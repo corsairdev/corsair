@@ -3,7 +3,7 @@ import type { DnsfilterEndpoints } from '..';
 import { makeDnsfilterRequest } from '../client';
 import type { DnsfilterEndpointOutputs } from './types';
 
-// Qp methods for dictionary - GET /v1/dictionary/qp_methods
+// QP methods for dictionary - GET /v1/dictionary/qp_methods
 export const dictionaryQpMethods: DnsfilterEndpoints['dictionaryQpMethods'] =
 	async (ctx, input) => {
 		const response = await makeDnsfilterRequest<

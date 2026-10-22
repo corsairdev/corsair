@@ -50,7 +50,7 @@ export const usersListAll: DnsfilterEndpoints['usersListAll'] = async (
 	return response;
 };
 
-// Get an user - GET /v1/users/{id}
+// Get a user - GET /v1/users/{id}
 export const usersGet: DnsfilterEndpoints['usersGet'] = async (ctx, input) => {
 	const response = await makeDnsfilterRequest<
 		DnsfilterEndpointOutputs['usersGet']

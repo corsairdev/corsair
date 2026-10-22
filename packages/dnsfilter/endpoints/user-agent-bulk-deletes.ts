@@ -44,7 +44,7 @@ export const userAgentBulkDeletesCreate: DnsfilterEndpoints['userAgentBulkDelete
 		return response;
 	};
 
-// Get an user agent bulk delete - GET /v1/user_agent_bulk_deletes/{id}
+// Get a user agent bulk delete - GET /v1/user_agent_bulk_deletes/{id}
 export const userAgentBulkDeletesGet: DnsfilterEndpoints['userAgentBulkDeletesGet'] =
 	async (ctx, input) => {
 		const response = await makeDnsfilterRequest<

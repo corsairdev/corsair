@@ -852,7 +852,7 @@ await corsair.dnsfilter.api.apiKeys.list({});
 
 `apiKeys.revoke`
 
-Revoke for API keys
+Revoke an API key
 
 **Risk:** `destructive` · **Irreversible**
 
@@ -2752,7 +2752,7 @@ await corsair.dnsfilter.api.dashboards.update({});
 
 `dictionary.qpMethods`
 
-Qp methods for dictionary
+QP methods for dictionary
 
 **Risk:** `read`
 
@@ -2788,7 +2788,7 @@ await corsair.dnsfilter.api.dictionary.qpMethods({});
 
 `dictionaryV2.aiApplications`
 
-Ai applications for dictionary V2
+AI applications for dictionary V2
 
 **Risk:** `read`
 
@@ -4246,7 +4246,7 @@ await corsair.dnsfilter.api.ipAddresses.listAll({});
 
 `ipAddresses.myip`
 
-Myip for IP addresses
+My IP for IP addresses
 
 **Risk:** `read`
 
@@ -5100,7 +5100,7 @@ await corsair.dnsfilter.api.metrics.organizationUsageDetailed({});
 
 `networkLanIps.get`
 
-Get a network LAN IPS
+Get a network LAN IP
 
 **Risk:** `read`
 
@@ -5160,7 +5160,7 @@ await corsair.dnsfilter.api.networkLanIps.get({});
 
 `networkLanIps.list`
 
-List network LAN IPS
+List network LAN IPs
 
 **Risk:** `read`
 
@@ -5242,7 +5242,7 @@ await corsair.dnsfilter.api.networkLanIps.list({});
 
 `networkLanIps.update`
 
-Update a network LAN IPS
+Update a network LAN IP
 
 **Risk:** `write`
 
@@ -7599,7 +7599,7 @@ await corsair.dnsfilter.api.organizations.bulkUpdate({});
 
 `organizations.cancel`
 
-Cancel for organizations
+Cancel an organization
 
 **Risk:** `destructive` · **Irreversible**
 
@@ -10799,7 +10799,7 @@ await corsair.dnsfilter.api.policiesBulkActions.removeBlocklistDomains({});
 
 `policyIps.get`
 
-Get a policy IPS
+Get a policy IP
 
 **Risk:** `read`
 
@@ -10847,7 +10847,7 @@ await corsair.dnsfilter.api.policyIps.get({});
 
 `policyIps.list`
 
-List policy IPS
+List policy IPs
 
 **Risk:** `read`
 
@@ -15545,7 +15545,7 @@ await corsair.dnsfilter.api.userAgentBulkDeletes.create({});
 
 `userAgentBulkDeletes.get`
 
-Get an user agent bulk delete
+Get a user agent bulk delete
 
 **Risk:** `read`
 
@@ -15748,7 +15748,7 @@ await corsair.dnsfilter.api.userAgentBulkUpdates.create({});
 
 `userAgentBulkUpdates.get`
 
-Get an user agent bulk update
+Get a user agent bulk update
 
 **Risk:** `read`
 
@@ -15901,7 +15901,7 @@ await corsair.dnsfilter.api.userAgentCleanups.create({});
 
 `userAgentCleanups.get`
 
-Get an user agent cleanup
+Get a user agent cleanup
 
 **Risk:** `read`
 
@@ -15953,7 +15953,7 @@ await corsair.dnsfilter.api.userAgentCleanups.get({});
 
 `userAgentCleanups.update`
 
-Update an user agent cleanup
+Update a user agent cleanup
 
 **Risk:** `destructive` · **Irreversible**
 
@@ -16154,38 +16154,11 @@ await corsair.dnsfilter.api.userAgents.counts({});
 
 ---
 
-### csv
-
-`userAgents.csv`
-
-CSV for user agents
-
-**Risk:** `read`
-
-```ts
-await corsair.dnsfilter.api.userAgents.csv({});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `include_suborgs` | `boolean` | No | — |
-| `organization_id` | `number` | No | — |
-| `timezone` | `string` | No | — |
-
-
-
-**Output:** `string`
-
-
----
-
 ### delete
 
 `userAgents.delete`
 
-Delete an user agent
+Delete a user agent
 
 **Risk:** `destructive` · **Irreversible**
 
@@ -16242,7 +16215,7 @@ await corsair.dnsfilter.api.userAgents.dequeueUninstall({});
 
 `userAgents.get`
 
-Get an user agent
+Get a user agent
 
 **Risk:** `read`
 
@@ -16794,7 +16767,7 @@ await corsair.dnsfilter.api.userAgents.uninstallPin({});
 
 `userAgents.update`
 
-Update an user agent
+Update a user agent
 
 **Risk:** `write`
 
@@ -17006,7 +16979,7 @@ await corsair.dnsfilter.api.users.changePassword({});
 
 `users.get`
 
-Get an user
+Get a user
 
 **Risk:** `read`
 

@@ -158,7 +158,7 @@ export const ipAddressesVerify: DnsfilterEndpoints['ipAddressesVerify'] =
 		return response;
 	};
 
-// Myip for IP addresses - GET /v1/ip_addresses/myip
+// My IP for IP addresses - GET /v1/ip_addresses/myip
 export const ipAddressesMyip: DnsfilterEndpoints['ipAddressesMyip'] = async (
 	ctx,
 	input,

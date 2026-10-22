@@ -4262,17 +4262,6 @@ export type UserAgentsDequeueUninstallResponse = z.infer<
 	typeof UserAgentsDequeueUninstallResponseSchema
 >;
 
-// CSV Export
-const UserAgentsCsvInputSchema = z.object({
-	include_suborgs: z.boolean().optional(),
-	organization_id: z.number().int().optional(),
-	timezone: z.string().optional(),
-});
-export type UserAgentsCsvInput = z.infer<typeof UserAgentsCsvInputSchema>;
-
-const UserAgentsCsvResponseSchema = z.string();
-export type UserAgentsCsvResponse = z.infer<typeof UserAgentsCsvResponseSchema>;
-
 // PIN
 const UserAgentsUninstallPinInputSchema = z.object({
 	organization_id: z.number().int().optional(),
@@ -5110,7 +5099,6 @@ export const DnsfilterEndpointInputSchemas = {
 	userAgentsDelete: UserAgentsDeleteInputSchema,
 	userAgentsTags: UserAgentsTagsInputSchema,
 	userAgentsDequeueUninstall: UserAgentsDequeueUninstallInputSchema,
-	userAgentsCsv: UserAgentsCsvInputSchema,
 	userAgentsUninstallPin: UserAgentsUninstallPinInputSchema,
 	usersList: UsersListInputSchema,
 	usersListAll: UsersListAllInputSchema,
@@ -5402,7 +5390,6 @@ export const DnsfilterEndpointOutputSchemas = {
 	userAgentsDelete: UserAgentsDeleteResponseSchema,
 	userAgentsTags: UserAgentsTagsResponseSchema,
 	userAgentsDequeueUninstall: UserAgentsDequeueUninstallResponseSchema,
-	userAgentsCsv: UserAgentsCsvResponseSchema,
 	userAgentsUninstallPin: UserAgentsUninstallPinResponseSchema,
 	usersList: UsersListResponseSchema,
 	usersListAll: UsersListAllResponseSchema,

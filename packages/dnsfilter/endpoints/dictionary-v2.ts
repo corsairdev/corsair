@@ -3,7 +3,7 @@ import type { DnsfilterEndpoints } from '..';
 import { makeDnsfilterRequest } from '../client';
 import type { DnsfilterEndpointOutputs } from './types';
 
-// Ai applications for dictionary V2 - GET /v2/dictionary/ai_applications
+// AI applications for dictionary V2 - GET /v2/dictionary/ai_applications
 export const dictionaryV2AiApplications: DnsfilterEndpoints['dictionaryV2AiApplications'] =
 	async (ctx, input) => {
 		const response = await makeDnsfilterRequest<

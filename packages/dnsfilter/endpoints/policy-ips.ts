@@ -3,7 +3,7 @@ import type { DnsfilterEndpoints } from '..';
 import { makeDnsfilterRequest } from '../client';
 import type { DnsfilterEndpointOutputs } from './types';
 
-// List policy IPS - GET /v1/policy_ips
+// List policy IPs - GET /v1/policy_ips
 export const policyIpsList: DnsfilterEndpoints['policyIpsList'] = async (
 	ctx,
 	input,
@@ -22,7 +22,7 @@ export const policyIpsList: DnsfilterEndpoints['policyIpsList'] = async (
 	return response;
 };
 
-// Get a policy IPS - GET /v1/policy_ips/{id}
+// Get a policy IP - GET /v1/policy_ips/{id}
 export const policyIpsGet: DnsfilterEndpoints['policyIpsGet'] = async (
 	ctx,
 	input,

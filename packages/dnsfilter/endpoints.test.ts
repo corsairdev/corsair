@@ -53,8 +53,8 @@ describe('DNSFilter endpoint surface', () => {
 		requestMock.mockResolvedValue({ data: [] });
 	});
 
-	it('exposes all 249 JSON operations from the public spec', () => {
-		expect(endpoints).toHaveLength(249);
+	it('exposes all 248 JSON operations from the public spec', () => {
+		expect(endpoints).toHaveLength(248);
 		expect(Networks.networksGet).toBeDefined();
 		expect(UnblockRequests.unblockRequestsDecision).toBeDefined();
 	});

@@ -207,7 +207,7 @@ export const organizationsBulkUpdate: DnsfilterEndpoints['organizationsBulkUpdat
 		return response;
 	};
 
-// Cancel for organizations - POST /v1/organizations/{id}/cancel
+// Cancel an organization - POST /v1/organizations/{id}/cancel
 export const organizationsCancel: DnsfilterEndpoints['organizationsCancel'] =
 	async (ctx, input) => {
 		const response = await makeDnsfilterRequest<

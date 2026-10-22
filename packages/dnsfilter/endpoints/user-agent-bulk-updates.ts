@@ -44,7 +44,7 @@ export const userAgentBulkUpdatesCreate: DnsfilterEndpoints['userAgentBulkUpdate
 		return response;
 	};
 
-// Get an user agent bulk update - GET /v1/user_agent_bulk_updates/{id}
+// Get a user agent bulk update - GET /v1/user_agent_bulk_updates/{id}
 export const userAgentBulkUpdatesGet: DnsfilterEndpoints['userAgentBulkUpdatesGet'] =
 	async (ctx, input) => {
 		const response = await makeDnsfilterRequest<

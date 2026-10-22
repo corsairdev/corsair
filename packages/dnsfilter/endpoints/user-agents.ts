@@ -121,7 +121,7 @@ export const userAgentsCounts: DnsfilterEndpoints['userAgentsCounts'] = async (
 	return response;
 };
 
-// Get an user agent - GET /v1/user_agents/{id}
+// Get a user agent - GET /v1/user_agents/{id}
 export const userAgentsGet: DnsfilterEndpoints['userAgentsGet'] = async (
 	ctx,
 	input,
@@ -144,7 +144,7 @@ export const userAgentsGet: DnsfilterEndpoints['userAgentsGet'] = async (
 	return response;
 };
 
-// Update an user agent - PATCH /v1/user_agents/{id}
+// Update a user agent - PATCH /v1/user_agents/{id}
 export const userAgentsUpdate: DnsfilterEndpoints['userAgentsUpdate'] = async (
 	ctx,
 	input,
@@ -170,7 +170,7 @@ export const userAgentsUpdate: DnsfilterEndpoints['userAgentsUpdate'] = async (
 	return response;
 };
 
-// Delete an user agent - DELETE /v1/user_agents/{id}
+// Delete a user agent - DELETE /v1/user_agents/{id}
 export const userAgentsDelete: DnsfilterEndpoints['userAgentsDelete'] = async (
 	ctx,
 	input,
@@ -240,30 +240,6 @@ export const userAgentsDequeueUninstall: DnsfilterEndpoints['userAgentsDequeueUn
 		);
 		return response;
 	};
-
-// CSV for user agents - GET /v1/user_agents/csv
-export const userAgentsCsv: DnsfilterEndpoints['userAgentsCsv'] = async (
-	ctx,
-	input,
-) => {
-	const response = await makeDnsfilterRequest<
-		DnsfilterEndpointOutputs['userAgentsCsv']
-	>('/v1/user_agents/csv', ctx.key, {
-		method: 'GET',
-		query: {
-			include_suborgs: input.include_suborgs,
-			organization_id: input.organization_id,
-			timezone: input.timezone,
-		},
-	});
-	await logEventFromContext(
-		ctx,
-		'dnsfilter.userAgents.csv',
-		input ?? {},
-		'completed',
-	);
-	return response;
-};
 
 // Uninstall pin for user agents - GET /v1/user_agents/uninstall_pin
 export const userAgentsUninstallPin: DnsfilterEndpoints['userAgentsUninstallPin'] =

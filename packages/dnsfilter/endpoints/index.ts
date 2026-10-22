@@ -552,7 +552,6 @@ export const UserAgentReleases = {
 
 import {
 	userAgentsCounts,
-	userAgentsCsv,
 	userAgentsDelete,
 	userAgentsDequeueUninstall,
 	userAgentsGet,
@@ -571,7 +570,6 @@ export const UserAgents = {
 	userAgentsDelete,
 	userAgentsTags,
 	userAgentsDequeueUninstall,
-	userAgentsCsv,
 	userAgentsUninstallPin,
 };
 

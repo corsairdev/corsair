@@ -315,7 +315,6 @@ export type DnsfilterEndpoints = {
 	userAgentsDelete: DnsfilterEndpoint<'userAgentsDelete'>;
 	userAgentsTags: DnsfilterEndpoint<'userAgentsTags'>;
 	userAgentsDequeueUninstall: DnsfilterEndpoint<'userAgentsDequeueUninstall'>;
-	userAgentsCsv: DnsfilterEndpoint<'userAgentsCsv'>;
 	userAgentsUninstallPin: DnsfilterEndpoint<'userAgentsUninstallPin'>;
 	usersList: DnsfilterEndpoint<'usersList'>;
 	usersListAll: DnsfilterEndpoint<'usersListAll'>;
@@ -659,7 +658,6 @@ const dnsfilterEndpointsNested = {
 		delete: UserAgents.userAgentsDelete,
 		tags: UserAgents.userAgentsTags,
 		dequeueUninstall: UserAgents.userAgentsDequeueUninstall,
-		csv: UserAgents.userAgentsCsv,
 		uninstallPin: UserAgents.userAgentsUninstallPin,
 	},
 	users: {
@@ -1603,10 +1601,6 @@ export const dnsfilterEndpointSchemas = {
 		input: DnsfilterEndpointInputSchemas.userAgentsDequeueUninstall,
 		output: DnsfilterEndpointOutputSchemas.userAgentsDequeueUninstall,
 	},
-	'userAgents.csv': {
-		input: DnsfilterEndpointInputSchemas.userAgentsCsv,
-		output: DnsfilterEndpointOutputSchemas.userAgentsCsv,
-	},
 	'userAgents.uninstallPin': {
 		input: DnsfilterEndpointInputSchemas.userAgentsUninstallPin,
 		output: DnsfilterEndpointOutputSchemas.userAgentsUninstallPin,
@@ -1806,7 +1800,7 @@ const dnsfilterEndpointMeta = {
 	'apiKeys.revoke': {
 		riskLevel: 'destructive',
 		irreversible: true,
-		description: 'Revoke for API keys',
+		description: 'Revoke an API key',
 	},
 	'applicationCategories.list': {
 		riskLevel: 'read',
@@ -1908,7 +1902,7 @@ const dnsfilterEndpointMeta = {
 	},
 	'dictionary.qpMethods': {
 		riskLevel: 'read',
-		description: 'Qp methods for dictionary',
+		description: 'QP methods for dictionary',
 	},
 	'domainNotes.get': {
 		riskLevel: 'read',
@@ -2008,7 +2002,7 @@ const dnsfilterEndpointMeta = {
 	},
 	'ipAddresses.myip': {
 		riskLevel: 'read',
-		description: 'Myip for IP addresses',
+		description: 'My IP for IP addresses',
 	},
 	'macAddresses.list': {
 		riskLevel: 'read',
@@ -2045,15 +2039,15 @@ const dnsfilterEndpointMeta = {
 	},
 	'networkLanIps.list': {
 		riskLevel: 'read',
-		description: 'List network LAN IPS',
+		description: 'List network LAN IPs',
 	},
 	'networkLanIps.get': {
 		riskLevel: 'read',
-		description: 'Get a network LAN IPS',
+		description: 'Get a network LAN IP',
 	},
 	'networkLanIps.update': {
 		riskLevel: 'write',
-		description: 'Update a network LAN IPS',
+		description: 'Update a network LAN IP',
 	},
 	'networkSubnets.listAll': {
 		riskLevel: 'read',
@@ -2224,7 +2218,7 @@ const dnsfilterEndpointMeta = {
 	'organizations.cancel': {
 		riskLevel: 'destructive',
 		irreversible: true,
-		description: 'Cancel for organizations',
+		description: 'Cancel an organization',
 	},
 	'organizations.promoteToMsp': {
 		riskLevel: 'write',
@@ -2329,11 +2323,11 @@ const dnsfilterEndpointMeta = {
 	},
 	'policyIps.list': {
 		riskLevel: 'read',
-		description: 'List policy IPS',
+		description: 'List policy IPs',
 	},
 	'policyIps.get': {
 		riskLevel: 'read',
-		description: 'Get a policy IPS',
+		description: 'Get a policy IP',
 	},
 	'psaIntegrations.redirectLink': {
 		riskLevel: 'read',
@@ -2556,7 +2550,7 @@ const dnsfilterEndpointMeta = {
 	},
 	'userAgentBulkDeletes.get': {
 		riskLevel: 'read',
-		description: 'Get an user agent bulk delete',
+		description: 'Get a user agent bulk delete',
 	},
 	'userAgentBulkDeletes.counts': {
 		riskLevel: 'read',
@@ -2568,7 +2562,7 @@ const dnsfilterEndpointMeta = {
 	},
 	'userAgentBulkUpdates.get': {
 		riskLevel: 'read',
-		description: 'Get an user agent bulk update',
+		description: 'Get a user agent bulk update',
 	},
 	'userAgentBulkUpdates.hasMixed': {
 		riskLevel: 'write',
@@ -2585,12 +2579,12 @@ const dnsfilterEndpointMeta = {
 	},
 	'userAgentCleanups.get': {
 		riskLevel: 'read',
-		description: 'Get an user agent cleanup',
+		description: 'Get a user agent cleanup',
 	},
 	'userAgentCleanups.update': {
 		riskLevel: 'destructive',
 		irreversible: true,
-		description: 'Update an user agent cleanup',
+		description: 'Update a user agent cleanup',
 	},
 	'userAgentReleases.list': {
 		riskLevel: 'read',
@@ -2614,16 +2608,16 @@ const dnsfilterEndpointMeta = {
 	},
 	'userAgents.get': {
 		riskLevel: 'read',
-		description: 'Get an user agent',
+		description: 'Get a user agent',
 	},
 	'userAgents.update': {
 		riskLevel: 'write',
-		description: 'Update an user agent',
+		description: 'Update a user agent',
 	},
 	'userAgents.delete': {
 		riskLevel: 'destructive',
 		irreversible: true,
-		description: 'Delete an user agent',
+		description: 'Delete a user agent',
 	},
 	'userAgents.tags': {
 		riskLevel: 'read',
@@ -2632,10 +2626,6 @@ const dnsfilterEndpointMeta = {
 	'userAgents.dequeueUninstall': {
 		riskLevel: 'write',
 		description: 'Dequeue uninstall for user agents',
-	},
-	'userAgents.csv': {
-		riskLevel: 'read',
-		description: 'CSV for user agents',
 	},
 	'userAgents.uninstallPin': {
 		riskLevel: 'read',
@@ -2651,7 +2641,7 @@ const dnsfilterEndpointMeta = {
 	},
 	'users.get': {
 		riskLevel: 'read',
-		description: 'Get an user',
+		description: 'Get a user',
 	},
 	'users.changePassword': {
 		riskLevel: 'write',
@@ -2716,7 +2706,7 @@ const dnsfilterEndpointMeta = {
 	},
 	'dictionaryV2.aiApplications': {
 		riskLevel: 'read',
-		description: 'Ai applications for dictionary V2',
+		description: 'AI applications for dictionary V2',
 	},
 	'dictionaryV2.cyberSightActivityTypes': {
 		riskLevel: 'read',

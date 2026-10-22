@@ -13,7 +13,7 @@ pnpm add @corsair-dev/dnsfilter
 | Operation | Operation ID | Risk | Description |
 |-----------|--------------|------|-------------|
 | `agentLocalUserBulkDeletes.counts` | `dnsfilter.api.agentLocalUserBulkDeletes.counts` | `read` | Counts for agent local user bulk deletes |
-| `agentLocalUserBulkDeletes.create` | `dnsfilter.api.agentLocalUserBulkDeletes.create` | `write` | Bulk delete agent local user |
+| `agentLocalUserBulkDeletes.create` | `dnsfilter.api.agentLocalUserBulkDeletes.create` | `destructive` | Bulk delete agent local user |
 | `agentLocalUserBulkDeletes.get` | `dnsfilter.api.agentLocalUserBulkDeletes.get` | `read` | Get an agent local user bulk delete |
 | `agentLocalUsers.delete` | `dnsfilter.api.agentLocalUsers.delete` | `destructive` | Delete an agent local user |
 | `agentLocalUsers.get` | `dnsfilter.api.agentLocalUsers.get` | `read` | Get an agent local user |
@@ -25,7 +25,7 @@ pnpm add @corsair-dev/dnsfilter
 | `apiKeys.delete` | `dnsfilter.api.apiKeys.delete` | `destructive` | Delete an API key |
 | `apiKeys.get` | `dnsfilter.api.apiKeys.get` | `read` | Get an API key |
 | `apiKeys.list` | `dnsfilter.api.apiKeys.list` | `read` | List API keys |
-| `apiKeys.revoke` | `dnsfilter.api.apiKeys.revoke` | `destructive` | Revoke for API keys |
+| `apiKeys.revoke` | `dnsfilter.api.apiKeys.revoke` | `destructive` | Revoke an API key |
 | `applicationCategories.get` | `dnsfilter.api.applicationCategories.get` | `read` | Get an application category |
 | `applicationCategories.list` | `dnsfilter.api.applicationCategories.list` | `read` | List application categories |
 | `applications.get` | `dnsfilter.api.applications.get` | `read` | Get an application |
@@ -63,8 +63,8 @@ pnpm add @corsair-dev/dnsfilter
 | `dashboards.owned` | `dnsfilter.api.dashboards.owned` | `read` | Owned for dashboards |
 | `dashboards.unlink` | `dnsfilter.api.dashboards.unlink` | `write` | Unlink for dashboards |
 | `dashboards.update` | `dnsfilter.api.dashboards.update` | `write` | Update a dashboard |
-| `dictionary.qpMethods` | `dnsfilter.api.dictionary.qpMethods` | `read` | Qp methods for dictionary |
-| `dictionaryV2.aiApplications` | `dnsfilter.api.dictionaryV2.aiApplications` | `read` | Ai applications for dictionary V2 |
+| `dictionary.qpMethods` | `dnsfilter.api.dictionary.qpMethods` | `read` | QP methods for dictionary |
+| `dictionaryV2.aiApplications` | `dnsfilter.api.dictionaryV2.aiApplications` | `read` | AI applications for dictionary V2 |
 | `dictionaryV2.cyberSightActivityTypes` | `dnsfilter.api.dictionaryV2.cyberSightActivityTypes` | `read` | Cyber sight activity types for dictionary V2 |
 | `dictionaryV2.vpnSettingsStateTypes` | `dnsfilter.api.dictionaryV2.vpnSettingsStateTypes` | `read` | Vpn settings state types for dictionary V2 |
 | `domainNotes.batchDestroy` | `dnsfilter.api.domainNotes.batchDestroy` | `destructive` | Batch destroy for domain notes |
@@ -88,7 +88,7 @@ pnpm add @corsair-dev/dnsfilter
 | `ipAddresses.get` | `dnsfilter.api.ipAddresses.get` | `read` | Get an IP address |
 | `ipAddresses.list` | `dnsfilter.api.ipAddresses.list` | `read` | List IP addresses |
 | `ipAddresses.listAll` | `dnsfilter.api.ipAddresses.listAll` | `read` | List all IP addresses |
-| `ipAddresses.myip` | `dnsfilter.api.ipAddresses.myip` | `read` | Myip for IP addresses |
+| `ipAddresses.myip` | `dnsfilter.api.ipAddresses.myip` | `read` | My IP for IP addresses |
 | `ipAddresses.update` | `dnsfilter.api.ipAddresses.update` | `write` | Update an IP address |
 | `ipAddresses.verify` | `dnsfilter.api.ipAddresses.verify` | `read` | Verify for IP addresses |
 | `macAddresses.create` | `dnsfilter.api.macAddresses.create` | `write` | Create a MAC address |
@@ -99,9 +99,9 @@ pnpm add @corsair-dev/dnsfilter
 | `macAddresses.update` | `dnsfilter.api.macAddresses.update` | `write` | Update a MAC address |
 | `metrics.organizationUsage` | `dnsfilter.api.metrics.organizationUsage` | `read` | Organization usage for metrics |
 | `metrics.organizationUsageDetailed` | `dnsfilter.api.metrics.organizationUsageDetailed` | `read` | Organization usage detailed for metrics |
-| `networkLanIps.get` | `dnsfilter.api.networkLanIps.get` | `read` | Get a network LAN IPS |
-| `networkLanIps.list` | `dnsfilter.api.networkLanIps.list` | `read` | List network LAN IPS |
-| `networkLanIps.update` | `dnsfilter.api.networkLanIps.update` | `write` | Update a network LAN IPS |
+| `networkLanIps.get` | `dnsfilter.api.networkLanIps.get` | `read` | Get a network LAN IP |
+| `networkLanIps.list` | `dnsfilter.api.networkLanIps.list` | `read` | List network LAN IPs |
+| `networkLanIps.update` | `dnsfilter.api.networkLanIps.update` | `write` | Update a network LAN IP |
 | `networks.bulkCreate` | `dnsfilter.api.networks.bulkCreate` | `write` | Bulk create for networks |
 | `networks.bulkCreateStatus` | `dnsfilter.api.networks.bulkCreateStatus` | `read` | Bulk create status for networks |
 | `networks.bulkDestroy` | `dnsfilter.api.networks.bulkDestroy` | `destructive` | Bulk destroy for networks |
@@ -129,7 +129,7 @@ pnpm add @corsair-dev/dnsfilter
 | `networkSubnets.listAll` | `dnsfilter.api.networkSubnets.listAll` | `read` | List all network subnets |
 | `networkSubnets.update` | `dnsfilter.api.networkSubnets.update` | `write` | Update a network subnet |
 | `organizations.bulkUpdate` | `dnsfilter.api.organizations.bulkUpdate` | `write` | Bulk update for organizations |
-| `organizations.cancel` | `dnsfilter.api.organizations.cancel` | `destructive` | Cancel for organizations |
+| `organizations.cancel` | `dnsfilter.api.organizations.cancel` | `destructive` | Cancel an organization |
 | `organizations.create` | `dnsfilter.api.organizations.create` | `write` | Create an organization |
 | `organizations.delete` | `dnsfilter.api.organizations.delete` | `destructive` | Delete an organization |
 | `organizations.get` | `dnsfilter.api.organizations.get` | `read` | Get an organization |
@@ -168,8 +168,8 @@ pnpm add @corsair-dev/dnsfilter
 | `policiesBulkActions.addBlocklistDomains` | `dnsfilter.api.policiesBulkActions.addBlocklistDomains` | `write` | Add blocklist domains for policies bulk actions |
 | `policiesBulkActions.removeAllowlistDomains` | `dnsfilter.api.policiesBulkActions.removeAllowlistDomains` | `write` | Remove allowlist domains for policies bulk actions |
 | `policiesBulkActions.removeBlocklistDomains` | `dnsfilter.api.policiesBulkActions.removeBlocklistDomains` | `write` | Remove blocklist domains for policies bulk actions |
-| `policyIps.get` | `dnsfilter.api.policyIps.get` | `read` | Get a policy IPS |
-| `policyIps.list` | `dnsfilter.api.policyIps.list` | `read` | List policy IPS |
+| `policyIps.get` | `dnsfilter.api.policyIps.get` | `read` | Get a policy IP |
+| `policyIps.list` | `dnsfilter.api.policyIps.list` | `read` | List policy IPs |
 | `psaIntegrations.redirectLink` | `dnsfilter.api.psaIntegrations.redirectLink` | `read` | Redirect link for PSA integrations |
 | `scheduledPolicies.create` | `dnsfilter.api.scheduledPolicies.create` | `write` | Create a scheduled policy |
 | `scheduledPolicies.delete` | `dnsfilter.api.scheduledPolicies.delete` | `destructive` | Delete a scheduled policy |
@@ -235,30 +235,29 @@ pnpm add @corsair-dev/dnsfilter
 | `unblockRequests.list` | `dnsfilter.api.unblockRequests.list` | `read` | List unblock requests |
 | `unblockRequests.pendingCount` | `dnsfilter.api.unblockRequests.pendingCount` | `read` | Pending count for unblock requests |
 | `userAgentBulkDeletes.counts` | `dnsfilter.api.userAgentBulkDeletes.counts` | `read` | Counts for user agent bulk deletes |
-| `userAgentBulkDeletes.create` | `dnsfilter.api.userAgentBulkDeletes.create` | `write` | Bulk delete user agent |
-| `userAgentBulkDeletes.get` | `dnsfilter.api.userAgentBulkDeletes.get` | `read` | Get an user agent bulk delete |
+| `userAgentBulkDeletes.create` | `dnsfilter.api.userAgentBulkDeletes.create` | `destructive` | Bulk delete user agent |
+| `userAgentBulkDeletes.get` | `dnsfilter.api.userAgentBulkDeletes.get` | `read` | Get a user agent bulk delete |
 | `userAgentBulkUpdates.counts` | `dnsfilter.api.userAgentBulkUpdates.counts` | `read` | Counts for user agent bulk updates |
 | `userAgentBulkUpdates.create` | `dnsfilter.api.userAgentBulkUpdates.create` | `write` | Bulk update user agent |
-| `userAgentBulkUpdates.get` | `dnsfilter.api.userAgentBulkUpdates.get` | `read` | Get an user agent bulk update |
+| `userAgentBulkUpdates.get` | `dnsfilter.api.userAgentBulkUpdates.get` | `read` | Get a user agent bulk update |
 | `userAgentBulkUpdates.hasMixed` | `dnsfilter.api.userAgentBulkUpdates.hasMixed` | `write` | Has mixed for user agent bulk updates |
-| `userAgentCleanups.create` | `dnsfilter.api.userAgentCleanups.create` | `write` | Clean up user agent |
-| `userAgentCleanups.get` | `dnsfilter.api.userAgentCleanups.get` | `read` | Get an user agent cleanup |
-| `userAgentCleanups.update` | `dnsfilter.api.userAgentCleanups.update` | `write` | Update an user agent cleanup |
+| `userAgentCleanups.create` | `dnsfilter.api.userAgentCleanups.create` | `destructive` | Clean up user agent |
+| `userAgentCleanups.get` | `dnsfilter.api.userAgentCleanups.get` | `read` | Get a user agent cleanup |
+| `userAgentCleanups.update` | `dnsfilter.api.userAgentCleanups.update` | `destructive` | Update a user agent cleanup |
 | `userAgentReleases.list` | `dnsfilter.api.userAgentReleases.list` | `read` | List user agent releases |
 | `userAgentReleases.relay` | `dnsfilter.api.userAgentReleases.relay` | `read` | Relay for user agent releases |
 | `userAgents.counts` | `dnsfilter.api.userAgents.counts` | `read` | Counts for user agents |
-| `userAgents.csv` | `dnsfilter.api.userAgents.csv` | `read` | CSV for user agents |
-| `userAgents.delete` | `dnsfilter.api.userAgents.delete` | `destructive` | Delete an user agent |
+| `userAgents.delete` | `dnsfilter.api.userAgents.delete` | `destructive` | Delete a user agent |
 | `userAgents.dequeueUninstall` | `dnsfilter.api.userAgents.dequeueUninstall` | `write` | Dequeue uninstall for user agents |
-| `userAgents.get` | `dnsfilter.api.userAgents.get` | `read` | Get an user agent |
+| `userAgents.get` | `dnsfilter.api.userAgents.get` | `read` | Get a user agent |
 | `userAgents.list` | `dnsfilter.api.userAgents.list` | `read` | List user agents |
 | `userAgents.listAll` | `dnsfilter.api.userAgents.listAll` | `read` | List all user agents |
 | `userAgents.tags` | `dnsfilter.api.userAgents.tags` | `read` | Tags for user agents |
 | `userAgents.uninstallPin` | `dnsfilter.api.userAgents.uninstallPin` | `read` | Uninstall pin for user agents |
-| `userAgents.update` | `dnsfilter.api.userAgents.update` | `write` | Update an user agent |
+| `userAgents.update` | `dnsfilter.api.userAgents.update` | `write` | Update a user agent |
 | `userAgentsV2.updateSettings` | `dnsfilter.api.userAgentsV2.updateSettings` | `write` | Update settings for user agents V2 |
 | `users.changePassword` | `dnsfilter.api.users.changePassword` | `write` | Change password for users |
-| `users.get` | `dnsfilter.api.users.get` | `read` | Get an user |
+| `users.get` | `dnsfilter.api.users.get` | `read` | Get a user |
 | `users.list` | `dnsfilter.api.users.list` | `read` | List users |
 | `users.listAll` | `dnsfilter.api.users.listAll` | `read` | List all users |
 

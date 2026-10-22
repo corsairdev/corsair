@@ -96,7 +96,7 @@ export const apiKeysDelete: DnsfilterEndpoints['apiKeysDelete'] = async (
 	return response;
 };
 
-// Revoke for API keys - POST /v1/api_keys/{id}/revoke
+// Revoke an API key - POST /v1/api_keys/{id}/revoke
 export const apiKeysRevoke: DnsfilterEndpoints['apiKeysRevoke'] = async (
 	ctx,
 	input,

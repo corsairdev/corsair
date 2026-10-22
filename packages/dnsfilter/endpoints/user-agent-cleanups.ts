@@ -25,7 +25,7 @@ export const userAgentCleanupsCreate: DnsfilterEndpoints['userAgentCleanupsCreat
 		return response;
 	};
 
-// Get an user agent cleanup - GET /v1/user_agent_cleanups/{id}
+// Get a user agent cleanup - GET /v1/user_agent_cleanups/{id}
 export const userAgentCleanupsGet: DnsfilterEndpoints['userAgentCleanupsGet'] =
 	async (ctx, input) => {
 		const response = await makeDnsfilterRequest<
@@ -45,7 +45,7 @@ export const userAgentCleanupsGet: DnsfilterEndpoints['userAgentCleanupsGet'] =
 		return response;
 	};
 
-// Update an user agent cleanup - PUT /v1/user_agent_cleanups/{id}
+// Update a user agent cleanup - PUT /v1/user_agent_cleanups/{id}
 export const userAgentCleanupsUpdate: DnsfilterEndpoints['userAgentCleanupsUpdate'] =
 	async (ctx, input) => {
 		const response = await makeDnsfilterRequest<

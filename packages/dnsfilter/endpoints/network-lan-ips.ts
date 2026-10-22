@@ -3,7 +3,7 @@ import type { DnsfilterEndpoints } from '..';
 import { makeDnsfilterRequest } from '../client';
 import type { DnsfilterEndpointOutputs } from './types';
 
-// List network LAN IPS - GET /v1/networks/{id}/lan_ips
+// List network LAN IPs - GET /v1/networks/{id}/lan_ips
 export const networkLanIpsList: DnsfilterEndpoints['networkLanIpsList'] =
 	async (ctx, input) => {
 		const response = await makeDnsfilterRequest<
@@ -26,7 +26,7 @@ export const networkLanIpsList: DnsfilterEndpoints['networkLanIpsList'] =
 		return response;
 	};
 
-// Get a network LAN IPS - GET /v1/networks/{id}/lan_ips/{lan_ip_id}
+// Get a network LAN IP - GET /v1/networks/{id}/lan_ips/{lan_ip_id}
 export const networkLanIpsGet: DnsfilterEndpoints['networkLanIpsGet'] = async (
 	ctx,
 	input,
@@ -49,7 +49,7 @@ export const networkLanIpsGet: DnsfilterEndpoints['networkLanIpsGet'] = async (
 	return response;
 };
 
-// Update a network LAN IPS - PATCH /v1/networks/{id}/lan_ips/{lan_ip_id}
+// Update a network LAN IP - PATCH /v1/networks/{id}/lan_ips/{lan_ip_id}
 export const networkLanIpsUpdate: DnsfilterEndpoints['networkLanIpsUpdate'] =
 	async (ctx, input) => {
 		const response = await makeDnsfilterRequest<
