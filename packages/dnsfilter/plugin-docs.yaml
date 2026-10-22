@@ -1,0 +1,45 @@
+displayName: DNSFilter
+description: Cloud DNS security and content filtering - manage networks, policies, roaming clients, block pages, and traffic reporting.
+recommendedAuth: api_key
+apiExamples:
+  networks.list:
+    page:
+      number: 1
+      size: 25
+  networks.get:
+    id: 12345
+  networks.create:
+    network:
+      name: HQ
+      organization_id: 99
+  networks.update:
+    id: 12345
+    network:
+      name: HQ
+      organization_id: 99
+  networks.delete:
+    id: 12345
+  policies.list:
+    page:
+      number: 1
+      size: 25
+  policies.get:
+    id: 321
+  users.list:
+    page:
+      number: 1
+      size: 25
+  ipAddresses.list:
+    page:
+      number: 1
+      size: 25
+  unblockRequests.list:
+    page:
+      number: 1
+      size: 25
+  unblockRequests.decision:
+    call: "{ id: '8f14e45f', decision: 'allow' }"
+  scheduledReportsV2.list:
+    page:
+      number: 1
+      size: 25
