@@ -1890,6 +1890,16 @@ export type TrafficReportsCursorPaginationRequest = z.infer<
 	typeof TrafficReportsCursorPaginationRequestSchema
 >;
 
+export const TrafficReportsQueryLogsPageRequestSchema = z.object({
+	number: z.number().int().optional(),
+	size: z.number().int().optional(),
+	cursor: z.string().optional(),
+	cursor_offset: z.number().int().optional(),
+});
+export type TrafficReportsQueryLogsPageRequest = z.infer<
+	typeof TrafficReportsQueryLogsPageRequestSchema
+>;
+
 export const TrafficReportsQueryLogsResultSchema = z.object({
 	time: z.string().optional(),
 	fqdn: z.string().optional(),
@@ -1950,6 +1960,21 @@ export type TrafficReportsCursorPaginationResponse = z.infer<
 	typeof TrafficReportsCursorPaginationResponseSchema
 >;
 
+export const TrafficReportsQueryLogsPageResponseSchema = z.object({
+	size: z.number().int().optional(),
+	total: z.number().int().optional(),
+	first: z.number().int().optional(),
+	last: z.number().int().optional(),
+	self: z.number().int().optional(),
+	prev: z.number().int().optional(),
+	next: z.number().int().optional(),
+	cursor: z.string().optional(),
+	cursor_offset: z.number().int().optional(),
+});
+export type TrafficReportsQueryLogsPageResponse = z.infer<
+	typeof TrafficReportsQueryLogsPageResponseSchema
+>;
+
 export const TrafficReportsQueryLogsSchema = z.object({
 	organization_id: z.number().int().optional(),
 	organization_ids: z.array(z.string()).optional(),
@@ -1964,12 +1989,7 @@ export const TrafficReportsQueryLogsSchema = z.object({
 	collection_id: z.number().int().optional(),
 	collection_ids: z.array(z.string()).optional(),
 	values: z.array(TrafficReportsQueryLogsResultSchema).optional(),
-	page: z
-		.union([
-			TrafficReportsPaginationResponseSchema,
-			TrafficReportsCursorPaginationResponseSchema,
-		])
-		.optional(),
+	page: TrafficReportsQueryLogsPageResponseSchema.optional(),
 });
 export type TrafficReportsQueryLogs = z.infer<
 	typeof TrafficReportsQueryLogsSchema

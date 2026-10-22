@@ -5,6 +5,7 @@ import {
 	CollectionUsers,
 	IpAddresses,
 	Networks,
+	TrafficReports,
 	UnblockRequests,
 } from './endpoints';
 import {
@@ -188,6 +189,48 @@ describe('DNSFilter endpoint surface', () => {
 		expect(options.method).toBe('GET');
 		expect(options.body).toBeUndefined();
 		expect(options.query).toHaveProperty('ip_address');
+	});
+
+	it('keeps IP verification rows in the parsed response', async () => {
+		requestMock.mockResolvedValueOnce({
+			data: [
+				{
+					id: 'ip-1',
+					type: 'ip_addresses',
+					attributes: { address: '203.0.113.7', organization_id: 1 },
+				},
+			],
+		});
+
+		const result = await IpAddresses.ipAddressesVerify(createContext(), {
+			ip_address: {
+				address: '203.0.113.7',
+				organization_id: 1,
+				network_id: 2,
+			},
+		});
+
+		expect(result.data).toEqual([
+			expect.objectContaining({
+				id: 'ip-1',
+				attributes: expect.objectContaining({ address: '203.0.113.7' }),
+			}),
+		]);
+	});
+
+	it('round-trips query-log cursor pagination', async () => {
+		const page = { cursor: 'next-page', cursor_offset: 20, size: 20 };
+		requestMock.mockResolvedValueOnce({
+			data: { values: [], page },
+		});
+
+		const result = await TrafficReports.trafficReportsQueryLogs(
+			createContext(),
+			{ page },
+		);
+
+		expect(lastRequestOptions().query).toMatchObject({ page });
+		expect(result.data?.page).toEqual(page);
 	});
 
 	it('forwards nested pagination and filters as query values', async () => {

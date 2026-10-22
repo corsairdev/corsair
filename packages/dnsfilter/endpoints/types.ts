@@ -1024,14 +1024,12 @@ export type IpAddressesVerifyInput = z.infer<
 	typeof IpAddressesVerifyInputSchema
 >;
 
-const IpAddressesVerifyResponseSchema = z.union([
-	z.object({
-		status: z.string().optional(),
-	}),
-	z.object({
-		data: z.array(Models.IpAddressSpecSchema).optional(),
-	}),
-]);
+const IpAddressesVerifyResponseSchema = z.object({
+	// Verify returns either a status envelope or the matching IP data; merging
+	// both fields keeps `data` instead of letting a union strip it.
+	status: z.string().optional(),
+	data: z.array(Models.IpAddressSpecSchema).optional(),
+});
 export type IpAddressesVerifyResponse = z.infer<
 	typeof IpAddressesVerifyResponseSchema
 >;
@@ -3396,12 +3394,10 @@ const TrafficReportsQueryLogsInputSchema = z.object({
 	network_id: z.number().int().optional(),
 	network_ids: z.string().optional(),
 	organization_id: z.number().int().optional(),
-	page: z
-		.union([
-			Models.TrafficReportsPaginationRequestSchema,
-			Models.TrafficReportsCursorPaginationRequestSchema,
-		])
-		.optional(),
+	// Offset (`number`/`size`) and cursor (`cursor`/`cursor_offset`) pagination
+	// share one schema: a union of two all-optional objects matches the offset
+	// branch first and silently strips the cursor fields.
+	page: Models.TrafficReportsQueryLogsPageRequestSchema.optional(),
 	policy_ids: z.string().optional(),
 	private_ip: z.string().optional(),
 	private_ip_from: z.string().optional(),
