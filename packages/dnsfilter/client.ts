@@ -1,16 +1,10 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 
-/**
- * DNSFilter serves every operation from a single production host. Versioning is
- * per-path (`/v1/...`, `/v2/...`), so requests carry absolute paths.
- */
+// One production host; the API version lives in the path.
 export const DNSFILTER_API_BASE = 'https://api.dnsfilter.com';
 
-/**
- * Normalised DNSFilter error. DNSFilter v1 returns `{ error, type }` and v2
- * returns `{ error: { message, type } }`, so both shapes are flattened here.
- */
+// v1 errors are `{ error, type }`, v2 errors are `{ error: { message, type } }`.
 export class DnsfilterAPIError extends Error {
 	constructor(
 		message: string,
@@ -29,16 +23,11 @@ export class DnsfilterAPIError extends Error {
 
 export type DnsfilterRequestOptions = {
 	method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
-	/** Values substituted into `{placeholders}` in the path. */
+	// Values for `{placeholders}` in the path.
 	path?: Record<string, string | number>;
-	/** Query string values; nested objects become `key[subkey]` pairs. */
+	// Nested objects become `key[subkey]` pairs.
 	query?: Record<string, unknown>;
-	/**
-	 * JSON request body. `unknown` is required because DNSFilter request bodies
-	 * are JSON:API envelopes with per-operation shapes (`{ network: ... }`,
-	 * `{ policy: ... }`); the typed shape is enforced by the endpoint's zod
-	 * input schema before this helper is called.
-	 */
+	// JSON:API envelope; the endpoint's input schema checks the shape.
 	body?: unknown;
 };
 
@@ -78,10 +67,7 @@ function withoutUndefined(
 	return entries.length > 0 ? Object.fromEntries(entries) : undefined;
 }
 
-/**
- * Bodies keep `null` (a `null` clears a field on PATCH/PUT) and pass arrays
- * through unchanged; only `undefined` properties are dropped.
- */
+// Drops only undefined: null clears a field and arrays pass through.
 function withoutUndefinedBody(body: unknown): unknown {
 	if (!body || typeof body !== 'object') return body;
 	if (Array.isArray(body)) return body;
@@ -106,10 +92,7 @@ function toDnsfilterError(error: unknown): Error {
 	return new DnsfilterAPIError('Unknown DNSFilter API error');
 }
 
-/**
- * Single transport used by every endpoint. DNSFilter authenticates with the raw
- * API key in the `Authorization` header (no `Bearer` prefix).
- */
+// Shared transport. DNSFilter wants the raw key, not `Bearer <key>`.
 export async function makeDnsfilterRequest<T>(
 	endpoint: string,
 	apiKey: string,
@@ -122,8 +105,7 @@ export async function makeDnsfilterRequest<T>(
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		// No TOKEN: the shared client turns TOKEN into `Bearer <token>`, and
-		// DNSFilter expects the raw key in the Authorization header below.
+		// No TOKEN: the shared client would send `Bearer <key>`.
 		HEADERS: {
 			Accept: 'application/json',
 			'Content-Type': 'application/json',

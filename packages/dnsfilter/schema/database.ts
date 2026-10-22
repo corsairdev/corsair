@@ -67,9 +67,9 @@ export const DnsfilterMacAddress = z.object({
 export const DnsfilterSubnet = z.object({
 	id: z.string(),
 	name: z.string().optional(),
-	/** First address of the subnet range (`from` in the DNSFilter payload). */
+	/** Subnet range start (`from`). */
 	from: z.string().optional(),
-	/** Last address of the subnet range (`to` in the DNSFilter payload). */
+	/** Subnet range end (`to`). */
 	to: z.string().optional(),
 	networkId: z.string().optional(),
 	createdAt: z.coerce.date().nullable().optional(),
@@ -88,7 +88,7 @@ export const DnsfilterUnblockRequest = z.object({
 export const DnsfilterScheduledReport = z.object({
 	id: z.string(),
 	name: z.string().optional(),
-	/** Delivery cadence (`frequency` in the DNSFilter payload). */
+	/** Delivery frequency. */
 	frequency: z.string().optional(),
 	organizationId: z.string().optional(),
 	createdAt: z.coerce.date().nullable().optional(),

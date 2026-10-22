@@ -1,11 +1,7 @@
 import { z } from 'zod';
 
-// Models generated from the DNSFilter OpenAPI document (version 2026-10-13).
-//
-// DNSFilter leaves some payloads untyped in its document (free-form metadata,
-// report rows, `additionalProperties` bags). Those nodes are emitted as
-// `z.unknown()` because the provider contract does not constrain them; every
-// documented field keeps its concrete type.
+// Generated from the DNSFilter OpenAPI document (2026-10-13). Payloads the
+// document leaves open become z.unknown(); typed fields stay concrete.
 
 export const StringContainsOpSchema = z.object({
 	operator: z.enum(['contains', 'doesnotcontain']).optional(),

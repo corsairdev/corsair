@@ -1025,8 +1025,7 @@ export type IpAddressesVerifyInput = z.infer<
 >;
 
 const IpAddressesVerifyResponseSchema = z.object({
-	// Verify returns either a status envelope or the matching IP data; merging
-	// both fields keeps `data` instead of letting a union strip it.
+	// Verify can answer with a status envelope or the IP rows.
 	status: z.string().optional(),
 	data: z.array(Models.IpAddressSpecSchema).optional(),
 });
@@ -3394,9 +3393,7 @@ const TrafficReportsQueryLogsInputSchema = z.object({
 	network_id: z.number().int().optional(),
 	network_ids: z.string().optional(),
 	organization_id: z.number().int().optional(),
-	// Offset (`number`/`size`) and cursor (`cursor`/`cursor_offset`) pagination
-	// share one schema: a union of two all-optional objects matches the offset
-	// branch first and silently strips the cursor fields.
+	// Offset or cursor pagination; both live in one schema.
 	page: Models.TrafficReportsQueryLogsPageRequestSchema.optional(),
 	policy_ids: z.string().optional(),
 	private_ip: z.string().optional(),

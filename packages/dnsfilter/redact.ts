@@ -1,23 +1,11 @@
-/**
- * Event payload safety.
- *
- * `logEventFromContext` stores its payload verbatim in the local `events`
- * table. DNSFilter payloads include credentials (`new_password`,
- * `payment_token`, SSO `client_secret`, API keys), so endpoint inputs are
- * passed through `redactSensitive` before they reach the event log.
- */
+// Inputs can hold passwords, payment tokens, API keys and SSO secrets; strip
+// them before logEventFromContext stores the payload.
 
 const SENSITIVE_KEY =
 	/(password|passphrase|secret|token|api[_-]?key|authorization|credential)/i;
 
-/**
- * Returns a copy of an endpoint input that is safe to store in the event log.
- *
- * `unknown` is required for the parameter because the 248 operations accept
- * heterogeneous inputs (nested objects, arrays, primitives) and the helper must
- * work for all of them. The returned value keeps the input's shape with
- * sensitive leaves replaced by `'[redacted]'`; non-object inputs log as `{}`.
- */
+// Returns a redacted copy for the event log. Inputs vary across operations,
+// so the parameter is `unknown`; non-objects log as {}.
 export function redactSensitive(value: unknown): Record<string, unknown> {
 	const redacted = redact(value, 0);
 	if (Array.isArray(redacted)) return { values: redacted };

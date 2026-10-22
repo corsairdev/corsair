@@ -60,7 +60,7 @@ function lastRequestOptions() {
 	};
 }
 
-/** First candidate that satisfies the operation's response schema. */
+/** First response shape the output schema accepts. */
 function sampleOutput(key: EndpointKey): unknown {
 	const schema = DnsfilterEndpointOutputSchemas[key];
 	const candidates = [
@@ -101,8 +101,8 @@ describe('DNSFilter endpoint surface', () => {
 	});
 });
 
-// One case per operation: required inputs are rejected before the transport,
-// while optional-input operations hit the mocked transport and parse the result.
+// One case per endpoint: bad input fails before the request, valid input hits
+// the mocked transport and parses the response.
 describe.each(endpointKeys)('endpoint %s', (key) => {
 	beforeEach(() => {
 		requestMock.mockReset();

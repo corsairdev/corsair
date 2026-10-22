@@ -1,10 +1,7 @@
 import type { DnsfilterContext } from './index';
 
-/**
- * DNSFilter returns JSON:API documents (`{ data: { id, attributes } }`), so the
- * persistence helpers unwrap the row, fall back to `attributes` for the entity
- * fields, and never let a write failure break the API call.
- */
+// Unwraps JSON:API rows and keeps local sync best-effort: a DB failure never
+// fails the API call.
 
 type Row = Record<string, unknown>;
 

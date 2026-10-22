@@ -1,13 +1,8 @@
 import type { CorsairErrorHandler } from 'corsair/core';
 import { DnsfilterAPIError } from './client';
 
-/**
- * DNSFilter rate limits every endpoint and documents `Retry-After` plus the
- * `RateLimit-*` headers on 429 responses, so we honour the server-provided
- * delay instead of guessing. `makeDnsfilterRequest` normalises every transport
- * failure into `DnsfilterAPIError` (status + retryAfter) before Corsair
- * dispatches it, so the matchers below check that type.
- */
+// 429s include Retry-After / RateLimit-* headers; retry with the server's delay.
+// The transport turns failures into DnsfilterAPIError before we get them.
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) =>
