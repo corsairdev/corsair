@@ -1,6 +1,6 @@
 import { request } from 'corsair/http';
-import { GoogleDriveFile } from '../schema/database';
-import { get, list } from './files';
+import { GoogleDriveFile, GoogleDriveFileContents } from '../schema/database';
+import { exportText, get, list } from './files';
 import { GoogleDriveEndpointInputSchemas } from './types';
 
 jest.mock('corsair/http', () => {
@@ -34,11 +34,16 @@ function ctx() {
 			stored[id] = GoogleDriveFile.parse(data);
 		}),
 	};
+	const fileContents = {
+		upsertByEntityId: jest.fn(async (id: string, data: unknown) => {
+			stored[`contents:${id}`] = GoogleDriveFileContents.parse(data);
+		}),
+	};
 	return {
 		stored,
 		ctx: {
 			key: 'test-token',
-			db: { files, folders: { upsertByEntityId: jest.fn() } },
+			db: { files, fileContents, folders: { upsertByEntityId: jest.fn() } },
 			$getAccountId: async () => 'account-1',
 		} as never,
 	};
@@ -97,5 +102,100 @@ describe('files fields passthrough', () => {
 			}),
 		);
 		expect(stored['file-1']?.owners).toEqual(driveFile.owners);
+	});
+});
+
+function paragraph(text: string) {
+	return { paragraph: { elements: [{ textRun: { content: text } }] } };
+}
+
+function tab(title: string, lines: string[], childTabs: unknown[] = []) {
+	return {
+		tabProperties: { title },
+		documentTab: { body: { content: lines.map(paragraph) } },
+		childTabs,
+	};
+}
+
+function mockDoc(tabs: unknown[], meta: Record<string, unknown> = driveFile) {
+	mockRequest.mockImplementation(async (config: { BASE: string }) =>
+		config.BASE.includes('docs.googleapis.com') ? { tabs } : meta,
+	);
+}
+
+describe('files.exportText', () => {
+	beforeEach(() => {
+		jest.clearAllMocks();
+	});
+
+	it('reads metadata, fetches the doc with all tabs and persists fileContents', async () => {
+		mockDoc([tab('Notes', ['Hello ', 'world\n'])]);
+		const { ctx: c, stored } = ctx();
+
+		const result = await exportText(c, { fileId: 'file-1' });
+
+		expect(mockRequest).toHaveBeenCalledWith(
+			expect.objectContaining({ BASE: 'https://www.googleapis.com/drive/v3' }),
+			expect.objectContaining({
+				url: '/files/file-1',
+				query: expect.objectContaining({
+					fields: 'id,name,mimeType,createdTime,modifiedTime,webViewLink',
+				}),
+			}),
+		);
+		expect(mockRequest).toHaveBeenCalledWith(
+			expect.objectContaining({ BASE: 'https://docs.googleapis.com/v1' }),
+			expect.objectContaining({
+				url: '/documents/file-1',
+				query: { includeTabsContent: true },
+			}),
+		);
+		const expected = {
+			id: 'file-1',
+			name: driveFile.name,
+			mimeType: driveFile.mimeType,
+			createdTime: driveFile.createdTime,
+			modifiedTime: driveFile.modifiedTime,
+			webViewLink: driveFile.webViewLink,
+			text: '# Notes\nHello world\n',
+		};
+		expect(result).toEqual(expected);
+		expect(stored['contents:file-1']).toEqual(expected);
+		expect(stored['file-1']).toBeUndefined();
+	});
+
+	it('includes every tab, child tabs too, in document order', async () => {
+		mockDoc([
+			tab('Notes', ['Summary\n'], [tab('Action items', ['Ship it\n'])]),
+			tab('Transcript', ['Ada: hi\n']),
+		]);
+		const { ctx: c } = ctx();
+
+		const { text } = await exportText(c, { fileId: 'file-1' });
+
+		expect(text).toBe(
+			'# Notes\nSummary\n\n# Action items\nShip it\n\n# Transcript\nAda: hi\n',
+		);
+	});
+
+	it('rejects files that are not Google Docs', async () => {
+		mockDoc([], { ...driveFile, mimeType: 'application/pdf' });
+		const { ctx: c, stored } = ctx();
+
+		await expect(exportText(c, { fileId: 'file-1' })).rejects.toThrow(
+			'exportText supports Google Docs only',
+		);
+		expect(mockRequest).toHaveBeenCalledTimes(1);
+		expect(stored['contents:file-1']).toBeUndefined();
+	});
+
+	it('caps stored text at 500k characters', async () => {
+		mockDoc([tab('Transcript', ['x'.repeat(600_000)])]);
+		const { ctx: c, stored } = ctx();
+
+		const { text } = await exportText(c, { fileId: 'file-1' });
+
+		expect(text).toHaveLength(500_000);
+		expect(stored['contents:file-1']?.text).toHaveLength(500_000);
 	});
 });

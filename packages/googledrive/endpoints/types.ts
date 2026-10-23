@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import type {
 	File,
+	FileContents,
 	FileList,
 	Permission,
 	SharedDrive,
@@ -88,6 +89,10 @@ const FilesMoveInputSchema = z.object({
 const FilesDownloadInputSchema = z.object({
 	fileId: z.string(),
 	acknowledgeAbuse: z.boolean().optional(),
+});
+
+const FilesExportTextInputSchema = z.object({
+	fileId: z.string(),
 });
 
 const FilesShareInputSchema = z.object({
@@ -249,6 +254,7 @@ export const GoogleDriveEndpointInputSchemas = {
 	filesMove: FilesMoveInputSchema,
 	filesDownload: FilesDownloadInputSchema,
 	filesShare: FilesShareInputSchema,
+	filesExportText: FilesExportTextInputSchema,
 	foldersCreate: FoldersCreateInputSchema,
 	foldersGet: FoldersGetInputSchema,
 	foldersList: FoldersListInputSchema,
@@ -322,6 +328,16 @@ const FileSchema = z.object({
 	sha256Checksum: z.string().optional(),
 });
 
+const FileContentsSchema = z.object({
+	id: z.string(),
+	name: z.string().optional(),
+	mimeType: z.string().optional(),
+	createdTime: z.string().optional(),
+	modifiedTime: z.string().optional(),
+	webViewLink: z.string().optional(),
+	text: z.string(),
+});
+
 const FileListSchema = z.object({
 	kind: z.string().optional(),
 	nextPageToken: z.string().optional(),
@@ -387,6 +403,7 @@ export const GoogleDriveEndpointOutputSchemas = {
 	filesMove: FileSchema,
 	filesDownload: z.any(), // Using any because download returns a raw binary stream whose shape depends on file type
 	filesShare: PermissionSchema,
+	filesExportText: FileContentsSchema,
 	foldersCreate: FileSchema,
 	foldersGet: FileSchema,
 	foldersList: FileListSchema,
@@ -412,6 +429,7 @@ export type GoogleDriveEndpointOutputs = {
 	filesMove: File;
 	filesDownload: any;
 	filesShare: Permission;
+	filesExportText: FileContents;
 	foldersCreate: File;
 	foldersGet: File;
 	foldersList: FileList;

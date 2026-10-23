@@ -1,6 +1,11 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeAuthenticatedGoogleDriveRequest } from '../client';
+import {
+	GOOGLE_DOCS_API_BASE,
+	GoogleDriveAPIError,
+	makeAuthenticatedGoogleDriveRequest,
+} from '../client';
 import type { GoogleDriveBoundEndpoints, GoogleDriveEndpoints } from '../index';
+import type { File } from '../types';
 import type { GoogleDriveEndpointOutputs } from './types';
 
 export const list: GoogleDriveEndpoints['filesList'] = async (ctx, input) => {
@@ -317,6 +322,105 @@ export const share: GoogleDriveEndpoints['filesShare'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'googledrive.files.share',
+		{ ...input },
+		'completed',
+	);
+	return result;
+};
+
+const GOOGLE_DOC_MIME_TYPE = 'application/vnd.google-apps.document';
+const EXPORT_TEXT_FIELDS =
+	'id,name,mimeType,createdTime,modifiedTime,webViewLink';
+const EXPORT_TEXT_MAX_CHARS = 500_000;
+
+type DocsStructuralElement = {
+	paragraph?: { elements?: { textRun?: { content?: string } }[] };
+	table?: {
+		tableRows?: {
+			tableCells?: { content?: DocsStructuralElement[] }[];
+		}[];
+	};
+};
+
+type DocsTab = {
+	tabProperties?: { title?: string };
+	documentTab?: { body?: { content?: DocsStructuralElement[] } };
+	childTabs?: DocsTab[];
+};
+
+function elementsText(elements: DocsStructuralElement[] = []): string {
+	return elements
+		.map((element) => {
+			if (element.paragraph) {
+				return (element.paragraph.elements ?? [])
+					.map((e) => e.textRun?.content ?? '')
+					.join('');
+			}
+			return (element.table?.tableRows ?? [])
+				.flatMap((row) => row.tableCells ?? [])
+				.map((cell) => elementsText(cell.content))
+				.join('');
+		})
+		.join('');
+}
+
+function tabsText(tabs: DocsTab[] = []): string[] {
+	return tabs.flatMap((tab) => [
+		`# ${tab.tabProperties?.title ?? ''}\n${elementsText(tab.documentTab?.body?.content)}`,
+		...tabsText(tab.childTabs),
+	]);
+}
+
+// Drive's files.export doesn't document tab handling, so read every tab
+// (Gemini meeting notes keep the transcript in its own tab) via the Docs API.
+export const exportText: GoogleDriveEndpoints['filesExportText'] = async (
+	ctx,
+	input,
+) => {
+	const meta = await makeAuthenticatedGoogleDriveRequest<File>(
+		`/files/${input.fileId}`,
+		ctx,
+		{
+			method: 'GET',
+			query: { fields: EXPORT_TEXT_FIELDS, supportsAllDrives: true },
+		},
+	);
+
+	if (meta.mimeType !== GOOGLE_DOC_MIME_TYPE) {
+		throw new GoogleDriveAPIError('exportText supports Google Docs only', 400);
+	}
+
+	const doc = await makeAuthenticatedGoogleDriveRequest<{ tabs?: DocsTab[] }>(
+		`/documents/${input.fileId}`,
+		ctx,
+		{
+			method: 'GET',
+			base: GOOGLE_DOCS_API_BASE,
+			query: { includeTabsContent: true },
+		},
+	);
+
+	const result = {
+		id: meta.id ?? input.fileId,
+		name: meta.name,
+		mimeType: meta.mimeType,
+		createdTime: meta.createdTime,
+		modifiedTime: meta.modifiedTime,
+		webViewLink: meta.webViewLink,
+		text: tabsText(doc.tabs).join('\n').slice(0, EXPORT_TEXT_MAX_CHARS),
+	};
+
+	if (ctx.db.fileContents) {
+		try {
+			await ctx.db.fileContents.upsertByEntityId(result.id, result);
+		} catch (error) {
+			console.warn('Failed to save file contents to database:', error);
+		}
+	}
+
+	await logEventFromContext(
+		ctx,
+		'googledrive.files.exportText',
 		{ ...input },
 		'completed',
 	);
