@@ -1,4 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import {
 	GOOGLE_DOCS_API_BASE,
 	GoogleDriveAPIError,
@@ -13,7 +14,14 @@ export const list: GoogleDriveEndpoints['filesList'] = async (ctx, input) => {
 		GoogleDriveEndpointOutputs['filesList']
 	>('/files', ctx, {
 		method: 'GET',
-		query: input,
+		query: {
+			...input,
+			// A fields mask without nextPageToken silently ends pagination.
+			fields:
+				input.fields && !input.fields.includes('nextPageToken')
+					? `nextPageToken,${input.fields}`
+					: input.fields,
+		},
 	});
 
 	if (result.files && ctx.db.files) {
@@ -333,8 +341,15 @@ const EXPORT_TEXT_FIELDS =
 	'id,name,mimeType,createdTime,modifiedTime,webViewLink';
 const EXPORT_TEXT_MAX_CHARS = 500_000;
 
+type DocsParagraphElement = {
+	textRun?: { content?: string };
+	person?: { personProperties?: { name?: string; email?: string } };
+	richLink?: { richLinkProperties?: { title?: string } };
+	dateElement?: { dateElementProperties?: { displayText?: string } };
+};
+
 type DocsStructuralElement = {
-	paragraph?: { elements?: { textRun?: { content?: string } }[] };
+	paragraph?: { elements?: DocsParagraphElement[] };
 	table?: {
 		tableRows?: {
 			tableCells?: { content?: DocsStructuralElement[] }[];
@@ -353,7 +368,15 @@ function elementsText(elements: DocsStructuralElement[] = []): string {
 		.map((element) => {
 			if (element.paragraph) {
 				return (element.paragraph.elements ?? [])
-					.map((e) => e.textRun?.content ?? '')
+					.map(
+						(e) =>
+							e.textRun?.content ??
+							e.person?.personProperties?.name ??
+							e.person?.personProperties?.email ??
+							e.richLink?.richLinkProperties?.title ??
+							e.dateElement?.dateElementProperties?.displayText ??
+							'',
+					)
 					.join('');
 			}
 			return (element.table?.tableRows ?? [])
@@ -390,15 +413,29 @@ export const exportText: GoogleDriveEndpoints['filesExportText'] = async (
 		throw new GoogleDriveAPIError('exportText supports Google Docs only', 400);
 	}
 
-	const doc = await makeAuthenticatedGoogleDriveRequest<{ tabs?: DocsTab[] }>(
-		`/documents/${input.fileId}`,
-		ctx,
-		{
-			method: 'GET',
-			base: GOOGLE_DOCS_API_BASE,
-			query: { includeTabsContent: true },
-		},
-	);
+	let doc: { tabs?: DocsTab[] };
+	try {
+		doc = await makeAuthenticatedGoogleDriveRequest<{ tabs?: DocsTab[] }>(
+			`/documents/${input.fileId}`,
+			ctx,
+			{
+				method: 'GET',
+				base: GOOGLE_DOCS_API_BASE,
+				query: { includeTabsContent: true },
+			},
+		);
+	} catch (error) {
+		// Carries Google's "enable docs.googleapis.com" hint when the Docs API is off.
+		const message = (error as ApiError).body?.error?.message;
+		if (error instanceof ApiError && error.status === 403 && message) {
+			throw new GoogleDriveAPIError(message, 403);
+		}
+		throw error;
+	}
+
+	let text = tabsText(doc.tabs).join('\n').slice(0, EXPORT_TEXT_MAX_CHARS);
+	const last = text.charCodeAt(text.length - 1);
+	if (last >= 0xd800 && last <= 0xdbff) text = text.slice(0, -1);
 
 	const result = {
 		id: meta.id ?? input.fileId,
@@ -407,7 +444,7 @@ export const exportText: GoogleDriveEndpoints['filesExportText'] = async (
 		createdTime: meta.createdTime,
 		modifiedTime: meta.modifiedTime,
 		webViewLink: meta.webViewLink,
-		text: tabsText(doc.tabs).join('\n').slice(0, EXPORT_TEXT_MAX_CHARS),
+		text,
 	};
 
 	if (ctx.db.fileContents) {
