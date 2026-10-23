@@ -7,8 +7,8 @@ Use **Google Drive** through Corsair: one client, typed API calls, local DB sync
 
 **What you get:**
 
-- 22 typed API operations
-- 3 synced entities (`files`, `folders`, `sharedDrives`) for fast `.search()` / `.list()`
+- 23 typed API operations
+- 4 synced entities (`fileContents`, `files`, `folders`, `sharedDrives`) for fast `.search()` / `.list()`
 - 1 incoming webhook event types
 
 ## Setup
@@ -122,7 +122,7 @@ const rows = await tenant.googledrive.db.files.search({
 });
 ```
 
-Synced entities: `files`, `folders`, `sharedDrives`. See [Database](/plugins/googledrive/database) for filters and operators.
+Synced entities: `fileContents`, `files`, `folders`, `sharedDrives`. See [Database](/plugins/googledrive/database) for filters and operators.
 
 ## Webhooks
 
