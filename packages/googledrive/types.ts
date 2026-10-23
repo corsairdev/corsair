@@ -158,6 +158,16 @@ export type File = {
 	sha256Checksum?: string;
 };
 
+export type FileContents = {
+	id: string;
+	name?: string;
+	mimeType?: string;
+	createdTime?: string;
+	modifiedTime?: string;
+	webViewLink?: string;
+	text: string;
+};
+
 export type FileList = {
 	kind?: string;
 	nextPageToken?: string;

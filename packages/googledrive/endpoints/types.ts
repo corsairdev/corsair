@@ -3,6 +3,7 @@ import { FileOutputSchema } from 'corsair/http';
 import { z } from 'zod';
 import type {
 	File,
+	FileContents,
 	FileList,
 	Permission,
 	SharedDrive,
@@ -102,6 +103,10 @@ const FilesExportInputSchema = z.object({
 		.describe(
 			'The format to export to, for example application/pdf or application/vnd.openxmlformats-officedocument.wordprocessingml.document. Defaults to Markdown for Docs, CSV (first sheet only) for Sheets, PDF for Slides and PNG for Drawings.',
 		),
+});
+
+const FilesExportTextInputSchema = z.object({
+	fileId: z.string(),
 });
 
 const FilesShareInputSchema = z.object({
@@ -264,6 +269,7 @@ export const GoogleDriveEndpointInputSchemas = {
 	filesDownload: FilesDownloadInputSchema,
 	filesExport: FilesExportInputSchema,
 	filesShare: FilesShareInputSchema,
+	filesExportText: FilesExportTextInputSchema,
 	foldersCreate: FoldersCreateInputSchema,
 	foldersGet: FoldersGetInputSchema,
 	foldersList: FoldersListInputSchema,
@@ -337,6 +343,16 @@ const FileSchema = z.object({
 	sha256Checksum: z.string().optional(),
 });
 
+const FileContentsSchema = z.object({
+	id: z.string(),
+	name: z.string().optional(),
+	mimeType: z.string().optional(),
+	createdTime: z.string().optional(),
+	modifiedTime: z.string().optional(),
+	webViewLink: z.string().optional(),
+	text: z.string(),
+});
+
 const FileListSchema = z.object({
 	kind: z.string().optional(),
 	nextPageToken: z.string().optional(),
@@ -403,6 +419,7 @@ export const GoogleDriveEndpointOutputSchemas = {
 	filesDownload: FileOutputSchema,
 	filesExport: FileOutputSchema,
 	filesShare: PermissionSchema,
+	filesExportText: FileContentsSchema,
 	foldersCreate: FileSchema,
 	foldersGet: FileSchema,
 	foldersList: FileListSchema,
@@ -429,6 +446,7 @@ export type GoogleDriveEndpointOutputs = {
 	filesDownload: FileOutput;
 	filesExport: FileOutput;
 	filesShare: Permission;
+	filesExportText: FileContents;
 	foldersCreate: File;
 	foldersGet: File;
 	foldersList: FileList;
