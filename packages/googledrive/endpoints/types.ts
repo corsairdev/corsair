@@ -21,6 +21,7 @@ const FilesListInputSchema = z.object({
 	supportsAllDrives: z.boolean().optional(),
 	supportsTeamDrives: z.boolean().optional(),
 	teamDriveId: z.string().optional(),
+	fields: z.string().optional(),
 });
 
 const FilesGetInputSchema = z.object({
@@ -29,6 +30,7 @@ const FilesGetInputSchema = z.object({
 	supportsAllDrives: z.boolean().optional(),
 	supportsTeamDrives: z.boolean().optional(),
 	includePermissionsForView: z.string().optional(),
+	fields: z.string().optional(),
 });
 
 const FilesCreateFromTextInputSchema = z.object({
@@ -267,6 +269,15 @@ export type GoogleDriveEndpointInputs = {
 	>;
 };
 
+const UserSchema = z.object({
+	kind: z.string().optional(),
+	displayName: z.string().optional(),
+	photoLink: z.string().optional(),
+	me: z.boolean().optional(),
+	permissionId: z.string().optional(),
+	emailAddress: z.string().optional(),
+});
+
 const FileSchema = z.object({
 	id: z.string().optional(),
 	name: z.string().optional(),
@@ -294,6 +305,7 @@ const FileSchema = z.object({
 	modifiedByMe: z.boolean().optional(),
 	shared: z.boolean().optional(),
 	ownedByMe: z.boolean().optional(),
+	owners: z.array(UserSchema).optional(),
 	permissionIds: z.array(z.string()).optional(),
 	hasAugmentedPermissions: z.boolean().optional(),
 	folderColorRgb: z.string().optional(),
