@@ -12,11 +12,13 @@ export class GoogleDriveAPIError extends Error {
 }
 
 export const GOOGLE_DRIVE_API_BASE = 'https://www.googleapis.com/drive/v3';
+export const GOOGLE_DOCS_API_BASE = 'https://docs.googleapis.com/v1';
 
 type GoogleDriveRequestOptions = {
 	method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 	body?: Record<string, unknown>;
 	query?: Record<string, string | number | boolean | undefined>;
+	base?: string;
 };
 
 export async function makeGoogleDriveRequest<T>(
@@ -24,10 +26,10 @@ export async function makeGoogleDriveRequest<T>(
 	credentials: string,
 	options: GoogleDriveRequestOptions = {},
 ): Promise<T> {
-	const { method = 'GET', body, query } = options;
+	const { method = 'GET', body, query, base } = options;
 
 	const config: OpenAPIConfig = {
-		BASE: GOOGLE_DRIVE_API_BASE,
+		BASE: base ?? GOOGLE_DRIVE_API_BASE,
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',

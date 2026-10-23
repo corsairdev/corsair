@@ -56,6 +56,17 @@ export const GoogleDriveFile = z.object({
 	modifiedByMe: z.boolean().optional(),
 	shared: z.boolean().optional(),
 	ownedByMe: z.boolean().optional(),
+	owners: z
+		.array(
+			z.object({
+				displayName: z.string().optional(),
+				emailAddress: z.string().optional(),
+				photoLink: z.string().optional(),
+				me: z.boolean().optional(),
+				permissionId: z.string().optional(),
+			}),
+		)
+		.optional(),
 	capabilities: FileCapabilities.optional(),
 	viewersCanCopyContent: z.boolean().optional(),
 	copyRequiresWriterPermission: z.boolean().optional(),
@@ -116,6 +127,16 @@ export const GoogleDriveFolder = z.object({
 	createdAt: z.coerce.date().optional(),
 });
 
+export const GoogleDriveFileContents = z.object({
+	id: z.string(),
+	name: z.string().optional(),
+	mimeType: z.string().optional(),
+	createdTime: z.string().optional(),
+	modifiedTime: z.string().optional(),
+	webViewLink: z.string().optional(),
+	text: z.string(),
+});
+
 export const GoogleDriveSharedDrive = z.object({
 	id: z.string(),
 	name: z.string().optional(),
@@ -127,5 +148,6 @@ export const GoogleDriveSharedDrive = z.object({
 });
 
 export type GoogleDriveFile = z.infer<typeof GoogleDriveFile>;
+export type GoogleDriveFileContents = z.infer<typeof GoogleDriveFileContents>;
 export type GoogleDriveFolder = z.infer<typeof GoogleDriveFolder>;
 export type GoogleDriveSharedDrive = z.infer<typeof GoogleDriveSharedDrive>;
