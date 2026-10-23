@@ -229,6 +229,9 @@ describe('message components and allowed mentions: schemas', () => {
 		expect(ok({ min_values: 2, max_values: 1 })).toBe(false);
 		expect(ok({ max_values: 3 })).toBe(false);
 		expect(ok({ min_values: 1, max_values: 2 })).toBe(true);
+		// max_values defaults to 1 on Discord's side
+		expect(ok({ min_values: 2 })).toBe(false);
+		expect(ok({})).toBe(true);
 		expect(
 			AutoSelectComponentSchema.safeParse({
 				type: 5,

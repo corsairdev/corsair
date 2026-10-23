@@ -263,11 +263,8 @@ function checkValueCounts(
 	ctx: z.RefinementCtx,
 	optionCount?: number,
 ) {
-	if (
-		select.min_values !== undefined &&
-		select.max_values !== undefined &&
-		select.min_values > select.max_values
-	) {
+	// Discord defaults both to 1, so an omitted max_values still caps min_values.
+	if ((select.min_values ?? 1) > (select.max_values ?? 1)) {
 		ctx.addIssue({
 			code: 'custom',
 			message: 'min_values cannot be greater than max_values',
