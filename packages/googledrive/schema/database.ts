@@ -56,6 +56,17 @@ export const GoogleDriveFile = z.object({
 	modifiedByMe: z.boolean().optional(),
 	shared: z.boolean().optional(),
 	ownedByMe: z.boolean().optional(),
+	owners: z
+		.array(
+			z.object({
+				displayName: z.string().optional(),
+				emailAddress: z.string().optional(),
+				photoLink: z.string().optional(),
+				me: z.boolean().optional(),
+				permissionId: z.string().optional(),
+			}),
+		)
+		.optional(),
 	capabilities: FileCapabilities.optional(),
 	viewersCanCopyContent: z.boolean().optional(),
 	copyRequiresWriterPermission: z.boolean().optional(),
