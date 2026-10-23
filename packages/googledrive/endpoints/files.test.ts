@@ -1,4 +1,4 @@
-import { request } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 import { GoogleDriveFile, GoogleDriveFileContents } from '../schema/database';
 import { exportText, get, list } from './files';
 import { GoogleDriveEndpointInputSchemas } from './types';
@@ -86,6 +86,22 @@ describe('files fields passthrough', () => {
 			webViewLink: driveFile.webViewLink,
 			parents: driveFile.parents,
 		});
+	});
+
+	it('adds nextPageToken when the caller fields omit it', async () => {
+		mockRequest.mockResolvedValue({ files: [] });
+		const { ctx: c } = ctx();
+
+		await list(c, { fields: 'files(id,name)' });
+
+		expect(mockRequest).toHaveBeenCalledWith(
+			expect.anything(),
+			expect.objectContaining({
+				query: expect.objectContaining({
+					fields: 'nextPageToken,files(id,name)',
+				}),
+			}),
+		);
 	});
 
 	it('passes fields to files.get', async () => {
@@ -176,6 +192,107 @@ describe('files.exportText', () => {
 		expect(text).toBe(
 			'# Notes\nSummary\n\n# Action items\nShip it\n\n# Transcript\nAda: hi\n',
 		);
+	});
+
+	it('keeps the text of person, rich link and date chips', async () => {
+		mockDoc([
+			{
+				tabProperties: { title: 'Notes' },
+				documentTab: {
+					body: {
+						content: [
+							{
+								paragraph: {
+									elements: [
+										{ textRun: { content: 'Attendees: ' } },
+										{
+											person: {
+												personProperties: {
+													name: 'Ada Lovelace',
+													email: 'ada@example.com',
+												},
+											},
+										},
+										{ textRun: { content: ', ' } },
+										{
+											person: {
+												personProperties: { email: 'bob@example.com' },
+											},
+										},
+										{ textRun: { content: ' see ' } },
+										{
+											richLink: {
+												richLinkProperties: {
+													title: 'Q4 plan',
+													uri: 'https://docs.google.com/x',
+												},
+											},
+										},
+										{ textRun: { content: ' on ' } },
+										{
+											dateElement: {
+												dateElementProperties: { displayText: 'Oct 23, 2026' },
+											},
+										},
+										{ textRun: { content: '\n' } },
+									],
+								},
+							},
+						],
+					},
+				},
+			},
+		]);
+		const { ctx: c } = ctx();
+
+		const { text } = await exportText(c, { fileId: 'file-1' });
+
+		expect(text).toBe(
+			'# Notes\nAttendees: Ada Lovelace, bob@example.com see Q4 plan on Oct 23, 2026\n',
+		);
+	});
+
+	it('surfaces the Docs API message on a 403', async () => {
+		const message =
+			'Google Docs API has not been used in project 123 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/docs.googleapis.com/overview?project=123';
+		mockRequest.mockImplementation(async (config: { BASE: string }) => {
+			if (!config.BASE.includes('docs.googleapis.com')) return driveFile;
+			throw new ApiError(
+				{ method: 'GET', url: '/documents/file-1' },
+				{
+					url: 'https://docs.googleapis.com/v1/documents/file-1',
+					ok: false,
+					status: 403,
+					statusText: 'Forbidden',
+					body: {
+						error: { code: 403, message, status: 'PERMISSION_DENIED' },
+					},
+				},
+				'Forbidden',
+			);
+		});
+		const { ctx: c } = ctx();
+
+		await expect(exportText(c, { fileId: 'file-1' })).rejects.toMatchObject({
+			name: 'GoogleDriveAPIError',
+			message,
+			code: 403,
+		});
+	});
+
+	it('never ends the capped text on half a surrogate pair', async () => {
+		const header = '# Transcript\n';
+		mockDoc([
+			tab('Transcript', [
+				`${'x'.repeat(500_000 - header.length - 1)}\u{1F600}tail`,
+			]),
+		]);
+		const { ctx: c } = ctx();
+
+		const { text } = await exportText(c, { fileId: 'file-1' });
+
+		expect(text).toHaveLength(499_999);
+		expect(text.endsWith('x')).toBe(true);
 	});
 
 	it('rejects files that are not Google Docs', async () => {
