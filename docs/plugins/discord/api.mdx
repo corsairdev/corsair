@@ -447,7 +447,7 @@ await corsair.discord.api.messages.edit({});
 
 ```ts
 {
-  parse?: roles | users | everyone[],
+  parse?: ('roles' | 'users' | 'everyone')[],
   roles?: string[],
   users?: string[],
   replied_user?: boolean
@@ -1110,7 +1110,7 @@ await corsair.discord.api.messages.reply({});
 
 ```ts
 {
-  parse?: roles | users | everyone[],
+  parse?: ('roles' | 'users' | 'everyone')[],
   roles?: string[],
   users?: string[],
   replied_user?: boolean
@@ -1416,7 +1416,7 @@ await corsair.discord.api.messages.send({});
 
 ```ts
 {
-  parse?: roles | users | everyone[],
+  parse?: ('roles' | 'users' | 'everyone')[],
   roles?: string[],
   users?: string[],
   replied_user?: boolean

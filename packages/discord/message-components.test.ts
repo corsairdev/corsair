@@ -173,6 +173,7 @@ describe('message components and allowed mentions: schemas', () => {
 	});
 
 	it('rejects fields a button style does not allow', () => {
+		// unknown on purpose: these inputs are invalid buttons, so they can't be typed as ButtonComponent.
 		const ok = (v: unknown) => ButtonComponentSchema.safeParse(v).success;
 		expect(
 			ok({
@@ -305,6 +306,7 @@ describe('message components and allowed mentions: request bodies', () => {
 	let calls: Array<{
 		url: string;
 		method: string;
+		// The captured body is whatever JSON the client sent; the tests check specific keys on it.
 		body: Record<string, unknown>;
 	}> = [];
 
@@ -327,6 +329,9 @@ describe('message components and allowed mentions: request bodies', () => {
 		globalThis.fetch = originalFetch;
 	});
 
+	// The endpoint only reads key and db here. Building the full plugin context
+	// (keys, logger, tenant helpers) would test core, not this plugin, so the
+	// partial object is cast to the context type.
 	const ctx = {
 		key: 'test-token',
 		db: {},
