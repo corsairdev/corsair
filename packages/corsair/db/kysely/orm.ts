@@ -12,6 +12,12 @@ import {
 	jsonbTextField,
 	jsonbTimestampField,
 } from './postgres';
+import {
+	jsonBooleanField,
+	jsonNumberField,
+	jsonTextField,
+	jsonTimestampField,
+} from './sqlite';
 
 type EntityQueryBuilder = SelectQueryBuilder<
 	CorsairKyselyDatabase,
@@ -31,6 +37,35 @@ function parseJsonLike(value: unknown): unknown {
 }
 
 type DataFieldType = 'string' | 'number' | 'boolean' | 'date';
+
+/**
+ * JSON field extractors for the `data` column. Postgres uses `->>` plus `::`
+ * casts; SQLite has no `::` cast syntax, so it needs `CAST(... AS REAL)`.
+ */
+type DataFieldExpressions = {
+	text: typeof jsonbTextField;
+	number: typeof jsonbNumberField;
+	boolean: typeof jsonbBooleanField;
+	timestamp: typeof jsonbTimestampField;
+	/** SQLite stores JSON booleans as 1/0 and better-sqlite3 cannot bind booleans. */
+	booleanParam: (value: boolean) => boolean | number;
+};
+
+const POSTGRES_DATA_FIELDS: DataFieldExpressions = {
+	text: jsonbTextField,
+	number: jsonbNumberField,
+	boolean: jsonbBooleanField,
+	timestamp: jsonbTimestampField,
+	booleanParam: (value) => value,
+};
+
+const SQLITE_DATA_FIELDS: DataFieldExpressions = {
+	text: jsonTextField,
+	number: jsonNumberField,
+	boolean: jsonBooleanField,
+	timestamp: jsonTimestampField,
+	booleanParam: (value) => (value ? 1 : 0),
+};
 
 function unwrapSchema(schema: ZodTypeAny): ZodTypeAny {
 	let current = schema;
@@ -130,9 +165,13 @@ function applyBooleanFilter(
 	q: EntityQueryBuilder,
 	expr: ReturnType<typeof jsonbBooleanField>,
 	filterValue: unknown,
+	toParam: DataFieldExpressions['booleanParam'],
 ) {
+	// toParam returns 1/0 on SQLite, where json_extract yields an integer for a
+	// JSON boolean; the cast only satisfies the Postgres-typed expression.
+	const eq = (value: boolean) => q.where(expr, '=', toParam(value) as boolean);
 	if (typeof filterValue === 'boolean') {
-		return q.where(expr, '=', filterValue);
+		return eq(filterValue);
 	}
 	if (
 		typeof filterValue === 'object' &&
@@ -140,7 +179,7 @@ function applyBooleanFilter(
 		!Array.isArray(filterValue)
 	) {
 		const obj = filterValue as Record<string, unknown>;
-		if (typeof obj.equals === 'boolean') q = q.where(expr, '=', obj.equals);
+		if (typeof obj.equals === 'boolean') q = eq(obj.equals);
 	}
 	return q;
 }
@@ -176,17 +215,23 @@ function applyDataFilter(
 	key: string,
 	fieldType: DataFieldType,
 	filterValue: unknown,
+	fields: DataFieldExpressions,
 ) {
 	if (fieldType === 'number') {
-		return applyNumberFilter(q, jsonbNumberField(key), filterValue);
+		return applyNumberFilter(q, fields.number(key), filterValue);
 	}
 	if (fieldType === 'boolean') {
-		return applyBooleanFilter(q, jsonbBooleanField(key), filterValue);
+		return applyBooleanFilter(
+			q,
+			fields.boolean(key),
+			filterValue,
+			fields.booleanParam,
+		);
 	}
 	if (fieldType === 'date') {
-		return applyDateFilter(q, jsonbTimestampField(key), filterValue);
+		return applyDateFilter(q, fields.timestamp(key), filterValue);
 	}
-	return applyStringFilter(q, jsonbTextField(key), filterValue);
+	return applyStringFilter(q, fields.text(key), filterValue);
 }
 
 function applyEntityFieldFilter(
@@ -242,8 +287,14 @@ export function createKyselyEntityClient<DataSchema extends ZodTypeAny>(
 	entityTypeName: string,
 	version: string,
 	dataSchema: DataSchema,
+	options?: {
+		/** `false` for SQLite (see createCorsairDatabase); Postgres otherwise. */
+		isPg?: boolean;
+	},
 ): PluginEntityClient<DataSchema> {
 	const dataFieldTypes = getDataFieldTypes(dataSchema);
+	const dataFields =
+		options?.isPg === false ? SQLITE_DATA_FIELDS : POSTGRES_DATA_FIELDS;
 
 	function parseRow(row: CorsairEntity): TypedEntity<DataSchema> {
 		const data = parseJsonLike(row.data);
@@ -320,7 +371,7 @@ export function createKyselyEntityClient<DataSchema extends ZodTypeAny>(
 				for (const [key, filterValue] of Object.entries(options.data)) {
 					if (filterValue === undefined) continue;
 					const fieldType = dataFieldTypes[key] ?? 'string';
-					q = applyDataFilter(q, key, fieldType, filterValue);
+					q = applyDataFilter(q, key, fieldType, filterValue, dataFields);
 				}
 			}
 

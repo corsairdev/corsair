@@ -375,6 +375,7 @@ function createEntityClient(
 			entityTypeName,
 			version,
 			dataSchema,
+			{ isPg: database.isPg },
 		);
 	}
 
@@ -484,6 +485,7 @@ export function buildCorsairClient<
 							entityTypeName,
 							schema.version,
 							dataSchema,
+							{ isPg: database.isPg },
 						)
 					: createEntityClient(
 							undefined,
