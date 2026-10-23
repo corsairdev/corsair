@@ -5,6 +5,10 @@ import * as threads from './threads';
 // into one comma-separated value, metadataHeaders=Subject,From matches a header
 // literally named "Subject,From", so a metadata read returns no headers at all.
 
+// Each endpoint expects a full GmailContext and its own input type. These tests
+// only need the token the request builder reads and the query it builds, so
+// ctx and input stay loose rather than building a whole plugin context; the
+// response is never read, hence unknown.
 type AnyEndpoint = (ctx: any, input: any) => Promise<unknown>;
 
 let urls: URL[] = [];
@@ -12,8 +16,8 @@ let urls: URL[] = [];
 beforeEach(() => {
 	urls = [];
 	jest.spyOn(console, 'warn').mockImplementation(() => {});
-	global.fetch = jest.fn(async (input: any) => {
-		urls.push(new URL(typeof input === 'string' ? input : input.url));
+	global.fetch = jest.fn(async (input: string | URL | Request) => {
+		urls.push(new URL(input instanceof Request ? input.url : String(input)));
 		return new Response(JSON.stringify({}), {
 			status: 200,
 			headers: { 'content-type': 'application/json' },
