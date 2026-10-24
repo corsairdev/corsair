@@ -116,6 +116,7 @@ export const BaseProviders = [
 	'builtwith',
 	'browserless',
 	'browsertool',
+	'browseruse',
 	'bubble',
 	'bugsnag',
 	'buildkite',
@@ -522,6 +523,7 @@ export const ProviderDisplayNames = {
 	builtwith: 'BuiltWith',
 	browserless: 'Browserless',
 	browsertool: 'Browser Tool',
+	browseruse: 'Browser Use',
 	bubble: 'Bubble',
 	bugsnag: 'BugSnag',
 	buildkite: 'Buildkite',
@@ -933,6 +935,7 @@ export type AllProviders =
 	| 'browseai'
 	| 'browserless'
 	| 'browsertool'
+	| 'browseruse'
 	| 'bubble'
 	| 'bugsnag'
 	| 'buildkite'
