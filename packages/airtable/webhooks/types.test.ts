@@ -11,6 +11,10 @@ describe('createAirtableMatch', () => {
 		expect(match({ headers: {}, body: '[]' })).toBe(false);
 	});
 
+	it('does not match primitive JSON values', () => {
+		expect(match({ headers: {}, body: 'null' })).toBe(false);
+	});
+
 	it('matches an Airtable webhook-shaped object', () => {
 		expect(
 			match({
@@ -18,5 +22,9 @@ describe('createAirtableMatch', () => {
 				body: JSON.stringify({ base: {}, webhook: {} }),
 			}),
 		).toBe(true);
+	});
+
+	it('matches an already parsed webhook-shaped object', () => {
+		expect(match({ headers: {}, body: { base: {}, webhook: {} } })).toBe(true);
 	});
 });
