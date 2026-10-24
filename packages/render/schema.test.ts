@@ -87,6 +87,8 @@ describe('Render schema', () => {
 		}
 	});
 
+	// Per the plugin endpoint-test rule, this table-driven traversal invokes
+	// every registered operation and asserts one request plus response parsing.
 	it('exercises every registered operation through its public boundary', async () => {
 		const request = jest.mocked(makeRenderRequest);
 		request.mockClear();

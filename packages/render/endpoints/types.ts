@@ -55,6 +55,8 @@ const ResourceInputSchema = z
 // is shared with a singular resource operation, so both shapes are accepted
 // at the generic resource boundary. The operation-specific list schemas below
 // still document and enforce collection responses where the API guarantees one.
+// unknown: Render resource records are provider-defined and can add fields
+// without changing the stable Corsair operation contract.
 const ResourceRecordSchema = z.record(z.string(), z.unknown());
 const ResourceOutputSchema = z.union([
 	ResourceRecordSchema,
@@ -377,6 +379,7 @@ export const RenderEndpointOutputSchemas = {
 	retrieveService: ServiceOutputSchema,
 	deleteService: EmptyOutputSchema,
 	updateService: ServiceOutputSchema,
+	// unknown: lifecycle acknowledgements differ by Render service type.
 	triggerDeploy: z.unknown(),
 	restartService: z.unknown(),
 	suspendService: z.unknown(),
