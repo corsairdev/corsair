@@ -83,6 +83,40 @@ describe('buildShippedMessage', () => {
 		assert.equal(message?.embeds[0]?.title, '🔧 Ambee fix merged');
 	});
 
+	it('pre-fills the post text on X and LinkedIn', () => {
+		const shareText = (description: string, site: 'X' | 'LinkedIn') => {
+			const link = description.match(
+				new RegExp(`\\[Post on ${site}\\]\\(([^)]+)\\)`),
+			)?.[1];
+			assert.ok(link, `no ${site} link`);
+			return new URL(link).searchParams.get('text') ?? '';
+		};
+
+		const plugin =
+			buildShippedMessage(
+				pr('Srinidhi444', 'feat(coassemble): add Coassemble integration'),
+				credit,
+			)?.embeds[0]?.description ?? '';
+		assert.equal(
+			shareText(plugin, 'X'),
+			'I just shipped the Coassemble integration for @corsairdotdev, the open-source integration layer for AI agents 🚢',
+		);
+		assert.equal(
+			shareText(plugin, 'LinkedIn'),
+			'I just shipped the Coassemble integration for Corsair, the open-source integration layer for AI agents 🚢\n\nhttps://github.com/corsairdev/corsair/pull/1831',
+		);
+
+		const fix =
+			buildShippedMessage(
+				pr('Apageoflove', 'fix(ambee): treat a zoneless ISO timestamp as UTC'),
+				null,
+			)?.embeds[0]?.description ?? '';
+		assert.match(
+			shareText(fix, 'X'),
+			/^My Ambee fix just got merged into @corsairdotdev, /,
+		);
+	});
+
 	it('skips bots, release PRs and team chores', () => {
 		assert.equal(
 			buildShippedMessage(pr('dependabot[bot]', 'chore(deps): bump x'), null),

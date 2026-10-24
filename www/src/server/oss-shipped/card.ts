@@ -46,11 +46,26 @@ const SKIP_TYPES = new Set([
 	'revert',
 ]);
 
-function shareLine(what: string, url: string) {
-	const text = `I just shipped ${what} for ${X_HANDLE}, the open-source integration layer for AI agents 🚢`;
-	const x = `https://x.com/intent/post?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
-	const linkedin = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
-	return `Share it: [Post on X](${x}) · [Post on LinkedIn](${linkedin})`;
+type ShareSentence = (corsair: string) => string;
+
+const shippedIntegration =
+	(name: string): ShareSentence =>
+	(corsair) =>
+		`I just shipped the ${name} integration for ${corsair}`;
+
+const mergedChange =
+	(label: string): ShareSentence =>
+	(corsair) =>
+		`My ${label} just got merged into ${corsair}`;
+
+// X tags the handle and builds the preview from `url`. LinkedIn's share-offsite page
+// ignores any text, so the post opens from the feed composer, which takes the text
+// with the link in it; a typed @handle isn't a LinkedIn mention, so it names Corsair.
+function shareLine(sentence: ShareSentence, url: string) {
+	const tail = ', the open-source integration layer for AI agents 🚢';
+	const x = `https://x.com/intent/post?text=${encodeURIComponent(`${sentence(X_HANDLE)}${tail}`)}&url=${encodeURIComponent(url)}`;
+	const linkedin = `https://www.linkedin.com/feed/?shareActive=true&text=${encodeURIComponent(`${sentence('Corsair')}${tail}\n\n${url}`)}`;
+	return `Share it: [Post on X](${x}) · [Post on LinkedIn](${linkedin}) and tag Corsair`;
 }
 
 function capitalize(value: string) {
@@ -103,7 +118,7 @@ export function buildShippedMessage(
 				{
 					...base,
 					title: `🚢 ${credit.integrationName} integration shipped`,
-					description: `${prLine}\n${points}\n\n${shareLine(`the ${credit.integrationName} integration`, pr.html_url)}`,
+					description: `${prLine}\n${points}\n\n${shareLine(shippedIntegration(credit.integrationName), pr.html_url)}`,
 					footer: {
 						text: `corsair.dev/oss/${credit.integrationSlug} · Build one, earn AI credits`,
 					},
@@ -120,7 +135,7 @@ export function buildShippedMessage(
 					title: isTeam
 						? `🧩 New integration: ${integration}`
 						: `🚢 ${integration} integration shipped`,
-					description: `${prLine}\n\n${shareLine(`the ${integration} integration`, pr.html_url)}`,
+					description: `${prLine}\n\n${shareLine(shippedIntegration(integration), pr.html_url)}`,
 					footer: {
 						text: isTeam
 							? 'corsair.dev/integrations'
@@ -153,7 +168,7 @@ export function buildShippedMessage(
 			{
 				...base,
 				title: `${type === 'fix' ? '🔧' : '🚢'} ${scope ? `${capitalize(scope)} ${what}` : capitalize(what)} merged`,
-				description: `${prLine}\n\n${shareLine(scope ? `a ${scope} ${what}` : `a ${what}`, pr.html_url)}`,
+				description: `${prLine}\n\n${shareLine(mergedChange(scope ? `${capitalize(scope)} ${what}` : what), pr.html_url)}`,
 				footer: { text: 'Contribute → corsair.dev/oss' },
 			},
 		],
