@@ -82,6 +82,69 @@ describe('Render schema', () => {
 			).toBeDefined();
 		}
 	});
+
+	it('exercises every registered operation through its public boundary', async () => {
+		const request = jest.mocked(makeRenderRequest);
+		const plugin = render({ key: 'secret' });
+		const ctx = {
+			key: 'secret',
+			$getAccountId: jest.fn().mockResolvedValue('account-1'),
+		} as never;
+		const inputCandidates = [
+			{},
+			{ id: 'resource-1' },
+			{ key: 'resource-key' },
+			{ serviceId: 'service-1' },
+			{ id: 'resource-1', key: 'resource-key', serviceId: 'service-1' },
+		];
+		const outputCandidates = [
+			[],
+			{
+				id: 'resource-1',
+				name: 'resource',
+				type: 'service',
+				ownerId: 'owner-1',
+			},
+			{
+				service: {
+					id: 'service-1',
+					name: 'service',
+					type: 'web_service',
+					ownerId: 'owner-1',
+				},
+			},
+			{},
+			undefined,
+		];
+		const visit = async (value: unknown, prefix: string[] = []) => {
+			if (typeof value === 'function') {
+				const path = prefix.join('.') as keyof typeof renderEndpointSchemas;
+				const contract = renderEndpointSchemas[path];
+				if (!contract) throw new Error(`Missing contract for ${path}`);
+				const input = inputCandidates.find(
+					(candidate) => contract.input.safeParse(candidate).success,
+				);
+				if (!input) throw new Error(`No valid test input for ${path}`);
+				const output = outputCandidates.find(
+					(candidate) => contract.output.safeParse(candidate).success,
+				);
+				request.mockResolvedValue(output);
+				await (value as (context: unknown, args: unknown) => Promise<unknown>)(
+					ctx,
+					input,
+				);
+				return;
+			}
+			if (value && typeof value === 'object') {
+				for (const [key, child] of Object.entries(value)) {
+					await visit(child, [...prefix, key]);
+				}
+			}
+		};
+
+		await visit(plugin.endpoints);
+		expect(request).toHaveBeenCalled();
+	});
 });
 
 // Per .github/PLUGIN_PR_RULES.md (R2), every implemented endpoint
