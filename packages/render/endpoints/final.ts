@@ -15,9 +15,13 @@ const call = <T>(
 		.replace('{id}', encodeURIComponent(String(id ?? '')))
 		.replace('{key}', encodeURIComponent(String(key ?? '')))
 		.replace('{serviceId}', encodeURIComponent(String(serviceId ?? '')));
+	const body =
+		'body' in values
+			? (values.body as Record<string, unknown> | unknown[])
+			: values;
 	return makeRenderRequest<T>(path, ctx.key, {
 		method,
-		body: method === 'GET' || method === 'DELETE' ? undefined : values,
+		body: method === 'GET' || method === 'DELETE' ? undefined : body,
 		query:
 			method === 'GET'
 				? (values as Record<

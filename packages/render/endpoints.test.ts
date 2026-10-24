@@ -52,7 +52,7 @@ describe('Render service endpoints', () => {
 				options: {},
 				$getAccountId: jest.fn().mockResolvedValue('account-1'),
 			} as never,
-			{ id: 'srv-1', routes: [] },
+			{ id: 'srv-1', body: [] },
 		);
 
 		expect(request).toHaveBeenCalledWith(
@@ -60,7 +60,7 @@ describe('Render service endpoints', () => {
 			'secret',
 			{
 				method: 'PUT',
-				body: { routes: [] },
+				body: [],
 			},
 		);
 	});
