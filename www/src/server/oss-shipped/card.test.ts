@@ -206,6 +206,48 @@ describe('buildShippedMessage', () => {
 		);
 	});
 
+	it('announces an integration only from a feature or an unprefixed title', () => {
+		const fix = buildShippedMessage(
+			pr('Srinidhi444', 'fix(slack): add retry to Slack plugin'),
+			null,
+		);
+		assert.equal(fix?.embeds[0]?.title, '🔧 Slack fix merged');
+
+		const unprefixed = buildShippedMessage(
+			pr('Srinidhi444', 'Add Customer.io integration'),
+			null,
+		);
+		assert.equal(
+			unprefixed?.embeds[0]?.title,
+			'🚢 Customer.io integration shipped',
+		);
+	});
+
+	it("keeps embed titles within Discord's 256-character limit", () => {
+		const longTitle = `feat(hub): ${'retry webhooks '.repeat(20)}`.trim();
+		const team = buildShippedMessage(
+			pr('devjain32', longTitle, { author_association: 'OWNER' }),
+			null,
+		)?.embeds[0]?.title;
+		assert.ok(team && team.length <= 256, `${team?.length}`);
+		assert.ok(team.endsWith('…'));
+
+		const name = 'A'.repeat(300);
+		const credited = buildShippedMessage(
+			pr('Srinidhi444', `feat(long): add ${name} integration`),
+			{ ...credit, integrationName: name },
+		)?.embeds[0]?.title;
+		assert.ok(credited && credited.length <= 256, `${credited?.length}`);
+
+		const short = buildShippedMessage(
+			pr('devjain32', 'fix(hub): retry webhooks', {
+				author_association: 'OWNER',
+			}),
+			null,
+		)?.embeds[0]?.title;
+		assert.equal(short, '🔧 fix(hub): retry webhooks');
+	});
+
 	it('skips bots, release PRs and team chores', () => {
 		assert.equal(
 			buildShippedMessage(pr('dependabot[bot]', 'chore(deps): bump x'), null),

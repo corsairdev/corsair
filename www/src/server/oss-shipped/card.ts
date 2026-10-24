@@ -43,6 +43,8 @@ const X_HANDLE = '@corsairdotdev';
 const LINK_BUTTON = 5;
 // Discord refuses a link button whose url is longer than this.
 const MAX_BUTTON_URL = 512;
+// Discord refuses the whole message when an embed title is longer than this.
+const MAX_TITLE = 256;
 const SKIP_TYPES = new Set([
 	'docs',
 	'chore',
@@ -110,6 +112,16 @@ function share(sentence: ShareSentence, url: string) {
 	};
 }
 
+function clipTitle(title: string) {
+	if (title.length <= MAX_TITLE) return title;
+	let clipped = '';
+	for (const char of title) {
+		if (clipped.length + char.length > MAX_TITLE - 1) break;
+		clipped += char;
+	}
+	return `${clipped}…`;
+}
+
 function capitalize(value: string) {
 	return value ? `${value[0]?.toUpperCase()}${value.slice(1)}` : value;
 }
@@ -132,9 +144,16 @@ export function buildShippedMessage(
 	}
 
 	const type = (pr.title.match(/^(\w+)(\(|:|!)/)?.[1] ?? '').toLowerCase();
-	const integration = pr.title
-		.match(/\badd(?:s|ed)?\s+(?:the\s+)?(.+?)\s+(?:integration|plugin)\b/i)?.[1]
-		?.trim();
+	// Only a feature, or an unprefixed "Add X integration", announces an integration:
+	// `fix(slack): add retry to Slack plugin` is a fix.
+	const integration =
+		type === 'feat' || type === ''
+			? pr.title
+					.match(
+						/\badd(?:s|ed)?\s+(?:the\s+)?(.+?)\s+(?:integration|plugin)\b/i,
+					)?.[1]
+					?.trim()
+			: undefined;
 	const isTeam = isOssTeamAssociation(pr.author_association);
 	const prLine = `\`${pr.title}\`\nPR #${pr.number}${pr.merged_by ? ` · merged by ${pr.merged_by.login}` : ''}`;
 	const base = {
@@ -166,7 +185,7 @@ export function buildShippedMessage(
 			embeds: [
 				{
 					...base,
-					title: `🚢 ${credit.integrationName} integration shipped`,
+					title: clipTitle(`🚢 ${credit.integrationName} integration shipped`),
 					description: `${prLine}\n${points}\n\n${line}`,
 					footer: {
 						text: `corsair.dev/oss/${credit.integrationSlug} · Build one, earn AI credits`,
@@ -186,9 +205,11 @@ export function buildShippedMessage(
 			embeds: [
 				{
 					...base,
-					title: isTeam
-						? `🧩 New integration: ${integration}`
-						: `🚢 ${integration} integration shipped`,
+					title: clipTitle(
+						isTeam
+							? `🧩 New integration: ${integration}`
+							: `🚢 ${integration} integration shipped`,
+					),
 					description: `${prLine}\n\n${line}`,
 					footer: {
 						text: isTeam
@@ -207,7 +228,7 @@ export function buildShippedMessage(
 			embeds: [
 				{
 					...base,
-					title: `${type === 'fix' ? '🔧' : '✨'} ${pr.title}`,
+					title: clipTitle(`${type === 'fix' ? '🔧' : '✨'} ${pr.title}`),
 					description: `PR #${pr.number}`,
 				},
 			],
@@ -226,7 +247,9 @@ export function buildShippedMessage(
 		embeds: [
 			{
 				...base,
-				title: `${type === 'fix' ? '🔧' : '🚢'} ${scope ? `${capitalize(scope)} ${what}` : capitalize(what)} merged`,
+				title: clipTitle(
+					`${type === 'fix' ? '🔧' : '🚢'} ${scope ? `${capitalize(scope)} ${what}` : capitalize(what)} merged`,
+				),
 				description: `${prLine}\n\n${line}`,
 				footer: { text: 'Contribute → corsair.dev/oss' },
 			},
