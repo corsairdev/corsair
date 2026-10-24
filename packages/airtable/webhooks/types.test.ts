@@ -7,6 +7,10 @@ describe('createAirtableMatch', () => {
 		expect(match({ headers: {}, body: '{not-json' })).toBe(false);
 	});
 
+	it('does not match an empty body', () => {
+		expect(match({ headers: {}, body: '' })).toBe(false);
+	});
+
 	it('does not match JSON arrays', () => {
 		expect(match({ headers: {}, body: '[]' })).toBe(false);
 	});
