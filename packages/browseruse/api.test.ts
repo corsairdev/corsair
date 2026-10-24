@@ -37,6 +37,7 @@ const mockFetch = jest.fn();
 const originalFetch = globalThis.fetch;
 
 beforeAll(() => {
+	// as: jest.fn() is not typed as fetch. The tests only inspect its calls.
 	globalThis.fetch = mockFetch as typeof fetch;
 });
 
@@ -71,7 +72,7 @@ const mockCtx = {
 		runs: { upsertByEntityId: upsertRun, findByEntityId: findRun },
 	},
 	$getAccountId: async () => 'test-account',
-	// The stub is not a full plugin context. The handlers only read key, database, and db.
+	// as: this stub is not a full plugin context. Handlers only read key, database, and db.
 } as never;
 
 const BROWSER_ID = '3fa85f64-5717-4562-b3fc-2c963f66afa6';
@@ -122,6 +123,7 @@ const runSummary = {
 	updatedAt: '2026-10-20T12:01:00Z',
 };
 
+// unknown: each test passes a different JSON body. Response.stringify accepts that.
 function json(body: unknown, init: ResponseInit = {}): Response {
 	return new Response(JSON.stringify(body), {
 		...init,
@@ -129,8 +131,24 @@ function json(body: unknown, init: ResponseInit = {}): Response {
 	});
 }
 
+// unknown: a rejected promise is untyped. Only Error values continue.
+function caught(value: unknown): Error {
+	if (value instanceof Error) return value;
+	throw new Error('expected an Error');
+}
+
+async function expectFail(run: Promise<unknown>): Promise<Error> {
+	try {
+		await run;
+	} catch (error) {
+		return caught(error);
+	}
+	throw new Error('expected failure');
+}
+
 function lastCall(): { url: string; init: RequestInit } {
 	expect(mockFetch).toHaveBeenCalled();
+	// as: jest stores call args as any. These tests only pass a URL string and RequestInit.
 	const [url, init] = mockFetch.mock.calls[0] as [string, RequestInit];
 	return { url, init };
 }
@@ -157,6 +175,7 @@ describe('Browser Use plugin & client tests', () => {
 				{
 					authType: 'api_key',
 					keys: { get_api_key: async () => undefined },
+					// as: keyBuilder only reads authType and keys.get_api_key here.
 				} as never,
 				'endpoint',
 			),
@@ -314,6 +333,7 @@ describe('Browser Use plugin & client tests', () => {
 	});
 
 	it('keeps a full run when a status poll overlaps the get', async () => {
+		// unknown: the mock row is the JSON document upsert replaces, not a class.
 		let stored: Record<string, unknown> = {
 			id: RUN_ID,
 			status: 'running',
@@ -343,6 +363,7 @@ describe('Browser Use plugin & client tests', () => {
 	});
 
 	it('does not let a stale running response rewind a completed run', async () => {
+		// unknown: the mock row is the JSON document upsert replaces, not a class.
 		let stored: Record<string, unknown> = {
 			id: RUN_ID,
 			status: 'completed',
@@ -414,6 +435,7 @@ describe('Browser Use plugin & client tests', () => {
 
 	it('does not write when no database is configured', async () => {
 		mockFetch.mockResolvedValue(json(runSummary));
+		// as: spreading the stub drops the never type. database: undefined is the case under test.
 		const ctx = { ...(mockCtx as object), database: undefined } as never;
 		await runsGet(ctx, { id: RUN_ID });
 		expect(upsertRun).not.toHaveBeenCalled();
@@ -445,12 +467,10 @@ describe('Browser Use plugin & client tests', () => {
 		mockFetch.mockResolvedValue(
 			json({ detail: 'Invalid API key' }, { status: 401 }),
 		);
-		const err = await requestBrowserUse('/browsers', 'bad').catch(
-			(e: unknown) => e,
-		);
+		const err = await expectFail(requestBrowserUse('/browsers', 'bad'));
 		expect(err).toBeInstanceOf(BrowserUseAPIError);
 		expect(err).toMatchObject({ status: 401, message: 'Invalid API key' });
-		expect(errorHandlers.AUTH_ERROR.match(err as Error)).toBe(true);
+		expect(errorHandlers.AUTH_ERROR.match(err)).toBe(true);
 	});
 
 	it('maps 429 to BrowserUseRateLimitError with Retry-After', async () => {
@@ -460,19 +480,24 @@ describe('Browser Use plugin & client tests', () => {
 				{ status: 429, headers: { 'Retry-After': '3' } },
 			),
 		);
-		const err = await requestBrowserUse('/browsers', 'bu_test', {
-			method: 'POST',
-		}).catch((e: unknown) => e);
+		const err = await expectFail(
+			requestBrowserUse('/browsers', 'bu_test', {
+				method: 'POST',
+			}),
+		);
 		expect(err).toBeInstanceOf(BrowserUseRateLimitError);
-		expect((err as BrowserUseRateLimitError).retryAfterMs).toBe(3000);
-		expect(errorHandlers.RATE_LIMIT_ERROR.match(err as Error)).toBe(true);
+		if (!(err instanceof BrowserUseRateLimitError)) {
+			throw new Error('expected BrowserUseRateLimitError');
+		}
+		expect(err.retryAfterMs).toBe(3000);
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(err)).toBe(true);
 		await expect(
-			errorHandlers.RATE_LIMIT_ERROR.handler(err as Error),
+			errorHandlers.RATE_LIMIT_ERROR.handler(err),
 		).resolves.toMatchObject({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff_jitter',
 		});
-		const retry = await errorHandlers.RATE_LIMIT_ERROR.handler(err as Error);
+		const retry = await errorHandlers.RATE_LIMIT_ERROR.handler(err);
 		expect(retry.headersRetryAfterMs).toBeGreaterThanOrEqual(3000);
 		expect(retry.headersRetryAfterMs).toBeLessThan(3250);
 	});
@@ -484,11 +509,13 @@ describe('Browser Use plugin & client tests', () => {
 				{ status: 503, headers: { 'Retry-After': '3600' } },
 			),
 		);
-		const err = await requestBrowserUse(`/runs/${RUN_ID}/cancel`, 'bu_test', {
-			method: 'POST',
-		}).catch((e: unknown) => e);
-		expect(errorHandlers.FINISHING_ERROR.match(err as Error)).toBe(true);
-		const retry = await errorHandlers.FINISHING_ERROR.handler(err as Error);
+		const err = await expectFail(
+			requestBrowserUse(`/runs/${RUN_ID}/cancel`, 'bu_test', {
+				method: 'POST',
+			}),
+		);
+		expect(errorHandlers.FINISHING_ERROR.match(err)).toBe(true);
+		const retry = await errorHandlers.FINISHING_ERROR.handler(err);
 		expect(retry.maxRetries).toBe(2);
 		expect(retry.headersRetryAfterMs).toBeGreaterThanOrEqual(60_000);
 		expect(retry.headersRetryAfterMs).toBeLessThan(60_250);
@@ -498,10 +525,12 @@ describe('Browser Use plugin & client tests', () => {
 		mockFetch.mockResolvedValue(
 			json({ detail: 'unavailable' }, { status: 503 }),
 		);
-		const err = await requestBrowserUse('/browsers', 'bu_test', {
-			method: 'POST',
-			body: {},
-		}).catch((e: unknown) => e);
-		expect(errorHandlers.FINISHING_ERROR.match(err as Error)).toBe(false);
+		const err = await expectFail(
+			requestBrowserUse('/browsers', 'bu_test', {
+				method: 'POST',
+				body: {},
+			}),
+		);
+		expect(errorHandlers.FINISHING_ERROR.match(err)).toBe(false);
 	});
 });

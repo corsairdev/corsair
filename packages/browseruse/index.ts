@@ -217,7 +217,7 @@ function mergeErrorHandlers(
 }
 
 export function browseruse<const T extends BrowserUsePluginOptions>(
-	// Factory default is an empty options object. T is the caller's options.
+	// as: the factory default is an empty object, which is not the caller's options type T.
 	incomingOptions: BrowserUsePluginOptions & T = {} as BrowserUsePluginOptions &
 		T,
 ): ExternalBrowserUsePlugin<T> {

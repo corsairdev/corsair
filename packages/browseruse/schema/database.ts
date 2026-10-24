@@ -59,7 +59,7 @@ export const BrowserUseRun = z
 		sessionId: z.string().optional(),
 		workspaceId: z.string().nullable().optional(),
 		result: z.string().nullable().optional(),
-		// Shape is decided by the caller's outputSchema.
+		// unknown: outputSchema is caller-defined JSON, so a fixed object would reject valid results.
 		output: z.unknown().nullable().optional(),
 		error: z.string().nullable().optional(),
 		contextLimit: z.number().int().optional(),
@@ -83,7 +83,7 @@ export const RunSummary = z
 		contextLimit: z.number().int(),
 		status: RunStatus,
 		result: z.string().nullable(),
-		// Shape is decided by the caller's outputSchema.
+		// unknown: outputSchema is caller-defined JSON, so a fixed object would reject valid results.
 		output: z.unknown().nullable().optional(),
 		error: z.string().nullable(),
 		sessionId: z.string(),

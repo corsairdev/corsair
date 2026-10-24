@@ -6,7 +6,7 @@ import type { BrowserUseBrowser, BrowserUseRun } from '../schema';
 const TERMINAL_RUN_STATUSES = new Set(['completed', 'failed', 'cancelled']);
 const ENTITY_VERSION = '1.0.0';
 
-// Stored rows are open records. A missing key keeps the previous value.
+// unknown: the stored JSON has no closed field list. A named interface would drop provider fields.
 function mergeDefined<T extends Record<string, unknown>>(
 	previous: T | undefined,
 	next: Record<string, unknown>,
@@ -44,7 +44,7 @@ function usesPostgres(database: CorsairDatabase): boolean {
 	return database.isPg !== false;
 }
 
-// SQLite stores JSON text. Postgres may already return an object.
+// unknown: SQLite returns JSON text and Postgres returns an object. A single class does not fit both.
 function decodeRow(value: unknown): Record<string, unknown> | undefined {
 	const parsed: unknown = typeof value === 'string' ? JSON.parse(value) : value;
 	if (!parsed || typeof parsed !== 'object') return undefined;
@@ -78,6 +78,7 @@ async function lockedMerge(
 						FOR UPDATE
 					`.execute(conn);
 					}
+					// unknown: data is JSON text or an object, and updated_at is text or a Date.
 					const read = await sql<{ data: unknown; updated_at: unknown }>`
 					SELECT data, updated_at
 					FROM ${sql.table('corsair_entities')}
@@ -86,6 +87,11 @@ async function lockedMerge(
 						AND entity_id = ${entityId}
 				`.execute(conn);
 					const row = read.rows[0];
+					// Test-only. Holds the write lock so another process blocks in BEGIN IMMEDIATE.
+					const holdMs = Number(process.env.BROWSERUSE_TEST_HOLD_MS ?? '');
+					if (Number.isFinite(holdMs) && holdMs > 0) {
+						await new Promise((resolve) => setTimeout(resolve, holdMs));
+					}
 					const merged = merge(row ? decodeRow(row.data) : undefined, patch);
 					const payload = JSON.stringify(merged);
 					const data = postgres ? sql`${payload}::jsonb` : sql`${payload}`;

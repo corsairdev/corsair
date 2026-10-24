@@ -75,7 +75,7 @@ async function parseErrorBody(res: Response): Promise<string> {
 	const text = await res.text();
 	if (!text) return `Browser Use request failed (${res.status})`;
 	try {
-		// FastAPI detail is a string or a validation list. Both are read below.
+		// unknown: FastAPI detail is either a string or a list of objects, so one object type does not fit.
 		const body = JSON.parse(text) as { detail?: unknown; message?: unknown };
 		if (typeof body.detail === 'string' && body.detail) return body.detail;
 		if (body.detail !== undefined) return JSON.stringify(body.detail);

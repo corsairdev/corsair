@@ -396,9 +396,9 @@ export const RunsCreateInputSchema = z
 		task: z.string().min(1),
 		// Closed list from the v4 spec on 2026-10-21. A typo must fail here, not as a billed 422.
 		model: RunModel.optional(),
-		// Provider-native request bag. The keys depend on the model, so a fixed object is not practical.
+		// unknown: model params use each provider's own keys, so a fixed object is not practical.
 		modelParams: z.record(z.string(), z.unknown()).nullable().optional(),
-		// Caller-supplied JSON Schema. The document shape is the caller's, so a fixed object is not practical.
+		// unknown: outputSchema is a caller JSON Schema, so a fixed object is not practical.
 		outputSchema: z.record(z.string(), z.unknown()).nullable().optional(),
 		sessionId: Uuid.nullable().optional(),
 		workspaceId: Uuid.nullable().optional(),
