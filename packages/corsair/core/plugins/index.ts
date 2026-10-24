@@ -404,6 +404,14 @@ export type KeyBuilderContext<
 				keys: AccountKeyManagerFor<A, AuthConfig>;
 				/** Tenant ID for this request (always set; defaults to 'default' in single-tenant) */
 				tenantId: string;
+				/**
+				 * The Corsair instance's database handle. The client passes the same
+				 * handle into every keyBuilder ctx it builds, so it identifies the
+				 * instance and owns refresh single-flight: concurrent refreshes for the
+				 * same tenant dedupe across that instance's clients, while different
+				 * tenants and separate instances (separate databases) stay independent.
+				 */
+				database?: object;
 				/** Hub config when createCorsair({ hub: ... }) is configured */
 				hub?: HubConfig;
 				/**
