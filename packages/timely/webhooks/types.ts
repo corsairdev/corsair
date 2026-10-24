@@ -28,21 +28,21 @@ export type TimelyWebhookOutputs = {
 	example: ExampleEvent;
 };
 
-function parseBody(body: unknown): Record<string, unknown> | null {
+function parseBody(body: unknown): Record<string, unknown> | null { // dynamic webhook payloads
 	if (typeof body === 'string') {
 		try {
 			const parsed = JSON.parse(body);
 			return parsed !== null &&
 				typeof parsed === 'object' &&
 				!Array.isArray(parsed)
-				? (parsed as Record<string, unknown>)
+				? (parsed as Record<string, unknown>) // dynamic webhook payloads
 				: null;
 		} catch {
 			return null;
 		}
 	}
 	return body !== null && typeof body === 'object' && !Array.isArray(body)
-		? (body as Record<string, unknown>)
+		? (body as Record<string, unknown>) // dynamic webhook payloads
 		: null;
 }
 
@@ -60,3 +60,6 @@ export function verifyTimelyWebhookSignature(
 	// TODO: Implement webhook signature verification
 	return { valid: true };
 }
+
+
+

@@ -1,4 +1,5 @@
-import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
+import type { ApiRequestOptions } from 'corsair/http';
+import type { OpenAPIConfig } from 'corsair/http';
 import { request } from 'corsair/http';
 
 export class TimelyAPIError extends Error {
@@ -19,7 +20,7 @@ export async function makeTimelyRequest<T>(
 	apiKey: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-		body?: Record<string, unknown>;
+		body?: Record<string, unknown>; // provider payloads are dynamic; strict typing is impractical here
 		query?: Record<string, string | number | boolean | undefined>;
 	} = {},
 ): Promise<T> {
