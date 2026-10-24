@@ -755,6 +755,38 @@ export const renderEndpointSchemas = {
 	typeof renderEndpointsNested
 >;
 
+/**
+ * Corsair exposes endpoint schemas for inspection but intentionally leaves
+ * invocation validation to each plugin. Keep that contract enforcement at a
+ * single boundary so every Render operation validates both input and output.
+ */
+function withRenderSchemas<T extends Record<string, unknown>>(
+	tree: T,
+	prefix: string[] = [],
+): T {
+	for (const [key, value] of Object.entries(tree)) {
+		const operation = [...prefix, key].join('.');
+		if (typeof value === 'function') {
+			const schema =
+				renderEndpointSchemas[operation as keyof typeof renderEndpointSchemas];
+			if (!schema) continue;
+			const endpoint = value as (
+				ctx: unknown,
+				input: unknown,
+			) => Promise<unknown>;
+			tree[key as keyof T] = (async (ctx: unknown, input: unknown) =>
+				schema.output.parse(
+					await endpoint(ctx, schema.input.parse(input ?? {})),
+				)) as T[keyof T];
+		} else if (value && typeof value === 'object') {
+			withRenderSchemas(value as Record<string, unknown>, [...prefix, key]);
+		}
+	}
+	return tree;
+}
+
+const validatedRenderEndpointsNested = withRenderSchemas(renderEndpointsNested);
+
 const renderEndpointMeta = {
 	'services.list': {
 		riskLevel: 'read',
@@ -1153,7 +1185,7 @@ export function render<const T extends RenderPluginOptions>(
 		schema: RenderSchema,
 		options,
 		hooks: options.hooks,
-		endpoints: renderEndpointsNested,
+		endpoints: validatedRenderEndpointsNested,
 		webhooks: {},
 		endpointMeta: renderEndpointMeta,
 		endpointSchemas: renderEndpointSchemas,

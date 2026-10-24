@@ -1,5 +1,11 @@
-import { renderEndpointSchemas } from './index';
+import { render, renderEndpointSchemas } from './index';
 import { RenderSchema } from './schema';
+
+jest.mock('./client', () => ({
+	makeRenderRequest: jest.fn(),
+}));
+
+import { makeRenderRequest } from './client';
 
 describe('Render schema', () => {
 	it('declares a semver version', () => {
@@ -20,6 +26,28 @@ describe('Render schema', () => {
 		expect(Object.keys(renderEndpointSchemas).length).toBeGreaterThanOrEqual(
 			93,
 		);
+	});
+
+	it('enforces endpoint schemas at the bound endpoint boundary', async () => {
+		const request = jest.mocked(makeRenderRequest);
+		request.mockResolvedValue([]);
+		const plugin = render({ key: 'secret' });
+		const ctx = { key: 'secret' } as never;
+		if (!plugin.endpoints) throw new Error('Render endpoints are missing');
+
+		await expect(
+			plugin.endpoints.services.list(ctx, { limit: 0 } as never),
+		).rejects.toThrow();
+		expect(request).not.toHaveBeenCalled();
+
+		await expect(plugin.endpoints.services.list(ctx, {})).resolves.toEqual([]);
+	});
+
+	it('provides executable input and output contracts for every operation', () => {
+		for (const schemas of Object.values(renderEndpointSchemas)) {
+			expect(typeof schemas.input.safeParse).toBe('function');
+			expect(typeof schemas.output.safeParse).toBe('function');
+		}
 	});
 });
 
