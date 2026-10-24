@@ -38,6 +38,28 @@ describe('matchSharepointTenantWebhook', () => {
 		expect(extractMicrosoftGraphValidationToken(request)).toBeNull();
 	});
 
+	it('skips a malformed validationtoken header and falls back to the query param', () => {
+		const request: RawWebhookRequest = {
+			headers: { validationtoken: '%' },
+			query: { validationToken: 'query-token' },
+			body: {},
+		};
+
+		expect(extractMicrosoftGraphValidationToken(request)).toBe('query-token');
+	});
+
+	it('skips a malformed validationtoken header and falls back to the forwarded URI', () => {
+		const request: RawWebhookRequest = {
+			headers: {
+				validationtoken: '%',
+				'x-forwarded-uri': '/webhooks/sharepoint?validationToken=uri-token',
+			},
+			body: {},
+		};
+
+		expect(extractMicrosoftGraphValidationToken(request)).toBe('uri-token');
+	});
+
 	it('extracts subscription_id from notification payloads', () => {
 		const request: RawWebhookRequest = {
 			headers: { 'content-type': 'application/json' },
