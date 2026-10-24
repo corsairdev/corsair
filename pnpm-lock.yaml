@@ -374,9 +374,6 @@ importers:
       '@corsair-dev/reddit':
         specifier: workspace:*
         version: link:../../packages/reddit
-      '@corsair-dev/render':
-        specifier: workspace:*
-        version: link:../../packages/render
       '@corsair-dev/sharepoint':
         specifier: workspace:*
         version: link:../../packages/sharepoint
