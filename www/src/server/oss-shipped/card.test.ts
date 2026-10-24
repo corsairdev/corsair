@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
-import type { ShippedPullRequest } from './card';
+import { discordEndpointSchemas } from '@corsair-dev/discord';
+import type { ShippedMessage, ShippedPullRequest } from './card';
 import { buildShippedMessage } from './card';
 
 function pr(
@@ -58,6 +59,9 @@ describe('buildShippedMessage', () => {
 			message?.content,
 			'<@1420731498834694164> shipped **Coassemble** 🎉',
 		);
+		assert.deepEqual(message?.allowed_mentions, {
+			users: ['1420731498834694164'],
+		});
 		assert.match(message?.embeds[0]?.description ?? '', /first merged plugin/);
 	});
 
@@ -83,20 +87,77 @@ describe('buildShippedMessage', () => {
 		assert.equal(message?.embeds[0]?.title, '🔧 Ambee fix merged');
 	});
 
+	it('puts Post on X, Post on LinkedIn and View PR in link buttons', () => {
+		const message = buildShippedMessage(
+			pr('Srinidhi444', 'feat(coassemble): add Coassemble integration'),
+			credit,
+		);
+		const buttons = message?.components?.[0]?.components ?? [];
+		assert.deepEqual(
+			buttons.map((button) => 'label' in button && button.label),
+			['Post on X', 'Post on LinkedIn', 'View PR'],
+		);
+		for (const button of buttons) {
+			assert.equal(button.type, 2);
+			assert.ok('style' in button && button.style === 5, 'link style');
+			assert.ok('url' in button && button.url && button.url.length <= 512);
+		}
+		assert.equal(
+			'url' in buttons[2]! && buttons[2].url,
+			'https://github.com/corsairdev/corsair/pull/1831',
+		);
+		assert.doesNotMatch(message?.embeds[0]?.description ?? '', /\]\(https/);
+	});
+
+	it('builds cards the Discord plugin accepts for messages.send', () => {
+		const send = discordEndpointSchemas['messages.send'].input;
+		const cards = [
+			buildShippedMessage(
+				pr('Srinidhi444', 'feat(ga): add Google Ads (Beta) integration'),
+				{
+					...credit,
+					integrationName: 'Google Ads (Beta)',
+					discordUserId: '1420731498834694164',
+				},
+			),
+			buildShippedMessage(
+				pr('Mayank-saraswal', 'feat(mrscraper): add MrScraper integration', {
+					author_association: 'COLLABORATOR',
+				}),
+				null,
+			),
+			buildShippedMessage(pr('Apageoflove', 'fix(ambee): parse UTC'), null),
+			buildShippedMessage(
+				pr('devjain32', 'feat(hub): retry webhooks', {
+					author_association: 'OWNER',
+				}),
+				null,
+			),
+		];
+		for (const card of cards) {
+			assert.ok(card);
+			const parsed = send.safeParse({ channel_id: '1', ...card });
+			assert.ok(parsed.success, parsed.error?.message);
+		}
+	});
+
 	it('pre-fills the post text on X and LinkedIn', () => {
-		const shareText = (description: string, site: 'X' | 'LinkedIn') => {
-			const link = description.match(
-				new RegExp(`\\[Post on ${site}\\]\\(([^)]+)\\)`),
-			)?.[1];
-			assert.ok(link, `no ${site} link`);
+		const shareText = (
+			message: ShippedMessage | null,
+			site: 'X' | 'LinkedIn',
+		) => {
+			const button = message?.components?.[0]?.components.find(
+				(c) => 'label' in c && c.label === `Post on ${site}`,
+			);
+			const link = button && 'url' in button ? button.url : undefined;
+			assert.ok(link, `no ${site} button`);
 			return new URL(link).searchParams.get('text') ?? '';
 		};
 
-		const plugin =
-			buildShippedMessage(
-				pr('Srinidhi444', 'feat(coassemble): add Coassemble integration'),
-				credit,
-			)?.embeds[0]?.description ?? '';
+		const plugin = buildShippedMessage(
+			pr('Srinidhi444', 'feat(coassemble): add Coassemble integration'),
+			credit,
+		);
 		assert.equal(
 			shareText(plugin, 'X'),
 			'I just shipped the Coassemble integration for @corsairdotdev, the open-source integration layer for AI agents 🚢',
@@ -106,25 +167,42 @@ describe('buildShippedMessage', () => {
 			'I just shipped the Coassemble integration for Corsair, the open-source integration layer for AI agents 🚢\n\nhttps://github.com/corsairdev/corsair/pull/1831',
 		);
 
-		// A ) in the name would end the markdown link early.
-		const parens =
-			buildShippedMessage(
-				pr('Srinidhi444', 'feat(ga): add Google Ads (Beta) integration'),
-				{ ...credit, integrationName: 'Google Ads (Beta)' },
-			)?.embeds[0]?.description ?? '';
+		const parens = buildShippedMessage(
+			pr('Srinidhi444', 'feat(ga): add Google Ads (Beta) integration'),
+			{ ...credit, integrationName: 'Google Ads (Beta)' },
+		);
 		assert.equal(
 			shareText(parens, 'X'),
 			'I just shipped the Google Ads (Beta) integration for @corsairdotdev, the open-source integration layer for AI agents 🚢',
 		);
 
-		const fix =
-			buildShippedMessage(
-				pr('Apageoflove', 'fix(ambee): treat a zoneless ISO timestamp as UTC'),
-				null,
-			)?.embeds[0]?.description ?? '';
+		const fix = buildShippedMessage(
+			pr('Apageoflove', 'fix(ambee): treat a zoneless ISO timestamp as UTC'),
+			null,
+		);
 		assert.match(
 			shareText(fix, 'X'),
 			/^My Ambee fix just got merged into @corsairdotdev, /,
+		);
+	});
+
+	it('falls back to links in the text when a share url is too long for a button', () => {
+		const name = 'A'.repeat(300);
+		const message = buildShippedMessage(
+			pr('Srinidhi444', `feat(long): add ${name} integration`),
+			{ ...credit, integrationName: name },
+		);
+		assert.equal(message?.components, undefined);
+		// A ) in the name would end the markdown link early, so ( and ) are encoded.
+		const parens = buildShippedMessage(
+			pr('Srinidhi444', `feat(long): add ${name} (Beta) integration`),
+			{ ...credit, integrationName: `${name} (Beta)` },
+		)?.embeds[0]?.description;
+		const link = parens?.match(/\[Post on X\]\(([^)]+)\)/)?.[1];
+		assert.ok(link);
+		assert.match(
+			new URL(link).searchParams.get('text') ?? '',
+			/A \(Beta\) integration for @corsairdotdev/,
 		);
 	});
 
@@ -180,5 +258,6 @@ describe('buildShippedMessage', () => {
 		);
 		assert.equal(message?.embeds[0]?.title, '🔧 fix(hub): retry webhooks');
 		assert.equal(message?.embeds[0]?.description, 'PR #1831');
+		assert.equal(message?.components, undefined);
 	});
 });

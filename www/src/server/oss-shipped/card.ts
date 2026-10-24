@@ -1,3 +1,5 @@
+import type { MessagesSendInput } from '@corsair-dev/discord';
+
 import { isOssTeamAssociation } from '@/lib/oss-team';
 
 export type ShippedPullRequest = {
@@ -28,11 +30,19 @@ export type ShippedEmbed = {
 	timestamp?: string;
 };
 
-export type ShippedMessage = { content?: string; embeds: ShippedEmbed[] };
+export type ShippedMessage = {
+	content?: string;
+	embeds: ShippedEmbed[];
+	components?: MessagesSendInput['components'];
+	allowed_mentions?: MessagesSendInput['allowed_mentions'];
+};
 
 const COMMUNITY_COLOR = 0x1f7a99;
 const TEAM_COLOR = 0x4a38f5;
 const X_HANDLE = '@corsairdotdev';
+const LINK_BUTTON = 5;
+// Discord refuses a link button whose url is longer than this.
+const MAX_BUTTON_URL = 512;
 const SKIP_TYPES = new Set([
 	'docs',
 	'chore',
@@ -65,11 +75,39 @@ const mergedChange =
 const encode = (value: string) =>
 	encodeURIComponent(value).replace(/\(/g, '%28').replace(/\)/g, '%29');
 
-function shareLine(sentence: ShareSentence, url: string) {
+/**
+ * Post on X / Post on LinkedIn / View PR as link buttons under the card. If a share
+ * url is too long for a button (a very long integration name), the links go in the
+ * description instead.
+ */
+function share(sentence: ShareSentence, url: string) {
 	const tail = ', the open-source integration layer for AI agents 🚢';
 	const x = `https://x.com/intent/post?text=${encode(`${sentence(X_HANDLE)}${tail}`)}&url=${encode(url)}`;
 	const linkedin = `https://www.linkedin.com/feed/?shareActive=true&text=${encode(`${sentence('Corsair')}${tail}\n\n${url}`)}`;
-	return `Share it: [Post on X](${x}) · [Post on LinkedIn](${linkedin}) and tag Corsair`;
+	if (x.length > MAX_BUTTON_URL || linkedin.length > MAX_BUTTON_URL) {
+		return {
+			line: `Share it: [Post on X](${x}) · [Post on LinkedIn](${linkedin}) and tag Corsair`,
+		};
+	}
+	const button = (label: string, href: string) => ({
+		type: 2 as const,
+		style: LINK_BUTTON,
+		label,
+		url: href,
+	});
+	return {
+		line: 'Share it with the buttons below, and tag Corsair on LinkedIn.',
+		components: [
+			{
+				type: 1 as const,
+				components: [
+					button('Post on X', x),
+					button('Post on LinkedIn', linkedin),
+					button('View PR', url),
+				],
+			},
+		],
+	};
 }
 
 function capitalize(value: string) {
@@ -112,17 +150,24 @@ export function buildShippedMessage(
 
 	if (credit && !isTeam) {
 		const points = `**+${credit.points} pts**${credit.firstMerge ? ' · first merged plugin 🎉' : ''}`;
+		const { line, components } = share(
+			shippedIntegration(credit.integrationName),
+			pr.html_url,
+		);
 		return {
 			...(credit.discordUserId
 				? {
 						content: `<@${credit.discordUserId}> shipped **${credit.integrationName}** 🎉`,
+						// Ping the contributor and nobody else.
+						allowed_mentions: { users: [credit.discordUserId] },
 					}
 				: {}),
+			...(components ? { components } : {}),
 			embeds: [
 				{
 					...base,
 					title: `🚢 ${credit.integrationName} integration shipped`,
-					description: `${prLine}\n${points}\n\n${shareLine(shippedIntegration(credit.integrationName), pr.html_url)}`,
+					description: `${prLine}\n${points}\n\n${line}`,
 					footer: {
 						text: `corsair.dev/oss/${credit.integrationSlug} · Build one, earn AI credits`,
 					},
@@ -132,14 +177,19 @@ export function buildShippedMessage(
 	}
 
 	if (integration) {
+		const { line, components } = share(
+			shippedIntegration(integration),
+			pr.html_url,
+		);
 		return {
+			...(components ? { components } : {}),
 			embeds: [
 				{
 					...base,
 					title: isTeam
 						? `🧩 New integration: ${integration}`
 						: `🚢 ${integration} integration shipped`,
-					description: `${prLine}\n\n${shareLine(shippedIntegration(integration), pr.html_url)}`,
+					description: `${prLine}\n\n${line}`,
 					footer: {
 						text: isTeam
 							? 'corsair.dev/integrations'
@@ -167,12 +217,17 @@ export function buildShippedMessage(
 	const scope = pr.title.match(/^\w+\(([^)]+)\)/)?.[1];
 	const what =
 		type === 'fix' ? 'fix' : type === 'docs' ? 'docs update' : 'contribution';
+	const { line, components } = share(
+		mergedChange(scope ? `${capitalize(scope)} ${what}` : what),
+		pr.html_url,
+	);
 	return {
+		...(components ? { components } : {}),
 		embeds: [
 			{
 				...base,
 				title: `${type === 'fix' ? '🔧' : '🚢'} ${scope ? `${capitalize(scope)} ${what}` : capitalize(what)} merged`,
-				description: `${prLine}\n\n${shareLine(mergedChange(scope ? `${capitalize(scope)} ${what}` : what), pr.html_url)}`,
+				description: `${prLine}\n\n${line}`,
 				footer: { text: 'Contribute → corsair.dev/oss' },
 			},
 		],
