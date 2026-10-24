@@ -755,36 +755,43 @@ export const renderEndpointSchemas = {
 	typeof renderEndpointsNested
 >;
 
+// unknown: endpoint trees mix nested groups and handlers; narrowed by typeof checks.
+type RenderEndpointTree = Record<string, unknown>;
+// unknown: wrappers receive core context/input before Zod parsing and re-parse output.
+type RenderEndpointHandler = (ctx: unknown, input: unknown) => Promise<unknown>;
+
 /**
- * Corsair exposes endpoint schemas for inspection but intentionally leaves
- * invocation validation to each plugin. Keep that contract enforcement at a
- * single boundary so every Render operation validates both input and output.
+ * Binds every Render endpoint to its declared input and output schemas.
+ * `endpointSchemas` is also exposed for introspection, but the shared Corsair
+ * binder does not execute those metadata schemas. Validation here prevents
+ * malformed requests from reaching Render and rejects incompatible responses.
  */
-function withRenderSchemas<T extends Record<string, unknown>>(
+function withRenderSchemas<T extends RenderEndpointTree>(
 	tree: T,
-	prefix: string[] = [],
+	prefix = '',
 ): T {
-	for (const [key, value] of Object.entries(tree)) {
-		const operation = [...prefix, key].join('.');
+	const validatedEntries = Object.entries(tree).map(([key, value]) => {
+		const operation = prefix ? `${prefix}.${key}` : key;
 		if (typeof value === 'function') {
 			const schema =
 				renderEndpointSchemas[operation as keyof typeof renderEndpointSchemas];
 			if (!schema) {
 				throw new Error(`Missing Render endpoint schema for ${operation}`);
 			}
-			const endpoint = value as (
-				ctx: unknown,
-				input: unknown,
-			) => Promise<unknown>;
-			tree[key as keyof T] = (async (ctx: unknown, input: unknown) =>
-				schema.output.parse(
-					await endpoint(ctx, schema.input.parse(input ?? {})),
-				)) as T[keyof T];
-		} else if (value && typeof value === 'object') {
-			withRenderSchemas(value as Record<string, unknown>, [...prefix, key]);
+			const endpoint = value as RenderEndpointHandler;
+			const validated: RenderEndpointHandler = async (ctx, input) => {
+				const parsedInput = schema.input.parse(input ?? {});
+				const result = await endpoint(ctx, parsedInput);
+				return schema.output.parse(result);
+			};
+			return [key, validated];
 		}
-	}
-	return tree;
+		if (value && typeof value === 'object') {
+			return [key, withRenderSchemas(value as RenderEndpointTree, operation)];
+		}
+		return [key, value];
+	});
+	return Object.fromEntries(validatedEntries) as T;
 }
 
 const validatedRenderEndpointsNested = withRenderSchemas(renderEndpointsNested);
