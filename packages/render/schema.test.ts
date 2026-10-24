@@ -32,7 +32,10 @@ describe('Render schema', () => {
 		const request = jest.mocked(makeRenderRequest);
 		request.mockResolvedValue([]);
 		const plugin = render({ key: 'secret' });
-		const ctx = { key: 'secret' } as never;
+		const ctx = {
+			key: 'secret',
+			$getAccountId: jest.fn().mockResolvedValue('account-1'),
+		} as never;
 		if (!plugin.endpoints) throw new Error('Render endpoints are missing');
 
 		await expect(
@@ -41,6 +44,12 @@ describe('Render schema', () => {
 		expect(request).not.toHaveBeenCalled();
 
 		await expect(plugin.endpoints.services.list(ctx, {})).resolves.toEqual([]);
+		await expect(plugin.endpoints.projects.list(ctx, {})).resolves.toEqual([]);
+
+		request.mockResolvedValue(undefined);
+		await expect(
+			plugin.endpoints.services.delete(ctx, { serviceId: 'service-1' }),
+		).resolves.toBeUndefined();
 	});
 
 	it('provides executable input and output contracts for every operation', () => {

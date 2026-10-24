@@ -38,7 +38,7 @@ const ListServicesOutputSchema = z.array(
 
 const ServiceIdInputSchema = z.object({ serviceId: z.string().min(1) });
 const ServiceOutputSchema = RenderServiceSchema;
-const EmptyOutputSchema = z.object({});
+const EmptyOutputSchema = z.union([z.object({}), z.undefined()]);
 const ResourceInputSchema = z
 	.object({
 		id: z.string().min(1).optional(),
@@ -50,6 +50,7 @@ const ResourceInputSchema = z
 	})
 	.passthrough();
 const ResourceOutputSchema = z.record(z.string(), z.unknown());
+const ResourceListOutputSchema = z.array(ResourceOutputSchema);
 
 export type ListServicesInput = z.infer<typeof ListServicesInputSchema>;
 export type ListServicesOutput = z.infer<typeof ListServicesOutputSchema>;
@@ -159,44 +160,44 @@ export type RenderEndpointInputs = {
 export type RenderEndpointOutputs = {
 	listServices: ListServicesOutput;
 	retrieveService: ServiceOutput;
-	deleteService: Record<string, never>;
+	deleteService: z.infer<typeof EmptyOutputSchema>;
 	updateService: ServiceOutput;
 	triggerDeploy: unknown;
 	restartService: unknown;
 	suspendService: unknown;
 	resumeService: unknown;
-	listEnvironments: z.infer<typeof ResourceOutputSchema>;
+	listEnvironments: z.infer<typeof ResourceListOutputSchema>;
 	createEnvironment: z.infer<typeof ResourceOutputSchema>;
 	retrieveEnvironment: z.infer<typeof ResourceOutputSchema>;
 	updateEnvironment: z.infer<typeof ResourceOutputSchema>;
-	deleteEnvironment: Record<string, never>;
-	listEnvGroups: z.infer<typeof ResourceOutputSchema>;
+	deleteEnvironment: z.infer<typeof EmptyOutputSchema>;
+	listEnvGroups: z.infer<typeof ResourceListOutputSchema>;
 	createEnvGroup: z.infer<typeof ResourceOutputSchema>;
 	retrieveEnvGroup: z.infer<typeof ResourceOutputSchema>;
 	updateEnvGroup: z.infer<typeof ResourceOutputSchema>;
-	deleteEnvGroup: Record<string, never>;
-	listProjects: z.infer<typeof ResourceOutputSchema>;
+	deleteEnvGroup: z.infer<typeof EmptyOutputSchema>;
+	listProjects: z.infer<typeof ResourceListOutputSchema>;
 	createProject: z.infer<typeof ResourceOutputSchema>;
 	retrieveProject: z.infer<typeof ResourceOutputSchema>;
 	updateProject: z.infer<typeof ResourceOutputSchema>;
-	listPostgres: z.infer<typeof ResourceOutputSchema>;
+	listPostgres: z.infer<typeof ResourceListOutputSchema>;
 	createPostgres: z.infer<typeof ResourceOutputSchema>;
 	retrievePostgres: z.infer<typeof ResourceOutputSchema>;
 	updatePostgres: z.infer<typeof ResourceOutputSchema>;
-	listRegistryCredentials: z.infer<typeof ResourceOutputSchema>;
+	listRegistryCredentials: z.infer<typeof ResourceListOutputSchema>;
 	createRegistryCredential: z.infer<typeof ResourceOutputSchema>;
 	retrieveRegistryCredential: z.infer<typeof ResourceOutputSchema>;
 	updateRegistryCredential: z.infer<typeof ResourceOutputSchema>;
-	deleteRegistryCredential: Record<string, never>;
-	listOwners: z.infer<typeof ResourceOutputSchema>;
+	deleteRegistryCredential: z.infer<typeof EmptyOutputSchema>;
+	listOwners: z.infer<typeof ResourceListOutputSchema>;
 	retrieveOwner: z.infer<typeof ResourceOutputSchema>;
-	listOwnerMembers: z.infer<typeof ResourceOutputSchema>;
+	listOwnerMembers: z.infer<typeof ResourceListOutputSchema>;
 	getUser: z.infer<typeof ResourceOutputSchema>;
 	listLogs: z.infer<typeof ResourceOutputSchema>;
 	listLogsValues: z.infer<typeof ResourceOutputSchema>;
 	subscribeLogs: z.infer<typeof ResourceOutputSchema>;
-	listResourceLogStreams: z.infer<typeof ResourceOutputSchema>;
-	deleteOwnerLogStream: Record<string, never>;
+	listResourceLogStreams: z.infer<typeof ResourceListOutputSchema>;
+	deleteOwnerLogStream: z.infer<typeof EmptyOutputSchema>;
 	updateOwnerLogStream: z.infer<typeof ResourceOutputSchema>;
 	getActiveConnections: z.infer<typeof ResourceOutputSchema>;
 	getBandwidthSources: z.infer<typeof ResourceOutputSchema>;
@@ -208,34 +209,34 @@ export type RenderEndpointOutputs = {
 	getMemory: z.infer<typeof ResourceOutputSchema>;
 	getMemoryLimit: z.infer<typeof ResourceOutputSchema>;
 	getMemoryTarget: z.infer<typeof ResourceOutputSchema>;
-	listApplicationFilterValues: z.infer<typeof ResourceOutputSchema>;
-	listDisks: z.infer<typeof ResourceOutputSchema>;
-	listMaintenance: z.infer<typeof ResourceOutputSchema>;
-	listTaskRuns: z.infer<typeof ResourceOutputSchema>;
-	listTasks: z.infer<typeof ResourceOutputSchema>;
+	listApplicationFilterValues: z.infer<typeof ResourceListOutputSchema>;
+	listDisks: z.infer<typeof ResourceListOutputSchema>;
+	listMaintenance: z.infer<typeof ResourceListOutputSchema>;
+	listTaskRuns: z.infer<typeof ResourceListOutputSchema>;
+	listTasks: z.infer<typeof ResourceListOutputSchema>;
 	streamTaskRunsEvents: z.infer<typeof ResourceOutputSchema>;
-	listWorkflows: z.infer<typeof ResourceOutputSchema>;
-	listWorkflowVersions: z.infer<typeof ResourceOutputSchema>;
-	listWebhooks: z.infer<typeof ResourceOutputSchema>;
+	listWorkflows: z.infer<typeof ResourceListOutputSchema>;
+	listWorkflowVersions: z.infer<typeof ResourceListOutputSchema>;
+	listWebhooks: z.infer<typeof ResourceListOutputSchema>;
 	addHeaders: z.infer<typeof ResourceOutputSchema>;
 	addOrUpdateSecretFile: z.infer<typeof ResourceOutputSchema>;
 	addResourcesToEnvironment: z.infer<typeof ResourceOutputSchema>;
 	addRoute: z.infer<typeof ResourceOutputSchema>;
 	createCustomDomain: z.infer<typeof ResourceOutputSchema>;
-	deleteEnvGroupEnvVar: z.infer<typeof ResourceOutputSchema>;
-	deleteEnvGroupSecretFile: z.infer<typeof ResourceOutputSchema>;
-	deleteKeyValue: z.infer<typeof ResourceOutputSchema>;
-	deleteSecretFile: z.infer<typeof ResourceOutputSchema>;
-	disconnectBlueprint: z.infer<typeof ResourceOutputSchema>;
+	deleteEnvGroupEnvVar: z.infer<typeof EmptyOutputSchema>;
+	deleteEnvGroupSecretFile: z.infer<typeof EmptyOutputSchema>;
+	deleteKeyValue: z.infer<typeof EmptyOutputSchema>;
+	deleteSecretFile: z.infer<typeof EmptyOutputSchema>;
+	disconnectBlueprint: z.infer<typeof EmptyOutputSchema>;
 	linkServiceToEnvGroup: z.infer<typeof ResourceOutputSchema>;
-	listBlueprints: z.infer<typeof ResourceOutputSchema>;
-	listInstances: z.infer<typeof ResourceOutputSchema>;
-	listKeyValue: z.infer<typeof ResourceOutputSchema>;
-	listNotificationOverrides: z.infer<typeof ResourceOutputSchema>;
-	listPostgresExport: z.infer<typeof ResourceOutputSchema>;
-	listPostgresUsers: z.infer<typeof ResourceOutputSchema>;
-	listRoutes: z.infer<typeof ResourceOutputSchema>;
-	listSecretFiles: z.infer<typeof ResourceOutputSchema>;
+	listBlueprints: z.infer<typeof ResourceListOutputSchema>;
+	listInstances: z.infer<typeof ResourceListOutputSchema>;
+	listKeyValue: z.infer<typeof ResourceListOutputSchema>;
+	listNotificationOverrides: z.infer<typeof ResourceListOutputSchema>;
+	listPostgresExport: z.infer<typeof ResourceListOutputSchema>;
+	listPostgresUsers: z.infer<typeof ResourceListOutputSchema>;
+	listRoutes: z.infer<typeof ResourceListOutputSchema>;
+	listSecretFiles: z.infer<typeof ResourceListOutputSchema>;
 	retrieveCustomDomain: z.infer<typeof ResourceOutputSchema>;
 	retrieveDeploy: z.infer<typeof ResourceOutputSchema>;
 	retrieveEnvGroupEnvVar: z.infer<typeof ResourceOutputSchema>;
@@ -251,7 +252,7 @@ export type RenderEndpointOutputs = {
 	updateResourceLogStream: z.infer<typeof ResourceOutputSchema>;
 	updateSecretFilesForService: z.infer<typeof ResourceOutputSchema>;
 	verifyCustomDomain: z.infer<typeof ResourceOutputSchema>;
-	deleteOwnerMetricsStream: Record<string, never>;
+	deleteOwnerMetricsStream: z.infer<typeof EmptyOutputSchema>;
 	updateOwnerNotificationSettings: z.infer<typeof ResourceOutputSchema>;
 	updateRoutes: z.infer<typeof ResourceOutputSchema>;
 };
@@ -368,37 +369,37 @@ export const RenderEndpointOutputSchemas = {
 	restartService: z.unknown(),
 	suspendService: z.unknown(),
 	resumeService: z.unknown(),
-	listEnvironments: ResourceOutputSchema,
+	listEnvironments: ResourceListOutputSchema,
 	createEnvironment: ResourceOutputSchema,
 	retrieveEnvironment: ResourceOutputSchema,
 	updateEnvironment: ResourceOutputSchema,
 	deleteEnvironment: EmptyOutputSchema,
-	listEnvGroups: ResourceOutputSchema,
+	listEnvGroups: ResourceListOutputSchema,
 	createEnvGroup: ResourceOutputSchema,
 	retrieveEnvGroup: ResourceOutputSchema,
 	updateEnvGroup: ResourceOutputSchema,
 	deleteEnvGroup: EmptyOutputSchema,
-	listProjects: ResourceOutputSchema,
+	listProjects: ResourceListOutputSchema,
 	createProject: ResourceOutputSchema,
 	retrieveProject: ResourceOutputSchema,
 	updateProject: ResourceOutputSchema,
-	listPostgres: ResourceOutputSchema,
+	listPostgres: ResourceListOutputSchema,
 	createPostgres: ResourceOutputSchema,
 	retrievePostgres: ResourceOutputSchema,
 	updatePostgres: ResourceOutputSchema,
-	listRegistryCredentials: ResourceOutputSchema,
+	listRegistryCredentials: ResourceListOutputSchema,
 	createRegistryCredential: ResourceOutputSchema,
 	retrieveRegistryCredential: ResourceOutputSchema,
 	updateRegistryCredential: ResourceOutputSchema,
 	deleteRegistryCredential: EmptyOutputSchema,
-	listOwners: ResourceOutputSchema,
+	listOwners: ResourceListOutputSchema,
 	retrieveOwner: ResourceOutputSchema,
-	listOwnerMembers: ResourceOutputSchema,
+	listOwnerMembers: ResourceListOutputSchema,
 	getUser: ResourceOutputSchema,
 	listLogs: ResourceOutputSchema,
 	listLogsValues: ResourceOutputSchema,
 	subscribeLogs: ResourceOutputSchema,
-	listResourceLogStreams: ResourceOutputSchema,
+	listResourceLogStreams: ResourceListOutputSchema,
 	deleteOwnerLogStream: EmptyOutputSchema,
 	updateOwnerLogStream: ResourceOutputSchema,
 	getActiveConnections: ResourceOutputSchema,
@@ -411,34 +412,34 @@ export const RenderEndpointOutputSchemas = {
 	getMemory: ResourceOutputSchema,
 	getMemoryLimit: ResourceOutputSchema,
 	getMemoryTarget: ResourceOutputSchema,
-	listApplicationFilterValues: ResourceOutputSchema,
-	listDisks: ResourceOutputSchema,
-	listMaintenance: ResourceOutputSchema,
-	listTaskRuns: ResourceOutputSchema,
-	listTasks: ResourceOutputSchema,
+	listApplicationFilterValues: ResourceListOutputSchema,
+	listDisks: ResourceListOutputSchema,
+	listMaintenance: ResourceListOutputSchema,
+	listTaskRuns: ResourceListOutputSchema,
+	listTasks: ResourceListOutputSchema,
 	streamTaskRunsEvents: ResourceOutputSchema,
-	listWorkflows: ResourceOutputSchema,
-	listWorkflowVersions: ResourceOutputSchema,
-	listWebhooks: ResourceOutputSchema,
+	listWorkflows: ResourceListOutputSchema,
+	listWorkflowVersions: ResourceListOutputSchema,
+	listWebhooks: ResourceListOutputSchema,
 	addHeaders: ResourceOutputSchema,
 	addOrUpdateSecretFile: ResourceOutputSchema,
 	addResourcesToEnvironment: ResourceOutputSchema,
 	addRoute: ResourceOutputSchema,
 	createCustomDomain: ResourceOutputSchema,
-	deleteEnvGroupEnvVar: ResourceOutputSchema,
-	deleteEnvGroupSecretFile: ResourceOutputSchema,
-	deleteKeyValue: ResourceOutputSchema,
-	deleteSecretFile: ResourceOutputSchema,
-	disconnectBlueprint: ResourceOutputSchema,
+	deleteEnvGroupEnvVar: EmptyOutputSchema,
+	deleteEnvGroupSecretFile: EmptyOutputSchema,
+	deleteKeyValue: EmptyOutputSchema,
+	deleteSecretFile: EmptyOutputSchema,
+	disconnectBlueprint: EmptyOutputSchema,
 	linkServiceToEnvGroup: ResourceOutputSchema,
-	listBlueprints: ResourceOutputSchema,
-	listInstances: ResourceOutputSchema,
-	listKeyValue: ResourceOutputSchema,
-	listNotificationOverrides: ResourceOutputSchema,
-	listPostgresExport: ResourceOutputSchema,
-	listPostgresUsers: ResourceOutputSchema,
-	listRoutes: ResourceOutputSchema,
-	listSecretFiles: ResourceOutputSchema,
+	listBlueprints: ResourceListOutputSchema,
+	listInstances: ResourceListOutputSchema,
+	listKeyValue: ResourceListOutputSchema,
+	listNotificationOverrides: ResourceListOutputSchema,
+	listPostgresExport: ResourceListOutputSchema,
+	listPostgresUsers: ResourceListOutputSchema,
+	listRoutes: ResourceListOutputSchema,
+	listSecretFiles: ResourceListOutputSchema,
 	retrieveCustomDomain: ResourceOutputSchema,
 	retrieveDeploy: ResourceOutputSchema,
 	retrieveEnvGroupEnvVar: ResourceOutputSchema,
