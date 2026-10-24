@@ -4,6 +4,7 @@ import { makeRenderRequest } from '../client';
 type Context = { key: string };
 // Stricter typing is not feasible because resource operations share identifiers
 // while preserving different provider-specific request fields.
+// unknown: the operation schemas validate the concrete resource payloads.
 type Input = Record<string, unknown>;
 
 const request = <T>(

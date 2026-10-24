@@ -36,6 +36,7 @@ export async function makeRenderRequest<T>(
 		// corresponding endpoint schema before reaching this transport boundary.
 		// Stricter typing is not feasible here because Render uses object bodies
 		// for most writes and array bodies for replacement operations.
+		// unknown: the endpoint schemas validate each provider-specific body.
 		body?: Record<string, unknown> | unknown[];
 		query?: Record<string, string | string[] | number | boolean | undefined>;
 	} = {},

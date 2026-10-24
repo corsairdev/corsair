@@ -6,6 +6,7 @@ type Context = { key: string };
 // preserves those provider-specific fields until the endpoint schema validates them.
 // Stricter typing is not feasible because observability filters vary across
 // Render resources and remain open until schema validation.
+// unknown: the operation schemas validate the provider-specific filters.
 type Input = Record<string, unknown>;
 
 const call = <T>(

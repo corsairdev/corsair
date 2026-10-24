@@ -4,6 +4,7 @@ import { makeRenderRequest } from '../client';
 type ResourceContext = { key: string };
 // Stricter typing is not feasible for this shared adapter because Render
 // environment operations use different request and query fields.
+// unknown: the operation schemas validate each environment payload.
 type ResourceInput = Record<string, unknown>;
 
 const request = <T>(

@@ -4,6 +4,7 @@ import { makeRenderRequest } from '../client';
 type Context = { key: string };
 // Stricter typing is not feasible for this shared adapter because final
 // operations use different provider-specific request bodies.
+// unknown: the operation schemas validate each final operation payload.
 type Input = Record<string, unknown>;
 
 const call = <T>(

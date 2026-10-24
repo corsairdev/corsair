@@ -4,6 +4,7 @@ import { makeRenderRequest } from '../client';
 type Context = { key: string };
 // Stricter typing is not feasible for this shared adapter because each Render
 // automation operation has different provider-specific query filters.
+// unknown: the operation schemas validate these provider-specific fields.
 type Input = Record<string, unknown>;
 
 const get = <T>(ctx: Context, path: string, input: Input) =>

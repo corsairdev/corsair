@@ -4,6 +4,7 @@ import { makeRenderRequest } from '../client';
 type Context = { key: string };
 // Stricter typing is not feasible because metric filters differ by Render
 // resource and are validated by the registered endpoint schema.
+// unknown: the schema preserves the provider-specific metric fields.
 type Input = Record<string, unknown>;
 
 const metric = <T>(ctx: Context, path: string, input: Input) =>

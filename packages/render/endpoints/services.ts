@@ -22,6 +22,7 @@ const serviceRequest = async <T>(
 	serviceId: string,
 	path: string,
 	method: 'GET' | 'POST' | 'PATCH' | 'DELETE',
+	// unknown: service write fields differ by operation and are schema-validated.
 	body?: Record<string, unknown>,
 ) =>
 	makeRenderRequest<T>(
