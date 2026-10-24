@@ -10649,6 +10649,9 @@ importers:
 
   www:
     dependencies:
+      '@corsair-dev/discord':
+        specifier: workspace:*
+        version: link:../packages/discord
       '@corsair-dev/github':
         specifier: workspace:*
         version: link:../packages/github
