@@ -62,7 +62,7 @@ const ResourceInputSchema = z
 // still document and enforce collection responses where the API guarantees one.
 // unknown: Render resource records are provider-defined and can add fields
 // without changing the stable Corsair operation contract.
-const ResourceRecordSchema = z.record(z.string(), z.unknown());
+const ResourceRecordSchema = z.object({}).passthrough();
 const ResourceOutputSchema = z.union([
 	ResourceRecordSchema,
 	z.array(ResourceRecordSchema),
