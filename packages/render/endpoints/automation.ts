@@ -2,6 +2,7 @@ import type { RenderEndpoints } from '..';
 import { makeRenderRequest } from '../client';
 
 type Context = { key: string };
+// Shared query input preserves endpoint-specific Render filters until validation.
 type Input = Record<string, unknown>;
 
 const get = <T>(ctx: Context, path: string, input: Input) =>

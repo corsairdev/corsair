@@ -2,6 +2,7 @@ import type { RenderEndpoints } from '..';
 import { makeRenderRequest } from '../client';
 
 type ResourceContext = { key: string };
+// Render environment payloads vary by operation and are validated at the plugin boundary.
 type ResourceInput = Record<string, unknown>;
 
 const request = <T>(

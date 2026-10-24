@@ -1,6 +1,11 @@
 import { makeRenderRequest } from './client';
 import {
 	deleteService,
+	listBlueprints,
+	listDisks,
+	listEnvironments,
+	listOwners,
+	listProjects,
 	listServices,
 	updateOwnerLogStream,
 	updateRoutes,
@@ -41,6 +46,36 @@ describe('Render service endpoints', () => {
 		expect(request).toHaveBeenCalledWith('/v1/services', 'secret', {
 			method: 'GET',
 			query: { limit: 20, cursor: 'next' },
+		});
+	});
+
+	it('covers the resource, observability, metrics, automation, and final groups', async () => {
+		const ctx = { key: 'secret' } as never;
+		await listEnvironments(ctx, {});
+		await listProjects(ctx, {});
+		await listOwners(ctx, {});
+		await listDisks(ctx, {});
+		await listBlueprints(ctx, {});
+
+		expect(request).toHaveBeenCalledWith('/v1/environments', 'secret', {
+			method: 'GET',
+			query: {},
+		});
+		expect(request).toHaveBeenCalledWith('/v1/projects', 'secret', {
+			method: 'GET',
+			query: {},
+		});
+		expect(request).toHaveBeenCalledWith('/v1/owners', 'secret', {
+			method: 'GET',
+			query: {},
+		});
+		expect(request).toHaveBeenCalledWith('/v1/disks', 'secret', {
+			method: 'GET',
+			query: {},
+		});
+		expect(request).toHaveBeenCalledWith('/v1/blueprints', 'secret', {
+			method: 'GET',
+			query: {},
 		});
 	});
 

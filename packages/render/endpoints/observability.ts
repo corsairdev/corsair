@@ -4,6 +4,7 @@ import { makeRenderRequest } from '../client';
 type Context = { key: string };
 // Render's generated operation inputs vary by endpoint; the shared adapter
 // preserves those provider-specific fields until the endpoint schema validates them.
+// Observability filters vary across Render resources and remain open until schema validation.
 type Input = Record<string, unknown>;
 
 const call = <T>(

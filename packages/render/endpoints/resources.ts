@@ -2,6 +2,7 @@ import type { RenderEndpoints } from '..';
 import { makeRenderRequest } from '../client';
 
 type Context = { key: string };
+// Resource operations share identifiers while preserving provider-specific fields.
 type Input = Record<string, unknown>;
 
 const request = <T>(

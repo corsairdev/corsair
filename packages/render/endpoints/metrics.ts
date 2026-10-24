@@ -2,6 +2,7 @@ import type { RenderEndpoints } from '..';
 import { makeRenderRequest } from '../client';
 
 type Context = { key: string };
+// Metric filters are provider-defined and validated by the registered endpoint schema.
 type Input = Record<string, unknown>;
 
 const metric = <T>(ctx: Context, path: string, input: Input) =>

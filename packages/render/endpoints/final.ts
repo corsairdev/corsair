@@ -2,6 +2,7 @@ import type { RenderEndpoints } from '..';
 import { makeRenderRequest } from '../client';
 
 type Context = { key: string };
+// Final operations share path identifiers but retain provider-specific request fields.
 type Input = Record<string, unknown>;
 
 const call = <T>(
