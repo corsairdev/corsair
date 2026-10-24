@@ -185,10 +185,10 @@ export type RenderEndpointOutputs = {
 	updateService: ServiceOutput;
 	// Stricter typing is not feasible because these commands return
 	// provider-specific deployment acknowledgements.
-	triggerDeploy: unknown;
-	restartService: unknown;
-	suspendService: unknown;
-	resumeService: unknown;
+	triggerDeploy: /* unknown: provider-specific deployment acknowledgement */ unknown;
+	restartService: /* unknown: provider-specific lifecycle acknowledgement */ unknown;
+	suspendService: /* unknown: provider-specific lifecycle acknowledgement */ unknown;
+	resumeService: /* unknown: provider-specific lifecycle acknowledgement */ unknown;
 	listEnvironments: z.infer<typeof ResourceListOutputSchema>;
 	createEnvironment: z.infer<typeof ResourceOutputSchema>;
 	retrieveEnvironment: z.infer<typeof ResourceOutputSchema>;
@@ -389,10 +389,14 @@ export const RenderEndpointOutputSchemas = {
 	deleteService: EmptyOutputSchema,
 	updateService: ServiceOutputSchema,
 	// unknown: lifecycle acknowledgements differ by Render service type.
-	triggerDeploy: z.unknown(),
-	restartService: z.unknown(),
-	suspendService: z.unknown(),
-	resumeService: z.unknown(),
+	triggerDeploy:
+		/* unknown: provider-specific deployment acknowledgement */ z.unknown(),
+	restartService:
+		/* unknown: provider-specific lifecycle acknowledgement */ z.unknown(),
+	suspendService:
+		/* unknown: provider-specific lifecycle acknowledgement */ z.unknown(),
+	resumeService:
+		/* unknown: provider-specific lifecycle acknowledgement */ z.unknown(),
 	listEnvironments: ResourceListOutputSchema,
 	createEnvironment: ResourceOutputSchema,
 	retrieveEnvironment: ResourceOutputSchema,

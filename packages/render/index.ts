@@ -1194,6 +1194,8 @@ export function render<const T extends RenderPluginOptions>(
 		schema: RenderSchema,
 		options,
 		hooks: options.hooks,
+		// Every public endpoint is the schema-bound tree. endpointSchemas remains
+		// introspection metadata; calls use this validated tree at runtime.
 		endpoints: validatedRenderEndpointsNested,
 		webhooks: {},
 		endpointMeta: renderEndpointMeta,
