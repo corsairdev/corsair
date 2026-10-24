@@ -8,7 +8,7 @@ import { z } from 'zod';
 export const TimelyWebhookPayloadSchema = z.object({
 	type: z.string(),
 	created_at: z.string(),
-	data: z.record(z.string(), z.unknown()),
+	data: z.record(z.string(), z.unknown()), // dynamic webhook payload values
 });
 
 export type TimelyWebhookPayload = z.infer<typeof TimelyWebhookPayloadSchema>;
