@@ -61,10 +61,14 @@ const mergedChange =
 // X tags the handle and builds the preview from `url`. LinkedIn's share-offsite page
 // ignores any text, so the post opens from the feed composer, which takes the text
 // with the link in it; a typed @handle isn't a LinkedIn mention, so it names Corsair.
+// encodeURIComponent leaves ( and ) alone, and a ) ends a Discord markdown link early.
+const encode = (value: string) =>
+	encodeURIComponent(value).replace(/\(/g, '%28').replace(/\)/g, '%29');
+
 function shareLine(sentence: ShareSentence, url: string) {
 	const tail = ', the open-source integration layer for AI agents 🚢';
-	const x = `https://x.com/intent/post?text=${encodeURIComponent(`${sentence(X_HANDLE)}${tail}`)}&url=${encodeURIComponent(url)}`;
-	const linkedin = `https://www.linkedin.com/feed/?shareActive=true&text=${encodeURIComponent(`${sentence('Corsair')}${tail}\n\n${url}`)}`;
+	const x = `https://x.com/intent/post?text=${encode(`${sentence(X_HANDLE)}${tail}`)}&url=${encode(url)}`;
+	const linkedin = `https://www.linkedin.com/feed/?shareActive=true&text=${encode(`${sentence('Corsair')}${tail}\n\n${url}`)}`;
 	return `Share it: [Post on X](${x}) · [Post on LinkedIn](${linkedin}) and tag Corsair`;
 }
 

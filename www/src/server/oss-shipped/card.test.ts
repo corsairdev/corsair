@@ -106,6 +106,17 @@ describe('buildShippedMessage', () => {
 			'I just shipped the Coassemble integration for Corsair, the open-source integration layer for AI agents 🚢\n\nhttps://github.com/corsairdev/corsair/pull/1831',
 		);
 
+		// A ) in the name would end the markdown link early.
+		const parens =
+			buildShippedMessage(
+				pr('Srinidhi444', 'feat(ga): add Google Ads (Beta) integration'),
+				{ ...credit, integrationName: 'Google Ads (Beta)' },
+			)?.embeds[0]?.description ?? '';
+		assert.equal(
+			shareText(parens, 'X'),
+			'I just shipped the Google Ads (Beta) integration for @corsairdotdev, the open-source integration layer for AI agents 🚢',
+		);
+
 		const fix =
 			buildShippedMessage(
 				pr('Apageoflove', 'fix(ambee): treat a zoneless ISO timestamp as UTC'),

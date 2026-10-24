@@ -24,8 +24,11 @@ type SendToShipped = (
 	message: ShippedMessage,
 ) => Promise<{ id: string } | null>;
 
-/** The claim a merged PR finishes: the integration whose linked PR URL is this PR. */
-async function findClaimForPullRequest(db: DB, prNumber: number) {
+/**
+ * Every claim that links this PR. More than one integration can link the same URL,
+ * so the caller picks the one the PR's author holds rather than whichever row comes first.
+ */
+async function findClaimsForPullRequest(db: DB, prNumber: number) {
 	const rows = await db
 		.select({
 			integrationId: integrationUrls.integrationId,
@@ -38,25 +41,31 @@ async function findClaimForPullRequest(db: DB, prNumber: number) {
 				like(integrationUrls.url, `%/pull/${prNumber}%`),
 			),
 		);
-	const match = rows.find(
-		(row) => parsePullRequestNumber(row.url) === prNumber,
-	);
-	if (!match) return null;
+	const integrationIds = [
+		...new Set(
+			rows
+				.filter((row) => parsePullRequestNumber(row.url) === prNumber)
+				.map((row) => row.integrationId),
+		),
+	];
 
-	const [integration] = await db
-		.select({
-			id: integrations.id,
-			name: integrations.name,
-			slug: integrations.slug,
-			points: integrations.points,
-		})
-		.from(integrations)
-		.where(eq(integrations.id, match.integrationId))
-		.limit(1);
-	if (!integration) return null;
-
-	const latest = await getLatestStatusForIntegration(db, integration.id);
-	return { integration, latest };
+	const claims = [];
+	for (const integrationId of integrationIds) {
+		const [integration] = await db
+			.select({
+				id: integrations.id,
+				name: integrations.name,
+				slug: integrations.slug,
+				points: integrations.points,
+			})
+			.from(integrations)
+			.where(eq(integrations.id, integrationId))
+			.limit(1);
+		if (!integration) continue;
+		const latest = await getLatestStatusForIntegration(db, integration.id);
+		claims.push({ integration, latest });
+	}
+	return claims;
 }
 
 async function claimerProfile(db: DB, userId: string) {
@@ -115,26 +124,47 @@ export async function handleMergedPullRequest(
 	db: DB,
 	event: PullRequestClosedEvent,
 	send: SendToShipped,
-): Promise<{ outcome: string; integrationId?: string }> {
+): Promise<{
+	outcome: string;
+	integrationId?: string;
+	integrationSlug?: string;
+}> {
 	const pr = event.pull_request;
 	if (event.action !== 'closed' || !pr.merged || pr.draft)
 		return { outcome: 'not_merged' };
 	if (event.repository.full_name.toLowerCase() !== SHIPPED_REPO)
 		return { outcome: 'other_repo' };
 
-	const claim = await findClaimForPullRequest(db, pr.number);
+	// The claim the PR's author holds wins; otherwise the first one, for the log below.
+	let picked: {
+		claim: Awaited<ReturnType<typeof findClaimsForPullRequest>>[number];
+		profile: Awaited<ReturnType<typeof claimerProfile>> | null;
+		decision: ReturnType<typeof decideMergeCredit>;
+	} | null = null;
+	for (const candidate of await findClaimsForPullRequest(db, pr.number)) {
+		const candidateProfile = candidate.latest
+			? await claimerProfile(db, candidate.latest.userId)
+			: null;
+		const candidateDecision = decideMergeCredit({
+			latestPhase: candidate.latest?.phase ?? null,
+			claimerGithubLogin: candidateProfile?.githubUsername ?? null,
+			prAuthorLogin: pr.user.login,
+		});
+		if (!picked || candidateDecision.kind === 'credit') {
+			picked = {
+				claim: candidate,
+				profile: candidateProfile,
+				decision: candidateDecision,
+			};
+		}
+		if (candidateDecision.kind === 'credit') break;
+	}
+	const claim = picked?.claim ?? null;
 	let credit: ShippedCredit | null = null;
 	let finishedRowId: string | null = null;
 
-	if (claim) {
-		const profile = claim.latest
-			? await claimerProfile(db, claim.latest.userId)
-			: null;
-		const decision = decideMergeCredit({
-			latestPhase: claim.latest?.phase ?? null,
-			claimerGithubLogin: profile?.githubUsername ?? null,
-			prAuthorLogin: pr.user.login,
-		});
+	if (claim && picked) {
+		const { profile, decision } = picked;
 
 		if (decision.kind === 'credit' && claim.latest && profile) {
 			if (decision.finish) {
@@ -153,6 +183,8 @@ export async function handleMergedPullRequest(
 			} else {
 				// Already finished (e.g. by hand). Post once: skip if a card was recorded.
 				const row = await latestFinishedRow(db, claim.integration.id);
+				// `metadata` is an untyped jsonb column holding free-form keys (source,
+				// prNumber, shippedMessageId); a string-keyed record is as strict as it allows.
 				const meta = (row?.metadata ?? {}) as Record<string, unknown>;
 				if (meta.shippedMessageId)
 					return {
@@ -190,6 +222,7 @@ export async function handleMergedPullRequest(
 			.from(integrationStatus)
 			.where(eq(integrationStatus.id, finishedRowId))
 			.limit(1);
+		// Same untyped jsonb column as above: keep its keys and add the message id.
 		const meta = (row?.metadata ?? {}) as Record<string, unknown>;
 		await db
 			.update(integrationStatus)
@@ -199,5 +232,6 @@ export async function handleMergedPullRequest(
 	return {
 		outcome: credit ? 'credited' : 'posted',
 		integrationId: claim?.integration.id,
+		integrationSlug: credit ? claim?.integration.slug : undefined,
 	};
 }
