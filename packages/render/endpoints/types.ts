@@ -50,9 +50,17 @@ const ResourceInputSchema = z
 	})
 	.passthrough();
 // Stricter typing is not feasible because Render resource payloads are
-// provider-defined and may gain fields independently.
-const ResourceOutputSchema = z.record(z.string(), z.unknown());
-const ResourceListOutputSchema = z.array(ResourceOutputSchema);
+// provider-defined and may gain fields independently. Some Render responses
+// also return a resource collection from an operation whose endpoint metadata
+// is shared with a singular resource operation, so both shapes are accepted
+// at the generic resource boundary. The operation-specific list schemas below
+// still document and enforce collection responses where the API guarantees one.
+const ResourceRecordSchema = z.record(z.string(), z.unknown());
+const ResourceOutputSchema = z.union([
+	ResourceRecordSchema,
+	z.array(ResourceRecordSchema),
+]);
+const ResourceListOutputSchema = z.array(ResourceRecordSchema);
 
 export type ListServicesInput = z.infer<typeof ListServicesInputSchema>;
 export type ListServicesOutput = z.infer<typeof ListServicesOutputSchema>;
