@@ -1,5 +1,10 @@
 import { makeRenderRequest } from './client';
-import { listServices, updateRoutes } from './endpoints';
+import {
+	deleteService,
+	listServices,
+	updateOwnerLogStream,
+	updateRoutes,
+} from './endpoints';
 
 jest.mock('./client', () => ({
 	makeRenderRequest: jest.fn(),
@@ -9,6 +14,7 @@ const request = jest.mocked(makeRenderRequest);
 
 describe('Render service endpoints', () => {
 	beforeEach(() => {
+		request.mockClear();
 		request.mockResolvedValue([
 			{
 				service: {
@@ -56,6 +62,32 @@ describe('Render service endpoints', () => {
 				method: 'PUT',
 				body: { routes: [] },
 			},
+		);
+	});
+
+	it('rejects service IDs that can escape the service path', async () => {
+		await expect(
+			deleteService({ key: 'secret' } as never, {
+				serviceId: '../registrycredentials/credential-id',
+			}),
+		).rejects.toThrow('Invalid Render service ID');
+		expect(request).not.toHaveBeenCalled();
+	});
+
+	it('sends owner log stream updates as a request body', async () => {
+		request.mockResolvedValue({});
+		await updateOwnerLogStream({ key: 'secret' } as never, {
+			id: 'stream-1',
+			url: 'https://logs.example.test',
+			labels: ['app'],
+		});
+		expect(request).toHaveBeenCalledWith(
+			'/v1/logs/streams/owner/stream-1',
+			'secret',
+			expect.objectContaining({
+				method: 'PUT',
+				body: { url: 'https://logs.example.test', labels: ['app'] },
+			}),
 		);
 	});
 });

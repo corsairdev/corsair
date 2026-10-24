@@ -24,10 +24,26 @@ const serviceRequest = async <T>(
 	method: 'GET' | 'POST' | 'PATCH' | 'DELETE',
 	body?: Record<string, unknown>,
 ) =>
-	makeRenderRequest<T>(`/v1/services/${serviceId}${path}`, ctx.key, {
-		method,
-		body,
-	});
+	makeRenderRequest<T>(
+		`/v1/services/${encodeServiceId(serviceId)}${path}`,
+		ctx.key,
+		{
+			method,
+			body,
+		},
+	);
+
+const encodeServiceId = (serviceId: string) => {
+	if (
+		!serviceId ||
+		serviceId === '.' ||
+		serviceId === '..' ||
+		/[\\/]/.test(serviceId)
+	) {
+		throw new Error('Invalid Render service ID');
+	}
+	return encodeURIComponent(serviceId);
+};
 
 export const retrieveService: RenderEndpoints['retrieveService'] = async (
 	ctx,

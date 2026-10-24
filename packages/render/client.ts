@@ -32,6 +32,8 @@ export async function makeRenderRequest<T>(
 	apiKey: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+		// Render request bodies differ by operation and are validated by the
+		// corresponding endpoint schema before reaching this transport boundary.
 		body?: Record<string, unknown>;
 		query?: Record<string, string | string[] | number | boolean | undefined>;
 	} = {},

@@ -2,6 +2,8 @@ import type { RenderEndpoints } from '..';
 import { makeRenderRequest } from '../client';
 
 type Context = { key: string };
+// Render's generated operation inputs vary by endpoint; the shared adapter
+// preserves those provider-specific fields until the endpoint schema validates them.
 type Input = Record<string, unknown>;
 
 const call = <T>(
@@ -14,6 +16,7 @@ const call = <T>(
 	const path = template.replace('{id}', encodeURIComponent(String(id ?? '')));
 	return makeRenderRequest<T>(path, ctx.key, {
 		method,
+		body: method === 'PUT' ? query : undefined,
 		query:
 			method === 'GET'
 				? (query as Record<
