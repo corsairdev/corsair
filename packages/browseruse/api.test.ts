@@ -15,6 +15,7 @@ import {
 	runsGet,
 	runsGetStatus,
 } from './endpoints';
+import type { BrowserUseSaveContext } from './endpoints/save';
 import { saveRun } from './endpoints/save';
 import { BrowserUseEndpointInputSchemas } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
@@ -33,12 +34,17 @@ jest.mock('corsair/core', () => {
 	};
 });
 
+// unknown is necessary: mock rows are open JSON. A stricter row type is not practical.
+type JsonRecord = Record<string, unknown>;
+
 const mockFetch = jest.fn();
 const originalFetch = globalThis.fetch;
 
 beforeAll(() => {
-	// as: jest.fn() is not typed as fetch. The tests only inspect its calls.
-	globalThis.fetch = mockFetch as typeof fetch;
+	globalThis.fetch = (
+		input: Parameters<typeof fetch>[0],
+		init?: Parameters<typeof fetch>[1],
+	) => mockFetch(input, init);
 });
 
 afterAll(() => {
@@ -61,7 +67,7 @@ beforeEach(() => {
 	jest.mocked(logEventFromContext).mockReset();
 });
 
-const mockCtx = {
+const mockCtx: BrowserUseSaveContext = {
 	key: 'bu_test',
 	database: {},
 	db: {
@@ -72,8 +78,7 @@ const mockCtx = {
 		runs: { upsertByEntityId: upsertRun, findByEntityId: findRun },
 	},
 	$getAccountId: async () => 'test-account',
-	// as: this stub is not a full plugin context. Handlers only read key, database, and db.
-} as never;
+};
 
 const BROWSER_ID = '3fa85f64-5717-4562-b3fc-2c963f66afa6';
 const RUN_ID = '7c9e6679-7425-40de-944b-e07fc1f90ae7';
@@ -123,7 +128,7 @@ const runSummary = {
 	updatedAt: '2026-10-20T12:01:00Z',
 };
 
-// unknown: each test passes a different JSON body. Response.stringify accepts that.
+// unknown is necessary: each test passes a different JSON body. A stricter body type is not practical.
 function json(body: unknown, init: ResponseInit = {}): Response {
 	return new Response(JSON.stringify(body), {
 		...init,
@@ -131,12 +136,13 @@ function json(body: unknown, init: ResponseInit = {}): Response {
 	});
 }
 
-// unknown: a rejected promise is untyped. Only Error values continue.
+// unknown is necessary: a rejected promise is untyped. A stricter rejection type is not practical.
 function caught(value: unknown): Error {
 	if (value instanceof Error) return value;
 	throw new Error('expected an Error');
 }
 
+// unknown is necessary: the call under test may reject or resolve. A stricter promise type is not practical.
 async function expectFail(run: Promise<unknown>): Promise<Error> {
 	try {
 		await run;
@@ -148,8 +154,12 @@ async function expectFail(run: Promise<unknown>): Promise<Error> {
 
 function lastCall(): { url: string; init: RequestInit } {
 	expect(mockFetch).toHaveBeenCalled();
-	// as: jest stores call args as any. These tests only pass a URL string and RequestInit.
-	const [url, init] = mockFetch.mock.calls[0] as [string, RequestInit];
+	const call = mockFetch.mock.calls[0];
+	const url = call?.[0];
+	const init = call?.[1];
+	if (typeof url !== 'string' || !init || typeof init !== 'object') {
+		throw new Error('expected a fetch url and init');
+	}
 	return { url, init };
 }
 
@@ -175,7 +185,7 @@ describe('Browser Use plugin & client tests', () => {
 				{
 					authType: 'api_key',
 					keys: { get_api_key: async () => undefined },
-					// as: keyBuilder only reads authType and keys.get_api_key here.
+					// as is necessary: keyBuilder only reads authType and get_api_key. A full plugin context is not practical here.
 				} as never,
 				'endpoint',
 			),
@@ -213,7 +223,7 @@ describe('Browser Use plugin & client tests', () => {
 		});
 		expect(upsertBrowser).toHaveBeenCalledWith(BROWSER_ID, result);
 		expect(logEventFromContext).toHaveBeenCalledWith(
-			mockCtx,
+			{ $getAccountId: mockCtx.$getAccountId, database: undefined },
 			'browseruse.browsers.create',
 			{},
 			'completed',
@@ -333,19 +343,17 @@ describe('Browser Use plugin & client tests', () => {
 	});
 
 	it('keeps a full run when a status poll overlaps the get', async () => {
-		// unknown: the mock row is the JSON document upsert replaces, not a class.
-		let stored: Record<string, unknown> = {
+		// unknown is necessary: the mock row is open JSON. A stricter row type is not practical.
+		let stored: JsonRecord = {
 			id: RUN_ID,
 			status: 'running',
 			task: runSummary.task,
 		};
 		findRun.mockImplementation(async () => ({ data: { ...stored } }));
 		// upsert replaces the row. A merge-style mock would hide a stale write.
-		upsertRun.mockImplementation(
-			async (_id: string, data: Record<string, unknown>) => {
-				stored = { ...data };
-			},
-		);
+		upsertRun.mockImplementation(async (_id: string, data: JsonRecord) => {
+			stored = { ...data };
+		});
 		mockFetch.mockImplementation(async (url: string) => {
 			if (url.endsWith('/status')) return json({ status: 'completed' });
 			return json(runSummary);
@@ -363,19 +371,17 @@ describe('Browser Use plugin & client tests', () => {
 	});
 
 	it('does not let a stale running response rewind a completed run', async () => {
-		// unknown: the mock row is the JSON document upsert replaces, not a class.
-		let stored: Record<string, unknown> = {
+		// unknown is necessary: the mock row is open JSON. A stricter row type is not practical.
+		let stored: JsonRecord = {
 			id: RUN_ID,
 			status: 'completed',
 			task: runSummary.task,
 			result: 'done',
 		};
 		findRun.mockImplementation(async () => ({ data: { ...stored } }));
-		upsertRun.mockImplementation(
-			async (_id: string, data: Record<string, unknown>) => {
-				stored = { ...data };
-			},
-		);
+		upsertRun.mockImplementation(async (_id: string, data: JsonRecord) => {
+			stored = { ...data };
+		});
 		await saveRun(mockCtx, {
 			id: RUN_ID,
 			status: 'running',
@@ -435,8 +441,7 @@ describe('Browser Use plugin & client tests', () => {
 
 	it('does not write when no database is configured', async () => {
 		mockFetch.mockResolvedValue(json(runSummary));
-		// as: spreading the stub drops the never type. database: undefined is the case under test.
-		const ctx = { ...(mockCtx as object), database: undefined } as never;
+		const ctx: BrowserUseSaveContext = { ...mockCtx, database: undefined };
 		await runsGet(ctx, { id: RUN_ID });
 		expect(upsertRun).not.toHaveBeenCalled();
 	});

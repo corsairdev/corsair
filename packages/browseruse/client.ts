@@ -75,27 +75,33 @@ async function parseErrorBody(res: Response): Promise<string> {
 	const text = await res.text();
 	if (!text) return `Browser Use request failed (${res.status})`;
 	try {
-		// unknown: FastAPI detail is either a string or a list of objects, so one object type does not fit.
-		const body = JSON.parse(text) as { detail?: unknown; message?: unknown };
-		if (typeof body.detail === 'string' && body.detail) return body.detail;
-		if (body.detail !== undefined) return JSON.stringify(body.detail);
-		if (typeof body.message === 'string' && body.message) return body.message;
+		// unknown is necessary: FastAPI detail is a string or a list of objects. A stricter type is not practical.
+		const parsed: unknown = JSON.parse(text);
+		if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+			return text;
+		}
+		const detail = Reflect.get(parsed, 'detail');
+		const message = Reflect.get(parsed, 'message');
+		if (typeof detail === 'string' && detail) return detail;
+		if (detail !== undefined) return JSON.stringify(detail);
+		if (typeof message === 'string' && message) return message;
 	} catch {
 		return text;
 	}
 	return text;
 }
 
-export async function requestBrowserUse<T>(
+export async function requestBrowserUse(
 	path: string,
 	apiKey: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PATCH';
-		// Each endpoint parses its body before this call. The helper cannot name every shape.
+		// unknown is necessary: each endpoint has its own body. A stricter shared type is not practical.
 		body?: unknown;
 		query?: Query;
 	} = {},
-): Promise<T> {
+	// unknown is necessary: the caller parses this JSON with that route's schema. A stricter return is not practical.
+): Promise<unknown> {
 	const method = options.method ?? 'GET';
 	const headers: Record<string, string> = {
 		'X-Browser-Use-API-Key': apiKey,
@@ -133,8 +139,9 @@ export async function requestBrowserUse<T>(
 
 	const text = await res.text();
 	try {
-		// Caller parses this JSON with the operation schema. T is that boundary.
-		return JSON.parse(text) as T;
+		// unknown is necessary: JSON.parse is untyped. A stricter return type is not practical.
+		const parsed: unknown = JSON.parse(text);
+		return parsed;
 	} catch {
 		throw new BrowserUseAPIError(
 			'Browser Use returned a non-JSON response',

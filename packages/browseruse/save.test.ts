@@ -4,23 +4,48 @@ import { createRequire } from 'node:module';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { createCorsairDatabase } from 'corsair/db';
+import type { BrowserUseSaveContext } from './endpoints/save';
 import { saveRun } from './endpoints/save';
 
+// unknown is necessary: better-sqlite3 get() is untyped. A stricter row type is not practical.
+type SqliteCell = unknown;
+
 const load = createRequire(path.join(process.cwd(), 'package.json'));
-// better-sqlite3 has no typed export on this package. The constructor is the slice the test calls.
 const Database = load(
 	path.resolve(process.cwd(), '../corsair/node_modules/better-sqlite3'),
+	// as is necessary: createRequire returns an untyped module. A stricter constructor type is not practical.
 ) as new (
 	filename: string,
 ) => {
 	exec: (sql: string) => void;
-	pragma: (source: string) => unknown;
-	prepare: (sql: string) => {
-		// unknown: bound SQL parameters are whatever the statement received.
-		get: (...args: unknown[]) => unknown;
-	};
+	pragma: (source: string) => void;
+	prepare: (sql: string) => { get: (id: string) => SqliteCell };
 	close: () => void;
 };
+
+function storedRun(sqlite: {
+	// unknown is necessary: better-sqlite3 get() is untyped. A stricter row type is not practical.
+	prepare: (sql: string) => { get: (id: string) => SqliteCell };
+	close: () => void;
+}): { status: string; task?: string; result?: string } {
+	const row = sqlite
+		.prepare('SELECT data FROM corsair_entities WHERE entity_id = ?')
+		.get('run-1');
+	if (!row || typeof row !== 'object') throw new Error('missing row');
+	const text = Reflect.get(row, 'data');
+	if (typeof text !== 'string') throw new Error('missing data');
+	// unknown is necessary: JSON.parse is untyped. A stricter parse result is not practical.
+	const parsed: unknown = JSON.parse(text);
+	if (!parsed || typeof parsed !== 'object') throw new Error('missing json');
+	const status = Reflect.get(parsed, 'status');
+	const task = Reflect.get(parsed, 'task');
+	const result = Reflect.get(parsed, 'result');
+	return {
+		status: typeof status === 'string' ? status : '',
+		task: typeof task === 'string' ? task : undefined,
+		result: typeof result === 'string' ? result : undefined,
+	};
+}
 
 const ENTITY_DDL = `
 	CREATE TABLE corsair_entities (
@@ -39,7 +64,7 @@ function openMemory() {
 	const sqlite = new Database(':memory:');
 	sqlite.exec(ENTITY_DDL);
 	const database = createCorsairDatabase(
-		// The local handle matches the driver createCorsairDatabase accepts.
+		// as is necessary: the loaded driver has no shared Database type. A stricter driver type is not practical.
 		sqlite as unknown as Parameters<typeof createCorsairDatabase>[0],
 	);
 	return { sqlite, database };
@@ -58,6 +83,7 @@ function createFileDb(): string {
 
 function runWorker(
 	dbPath: string,
+	// unknown is necessary: the worker patch is open JSON. A stricter field type is not practical.
 	patch: Record<string, unknown>,
 	holdMs: number,
 ): Promise<void> {
@@ -110,15 +136,7 @@ describe('browseruse run saves', () => {
 
 		const sqlite = new Database(dbPath);
 		try {
-			const row = sqlite
-				.prepare(`SELECT data FROM corsair_entities WHERE entity_id = ?`)
-				.get('run-1') as { data: string };
-			// The column is the JSON text this plugin stored.
-			const data = JSON.parse(row.data) as {
-				status: string;
-				task: string;
-				result: string;
-			};
+			const data = storedRun(sqlite);
 			expect(data.task).toBe('keep me');
 			expect(data.result).toBe('rows');
 			expect(data.status).toBe('completed');
@@ -129,11 +147,21 @@ describe('browseruse run saves', () => {
 
 	it('does not rewind a completed run when a stale running write lands last', async () => {
 		const { sqlite, database } = openMemory();
-		const ctx = {
+		const ctx: BrowserUseSaveContext = {
+			key: 'bu_test',
 			database,
 			$getAccountId: async () => 'account-1',
-			// as: saveRun only needs the database and the account id.
-		} as never;
+			db: {
+				browsers: {
+					findByEntityId: async () => undefined,
+					upsertByEntityId: async () => undefined,
+				},
+				runs: {
+					findByEntityId: async () => undefined,
+					upsertByEntityId: async () => undefined,
+				},
+			},
+		};
 		try {
 			await saveRun(ctx, {
 				id: 'run-1',
@@ -146,13 +174,7 @@ describe('browseruse run saves', () => {
 				status: 'running',
 				result: 'later detail',
 			});
-			const row = sqlite
-				.prepare(`SELECT data FROM corsair_entities WHERE entity_id = ?`)
-				.get('run-1') as { data: string };
-			const data = JSON.parse(row.data) as {
-				status: string;
-				result: string;
-			};
+			const data = storedRun(sqlite);
 			expect(data.status).toBe('completed');
 			expect(data.result).toBe('later detail');
 		} finally {

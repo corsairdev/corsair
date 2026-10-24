@@ -20,7 +20,7 @@ export const errorHandlers = {
 			// Two retries after the first call. A missing Retry-After uses backoff.
 			maxRetries: 2,
 			headersRetryAfterMs: cappedRetryAfter(error),
-			retryStrategy: 'exponential_backoff_jitter' as const,
+			retryStrategy: 'exponential_backoff_jitter' as const, // as is necessary: this must stay a literal. A wider type is not practical.
 		}),
 	},
 	// Only cancel documents a 503 that should be repeated. A create 503 must not start a second browser or run.
@@ -32,7 +32,7 @@ export const errorHandlers = {
 		handler: async (error: Error) => ({
 			maxRetries: 2,
 			headersRetryAfterMs: cappedRetryAfter(error),
-			retryStrategy: 'exponential_backoff_jitter' as const,
+			retryStrategy: 'exponential_backoff_jitter' as const, // as is necessary: this must stay a literal. A wider type is not practical.
 		}),
 	},
 	AUTH_ERROR: {

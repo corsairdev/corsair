@@ -1,28 +1,60 @@
+import type { EventLoggingContext } from 'corsair/core';
 import type { CorsairDatabase } from 'corsair/db';
 import { sql } from 'corsair/db';
-import type { BrowserUseContext } from '..';
-import type { BrowserUseBrowser, BrowserUseRun } from '../schema';
+import { BrowserUseBrowser, BrowserUseRun } from '../schema';
+
+// unknown is necessary: callers ignore the entity-client return. A stricter return is not practical.
+type Saved = Promise<unknown>;
+
+export type BrowserUseSaveContext = {
+	key: string;
+	database?: CorsairDatabase | { db?: undefined };
+	$getAccountId: () => Promise<string>;
+	db: {
+		browsers: {
+			findByEntityId: (
+				id: string,
+			) => Promise<{ data: BrowserUseBrowser } | null | undefined>;
+			upsertByEntityId: (id: string, data: BrowserUseBrowser) => Saved;
+		};
+		runs: {
+			findByEntityId: (
+				id: string,
+			) => Promise<{ data: BrowserUseRun } | null | undefined>;
+			upsertByEntityId: (id: string, data: BrowserUseRun) => Saved;
+		};
+	};
+};
+
+// unknown is necessary: stored JSON has no closed field list. A stricter value type is not practical.
+type JsonValue = unknown;
+type JsonRecord = Record<string, JsonValue>;
 
 const TERMINAL_RUN_STATUSES = new Set(['completed', 'failed', 'cancelled']);
 const ENTITY_VERSION = '1.0.0';
 
-// unknown: the stored JSON has no closed field list. A named interface would drop provider fields.
-function mergeDefined<T extends Record<string, unknown>>(
-	previous: T | undefined,
-	next: Record<string, unknown>,
-): T {
-	const merged: Record<string, unknown> = { ...(previous ?? {}) };
+// A stored row is open JSON. A named interface would drop provider fields, so a stricter record is not practical.
+function mergeDefined(
+	previous: JsonRecord | undefined,
+	next: JsonRecord,
+): JsonRecord {
+	const merged: JsonRecord = { ...(previous ?? {}) };
 	for (const [key, value] of Object.entries(next)) {
 		if (value !== undefined) merged[key] = value;
 	}
-	// The caller named T. The merge only copies that row's own keys.
-	return merged as T;
+	return merged;
+}
+
+function toRecord(value: object): JsonRecord {
+	const record: JsonRecord = {};
+	for (const [key, item] of Object.entries(value)) record[key] = item;
+	return record;
 }
 
 function mergeRun(
-	previous: Record<string, unknown> | undefined,
-	next: Record<string, unknown>,
-): Record<string, unknown> {
+	previous: JsonRecord | undefined,
+	next: JsonRecord,
+): JsonRecord {
 	const merged = mergeDefined(previous, next);
 	const previousStatus = previous?.status;
 	const nextStatus = next.status;
@@ -40,64 +72,92 @@ function mergeRun(
 
 type SqlConn = CorsairDatabase['db'];
 
-function usesPostgres(database: CorsairDatabase): boolean {
+function isFullDatabase(
+	value: BrowserUseSaveContext['database'],
+): value is CorsairDatabase {
+	return !!value && 'db' in value && value.db != null;
+}
+
+export function browserUseLogContext(
+	ctx: BrowserUseSaveContext,
+): EventLoggingContext {
+	return {
+		$getAccountId: ctx.$getAccountId,
+		database: isFullDatabase(ctx.database) ? ctx.database : undefined,
+	};
+}
+
+function usesPostgres(database: { isPg?: boolean }): boolean {
 	return database.isPg !== false;
 }
 
-// unknown: SQLite returns JSON text and Postgres returns an object. A single class does not fit both.
-function decodeRow(value: unknown): Record<string, unknown> | undefined {
+// unknown is necessary: SQLite returns JSON text and Postgres returns an object. A stricter class is not practical.
+function decodeRow(value: unknown): JsonRecord | undefined {
 	const parsed: unknown = typeof value === 'string' ? JSON.parse(value) : value;
-	if (!parsed || typeof parsed !== 'object') return undefined;
-	// The column is the JSON object this plugin stored.
-	return parsed as Record<string, unknown>;
+	if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+		return undefined;
+	}
+	const record: JsonRecord = {};
+	for (const [key, item] of Object.entries(parsed)) record[key] = item;
+	return record;
+}
+
+// unknown is necessary: drivers throw plain objects or Errors. A stricter error class is not practical.
+function isSqliteLock(error: unknown): boolean {
+	const message = error instanceof Error ? error.message : '';
+	if (/SQLITE_BUSY|database is locked/i.test(message)) return true;
+	if (typeof error === 'object' && error !== null && 'code' in error) {
+		return Reflect.get(error, 'code') === 'SQLITE_BUSY';
+	}
+	return false;
 }
 
 async function lockedMerge(
-	database: CorsairDatabase,
+	database: { db: CorsairDatabase['db']; isPg?: boolean },
 	accountId: string,
 	entityType: string,
 	entityId: string,
-	patch: Record<string, unknown>,
-	merge: (
-		previous: Record<string, unknown> | undefined,
-		next: Record<string, unknown>,
-	) => Record<string, unknown>,
+	patch: JsonRecord,
+	merge: (previous: JsonRecord | undefined, next: JsonRecord) => JsonRecord,
 ): Promise<void> {
 	const postgres = usesPostgres(database);
 	for (let attempt = 0; attempt < 8; attempt++) {
-		const changed = await database.db
-			.connection()
-			.execute(async (conn: SqlConn) => {
-				if (postgres) await sql`BEGIN`.execute(conn);
-				else await sql`BEGIN IMMEDIATE`.execute(conn);
-				try {
-					if (postgres) {
-						await sql`
+		let changed = 0n;
+		try {
+			changed = await database.db
+				.connection()
+				.execute(async (conn: SqlConn) => {
+					if (!postgres) await sql`PRAGMA busy_timeout = 5000`.execute(conn);
+					if (postgres) await sql`BEGIN`.execute(conn);
+					else await sql`BEGIN IMMEDIATE`.execute(conn);
+					try {
+						if (postgres) {
+							await sql`
 						SELECT id FROM ${sql.table('corsair_accounts')}
 						WHERE id = ${accountId}
 						FOR UPDATE
 					`.execute(conn);
-					}
-					// unknown: data is JSON text or an object, and updated_at is text or a Date.
-					const read = await sql<{ data: unknown; updated_at: unknown }>`
+						}
+						// unknown is necessary: data is JSON text or an object, and updated_at is text or a Date. A stricter column type is not practical.
+						const read = await sql<{ data: unknown; updated_at: unknown }>`
 					SELECT data, updated_at
 					FROM ${sql.table('corsair_entities')}
 					WHERE account_id = ${accountId}
 						AND entity_type = ${entityType}
 						AND entity_id = ${entityId}
 				`.execute(conn);
-					const row = read.rows[0];
-					// Test-only. Holds the write lock so another process blocks in BEGIN IMMEDIATE.
-					const holdMs = Number(process.env.BROWSERUSE_TEST_HOLD_MS ?? '');
-					if (Number.isFinite(holdMs) && holdMs > 0) {
-						await new Promise((resolve) => setTimeout(resolve, holdMs));
-					}
-					const merged = merge(row ? decodeRow(row.data) : undefined, patch);
-					const payload = JSON.stringify(merged);
-					const data = postgres ? sql`${payload}::jsonb` : sql`${payload}`;
-					const now = new Date();
-					const result = row
-						? await sql`
+						const row = read.rows[0];
+						// Test-only. Holds the write lock so another process blocks in BEGIN IMMEDIATE.
+						const holdMs = Number(process.env.BROWSERUSE_TEST_HOLD_MS ?? '');
+						if (Number.isFinite(holdMs) && holdMs > 0) {
+							await new Promise((resolve) => setTimeout(resolve, holdMs));
+						}
+						const merged = merge(row ? decodeRow(row.data) : undefined, patch);
+						const payload = JSON.stringify(merged);
+						const data = postgres ? sql`${payload}::jsonb` : sql`${payload}`;
+						const now = new Date();
+						const result = row
+							? await sql`
 						UPDATE ${sql.table('corsair_entities')}
 						SET data = ${data},
 							updated_at = ${now},
@@ -107,7 +167,7 @@ async function lockedMerge(
 							AND entity_id = ${entityId}
 							AND updated_at = ${row.updated_at}
 					`.execute(conn)
-						: await sql`
+							: await sql`
 						INSERT INTO ${sql.table('corsair_entities')} (
 							id, created_at, updated_at, account_id, entity_id, entity_type, version, data
 						)
@@ -119,17 +179,23 @@ async function lockedMerge(
 								AND entity_id = ${entityId}
 						)
 					`.execute(conn);
-					await sql`COMMIT`.execute(conn);
-					return result.numAffectedRows ?? 0n;
-				} catch (error) {
-					try {
-						await sql`ROLLBACK`.execute(conn);
-					} catch {
-						// BEGIN may have failed before a transaction existed.
+						await sql`COMMIT`.execute(conn);
+						return result.numAffectedRows ?? 0n;
+					} catch (error) {
+						try {
+							await sql`ROLLBACK`.execute(conn);
+						} catch {
+							// BEGIN may have failed before a transaction existed.
+						}
+						throw error;
 					}
-					throw error;
-				}
-			});
+				});
+		} catch (error) {
+			// Another process holds the SQLite lock. Wait and try the merge again.
+			if (!isSqliteLock(error) || attempt === 7) throw error;
+			await new Promise((resolve) => setTimeout(resolve, 25 * (attempt + 1)));
+			continue;
+		}
 		if (changed > 0n) return;
 	}
 	throw new Error(
@@ -150,7 +216,7 @@ function enqueueSave(key: string, work: () => Promise<void>): Promise<void> {
 }
 
 export async function saveBrowser(
-	ctx: BrowserUseContext,
+	ctx: BrowserUseSaveContext,
 	browser: BrowserUseBrowser,
 ): Promise<void> {
 	// The entity client exists even when no database is configured.
@@ -158,14 +224,14 @@ export async function saveBrowser(
 	if (!database) return;
 	await enqueueSave(`browser:${browser.id}`, async () => {
 		try {
-			if (database.db) {
+			if (isFullDatabase(database)) {
 				const accountId = await ctx.$getAccountId();
 				await lockedMerge(
-					database,
+					{ db: database.db, isPg: database.isPg },
 					accountId,
 					'browsers',
 					browser.id,
-					browser,
+					toRecord(browser),
 					mergeDefined,
 				);
 				return;
@@ -173,7 +239,12 @@ export async function saveBrowser(
 			const existing = await ctx.db.browsers.findByEntityId(browser.id);
 			await ctx.db.browsers.upsertByEntityId(
 				browser.id,
-				mergeDefined(existing?.data, browser),
+				BrowserUseBrowser.parse(
+					mergeDefined(
+						existing?.data ? toRecord(existing.data) : undefined,
+						toRecord(browser),
+					),
+				),
 			);
 		} catch (error) {
 			console.warn('Failed to save Browser Use browser to database:', error);
@@ -182,23 +253,34 @@ export async function saveBrowser(
 }
 
 export async function saveRun(
-	ctx: BrowserUseContext,
+	ctx: BrowserUseSaveContext,
 	run: Partial<BrowserUseRun> & { id: string },
 ): Promise<void> {
 	const database = ctx.database;
 	if (!database) return;
 	await enqueueSave(`run:${run.id}`, async () => {
 		try {
-			if (database.db) {
+			if (isFullDatabase(database)) {
 				const accountId = await ctx.$getAccountId();
-				await lockedMerge(database, accountId, 'runs', run.id, run, mergeRun);
+				await lockedMerge(
+					{ db: database.db, isPg: database.isPg },
+					accountId,
+					'runs',
+					run.id,
+					toRecord(run),
+					mergeRun,
+				);
 				return;
 			}
 			const existing = await ctx.db.runs.findByEntityId(run.id);
 			await ctx.db.runs.upsertByEntityId(
 				run.id,
-				// mergeRun returns the stored record. The entity schema checks it on read.
-				mergeRun(existing?.data, run) as BrowserUseRun,
+				BrowserUseRun.parse(
+					mergeRun(
+						existing?.data ? toRecord(existing.data) : undefined,
+						toRecord(run),
+					),
+				),
 			);
 		} catch (error) {
 			console.warn('Failed to save Browser Use run to database:', error);

@@ -53,9 +53,9 @@ export const browserUseAuthConfig = {
 	api_key: {
 		// The project key is the only credential. An extra account field
 		// would leave a saved key looking incomplete.
-		account: [] as const,
+		account: [] as const, // as is necessary: this must stay a literal. A wider type is not practical.
 	},
-} as const satisfies PluginAuthConfig;
+} as const satisfies PluginAuthConfig; // as is necessary: this must stay a literal. A wider type is not practical.
 
 export type BrowserUseContext = CorsairPluginContext<
 	typeof BrowserUseSchema,
@@ -104,7 +104,7 @@ const browserUseEndpointsNested = {
 		getStatus: runsGetStatus,
 		cancel: runsCancel,
 	},
-} as const;
+} as const; // as is necessary: this must stay a literal. A wider type is not practical.
 
 export const browserUseEndpointSchemas = {
 	'browsers.create': {
@@ -140,10 +140,11 @@ export const browserUseEndpointSchemas = {
 		output: BrowserUseEndpointOutputSchemas.runsCancel,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
+	// as is necessary: this must stay a literal. A wider type is not practical.
 	typeof browserUseEndpointsNested
 >;
 
-const defaultAuthType: AuthTypes = 'api_key' as const;
+const defaultAuthType: AuthTypes = 'api_key' as const; // as is necessary: this must stay a literal. A wider type is not practical.
 
 const browserUseEndpointMeta = {
 	'browsers.create': {
@@ -183,6 +184,7 @@ const browserUseEndpointMeta = {
 		description: 'POST /runs/{id}/cancel — cancel an in-flight run',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
+	// as is necessary: this must stay a literal. A wider type is not practical.
 	typeof browserUseEndpointsNested
 >;
 
@@ -217,7 +219,7 @@ function mergeErrorHandlers(
 }
 
 export function browseruse<const T extends BrowserUsePluginOptions>(
-	// as: the factory default is an empty object, which is not the caller's options type T.
+	// as is necessary: the factory default is an empty object, which is not the caller's options type T. A stricter default is not practical.
 	incomingOptions: BrowserUsePluginOptions & T = {} as BrowserUsePluginOptions &
 		T,
 ): ExternalBrowserUsePlugin<T> {

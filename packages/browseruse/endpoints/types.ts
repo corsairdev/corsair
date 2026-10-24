@@ -255,7 +255,7 @@ const PROXY_COUNTRY_CODES = [
 	'za',
 	'zm',
 	'zw',
-] as const;
+] as const; // as is necessary: this must stay a literal. A wider type is not practical.
 
 const RUN_MODELS = [
 	'mimo-v2.6-pro',
@@ -290,7 +290,7 @@ const RUN_MODELS = [
 	'gemini-3-flash',
 	'bu-ultrafast',
 	'bu-fast',
-] as const;
+] as const; // as is necessary: this must stay a literal. A wider type is not practical.
 
 const ProxyCountryCode = z.enum(PROXY_COUNTRY_CODES).nullable();
 const RunModel = z.enum(RUN_MODELS);
@@ -441,7 +441,7 @@ export const BrowserUseEndpointInputSchemas = {
 	runsGet: RunsGetInputSchema,
 	runsGetStatus: RunsStatusInputSchema,
 	runsCancel: RunsCancelInputSchema,
-} as const;
+} as const; // as is necessary: this must stay a literal. A wider type is not practical.
 
 export type BrowserUseEndpointInputs = {
 	[K in keyof typeof BrowserUseEndpointInputSchemas]: z.input<
@@ -475,7 +475,7 @@ export const BrowserUseEndpointOutputSchemas = {
 	runsGet: RunSummary,
 	runsGetStatus: RunStatusBody,
 	runsCancel: RunSummary,
-} as const;
+} as const; // as is necessary: this must stay a literal. A wider type is not practical.
 
 export type BrowserUseEndpointOutputs = {
 	[K in keyof typeof BrowserUseEndpointOutputSchemas]: z.infer<

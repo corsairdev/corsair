@@ -6,6 +6,6 @@ export const BrowserUseSchema = {
 		browsers: BrowserUseBrowser,
 		runs: BrowserUseRun,
 	},
-} as const;
+} as const; // as is necessary: this must stay a literal. A wider type is not practical.
 
 export { BrowserUseBrowser, BrowserUseRun, RunStatus } from './database';

@@ -1,7 +1,8 @@
 import { logEventFromContext } from 'corsair/core';
-import type { BrowserUseEndpoints } from '..';
 import { requestBrowserUse } from '../client';
-import { saveRun } from './save';
+import type { BrowserUseSaveContext } from './save';
+import { browserUseLogContext, saveRun } from './save';
+import type { BrowserUseEndpointInputs } from './types';
 import {
 	RunsCancelInputSchema,
 	RunsCancelOutputSchema,
@@ -14,10 +15,10 @@ import {
 } from './types';
 
 /** Starts an agent run and returns immediately. Poll `runs.getStatus` until terminal, then `runs.get`. */
-export const runsCreate: BrowserUseEndpoints['runsCreate'] = async (
-	ctx,
-	input,
-) => {
+export async function runsCreate(
+	ctx: BrowserUseSaveContext,
+	input: BrowserUseEndpointInputs['runsCreate'],
+) {
 	const body = RunsCreateInputSchema.parse(input);
 	const raw = await requestBrowserUse('/runs', ctx.key, {
 		method: 'POST',
@@ -32,11 +33,19 @@ export const runsCreate: BrowserUseEndpoints['runsCreate'] = async (
 		workspaceId: run.workspaceId,
 		task: body.task,
 	});
-	await logEventFromContext(ctx, 'browseruse.runs.create', {}, 'completed');
+	await logEventFromContext(
+		browserUseLogContext(ctx),
+		'browseruse.runs.create',
+		{},
+		'completed',
+	);
 	return run;
-};
+}
 
-export const runsGet: BrowserUseEndpoints['runsGet'] = async (ctx, input) => {
+export async function runsGet(
+	ctx: BrowserUseSaveContext,
+	input: BrowserUseEndpointInputs['runsGet'],
+) {
 	const validated = RunsGetInputSchema.parse(input);
 	const raw = await requestBrowserUse(
 		`/runs/${encodeURIComponent(validated.id)}`,
@@ -44,15 +53,20 @@ export const runsGet: BrowserUseEndpoints['runsGet'] = async (ctx, input) => {
 	);
 	const run = RunsGetOutputSchema.parse(raw);
 	await saveRun(ctx, run);
-	await logEventFromContext(ctx, 'browseruse.runs.get', {}, 'completed');
+	await logEventFromContext(
+		browserUseLogContext(ctx),
+		'browseruse.runs.get',
+		{},
+		'completed',
+	);
 	return run;
-};
+}
 
 /** Cheap indexed lookup. The v4 docs say to poll this, not the full run. */
-export const runsGetStatus: BrowserUseEndpoints['runsGetStatus'] = async (
-	ctx,
-	input,
-) => {
+export async function runsGetStatus(
+	ctx: BrowserUseSaveContext,
+	input: BrowserUseEndpointInputs['runsGetStatus'],
+) {
 	const validated = RunsStatusInputSchema.parse(input);
 	const raw = await requestBrowserUse(
 		`/runs/${encodeURIComponent(validated.id)}/status`,
@@ -60,14 +74,19 @@ export const runsGetStatus: BrowserUseEndpoints['runsGetStatus'] = async (
 	);
 	const status = RunsStatusOutputSchema.parse(raw);
 	await saveRun(ctx, { id: validated.id, status: status.status });
-	await logEventFromContext(ctx, 'browseruse.runs.getStatus', {}, 'completed');
+	await logEventFromContext(
+		browserUseLogContext(ctx),
+		'browseruse.runs.getStatus',
+		{},
+		'completed',
+	);
 	return status;
-};
+}
 
-export const runsCancel: BrowserUseEndpoints['runsCancel'] = async (
-	ctx,
-	input,
-) => {
+export async function runsCancel(
+	ctx: BrowserUseSaveContext,
+	input: BrowserUseEndpointInputs['runsCancel'],
+) {
 	const validated = RunsCancelInputSchema.parse(input);
 	const raw = await requestBrowserUse(
 		`/runs/${encodeURIComponent(validated.id)}/cancel`,
@@ -76,6 +95,11 @@ export const runsCancel: BrowserUseEndpoints['runsCancel'] = async (
 	);
 	const run = RunsCancelOutputSchema.parse(raw);
 	await saveRun(ctx, run);
-	await logEventFromContext(ctx, 'browseruse.runs.cancel', {}, 'completed');
+	await logEventFromContext(
+		browserUseLogContext(ctx),
+		'browseruse.runs.cancel',
+		{},
+		'completed',
+	);
 	return run;
-};
+}
