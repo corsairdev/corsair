@@ -66,7 +66,10 @@ export const updateService: RenderEndpoints['updateService'] = async (
 export const triggerDeploy: RenderEndpoints['triggerDeploy'] = async (
 	ctx,
 	input,
-) => serviceRequest<unknown>(ctx, input.serviceId, '/deploys', 'POST');
+) => {
+	const { serviceId, ...body } = input;
+	return serviceRequest<unknown>(ctx, serviceId, '/deploys', 'POST', body);
+};
 
 export const restartService: RenderEndpoints['restartService'] = async (
 	ctx,
