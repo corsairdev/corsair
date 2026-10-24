@@ -769,7 +769,9 @@ function withRenderSchemas<T extends Record<string, unknown>>(
 		if (typeof value === 'function') {
 			const schema =
 				renderEndpointSchemas[operation as keyof typeof renderEndpointSchemas];
-			if (!schema) continue;
+			if (!schema) {
+				throw new Error(`Missing Render endpoint schema for ${operation}`);
+			}
 			const endpoint = value as (
 				ctx: unknown,
 				input: unknown,

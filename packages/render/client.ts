@@ -34,7 +34,8 @@ export async function makeRenderRequest<T>(
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 		// Render request bodies differ by operation and are validated by the
 		// corresponding endpoint schema before reaching this transport boundary.
-		// Render uses object bodies for most writes and array bodies for replacement operations.
+		// Stricter typing is not feasible here because Render uses object bodies
+		// for most writes and array bodies for replacement operations.
 		body?: Record<string, unknown> | unknown[];
 		query?: Record<string, string | string[] | number | boolean | undefined>;
 	} = {},

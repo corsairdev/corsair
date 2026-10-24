@@ -49,7 +49,8 @@ const ResourceInputSchema = z
 		cursor: z.string().optional(),
 	})
 	.passthrough();
-// Render resource payloads are provider-defined and may gain fields independently.
+// Stricter typing is not feasible because Render resource payloads are
+// provider-defined and may gain fields independently.
 const ResourceOutputSchema = z.record(z.string(), z.unknown());
 const ResourceListOutputSchema = z.array(ResourceOutputSchema);
 
@@ -163,7 +164,8 @@ export type RenderEndpointOutputs = {
 	retrieveService: ServiceOutput;
 	deleteService: z.infer<typeof EmptyOutputSchema>;
 	updateService: ServiceOutput;
-	// These commands return provider-specific deployment acknowledgements.
+	// Stricter typing is not feasible because these commands return
+	// provider-specific deployment acknowledgements.
 	triggerDeploy: unknown;
 	restartService: unknown;
 	suspendService: unknown;

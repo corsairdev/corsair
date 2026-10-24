@@ -2,7 +2,8 @@ import type { RenderEndpoints } from '..';
 import { makeRenderRequest } from '../client';
 
 type ResourceContext = { key: string };
-// Render environment payloads vary by operation and are validated at the plugin boundary.
+// Stricter typing is not feasible for this shared adapter because Render
+// environment operations use different request and query fields.
 type ResourceInput = Record<string, unknown>;
 
 const request = <T>(

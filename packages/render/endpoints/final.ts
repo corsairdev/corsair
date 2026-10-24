@@ -2,7 +2,8 @@ import type { RenderEndpoints } from '..';
 import { makeRenderRequest } from '../client';
 
 type Context = { key: string };
-// Final operations share path identifiers but retain provider-specific request fields.
+// Stricter typing is not feasible for this shared adapter because final
+// operations use different provider-specific request bodies.
 type Input = Record<string, unknown>;
 
 const call = <T>(

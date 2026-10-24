@@ -2,7 +2,8 @@ import type { RenderEndpoints } from '..';
 import { makeRenderRequest } from '../client';
 
 type Context = { key: string };
-// Shared query input preserves endpoint-specific Render filters until validation.
+// Stricter typing is not feasible for this shared adapter because each Render
+// automation operation has different provider-specific query filters.
 type Input = Record<string, unknown>;
 
 const get = <T>(ctx: Context, path: string, input: Input) =>

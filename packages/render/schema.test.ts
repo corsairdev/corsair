@@ -58,6 +58,30 @@ describe('Render schema', () => {
 			expect(typeof schemas.output.safeParse).toBe('function');
 		}
 	});
+
+	it('keeps every registered endpoint behind a schema boundary', () => {
+		const plugin = render({ key: 'secret' });
+		const paths: string[] = [];
+		const visit = (value: unknown, prefix: string[] = []) => {
+			if (typeof value === 'function') {
+				paths.push(prefix.join('.'));
+				return;
+			}
+			if (value && typeof value === 'object') {
+				for (const [key, child] of Object.entries(value)) {
+					visit(child, [...prefix, key]);
+				}
+			}
+		};
+
+		visit(plugin.endpoints);
+		expect(paths).toHaveLength(Object.keys(renderEndpointSchemas).length);
+		for (const path of paths) {
+			expect(
+				renderEndpointSchemas[path as keyof typeof renderEndpointSchemas],
+			).toBeDefined();
+		}
+	});
 });
 
 // Per .github/PLUGIN_PR_RULES.md (R2), every implemented endpoint
