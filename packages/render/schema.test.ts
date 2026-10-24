@@ -30,6 +30,7 @@ describe('Render schema', () => {
 
 	it('enforces endpoint schemas at the bound endpoint boundary', async () => {
 		const request = jest.mocked(makeRenderRequest);
+		request.mockClear();
 		request.mockResolvedValue([]);
 		const plugin = render({ key: 'secret' });
 		const ctx = {
@@ -45,6 +46,9 @@ describe('Render schema', () => {
 
 		await expect(plugin.endpoints.services.list(ctx, {})).resolves.toEqual([]);
 		await expect(plugin.endpoints.projects.list(ctx, {})).resolves.toEqual([]);
+
+		request.mockResolvedValue({ invalid: true });
+		await expect(plugin.endpoints.services.list(ctx, {})).rejects.toThrow();
 
 		request.mockResolvedValue(undefined);
 		await expect(
@@ -85,6 +89,7 @@ describe('Render schema', () => {
 
 	it('exercises every registered operation through its public boundary', async () => {
 		const request = jest.mocked(makeRenderRequest);
+		request.mockClear();
 		const plugin = render({ key: 'secret' });
 		const ctx = {
 			key: 'secret',
@@ -116,8 +121,10 @@ describe('Render schema', () => {
 			{},
 			undefined,
 		];
+		let invokedOperations = 0;
 		const visit = async (value: unknown, prefix: string[] = []) => {
 			if (typeof value === 'function') {
+				invokedOperations += 1;
 				const path = prefix.join('.') as keyof typeof renderEndpointSchemas;
 				const contract = renderEndpointSchemas[path];
 				if (!contract) throw new Error(`Missing contract for ${path}`);
@@ -143,7 +150,8 @@ describe('Render schema', () => {
 		};
 
 		await visit(plugin.endpoints);
-		expect(request).toHaveBeenCalled();
+		expect(invokedOperations).toBe(Object.keys(renderEndpointSchemas).length);
+		expect(request).toHaveBeenCalledTimes(invokedOperations);
 	});
 });
 
