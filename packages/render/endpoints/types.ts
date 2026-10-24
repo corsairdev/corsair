@@ -37,6 +37,11 @@ const ListServicesOutputSchema = z.array(
 );
 
 const ServiceIdInputSchema = z.object({ serviceId: z.string().min(1) });
+const TriggerDeployInputSchema = ServiceIdInputSchema.extend({
+	commitId: z.string().min(1).optional(),
+	buildId: z.string().min(1).optional(),
+	clearCache: z.boolean().optional(),
+});
 const ServiceOutputSchema = RenderServiceSchema;
 const EmptyOutputSchema = z.union([z.object({}), z.undefined()]);
 const ResourceInputSchema = z
@@ -74,7 +79,11 @@ export type RenderEndpointInputs = {
 	retrieveService: ServiceIdInput;
 	deleteService: ServiceIdInput;
 	updateService: ServiceIdInput & { name?: string; autoDeployTrigger?: string };
-	triggerDeploy: ServiceIdInput;
+	triggerDeploy: ServiceIdInput & {
+		commitId?: string;
+		buildId?: string;
+		clearCache?: boolean;
+	};
 	restartService: ServiceIdInput;
 	suspendService: ServiceIdInput;
 	resumeService: ServiceIdInput;
@@ -279,7 +288,7 @@ export const RenderEndpointInputSchemas = {
 		name: z.string().min(1).optional(),
 		autoDeployTrigger: z.string().optional(),
 	}),
-	triggerDeploy: ServiceIdInputSchema,
+	triggerDeploy: TriggerDeployInputSchema,
 	restartService: ServiceIdInputSchema,
 	suspendService: ServiceIdInputSchema,
 	resumeService: ServiceIdInputSchema,

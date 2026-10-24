@@ -7,6 +7,8 @@ import {
 	listOwners,
 	listProjects,
 	listServices,
+	retrieveService,
+	triggerDeploy,
 	updateOwnerLogStream,
 	updateRoutes,
 } from './endpoints';
@@ -98,6 +100,39 @@ describe('Render service endpoints', () => {
 				body: [],
 			},
 		);
+	});
+
+	it('asserts service retrieve, deploy, and delete requests', async () => {
+		request.mockResolvedValue({});
+		await retrieveService({ key: 'secret' } as never, {
+			serviceId: 'srv-1',
+		});
+		expect(request).toHaveBeenCalledWith('/v1/services/srv-1', 'secret', {
+			method: 'GET',
+			body: undefined,
+		});
+
+		await triggerDeploy(
+			{ key: 'secret' } as never,
+			{
+				serviceId: 'srv-1',
+				commitId: 'commit-1',
+			} as never,
+		);
+		expect(request).toHaveBeenCalledWith(
+			'/v1/services/srv-1/deploys',
+			'secret',
+			{
+				method: 'POST',
+				body: { commitId: 'commit-1' },
+			},
+		);
+
+		await deleteService({ key: 'secret' } as never, { serviceId: 'srv-1' });
+		expect(request).toHaveBeenCalledWith('/v1/services/srv-1', 'secret', {
+			method: 'DELETE',
+			body: undefined,
+		});
 	});
 
 	it('rejects service IDs that can escape the service path', async () => {
