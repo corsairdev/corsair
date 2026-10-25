@@ -9,16 +9,11 @@ export async function POST(request: NextRequest) {
 		headers[key] = value;
 	});
 
-	const contentType = request.headers.get('content-type');
-
-	let body: string | Record<string, unknown>;
-
-	if (contentType?.includes('application/json')) {
-		body = await request.json();
-	} else {
-		const text = await request.text();
-		body = text && text.trim() ? text : {};
-	}
+	// Pass the body exactly as received. GitHub, Slack and Discord sign the raw
+	// bytes, and parsing then re-serializing JSON can change them, which fails
+	// the signature check. processWebhook parses the string itself.
+	const text = await request.text();
+	const body: string | Record<string, unknown> = text.trim() ? text : {};
 
 	const result = await processWebhook(corsair, headers, body);
 
