@@ -2,7 +2,7 @@ import {
 	agentLocalUserBulkDeletesCounts,
 	agentLocalUserBulkDeletesCreate,
 	agentLocalUserBulkDeletesGet,
-} from './agent-local-user-bulk-deletes';
+} from './agent-local-users';
 export const AgentLocalUserBulkDeletes = {
 	agentLocalUserBulkDeletesCreate,
 	agentLocalUserBulkDeletesGet,
@@ -42,7 +42,7 @@ export const ApiKeys = {
 import {
 	applicationCategoriesGet,
 	applicationCategoriesList,
-} from './application-categories';
+} from './applications';
 export const ApplicationCategories = {
 	applicationCategoriesList,
 	applicationCategoriesGet,
@@ -97,7 +97,7 @@ import {
 	collectionUsersDelete,
 	collectionUsersGet,
 	collectionUsersList,
-} from './collection-users';
+} from './users';
 export const CollectionUsers = {
 	collectionUsersList,
 	collectionUsersCreate,
@@ -105,7 +105,7 @@ export const CollectionUsers = {
 	collectionUsersDelete,
 };
 
-import { currentUsersGet, currentUsersUpdate } from './current-users';
+import { currentUsersGet, currentUsersUpdate } from './users';
 export const CurrentUsers = { currentUsersGet, currentUsersUpdate };
 
 import { dictionaryQpMethods } from './dictionary';
@@ -117,7 +117,7 @@ import {
 	domainNotesDelete,
 	domainNotesGet,
 	domainNotesUpdate,
-} from './domain-notes';
+} from './domains';
 export const DomainNotes = {
 	domainNotesGet,
 	domainNotesUpdate,
@@ -152,7 +152,7 @@ export const EnterpriseConnections = {
 	enterpriseConnectionsDelete,
 };
 
-import { invoicesCurrent, invoicesGet, invoicesList } from './invoices';
+import { invoicesCurrent, invoicesGet, invoicesList } from './billings';
 export const Invoices = { invoicesCurrent, invoicesList, invoicesGet };
 
 import {
@@ -206,7 +206,7 @@ import {
 	networkLanIpsGet,
 	networkLanIpsList,
 	networkLanIpsUpdate,
-} from './network-lan-ips';
+} from './networks';
 export const NetworkLanIps = {
 	networkLanIpsList,
 	networkLanIpsGet,
@@ -220,7 +220,7 @@ import {
 	networkSubnetsList,
 	networkSubnetsListAll,
 	networkSubnetsUpdate,
-} from './network-subnets';
+} from './networks';
 export const NetworkSubnets = {
 	networkSubnetsListAll,
 	networkSubnetsList,
@@ -282,7 +282,7 @@ import {
 	organizationUsersList,
 	organizationUsersResendInvite,
 	organizationUsersUpdate,
-} from './organization-users';
+} from './users';
 export const OrganizationUsers = {
 	organizationUsersList,
 	organizationUsersCreate,
@@ -322,7 +322,7 @@ import {
 	policiesBulkActionsAddBlocklistDomains,
 	policiesBulkActionsRemoveAllowlistDomains,
 	policiesBulkActionsRemoveBlocklistDomains,
-} from './policies-bulk-actions';
+} from './policies';
 export const PoliciesBulkActions = {
 	policiesBulkActionsAddAllowlistDomains,
 	policiesBulkActionsRemoveAllowlistDomains,
@@ -375,7 +375,7 @@ export const Policies = {
 	policiesUpdatePermissiveMode,
 };
 
-import { policyIpsGet, policyIpsList } from './policy-ips';
+import { policyIpsGet, policyIpsList } from './policies';
 export const PolicyIps = { policyIpsList, policyIpsGet };
 
 import { psaIntegrationsRedirectLink } from './psa-integrations';
@@ -401,7 +401,7 @@ export const ScheduledPolicies = {
 import {
 	scheduledReportPreviewsCreate,
 	scheduledReportPreviewsGet,
-} from './scheduled-report-previews';
+} from './scheduled-reports';
 export const ScheduledReportPreviews = {
 	scheduledReportPreviewsGet,
 	scheduledReportPreviewsCreate,
@@ -503,14 +503,14 @@ export const TrafficReports = {
 	trafficReportsTotalApplicationsCollectionsStats,
 };
 
-import { trialsCreate } from './trials';
+import { trialsCreate } from './billings';
 export const Trials = { trialsCreate };
 
 import {
 	userAgentBulkDeletesCounts,
 	userAgentBulkDeletesCreate,
 	userAgentBulkDeletesGet,
-} from './user-agent-bulk-deletes';
+} from './user-agents';
 export const UserAgentBulkDeletes = {
 	userAgentBulkDeletesCreate,
 	userAgentBulkDeletesGet,
@@ -522,7 +522,7 @@ import {
 	userAgentBulkUpdatesCreate,
 	userAgentBulkUpdatesGet,
 	userAgentBulkUpdatesHasMixed,
-} from './user-agent-bulk-updates';
+} from './user-agents';
 export const UserAgentBulkUpdates = {
 	userAgentBulkUpdatesCreate,
 	userAgentBulkUpdatesGet,
@@ -534,17 +534,14 @@ import {
 	userAgentCleanupsCreate,
 	userAgentCleanupsGet,
 	userAgentCleanupsUpdate,
-} from './user-agent-cleanups';
+} from './user-agents';
 export const UserAgentCleanups = {
 	userAgentCleanupsCreate,
 	userAgentCleanupsGet,
 	userAgentCleanupsUpdate,
 };
 
-import {
-	userAgentReleasesList,
-	userAgentReleasesRelay,
-} from './user-agent-releases';
+import { userAgentReleasesList, userAgentReleasesRelay } from './user-agents';
 export const UserAgentReleases = {
 	userAgentReleasesList,
 	userAgentReleasesRelay,
@@ -581,18 +578,15 @@ import {
 } from './users';
 export const Users = { usersList, usersListAll, usersGet, usersChangePassword };
 
-import { agentLocalUsersV2Counts } from './agent-local-users-v2';
+import { agentLocalUsersV2Counts } from './agent-local-users';
 export const AgentLocalUsersV2 = { agentLocalUsersV2Counts };
 
-import { currentUserOrgUiSettingsSuppressLicenseWarning } from './current-user-org-ui-settings';
+import { currentUserOrgUiSettingsSuppressLicenseWarning } from './users';
 export const CurrentUserOrgUiSettings = {
 	currentUserOrgUiSettingsSuppressLicenseWarning,
 };
 
-import {
-	currentUserUiSettingsGet,
-	currentUserUiSettingsUpdate,
-} from './current-user-ui-settings';
+import { currentUserUiSettingsGet, currentUserUiSettingsUpdate } from './users';
 export const CurrentUserUiSettings = {
 	currentUserUiSettingsGet,
 	currentUserUiSettingsUpdate,
@@ -627,7 +621,7 @@ import {
 	dictionaryV2AiApplications,
 	dictionaryV2CyberSightActivityTypes,
 	dictionaryV2VpnSettingsStateTypes,
-} from './dictionary-v2';
+} from './dictionary';
 export const DictionaryV2 = {
 	dictionaryV2AiApplications,
 	dictionaryV2CyberSightActivityTypes,
@@ -641,7 +635,7 @@ import {
 	scheduledReportsV2Get,
 	scheduledReportsV2List,
 	scheduledReportsV2Update,
-} from './scheduled-reports-v2';
+} from './scheduled-reports';
 export const ScheduledReportsV2 = {
 	scheduledReportsV2List,
 	scheduledReportsV2Create,
@@ -666,7 +660,7 @@ export const UnblockRequests = {
 	unblockRequestsDecision,
 };
 
-import { userAgentsV2UpdateSettings } from './user-agents-v2';
+import { userAgentsV2UpdateSettings } from './user-agents';
 export const UserAgentsV2 = { userAgentsV2UpdateSettings };
 
 import {

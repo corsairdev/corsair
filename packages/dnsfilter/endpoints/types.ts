@@ -2019,6 +2019,8 @@ export type OrganizationsCancelResponse = z.infer<
 // Promote
 const OrganizationsPromoteToMspInputSchema = z.object({
 	plan: z.string().optional(),
+	// Zapier passthrough parameters are arbitrary key/value pairs owned by the
+	// caller, so no stricter type is possible.
 	zapier_params: z.record(z.string(), z.unknown()).optional(),
 });
 export type OrganizationsPromoteToMspInput = z.infer<
@@ -4777,6 +4779,8 @@ const UnblockRequestsListInputSchema = z.object({
 		.optional(),
 	resolved_date: z
 		.object({
+			// Filter values are free-form per field (string, number, or nested object),
+			// so `unknown` is the narrowest accurate type.
 			value: z.record(z.string(), z.unknown()).optional(),
 			operator: z.string().optional(),
 		})
@@ -4798,6 +4802,7 @@ const UnblockRequestsListInputSchema = z.object({
 	tab: z.string().optional(),
 	time_of_attempt: z
 		.object({
+			// Same free-form filter value as above.
 			value: z.record(z.string(), z.unknown()).optional(),
 			operator: z.string().optional(),
 		})

@@ -288,7 +288,10 @@ export const UserSpecSchema = z.object({
 export type UserSpec = z.infer<typeof UserSpecSchema>;
 
 export const DomainNotesSpecSchema = z.object({
+	// Per-domain note overrides keyed by domain; the spec leaves the values
+	// undocumented, so `unknown` is the narrowest accurate type.
 	allow_notes: z.record(z.string(), z.unknown()).optional(),
+	// Paired with allow_notes above; values are free-form per domain.
 	block_notes: z.record(z.string(), z.unknown()).optional(),
 });
 export type DomainNotesSpec = z.infer<typeof DomainNotesSpecSchema>;
@@ -2591,6 +2594,8 @@ export type UserUiSetting = z.infer<typeof UserUiSettingSchema>;
 export const DashboardSchema = z.object({
 	id: z.number().int().optional(),
 	name: z.string().optional(),
+	// Dashboard tiles are a free-form JSON blob the spec does not describe, so
+	// the values stay `unknown` rather than being guessed.
 	data: z.record(z.string(), z.unknown()).optional(),
 	is_public: z.boolean().optional(),
 	created_at: z.string().optional(),
@@ -2606,6 +2611,7 @@ export type Dashboard = z.infer<typeof DashboardSchema>;
 
 export const DashboardCreateSchema = z.object({
 	name: z.string(),
+	// Same free-form dashboard payload, required on create.
 	data: z.record(z.string(), z.unknown()),
 	is_public: z.boolean().optional(),
 });
@@ -2618,6 +2624,7 @@ export type DashboardCreateSpec = z.infer<typeof DashboardCreateSpecSchema>;
 
 export const DashboardUpdateSchema = z.object({
 	name: z.string().optional(),
+	// Same free-form dashboard payload, optional on update.
 	data: z.record(z.string(), z.unknown()).optional(),
 	is_public: z.boolean().optional(),
 });
