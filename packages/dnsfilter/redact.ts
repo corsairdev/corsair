@@ -9,6 +9,8 @@ const SENSITIVE_KEY =
 export function redactSensitive(value: unknown): Record<string, unknown> {
 	const redacted = redact(value, 0);
 	if (Array.isArray(redacted)) return { values: redacted };
+	// Safe: `redact` returns objects unchanged in shape, so a non-null,
+	// non-array object is the event-log record we built above.
 	return typeof redacted === 'object' && redacted !== null
 		? (redacted as Record<string, unknown>)
 		: {};
@@ -21,6 +23,7 @@ function redact(value: unknown, depth: number): unknown {
 		return value.map((entry) => redact(entry, depth + 1));
 	}
 	if (typeof value !== 'object' || value === null) return value;
+	// Safe: the guard above leaves only non-null, non-array objects.
 	const source = value as Record<string, unknown>;
 	const result: Record<string, unknown> = {};
 	for (const [key, entry] of Object.entries(source)) {

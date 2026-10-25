@@ -6,6 +6,7 @@ import type { DnsfilterContext } from './index';
 type Row = Record<string, unknown>;
 
 function asRecord(value: unknown): Row | undefined {
+	// Safe: the guard is exactly the property the cast asserts.
 	return typeof value === 'object' && value !== null && !Array.isArray(value)
 		? (value as Row)
 		: undefined;
@@ -24,6 +25,7 @@ function collectRows(payload: unknown): Row[] {
 		return [single];
 	const collections = Object.values(single).filter(
 		Array.isArray,
+		// Safe: the predicate above keeps only array values.
 	) as unknown[][];
 	if (collections.length === 1) {
 		return (collections[0] ?? [])

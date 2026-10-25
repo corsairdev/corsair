@@ -48,6 +48,17 @@ pnpm add @corsair-dev/dnsfilter
 | `collectionUsers.delete` | `dnsfilter.api.collectionUsers.delete` | `destructive` | Delete a collection user |
 | `collectionUsers.get` | `dnsfilter.api.collectionUsers.get` | `read` | Get a collection user |
 | `collectionUsers.list` | `dnsfilter.api.collectionUsers.list` | `read` | List collection users |
+| `csvExports.agentLocalUsersCreate` | `dnsfilter.api.csvExports.agentLocalUsersCreate` | `write` | Create agent local users CSV export |
+| `csvExports.agentLocalUsersGet` | `dnsfilter.api.csvExports.agentLocalUsersGet` | `read` | Get agent local users CSV export |
+| `csvExports.cyberSightCreate` | `dnsfilter.api.csvExports.cyberSightCreate` | `write` | Create CyberSight CSV export |
+| `csvExports.cyberSightGet` | `dnsfilter.api.csvExports.cyberSightGet` | `read` | Get CyberSight CSV export |
+| `csvExports.networksCreate` | `dnsfilter.api.csvExports.networksCreate` | `write` | Create networks CSV export |
+| `csvExports.networksGet` | `dnsfilter.api.csvExports.networksGet` | `read` | Get networks CSV export |
+| `csvExports.unblockRequestsCreate` | `dnsfilter.api.csvExports.unblockRequestsCreate` | `write` | Create unblock requests CSV export |
+| `csvExports.unblockRequestsGet` | `dnsfilter.api.csvExports.unblockRequestsGet` | `read` | Get unblock requests CSV export |
+| `csvExports.userAgentCreate` | `dnsfilter.api.csvExports.userAgentCreate` | `write` | Create user agent CSV export |
+| `csvExports.userAgentGet` | `dnsfilter.api.csvExports.userAgentGet` | `read` | Get user agent CSV export |
+| `csvExports.userAgentsCsv` | `dnsfilter.api.csvExports.userAgentsCsv` | `read` | Download user agents CSV |
 | `currentUserOrgUiSettings.suppressLicenseWarning` | `dnsfilter.api.currentUserOrgUiSettings.suppressLicenseWarning` | `write` | Suppress license warning for current user org UI settings |
 | `currentUsers.get` | `dnsfilter.api.currentUsers.get` | `read` | Get a current user |
 | `currentUsers.update` | `dnsfilter.api.currentUsers.update` | `write` | Update a current user |

@@ -25,13 +25,17 @@ export type DnsfilterRequestOptions = {
 	method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 	// Values for `{placeholders}` in the path.
 	path?: Record<string, string | number>;
-	// Nested objects become `key[subkey]` pairs.
+	// Nested objects become `key[subkey]` pairs. Values are heterogeneous
+	// (strings, numbers, booleans, nested page objects) and already validated
+	// by the endpoint's zod input schema, so `unknown` avoids per-key casts.
 	query?: Record<string, unknown>;
-	// JSON:API envelope; the endpoint's input schema checks the shape.
+	// JSON:API envelope; the endpoint's input schema checks the shape, which is
+	// why the transport itself does not restate it.
 	body?: unknown;
 };
 
 function asRecord(value: unknown): Record<string, unknown> | undefined {
+	// Safe: typeof object + non-null + non-array is exactly what the cast asserts.
 	return typeof value === 'object' && value !== null && !Array.isArray(value)
 		? (value as Record<string, unknown>)
 		: undefined;
@@ -71,6 +75,8 @@ function withoutUndefined(
 function withoutUndefinedBody(body: unknown): unknown {
 	if (!body || typeof body !== 'object') return body;
 	if (Array.isArray(body)) return body;
+	// Safe: the guard above proves a non-array object, so its entries are
+	// string-keyed.
 	const entries = Object.entries(body as Record<string, unknown>).filter(
 		([, value]) => value !== undefined,
 	);

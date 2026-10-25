@@ -1,6 +1,10 @@
 import { z } from 'zod';
 import * as Models from './models';
 
+// Fields the provider documents as free-form (dashboard data, Zapier
+// passthrough, unblock-request filter values) stay `z.unknown()` rather than
+// inventing a shape; everything documented stays concrete.
+
 // Create
 const AgentLocalUserBulkDeletesCreateInputSchema = z.object({
 	block_page: Models.StringContainsOpSchema.optional(),
@@ -42,7 +46,8 @@ export type AgentLocalUserBulkDeletesGetResponse = z.infer<
 
 // Count
 const AgentLocalUserBulkDeletesCountsInputSchema = z.object({
-	id: z.number().int().optional(),
+	// Required by GET /v1/agent_local_user_bulk_deletes/counts.
+	id: z.number().int(),
 });
 export type AgentLocalUserBulkDeletesCountsInput = z.infer<
 	typeof AgentLocalUserBulkDeletesCountsInputSchema
@@ -320,7 +325,8 @@ export type ApplicationsGetResponse = z.infer<
 
 // Show
 const BillingsGetInputSchema = z.object({
-	organization_id: z.number().int().optional(),
+	// Required by GET /v1/billing.
+	organization_id: z.number().int(),
 });
 export type BillingsGetInput = z.infer<typeof BillingsGetInputSchema>;
 
@@ -636,7 +642,11 @@ const DomainNotesGetInputSchema = z.object({
 });
 export type DomainNotesGetInput = z.infer<typeof DomainNotesGetInputSchema>;
 
-const DomainNotesGetResponseSchema = z.record(z.string(), z.unknown());
+// The document types this as a map of domain -> note set (additionalProperties).
+const DomainNotesGetResponseSchema = z.record(
+	z.string(),
+	Models.DomainNotesSpecSchema,
+);
 export type DomainNotesGetResponse = z.infer<
 	typeof DomainNotesGetResponseSchema
 >;
@@ -652,7 +662,11 @@ export type DomainNotesUpdateInput = z.infer<
 	typeof DomainNotesUpdateInputSchema
 >;
 
-const DomainNotesUpdateResponseSchema = z.record(z.string(), z.unknown());
+// Map of domain -> note set, per the document's `additionalProperties`.
+const DomainNotesUpdateResponseSchema = z.record(
+	z.string(),
+	Models.DomainNotesSpecSchema,
+);
 export type DomainNotesUpdateResponse = z.infer<
 	typeof DomainNotesUpdateResponseSchema
 >;
@@ -662,14 +676,13 @@ const DomainNotesBatchUpdateInputSchema = z.object({
 	id: z.number().int(),
 	resource: z.enum(['policies', 'msps', 'organizations']),
 	append: z.boolean().optional(),
-	notes: z
-		.array(
-			z.object({
-				domain: z.string().optional(),
-				note: z.string().optional(),
-			}),
-		)
-		.optional(),
+	// Required by PATCH /v1/notes/{resource}/{id}/batch_update.
+	notes: z.array(
+		z.object({
+			domain: z.string().optional(),
+			note: z.string().optional(),
+		}),
+	),
 	organization_ids: z.array(z.number().int()).optional(),
 	single_note: z.string().optional(),
 	type: z.enum(['allow', 'block']).optional(),
@@ -678,7 +691,11 @@ export type DomainNotesBatchUpdateInput = z.infer<
 	typeof DomainNotesBatchUpdateInputSchema
 >;
 
-const DomainNotesBatchUpdateResponseSchema = z.record(z.string(), z.unknown());
+// Map of domain -> note set, per the document's `additionalProperties`.
+const DomainNotesBatchUpdateResponseSchema = z.record(
+	z.string(),
+	Models.DomainNotesSpecSchema,
+);
 export type DomainNotesBatchUpdateResponse = z.infer<
 	typeof DomainNotesBatchUpdateResponseSchema
 >;
@@ -693,7 +710,11 @@ export type DomainNotesDeleteInput = z.infer<
 	typeof DomainNotesDeleteInputSchema
 >;
 
-const DomainNotesDeleteResponseSchema = z.record(z.string(), z.unknown());
+// Map of domain -> note set, per the document's `additionalProperties`.
+const DomainNotesDeleteResponseSchema = z.record(
+	z.string(),
+	Models.DomainNotesSpecSchema,
+);
 export type DomainNotesDeleteResponse = z.infer<
 	typeof DomainNotesDeleteResponseSchema
 >;
@@ -702,13 +723,18 @@ export type DomainNotesDeleteResponse = z.infer<
 const DomainNotesBatchDestroyInputSchema = z.object({
 	id: z.number().int(),
 	resource: z.enum(['policies', 'msps', 'organizations']),
-	domains: z.string().optional(),
+	// Required by DELETE /v1/notes/{resource}/{id}/notes/batch_destroy.
+	domains: z.string(),
 });
 export type DomainNotesBatchDestroyInput = z.infer<
 	typeof DomainNotesBatchDestroyInputSchema
 >;
 
-const DomainNotesBatchDestroyResponseSchema = z.record(z.string(), z.unknown());
+// Map of domain -> note set, per the document's `additionalProperties`.
+const DomainNotesBatchDestroyResponseSchema = z.record(
+	z.string(),
+	Models.DomainNotesSpecSchema,
+);
 export type DomainNotesBatchDestroyResponse = z.infer<
 	typeof DomainNotesBatchDestroyResponseSchema
 >;
@@ -746,8 +772,9 @@ export type DomainsBulkLookupResponse = z.infer<
 // Suggest threat
 const DomainsSuggestThreatInputSchema = z.object({
 	categories: z.string().optional(),
-	fqdn: z.string().optional(),
-	notes: z.string().optional(),
+	// Required by POST /v1/domains/suggest_threat.
+	fqdn: z.string(),
+	notes: z.string(),
 });
 export type DomainsSuggestThreatInput = z.infer<
 	typeof DomainsSuggestThreatInputSchema
@@ -760,7 +787,8 @@ export type DomainsSuggestThreatResponse = z.infer<
 
 // Get extant
 const EnterpriseConnectionsListInputSchema = z.object({
-	organization_id: z.number().int().optional(),
+	// Required by GET /v1/enterprise_connections.
+	organization_id: z.number().int(),
 });
 export type EnterpriseConnectionsListInput = z.infer<
 	typeof EnterpriseConnectionsListInputSchema
@@ -899,7 +927,8 @@ export type InvoicesCurrentResponse = z.infer<
 
 // Get invoices
 const InvoicesListInputSchema = z.object({
-	organization_id: z.number().int().optional(),
+	// Required by GET /v1/invoices.
+	organization_id: z.number().int(),
 });
 export type InvoicesListInput = z.infer<typeof InvoicesListInputSchema>;
 
@@ -909,7 +938,8 @@ export type InvoicesListResponse = z.infer<typeof InvoicesListResponseSchema>;
 // Get invoice
 const InvoicesGetInputSchema = z.object({
 	id: z.number().int(),
-	organization_id: z.number().int().optional(),
+	// Required by GET /v1/invoices/{id}.
+	organization_id: z.number().int(),
 });
 export type InvoicesGetInput = z.infer<typeof InvoicesGetInputSchema>;
 
@@ -1148,8 +1178,9 @@ export type MacAddressesDeleteResponse = z.infer<
 // Get usage
 const MetricsOrganizationUsageInputSchema = z.object({
 	id: z.number().int(),
-	from: z.string().optional(),
-	to: z.string().optional(),
+	// Both bounds are required by GET /v1/metrics/organization_usage/{id}.
+	from: z.string(),
+	to: z.string(),
 });
 export type MetricsOrganizationUsageInput = z.infer<
 	typeof MetricsOrganizationUsageInputSchema
@@ -1183,8 +1214,9 @@ export type MetricsOrganizationUsageResponse = z.infer<
 // Get usage detailed
 const MetricsOrganizationUsageDetailedInputSchema = z.object({
 	id: z.number().int(),
-	from: z.string().optional(),
-	to: z.string().optional(),
+	// Both bounds are required by GET /v1/metrics/organization_usage_detailed/{id}.
+	from: z.string(),
+	to: z.string(),
 });
 export type MetricsOrganizationUsageDetailedInput = z.infer<
 	typeof MetricsOrganizationUsageDetailedInputSchema
@@ -1453,7 +1485,8 @@ const NetworksMspInputSchema = z.object({
 	basic_info: z.boolean().optional(),
 	count_network_ips: z.boolean().optional(),
 	force_truncate_ips: z.boolean().optional(),
-	organization_id: z.number().int().optional(),
+	// Required by GET /v1/networks/msp.
+	organization_id: z.number().int(),
 	page: z
 		.object({
 			number: z.number().int().optional(),
@@ -1476,7 +1509,8 @@ export type NetworksMspResponse = z.infer<typeof NetworksMspResponseSchema>;
 const NetworksMspAllInputSchema = z.object({
 	count_network_ips: z.boolean().optional(),
 	force_truncate_ips: z.boolean().optional(),
-	organization_id: z.number().int().optional(),
+	// Required by GET /v1/networks/msp/all.
+	organization_id: z.number().int(),
 	page: z
 		.object({
 			number: z.number().int().optional(),
@@ -1506,7 +1540,8 @@ export type NetworksGeoResponse = z.infer<typeof NetworksGeoResponseSchema>;
 
 // Get by IP
 const NetworksLookupInputSchema = z.object({
-	requesting_ip_address: z.string().optional(),
+	// Required by GET /v1/networks/lookup.
+	requesting_ip_address: z.string(),
 });
 export type NetworksLookupInput = z.infer<typeof NetworksLookupInputSchema>;
 
@@ -1992,6 +2027,7 @@ export type OrganizationsPromoteToMspInput = z.infer<
 
 const OrganizationsPromoteToMspResponseSchema = z.record(
 	z.string(),
+	// The spec documents no shape for the promotion result.
 	z.unknown(),
 );
 export type OrganizationsPromoteToMspResponse = z.infer<
@@ -2174,9 +2210,10 @@ export type PoliciesDeleteResponse = z.infer<
 
 // Get application
 const PoliciesApplicationInputSchema = z.object({
-	application_id: z.number().int().optional(),
+	// Required by GET /v1/policies/application.
+	application_id: z.number().int(),
 	name: z.string().optional(),
-	organization_id: z.number().int().optional(),
+	organization_id: z.number().int(),
 	policy_ids: z.array(z.number().int()).optional(),
 });
 export type PoliciesApplicationInput = z.infer<
@@ -2192,10 +2229,11 @@ export type PoliciesApplicationResponse = z.infer<
 
 // Update application
 const PoliciesApplicationUpdateInputSchema = z.object({
-	allow_policies: z.array(z.number().int()).optional(),
-	application_id: z.number().int().optional(),
-	block_policies: z.array(z.number().int()).optional(),
-	organization_id: z.number().int().optional(),
+	// All four are required by POST /v1/policies/application_update.
+	allow_policies: z.array(z.number().int()),
+	application_id: z.number().int(),
+	block_policies: z.array(z.number().int()),
+	organization_id: z.number().int(),
 });
 export type PoliciesApplicationUpdateInput = z.infer<
 	typeof PoliciesApplicationUpdateInputSchema
@@ -2390,9 +2428,10 @@ export type PoliciesGetPermissiveModeInput = z.infer<
 	typeof PoliciesGetPermissiveModeInputSchema
 >;
 
+// Map of policy id -> permissive-mode flag, per `additionalProperties`.
 const PoliciesGetPermissiveModeResponseSchema = z.record(
 	z.string(),
-	z.unknown(),
+	Models.PolicyPermissiveModeSpecSchema,
 );
 export type PoliciesGetPermissiveModeResponse = z.infer<
 	typeof PoliciesGetPermissiveModeResponseSchema
@@ -2401,15 +2440,17 @@ export type PoliciesGetPermissiveModeResponse = z.infer<
 // Update permissive mode
 const PoliciesUpdatePermissiveModeInputSchema = z.object({
 	id: z.number().int(),
-	permissive_mode: z.boolean().optional(),
+	// Required by POST /v1/policies/{id}/permissive_mode.
+	permissive_mode: z.boolean(),
 });
 export type PoliciesUpdatePermissiveModeInput = z.infer<
 	typeof PoliciesUpdatePermissiveModeInputSchema
 >;
 
+// Map of policy id -> permissive-mode flag, per `additionalProperties`.
 const PoliciesUpdatePermissiveModeResponseSchema = z.record(
 	z.string(),
-	z.unknown(),
+	Models.PolicyPermissiveModeSpecSchema,
 );
 export type PoliciesUpdatePermissiveModeResponse = z.infer<
 	typeof PoliciesUpdatePermissiveModeResponseSchema
@@ -2581,7 +2622,8 @@ export type ScheduledReportPreviewsCreateResponse = z.infer<
 
 // Get
 const ScheduledReportsListInputSchema = z.object({
-	organization_id: z.number().int().optional(),
+	// Required by GET /v1/scheduled_reports.
+	organization_id: z.number().int(),
 });
 export type ScheduledReportsListInput = z.infer<
 	typeof ScheduledReportsListInputSchema
@@ -2689,7 +2731,8 @@ export type TrafficReportsTotalRequestsResponse = z.infer<
 // Total requests geo
 const TrafficReportsTotalRequestsGeoInputSchema = z.object({
 	from: z.string().optional(),
-	limit: z.number().int().optional(),
+	// Required by GET /v1/traffic_reports/total_requests_geo.
+	limit: z.number().int(),
 	msp_id: z.number().int().optional(),
 	organization_ids: z.string().optional(),
 	to: z.string().optional(),
@@ -4117,7 +4160,13 @@ export type UserAgentsListInput = z.infer<typeof UserAgentsListInputSchema>;
 const UserAgentsListResponseSchema = z.object({
 	data: z.array(Models.UserAgentSpecSchema).optional(),
 	links: Models.LinksSchema.optional(),
-	meta: z.record(z.string(), z.unknown()).optional(),
+	meta: z
+		.record(
+			z.string(),
+			// Pagination metadata keys vary by endpoint in the spec.
+			z.unknown(),
+		)
+		.optional(),
 });
 export type UserAgentsListResponse = z.infer<
 	typeof UserAgentsListResponseSchema
@@ -4242,7 +4291,8 @@ export type UserAgentsTagsResponse = z.infer<
 
 // Remove queue
 const UserAgentsDequeueUninstallInputSchema = z.object({
-	id: z.string().optional(),
+	// Required UUID query parameter for POST /v1/user_agents/dequeue_uninstall.
+	id: z.string(),
 });
 export type UserAgentsDequeueUninstallInput = z.infer<
 	typeof UserAgentsDequeueUninstallInputSchema
@@ -4257,7 +4307,8 @@ export type UserAgentsDequeueUninstallResponse = z.infer<
 
 // PIN
 const UserAgentsUninstallPinInputSchema = z.object({
-	organization_id: z.number().int().optional(),
+	// Required by GET /v1/user_agents/uninstall_pin.
+	organization_id: z.number().int(),
 });
 export type UserAgentsUninstallPinInput = z.infer<
 	typeof UserAgentsUninstallPinInputSchema
@@ -4350,11 +4401,10 @@ export type AgentLocalUsersV2CountsResponse = z.infer<
 
 // Suppresses license warning
 const CurrentUserOrgUiSettingsSuppressLicenseWarningInputSchema = z.object({
-	body: z
-		.object({
-			organization_uuid: z.string().optional(),
-		})
-		.optional(),
+	// The document models this POST payload as a required `body` query object.
+	body: z.object({
+		organization_uuid: z.string().optional(),
+	}),
 });
 export type CurrentUserOrgUiSettingsSuppressLicenseWarningInput = z.infer<
 	typeof CurrentUserOrgUiSettingsSuppressLicenseWarningInputSchema
@@ -4856,6 +4906,188 @@ export type UserAgentsV2UpdateSettingsResponse = z.infer<
 	typeof UserAgentsV2UpdateSettingsResponseSchema
 >;
 
+// Download user agents CSV
+const CsvExportsUserAgentsCsvInputSchema = z.object({
+	organization_id: z.number().int(),
+	include_suborgs: z.boolean().optional(),
+	timezone: z.string().optional(),
+});
+export type CsvExportsUserAgentsCsvInput = z.infer<
+	typeof CsvExportsUserAgentsCsvInputSchema
+>;
+
+// Raw CSV text; the API answers with text/csv rather than JSON.
+const CsvExportsUserAgentsCsvResponseSchema = z.string();
+export type CsvExportsUserAgentsCsvResponse = z.infer<
+	typeof CsvExportsUserAgentsCsvResponseSchema
+>;
+
+// Create user agent CSV export
+const CsvExportsUserAgentCreateInputSchema =
+	Models.UserAgentCsvExportCreateSpecSchema;
+export type CsvExportsUserAgentCreateInput = z.infer<
+	typeof CsvExportsUserAgentCreateInputSchema
+>;
+
+const CsvExportsUserAgentCreateResponseSchema = z.object({
+	data: Models.UserAgentCsvExportSpecSchema.optional(),
+});
+export type CsvExportsUserAgentCreateResponse = z.infer<
+	typeof CsvExportsUserAgentCreateResponseSchema
+>;
+
+// Show user agent CSV export
+const CsvExportsUserAgentGetInputSchema = z.object({
+	id: z.number().int(),
+});
+export type CsvExportsUserAgentGetInput = z.infer<
+	typeof CsvExportsUserAgentGetInputSchema
+>;
+
+const CsvExportsUserAgentGetResponseSchema = z.object({
+	data: Models.UserAgentCsvExportSpecSchema.optional(),
+});
+export type CsvExportsUserAgentGetResponse = z.infer<
+	typeof CsvExportsUserAgentGetResponseSchema
+>;
+
+// Create agent local users CSV export
+const CsvExportsAgentLocalUsersCreateInputSchema =
+	Models.AgentLocalUsersCsvExportCreateSpecSchema;
+export type CsvExportsAgentLocalUsersCreateInput = z.infer<
+	typeof CsvExportsAgentLocalUsersCreateInputSchema
+>;
+
+const CsvExportsAgentLocalUsersCreateResponseSchema = z.object({
+	data: Models.AgentLocalUsersCsvExportSpecSchema.optional(),
+});
+export type CsvExportsAgentLocalUsersCreateResponse = z.infer<
+	typeof CsvExportsAgentLocalUsersCreateResponseSchema
+>;
+
+// Show agent local users CSV export
+const CsvExportsAgentLocalUsersGetInputSchema = z.object({
+	id: z.string(),
+});
+export type CsvExportsAgentLocalUsersGetInput = z.infer<
+	typeof CsvExportsAgentLocalUsersGetInputSchema
+>;
+
+const CsvExportsAgentLocalUsersGetResponseSchema = z.object({
+	data: Models.AgentLocalUsersCsvExportSpecSchema.optional(),
+});
+export type CsvExportsAgentLocalUsersGetResponse = z.infer<
+	typeof CsvExportsAgentLocalUsersGetResponseSchema
+>;
+
+// Create CyberSight CSV export. The body carries report_type/start_at/end_at;
+// `included_columns` exists both as a query parameter and nested under
+// `cyber_sight_csv_export`, so the endpoint forwards whichever the caller sets.
+const CsvExportsCyberSightCreateInputSchema =
+	Models.CyberSightCsvExportCreateSpecSchema.extend({
+		included_columns: z.array(z.string()).optional(),
+	});
+export type CsvExportsCyberSightCreateInput = z.infer<
+	typeof CsvExportsCyberSightCreateInputSchema
+>;
+
+const CsvExportsCyberSightCreateResponseSchema = z.object({
+	data: Models.CyberSightCsvExportSpecSchema.optional(),
+});
+export type CsvExportsCyberSightCreateResponse = z.infer<
+	typeof CsvExportsCyberSightCreateResponseSchema
+>;
+
+// Show CyberSight CSV export
+const CsvExportsCyberSightGetInputSchema = z.object({
+	id: z.string(),
+});
+export type CsvExportsCyberSightGetInput = z.infer<
+	typeof CsvExportsCyberSightGetInputSchema
+>;
+
+// 200 returns the finished export, 202 a `processing` stub.
+const CsvExportsCyberSightGetResponseSchema = z.object({
+	data: Models.CyberSightCsvExportResponseSpecSchema.optional(),
+});
+export type CsvExportsCyberSightGetResponse = z.infer<
+	typeof CsvExportsCyberSightGetResponseSchema
+>;
+
+// Create networks CSV export
+const CsvExportsNetworksCreateInputSchema = z.object({
+	ip_search: z.string().optional(),
+	protected: z.boolean().optional(),
+	search: z.string().optional(),
+	state: z.string().optional(),
+	unprotected: z.boolean().optional(),
+	networks_csv_export:
+		Models.NetworksCsvExportAttributesCreateSpecSchema.optional(),
+});
+export type CsvExportsNetworksCreateInput = z.infer<
+	typeof CsvExportsNetworksCreateInputSchema
+>;
+
+const CsvExportsNetworksCreateResponseSchema = z.object({
+	data: Models.NetworksCsvExportSpecSchema.optional(),
+});
+export type CsvExportsNetworksCreateResponse = z.infer<
+	typeof CsvExportsNetworksCreateResponseSchema
+>;
+
+// Show networks CSV export
+const CsvExportsNetworksGetInputSchema = z.object({
+	id: z.number().int(),
+});
+export type CsvExportsNetworksGetInput = z.infer<
+	typeof CsvExportsNetworksGetInputSchema
+>;
+
+const CsvExportsNetworksGetResponseSchema = z.object({
+	data: Models.NetworksCsvExportSpecSchema.optional(),
+});
+export type CsvExportsNetworksGetResponse = z.infer<
+	typeof CsvExportsNetworksGetResponseSchema
+>;
+
+// Create unblock requests CSV export
+const CsvExportsUnblockRequestsCreateInputSchema = z.object({
+	msp_id: z.number().int().optional(),
+	organization_id: z.number().int().optional(),
+	organization_ids: z.array(z.number().int()).optional(),
+	search: z.string().optional(),
+	sort: z.string().optional(),
+	tab: z.string().optional(),
+	unblock_requests_csv_export:
+		Models.UnblockRequestsCsvExportAttributesCreateSpecSchema.optional(),
+});
+export type CsvExportsUnblockRequestsCreateInput = z.infer<
+	typeof CsvExportsUnblockRequestsCreateInputSchema
+>;
+
+const CsvExportsUnblockRequestsCreateResponseSchema = z.object({
+	export: Models.UnblockRequestsCsvExportSpecSchema.optional(),
+});
+export type CsvExportsUnblockRequestsCreateResponse = z.infer<
+	typeof CsvExportsUnblockRequestsCreateResponseSchema
+>;
+
+// Show unblock requests CSV export
+const CsvExportsUnblockRequestsGetInputSchema = z.object({
+	id: z.string(),
+});
+export type CsvExportsUnblockRequestsGetInput = z.infer<
+	typeof CsvExportsUnblockRequestsGetInputSchema
+>;
+
+// 200 returns the finished export, 202 a `processing` stub.
+const CsvExportsUnblockRequestsGetResponseSchema = z.object({
+	export: Models.UnblockRequestsCsvExportResponseSpecSchema.optional(),
+});
+export type CsvExportsUnblockRequestsGetResponse = z.infer<
+	typeof CsvExportsUnblockRequestsGetResponseSchema
+>;
+
 export const DnsfilterEndpointInputSchemas = {
 	agentLocalUserBulkDeletesCreate: AgentLocalUserBulkDeletesCreateInputSchema,
 	agentLocalUserBulkDeletesGet: AgentLocalUserBulkDeletesGetInputSchema,
@@ -5129,6 +5361,17 @@ export const DnsfilterEndpointInputSchemas = {
 	unblockRequestsGet: UnblockRequestsGetInputSchema,
 	unblockRequestsDecision: UnblockRequestsDecisionInputSchema,
 	userAgentsV2UpdateSettings: UserAgentsV2UpdateSettingsInputSchema,
+	csvExportsUserAgentsCsv: CsvExportsUserAgentsCsvInputSchema,
+	csvExportsUserAgentCreate: CsvExportsUserAgentCreateInputSchema,
+	csvExportsUserAgentGet: CsvExportsUserAgentGetInputSchema,
+	csvExportsAgentLocalUsersCreate: CsvExportsAgentLocalUsersCreateInputSchema,
+	csvExportsAgentLocalUsersGet: CsvExportsAgentLocalUsersGetInputSchema,
+	csvExportsCyberSightCreate: CsvExportsCyberSightCreateInputSchema,
+	csvExportsCyberSightGet: CsvExportsCyberSightGetInputSchema,
+	csvExportsNetworksCreate: CsvExportsNetworksCreateInputSchema,
+	csvExportsNetworksGet: CsvExportsNetworksGetInputSchema,
+	csvExportsUnblockRequestsCreate: CsvExportsUnblockRequestsCreateInputSchema,
+	csvExportsUnblockRequestsGet: CsvExportsUnblockRequestsGetInputSchema,
 } as const;
 
 export type DnsfilterEndpointInputs = {
@@ -5420,6 +5663,19 @@ export const DnsfilterEndpointOutputSchemas = {
 	unblockRequestsGet: UnblockRequestsGetResponseSchema,
 	unblockRequestsDecision: UnblockRequestsDecisionResponseSchema,
 	userAgentsV2UpdateSettings: UserAgentsV2UpdateSettingsResponseSchema,
+	csvExportsUserAgentsCsv: CsvExportsUserAgentsCsvResponseSchema,
+	csvExportsUserAgentCreate: CsvExportsUserAgentCreateResponseSchema,
+	csvExportsUserAgentGet: CsvExportsUserAgentGetResponseSchema,
+	csvExportsAgentLocalUsersCreate:
+		CsvExportsAgentLocalUsersCreateResponseSchema,
+	csvExportsAgentLocalUsersGet: CsvExportsAgentLocalUsersGetResponseSchema,
+	csvExportsCyberSightCreate: CsvExportsCyberSightCreateResponseSchema,
+	csvExportsCyberSightGet: CsvExportsCyberSightGetResponseSchema,
+	csvExportsNetworksCreate: CsvExportsNetworksCreateResponseSchema,
+	csvExportsNetworksGet: CsvExportsNetworksGetResponseSchema,
+	csvExportsUnblockRequestsCreate:
+		CsvExportsUnblockRequestsCreateResponseSchema,
+	csvExportsUnblockRequestsGet: CsvExportsUnblockRequestsGetResponseSchema,
 } as const;
 
 export type DnsfilterEndpointOutputs = {

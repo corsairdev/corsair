@@ -43,3 +43,17 @@ apiExamples:
     page:
       number: 1
       size: 25
+  csvExports.userAgentsCsv:
+    organization_id: 99
+  csvExports.userAgentCreate:
+    user_agent_csv_export:
+      organization_ids:
+        - 99
+    type: agents
+  csvExports.cyberSightCreate:
+    report_type: top_websites
+    start_at: '2026-01-01T00:00:00Z'
+    end_at: '2026-01-31T00:00:00Z'
+  csvExports.unblockRequestsCreate:
+    tab: active
+    organization_id: 99

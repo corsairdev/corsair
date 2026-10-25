@@ -3072,3 +3072,248 @@ export const UserAgentSettingsBodySchema = z.object({
 		FilteringClientSettingAttributesSchema.optional(),
 });
 export type UserAgentSettingsBody = z.infer<typeof UserAgentSettingsBodySchema>;
+
+export const UserAgentCsvExportSpecSchema = z.object({
+	id: z.number().int().optional(),
+	organization_ids: z.array(z.number().int()).optional(),
+	url: z.string().optional(),
+	error: z.string().optional(),
+});
+export type UserAgentCsvExportSpec = z.infer<
+	typeof UserAgentCsvExportSpecSchema
+>;
+
+export const UserAgentCsvExportAttributesCreateSpecSchema = z.object({
+	organization_ids: z.array(z.number().int()).optional(),
+	msp_id: z.number().int().optional(),
+	ids: z.array(z.string()).optional(),
+});
+export type UserAgentCsvExportAttributesCreateSpec = z.infer<
+	typeof UserAgentCsvExportAttributesCreateSpecSchema
+>;
+
+export const UserAgentCsvExportCreateSpecSchema = z.object({
+	user_agent_csv_export:
+		UserAgentCsvExportAttributesCreateSpecSchema.optional(),
+	network_ids: z.array(z.number().int()).optional(),
+	type: z.enum(['proxy', 'agents']).optional(),
+	search: z.string().optional(),
+	name_search: z.string().optional(),
+	tags: z.array(z.string()).optional(),
+	// Documented as active/disabled/uninstalled but not enumerated in the spec.
+	status: z.string().optional(),
+	state: z.enum(['online', 'offline']).optional(),
+	agent_state: z
+		.enum(['protected', 'unprotected', 'bypassed', 'uninstalled'])
+		.optional(),
+	traffic_received_last_15_mins: z.boolean().optional(),
+});
+export type UserAgentCsvExportCreateSpec = z.infer<
+	typeof UserAgentCsvExportCreateSpecSchema
+>;
+
+export const AgentLocalUsersCsvExportSpecSchema = z.object({
+	uuid: z.string().optional(),
+	organization_ids: z.array(z.number().int()).optional(),
+	// Documented as null until the export job completes.
+	url: z.string().nullable().optional(),
+	error: z.string().optional(),
+});
+export type AgentLocalUsersCsvExportSpec = z.infer<
+	typeof AgentLocalUsersCsvExportSpecSchema
+>;
+
+export const AgentLocalUsersCsvExportAttributesCreateSpecSchema = z.object({
+	organization_ids: z.array(z.number().int()).optional(),
+	name: z.string().optional(),
+	search: z.string().optional(),
+	user_policy_override: z.boolean().optional(),
+});
+export type AgentLocalUsersCsvExportAttributesCreateSpec = z.infer<
+	typeof AgentLocalUsersCsvExportAttributesCreateSpecSchema
+>;
+
+export const AgentLocalUsersCsvExportCreateSpecSchema = z.object({
+	agent_local_users_csv_export:
+		AgentLocalUsersCsvExportAttributesCreateSpecSchema.optional(),
+});
+export type AgentLocalUsersCsvExportCreateSpec = z.infer<
+	typeof AgentLocalUsersCsvExportCreateSpecSchema
+>;
+
+export const CyberSightCsvExportReportTypeSchema = z.enum([
+	'activity_logs',
+	'top_websites',
+	'top_applications',
+	'top_categories',
+	'top_streaming',
+	'top_risky_users',
+	'top_active_clients',
+	'top_ai_usage',
+]);
+export type CyberSightCsvExportReportType = z.infer<
+	typeof CyberSightCsvExportReportTypeSchema
+>;
+
+export const CyberSightCsvExportSpecSchema = z.object({
+	uuid: z.string().optional(),
+	organization_ids: z.array(z.number().int()).optional(),
+	// Documented as null while the export is processing or has failed.
+	url: z.string().nullable().optional(),
+	// Documented as null when the export succeeded.
+	error: z.string().nullable().optional(),
+});
+export type CyberSightCsvExportSpec = z.infer<
+	typeof CyberSightCsvExportSpecSchema
+>;
+
+export const CyberSightCsvExportAttributesCreateSpecSchema = z.object({
+	included_columns: z.array(z.string()).optional(),
+	organization_ids: z.array(z.number().int()).optional(),
+});
+export type CyberSightCsvExportAttributesCreateSpec = z.infer<
+	typeof CyberSightCsvExportAttributesCreateSpecSchema
+>;
+
+export const CyberSightCsvExportPendingSpecSchema = z.object({
+	export: z
+		.object({
+			uuid: z.string().optional(),
+			status: z.string().optional(),
+		})
+		.optional(),
+	// The spec also exposes flattened `export.uuid` / `export.status` keys.
+	'export.uuid': z.string().optional(),
+	'export.status': z.string().optional(),
+});
+export type CyberSightCsvExportPendingSpec = z.infer<
+	typeof CyberSightCsvExportPendingSpecSchema
+>;
+
+// Show returns the finished export (200) or a `processing` stub (202); one
+// schema covers both so a poll never drops the pending fields.
+export const CyberSightCsvExportResponseSpecSchema =
+	CyberSightCsvExportSpecSchema.extend(
+		CyberSightCsvExportPendingSpecSchema.shape,
+	);
+export type CyberSightCsvExportResponseSpec = z.infer<
+	typeof CyberSightCsvExportResponseSpecSchema
+>;
+
+export const CyberSightCsvExportCreateSpecSchema = z.object({
+	cyber_sight_csv_export:
+		CyberSightCsvExportAttributesCreateSpecSchema.optional(),
+	report_type: CyberSightCsvExportReportTypeSchema,
+	ai_tool: z.enum(['all', 'web', 'app', 'client']).optional(),
+	start_at: z.string(),
+	end_at: z.string(),
+	msp_uuid: z.string().optional(),
+	org_uuids: z.array(z.string()).optional(),
+	excluded_org_uuids: z.array(z.string()).optional(),
+	// The spec leaves this untyped but documents "comma delimited integers", so
+	// accept either the raw string or an already-split list of category IDs.
+	category_ids: z.union([z.string(), z.array(z.number().int())]).optional(),
+	user_agent_uuids: z.array(z.string()).optional(),
+	agent_local_user_uuids: z.array(z.string()).optional(),
+	weekdays_only: z.boolean().optional(),
+	search_id: z.string().optional(),
+	size: z.number().int().optional(),
+	activity_type_ids: z.array(z.number().int()).optional(),
+	app_executable_path: z.string().optional(),
+	app_name: z.string().optional(),
+	app_window_title: z.string().optional(),
+	web_full_url: z.string().optional(),
+	web_host: z.string().optional(),
+	threats_only: z.boolean().optional(),
+	web_categories: z.string().optional(),
+	sort_by: z
+		.enum([
+			'app_executable_path',
+			'app_name',
+			'app_window_title',
+			'cyber_sight_service_version',
+			'event_duration',
+			'event_end_at',
+			'event_start_at',
+			'remote_ip',
+			'web_full_url',
+			'web_host',
+		])
+		.optional(),
+	sort_direction: z.enum(['asc', 'desc']).optional(),
+});
+export type CyberSightCsvExportCreateSpec = z.infer<
+	typeof CyberSightCsvExportCreateSpecSchema
+>;
+
+export const NetworksCsvExportSpecSchema = z.object({
+	id: z.number().int().optional(),
+	organization_ids: z.array(z.number().int()).optional(),
+	url: z.string().optional(),
+	error: z.string().optional(),
+});
+export type NetworksCsvExportSpec = z.infer<typeof NetworksCsvExportSpecSchema>;
+
+export const NetworksCsvExportAttributesCreateSpecSchema = z.object({
+	organization_ids: z.array(z.number().int()).optional(),
+	msp_id: z.number().int().optional(),
+	ids: z.array(z.number().int()).optional(),
+});
+export type NetworksCsvExportAttributesCreateSpec = z.infer<
+	typeof NetworksCsvExportAttributesCreateSpecSchema
+>;
+
+export const NetworksCsvExportCreateSpecSchema = z.object({
+	networks_csv_export: NetworksCsvExportAttributesCreateSpecSchema.optional(),
+});
+export type NetworksCsvExportCreateSpec = z.infer<
+	typeof NetworksCsvExportCreateSpecSchema
+>;
+
+export const UnblockRequestsCsvExportSpecSchema = z.object({
+	uuid: z.string().optional(),
+	tab: z.enum(['active', 'history']).optional(),
+	row_count: z.number().int().optional(),
+	total_count: z.number().int().optional(),
+	truncated: z.boolean().optional(),
+	// Documented as null while the export is still processing or failed.
+	url: z.string().nullable().optional(),
+	// Documented as null when the export succeeded.
+	error: z.string().nullable().optional(),
+});
+export type UnblockRequestsCsvExportSpec = z.infer<
+	typeof UnblockRequestsCsvExportSpecSchema
+>;
+
+export const UnblockRequestsCsvExportAttributesCreateSpecSchema = z.object({
+	included_columns: z.array(z.string()).optional(),
+});
+export type UnblockRequestsCsvExportAttributesCreateSpec = z.infer<
+	typeof UnblockRequestsCsvExportAttributesCreateSpecSchema
+>;
+
+export const UnblockRequestsCsvExportCreateSpecSchema = z.object({
+	unblock_requests_csv_export:
+		UnblockRequestsCsvExportAttributesCreateSpecSchema.optional(),
+});
+export type UnblockRequestsCsvExportCreateSpec = z.infer<
+	typeof UnblockRequestsCsvExportCreateSpecSchema
+>;
+
+export const UnblockRequestsCsvExportPendingSpecSchema = z.object({
+	uuid: z.string().optional(),
+	status: z.enum(['processing']).optional(),
+});
+export type UnblockRequestsCsvExportPendingSpec = z.infer<
+	typeof UnblockRequestsCsvExportPendingSpecSchema
+>;
+
+// Show returns the finished export (200) or a `processing` stub (202); one
+// schema covers both so a poll never drops the pending fields.
+export const UnblockRequestsCsvExportResponseSpecSchema =
+	UnblockRequestsCsvExportSpecSchema.extend(
+		UnblockRequestsCsvExportPendingSpecSchema.shape,
+	);
+export type UnblockRequestsCsvExportResponseSpec = z.infer<
+	typeof UnblockRequestsCsvExportResponseSpecSchema
+>;

@@ -669,4 +669,31 @@ export const UnblockRequests = {
 import { userAgentsV2UpdateSettings } from './user-agents-v2';
 export const UserAgentsV2 = { userAgentsV2UpdateSettings };
 
+import {
+	csvExportsAgentLocalUsersCreate,
+	csvExportsAgentLocalUsersGet,
+	csvExportsCyberSightCreate,
+	csvExportsCyberSightGet,
+	csvExportsNetworksCreate,
+	csvExportsNetworksGet,
+	csvExportsUnblockRequestsCreate,
+	csvExportsUnblockRequestsGet,
+	csvExportsUserAgentCreate,
+	csvExportsUserAgentGet,
+	csvExportsUserAgentsCsv,
+} from './csv-exports';
+export const CsvExports = {
+	csvExportsUserAgentsCsv,
+	csvExportsUserAgentCreate,
+	csvExportsUserAgentGet,
+	csvExportsAgentLocalUsersCreate,
+	csvExportsAgentLocalUsersGet,
+	csvExportsCyberSightCreate,
+	csvExportsCyberSightGet,
+	csvExportsNetworksCreate,
+	csvExportsNetworksGet,
+	csvExportsUnblockRequestsCreate,
+	csvExportsUnblockRequestsGet,
+};
+
 export * from './types';

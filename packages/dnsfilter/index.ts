@@ -24,6 +24,7 @@ import {
 	BlockPages,
 	Categories,
 	CollectionUsers,
+	CsvExports,
 	CurrentUserOrgUiSettings,
 	CurrentUsers,
 	CurrentUserUiSettings,
@@ -349,6 +350,17 @@ export type DnsfilterEndpoints = {
 	unblockRequestsGet: DnsfilterEndpoint<'unblockRequestsGet'>;
 	unblockRequestsDecision: DnsfilterEndpoint<'unblockRequestsDecision'>;
 	userAgentsV2UpdateSettings: DnsfilterEndpoint<'userAgentsV2UpdateSettings'>;
+	csvExportsUserAgentsCsv: DnsfilterEndpoint<'csvExportsUserAgentsCsv'>;
+	csvExportsUserAgentCreate: DnsfilterEndpoint<'csvExportsUserAgentCreate'>;
+	csvExportsUserAgentGet: DnsfilterEndpoint<'csvExportsUserAgentGet'>;
+	csvExportsAgentLocalUsersCreate: DnsfilterEndpoint<'csvExportsAgentLocalUsersCreate'>;
+	csvExportsAgentLocalUsersGet: DnsfilterEndpoint<'csvExportsAgentLocalUsersGet'>;
+	csvExportsCyberSightCreate: DnsfilterEndpoint<'csvExportsCyberSightCreate'>;
+	csvExportsCyberSightGet: DnsfilterEndpoint<'csvExportsCyberSightGet'>;
+	csvExportsNetworksCreate: DnsfilterEndpoint<'csvExportsNetworksCreate'>;
+	csvExportsNetworksGet: DnsfilterEndpoint<'csvExportsNetworksGet'>;
+	csvExportsUnblockRequestsCreate: DnsfilterEndpoint<'csvExportsUnblockRequestsCreate'>;
+	csvExportsUnblockRequestsGet: DnsfilterEndpoint<'csvExportsUnblockRequestsGet'>;
 };
 
 export type DnsfilterBoundWebhooks = BindWebhooks<Record<string, never>>;
@@ -711,6 +723,19 @@ const dnsfilterEndpointsNested = {
 	},
 	userAgentsV2: {
 		updateSettings: UserAgentsV2.userAgentsV2UpdateSettings,
+	},
+	csvExports: {
+		userAgentsCsv: CsvExports.csvExportsUserAgentsCsv,
+		userAgentCreate: CsvExports.csvExportsUserAgentCreate,
+		userAgentGet: CsvExports.csvExportsUserAgentGet,
+		agentLocalUsersCreate: CsvExports.csvExportsAgentLocalUsersCreate,
+		agentLocalUsersGet: CsvExports.csvExportsAgentLocalUsersGet,
+		cyberSightCreate: CsvExports.csvExportsCyberSightCreate,
+		cyberSightGet: CsvExports.csvExportsCyberSightGet,
+		networksCreate: CsvExports.csvExportsNetworksCreate,
+		networksGet: CsvExports.csvExportsNetworksGet,
+		unblockRequestsCreate: CsvExports.csvExportsUnblockRequestsCreate,
+		unblockRequestsGet: CsvExports.csvExportsUnblockRequestsGet,
 	},
 } as const;
 
@@ -1739,6 +1764,50 @@ export const dnsfilterEndpointSchemas = {
 		input: DnsfilterEndpointInputSchemas.userAgentsV2UpdateSettings,
 		output: DnsfilterEndpointOutputSchemas.userAgentsV2UpdateSettings,
 	},
+	'csvExports.userAgentsCsv': {
+		input: DnsfilterEndpointInputSchemas.csvExportsUserAgentsCsv,
+		output: DnsfilterEndpointOutputSchemas.csvExportsUserAgentsCsv,
+	},
+	'csvExports.userAgentCreate': {
+		input: DnsfilterEndpointInputSchemas.csvExportsUserAgentCreate,
+		output: DnsfilterEndpointOutputSchemas.csvExportsUserAgentCreate,
+	},
+	'csvExports.userAgentGet': {
+		input: DnsfilterEndpointInputSchemas.csvExportsUserAgentGet,
+		output: DnsfilterEndpointOutputSchemas.csvExportsUserAgentGet,
+	},
+	'csvExports.agentLocalUsersCreate': {
+		input: DnsfilterEndpointInputSchemas.csvExportsAgentLocalUsersCreate,
+		output: DnsfilterEndpointOutputSchemas.csvExportsAgentLocalUsersCreate,
+	},
+	'csvExports.agentLocalUsersGet': {
+		input: DnsfilterEndpointInputSchemas.csvExportsAgentLocalUsersGet,
+		output: DnsfilterEndpointOutputSchemas.csvExportsAgentLocalUsersGet,
+	},
+	'csvExports.cyberSightCreate': {
+		input: DnsfilterEndpointInputSchemas.csvExportsCyberSightCreate,
+		output: DnsfilterEndpointOutputSchemas.csvExportsCyberSightCreate,
+	},
+	'csvExports.cyberSightGet': {
+		input: DnsfilterEndpointInputSchemas.csvExportsCyberSightGet,
+		output: DnsfilterEndpointOutputSchemas.csvExportsCyberSightGet,
+	},
+	'csvExports.networksCreate': {
+		input: DnsfilterEndpointInputSchemas.csvExportsNetworksCreate,
+		output: DnsfilterEndpointOutputSchemas.csvExportsNetworksCreate,
+	},
+	'csvExports.networksGet': {
+		input: DnsfilterEndpointInputSchemas.csvExportsNetworksGet,
+		output: DnsfilterEndpointOutputSchemas.csvExportsNetworksGet,
+	},
+	'csvExports.unblockRequestsCreate': {
+		input: DnsfilterEndpointInputSchemas.csvExportsUnblockRequestsCreate,
+		output: DnsfilterEndpointOutputSchemas.csvExportsUnblockRequestsCreate,
+	},
+	'csvExports.unblockRequestsGet': {
+		input: DnsfilterEndpointInputSchemas.csvExportsUnblockRequestsGet,
+		output: DnsfilterEndpointOutputSchemas.csvExportsUnblockRequestsGet,
+	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof dnsfilterEndpointsNested
 >;
@@ -2764,6 +2833,50 @@ const dnsfilterEndpointMeta = {
 	'userAgentsV2.updateSettings': {
 		riskLevel: 'write',
 		description: 'Update settings for user agents V2',
+	},
+	'csvExports.userAgentsCsv': {
+		riskLevel: 'read',
+		description: 'Download user agents CSV',
+	},
+	'csvExports.userAgentCreate': {
+		riskLevel: 'write',
+		description: 'Create user agent CSV export',
+	},
+	'csvExports.userAgentGet': {
+		riskLevel: 'read',
+		description: 'Get user agent CSV export',
+	},
+	'csvExports.agentLocalUsersCreate': {
+		riskLevel: 'write',
+		description: 'Create agent local users CSV export',
+	},
+	'csvExports.agentLocalUsersGet': {
+		riskLevel: 'read',
+		description: 'Get agent local users CSV export',
+	},
+	'csvExports.cyberSightCreate': {
+		riskLevel: 'write',
+		description: 'Create CyberSight CSV export',
+	},
+	'csvExports.cyberSightGet': {
+		riskLevel: 'read',
+		description: 'Get CyberSight CSV export',
+	},
+	'csvExports.networksCreate': {
+		riskLevel: 'write',
+		description: 'Create networks CSV export',
+	},
+	'csvExports.networksGet': {
+		riskLevel: 'read',
+		description: 'Get networks CSV export',
+	},
+	'csvExports.unblockRequestsCreate': {
+		riskLevel: 'write',
+		description: 'Create unblock requests CSV export',
+	},
+	'csvExports.unblockRequestsGet': {
+		riskLevel: 'read',
+		description: 'Get unblock requests CSV export',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof dnsfilterEndpointsNested
