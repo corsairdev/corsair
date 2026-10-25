@@ -32,6 +32,7 @@
               "introduction",
               "quick-start",
               "cloud/overview",
+              "cloud/mcp",
               {
                 "group": "Use cases",
                 "pages": [
