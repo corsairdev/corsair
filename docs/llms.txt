@@ -110,7 +110,7 @@ Expose Corsair tools to agents over MCP, or wire them into agent SDKs and coding
 - [Plugins guide](https://docs.corsair.dev/guides/plugins.md): Install an integration package, register it, and browse reference docs for each provider.
 - [Create your own plugin](https://docs.corsair.dev/guides/create-your-own-plugin.md): Scaffold a new Corsair plugin with the generator.
 - [Plugin credentials](https://docs.corsair.dev/guides/plugin-credentials.md): How to obtain API keys, tokens, client IDs, secrets, and webhook credentials for every plugin.
-- [Integrations catalog](https://api.corsair.dev/md/integrations): Complete Corsair integration catalog (Markdown).
+- [Integrations catalog](https://corsair.dev/integrations): Every Corsair integration. Each page's slug is its plugin id.
 
 ## Guides
 
