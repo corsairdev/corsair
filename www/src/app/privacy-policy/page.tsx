@@ -623,9 +623,11 @@ export default function PrivacyPolicyPage() {
 						example a tip when setup stalls or a plan offer when you near a
 						usage limit. Each one has an unsubscribe link, and you can
 						unsubscribe from some or all of them. Unsubscribing stops these
-						emails but not account emails. Where the law requires a legal basis,
-						we send them based on our legitimate interest in telling customers
-						about our services, and you can object at any time by unsubscribing.
+						emails but not account emails. We send them only where the
+						direct-marketing rules that apply to you allow it. Where data
+						protection law requires a legal basis, we rely on our legitimate
+						interest in telling customers about our services, and you can object
+						at any time by unsubscribing.
 					</p>
 					<p>
 						To decide whether to send an email and which one, we use your Hub
