@@ -77,6 +77,9 @@ export async function fetchLinkedIdentity(
 			// GitHub rejects API calls without a User-Agent.
 			'User-Agent': 'corsair-oss',
 		},
+		// Runs inside the OAuth callback; a stalled API must not hold the redirect.
+		// A failed copy is retried by connecting again.
+		signal: AbortSignal.timeout(5000),
 	});
 	if (!response.ok) return null;
 	const body = (await response.json()) as {

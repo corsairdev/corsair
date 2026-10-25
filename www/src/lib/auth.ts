@@ -109,6 +109,9 @@ export const auth = betterAuth({
 			allowDifferentEmails: true,
 			// A magic-link account has no other linked account to fall back on.
 			allowUnlinkingAll: true,
+			// Only the explicit Connect buttons link accounts. A GitHub or Discord
+			// sign-in never attaches itself to an existing account by email.
+			disableImplicitLinking: true,
 		},
 	},
 	databaseHooks: {
