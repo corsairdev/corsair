@@ -29,11 +29,14 @@ export type DnsfilterRequestOptions = {
 	// (strings, numbers, booleans, nested page objects) and already validated
 	// by the endpoint's zod input schema, so `unknown` avoids per-key casts.
 	query?: Record<string, unknown>;
-	// JSON:API envelope; the endpoint's input schema checks the shape, which is
-	// why the transport itself does not restate it.
+	// `unknown` because bodies differ per endpoint (plain object, JSON:API
+	// envelope, nested document). The endpoint's zod input schema is the single
+	// source of truth for the shape, so restating it here would duplicate it.
 	body?: unknown;
 };
 
+// Arbitrary JSON from the API: keys cannot be typed statically, so callers
+// narrow the returned record field by field.
 function asRecord(value: unknown): Record<string, unknown> | undefined {
 	// Safe: typeof object + non-null + non-array is exactly what the cast asserts.
 	return typeof value === 'object' && value !== null && !Array.isArray(value)
@@ -41,6 +44,8 @@ function asRecord(value: unknown): Record<string, unknown> | undefined {
 		: undefined;
 }
 
+// Error JSON differs by version (v1 `{ error, type }`, v2 `{ error: {...} }`),
+// so it is probed with typeof instead of being modelled.
 function extractErrorMessage(body: unknown): string | undefined {
 	const record = asRecord(body);
 	if (!record) return undefined;
@@ -52,6 +57,7 @@ function extractErrorMessage(body: unknown): string | undefined {
 	return undefined;
 }
 
+// Same untyped error JSON as above; only `type` is read.
 function extractErrorType(body: unknown): string | undefined {
 	const record = asRecord(body);
 	if (!record) return undefined;
@@ -62,6 +68,8 @@ function extractErrorType(body: unknown): string | undefined {
 }
 
 function withoutUndefined(
+	// Query values are validated per endpoint; the transport only strips empty
+	// entries, so it cannot type them more narrowly.
 	input: Record<string, unknown> | undefined,
 ): Record<string, unknown> | undefined {
 	if (!input) return undefined;
@@ -83,6 +91,7 @@ function withoutUndefinedBody(body: unknown): unknown {
 	return entries.length > 0 ? Object.fromEntries(entries) : undefined;
 }
 
+// Anything the fetch/zod layer can throw; narrowed with instanceof below.
 function toDnsfilterError(error: unknown): Error {
 	if (error instanceof ApiError) {
 		return new DnsfilterAPIError(

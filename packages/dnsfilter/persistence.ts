@@ -3,8 +3,10 @@ import type { DnsfilterContext } from './index';
 // Unwraps JSON:API rows and keeps local sync best-effort: a DB failure never
 // fails the API call.
 
+// A JSON:API row is untyped on arrival; the helpers below narrow each field.
 type Row = Record<string, unknown>;
 
+// Arbitrary parsed JSON; the guard below proves the object shape.
 function asRecord(value: unknown): Row | undefined {
 	// Safe: the guard is exactly the property the cast asserts.
 	return typeof value === 'object' && value !== null && !Array.isArray(value)
@@ -12,6 +14,7 @@ function asRecord(value: unknown): Row | undefined {
 		: undefined;
 }
 
+// Raw endpoint response: list, single resource, or wrapped document.
 function collectRows(payload: unknown): Row[] {
 	const document = asRecord(payload);
 	if (!document) return [];
@@ -39,18 +42,21 @@ function attributesOf(row: Row): Row {
 	return asRecord(row.attributes) ?? row;
 }
 
+// Ids come back as numbers or strings; narrowed here, not cast at call sites.
 function toId(value: unknown): string | undefined {
 	if (typeof value === 'string' && value.length > 0) return value;
 	if (typeof value === 'number') return String(value);
 	return undefined;
 }
 
+// Same mixed string/number values the API returns for names and emails.
 function toStringOrUndefined(value: unknown): string | undefined {
 	if (typeof value === 'string' && value.length > 0) return value;
 	if (typeof value === 'number') return String(value);
 	return undefined;
 }
 
+// Timestamps arrive as ISO strings or epoch numbers.
 function toDate(value: unknown): Date | null | undefined {
 	if (value instanceof Date) return value;
 	if (typeof value === 'string' || typeof value === 'number') {
@@ -68,6 +74,7 @@ function relationshipId(row: Row, relation: string): string | undefined {
 
 export async function persistNetworks(
 	ctx: DnsfilterContext,
+	// Endpoint response, narrowed through collectRows/asRecord below.
 	payload: unknown,
 ): Promise<void> {
 	for (const row of collectRows(payload)) {
@@ -97,6 +104,7 @@ export async function persistNetworks(
 
 export async function persistPolicies(
 	ctx: DnsfilterContext,
+	// Endpoint response, narrowed through collectRows/asRecord below.
 	payload: unknown,
 ): Promise<void> {
 	for (const row of collectRows(payload)) {
@@ -121,6 +129,7 @@ export async function persistPolicies(
 
 export async function persistOrganizations(
 	ctx: DnsfilterContext,
+	// Endpoint response, narrowed through collectRows/asRecord below.
 	payload: unknown,
 ): Promise<void> {
 	for (const row of collectRows(payload)) {
@@ -142,6 +151,7 @@ export async function persistOrganizations(
 
 export async function persistUsers(
 	ctx: DnsfilterContext,
+	// Endpoint response, narrowed through collectRows/asRecord below.
 	payload: unknown,
 ): Promise<void> {
 	for (const row of collectRows(payload)) {
@@ -167,6 +177,7 @@ export async function persistUsers(
 
 export async function persistUserAgents(
 	ctx: DnsfilterContext,
+	// Endpoint response, narrowed through collectRows/asRecord below.
 	payload: unknown,
 ): Promise<void> {
 	for (const row of collectRows(payload)) {
@@ -201,6 +212,7 @@ export async function persistUserAgents(
 
 export async function persistIpAddresses(
 	ctx: DnsfilterContext,
+	// Endpoint response, narrowed through collectRows/asRecord below.
 	payload: unknown,
 ): Promise<void> {
 	for (const row of collectRows(payload)) {
@@ -228,6 +240,7 @@ export async function persistIpAddresses(
 
 export async function persistMacAddresses(
 	ctx: DnsfilterContext,
+	// Endpoint response, narrowed through collectRows/asRecord below.
 	payload: unknown,
 ): Promise<void> {
 	for (const row of collectRows(payload)) {
@@ -255,6 +268,7 @@ export async function persistMacAddresses(
 
 export async function persistSubnets(
 	ctx: DnsfilterContext,
+	// Endpoint response, narrowed through collectRows/asRecord below.
 	payload: unknown,
 ): Promise<void> {
 	for (const row of collectRows(payload)) {
@@ -281,6 +295,7 @@ export async function persistSubnets(
 
 export async function persistUnblockRequests(
 	ctx: DnsfilterContext,
+	// Endpoint response, narrowed through collectRows/asRecord below.
 	payload: unknown,
 ): Promise<void> {
 	for (const row of collectRows(payload)) {
@@ -311,6 +326,7 @@ export async function persistUnblockRequests(
 
 export async function persistScheduledReports(
 	ctx: DnsfilterContext,
+	// Endpoint response, narrowed through collectRows/asRecord below.
 	payload: unknown,
 ): Promise<void> {
 	for (const row of collectRows(payload)) {

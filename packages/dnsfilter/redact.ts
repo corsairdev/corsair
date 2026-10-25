@@ -16,6 +16,8 @@ export function redactSensitive(value: unknown): Record<string, unknown> {
 		: {};
 }
 
+// Recursive walker: fields are unknown until their runtime type is checked,
+// and the return keeps the caller value otherwise.
 function redact(value: unknown, depth: number): unknown {
 	if (depth > 6) return '[truncated]';
 	if (value instanceof Date) return value.toISOString();
@@ -25,6 +27,7 @@ function redact(value: unknown, depth: number): unknown {
 	if (typeof value !== 'object' || value === null) return value;
 	// Safe: the guard above leaves only non-null, non-array objects.
 	const source = value as Record<string, unknown>;
+	// Copies arbitrary input keys, so values stay `unknown`.
 	const result: Record<string, unknown> = {};
 	for (const [key, entry] of Object.entries(source)) {
 		result[key] = SENSITIVE_KEY.test(key)

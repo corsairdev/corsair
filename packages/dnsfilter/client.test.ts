@@ -9,12 +9,14 @@ import { redactSensitive } from './redact';
 jest.mock('corsair/http', () => {
 	class MockApiError extends Error {
 		public readonly status: number;
+		// Mirrors `ApiError`: the body is arbitrary JSON, so it stays untyped.
 		public readonly body: unknown;
 		public readonly retryAfter?: number;
 
 		constructor(
 			message: string,
 			status = 500,
+			// Unvalidated JSON handed to the mocked error; no shape is assumed.
 			body?: unknown,
 			retryAfter?: number,
 		) {
@@ -36,6 +38,7 @@ const requestMock = jest.mocked(request);
 const MockApiError = ApiError as unknown as new (
 	message: string,
 	status?: number,
+	// Same untyped body as the mocked ApiError constructor above.
 	body?: unknown,
 	retryAfter?: number,
 ) => Error;
@@ -47,12 +50,14 @@ function lastRequestCall() {
 	return calls[calls.length - 1] as unknown as [
 		{
 			BASE: string;
+			// Asserted to be absent; typing it would imply the transport sends one.
 			TOKEN?: unknown;
 			HEADERS: Record<string, string>;
 		},
 		{
 			method: string;
 			url: string;
+			// Forwarded path/query/body values are untyped here; assertions pin them below.
 			path?: Record<string, unknown>;
 			query?: Record<string, unknown>;
 			body?: unknown;
@@ -177,6 +182,7 @@ describe('makeDnsfilterRequest', () => {
 		);
 
 		const error = await makeDnsfilterRequest('/v1/networks', 'key').catch(
+			// Whatever the transport threw; narrowed to DnsfilterAPIError by the assertion.
 			(caught: unknown) => caught,
 		);
 

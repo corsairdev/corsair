@@ -29,6 +29,8 @@ jest.mock('corsair/http', () => {
 
 const requestMock = jest.mocked(request);
 
+// Endpoints are typed per endpoint; this shared helper cannot know either the
+// input or the output type, so both stay `unknown` here.
 type EndpointFn = (ctx: DnsfilterContext, input: unknown) => Promise<unknown>;
 type EndpointKey = keyof typeof DnsfilterEndpointInputSchemas;
 
@@ -36,6 +38,8 @@ function isEndpointKey(name: string): name is EndpointKey {
 	return Object.hasOwn(DnsfilterEndpointInputSchemas, name);
 }
 
+// Values come from enumerating a module object, so they are untyped until
+// this type guard checks them.
 function isEndpointFn(value: unknown): value is EndpointFn {
 	return typeof value === 'function';
 }
@@ -56,6 +60,7 @@ function collectEndpoints(): Map<EndpointKey, EndpointFn> {
 const endpoints = collectEndpoints();
 const endpointKeys = [...endpoints.keys()].sort();
 
+// Entity doubles are assembled per test, so the db record stays untyped.
 function createContext(db: Record<string, unknown> = {}): DnsfilterContext {
 	// Test double: only the fields the endpoints touch are provided, so the
 	// cast stands in for the full Corsair context.
@@ -64,6 +69,8 @@ function createContext(db: Record<string, unknown> = {}): DnsfilterContext {
 		$getAccountId: jest.fn(async () => 'account-1'),
 		database: undefined,
 		db,
+		// Safe: the object above provides the subset of context fields the
+		// endpoints touch, which is what the cast asserts.
 	} as unknown as DnsfilterContext;
 }
 
@@ -74,7 +81,8 @@ function lastRequestOptions() {
 	return options;
 }
 
-/** First response shape the output schema accepts. */
+/** First response shape the output schema accepts. Each endpoint has its own
+ * output type, so the probe can only return `unknown`. */
 function sampleOutput(key: EndpointKey): unknown {
 	const schema = DnsfilterEndpointOutputSchemas[key];
 	const candidates = [
