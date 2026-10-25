@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 };
 
 const CONTACT_EMAIL = 'team@corsair.dev';
-const LAST_UPDATED = 'October 21, 2026';
+const LAST_UPDATED = 'October 25, 2026';
 const LOG_RETENTION_PERIOD = '90 days';
 
 export default function PrivacyPolicyPage() {
@@ -367,11 +367,13 @@ export default function PrivacyPolicyPage() {
 						When you sign in to Corsair Hub with Google or GitHub, we receive
 						basic profile information from that provider (such as name, email
 						address, profile picture if available, and a unique account
-						identifier). We use this information only to create and maintain
-						your Hub account, authenticate you, display your identity in the
-						dashboard, and communicate with you about your account. We do not
-						use it for advertising, and we do not sell, rent, or trade it to
-						third parties. You can revoke Hub&apos;s access through your{' '}
+						identifier). We use this information to create and maintain your Hub
+						account, authenticate you, display your identity in the dashboard,
+						email you about your account, and send you the product and marketing
+						emails described in Section 6, which you can unsubscribe from at any
+						time. We do not use it to show you ads, and we do not sell, rent, or
+						trade it to third parties. You can revoke Hub&apos;s access through
+						your{' '}
 						<a
 							href="https://myaccount.google.com/permissions"
 							target="_blank"
@@ -586,7 +588,11 @@ export default function PrivacyPolicyPage() {
 					</li>
 					<li>
 						Provide support, troubleshoot issues, and protect against abuse or
-						security incidents; and
+						security incidents;
+					</li>
+					<li>
+						Email Hub account holders about their account and about Corsair
+						products, as described below; and
 					</li>
 					<li>Comply with applicable law and enforce our terms.</li>
 				</ul>
@@ -596,6 +602,44 @@ export default function PrivacyPolicyPage() {
 					developing other products. Google user data is also covered by Section
 					5.
 				</p>
+
+				<LegalSubsection title="Emails to Hub account holders">
+					<p>
+						<strong className="font-medium text-[#1c1c1c]">
+							Account emails:
+						</strong>{' '}
+						sign-in links, invitations, a one-time welcome email after you sign
+						up, notices when a connection stops working or you reach a plan or
+						credit limit, security and billing notices, and changes to our terms
+						or this policy. You receive these while you have a Hub account.
+					</p>
+					<p>
+						<strong className="font-medium text-[#1c1c1c]">
+							Product and marketing emails:
+						</strong>{' '}
+						news about Corsair, such as product updates and launches, company
+						news, tips for getting more out of Hub, event invitations, surveys,
+						and offers on plans or credits. Some depend on how you use Hub, for
+						example a tip when setup stalls or a plan offer when you near a
+						usage limit. Each one has an unsubscribe link, and you can
+						unsubscribe from some or all of them. Unsubscribing stops these
+						emails but not account emails. Where the law requires a legal basis,
+						we send them based on our legitimate interest in telling customers
+						about our services, and you can object at any time by unsubscribing.
+					</p>
+					<p>
+						To decide whether to send an email and which one, we use your Hub
+						account details and how you use Hub itself: for example, how you
+						signed up, which integrations you have set up, whether you have
+						created an MCP link and whether an agent has used it, and how many
+						credits and workflow runs you use. We record whether links in
+						product and marketing emails are clicked; we do not track whether
+						emails are opened. We never use the contents of apps connected
+						through Corsair (such as emails, messages, files, or calendar
+						events) or any Google user data to write, choose, or target these
+						emails.
+					</p>
+				</LegalSubsection>
 			</LegalSection>
 
 			<LegalSection title="7. How We Protect Information">
@@ -629,6 +673,10 @@ export default function PrivacyPolicyPage() {
 					<li>
 						Cloud hosting providers that run Hub, Corsair Cloud, and our AI
 						model gateway, and store Service data;
+					</li>
+					<li>
+						Email delivery providers that send account, product, and marketing
+						emails on our behalf;
 					</li>
 					<li>
 						AI model providers (currently Microsoft Azure OpenAI Service), only
@@ -706,6 +754,11 @@ export default function PrivacyPolicyPage() {
 					retained while your account remains active, or as needed to provide
 					the Service.
 				</p>
+				<p>
+					If you unsubscribe from product and marketing emails, we keep your
+					email address on a suppression list so that we do not send them to you
+					again.
+				</p>
 			</LegalSection>
 
 			<LegalSection title="10. Your Rights">
@@ -730,6 +783,14 @@ export default function PrivacyPolicyPage() {
 					<li>
 						Revoke Google or GitHub Hub sign-in access using the links in
 						Section 4;
+					</li>
+					<li>
+						Unsubscribe from product and marketing emails using the link in any
+						of them, or by contacting{' '}
+						<a href={`mailto:${CONTACT_EMAIL}`} className={legalLinkClassName}>
+							{CONTACT_EMAIL}
+						</a>
+						;
 					</li>
 					<li>
 						Request deletion of your Hub account and associated control-plane
