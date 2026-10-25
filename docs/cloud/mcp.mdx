@@ -50,6 +50,8 @@ One connection uses one link. To switch links, remove Corsair from the client, a
   <Tab title="ChatGPT">
     1. In ChatGPT, add a custom MCP server and paste `https://mcp.corsair.cloud/mcp`.
     2. Choose OAuth, then sign in to Corsair.
+
+    On personal plans, ChatGPT currently uses only the read tools from a custom server, so Corsair can look things up but not make changes. Write tools such as `run_script` need a Business or Enterprise/Edu workspace, where an admin adds the server or gives you permission to. OpenAI's [guide to custom MCP servers](https://help.openai.com/en/articles/12584461-connecting-custom-mcp-servers-in-chatgpt) has the current rules.
   </Tab>
   <Tab title="Cursor">
     [Add to Cursor](cursor://anysphere.cursor-deeplink/mcp/install?name=corsair&config=eyJ1cmwiOiJodHRwczovL21jcC5jb3JzYWlyLmNsb3VkL21jcCJ9), or add this to `~/.cursor/mcp.json`:
@@ -113,7 +115,7 @@ One connection uses one link. To switch links, remove Corsair from the client, a
 Any other client that supports remote MCP servers with OAuth sign-in works the same way.
 
 <Note>
-Some clients can't sign in to an MCP server: Windsurf, Cline, Roo Code, LM Studio and GitHub Copilot's CLI and coding agent. For those, use a link's own address with an API key. Open the link at [hub.corsair.dev/me](https://hub.corsair.dev/me) and follow the steps for your client there.
+Some clients can't sign in to an MCP server, such as GitHub Copilot's coding agent. For those, use a link's own address with an API key. Open the link at [hub.corsair.dev/me](https://hub.corsair.dev/me) and follow the steps for your client there.
 </Note>
 
 ## What the agent can do
