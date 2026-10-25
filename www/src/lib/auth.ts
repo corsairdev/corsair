@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
+import { APIError } from 'better-auth/api';
 import { magicLink } from 'better-auth/plugins';
 import { Resend } from 'resend';
 import { db } from '@/db';
@@ -10,6 +11,7 @@ import {
 	connectProviderCredentials,
 	syncLinkedAccount,
 } from '@/server/oss-connect/linked-account';
+import { UNVERIFIED_EMAIL_MESSAGE } from '@/server/oss-connect/sign-up';
 
 const resend = process.env.RESEND_API_KEY
 	? new Resend(process.env.RESEND_API_KEY)
@@ -32,9 +34,8 @@ function getBaseUrl() {
 const baseURL = getBaseUrl();
 const baseOrigin = baseURL ? new URL(baseURL).origin : undefined;
 
-// GitHub and Discord are only connected from the OSS profile, to an account that
-// signed in with a magic link. They never create an account, and ask for the
-// smallest scope that returns the user id and name.
+// GitHub signs people in, and connects to an account that signed in with a magic
+// link. Discord only connects; it never signs anyone in or creates an account.
 const github = connectProviderCredentials('github');
 const discord = connectProviderCredentials('discord');
 
@@ -81,9 +82,10 @@ export const auth = betterAuth({
 			? {
 					github: {
 						...github,
-						disableSignUp: true,
 						disableDefaultScope: true,
-						scope: ['read:user'],
+						// user:email lets a sign-in read an email the user keeps private,
+						// and tells better-auth whether GitHub has verified it.
+						scope: ['read:user', 'user:email'],
 					},
 				}
 			: {}),
@@ -104,17 +106,37 @@ export const auth = betterAuth({
 	account: {
 		accountLinking: {
 			enabled: true,
-			trustedProviders: ['github', 'discord'],
+			// A trusted provider links without a verified email. Discord's identify
+			// scope returns no email, so its Connect button needs this, and it can't
+			// sign in to match an account by email. Don't add its email scope while
+			// it's listed. GitHub isn't listed: a GitHub sign-in joins an existing
+			// account only when GitHub has verified that account's email, and
+			// connecting GitHub needs a verified GitHub email too.
+			trustedProviders: ['discord'],
 			// The magic-link email rarely matches the GitHub or Discord email.
 			allowDifferentEmails: true,
-			// A magic-link account has no other linked account to fall back on.
+			// A magic-link account has no other linked account to fall back on, and
+			// a GitHub sign-up can hand its GitHub to an older email account.
 			allowUnlinkingAll: true,
-			// Only the explicit Connect buttons link accounts. A GitHub or Discord
-			// sign-in never attaches itself to an existing account by email.
-			disableImplicitLinking: true,
 		},
 	},
 	databaseHooks: {
+		user: {
+			create: {
+				// Every account needs an email its owner has proved. A magic link proves
+				// it; a GitHub sign-in only when GitHub has verified the address.
+				// Otherwise someone could put another person's address on a GitHub
+				// account, sign in first, and own the account that person's magic link
+				// later opens.
+				before: async (newUser) => {
+					if (!newUser.emailVerified) {
+						throw new APIError('FORBIDDEN', {
+							message: UNVERIFIED_EMAIL_MESSAGE,
+						});
+					}
+				},
+			},
+		},
 		account: {
 			create: { after: syncAfterLink },
 			update: { after: syncAfterLink },

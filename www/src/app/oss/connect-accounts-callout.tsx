@@ -9,6 +9,8 @@ import { Button } from '@/components/ui/button';
 import { authClient } from '@/lib/auth-client';
 import type { ConnectProvider } from '@/server/oss-connect/linked-account';
 
+import { connectErrorMessage } from './oauth-error-messages';
+
 export type ConnectableAccount = {
 	provider: ConnectProvider;
 	connected: boolean;
@@ -25,12 +27,6 @@ const PROVIDER_REASON: Record<ConnectProvider, string> = {
 	discord: 'The #shipped channel tags you when your PR merges.',
 };
 
-// better-auth adds ?error=<code> to the error callback URL.
-const LINK_ERRORS: Record<string, string> = {
-	account_already_linked_to_different_user:
-		'That account is already connected to another corsair.dev profile.',
-};
-
 export function ConnectAccountsCallout({
 	accounts,
 }: {
@@ -38,13 +34,38 @@ export function ConnectAccountsCallout({
 }) {
 	const searchParams = useSearchParams();
 	const [pending, setPending] = useState<ConnectProvider | null>(null);
+	const [switching, setSwitching] = useState(false);
 	const [error, setError] = useState('');
 
+	const failedProvider =
+		accounts.find(
+			(account) => account.provider === searchParams.get('provider'),
+		)?.provider ?? null;
 	const linkError =
 		searchParams.get('connect') === 'failed'
-			? (LINK_ERRORS[searchParams.get('error') ?? ''] ??
-				"Couldn't connect that account. Try again.")
+			? connectErrorMessage(searchParams.get('error'), failedProvider)
 			: '';
+	const github = accounts.find((account) => account.provider === 'github');
+	// A first GitHub sign-in made a new account. Someone who signed up with
+	// another email before has their claims there, so offer to move GitHub over.
+	const offerSwitch =
+		searchParams.get('welcome') === 'github' && github?.connected === true;
+
+	const switchToEmailAccount = async () => {
+		setSwitching(true);
+		setError('');
+		posthog.capture('oss_github_moved_to_email_account');
+		const { error: unlinkError } = await authClient.unlinkAccount({
+			providerId: 'github',
+		});
+		if (unlinkError) {
+			setError(unlinkError.message ?? "Couldn't disconnect GitHub.");
+			setSwitching(false);
+			return;
+		}
+		await authClient.signOut();
+		window.location.assign('/oss/sign-in?switched=github');
+	};
 
 	const connect = async (provider: ConnectProvider) => {
 		setPending(provider);
@@ -54,7 +75,7 @@ export function ConnectAccountsCallout({
 		const { error: linkStartError } = await authClient.linkSocial({
 			provider,
 			callbackURL: '/oss',
-			errorCallbackURL: '/oss?connect=failed',
+			errorCallbackURL: `/oss?connect=failed&provider=${provider}`,
 		});
 		if (linkStartError) {
 			setError(linkStartError.message ?? "Couldn't start connecting.");
@@ -68,6 +89,24 @@ export function ConnectAccountsCallout({
 			<p className="mb-4 text-sm text-muted-foreground">
 				Prove which GitHub and Discord accounts are yours.
 			</p>
+			{offerSwitch ? (
+				<div className="mb-4 rounded-lg border border-border/70 bg-muted/40 px-3 py-2 text-sm">
+					<p>
+						You're signed in with GitHub on a new corsair.dev account. Signed up
+						with a different email before? Your claims are on that account.
+					</p>
+					<Button
+						type="button"
+						variant="outline"
+						size="sm"
+						className="mt-2 rounded-lg"
+						disabled={switching}
+						onClick={switchToEmailAccount}
+					>
+						{switching ? 'Switching...' : 'Use my email account instead'}
+					</Button>
+				</div>
+			) : null}
 			<ul className="flex flex-col gap-3">
 				{accounts.map((account) => {
 					const Icon = account.provider === 'github' ? GithubLogo : DiscordLogo;
