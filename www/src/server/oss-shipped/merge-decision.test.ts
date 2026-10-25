@@ -51,12 +51,10 @@ describe('parsePullRequestNumber', () => {
 });
 
 describe('decideMergeCredit', () => {
-	const base = {
-		claimerGithubLogin: 'Srinidhi444',
-		prAuthorLogin: 'srinidhi444',
-	};
+	// The claimer connected the GitHub account that opened the PR.
+	const base = { claimerGithubId: '183457221', prAuthorId: 183457221 };
 
-	it('finishes an active claim when the PR author is the claimer (case-insensitive)', () => {
+	it('finishes an active claim when the PR author is the connected GitHub account', () => {
 		assert.deepEqual(decideMergeCredit({ ...base, latestPhase: 'building' }), {
 			kind: 'credit',
 			finish: true,
@@ -83,20 +81,23 @@ describe('decideMergeCredit', () => {
 		});
 	});
 
+	it('leaves the claim for an admin when the claimer has not connected GitHub', () => {
+		assert.deepEqual(
+			decideMergeCredit({
+				latestPhase: 'building',
+				claimerGithubId: null,
+				prAuthorId: 183457221,
+			}),
+			{ kind: 'unverified' },
+		);
+	});
+
 	it("doesn't credit a claim for someone else's merged PR", () => {
 		assert.deepEqual(
 			decideMergeCredit({
 				latestPhase: 'building',
-				claimerGithubLogin: 'alice',
-				prAuthorLogin: 'bob',
-			}),
-			{ kind: 'author_mismatch' },
-		);
-		assert.deepEqual(
-			decideMergeCredit({
-				latestPhase: 'building',
-				claimerGithubLogin: null,
-				prAuthorLogin: 'bob',
+				claimerGithubId: '1001',
+				prAuthorId: 2002,
 			}),
 			{ kind: 'author_mismatch' },
 		);

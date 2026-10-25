@@ -6,6 +6,10 @@ import { Resend } from 'resend';
 import { db } from '@/db';
 import * as authSchema from '@/db/auth-schema';
 import { buildMagicLinkEmailFromUrl } from '@/lib/auth-emails';
+import {
+	connectProviderCredentials,
+	syncLinkedAccount,
+} from '@/server/oss-connect/linked-account';
 
 const resend = process.env.RESEND_API_KEY
 	? new Resend(process.env.RESEND_API_KEY)
@@ -27,6 +31,26 @@ function getBaseUrl() {
 
 const baseURL = getBaseUrl();
 const baseOrigin = baseURL ? new URL(baseURL).origin : undefined;
+
+// GitHub and Discord are only connected from the OSS profile, to an account that
+// signed in with a magic link. They never create an account, and ask for the
+// smallest scope that returns the user id and name.
+const github = connectProviderCredentials('github');
+const discord = connectProviderCredentials('discord');
+
+async function syncAfterLink(linked: {
+	userId: string;
+	providerId: string;
+	accountId: string;
+	accessToken?: string | null;
+}) {
+	try {
+		await syncLinkedAccount(db, linked);
+	} catch (error) {
+		// The account is linked either way; only the copied username is missing.
+		console.error('[oss-connect] profile sync failed', error);
+	}
+}
 
 export const auth = betterAuth({
 	database: drizzleAdapter(db, {
@@ -52,6 +76,44 @@ export const auth = betterAuth({
 			},
 		}),
 	],
+	socialProviders: {
+		...(github
+			? {
+					github: {
+						...github,
+						disableSignUp: true,
+						disableDefaultScope: true,
+						scope: ['read:user'],
+					},
+				}
+			: {}),
+		...(discord
+			? {
+					discord: {
+						...discord,
+						disableSignUp: true,
+						disableDefaultScope: true,
+						scope: ['identify'],
+					},
+				}
+			: {}),
+	},
+	account: {
+		accountLinking: {
+			enabled: true,
+			trustedProviders: ['github', 'discord'],
+			// The magic-link email rarely matches the GitHub or Discord email.
+			allowDifferentEmails: true,
+			// A magic-link account has no other linked account to fall back on.
+			allowUnlinkingAll: true,
+		},
+	},
+	databaseHooks: {
+		account: {
+			create: { after: syncAfterLink },
+			update: { after: syncAfterLink },
+		},
+	},
 	secret: process.env.BETTER_AUTH_SECRET,
 	...(baseURL ? { baseURL } : {}),
 	trustedOrigins: [

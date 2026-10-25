@@ -15,6 +15,7 @@ function pr(
 		html_url: 'https://github.com/corsairdev/corsair/pull/1831',
 		merged_at: '2026-10-05T10:00:00Z',
 		user: {
+			id: 1001,
 			login,
 			avatar_url: 'https://avatars/x',
 			html_url: `https://github.com/${login}`,

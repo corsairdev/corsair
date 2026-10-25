@@ -1,8 +1,8 @@
 import { TRPCError } from '@trpc/server';
-import { eq } from 'drizzle-orm';
+import { and, eq, inArray } from 'drizzle-orm';
 import { z } from 'zod';
 
-import { user } from '@/db/auth-schema';
+import { account, user } from '@/db/auth-schema';
 
 import {
 	discordUsernameSchema,
@@ -21,11 +21,23 @@ export const accountRouter = createTRPCRouter({
 			.from(user)
 			.where(eq(user.id, ctx.user.id))
 			.limit(1);
+		const linked = await ctx.db
+			.select({ providerId: account.providerId })
+			.from(account)
+			.where(
+				and(
+					eq(account.userId, ctx.user.id),
+					inArray(account.providerId, ['github', 'discord']),
+				),
+			);
+		const isLinked = (providerId: string) =>
+			linked.some((row) => row.providerId === providerId);
 
 		return {
 			email: profile?.email ?? ctx.user.email,
 			githubUsername: profile?.githubUsername ?? null,
 			discordUsername: profile?.discordUsername ?? null,
+			connected: { github: isLinked('github'), discord: isLinked('discord') },
 		};
 	}),
 
