@@ -2,6 +2,7 @@ import { TRPCError } from '@trpc/server';
 import { and, eq, inArray } from 'drizzle-orm';
 import { z } from 'zod';
 
+import type { DB } from '@/db';
 import { account, user } from '@/db/auth-schema';
 
 import {
@@ -9,6 +10,21 @@ import {
 	githubUsernameSchema,
 } from '../schemas/usernames';
 import { createTRPCRouter, protectedProcedure } from '../trpc';
+
+/** Once GitHub is connected, github_username comes from that account and can't be typed over. */
+async function assertGithubNotConnected(db: DB, userId: string) {
+	const [linked] = await db
+		.select({ id: account.id })
+		.from(account)
+		.where(and(eq(account.userId, userId), eq(account.providerId, 'github')))
+		.limit(1);
+	if (linked) {
+		throw new TRPCError({
+			code: 'BAD_REQUEST',
+			message: 'Your GitHub username comes from your connected GitHub account',
+		});
+	}
+}
 
 export const accountRouter = createTRPCRouter({
 	getProfile: protectedProcedure.query(async ({ ctx }) => {
@@ -37,7 +53,12 @@ export const accountRouter = createTRPCRouter({
 			email: profile?.email ?? ctx.user.email,
 			githubUsername: profile?.githubUsername ?? null,
 			discordUsername: profile?.discordUsername ?? null,
-			connected: { github: isLinked('github'), discord: isLinked('discord') },
+			// Connected only once the name was copied: if that failed, the connect
+			// button comes back and linking again retries the copy.
+			connected: {
+				github: isLinked('github') && Boolean(profile?.githubUsername),
+				discord: isLinked('discord') && Boolean(profile?.discordUsername),
+			},
 		};
 	}),
 
@@ -49,6 +70,7 @@ export const accountRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			await assertGithubNotConnected(ctx.db, ctx.user.id);
 			const [existingGithub] = await ctx.db
 				.select({ id: user.id })
 				.from(user)
@@ -85,6 +107,7 @@ export const accountRouter = createTRPCRouter({
 	setGithubUsername: protectedProcedure
 		.input(z.object({ username: githubUsernameSchema }))
 		.mutation(async ({ ctx, input }) => {
+			await assertGithubNotConnected(ctx.db, ctx.user.id);
 			const [existing] = await ctx.db
 				.select({ id: user.id })
 				.from(user)

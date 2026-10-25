@@ -9,6 +9,7 @@ import {
 	syncLinkedAccount,
 } from './linked-account';
 
+// `body` is whatever JSON the fake GitHub or Discord API returns, including bad shapes.
 function respond(status: number, body: unknown) {
 	return async () =>
 		new Response(JSON.stringify(body), {

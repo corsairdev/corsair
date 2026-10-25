@@ -1,7 +1,7 @@
 import { and, eq, ne } from 'drizzle-orm';
 
 import type { DB } from '@/db';
-import { account, user } from '@/db/auth-schema';
+import { user } from '@/db/auth-schema';
 
 /**
  * Accounts a contributor can connect on their OSS profile. Connecting links to the
@@ -10,22 +10,43 @@ import { account, user } from '@/db/auth-schema';
 export const CONNECT_PROVIDERS = ['github', 'discord'] as const;
 export type ConnectProvider = (typeof CONNECT_PROVIDERS)[number];
 
-const ENV_PREFIX: Record<ConnectProvider, string> = {
-	github: 'GITHUB',
-	discord: 'DISCORD',
+/** The only environment variables the connect providers read. */
+type ConnectEnv = {
+	GITHUB_CLIENT_ID?: string;
+	GITHUB_CLIENT_SECRET?: string;
+	DISCORD_CLIENT_ID?: string;
+	DISCORD_CLIENT_SECRET?: string;
 };
+
+function readConnectEnv(): ConnectEnv {
+	return {
+		GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID,
+		GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET,
+		DISCORD_CLIENT_ID: process.env.DISCORD_CLIENT_ID,
+		DISCORD_CLIENT_SECRET: process.env.DISCORD_CLIENT_SECRET,
+	};
+}
+
+const CREDENTIAL_KEYS = {
+	github: ['GITHUB_CLIENT_ID', 'GITHUB_CLIENT_SECRET'],
+	discord: ['DISCORD_CLIENT_ID', 'DISCORD_CLIENT_SECRET'],
+} as const satisfies Record<
+	ConnectProvider,
+	readonly [keyof ConnectEnv, keyof ConnectEnv]
+>;
 
 export function connectProviderCredentials(
 	provider: ConnectProvider,
-	env: Record<string, string | undefined> = process.env,
+	env: ConnectEnv = readConnectEnv(),
 ) {
-	const clientId = env[`${ENV_PREFIX[provider]}_CLIENT_ID`];
-	const clientSecret = env[`${ENV_PREFIX[provider]}_CLIENT_SECRET`];
+	const [idKey, secretKey] = CREDENTIAL_KEYS[provider];
+	const clientId = env[idKey];
+	const clientSecret = env[secretKey];
 	return clientId && clientSecret ? { clientId, clientSecret } : null;
 }
 
 export function enabledConnectProviders(
-	env: Record<string, string | undefined> = process.env,
+	env: ConnectEnv = readConnectEnv(),
 ): ConnectProvider[] {
 	return CONNECT_PROVIDERS.filter((provider) =>
 		connectProviderCredentials(provider, env),
@@ -120,21 +141,8 @@ export async function syncLinkedAccount(
 			)
 			.limit(1);
 		if (holder) {
-			const [verified] = await tx
-				.select({ id: account.id })
-				.from(account)
-				.where(
-					and(eq(account.userId, holder.id), eq(account.providerId, 'github')),
-				)
-				.limit(1);
-			if (verified) {
-				console.warn(
-					'[oss-connect] GitHub login already belongs to another connected profile',
-					{ userId: linked.userId, holderId: holder.id },
-				);
-				return;
-			}
-			// Someone typed this login without proving it; the verified owner takes it.
+			// GitHub just confirmed this login belongs to the account being linked, so
+			// whoever else holds the name (typed, or kept after a rename) gives it up.
 			await tx
 				.update(user)
 				.set({ githubUsername: null })
