@@ -94,6 +94,9 @@ export const auth = betterAuth({
 						disableSignUp: true,
 						disableDefaultScope: true,
 						scope: ['identify'],
+						// better-auth defaults to prompt=none, which can skip Discord's
+						// approval screen; always show contributors what they connect.
+						prompt: 'consent',
 					},
 				}
 			: {}),
