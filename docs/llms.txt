@@ -7,7 +7,7 @@
 - [Introduction](https://docs.corsair.dev/introduction.md): What Corsair is, how the SDK works, and when to use it.
 - [Quick start](https://docs.corsair.dev/quick-start.md): A working integration in five steps, powered by Hub.
 - [Set up with your agent](https://docs.corsair.dev/getting-started/set-up-with-your-agent.md): One prompt that takes your app from empty to a working, connected integration.
-- [Corsair MCP](https://docs.corsair.dev/cloud/mcp.md): Let Claude, ChatGPT, Cursor and other agents use your connected apps through one address, https://mcp.corsair.cloud/mcp.
+- [Corsair MCP](https://docs.corsair.dev/cloud/mcp.md): Let Claude, ChatGPT, Cursor and other agents use your connected apps through one address, https://mcp.corsair.dev/mcp.
 
 ## Use cases
 
