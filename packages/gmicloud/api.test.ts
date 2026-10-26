@@ -435,6 +435,26 @@ describe('persistence', () => {
 		);
 	});
 
+	it('a full get replaces the cached record, so a removed field does not linger', async () => {
+		const sample = SPEC_CASES['containers.get']!;
+		const { eipAddress: _detached, ...withoutEip } = sample.response as Record<
+			string,
+			string
+		>;
+		respond(200, withoutEip);
+		const ctx = createContext();
+		ctx.db.containers.findByEntityId.mockResolvedValue({
+			data: { ...withoutEip, eipAddress: '203.0.113.10' },
+		});
+
+		await endpoint('containers.get')(ctx, sample.input);
+
+		const [, saved] = ctx.db.containers.upsertByEntityId.mock.calls[0]!;
+		expect(saved).toEqual(withoutEip);
+		expect(saved).not.toHaveProperty('eipAddress');
+		expect(ctx.db.containers.findByEntityId).not.toHaveBeenCalled();
+	});
+
 	it('a database failure never fails the API call', async () => {
 		respond(200, SPEC_CASES['containers.get']!.response);
 		const ctx = createContext();
