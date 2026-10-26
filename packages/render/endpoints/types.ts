@@ -40,7 +40,9 @@ const ServiceIdInputSchema = z.object({ serviceId: z.string().min(1) });
 const TriggerDeployInputSchema = ServiceIdInputSchema.extend({
 	commitId: z.string().min(1).optional(),
 	buildId: z.string().min(1).optional(),
-	clearCache: z.boolean().optional(),
+	clearCache: z.enum(['clear', 'do_not_clear']).optional(),
+	imageUrl: z.string().url().optional(),
+	deployMode: z.enum(['deploy_only', 'build_and_deploy']).optional(),
 });
 const ServiceOutputSchema = RenderServiceSchema;
 const EmptyOutputSchema = z.union([z.object({}), z.undefined()]);
@@ -91,7 +93,9 @@ export type RenderEndpointInputs = {
 	triggerDeploy: ServiceIdInput & {
 		commitId?: string;
 		buildId?: string;
-		clearCache?: boolean;
+		clearCache?: 'clear' | 'do_not_clear';
+		imageUrl?: string;
+		deployMode?: 'deploy_only' | 'build_and_deploy';
 	};
 	restartService: ServiceIdInput;
 	suspendService: ServiceIdInput;

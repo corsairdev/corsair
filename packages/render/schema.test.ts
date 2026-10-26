@@ -123,11 +123,11 @@ describe('Render schema', () => {
 			$getAccountId: jest.fn().mockResolvedValue('account-1'),
 		} as never;
 		const inputCandidates = [
-			{},
+			{ id: 'resource-1', key: 'resource-key', serviceId: 'service-1' },
+			{ serviceId: 'service-1' },
 			{ id: 'resource-1' },
 			{ key: 'resource-key' },
-			{ serviceId: 'service-1' },
-			{ id: 'resource-1', key: 'resource-key', serviceId: 'service-1' },
+			{},
 		];
 		const outputCandidates = [
 			[],

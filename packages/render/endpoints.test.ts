@@ -6,6 +6,7 @@ import {
 	listEnvironments,
 	listOwners,
 	listProjects,
+	listRoutes,
 	listServices,
 	retrieveService,
 	triggerDeploy,
@@ -117,6 +118,9 @@ describe('Render service endpoints', () => {
 			{
 				serviceId: 'srv-1',
 				commitId: 'commit-1',
+				clearCache: 'clear',
+				imageUrl: 'https://example.test/image.tar',
+				deployMode: 'deploy_only',
 			} as never,
 		);
 		expect(request).toHaveBeenCalledWith(
@@ -124,7 +128,12 @@ describe('Render service endpoints', () => {
 			'secret',
 			{
 				method: 'POST',
-				body: { commitId: 'commit-1' },
+				body: {
+					commitId: 'commit-1',
+					clearCache: 'clear',
+					imageUrl: 'https://example.test/image.tar',
+					deployMode: 'deploy_only',
+				},
 			},
 		);
 
@@ -133,6 +142,16 @@ describe('Render service endpoints', () => {
 			method: 'DELETE',
 			body: undefined,
 		});
+	});
+
+	it('rejects missing and unsafe final-route identifiers', async () => {
+		expect(() => listRoutes({ key: 'secret' } as never, {})).toThrow(
+			'Invalid Render id',
+		);
+		expect(() =>
+			listRoutes({ key: 'secret' } as never, { id: '../services' }),
+		).toThrow('Invalid Render id');
+		expect(request).not.toHaveBeenCalled();
 	});
 
 	it('rejects service IDs that can escape the service path', async () => {
