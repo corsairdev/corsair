@@ -43,6 +43,15 @@ export const create: GmicloudEndpoints['sandboxesCreate'] = async (
 			body,
 		}),
 	);
+	// The access tokens in the create result are never cached.
+	await mergeRecords(ctx.db.sandboxes, [
+		{
+			id: result.data.id,
+			sandbox_key: result.data.sandbox_key,
+			template_id: result.data.template_id,
+			domain: result.data.domain,
+		},
+	]);
 	await logEventFromContext(ctx, 'gmicloud.sandboxes.create', {}, 'completed');
 	return result;
 };
