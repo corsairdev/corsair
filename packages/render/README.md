@@ -12,14 +12,29 @@ pnpm add @corsair-dev/render
 
 | Operation | Operation ID | Risk | Description |
 |-----------|--------------|------|-------------|
+| `automation.createDisk` | `render.api.automation.createDisk` | `write` | Create a disk for a Render service |
+| `automation.createWebhook` | `render.api.automation.createWebhook` | `write` | Create a webhook for a Render owner |
+| `automation.deleteDisk` | `render.api.automation.deleteDisk` | `destructive` | Delete a Render disk |
+| `automation.deleteWebhook` | `render.api.automation.deleteWebhook` | `destructive` | Delete a Render webhook |
+| `automation.listDiskSnapshots` | `render.api.automation.listDiskSnapshots` | `read` | List snapshots for a Render disk |
 | `automation.listDisks` | `render.api.automation.listDisks` | `read` | List Render disks |
 | `automation.listMaintenance` | `render.api.automation.listMaintenance` | `read` | List Render maintenance windows |
 | `automation.listTaskRuns` | `render.api.automation.listTaskRuns` | `read` | List Render task runs |
 | `automation.listTasks` | `render.api.automation.listTasks` | `read` | List Render tasks |
 | `automation.listWebhooks` | `render.api.automation.listWebhooks` | `read` | List Render webhooks |
-| `automation.listWorkflows` | `render.api.automation.listWorkflows` | `read` | List Render workflows |
 | `automation.listWorkflowVersions` | `render.api.automation.listWorkflowVersions` | `read` | List Render workflow versions |
+| `automation.listWorkflows` | `render.api.automation.listWorkflows` | `read` | List Render workflows |
+| `automation.restoreDiskSnapshot` | `render.api.automation.restoreDiskSnapshot` | `write` | Restore a snapshot to a Render disk |
+| `automation.retrieveDisk` | `render.api.automation.retrieveDisk` | `read` | Retrieve a Render disk |
+| `automation.retrieveMaintenance` | `render.api.automation.retrieveMaintenance` | `read` | Retrieve a Render maintenance run |
+| `automation.retrieveWebhook` | `render.api.automation.retrieveWebhook` | `read` | Retrieve a Render webhook |
 | `automation.streamTaskRunsEvents` | `render.api.automation.streamTaskRunsEvents` | `read` | Stream Render task run events |
+| `automation.triggerCronJobRun` | `render.api.automation.triggerCronJobRun` | `write` | Trigger a run of a Render cron job |
+| `automation.triggerMaintenance` | `render.api.automation.triggerMaintenance` | `write` | Trigger a Render maintenance run |
+| `automation.updateDisk` | `render.api.automation.updateDisk` | `write` | Update a Render disk |
+| `automation.updateMaintenance` | `render.api.automation.updateMaintenance` | `write` | Update a Render maintenance run |
+| `automation.updateWebhook` | `render.api.automation.updateWebhook` | `write` | Update a Render webhook |
+| `blueprints.listSyncs` | `render.api.blueprints.listSyncs` | `read` | List syncs for a Render blueprint |
 | `final.addHeaders` | `render.api.final.addHeaders` | `write` | Render addHeaders |
 | `final.addOrUpdateSecretFile` | `render.api.final.addOrUpdateSecretFile` | `write` | Render addOrUpdateSecretFile |
 | `final.addResourcesToEnvironment` | `render.api.final.addResourcesToEnvironment` | `write` | Render addResourcesToEnvironment |
@@ -57,6 +72,9 @@ pnpm add @corsair-dev/render
 | `final.updateRoutes` | `render.api.final.updateRoutes` | `write` | Render updateRoutes |
 | `final.updateSecretFilesForService` | `render.api.final.updateSecretFilesForService` | `write` | Render updateSecretFilesForService |
 | `final.verifyCustomDomain` | `render.api.final.verifyCustomDomain` | `write` | Render verifyCustomDomain |
+| `keyValue.connectionInfo` | `render.api.keyValue.connectionInfo` | `read` | Retrieve connection info for a Render Key Value instance |
+| `keyValue.resume` | `render.api.keyValue.resume` | `write` | Resume a Render Key Value instance |
+| `keyValue.suspend` | `render.api.keyValue.suspend` | `write` | Suspend a Render Key Value instance |
 | `logs.deleteOwnerStream` | `render.api.logs.deleteOwnerStream` | `destructive` | Delete an owner log stream |
 | `logs.list` | `render.api.logs.list` | `read` | List Render logs |
 | `logs.resourceStreams` | `render.api.logs.resourceStreams` | `read` | List resource log streams |
@@ -74,12 +92,22 @@ pnpm add @corsair-dev/render
 | `metrics.memory` | `render.api.metrics.memory` | `read` | Read Render memory metrics |
 | `metrics.memoryLimit` | `render.api.metrics.memoryLimit` | `read` | Read Render memory limits |
 | `metrics.memoryTarget` | `render.api.metrics.memoryTarget` | `read` | Read Render memory targets |
+| `organizations.auditLogs` | `render.api.organizations.auditLogs` | `read` | List audit logs for a Render organization |
+| `owners.auditLogs` | `render.api.owners.auditLogs` | `read` | List audit logs for a Render owner |
 | `owners.list` | `render.api.owners.list` | `read` | List Render owners |
 | `owners.members` | `render.api.owners.members` | `read` | List Render owner members |
 | `owners.retrieve` | `render.api.owners.retrieve` | `read` | Retrieve a Render owner |
+| `postgres.connectionInfo` | `render.api.postgres.connectionInfo` | `read` | Retrieve connection info for a Render Postgres instance |
 | `postgres.create` | `render.api.postgres.create` | `write` | Create a Render Postgres database |
+| `postgres.deleteUser` | `render.api.postgres.deleteUser` | `destructive` | Delete a user on a Render Postgres instance |
+| `postgres.failover` | `render.api.postgres.failover` | `write` | Trigger a failover for a Render Postgres instance |
 | `postgres.list` | `render.api.postgres.list` | `read` | List Render Postgres databases |
+| `postgres.recover` | `render.api.postgres.recover` | `write` | Trigger point-in-time recovery for a Render Postgres instance |
+| `postgres.recoveryInfo` | `render.api.postgres.recoveryInfo` | `read` | Retrieve point-in-time recovery status for a Render Postgres instance |
+| `postgres.restart` | `render.api.postgres.restart` | `write` | Restart a Render Postgres instance |
+| `postgres.resume` | `render.api.postgres.resume` | `write` | Resume a Render Postgres instance |
 | `postgres.retrieve` | `render.api.postgres.retrieve` | `read` | Retrieve a Render Postgres database |
+| `postgres.suspend` | `render.api.postgres.suspend` | `write` | Suspend a Render Postgres instance |
 | `postgres.update` | `render.api.postgres.update` | `write` | Update a Render Postgres database |
 | `projects.create` | `render.api.projects.create` | `write` | Create a Render project |
 | `projects.list` | `render.api.projects.list` | `read` | List Render projects |
@@ -90,6 +118,7 @@ pnpm add @corsair-dev/render
 | `registryCredentials.list` | `render.api.registryCredentials.list` | `read` | List registry credentials |
 | `registryCredentials.retrieve` | `render.api.registryCredentials.retrieve` | `read` | Retrieve registry credentials |
 | `registryCredentials.update` | `render.api.registryCredentials.update` | `write` | Update registry credentials |
+| `services.cancelDeploy` | `render.api.services.cancelDeploy` | `write` | Cancel a Render deployment |
 | `services.delete` | `render.api.services.delete` | `destructive` | Delete a Render service |
 | `services.envGroups.create` | `render.api.services.envGroups.create` | `write` | Create a Render environment group |
 | `services.envGroups.delete` | `render.api.services.envGroups.delete` | `destructive` | Delete a Render environment group |
@@ -101,10 +130,19 @@ pnpm add @corsair-dev/render
 | `services.environments.list` | `render.api.services.environments.list` | `read` | List Render environments |
 | `services.environments.retrieve` | `render.api.services.environments.retrieve` | `read` | Retrieve a Render environment |
 | `services.environments.update` | `render.api.services.environments.update` | `write` | Update a Render environment |
+| `services.jobs.cancel` | `render.api.services.jobs.cancel` | `write` | Cancel a running job on a Render service |
+| `services.jobs.create` | `render.api.services.jobs.create` | `write` | Create a job run for a Render service |
+| `services.jobs.list` | `render.api.services.jobs.list` | `read` | List jobs for a Render service |
+| `services.jobs.retrieve` | `render.api.services.jobs.retrieve` | `read` | Retrieve a Render service job |
 | `services.list` | `render.api.services.list` | `read` | List Render services accessible to the authenticated owner |
+| `services.listDeploys` | `render.api.services.listDeploys` | `read` | List deployments for a Render service |
+| `services.listEvents` | `render.api.services.listEvents` | `read` | List events for a Render service |
+| `services.listOutboundIps` | `render.api.services.listOutboundIps` | `read` | List outbound IPs for a Render service |
+| `services.purgeServiceCache` | `render.api.services.purgeServiceCache` | `write` | Purge the cache for a Render service |
 | `services.restart` | `render.api.services.restart` | `write` | Restart a Render service |
 | `services.resume` | `render.api.services.resume` | `write` | Resume a Render service |
 | `services.retrieve` | `render.api.services.retrieve` | `read` | Retrieve a Render service |
+| `services.rollbackDeploy` | `render.api.services.rollbackDeploy` | `write` | Roll back a Render service deployment |
 | `services.suspend` | `render.api.services.suspend` | `write` | Suspend a Render service |
 | `services.triggerDeploy` | `render.api.services.triggerDeploy` | `write` | Trigger a Render deployment |
 | `services.update` | `render.api.services.update` | `write` | Update a Render service |
