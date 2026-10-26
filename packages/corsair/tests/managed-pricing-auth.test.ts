@@ -47,16 +47,65 @@ describe('resolveManagedPricingApiKey', () => {
 		);
 
 		expect(apiKey).toBe('fc-test-key');
-		expect(global.fetch).toHaveBeenCalledWith(
-			'https://hub.test/managed-pricing/credentials',
-			expect.objectContaining({
-				body: JSON.stringify({
-					plugin: 'firecrawl',
-					tenantId: 'tenant_a',
-					operation: TEST_OPERATION,
-				}),
-			}),
+		const [url, init] = (global.fetch as jest.Mock).mock.calls[0];
+		expect(url).toBe('https://hub.test/managed-pricing/credentials');
+		expect(JSON.parse(init.body)).toEqual({
+			plugin: 'firecrawl',
+			tenantId: 'tenant_a',
+			operation: TEST_OPERATION,
+			idempotencyKey: expect.any(String),
+		});
+	});
+
+	it('asks Hub for a fresh, separately charged key on every call', async () => {
+		global.fetch = jest.fn(async () => ({
+			ok: true,
+			status: 200,
+			headers: { get: () => 'application/json' },
+			text: async () =>
+				JSON.stringify({ api_key: 'fc-test-key', expires_in: 3600 }),
+		})) as typeof fetch;
+
+		const localCache = createManagedPricingCredentialCache();
+		for (let i = 0; i < 3; i++) {
+			await resolveManagedPricingApiKey(
+				{ hub, tenantId: 'tenant_a' },
+				{ plugin: 'firecrawl', cache: localCache, operation: TEST_OPERATION },
+			);
+		}
+
+		const calls = (global.fetch as jest.Mock).mock.calls;
+		expect(calls).toHaveLength(3);
+		const keys = calls.map(([, init]) => JSON.parse(init.body).idempotencyKey);
+		expect(new Set(keys).size).toBe(3);
+		for (const [, init] of calls) {
+			const headers = new Headers(init.headers);
+			expect(headers.get('x-corsair-idempotency-key')).toBe(
+				JSON.parse(init.body).idempotencyKey,
+			);
+		}
+	});
+
+	it('does not merge concurrent calls into one charge', async () => {
+		global.fetch = jest.fn(async () => ({
+			ok: true,
+			status: 200,
+			headers: { get: () => 'application/json' },
+			text: async () =>
+				JSON.stringify({ api_key: 'fc-test-key', expires_in: 3600 }),
+		})) as typeof fetch;
+
+		const localCache = createManagedPricingCredentialCache();
+		await Promise.all(
+			[1, 2].map(() =>
+				resolveManagedPricingApiKey(
+					{ hub, tenantId: 'tenant_a' },
+					{ plugin: 'firecrawl', cache: localCache, operation: TEST_OPERATION },
+				),
+			),
 		);
+
+		expect(global.fetch).toHaveBeenCalledTimes(2);
 	});
 });
 
