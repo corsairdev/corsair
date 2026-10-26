@@ -99,6 +99,10 @@ const ResourceOutputSchema = z.union([
 	z.array(ResourceRecordSchema),
 ]);
 const ResourceListOutputSchema = z.array(ResourceRecordSchema);
+const ServiceJobStartInputSchema = ServiceIdInputSchema.extend({
+	startCommand: z.string().min(1),
+	planId: z.string().min(1).optional(),
+});
 
 export type ListServicesInput = z.infer<typeof ListServicesInputSchema>;
 export type ListServicesOutput = z.infer<typeof ListServicesOutputSchema>;
@@ -128,6 +132,8 @@ export type RenderEndpointInputs = {
 	listOutboundIps: ServiceIdInput;
 	listServiceJobs: ServiceIdInput;
 	retrieveServiceJob: z.infer<typeof ServiceJobInputSchema>;
+	createServiceJob: z.infer<typeof ServiceJobStartInputSchema>;
+	cancelServiceJob: z.infer<typeof ServiceJobInputSchema>;
 	restartService: ServiceIdInput;
 	suspendService: ServiceIdInput;
 	resumeService: ServiceIdInput;
@@ -238,6 +244,8 @@ export type RenderEndpointOutputs = {
 	listOutboundIps: z.infer<typeof ResourceListOutputSchema>;
 	listServiceJobs: z.infer<typeof ResourceListOutputSchema>;
 	retrieveServiceJob: z.infer<typeof ResourceOutputSchema>;
+	createServiceJob: z.infer<typeof ResourceOutputSchema>;
+	cancelServiceJob: z.infer<typeof ResourceOutputSchema>;
 	restartService: /* unknown: provider-specific lifecycle acknowledgement */ unknown;
 	suspendService: /* unknown: provider-specific lifecycle acknowledgement */ unknown;
 	resumeService: /* unknown: provider-specific lifecycle acknowledgement */ unknown;
@@ -349,6 +357,8 @@ export const RenderEndpointInputSchemas = {
 	listOutboundIps: ServiceIdInputSchema,
 	listServiceJobs: ServiceIdInputSchema,
 	retrieveServiceJob: ServiceJobInputSchema,
+	createServiceJob: ServiceJobStartInputSchema,
+	cancelServiceJob: ServiceJobInputSchema,
 	restartService: ServiceIdInputSchema,
 	suspendService: ServiceIdInputSchema,
 	resumeService: ServiceIdInputSchema,
@@ -459,6 +469,8 @@ export const RenderEndpointOutputSchemas = {
 	listOutboundIps: ResourceListOutputSchema,
 	listServiceJobs: ResourceListOutputSchema,
 	retrieveServiceJob: ResourceOutputSchema,
+	createServiceJob: ResourceOutputSchema,
+	cancelServiceJob: ResourceOutputSchema,
 	restartService:
 		/* unknown: provider-specific lifecycle acknowledgement */ z.unknown(),
 	suspendService:

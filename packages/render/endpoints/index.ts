@@ -101,6 +101,8 @@ export {
 } from './resources';
 export {
 	cancelDeploy,
+	cancelServiceJob,
+	createServiceJob,
 	deleteService,
 	listDeploys,
 	listOutboundIps,

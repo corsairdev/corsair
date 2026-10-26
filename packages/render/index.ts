@@ -20,12 +20,14 @@ import {
 	addResourcesToEnvironment,
 	addRoute,
 	cancelDeploy,
+	cancelServiceJob,
 	createCustomDomain,
 	createEnvGroup,
 	createEnvironment,
 	createPostgres,
 	createProject,
 	createRegistryCredential,
+	createServiceJob,
 	deleteEnvGroup,
 	deleteEnvGroupEnvVar,
 	deleteEnvGroupSecretFile,
@@ -162,6 +164,8 @@ export type RenderEndpoints = {
 	listOutboundIps: RenderEndpoint<'listOutboundIps'>;
 	listServiceJobs: RenderEndpoint<'listServiceJobs'>;
 	retrieveServiceJob: RenderEndpoint<'retrieveServiceJob'>;
+	createServiceJob: RenderEndpoint<'createServiceJob'>;
+	cancelServiceJob: RenderEndpoint<'cancelServiceJob'>;
 	restartService: RenderEndpoint<'restartService'>;
 	suspendService: RenderEndpoint<'suspendService'>;
 	resumeService: RenderEndpoint<'resumeService'>;
@@ -272,6 +276,8 @@ const renderEndpointsNested = {
 		jobs: {
 			list: listServiceJobs,
 			retrieve: retrieveServiceJob,
+			create: createServiceJob,
+			cancel: cancelServiceJob,
 		},
 		restart: restartService,
 		suspend: suspendService,
@@ -440,6 +446,14 @@ export const renderEndpointSchemas = {
 	'services.jobs.retrieve': {
 		input: RenderEndpointInputSchemas.retrieveServiceJob,
 		output: RenderEndpointOutputSchemas.retrieveServiceJob,
+	},
+	'services.jobs.create': {
+		input: RenderEndpointInputSchemas.createServiceJob,
+		output: RenderEndpointOutputSchemas.createServiceJob,
+	},
+	'services.jobs.cancel': {
+		input: RenderEndpointInputSchemas.cancelServiceJob,
+		output: RenderEndpointOutputSchemas.cancelServiceJob,
 	},
 	'services.restart': {
 		input: RenderEndpointInputSchemas.restartService,
@@ -906,6 +920,14 @@ const renderEndpointMeta = {
 	'services.jobs.retrieve': {
 		riskLevel: 'read',
 		description: 'Retrieve a Render service job',
+	},
+	'services.jobs.create': {
+		riskLevel: 'write',
+		description: 'Create a job run for a Render service',
+	},
+	'services.jobs.cancel': {
+		riskLevel: 'write',
+		description: 'Cancel a running job on a Render service',
 	},
 	'services.restart': {
 		riskLevel: 'write',

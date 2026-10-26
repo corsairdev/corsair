@@ -150,6 +150,31 @@ export const retrieveServiceJob: RenderEndpoints['retrieveServiceJob'] = (
 		'GET',
 	);
 
+export const createServiceJob: RenderEndpoints['createServiceJob'] = (
+	ctx,
+	input,
+) => {
+	const { startCommand, planId } = input;
+	return serviceRequest<Record<string, unknown>>(
+		ctx,
+		input.serviceId,
+		'/jobs',
+		'POST',
+		{ startCommand, planId },
+	);
+};
+
+export const cancelServiceJob: RenderEndpoints['cancelServiceJob'] = async (
+	ctx,
+	input,
+) =>
+	serviceRequest<Record<string, unknown>>(
+		ctx,
+		input.serviceId,
+		`/jobs/${encodeServiceId(input.jobId)}/cancel`,
+		'POST',
+	);
+
 export const restartService: RenderEndpoints['restartService'] = async (
 	ctx,
 	input,

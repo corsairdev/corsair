@@ -154,6 +154,8 @@ describe('Render schema', () => {
 		for (const [operation, required] of [
 			['cancelDeploy', { serviceId: 'service-1', deployId: 'deploy-1' }],
 			['rollbackDeploy', { serviceId: 'service-1', deployId: 'deploy-1' }],
+			['cancelServiceJob', { serviceId: 'service-1', jobId: 'job-1' }],
+			['createServiceJob', { serviceId: 'service-1', startCommand: 'echo hi' }],
 		] as const) {
 			const schema = RenderEndpointInputSchemas[operation];
 			expect(schema.safeParse({ id: 'resource-1' }).success).toBe(false);
@@ -210,6 +212,7 @@ describe('Render schema', () => {
 			{},
 			{ serviceId: 'service-1', deployId: 'deploy-1' },
 			{ serviceId: 'service-1', jobId: 'job-1' },
+			{ serviceId: 'service-1', startCommand: 'echo hi', planId: 'plan-1' },
 		];
 		const outputCandidates = [
 			[],

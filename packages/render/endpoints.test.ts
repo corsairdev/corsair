@@ -1,6 +1,8 @@
 import { makeRenderRequest } from './client';
 import {
 	cancelDeploy,
+	cancelServiceJob,
+	createServiceJob,
 	deleteService,
 	getUser,
 	listBlueprints,
@@ -209,6 +211,29 @@ describe('Render service endpoints', () => {
 				method: 'POST',
 				body: { deployId: 'dep-1' },
 			},
+		);
+	});
+
+	it('creates and cancels service jobs on the documented routes', async () => {
+		request.mockResolvedValue({});
+		await createServiceJob({ key: 'secret' } as never, {
+			serviceId: 'srv-1',
+			startCommand: 'npm test',
+			planId: 'plan-1',
+		});
+		await cancelServiceJob({ key: 'secret' } as never, {
+			serviceId: 'srv-1',
+			jobId: 'job-1',
+		});
+
+		expect(request).toHaveBeenCalledWith('/v1/services/srv-1/jobs', 'secret', {
+			method: 'POST',
+			body: { startCommand: 'npm test', planId: 'plan-1' },
+		});
+		expect(request).toHaveBeenCalledWith(
+			'/v1/services/srv-1/jobs/job-1/cancel',
+			'secret',
+			{ method: 'POST', body: undefined },
 		);
 	});
 
