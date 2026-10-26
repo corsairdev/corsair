@@ -85,6 +85,8 @@ describe('Render schema', () => {
 		const idOperations = [
 			'retrieveOwner',
 			'listOwnerMembers',
+			'listOwnerAuditLogs',
+			'listOrganizationAuditLogs',
 			'deleteOwnerLogStream',
 			'updateOwnerLogStream',
 			'addHeaders',

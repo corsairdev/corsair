@@ -17,6 +17,8 @@ import {
 	listDiskSnapshots,
 	listDisks,
 	listEnvironments,
+	listOrganizationAuditLogs,
+	listOwnerAuditLogs,
 	listOwners,
 	listProjects,
 	listRoutes,
@@ -479,6 +481,30 @@ describe('Render service endpoints', () => {
 				method: 'GET',
 				query: { limit: 10 },
 			},
+		);
+	});
+
+	it('lists owner and organization audit logs with time filters', async () => {
+		request.mockResolvedValue([]);
+		const ctx = { key: 'secret' } as never;
+		await listOwnerAuditLogs(ctx, {
+			id: 'usr-1',
+			startTime: '2026-10-01T00:00:00.000Z',
+		});
+		await listOrganizationAuditLogs(ctx, { id: 'org-1' });
+
+		expect(request).toHaveBeenCalledWith(
+			'/v1/owners/usr-1/audit-logs',
+			'secret',
+			{
+				method: 'GET',
+				query: { startTime: '2026-10-01T00:00:00.000Z' },
+			},
+		);
+		expect(request).toHaveBeenCalledWith(
+			'/v1/organizations/org-1/audit-logs',
+			'secret',
+			{ method: 'GET', query: {} },
 		);
 	});
 

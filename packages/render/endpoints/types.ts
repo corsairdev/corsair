@@ -145,6 +145,10 @@ const BlueprintSyncsInputSchema = ResourceIdInputSchema.extend({
 	limit: z.number().int().min(1).max(100).optional(),
 	cursor: z.string().optional(),
 });
+const AuditLogsInputSchema = ResourceIdInputSchema.extend({
+	startTime: z.string().datetime().optional(),
+	endTime: z.string().datetime().optional(),
+});
 
 export type ListServicesInput = z.infer<typeof ListServicesInputSchema>;
 export type ListServicesOutput = z.infer<typeof ListServicesOutputSchema>;
@@ -213,6 +217,8 @@ export type RenderEndpointInputs = {
 	listOwners: z.infer<typeof ResourceInputSchema>;
 	retrieveOwner: ResourceIdInput;
 	listOwnerMembers: ResourceIdInput;
+	listOwnerAuditLogs: z.infer<typeof AuditLogsInputSchema>;
+	listOrganizationAuditLogs: z.infer<typeof AuditLogsInputSchema>;
 	getUser: z.infer<typeof ResourceInputSchema>;
 	listLogs: z.infer<typeof ResourceInputSchema>;
 	listLogsValues: z.infer<typeof ResourceInputSchema>;
@@ -351,6 +357,8 @@ export type RenderEndpointOutputs = {
 	listOwners: z.infer<typeof ResourceListOutputSchema>;
 	retrieveOwner: z.infer<typeof ResourceOutputSchema>;
 	listOwnerMembers: z.infer<typeof ResourceListOutputSchema>;
+	listOwnerAuditLogs: z.infer<typeof ResourceListOutputSchema>;
+	listOrganizationAuditLogs: z.infer<typeof ResourceListOutputSchema>;
 	getUser: z.infer<typeof ResourceOutputSchema>;
 	listLogs: z.infer<typeof ResourceOutputSchema>;
 	listLogsValues: z.infer<typeof ResourceOutputSchema>;
@@ -490,6 +498,8 @@ export const RenderEndpointInputSchemas = {
 	listOwners: ResourceInputSchema,
 	retrieveOwner: ResourceIdInputSchema,
 	listOwnerMembers: ResourceIdInputSchema,
+	listOwnerAuditLogs: AuditLogsInputSchema,
+	listOrganizationAuditLogs: AuditLogsInputSchema,
 	getUser: ResourceInputSchema,
 	listLogs: ResourceInputSchema,
 	listLogsValues: ResourceInputSchema,
@@ -635,6 +645,8 @@ export const RenderEndpointOutputSchemas = {
 	listOwners: ResourceListOutputSchema,
 	retrieveOwner: ResourceOutputSchema,
 	listOwnerMembers: ResourceListOutputSchema,
+	listOwnerAuditLogs: ResourceListOutputSchema,
+	listOrganizationAuditLogs: ResourceListOutputSchema,
 	getUser: ResourceOutputSchema,
 	listLogs: ResourceOutputSchema,
 	listLogsValues: ResourceOutputSchema,

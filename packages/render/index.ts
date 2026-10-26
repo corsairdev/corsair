@@ -71,7 +71,9 @@ import {
 	listLogsValues,
 	listMaintenance,
 	listNotificationOverrides,
+	listOrganizationAuditLogs,
 	listOutboundIps,
+	listOwnerAuditLogs,
 	listOwnerMembers,
 	listOwners,
 	listPostgres,
@@ -229,6 +231,8 @@ export type RenderEndpoints = {
 	listOwners: RenderEndpoint<'listOwners'>;
 	retrieveOwner: RenderEndpoint<'retrieveOwner'>;
 	listOwnerMembers: RenderEndpoint<'listOwnerMembers'>;
+	listOwnerAuditLogs: RenderEndpoint<'listOwnerAuditLogs'>;
+	listOrganizationAuditLogs: RenderEndpoint<'listOrganizationAuditLogs'>;
 	getUser: RenderEndpoint<'getUser'>;
 	listLogs: RenderEndpoint<'listLogs'>;
 	listLogsValues: RenderEndpoint<'listLogsValues'>;
@@ -380,6 +384,10 @@ const renderEndpointsNested = {
 		list: listOwners,
 		retrieve: retrieveOwner,
 		members: listOwnerMembers,
+		auditLogs: listOwnerAuditLogs,
+	},
+	organizations: {
+		auditLogs: listOrganizationAuditLogs,
 	},
 	keyValue: {
 		suspend: suspendKeyValue,
@@ -684,6 +692,14 @@ export const renderEndpointSchemas = {
 	'owners.members': {
 		input: RenderEndpointInputSchemas.listOwnerMembers,
 		output: RenderEndpointOutputSchemas.listOwnerMembers,
+	},
+	'owners.auditLogs': {
+		input: RenderEndpointInputSchemas.listOwnerAuditLogs,
+		output: RenderEndpointOutputSchemas.listOwnerAuditLogs,
+	},
+	'organizations.auditLogs': {
+		input: RenderEndpointInputSchemas.listOrganizationAuditLogs,
+		output: RenderEndpointOutputSchemas.listOrganizationAuditLogs,
 	},
 	'user.get': {
 		input: RenderEndpointInputSchemas.getUser,
@@ -1258,6 +1274,14 @@ const renderEndpointMeta = {
 	'owners.members': {
 		riskLevel: 'read',
 		description: 'List Render owner members',
+	},
+	'owners.auditLogs': {
+		riskLevel: 'read',
+		description: 'List audit logs for a Render owner',
+	},
+	'organizations.auditLogs': {
+		riskLevel: 'read',
+		description: 'List audit logs for a Render organization',
 	},
 	'user.get': {
 		riskLevel: 'read',

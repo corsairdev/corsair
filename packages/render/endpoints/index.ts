@@ -95,6 +95,8 @@ export {
 	getUser,
 	listLogs,
 	listLogsValues,
+	listOrganizationAuditLogs,
+	listOwnerAuditLogs,
 	listOwnerMembers,
 	listOwners,
 	listResourceLogStreams,
