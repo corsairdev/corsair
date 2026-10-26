@@ -431,7 +431,7 @@ export const ParseBlockSchema = z
 			.loose()
 			.optional(),
 		image_url: z.string().nullable().optional(),
-		chart_data: z.array(z.string()).optional(),
+		chart_data: z.array(z.string()).nullable().optional(),
 		merged_tables: z.array(z.unknown()).optional(),
 		extra: z.record(z.string(), z.unknown()).optional(),
 	})
@@ -468,7 +468,7 @@ export const FullResultSchema = z
 	.object({
 		type: z.literal('full'),
 		chunks: z.array(ParseChunkSchema),
-		ocr: ParseOcrSchema.optional(),
+		ocr: ParseOcrSchema.nullable().optional(),
 		custom: z.unknown().nullable().optional(),
 	})
 	.loose();
