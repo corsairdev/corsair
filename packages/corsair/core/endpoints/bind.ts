@@ -1,8 +1,10 @@
 import type { CorsairDatabase } from '../../db/kysely/database';
 import type { HubConfig } from '../../hub';
+import type { ManagedPricingCall } from '../../hub/managed-pricing-auth';
 import {
 	createManagedPricingCredentialCache,
-	resolveManagedPricingApiKey,
+	reportManagedPricingCallFailed,
+	resolveManagedPricingCall,
 } from '../../hub/managed-pricing-auth';
 import { reportPluginConnectionStatusFromBinding } from '../../hub/report-connection-status';
 import { throwAuthMissingEndpointError } from '../auth/auth-missing-message';
@@ -304,13 +306,21 @@ export function bindEndpointsRecursively({
 				};
 
 				let key: string | undefined;
+				// Set once Hub has charged for this call; a failure from here on is
+				// reported so the charge is given back.
+				let meteredCall: ManagedPricingCall | undefined;
+				const reportIfCharged = async (error: unknown) => {
+					if (meteredCall && hubConfig) {
+						await reportManagedPricingCallFailed(hubConfig, meteredCall, error);
+					}
+				};
 				const endpointCtx = { ...ctx, meteredOperationId: operationPath };
 				const ctxTenantId =
 					typeof ctx.tenantId === 'string' ? ctx.tenantId : undefined;
 				const pluginAuthType = plugin ? getPluginAuthType(plugin) : undefined;
 				try {
 					if (pluginAuthType === 'managed_pricing' && hubConfig) {
-						key = await resolveManagedPricingApiKey(
+						const resolved = await resolveManagedPricingCall(
 							{
 								hub: hubConfig,
 								tenantId: ctxTenantId ?? tenantId,
@@ -322,6 +332,8 @@ export function bindEndpointsRecursively({
 								operation: operationPath,
 							},
 						);
+						key = resolved.apiKey;
+						meteredCall = resolved.call;
 					} else if (keyBuilder) {
 						key = await keyBuilder(endpointCtx, 'endpoint');
 					}
@@ -392,7 +404,13 @@ export function bindEndpointsRecursively({
 				}
 
 				if (!endpointHooks?.before && !endpointHooks?.after) {
-					const res = await call(0, { ...ctx, key }, args);
+					let res: Awaited<ReturnType<typeof call>>;
+					try {
+						res = await call(0, { ...ctx, key }, args);
+					} catch (error) {
+						await reportIfCharged(error);
+						throw error;
+					}
 					await onPermissionComplete?.();
 					if (plugin && hubConfig) {
 						reportPluginConnectionStatusFromBinding({
@@ -409,21 +427,31 @@ export function bindEndpointsRecursively({
 				}
 
 				const ctxWithKey = { ...ctx, key };
-				const beforeResult = endpointHooks.before
-					? await endpointHooks.before(ctxWithKey, args)
-					: {
-							ctx: ctxWithKey,
-							args,
-							continue: true as const,
-							passToAfter: undefined,
-						};
-				if (beforeResult.continue === false) return;
-				const res = await call(0, beforeResult.ctx, beforeResult.args);
-				await endpointHooks.after?.(
-					beforeResult.ctx,
-					res,
-					beforeResult.passToAfter,
-				);
+				let res: Awaited<ReturnType<typeof call>>;
+				try {
+					const beforeResult = endpointHooks.before
+						? await endpointHooks.before(ctxWithKey, args)
+						: {
+								ctx: ctxWithKey,
+								args,
+								continue: true as const,
+								passToAfter: undefined,
+							};
+					if (beforeResult.continue === false) {
+						// Charged for a call the hook then stopped: nothing ran.
+						await reportIfCharged(new Error('Stopped by a before hook'));
+						return;
+					}
+					res = await call(0, beforeResult.ctx, beforeResult.args);
+					await endpointHooks.after?.(
+						beforeResult.ctx,
+						res,
+						beforeResult.passToAfter,
+					);
+				} catch (error) {
+					await reportIfCharged(error);
+					throw error;
+				}
 				await onPermissionComplete?.();
 				if (plugin && hubConfig) {
 					reportPluginConnectionStatusFromBinding({

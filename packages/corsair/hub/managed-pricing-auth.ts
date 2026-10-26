@@ -216,10 +216,23 @@ export function createManagedPricingCredentialCache(): object {
  * Resolves a provider API key for managed_pricing endpoint auth.
  * Forwards `meteredOperationId` to Hub; credit cost is configured in Hub only.
  */
-export async function resolveManagedPricingApiKey(
+/** What Hub charged for one managed endpoint call, as it was sent. */
+export type ManagedPricingCall = {
+	plugin: string;
+	tenantId: string;
+	operation: string;
+	idempotencyKey: string;
+};
+
+/**
+ * Fetches the provider key for one endpoint call and returns, with it, what
+ * the charge was made under, so a failed call can be reported against it
+ * (reportManagedPricingCallFailed).
+ */
+export async function resolveManagedPricingCall(
 	ctx: ManagedPricingKeyBuilderContext,
 	input: { plugin: string; cache: object; operation?: string },
-): Promise<string> {
+): Promise<{ apiKey: string; call: ManagedPricingCall }> {
 	requireHubForManagedPricing(input.plugin, ctx.hub);
 	const tenantId = ctx.tenantId?.trim();
 	if (!tenantId) {
@@ -237,6 +250,9 @@ export async function resolveManagedPricingApiKey(
 			`[auth-missing:${input.plugin}:managed_pricing]: Endpoint operation id missing — cannot meter usage.`,
 		);
 	}
+	// Each endpoint call is metered on its own; retries inside the call
+	// reuse the key resolved here.
+	const idempotencyKey = randomUUID();
 	const result = await getManagedPricingApiKey(
 		{
 			hub: ctx.hub,
@@ -244,9 +260,46 @@ export async function resolveManagedPricingApiKey(
 			tenantId,
 			cache: input.cache,
 		},
-		// Each endpoint call is metered on its own; retries inside the call
-		// reuse the key resolved here.
-		{ operation, idempotencyKey: randomUUID() },
+		{ operation, idempotencyKey },
 	);
-	return result.apiKey;
+	return {
+		apiKey: result.apiKey,
+		call: { plugin: input.plugin, tenantId, operation, idempotencyKey },
+	};
+}
+
+export async function resolveManagedPricingApiKey(
+	ctx: ManagedPricingKeyBuilderContext,
+	input: { plugin: string; cache: object; operation?: string },
+): Promise<string> {
+	return (await resolveManagedPricingCall(ctx, input)).apiKey;
+}
+
+/** How long the end of a call waits on its report. A report that does not
+ *  arrive leaves the charge in place, which is what happened before. */
+const OUTCOME_REPORT_TIMEOUT_MS = 3_000;
+
+/**
+ * Tells Hub a managed call failed, so it gives the call's credits back. Best
+ * effort and bounded: it never throws, and never holds the caller's own error
+ * up by more than OUTCOME_REPORT_TIMEOUT_MS.
+ */
+export async function reportManagedPricingCallFailed(
+	hub: HubConfig,
+	call: ManagedPricingCall,
+	error: unknown,
+): Promise<void> {
+	const reason =
+		error instanceof Error ? `${error.name}: ${error.message}` : String(error);
+	try {
+		await hubApiPost({
+			hub,
+			path: '/managed-pricing/usage/outcome',
+			body: { ...call, outcome: 'failed', error: reason.slice(0, 300) },
+			parseResponse: (payload) => payload,
+			signal: AbortSignal.timeout(OUTCOME_REPORT_TIMEOUT_MS),
+		});
+	} catch {
+		// Unreported means still charged: the behaviour before this report.
+	}
 }
