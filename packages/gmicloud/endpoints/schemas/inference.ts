@@ -54,7 +54,11 @@ const ToolCallSchema = z.looseObject({
 
 export const ChatMessageSchema = z.object({
 	role: z.enum(['system', 'developer', 'user', 'assistant', 'tool']),
-	content: z.union([z.string(), z.array(ContentPartSchema)]).nullable(),
+	// Optional: an assistant turn that only calls tools has no content.
+	content: z
+		.union([z.string(), z.array(ContentPartSchema)])
+		.nullable()
+		.optional(),
 	name: z.string().optional(),
 	tool_calls: z.array(ToolCallSchema).optional(),
 	tool_call_id: z.string().optional(),
