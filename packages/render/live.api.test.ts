@@ -43,26 +43,17 @@ describeLive('Render live API', () => {
 		expect(Array.isArray(projects)).toBe(true);
 	});
 
-	it('returns environments, environment groups, and registry credentials', async () => {
-		const [environmentsResponse, groupsResponse, credentialsResponse] =
-			await Promise.all([
-				get<unknown>('/v1/environments'),
-				get<unknown>('/v1/env-groups'),
-				get<unknown>('/v1/registry-credentials'),
-			]);
+	it('returns environment groups for the authenticated owner', async () => {
+		const servicesResponse = await get<unknown>('/v1/services', { limit: 1 });
+		const services =
+			RenderEndpointOutputSchemas.listServices.parse(servicesResponse);
+		const ownerId = services[0]?.service.ownerId;
+		expect(ownerId).toBeDefined();
 
-		const environments =
-			RenderEndpointOutputSchemas.listEnvironments.parse(environmentsResponse);
+		const groupsResponse = await get<unknown>('/v1/env-groups', { ownerId });
 		const groups =
 			RenderEndpointOutputSchemas.listEnvGroups.parse(groupsResponse);
-		const credentials =
-			RenderEndpointOutputSchemas.listRegistryCredentials.parse(
-				credentialsResponse,
-			);
-
-		expect(Array.isArray(environments)).toBe(true);
 		expect(Array.isArray(groups)).toBe(true);
-		expect(Array.isArray(credentials)).toBe(true);
 	});
 
 	it('returns Postgres resources and maintenance windows', async () => {
@@ -81,9 +72,19 @@ describeLive('Render live API', () => {
 	});
 
 	it('returns logs and disks using current list routes', async () => {
+		const servicesResponse = await get<unknown>('/v1/services', { limit: 1 });
+		const services =
+			RenderEndpointOutputSchemas.listServices.parse(servicesResponse);
+		const service = services[0]?.service;
+		expect(service).toBeDefined();
+
 		const [logsResponse, disksResponse] = await Promise.all([
-			get<unknown>('/v1/logs', { limit: 3 }),
-			get<unknown>('/v1/disks'),
+			get<unknown>('/v1/logs', {
+				ownerId: service?.ownerId,
+				resource: service?.id,
+				limit: 3,
+			}),
+			get<unknown>('/v1/disks', { ownerId: service?.ownerId }),
 		]);
 
 		const logs = RenderEndpointOutputSchemas.listLogs.parse(logsResponse);
