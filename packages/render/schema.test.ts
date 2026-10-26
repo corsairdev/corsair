@@ -93,6 +93,9 @@ describe('Render schema', () => {
 			'createCustomDomain',
 			'deleteKeyValue',
 			'disconnectBlueprint',
+			'suspendKeyValue',
+			'resumeKeyValue',
+			'retrieveKeyValueConnectionInfo',
 			'listInstances',
 			'listPostgresExport',
 			'listPostgresUsers',
@@ -222,6 +225,14 @@ describe('Render schema', () => {
 				eventFilter: [],
 			}).success,
 		).toBe(true);
+	});
+
+	it('does not register deprecated Render operations', () => {
+		// Render deprecated the entire Redis API in favor of Key Value; the
+		// deprecated operation ids are enumerated in the public OpenAPI spec.
+		const registered = Object.keys(renderEndpointSchemas);
+		expect(registered.filter((path) => path.includes('redis'))).toEqual([]);
+		expect(registered.some((path) => path.startsWith('keyValue.'))).toBe(true);
 	});
 
 	it('provides executable input and output contracts for every operation', () => {

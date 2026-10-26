@@ -69,6 +69,24 @@ export const disconnectBlueprint: RenderEndpoints['disconnectBlueprint'] = (
 	ctx,
 	input,
 ) => call(ctx, '/v1/blueprints/{id}', 'DELETE', input);
+// Render Key Value lifecycle triggers return 202 with no request body.
+export const suspendKeyValue: RenderEndpoints['suspendKeyValue'] = (
+	ctx,
+	input,
+) =>
+	makeRenderRequest(
+		renderPathParameter('/v1/key-value/{id}/suspend', 'id', input.id),
+		ctx.key,
+		{ method: 'POST', body: undefined },
+	);
+export const resumeKeyValue: RenderEndpoints['resumeKeyValue'] = (ctx, input) =>
+	makeRenderRequest(
+		renderPathParameter('/v1/key-value/{id}/resume', 'id', input.id),
+		ctx.key,
+		{ method: 'POST', body: undefined },
+	);
+export const retrieveKeyValueConnectionInfo: RenderEndpoints['retrieveKeyValueConnectionInfo'] =
+	(ctx, input) => call(ctx, '/v1/key-value/{id}/connection-info', 'GET', input);
 export const linkServiceToEnvGroup: RenderEndpoints['linkServiceToEnvGroup'] = (
 	ctx,
 	input,

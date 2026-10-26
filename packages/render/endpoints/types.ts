@@ -261,6 +261,9 @@ export type RenderEndpointInputs = {
 	disconnectBlueprint: ResourceIdInput;
 	linkServiceToEnvGroup: z.infer<typeof ResourceIdServiceIdInputSchema>;
 	listBlueprints: z.infer<typeof ResourceInputSchema>;
+	suspendKeyValue: ResourceIdInput;
+	resumeKeyValue: ResourceIdInput;
+	retrieveKeyValueConnectionInfo: ResourceIdInput;
 	listInstances: ResourceIdInput;
 	listKeyValue: z.infer<typeof ResourceInputSchema>;
 	listNotificationOverrides: z.infer<typeof ResourceInputSchema>;
@@ -395,6 +398,9 @@ export type RenderEndpointOutputs = {
 	disconnectBlueprint: z.infer<typeof EmptyOutputSchema>;
 	linkServiceToEnvGroup: z.infer<typeof ResourceOutputSchema>;
 	listBlueprints: z.infer<typeof ResourceListOutputSchema>;
+	suspendKeyValue: /* unknown: provider-specific lifecycle acknowledgement */ unknown;
+	resumeKeyValue: /* unknown: provider-specific lifecycle acknowledgement */ unknown;
+	retrieveKeyValueConnectionInfo: z.infer<typeof ResourceOutputSchema>;
 	listInstances: z.infer<typeof ResourceListOutputSchema>;
 	listKeyValue: z.infer<typeof ResourceListOutputSchema>;
 	listNotificationOverrides: z.infer<typeof ResourceListOutputSchema>;
@@ -530,6 +536,9 @@ export const RenderEndpointInputSchemas = {
 	disconnectBlueprint: ResourceIdInputSchema,
 	linkServiceToEnvGroup: ResourceIdServiceIdInputSchema,
 	listBlueprints: ResourceInputSchema,
+	suspendKeyValue: ResourceIdInputSchema,
+	resumeKeyValue: ResourceIdInputSchema,
+	retrieveKeyValueConnectionInfo: ResourceIdInputSchema,
 	listInstances: ResourceIdInputSchema,
 	listKeyValue: ResourceInputSchema,
 	listNotificationOverrides: ResourceInputSchema,
@@ -674,6 +683,11 @@ export const RenderEndpointOutputSchemas = {
 	disconnectBlueprint: EmptyOutputSchema,
 	linkServiceToEnvGroup: ResourceOutputSchema,
 	listBlueprints: ResourceListOutputSchema,
+	suspendKeyValue:
+		/* unknown: provider-specific lifecycle acknowledgement */ z.unknown(),
+	resumeKeyValue:
+		/* unknown: provider-specific lifecycle acknowledgement */ z.unknown(),
+	retrieveKeyValueConnectionInfo: ResourceOutputSchema,
 	listInstances: ResourceListOutputSchema,
 	listKeyValue: ResourceListOutputSchema,
 	listNotificationOverrides: ResourceListOutputSchema,

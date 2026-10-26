@@ -24,9 +24,11 @@ import {
 	recoverPostgres,
 	restartPostgres,
 	restoreDiskSnapshot,
+	resumeKeyValue,
 	resumePostgres,
 	retrieveDisk,
 	retrieveEnvironment,
+	retrieveKeyValueConnectionInfo,
 	retrieveMaintenance,
 	retrieveOwner,
 	retrievePostgresConnectionInfo,
@@ -36,6 +38,7 @@ import {
 	retrieveWebhook,
 	rollbackDeploy,
 	streamTaskRunsEvents,
+	suspendKeyValue,
 	suspendPostgres,
 	triggerCronJobRun,
 	triggerDeploy,
@@ -436,6 +439,36 @@ describe('Render service endpoints', () => {
 			'/v1/postgres/pg-1/credentials/app_user',
 			'secret',
 			{ method: 'DELETE', body: undefined },
+		);
+	});
+
+	it('covers Key Value lifecycle and blueprint sync routes', async () => {
+		request.mockResolvedValue({});
+		const ctx = { key: 'secret' } as never;
+		await suspendKeyValue(ctx, { id: 'kv-1' });
+		await resumeKeyValue(ctx, { id: 'kv-1' });
+		await retrieveKeyValueConnectionInfo(ctx, { id: 'kv-1' });
+
+		expect(request).toHaveBeenCalledWith(
+			'/v1/key-value/kv-1/suspend',
+			'secret',
+			{
+				method: 'POST',
+				body: undefined,
+			},
+		);
+		expect(request).toHaveBeenCalledWith(
+			'/v1/key-value/kv-1/resume',
+			'secret',
+			{
+				method: 'POST',
+				body: undefined,
+			},
+		);
+		expect(request).toHaveBeenCalledWith(
+			'/v1/key-value/kv-1/connection-info',
+			'secret',
+			{ method: 'GET', query: {} },
 		);
 	});
 

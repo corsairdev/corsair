@@ -96,6 +96,7 @@ import {
 	restartPostgres,
 	restartService,
 	restoreDiskSnapshot,
+	resumeKeyValue,
 	resumePostgres,
 	resumeService,
 	retrieveCustomDomain,
@@ -106,6 +107,7 @@ import {
 	retrieveEnvGroupSecretFile,
 	retrieveEnvironment,
 	retrieveEnvVar,
+	retrieveKeyValueConnectionInfo,
 	retrieveMaintenance,
 	retrieveOwner,
 	retrieveOwnerNotificationSettings,
@@ -121,6 +123,7 @@ import {
 	rollbackDeploy,
 	streamTaskRunsEvents,
 	subscribeLogs,
+	suspendKeyValue,
 	suspendPostgres,
 	suspendService,
 	triggerCronJobRun,
@@ -277,6 +280,9 @@ export type RenderEndpoints = {
 	disconnectBlueprint: RenderEndpoint<'disconnectBlueprint'>;
 	linkServiceToEnvGroup: RenderEndpoint<'linkServiceToEnvGroup'>;
 	listBlueprints: RenderEndpoint<'listBlueprints'>;
+	suspendKeyValue: RenderEndpoint<'suspendKeyValue'>;
+	resumeKeyValue: RenderEndpoint<'resumeKeyValue'>;
+	retrieveKeyValueConnectionInfo: RenderEndpoint<'retrieveKeyValueConnectionInfo'>;
 	listInstances: RenderEndpoint<'listInstances'>;
 	listKeyValue: RenderEndpoint<'listKeyValue'>;
 	listNotificationOverrides: RenderEndpoint<'listNotificationOverrides'>;
@@ -372,6 +378,11 @@ const renderEndpointsNested = {
 		list: listOwners,
 		retrieve: retrieveOwner,
 		members: listOwnerMembers,
+	},
+	keyValue: {
+		suspend: suspendKeyValue,
+		resume: resumeKeyValue,
+		connectionInfo: retrieveKeyValueConnectionInfo,
 	},
 	user: { get: getUser },
 	logs: {
@@ -884,6 +895,18 @@ export const renderEndpointSchemas = {
 	'final.listKeyValue': {
 		input: RenderEndpointInputSchemas.listKeyValue,
 		output: RenderEndpointOutputSchemas.listKeyValue,
+	},
+	'keyValue.suspend': {
+		input: RenderEndpointInputSchemas.suspendKeyValue,
+		output: RenderEndpointOutputSchemas.suspendKeyValue,
+	},
+	'keyValue.resume': {
+		input: RenderEndpointInputSchemas.resumeKeyValue,
+		output: RenderEndpointOutputSchemas.resumeKeyValue,
+	},
+	'keyValue.connectionInfo': {
+		input: RenderEndpointInputSchemas.retrieveKeyValueConnectionInfo,
+		output: RenderEndpointOutputSchemas.retrieveKeyValueConnectionInfo,
 	},
 	'final.listNotificationOverrides': {
 		input: RenderEndpointInputSchemas.listNotificationOverrides,
@@ -1427,6 +1450,18 @@ const renderEndpointMeta = {
 	'final.listKeyValue': {
 		riskLevel: 'read',
 		description: 'Render listKeyValue',
+	},
+	'keyValue.suspend': {
+		riskLevel: 'write',
+		description: 'Suspend a Render Key Value instance',
+	},
+	'keyValue.resume': {
+		riskLevel: 'write',
+		description: 'Resume a Render Key Value instance',
+	},
+	'keyValue.connectionInfo': {
+		riskLevel: 'read',
+		description: 'Retrieve connection info for a Render Key Value instance',
 	},
 	'final.listNotificationOverrides': {
 		riskLevel: 'read',
