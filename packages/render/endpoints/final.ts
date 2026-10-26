@@ -69,6 +69,10 @@ export const disconnectBlueprint: RenderEndpoints['disconnectBlueprint'] = (
 	ctx,
 	input,
 ) => call(ctx, '/v1/blueprints/{id}', 'DELETE', input);
+export const listBlueprintSyncs: RenderEndpoints['listBlueprintSyncs'] = (
+	ctx,
+	input,
+) => call(ctx, '/v1/blueprints/{id}/syncs', 'GET', input);
 // Render Key Value lifecycle triggers return 202 with no request body.
 export const suspendKeyValue: RenderEndpoints['suspendKeyValue'] = (
 	ctx,

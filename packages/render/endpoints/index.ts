@@ -47,6 +47,7 @@ export {
 	deleteSecretFile,
 	disconnectBlueprint,
 	linkServiceToEnvGroup,
+	listBlueprintSyncs,
 	listBlueprints,
 	listInstances,
 	listKeyValue,

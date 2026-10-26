@@ -141,6 +141,10 @@ const RecoverPostgresInputSchema = ResourceIdInputSchema.extend({
 const PostgresUsernameInputSchema = ResourceIdInputSchema.extend({
 	username: z.string().min(1),
 });
+const BlueprintSyncsInputSchema = ResourceIdInputSchema.extend({
+	limit: z.number().int().min(1).max(100).optional(),
+	cursor: z.string().optional(),
+});
 
 export type ListServicesInput = z.infer<typeof ListServicesInputSchema>;
 export type ListServicesOutput = z.infer<typeof ListServicesOutputSchema>;
@@ -261,6 +265,7 @@ export type RenderEndpointInputs = {
 	disconnectBlueprint: ResourceIdInput;
 	linkServiceToEnvGroup: z.infer<typeof ResourceIdServiceIdInputSchema>;
 	listBlueprints: z.infer<typeof ResourceInputSchema>;
+	listBlueprintSyncs: z.infer<typeof BlueprintSyncsInputSchema>;
 	suspendKeyValue: ResourceIdInput;
 	resumeKeyValue: ResourceIdInput;
 	retrieveKeyValueConnectionInfo: ResourceIdInput;
@@ -398,6 +403,7 @@ export type RenderEndpointOutputs = {
 	disconnectBlueprint: z.infer<typeof EmptyOutputSchema>;
 	linkServiceToEnvGroup: z.infer<typeof ResourceOutputSchema>;
 	listBlueprints: z.infer<typeof ResourceListOutputSchema>;
+	listBlueprintSyncs: z.infer<typeof ResourceListOutputSchema>;
 	suspendKeyValue: /* unknown: provider-specific lifecycle acknowledgement */ unknown;
 	resumeKeyValue: /* unknown: provider-specific lifecycle acknowledgement */ unknown;
 	retrieveKeyValueConnectionInfo: z.infer<typeof ResourceOutputSchema>;
@@ -536,6 +542,7 @@ export const RenderEndpointInputSchemas = {
 	disconnectBlueprint: ResourceIdInputSchema,
 	linkServiceToEnvGroup: ResourceIdServiceIdInputSchema,
 	listBlueprints: ResourceInputSchema,
+	listBlueprintSyncs: BlueprintSyncsInputSchema,
 	suspendKeyValue: ResourceIdInputSchema,
 	resumeKeyValue: ResourceIdInputSchema,
 	retrieveKeyValueConnectionInfo: ResourceIdInputSchema,
@@ -683,6 +690,7 @@ export const RenderEndpointOutputSchemas = {
 	disconnectBlueprint: EmptyOutputSchema,
 	linkServiceToEnvGroup: ResourceOutputSchema,
 	listBlueprints: ResourceListOutputSchema,
+	listBlueprintSyncs: ResourceListOutputSchema,
 	suspendKeyValue:
 		/* unknown: provider-specific lifecycle acknowledgement */ z.unknown(),
 	resumeKeyValue:

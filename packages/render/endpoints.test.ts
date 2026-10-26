@@ -11,6 +11,7 @@ import {
 	deleteWebhook,
 	failoverPostgres,
 	getUser,
+	listBlueprintSyncs,
 	listBlueprints,
 	listDeploys,
 	listDiskSnapshots,
@@ -448,6 +449,7 @@ describe('Render service endpoints', () => {
 		await suspendKeyValue(ctx, { id: 'kv-1' });
 		await resumeKeyValue(ctx, { id: 'kv-1' });
 		await retrieveKeyValueConnectionInfo(ctx, { id: 'kv-1' });
+		await listBlueprintSyncs(ctx, { id: 'bp-1', limit: 10 });
 
 		expect(request).toHaveBeenCalledWith(
 			'/v1/key-value/kv-1/suspend',
@@ -469,6 +471,14 @@ describe('Render service endpoints', () => {
 			'/v1/key-value/kv-1/connection-info',
 			'secret',
 			{ method: 'GET', query: {} },
+		);
+		expect(request).toHaveBeenCalledWith(
+			'/v1/blueprints/bp-1/syncs',
+			'secret',
+			{
+				method: 'GET',
+				query: { limit: 10 },
+			},
 		);
 	});
 

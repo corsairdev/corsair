@@ -93,6 +93,7 @@ describe('Render schema', () => {
 			'createCustomDomain',
 			'deleteKeyValue',
 			'disconnectBlueprint',
+			'listBlueprintSyncs',
 			'suspendKeyValue',
 			'resumeKeyValue',
 			'retrieveKeyValueConnectionInfo',

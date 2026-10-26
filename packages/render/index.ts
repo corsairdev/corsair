@@ -58,6 +58,7 @@ import {
 	getUser,
 	linkServiceToEnvGroup,
 	listApplicationFilterValues,
+	listBlueprintSyncs,
 	listBlueprints,
 	listDeploys,
 	listDiskSnapshots,
@@ -280,6 +281,7 @@ export type RenderEndpoints = {
 	disconnectBlueprint: RenderEndpoint<'disconnectBlueprint'>;
 	linkServiceToEnvGroup: RenderEndpoint<'linkServiceToEnvGroup'>;
 	listBlueprints: RenderEndpoint<'listBlueprints'>;
+	listBlueprintSyncs: RenderEndpoint<'listBlueprintSyncs'>;
 	suspendKeyValue: RenderEndpoint<'suspendKeyValue'>;
 	resumeKeyValue: RenderEndpoint<'resumeKeyValue'>;
 	retrieveKeyValueConnectionInfo: RenderEndpoint<'retrieveKeyValueConnectionInfo'>;
@@ -383,6 +385,9 @@ const renderEndpointsNested = {
 		suspend: suspendKeyValue,
 		resume: resumeKeyValue,
 		connectionInfo: retrieveKeyValueConnectionInfo,
+	},
+	blueprints: {
+		listSyncs: listBlueprintSyncs,
 	},
 	user: { get: getUser },
 	logs: {
@@ -907,6 +912,10 @@ export const renderEndpointSchemas = {
 	'keyValue.connectionInfo': {
 		input: RenderEndpointInputSchemas.retrieveKeyValueConnectionInfo,
 		output: RenderEndpointOutputSchemas.retrieveKeyValueConnectionInfo,
+	},
+	'blueprints.listSyncs': {
+		input: RenderEndpointInputSchemas.listBlueprintSyncs,
+		output: RenderEndpointOutputSchemas.listBlueprintSyncs,
 	},
 	'final.listNotificationOverrides': {
 		input: RenderEndpointInputSchemas.listNotificationOverrides,
@@ -1462,6 +1471,10 @@ const renderEndpointMeta = {
 	'keyValue.connectionInfo': {
 		riskLevel: 'read',
 		description: 'Retrieve connection info for a Render Key Value instance',
+	},
+	'blueprints.listSyncs': {
+		riskLevel: 'read',
+		description: 'List syncs for a Render blueprint',
 	},
 	'final.listNotificationOverrides': {
 		riskLevel: 'read',
