@@ -1,0 +1,3862 @@
+---
+title: API
+description: "API reference for GMI Cloud: every `gmicloud.api.*` operation with input and output types."
+---
+
+Every `gmicloud.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Api Keys
+
+### getCurrent
+
+`apiKeys.getCurrent`
+
+Verify the configured API key and return its details, including the organization it belongs to
+
+**Risk:** `read`
+
+```ts
+await corsair.gmicloud.api.apiKeys.getCurrent({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `key` | `object` | Yes | — |
+| `organization` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="key full type">
+
+```ts
+{
+  id: string,
+  type?: ie_model,
+  scope: ie_model | ce_resource,
+  owner: {
+    id: string
+  }
+}
+```
+</Accordion>
+
+<Accordion title="organization full type">
+
+```ts
+{
+  id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Baremetals
+
+### action
+
+`baremetals.action`
+
+Start, stop, power-cycle, or reboot a bare-metal server
+
+**Risk:** `write`
+
+```ts
+await corsair.gmicloud.api.baremetals.action({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `type` | `start \| stop \| powercycle \| reboot` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `string` | Yes | — |
+
+
+
+---
+
+### create
+
+`baremetals.create`
+
+Provision bare-metal GPU servers (billed while they exist)
+
+**Risk:** `write`
+
+```ts
+await corsair.gmicloud.api.baremetals.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | Yes | — |
+| `enableZabbixAgent` | `boolean` | No | Whether to enable Zabbix agent on the baremetal node |
+| `idc` | `string` | Yes | — |
+| `imageId` | `string` | Yes | The ID of the image to use for creating the baremetal instance |
+| `internalIp` | `string` | No | Manually allocate internal IP address(IPv4 only). |
+| `name` | `string` | Yes | — |
+| `product` | `string` | Yes | — |
+| `sshKey` | `string` | No | — |
+| `sshKeyIdList` | `string[]` | No | The list of SSH key IDs to use for creating the baremetal instance |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### delete
+
+`baremetals.delete`
+
+Delete a bare-metal server and release its resources
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.gmicloud.api.baremetals.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`baremetals.get`
+
+Get a bare-metal server by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.gmicloud.api.baremetals.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `associatedFirewalls` | `string[]` | Yes | — |
+| `consoleReady` | `boolean` | Yes | — |
+| `createdAt` | `string` | Yes | — |
+| `id` | `string` | Yes | — |
+| `idc` | `string` | Yes | — |
+| `image` | `string` | Yes | — |
+| `imageId` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `networks` | `object[]` | Yes | — |
+| `orgId` | `string` | Yes | — |
+| `product` | `string` | Yes | — |
+| `reason` | `string` | No | The reason for the validation error. |
+| `status` | `creating \| deleted \| deleting \| error \| powercycling \| rebooting \| rebuilding \| running \| starting \| stopped \| stopping \| unknown` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="networks full type">
+
+```ts
+{
+  ip?: string,
+  type?: internal | external
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`baremetals.list`
+
+List bare-metal GPU servers, optionally filtered by data center
+
+**Risk:** `read`
+
+```ts
+await corsair.gmicloud.api.baremetals.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `idc` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  associatedFirewalls: string[],
+  consoleReady: boolean,
+  createdAt: string,
+  id: string,
+  idc: string,
+  image: string,
+  imageId: string,
+  name: string,
+  networks: {
+    ip?: string,
+    type?: internal | external
+  }[],
+  orgId: string,
+  product: string,
+  reason?: string,
+  status: creating | deleted | deleting | error | powercycling | rebooting | rebuilding | running | starting | stopped | stopping | unknown
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listProducts
+
+`baremetals.listProducts`
+
+List bare-metal server products (GPU types and specs) in a data center
+
+**Risk:** `read`
+
+```ts
+await corsair.gmicloud.api.baremetals.listProducts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `idc` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  gpuModel?: string,
+  idc: string,
+  name: string,
+  price: number,
+  productLine?: string,
+  spec: {
+  },
+  type: Container | BareMetal | Storage | EIP,
+  valid: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`baremetals.update`
+
+Rename a bare-metal server
+
+**Risk:** `write`
+
+```ts
+await corsair.gmicloud.api.baremetals.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `associatedFirewalls` | `string[]` | Yes | — |
+| `consoleReady` | `boolean` | Yes | — |
+| `createdAt` | `string` | Yes | — |
+| `id` | `string` | Yes | — |
+| `idc` | `string` | Yes | — |
+| `image` | `string` | Yes | — |
+| `imageId` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `networks` | `object[]` | Yes | — |
+| `orgId` | `string` | Yes | — |
+| `product` | `string` | Yes | — |
+| `reason` | `string` | No | The reason for the validation error. |
+| `status` | `creating \| deleted \| deleting \| error \| powercycling \| rebooting \| rebuilding \| running \| starting \| stopped \| stopping \| unknown` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="networks full type">
+
+```ts
+{
+  ip?: string,
+  type?: internal | external
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Chat
+
+### createCompletion
+
+`chat.createCompletion`
+
+Generate a chat completion with an LLM through the OpenAI-compatible API (billed per token)
+
+**Risk:** `write`
+
+```ts
+await corsair.gmicloud.api.chat.createCompletion({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `string` | Yes | Model ID from models.list, e.g. deepseek-ai/DeepSeek-R1 |
+| `messages` | `object[]` | Yes | — |
+| `tools` | `object[]` | No | — |
+| `tool_choice` | `object` | No | — |
+| `max_tokens` | `number` | No | — |
+| `temperature` | `number` | No | — |
+| `top_p` | `number` | No | — |
+| `top_k` | `number` | No | — |
+| `frequency_penalty` | `number` | No | — |
+| `presence_penalty` | `number` | No | — |
+| `repetition_penalty` | `number` | No | — |
+| `seed` | `number` | No | — |
+| `ignore_eos` | `boolean` | No | — |
+| `stop` | `string \| string[]` | No | — |
+| `response_format` | `object` | No | — |
+| `context_length_exceeded_behavior` | `truncate \| error` | No | — |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+  role: system | developer | user | assistant | tool,
+  content?: string | {
+    type: string,
+    text?: string,
+    image_url?: {
+      url: string,
+      detail?: string
+    },
+    input_audio?: {
+      data: string,
+      format: string
+    }
+  }[] | null,
+  name?: string,
+  tool_calls?: {
+    id: string,
+    type: function,
+    function: {
+      name: string,
+      arguments: string
+    }
+  }[],
+  tool_call_id?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="tools full type">
+
+```ts
+{
+  type: function,
+  function: {
+    name: string,
+    description?: string,
+    parameters?: {
+    },
+    strict?: boolean
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="tool_choice full type">
+
+```ts
+none | auto | required | {
+  type: function,
+  function: {
+    name: string
+  }
+}
+```
+</Accordion>
+
+<Accordion title="response_format full type">
+
+```ts
+{
+  type: text | json_object | json_schema,
+  json_schema?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `string` | Yes | — |
+| `created` | `number` | Yes | — |
+| `model` | `string` | Yes | — |
+| `choices` | `object[]` | Yes | — |
+| `usage` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="choices full type">
+
+```ts
+{
+  index?: number,
+  message: {
+    role: string,
+    content?: string | null,
+    reasoning_content?: string | null,
+    tool_calls?: {
+      id: string,
+      type: function,
+      function: {
+        name: string,
+        arguments: string
+      }
+    }[] | null
+  },
+  finish_reason?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="usage full type">
+
+```ts
+{
+  prompt_tokens: number,
+  completion_tokens: number,
+  total_tokens: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Containers
+
+### create
+
+`containers.create`
+
+Launch GPU container workloads from a template (billed while they run)
+
+**Risk:** `write`
+
+```ts
+await corsair.gmicloud.api.containers.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | Yes | — |
+| `idc` | `string` | Yes | — |
+| `product` | `string` | Yes | — |
+| `args` | `string[]` | No | Optional container command arguments |
+| `command` | `string` | No | Optional container start command |
+| `envs` | `object[]` | No | — |
+| `name` | `string` | Yes | — |
+| `ports` | `object[]` | No | — |
+| `sshKeyIdList` | `string[]` | No | The list of SSH key IDs to use in the container |
+| `templateId` | `string` | Yes | template id |
+
+<AccordionGroup>
+<Accordion title="envs full type">
+
+```ts
+{
+  name: string,
+  value: string
+}[]
+```
+</Accordion>
+
+<Accordion title="ports full type">
+
+```ts
+{
+  containerPort: number,
+  port?: number,
+  protocol: TCP | UDP
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### createShell
+
+`containers.createShell`
+
+Generate a web shell URL path for a running container
+
+**Risk:** `write`
+
+```ts
+await corsair.gmicloud.api.containers.createShell({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `urlPath` | `string` | Yes | — |
+
+
+
+---
+
+### delete
+
+`containers.delete`
+
+Delete a container workload; its local data is lost
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.gmicloud.api.containers.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`containers.get`
+
+Get a container workload by ID, including status and IP addresses
+
+**Risk:** `read`
+
+```ts
+await corsair.gmicloud.api.containers.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `createdAt` | `string` | No | — |
+| `eipAddress` | `string` | No | — |
+| `eipId` | `string` | No | — |
+| `firewalls` | `string[]` | No | — |
+| `id` | `string` | No | — |
+| `inboundIP` | `object` | No | — |
+| `modifiedAt` | `string` | No | — |
+| `orgId` | `string` | No | — |
+| `outboundIP` | `object` | No | — |
+| `publicIP` | `object` | No | — |
+| `reason` | `string` | Yes | reason of container status |
+| `status` | `unknown \| creating \| running \| terminating \| stopped \| error \| zombie` | Yes | — |
+| `storages` | `object[]` | Yes | — |
+| `idc` | `string` | Yes | — |
+| `product` | `string` | Yes | — |
+| `args` | `string[]` | No | Optional container command arguments |
+| `command` | `string` | No | Optional container start command |
+| `envs` | `object[]` | No | — |
+| `name` | `string` | Yes | — |
+| `ports` | `object[]` | No | — |
+| `sshKeyIdList` | `string[]` | No | The list of SSH key IDs to use in the container |
+| `templateId` | `string` | Yes | template id |
+
+<AccordionGroup>
+<Accordion title="inboundIP full type">
+
+```ts
+{
+  ipAddress: string,
+  status: ready | pending | error | not_applicable
+}
+```
+</Accordion>
+
+<Accordion title="outboundIP full type">
+
+```ts
+{
+  ipAddress: string,
+  status: ready | pending | error | not_applicable
+}
+```
+</Accordion>
+
+<Accordion title="publicIP full type">
+
+```ts
+{
+  ipAddress: string,
+  status: ready | pending | error | not_applicable
+}
+```
+</Accordion>
+
+<Accordion title="storages full type">
+
+```ts
+{
+  containerPath: string,
+  id: string
+}[]
+```
+</Accordion>
+
+<Accordion title="envs full type">
+
+```ts
+{
+  name: string,
+  value: string
+}[]
+```
+</Accordion>
+
+<Accordion title="ports full type">
+
+```ts
+{
+  containerPort: number,
+  port?: number,
+  protocol: TCP | UDP
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getLogs
+
+`containers.getLogs`
+
+Download the logs of a container workload as text
+
+**Risk:** `read`
+
+```ts
+await corsair.gmicloud.api.containers.getLogs({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `text` | `string` | Yes | — |
+
+
+
+---
+
+### list
+
+`containers.list`
+
+List container workloads in the organization
+
+**Risk:** `read`
+
+```ts
+await corsair.gmicloud.api.containers.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  createdAt?: string,
+  eipAddress?: string,
+  eipId?: string,
+  firewalls?: string[],
+  id?: string,
+  inboundIP?: {
+    ipAddress: string,
+    status: ready | pending | error | not_applicable
+  },
+  modifiedAt?: string,
+  orgId?: string,
+  outboundIP?: {
+    ipAddress: string,
+    status: ready | pending | error | not_applicable
+  },
+  publicIP?: {
+    ipAddress: string,
+    status: ready | pending | error | not_applicable
+  },
+  reason: string,
+  status: unknown | creating | running | terminating | stopped | error | zombie,
+  storages: {
+    containerPath: string,
+    id: string
+  }[],
+  idc: string,
+  product: string,
+  args?: string[],
+  command?: string,
+  envs?: {
+    name: string,
+    value: string
+  }[],
+  name: string,
+  ports?: {
+    containerPort: number,
+    port?: number,
+    protocol: TCP | UDP
+  }[],
+  sshKeyIdList?: string[],
+  templateId: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listProducts
+
+`containers.listProducts`
+
+List container products (GPU types and specs) in a data center
+
+**Risk:** `read`
+
+```ts
+await corsair.gmicloud.api.containers.listProducts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `idc` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  gpuModel?: string,
+  idc: string,
+  name: string,
+  price: number,
+  productLine?: string,
+  spec: {
+  },
+  type: Container | BareMetal | Storage | EIP,
+  valid: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### restart
+
+`containers.restart`
+
+Restart a container workload
+
+**Risk:** `write`
+
+```ts
+await corsair.gmicloud.api.containers.restart({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `string` | Yes | — |
+
+
+
+---
+
+### update
+
+`containers.update`
+
+Update a container's name, template, command, arguments, environment, ports, or SSH keys
+
+**Risk:** `write`
+
+```ts
+await corsair.gmicloud.api.containers.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `args` | `string[]` | No | Optional container command arguments |
+| `command` | `string` | No | Optional container start command |
+| `envs` | `object[]` | No | — |
+| `name` | `string` | Yes | — |
+| `ports` | `object[]` | No | — |
+| `sshKeyIdList` | `string[]` | No | The list of SSH key IDs to use in the container |
+| `templateId` | `string` | Yes | template id |
+
+<AccordionGroup>
+<Accordion title="envs full type">
+
+```ts
+{
+  name: string,
+  value: string
+}[]
+```
+</Accordion>
+
+<Accordion title="ports full type">
+
+```ts
+{
+  containerPort: number,
+  port?: number,
+  protocol: TCP | UDP
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+
+
+
+---
+
+## Elastic Ips
+
+### allocate
+
+`elasticIps.allocate`
+
+Allocate a static public IPv4 address for the organization
+
+**Risk:** `write`
+
+```ts
+await corsair.gmicloud.api.elasticIps.allocate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | Yes | — |
+| `idc` | `string` | Yes | — |
+| `name` | `string` | Yes | Name of the elastic IP |
+| `product` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### associate
+
+`elasticIps.associate`
+
+Attach an elastic IP to a bare-metal server or container
+
+**Risk:** `write`
+
+```ts
+await corsair.gmicloud.api.elasticIps.associate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `instanceID` | `string` | No | set instanceID and instanceType to associate the elastic IP to the instance, set to null to disassociate the elastic IP from the instance |
+| `instanceType` | `baremetal \| container` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `string` | Yes | — |
+
+
+
+---
+
+### disassociate
+
+`elasticIps.disassociate`
+
+Detach an elastic IP from its instance
+
+**Risk:** `write`
+
+```ts
+await corsair.gmicloud.api.elasticIps.disassociate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`elasticIps.get`
+
+Get an elastic IP by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.gmicloud.api.elasticIps.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `orgId` | `string` | Yes | if nil, it means the elastic IP is not associated with any instance |
+| `status` | `released \| associated \| disassociated` | Yes | — |
+| `internetConnectionType` | `BGP \| Dual-Homed` | Yes | — |
+| `maxBandwidth` | `string` | Yes | — |
+| `name` | `string` | Yes | Name of the elastic IP |
+| `idc` | `string` | Yes | — |
+| `ipAddress` | `string` | Yes | IP address of the elastic IP. |
+| `product` | `string` | Yes | — |
+| `instanceID` | `string` | No | set instanceID and instanceType to associate the elastic IP to the instance, set to null to disassociate the elastic IP from the instance |
+| `instanceType` | `baremetal \| container` | No | — |
+
+
+
+---
+
+### list
+
+`elasticIps.list`
+
+List elastic IPs allocated to the organization
+
+**Risk:** `read`
+
+```ts
+await corsair.gmicloud.api.elasticIps.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  orgId: string,
+  status: released | associated | disassociated,
+  internetConnectionType: BGP | Dual-Homed,
+  maxBandwidth: string,
+  name: string,
+  idc: string,
+  ipAddress: string,
+  product: string,
+  instanceID?: string | null,
+  instanceType?: baremetal | container | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listProducts
+
+`elasticIps.listProducts`
+
+List elastic IP products in a data center
+
+**Risk:** `read`
+
+```ts
+await corsair.gmicloud.api.elasticIps.listProducts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `idc` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  gpuModel?: string,
+  idc: string,
+  name: string,
+  price: number,
+  productLine?: string,
+  spec: {
+  },
+  type: Container | BareMetal | Storage | EIP,
+  valid: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### release
+
+`elasticIps.release`
+
+Release an elastic IP; the address cannot be reclaimed
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.gmicloud.api.elasticIps.release({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `string` | Yes | — |
+
+
+
+---
+
+## Firewalls
+
+### associate
+
+`firewalls.associate`
+
+Apply a firewall to bare-metal servers or containers
+
+**Risk:** `write`
+
+```ts
+await corsair.gmicloud.api.firewalls.associate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `instances` | `string[]` | Yes | — |
+| `instanceType` | `baremetal \| container` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `string` | Yes | — |
+
+
+
+---
+
+### create
+
+`firewalls.create`
+
+Create a firewall with inbound rules in a data center
+
+**Risk:** `write`
+
+```ts
+await corsair.gmicloud.api.firewalls.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `description` | `string` | No | — |
+| `inboundRules` | `object[]` | Yes | — |
+| `name` | `string` | Yes | — |
+| `idc` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="inboundRules full type">
+
+```ts
+(
+  {
+    description?: string,
+    portRange: {
+      max: number,
+      min: number
+    },
+    protocol: tcp | udp,
+    remoteIpPrefix: string
+  } | {
+    description?: string,
+    protocol: icmp | any,
+    remoteIpPrefix: string
+  }
+)[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `description` | `string` | No | — |
+| `inboundRules` | `object[]` | Yes | — |
+| `name` | `string` | Yes | — |
+| `idc` | `string` | Yes | — |
+| `assoInstances` | `string[]` | No | — |
+| `assoContainers` | `string[]` | No | Associated container instance IDs |
+| `id` | `string` | No | — |
+| `isPreset` | `boolean` | No | Whether this is a preset firewall (cannot be deleted or have rules modified) |
+| `orgId` | `string` | No | — |
+| `status` | `active \| building \| error` | No | — |
+
+<AccordionGroup>
+<Accordion title="inboundRules full type">
+
+```ts
+(
+  {
+    description?: string,
+    portRange: {
+      max: number,
+      min: number
+    },
+    protocol: tcp | udp,
+    remoteIpPrefix: string
+  } | {
+    description?: string,
+    protocol: icmp | any,
+    remoteIpPrefix: string
+  }
+)[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`firewalls.delete`
+
+Delete a firewall
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.gmicloud.api.firewalls.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `string` | Yes | — |
+
+
+
+---
+
+### disassociate
+
+`firewalls.disassociate`
+
+Remove a firewall from bare-metal servers or containers
+
+**Risk:** `write`
+
+```ts
+await corsair.gmicloud.api.firewalls.disassociate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `instances` | `string[]` | Yes | — |
+| `instanceType` | `baremetal \| container` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`firewalls.get`
+
+Get a firewall and its rules by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.gmicloud.api.firewalls.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `description` | `string` | No | — |
+| `inboundRules` | `object[]` | Yes | — |
+| `name` | `string` | Yes | — |
+| `idc` | `string` | Yes | — |
+| `assoInstances` | `string[]` | No | — |
+| `assoContainers` | `string[]` | No | Associated container instance IDs |
+| `id` | `string` | No | — |
+| `isPreset` | `boolean` | No | Whether this is a preset firewall (cannot be deleted or have rules modified) |
+| `orgId` | `string` | No | — |
+| `status` | `active \| building \| error` | No | — |
+
+<AccordionGroup>
+<Accordion title="inboundRules full type">
+
+```ts
+(
+  {
+    description?: string,
+    portRange: {
+      max: number,
+      min: number
+    },
+    protocol: tcp | udp,
+    remoteIpPrefix: string
+  } | {
+    description?: string,
+    protocol: icmp | any,
+    remoteIpPrefix: string
+  }
+)[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`firewalls.list`
+
+List firewalls, optionally filtered by data center
+
+**Risk:** `read`
+
+```ts
+await corsair.gmicloud.api.firewalls.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `idc` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  description?: string,
+  inboundRules: (
+    {
+      description?: string,
+      portRange: {
+        max: number,
+        min: number
+      },
+      protocol: tcp | udp,
+      remoteIpPrefix: string
+    } | {
+      description?: string,
+      protocol: icmp | any,
+      remoteIpPrefix: string
+    }
+  )[],
+  name: string,
+  idc: string,
+  assoInstances?: string[],
+  assoContainers?: string[],
+  id?: string,
+  isPreset?: boolean,
+  orgId?: string,
+  status?: active | building | error
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`firewalls.update`
+
+Replace a firewall's name, description, and inbound rules
+
+**Risk:** `write`
+
+```ts
+await corsair.gmicloud.api.firewalls.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `inboundRules` | `object[]` | Yes | — |
+| `name` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="inboundRules full type">
+
+```ts
+(
+  {
+    description?: string,
+    portRange: {
+      max: number,
+      min: number
+    },
+    protocol: tcp | udp,
+    remoteIpPrefix: string
+  } | {
+    description?: string,
+    protocol: icmp | any,
+    remoteIpPrefix: string
+  }
+)[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `description` | `string` | No | — |
+| `inboundRules` | `object[]` | Yes | — |
+| `name` | `string` | Yes | — |
+| `idc` | `string` | Yes | — |
+| `assoInstances` | `string[]` | No | — |
+| `assoContainers` | `string[]` | No | Associated container instance IDs |
+| `id` | `string` | No | — |
+| `isPreset` | `boolean` | No | Whether this is a preset firewall (cannot be deleted or have rules modified) |
+| `orgId` | `string` | No | — |
+| `status` | `active \| building \| error` | No | — |
+
+<AccordionGroup>
+<Accordion title="inboundRules full type">
+
+```ts
+(
+  {
+    description?: string,
+    portRange: {
+      max: number,
+      min: number
+    },
+    protocol: tcp | udp,
+    remoteIpPrefix: string
+  } | {
+    description?: string,
+    protocol: icmp | any,
+    remoteIpPrefix: string
+  }
+)[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Idcs
+
+### list
+
+`idcs.list`
+
+List the data centers (IDCs) available for GPU compute resources
+
+**Risk:** `read`
+
+```ts
+await corsair.gmicloud.api.idcs.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `idcs` | `object[]` | Yes | A list of IDCs. |
+
+<AccordionGroup>
+<Accordion title="idcs full type">
+
+```ts
+{
+  idcId: string,
+  name: string,
+  country: string,
+  countrySubdivision: string,
+  status: available | full | maintenance
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Images
+
+### get
+
+`images.get`
+
+Get an OS image by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.gmicloud.api.images.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `supportedProducts` | `string[]` | Yes | — |
+| `BootMode` | `UEFI \| Legacy` | Yes | — |
+| `DefaultPartitionTable` | `object[]` | Yes | — |
+| `OSArchitecture` | `string` | Yes | — |
+| `OSSeries` | `string` | Yes | — |
+| `OSVersion` | `string` | Yes | — |
+| `SystemDiskSize` | `string` | Yes | — |
+| `icon` | `string` | Yes | — |
+| `idc` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `orgId` | `string` | Yes | — |
+| `path` | `string` | Yes | — |
+| `createdAt` | `string` | Yes | — |
+| `id` | `string` | Yes | — |
+| `type` | `Public \| Customized` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="DefaultPartitionTable full type">
+
+```ts
+{
+  fileSystem: string,
+  mountPoint: string,
+  name: string,
+  size: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`images.list`
+
+List OS images for bare-metal servers, optionally filtered by data center and product
+
+**Risk:** `read`
+
+```ts
+await corsair.gmicloud.api.images.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `idc` | `string` | No | — |
+| `product` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  supportedProducts: string[],
+  BootMode: UEFI | Legacy,
+  DefaultPartitionTable: {
+    fileSystem: string,
+    mountPoint: string,
+    name: string,
+    size: string
+  }[],
+  OSArchitecture: string,
+  OSSeries: string,
+  OSVersion: string,
+  SystemDiskSize: string,
+  icon: string,
+  idc: string,
+  name: string,
+  orgId: string,
+  path: string,
+  createdAt: string,
+  id: string,
+  type: Public | Customized
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Media Models
+
+### get
+
+`mediaModels.get`
+
+Get a media model's description and the payload parameters its requests accept
+
+**Risk:** `read`
+
+```ts
+await corsair.gmicloud.api.mediaModels.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model_id` | `string` | Yes | Model ID from mediaModels.list, e.g. Veo3 |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `string` | Yes | — |
+| `org_id` | `string` | No | — |
+| `brief_description` | `string` | No | — |
+| `detailed_description` | `string` | No | — |
+| `modalities` | `object` | No | — |
+| `parameters` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="modalities full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="parameters full type">
+
+```ts
+{
+  name: string,
+  display_name?: string | null,
+  description?: string | null,
+  type?: string | null,
+  required?: boolean | null,
+  default?: any
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`mediaModels.list`
+
+List the video, image, and audio model IDs served by the GMI request queue
+
+**Risk:** `read`
+
+```ts
+await corsair.gmicloud.api.mediaModels.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model_ids` | `string[]` | Yes | — |
+
+
+
+---
+
+## Media Requests
+
+### create
+
+`mediaRequests.create`
+
+Queue a video, image, or audio generation request; poll mediaRequests.get for the outcome (billed)
+
+**Risk:** `write`
+
+```ts
+await corsair.gmicloud.api.mediaRequests.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `string` | Yes | Model ID from mediaModels.list |
+| `payload` | `object` | Yes | Model parameters, e.g. { prompt, durationSeconds, aspectRatio } |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | Yes | — |
+| `model` | `string` | Yes | — |
+| `status` | `string` | Yes | dispatched, processing, success, failed, or another queue state |
+| `created_at` | `number` | No | — |
+| `updated_at` | `number` | No | — |
+| `queued_at` | `number` | No | — |
+
+
+
+---
+
+### get
+
+`mediaRequests.get`
+
+Get the status of a queued media request and, once it succeeds, its output file URLs
+
+**Risk:** `read`
+
+```ts
+await corsair.gmicloud.api.mediaRequests.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | Yes | — |
+| `model` | `string` | Yes | — |
+| `status` | `string` | Yes | dispatched, processing, success, failed, or another queue state |
+| `created_at` | `number` | No | — |
+| `updated_at` | `number` | No | — |
+| `queued_at` | `number` | No | — |
+| `org_id` | `string` | No | — |
+| `is_public` | `boolean` | No | — |
+| `payload` | `object` | No | — |
+| `outcome` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="outcome full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Models
+
+### list
+
+`models.list`
+
+List the LLMs available on GMI Cloud serverless inference
+
+**Risk:** `read`
+
+```ts
+await corsair.gmicloud.api.models.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `string` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  object?: string,
+  name?: string | null,
+  created?: number | null,
+  owned_by?: string | null,
+  context_length?: number | null,
+  quantization?: string | null,
+  pricing?: {
+    prompt?: string,
+    completion?: string
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Router
+
+### autoroute
+
+`router.autoroute`
+
+Let the GMI Router pick the best model for a conversation by cost, balance, or quality and return its completion
+
+**Risk:** `write`
+
+```ts
+await corsair.gmicloud.api.router.autoroute({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `messages` | `object[]` | Yes | — |
+| `mode` | `cost \| balanced \| quality` | No | What the router optimizes for; balanced by default |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+  role: system | developer | user | assistant | tool,
+  content?: string | {
+    type: string,
+    text?: string,
+    image_url?: {
+      url: string,
+      detail?: string
+    },
+    input_audio?: {
+      data: string,
+      format: string
+    }
+  }[] | null,
+  name?: string,
+  tool_calls?: {
+    id: string,
+    type: function,
+    function: {
+      name: string,
+      arguments: string
+    }
+  }[],
+  tool_call_id?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `string` | Yes | — |
+| `message` | `object` | Yes | — |
+| `routing_metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="message full type">
+
+```ts
+{
+  role: string,
+  content?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="routing_metadata full type">
+
+```ts
+{
+  selected_model: string,
+  task_type?: string | null,
+  selected_mode?: string | null,
+  fallback_models?: string[] | null,
+  recommendation_id?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Sandboxes
+
+### connect
+
+`sandboxes.connect`
+
+Connect to a running sandbox and return its data-plane domain and access token; a timeout extends its lifetime
+
+**Risk:** `write`
+
+```ts
+await corsair.gmicloud.api.sandboxes.connect({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Unique sandbox resource ID (UUID; the 'id' field of the create response). |
+| `timeout` | `number` | No | When greater than 0, extends the lifetime of a running sandbox (extend-only, never shortens). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | Yes | Request tracing ID |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  sandbox_key: string,
+  template_id: string,
+  domain: string,
+  sandbox_access_token: string,
+  traffic_access_token: string,
+  end_at: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`sandboxes.create`
+
+Create a sandbox from a template; returns the data-plane host and access token used by sandboxExec and sandboxFiles
+
+**Risk:** `write`
+
+```ts
+await corsair.gmicloud.api.sandboxes.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `idempotency_key` | `string` | No | Optional caller-generated idempotency key (a UUID is recommended). |
+| `template_id` | `string` | Yes | Template identifier or name. |
+| `idc_name` | `string` | No | Target data center name, e.g. |
+| `timeout` | `number` | No | Time-to-live in seconds. |
+| `env_vars` | `object` | No | — |
+| `metadata` | `object` | No | Customer-defined key/value pairs; the platform does not interpret them. |
+
+<AccordionGroup>
+<Accordion title="env_vars full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | Yes | Request tracing ID |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  sandbox_key?: string,
+  template_id?: string,
+  domain?: string,
+  sandbox_access_token?: string,
+  traffic_access_token?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`sandboxes.delete`
+
+Kill a sandbox; it moves to deleting and then deleted once resources are released
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.gmicloud.api.sandboxes.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Unique sandbox resource ID (UUID; the 'id' field of the create response). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  state?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`sandboxes.get`
+
+Get sandbox details, including state, resources, and failure reason
+
+**Risk:** `read`
+
+```ts
+await corsair.gmicloud.api.sandboxes.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Unique sandbox resource ID (UUID; the 'id' field of the create response). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | Yes | Request tracing ID |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  sandbox_key?: string,
+  template_id?: string,
+  idc_name?: string,
+  state?: provisioning | running | checkpointing | updating | failed,
+  product?: string,
+  product_name?: string,
+  resources?: {
+    vcpu?: number,
+    memory_mb?: number,
+    disk_mb?: number
+  },
+  metadata?: {
+  },
+  latest_operation?: {
+    type: create | delete | set_timeout,
+    status: pending | succeeded | failed,
+    error_code?: string,
+    message?: string,
+    completed_at?: string
+  },
+  failure?: {
+    code?: string,
+    message?: string,
+    occurred_at?: string
+  },
+  created_at?: string,
+  running_at?: string,
+  started_at?: string,
+  end_at?: string,
+  domain?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`sandboxes.list`
+
+List active sandboxes (provisioning, running, updating, checkpointing, failed) with pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.gmicloud.api.sandboxes.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page number, starting from 1; default 1 |
+| `page_size` | `number` | No | Items per page; default 20, maximum 100 |
+| `idc_name` | `string` | No | Filter by data center name, e.g. |
+| `state` | `provisioning \| running \| failed[]` | No | Filter by external state. |
+| `metadata` | `object` | No | Filter by customer metadata key/value, e.g. |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | Yes | Request tracing ID |
+| `total` | `number` | Yes | Total number of active sandboxes |
+| `page` | `number` | Yes | — |
+| `page_size` | `number` | Yes | — |
+| `items` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: string,
+  sandbox_key?: string,
+  template_id?: string,
+  idc_name?: string,
+  state?: provisioning | running | checkpointing | updating | failed,
+  metadata?: {
+  },
+  created_at?: string,
+  running_at?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### setTimeout
+
+`sandboxes.setTimeout`
+
+Reset a running sandbox's time-to-live relative to now (300 seconds when omitted)
+
+**Risk:** `write`
+
+```ts
+await corsair.gmicloud.api.sandboxes.setTimeout({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Unique sandbox resource ID (UUID; the 'id' field of the create response). |
+| `timeout` | `number` | No | Time-to-live in seconds, measured from the current time. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | Yes | Request tracing ID |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  old_end_at: string,
+  new_end_at: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateMetadata
+
+`sandboxes.updateMetadata`
+
+Replace a sandbox's metadata as a whole (an empty object clears it)
+
+**Risk:** `write`
+
+```ts
+await corsair.gmicloud.api.sandboxes.updateMetadata({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Unique sandbox resource ID (UUID; the 'id' field of the create response). |
+| `metadata` | `object` | Yes | Customer metadata, replaced as a whole. |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | Yes | Request tracing ID |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  sandbox_key?: string,
+  template_id?: string,
+  idc_name?: string,
+  state?: provisioning | running | checkpointing | updating | failed,
+  product?: string,
+  product_name?: string,
+  resources?: {
+    vcpu?: number,
+    memory_mb?: number,
+    disk_mb?: number
+  },
+  metadata?: {
+  },
+  latest_operation?: {
+    type: create | delete | set_timeout,
+    status: pending | succeeded | failed,
+    error_code?: string,
+    message?: string,
+    completed_at?: string
+  },
+  failure?: {
+    code?: string,
+    message?: string,
+    occurred_at?: string
+  },
+  created_at?: string,
+  running_at?: string,
+  started_at?: string,
+  end_at?: string,
+  domain?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Sandbox Exec
+
+### cancel
+
+`sandboxExec.cancel`
+
+Cancel a running sandbox command
+
+**Risk:** `write`
+
+```ts
+await corsair.gmicloud.api.sandboxExec.cancel({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sandbox_key` | `string` | Yes | sandbox_key returned by sandboxes.create or sandboxes.connect |
+| `domain` | `string` | Yes | domain returned by sandboxes.create or sandboxes.connect |
+| `access_token` | `string` | Yes | sandbox_access_token returned by sandboxes.create or sandboxes.connect |
+| `execution_id` | `string` | Yes | Public execution identifier returned by the create operation. |
+| `request_id` | `string` | No | Optional request correlation identifier echoed in the response. |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  request_id?: string,
+  execution_id: string,
+  sandbox_id: string,
+  status: pending | running | canceling | succeeded | failed | canceled,
+  exit_code?: number | null,
+  stdout?: string | null,
+  stderr?: string | null,
+  stdout_truncated?: boolean | null,
+  stderr_truncated?: boolean | null,
+  started_at?: string | null,
+  completed_at?: string | null
+} | {
+  request_id?: string,
+  execution_id: string,
+  sandbox_id: string,
+  status: pending | running | canceling | succeeded | failed | canceled
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`sandboxExec.get`
+
+Get the status, exit code, and output of a sandbox command
+
+**Risk:** `read`
+
+```ts
+await corsair.gmicloud.api.sandboxExec.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sandbox_key` | `string` | Yes | sandbox_key returned by sandboxes.create or sandboxes.connect |
+| `domain` | `string` | Yes | domain returned by sandboxes.create or sandboxes.connect |
+| `access_token` | `string` | Yes | sandbox_access_token returned by sandboxes.create or sandboxes.connect |
+| `execution_id` | `string` | Yes | Public execution identifier returned by the create operation. |
+| `request_id` | `string` | No | Optional request correlation identifier echoed in the response. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | No | Echo of X-Request-ID when supplied. |
+| `execution_id` | `string` | Yes | — |
+| `sandbox_id` | `string` | Yes | Echo of the data-plane addressing key (i.e. |
+| `status` | `pending \| running \| canceling \| succeeded \| failed \| canceled` | Yes | — |
+| `exit_code` | `number` | No | Process exit code; null while non-terminal or when canceled. |
+| `stdout` | `string` | No | Captured standard output, or null while not yet available. |
+| `stderr` | `string` | No | Captured standard error, or null while not yet available. |
+| `stdout_truncated` | `boolean` | No | — |
+| `stderr_truncated` | `boolean` | No | — |
+| `started_at` | `string` | No | — |
+| `completed_at` | `string` | No | — |
+
+
+
+---
+
+### run
+
+`sandboxExec.run`
+
+Run a shell command inside a sandbox; with wait it returns the result, otherwise poll sandboxExec.get
+
+**Risk:** `write`
+
+```ts
+await corsair.gmicloud.api.sandboxExec.run({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sandbox_key` | `string` | Yes | sandbox_key returned by sandboxes.create or sandboxes.connect |
+| `domain` | `string` | Yes | domain returned by sandboxes.create or sandboxes.connect |
+| `access_token` | `string` | Yes | sandbox_access_token returned by sandboxes.create or sandboxes.connect |
+| `request_id` | `string` | No | Optional request correlation identifier echoed in the response. |
+| `wait` | `boolean` | No | Wait for a terminal result before responding. |
+| `wait_timeout_seconds` | `number` | No | Maximum time to wait when 'wait=true', in seconds. |
+| `action` | `exec` | Yes | — |
+| `parameters` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="parameters full type">
+
+```ts
+{
+  command: string,
+  envs?: {
+  },
+  cwd?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  request_id?: string,
+  execution_id: string,
+  sandbox_id: string,
+  status: pending | running | canceling | succeeded | failed | canceled,
+  exit_code?: number | null,
+  stdout?: string | null,
+  stderr?: string | null,
+  stdout_truncated?: boolean | null,
+  stderr_truncated?: boolean | null,
+  started_at?: string | null,
+  completed_at?: string | null
+} | {
+  request_id?: string,
+  execution_id: string,
+  sandbox_id: string,
+  status: pending | running | canceling | succeeded | failed | canceled
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Sandbox Files
+
+### download
+
+`sandboxFiles.download`
+
+Download a file from a sandbox by absolute path; returns base64 content
+
+**Risk:** `read`
+
+```ts
+await corsair.gmicloud.api.sandboxFiles.download({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sandbox_key` | `string` | Yes | sandbox_key returned by sandboxes.create or sandboxes.connect |
+| `domain` | `string` | Yes | domain returned by sandboxes.create or sandboxes.connect |
+| `access_token` | `string` | Yes | sandbox_access_token returned by sandboxes.create or sandboxes.connect |
+| `path` | `string` | Yes | **Absolute path** inside the sandbox. |
+| `username` | `string` | No | Perform the file operation as this user; defaults to the sandbox's default user. |
+| `range` | `string` | No | Only honored in data centers with 'Accept-Ranges: bytes'; format 'bytes=<start>-<end>'. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `string` | Yes | — |
+| `contentType` | `string` | Yes | — |
+| `size` | `number` | Yes | — |
+| `contentBase64` | `string` | Yes | — |
+
+
+
+---
+
+### upload
+
+`sandboxFiles.upload`
+
+Write a file to an absolute path inside a sandbox, overwriting any existing file
+
+**Risk:** `write`
+
+```ts
+await corsair.gmicloud.api.sandboxFiles.upload({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sandbox_key` | `string` | Yes | sandbox_key returned by sandboxes.create or sandboxes.connect |
+| `domain` | `string` | Yes | domain returned by sandboxes.create or sandboxes.connect |
+| `access_token` | `string` | Yes | sandbox_access_token returned by sandboxes.create or sandboxes.connect |
+| `path` | `string` | Yes | **Absolute path** inside the sandbox. |
+| `username` | `string` | No | Perform the file operation as this user; defaults to the sandbox's default user. |
+| `content` | `string` | Yes | File content, as UTF-8 text or base64 (see encoding) |
+| `encoding` | `utf8 \| base64` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  path: string,
+  name: string,
+  type: file
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Sandbox Products
+
+### list
+
+`sandboxProducts.list`
+
+List the sandbox product catalog (CPU, memory, disk) in a data center
+
+**Risk:** `read`
+
+```ts
+await corsair.gmicloud.api.sandboxProducts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `idc_name` | `string` | Yes | IDC identifier used for capability and resource resolution. |
+| `resource_type` | `sandbox` | No | Resource type to list. |
+| `include_unavailable` | `boolean` | No | Include products whose status is 'unavailable'. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | Yes | HTTP request correlation identifier. |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  resource_type: sandbox,
+  product: string,
+  name: string,
+  status: active | unavailable,
+  resources: {
+    cpu_count: number,
+    memory_mb: number,
+    disk_size_mb: number,
+    architecture: x86_64 | arm64
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Sandbox Templates
+
+### create
+
+`sandboxTemplates.create`
+
+Create a sandbox template from an image or another template and start its first build
+
+**Risk:** `write`
+
+```ts
+await corsair.gmicloud.api.sandboxTemplates.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `idempotency_key` | `string` | Yes | Caller-generated key that makes the mutation safe to retry (a UUID is recommended). |
+| `name` | `string` | Yes | Organization-scoped Template display name. |
+| `description` | `string` | No | Human-readable Template description. |
+| `idc_name` | `string` | No | IDC that permanently owns the Template. |
+| `resources` | `object` | Yes | — |
+| `labels` | `object` | No | User-defined labels used for filtering. |
+| `build` | `object` | No | Initial Build definition created and started with the Template (combined flow, every IDC supports it). |
+
+<AccordionGroup>
+<Accordion title="resources full type">
+
+```ts
+{
+  type: preset,
+  product: string
+} | {
+  type: custom,
+  cpu_count: number,
+  memory_mb: number,
+  disk_size_mb: number,
+  architecture?: x86_64 | arm64
+}
+```
+</Accordion>
+
+<Accordion title="labels full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="build full type">
+
+```ts
+{
+  source: {
+    type: image,
+    image: string
+  } | {
+    type: template,
+    template_id: string,
+    build_id?: string
+  },
+  commands?: string[],
+  envs?: {
+  },
+  start_cmd?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | Yes | HTTP request correlation identifier. |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  build_id: string,
+  status: waiting | building | ready | error
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`sandboxTemplates.delete`
+
+Delete a sandbox template; existing sandboxes keep running
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.gmicloud.api.sandboxTemplates.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Template identifier. |
+| `idc_name` | `string` | No | Filter by data center name, e.g. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | Yes | Deletion request correlation identifier. |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  deleted: true
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`sandboxTemplates.get`
+
+Get a sandbox template with its current and latest build
+
+**Risk:** `read`
+
+```ts
+await corsair.gmicloud.api.sandboxTemplates.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Template identifier. |
+| `idc_name` | `string` | No | Filter by data center name, e.g. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | Yes | HTTP request correlation identifier. |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  description?: string,
+  idc_name: string,
+  source_type: image | template | sandbox,
+  product?: string | null,
+  product_name?: X_SMALL | SMALL | MEDIUM | LARGE | X_LARGE | null,
+  resources: {
+    cpu_count: number,
+    memory_mb: number,
+    disk_size_mb: number,
+    architecture: x86_64 | arm64
+  },
+  labels?: {
+  },
+  current_build_id?: string | null,
+  latest_build_id: string,
+  latest_build_status: waiting | building | ready | error,
+  rebuildable?: boolean,
+  deleted_at?: string | null,
+  created_at: string,
+  updated_at: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getBuild
+
+`sandboxTemplates.getBuild`
+
+Get a sandbox template build status and artifact availability
+
+**Risk:** `read`
+
+```ts
+await corsair.gmicloud.api.sandboxTemplates.getBuild({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_id` | `string` | Yes | Owning Template identifier. |
+| `id` | `string` | Yes | Template Build identifier. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | Yes | HTTP request correlation identifier. |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  template_id: string,
+  trigger: initial_build | rebuild | snapshot,
+  status: waiting | building | ready | error,
+  artifact_state: absent | unknown | available | reclaimed | retained,
+  source_type: image | template | sandbox,
+  source?: {
+  },
+  resources: {
+    cpu_count: number,
+    memory_mb: number,
+    disk_size_mb: number,
+    architecture: x86_64 | arm64
+  },
+  product?: string | null,
+  product_name?: X_SMALL | SMALL | MEDIUM | LARGE | X_LARGE | null,
+  commands?: string[],
+  start_cmd?: string | null,
+  failure?: {
+    code: string,
+    message: string
+  } | null,
+  created_at: string,
+  started_at?: string | null,
+  finished_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getBuildLogs
+
+`sandboxTemplates.getBuildLogs`
+
+Get build logs for a sandbox template build, paged by offset
+
+**Risk:** `read`
+
+```ts
+await corsair.gmicloud.api.sandboxTemplates.getBuildLogs({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_id` | `string` | Yes | Owning Template identifier. |
+| `id` | `string` | Yes | Template Build identifier. |
+| `offset` | `number` | No | Zero-based normalized log entry offset. |
+| `limit` | `number` | No | Maximum number of log entries to return. |
+| `level` | `debug \| info \| warn \| error` | No | Optional normalized log level filter. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | Yes | HTTP request correlation identifier. |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  entries: {
+    offset: number,
+    timestamp?: string | null,
+    level: debug | info | warn | error,
+    message: string
+  }[],
+  next_offset: number,
+  has_more: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`sandboxTemplates.list`
+
+List sandbox templates with pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.gmicloud.api.sandboxTemplates.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `idc_name` | `string` | No | Filter by data center name, e.g. |
+| `page` | `number` | No | Page number, starting from 1; default 1 |
+| `page_size` | `number` | No | Items per page; default 20, maximum 100 |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | Yes | HTTP request correlation identifier. |
+| `total` | `number` | Yes | Total number of matching Templates. |
+| `page` | `number` | Yes | One-based page number. |
+| `page_size` | `number` | Yes | Requested number of Templates per page. |
+| `items` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  description?: string,
+  idc_name: string,
+  source_type: image | template | sandbox,
+  product?: string | null,
+  product_name?: X_SMALL | SMALL | MEDIUM | LARGE | X_LARGE | null,
+  resources: {
+    cpu_count: number,
+    memory_mb: number,
+    disk_size_mb: number,
+    architecture: x86_64 | arm64
+  },
+  labels?: {
+  },
+  current_build_id?: string | null,
+  latest_build_id: string,
+  latest_build_status: waiting | building | ready | error,
+  rebuildable?: boolean,
+  deleted_at?: string | null,
+  created_at: string,
+  updated_at: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listBuilds
+
+`sandboxTemplates.listBuilds`
+
+List the builds of a sandbox template, newest first, with pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.gmicloud.api.sandboxTemplates.listBuilds({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_id` | `string` | Yes | Owning Template identifier. |
+| `page` | `number` | No | Page number, starting from 1; default 1 |
+| `page_size` | `number` | No | Items per page; default 20, maximum 100 |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | Yes | HTTP request correlation identifier. |
+| `total` | `number` | Yes | Total number of Build attempts for the Template. |
+| `page` | `number` | Yes | One-based page number. |
+| `page_size` | `number` | Yes | Requested number of Builds per page. |
+| `items` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: string,
+  template_id: string,
+  trigger: initial_build | rebuild | snapshot,
+  status: waiting | building | ready | error,
+  artifact_state: absent | unknown | available | reclaimed | retained,
+  source_type: image | template | sandbox,
+  source?: {
+  },
+  resources: {
+    cpu_count: number,
+    memory_mb: number,
+    disk_size_mb: number,
+    architecture: x86_64 | arm64
+  },
+  product?: string | null,
+  product_name?: X_SMALL | SMALL | MEDIUM | LARGE | X_LARGE | null,
+  commands?: string[],
+  start_cmd?: string | null,
+  failure?: {
+    code: string,
+    message: string
+  } | null,
+  created_at: string,
+  started_at?: string | null,
+  finished_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`sandboxTemplates.update`
+
+Update a sandbox template's name, description, or labels
+
+**Risk:** `write`
+
+```ts
+await corsair.gmicloud.api.sandboxTemplates.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Template identifier. |
+| `idc_name` | `string` | No | Filter by data center name, e.g. |
+| `name` | `string` | No | New organization-scoped display name. |
+| `description` | `string` | No | New human-readable description. |
+| `labels` | `object` | No | Complete replacement of user-defined labels. |
+
+<AccordionGroup>
+<Accordion title="labels full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | Yes | HTTP request correlation identifier. |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  description?: string,
+  idc_name: string,
+  source_type: image | template | sandbox,
+  product?: string | null,
+  product_name?: X_SMALL | SMALL | MEDIUM | LARGE | X_LARGE | null,
+  resources: {
+    cpu_count: number,
+    memory_mb: number,
+    disk_size_mb: number,
+    architecture: x86_64 | arm64
+  },
+  labels?: {
+  },
+  current_build_id?: string | null,
+  latest_build_id: string,
+  latest_build_status: waiting | building | ready | error,
+  rebuildable?: boolean,
+  deleted_at?: string | null,
+  created_at: string,
+  updated_at: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Templates
+
+### create
+
+`templates.create`
+
+Create a custom container template
+
+**Risk:** `write`
+
+```ts
+await corsair.gmicloud.api.templates.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `credential` | `object` | No | — |
+| `description` | `string` | No | — |
+| `name` | `string` | Yes | — |
+| `path` | `string` | Yes | — |
+| `status` | `draft \| published \| unpublished` | No | — |
+
+<AccordionGroup>
+<Accordion title="credential full type">
+
+```ts
+{
+  secret?: string,
+  username?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`templates.delete`
+
+Delete a custom container template
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.gmicloud.api.templates.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`templates.get`
+
+Get a container template by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.gmicloud.api.templates.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `official` | `boolean` | Yes | true means the template is provided by GMI Cloud and it's read only. |
+| `orgId` | `string` | No | — |
+| `credential` | `object` | No | — |
+| `description` | `string` | No | — |
+| `name` | `string` | Yes | — |
+| `path` | `string` | Yes | — |
+| `status` | `draft \| published \| unpublished` | No | — |
+
+<AccordionGroup>
+<Accordion title="credential full type">
+
+```ts
+{
+  secret?: string,
+  username?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`templates.list`
+
+List container templates (official and custom) used to launch containers
+
+**Risk:** `read`
+
+```ts
+await corsair.gmicloud.api.templates.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  official: boolean,
+  orgId?: string,
+  credential?: {
+    secret?: string,
+    username?: string
+  },
+  description?: string,
+  name: string,
+  path: string,
+  status?: draft | published | unpublished
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`templates.update`
+
+Update a custom container template
+
+**Risk:** `write`
+
+```ts
+await corsair.gmicloud.api.templates.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `credential` | `object` | No | — |
+| `description` | `string` | No | — |
+| `name` | `string` | Yes | — |
+| `path` | `string` | Yes | — |
+| `status` | `draft \| published \| unpublished` | No | — |
+
+<AccordionGroup>
+<Accordion title="credential full type">
+
+```ts
+{
+  secret?: string,
+  username?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `modified` | `string` | No | — |
+
+
+
+---
+
+## Uploads
+
+### createUrl
+
+`uploads.createUrl`
+
+Get a pre-signed upload URL and the stable public URL to reference an image, video, or audio file in media requests
+
+**Risk:** `write`
+
+```ts
+await corsair.gmicloud.api.uploads.createUrl({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_type` | `jpeg \| jpg \| png \| mp4 \| mp3 \| wav` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `upload_url` | `string` | Yes | Pre-signed URL to PUT the raw bytes to; valid for about 15 minutes |
+| `public_url` | `string` | Yes | Stable public URL to pass in media requests |
+
+
+
+---
+
+## Vpcs
+
+### allocate
+
+`vpcs.allocate`
+
+Allocate the default VPC for the organization in a data center
+
+**Risk:** `write`
+
+```ts
+await corsair.gmicloud.api.vpcs.allocate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `idc` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `createdAt` | `string` | Yes | — |
+| `id` | `string` | Yes | — |
+| `idc` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `orgId` | `string` | Yes | — |
+| `subnets` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="subnets full type">
+
+```ts
+{
+  cidr: string,
+  id: string,
+  name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`vpcs.get`
+
+Get a VPC and its subnets by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.gmicloud.api.vpcs.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `createdAt` | `string` | Yes | — |
+| `id` | `string` | Yes | — |
+| `idc` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `orgId` | `string` | Yes | — |
+| `subnets` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="subnets full type">
+
+```ts
+{
+  cidr: string,
+  id: string,
+  name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`vpcs.list`
+
+List VPCs, optionally filtered by data center
+
+**Risk:** `read`
+
+```ts
+await corsair.gmicloud.api.vpcs.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `idc` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  createdAt: string,
+  id: string,
+  idc: string,
+  name: string,
+  orgId: string,
+  subnets: {
+    cidr: string,
+    id: string,
+    name: string
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### release
+
+`vpcs.release`
+
+Release the default VPC
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.gmicloud.api.vpcs.release({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `string` | Yes | — |
+
+
+
+---
+

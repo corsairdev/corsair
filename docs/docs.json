@@ -1949,6 +1949,14 @@
                 ]
               },
               {
+                "group": "GMI Cloud",
+                "pages": [
+                  "plugins/gmicloud/overview",
+                  "plugins/gmicloud/api",
+                  "plugins/gmicloud/database"
+                ]
+              },
+              {
                 "group": "Google Address Validation",
                 "pages": [
                   "plugins/googleaddressvalidation/overview",
