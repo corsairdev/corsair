@@ -2,6 +2,9 @@ import { ReductoEndpointOutputSchemas } from './endpoints/types';
 
 // Shape of a real /parse response for a one-page text PDF (2026-10-26): blocks
 // with no chart carry `chart_data: null`, and `ocr` is null unless requested.
+// `chartData` and `ocr` are `unknown` on purpose: the tests pass values the
+// schema must reject (a string for chart_data), which a stricter type would not
+// let them write.
 function parseResponse(chartData: unknown, ocr: unknown) {
 	const block = (type: string, content: string, top: number) => ({
 		type,
@@ -37,6 +40,8 @@ function parseResponse(chartData: unknown, ocr: unknown) {
 	};
 }
 
+// `unknown` because this checks raw response bodies, which is exactly what the
+// schema exists to validate; typing them as the parsed shape would assume the answer.
 const parse = (body: unknown) =>
 	ReductoEndpointOutputSchemas.parse.safeParse(body).success;
 
