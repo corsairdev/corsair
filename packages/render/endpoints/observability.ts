@@ -1,5 +1,6 @@
 import type { RenderEndpoints } from '..';
 import { makeRenderRequest } from '../client';
+import { renderPathParameter } from './path';
 
 type Context = { key: string };
 // Render's generated operation inputs vary by endpoint; the shared adapter
@@ -16,7 +17,9 @@ const call = <T>(
 	input: Input,
 ) => {
 	const { id, ...query } = input;
-	const path = template.replace('{id}', encodeURIComponent(String(id ?? '')));
+	const path = template.includes('{id}')
+		? renderPathParameter(template, 'id', id)
+		: template;
 	return makeRenderRequest<T>(path, ctx.key, {
 		method,
 		body: method === 'PUT' ? query : undefined,

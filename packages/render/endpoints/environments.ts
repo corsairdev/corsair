@@ -1,5 +1,6 @@
 import type { RenderEndpoints } from '..';
 import { makeRenderRequest } from '../client';
+import { renderPathParameter } from './path';
 
 type ResourceContext = { key: string };
 // Stricter typing is not feasible for this shared adapter because Render
@@ -14,10 +15,9 @@ const request = <T>(
 	input: ResourceInput,
 ) => {
 	const { id, ...values } = input;
-	const resolvedPath = path.replace(
-		'{id}',
-		encodeURIComponent(String(id ?? '')),
-	);
+	const resolvedPath = path.includes('{id}')
+		? renderPathParameter(path, 'id', id)
+		: path;
 	return makeRenderRequest<T>(resolvedPath, ctx.key, {
 		method,
 		body: method === 'GET' || method === 'DELETE' ? undefined : values,

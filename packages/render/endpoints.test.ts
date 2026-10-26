@@ -9,6 +9,9 @@ import {
 	listProjects,
 	listRoutes,
 	listServices,
+	retrieveEnvironment,
+	retrieveOwner,
+	retrieveProject,
 	retrieveService,
 	triggerDeploy,
 	updateOwnerLogStream,
@@ -160,6 +163,19 @@ describe('Render service endpoints', () => {
 		expect(() =>
 			listRoutes({ key: 'secret' } as never, { id: '../services' }),
 		).toThrow('Invalid Render id');
+		expect(request).not.toHaveBeenCalled();
+	});
+
+	it('rejects missing identifiers in every path-based adapter family', async () => {
+		expect(() =>
+			retrieveEnvironment({ key: 'secret' } as never, {}),
+		).toThrow('Invalid Render id');
+		expect(() => retrieveProject({ key: 'secret' } as never, {})).toThrow(
+			'Invalid Render id',
+		);
+		expect(() => retrieveOwner({ key: 'secret' } as never, {})).toThrow(
+			'Invalid Render id',
+		);
 		expect(request).not.toHaveBeenCalled();
 	});
 

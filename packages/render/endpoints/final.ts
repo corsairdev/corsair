@@ -1,22 +1,12 @@
 import type { RenderEndpoints } from '..';
 import { makeRenderRequest } from '../client';
+import { renderPathParameter } from './path';
 
 type Context = { key: string };
 // Stricter typing is not feasible for this shared adapter because final
 // operations use different provider-specific request bodies.
 // unknown: the operation schemas validate each final operation payload.
 type Input = Record<string, unknown>;
-
-const replacePathParameter = (
-	template: string,
-	name: 'id' | 'key' | 'serviceId',
-	value: unknown,
-) => {
-	if (typeof value !== 'string' || value.length === 0 || value === '.' || value === '..' || /[\\/]/.test(value)) {
-		throw new Error(`Invalid Render ${name}`);
-	}
-	return template.replace(`{${name}}`, encodeURIComponent(value));
-};
 
 const call = <T>(
 	ctx: Context,
@@ -26,10 +16,10 @@ const call = <T>(
 ) => {
 	const { id, key, serviceId, ...values } = input;
 	let path = template;
-	if (path.includes('{id}')) path = replacePathParameter(path, 'id', id);
-	if (path.includes('{key}')) path = replacePathParameter(path, 'key', key);
+	if (path.includes('{id}')) path = renderPathParameter(path, 'id', id);
+	if (path.includes('{key}')) path = renderPathParameter(path, 'key', key);
 	if (path.includes('{serviceId}')) {
-		path = replacePathParameter(path, 'serviceId', serviceId);
+		path = renderPathParameter(path, 'serviceId', serviceId);
 	}
 	const body =
 		'body' in values

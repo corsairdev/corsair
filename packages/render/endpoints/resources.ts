@@ -1,5 +1,6 @@
 import type { RenderEndpoints } from '..';
 import { makeRenderRequest } from '../client';
+import { renderPathParameter } from './path';
 
 type Context = { key: string };
 // Stricter typing is not feasible because resource operations share identifiers
@@ -14,7 +15,9 @@ const request = <T>(
 	input: Input,
 ) => {
 	const { id, ...values } = input;
-	const path = template.replace('{id}', encodeURIComponent(String(id ?? '')));
+	const path = template.includes('{id}')
+		? renderPathParameter(template, 'id', id)
+		: template;
 	return makeRenderRequest<T>(path, ctx.key, {
 		method,
 		body: method === 'GET' || method === 'DELETE' ? undefined : values,
