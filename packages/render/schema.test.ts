@@ -114,6 +114,9 @@ describe('Render schema', () => {
 			'updateMaintenance',
 			'triggerMaintenance',
 			'triggerCronJobRun',
+			'retrieveWebhook',
+			'updateWebhook',
+			'deleteWebhook',
 		] as const;
 		for (const operation of idOperations) {
 			const schema = RenderEndpointInputSchemas[operation];
@@ -185,6 +188,20 @@ describe('Render schema', () => {
 				serviceId: 'service-1',
 			}).success,
 		).toBe(true);
+		expect(
+			RenderEndpointInputSchemas.createWebhook.safeParse({
+				ownerId: 'owner-1',
+			}).success,
+		).toBe(false);
+		expect(
+			RenderEndpointInputSchemas.createWebhook.safeParse({
+				ownerId: 'owner-1',
+				name: 'hook',
+				url: 'https://example.test/hook',
+				enabled: true,
+				eventFilter: [],
+			}).success,
+		).toBe(true);
 	});
 
 	it('provides executable input and output contracts for every operation', () => {
@@ -244,6 +261,13 @@ describe('Render schema', () => {
 				serviceId: 'service-1',
 			},
 			{ id: 'resource-1', snapshotKey: 'snapshot-1' },
+			{
+				ownerId: 'owner-1',
+				name: 'hook',
+				url: 'https://example.test/hook',
+				enabled: true,
+				eventFilter: ['deploy.created'],
+			},
 		];
 		const outputCandidates = [
 			[],

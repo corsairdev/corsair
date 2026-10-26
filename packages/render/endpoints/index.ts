@@ -1,6 +1,8 @@
 export {
 	createDisk,
+	createWebhook,
 	deleteDisk,
+	deleteWebhook,
 	listDiskSnapshots,
 	listDisks,
 	listMaintenance,
@@ -12,11 +14,13 @@ export {
 	restoreDiskSnapshot,
 	retrieveDisk,
 	retrieveMaintenance,
+	retrieveWebhook,
 	streamTaskRunsEvents,
 	triggerCronJobRun,
 	triggerMaintenance,
 	updateDisk,
 	updateMaintenance,
+	updateWebhook,
 } from './automation';
 export {
 	createEnvGroup,

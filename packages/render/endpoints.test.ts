@@ -4,8 +4,10 @@ import {
 	cancelServiceJob,
 	createDisk,
 	createServiceJob,
+	createWebhook,
 	deleteDisk,
 	deleteService,
+	deleteWebhook,
 	getUser,
 	listBlueprints,
 	listDeploys,
@@ -24,6 +26,7 @@ import {
 	retrieveOwner,
 	retrieveProject,
 	retrieveService,
+	retrieveWebhook,
 	rollbackDeploy,
 	streamTaskRunsEvents,
 	triggerCronJobRun,
@@ -33,6 +36,7 @@ import {
 	updateMaintenance,
 	updateOwnerLogStream,
 	updateRoutes,
+	updateWebhook,
 } from './endpoints';
 
 jest.mock('./client', () => ({
@@ -316,6 +320,44 @@ describe('Render service endpoints', () => {
 			'secret',
 			{ method: 'POST', body: undefined },
 		);
+	});
+
+	it('covers webhook management on the current webhook routes', async () => {
+		request.mockResolvedValue({});
+		const ctx = { key: 'secret' } as never;
+		await createWebhook(ctx, {
+			ownerId: 'usr-1',
+			name: 'deploys',
+			url: 'https://example.test/hook',
+			enabled: true,
+			eventFilter: ['deploy.created'],
+		});
+		await retrieveWebhook(ctx, { id: 'wh-1' });
+		await updateWebhook(ctx, { id: 'wh-1', enabled: false });
+		await deleteWebhook(ctx, { id: 'wh-1' });
+
+		expect(request).toHaveBeenCalledWith('/v1/webhooks', 'secret', {
+			method: 'POST',
+			body: {
+				ownerId: 'usr-1',
+				name: 'deploys',
+				url: 'https://example.test/hook',
+				enabled: true,
+				eventFilter: ['deploy.created'],
+			},
+		});
+		expect(request).toHaveBeenCalledWith('/v1/webhooks/wh-1', 'secret', {
+			method: 'GET',
+			query: {},
+		});
+		expect(request).toHaveBeenCalledWith('/v1/webhooks/wh-1', 'secret', {
+			method: 'PATCH',
+			body: { enabled: false },
+		});
+		expect(request).toHaveBeenCalledWith('/v1/webhooks/wh-1', 'secret', {
+			method: 'DELETE',
+			body: undefined,
+		});
 	});
 
 	it('triggers a cron job run on the documented route', async () => {

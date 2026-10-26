@@ -121,6 +121,19 @@ const RestoreDiskSnapshotInputSchema = ResourceIdInputSchema.extend({
 const UpdateMaintenanceInputSchema = ResourceIdInputSchema.extend({
 	scheduledAt: z.string().datetime().optional(),
 });
+const CreateWebhookInputSchema = z.object({
+	ownerId: z.string().min(1),
+	name: z.string().min(1),
+	url: z.string().min(1),
+	enabled: z.boolean(),
+	eventFilter: z.array(z.string()),
+});
+const UpdateWebhookInputSchema = ResourceIdInputSchema.extend({
+	name: z.string().min(1).optional(),
+	url: z.string().min(1).optional(),
+	enabled: z.boolean().optional(),
+	eventFilter: z.array(z.string()).optional(),
+});
 
 export type ListServicesInput = z.infer<typeof ListServicesInputSchema>;
 export type ListServicesOutput = z.infer<typeof ListServicesOutputSchema>;
@@ -217,6 +230,10 @@ export type RenderEndpointInputs = {
 	updateMaintenance: z.infer<typeof UpdateMaintenanceInputSchema>;
 	triggerMaintenance: ResourceIdInput;
 	triggerCronJobRun: ResourceIdInput;
+	createWebhook: z.infer<typeof CreateWebhookInputSchema>;
+	retrieveWebhook: ResourceIdInput;
+	updateWebhook: z.infer<typeof UpdateWebhookInputSchema>;
+	deleteWebhook: ResourceIdInput;
 	addHeaders: ResourceIdInput;
 	addOrUpdateSecretFile: ResourceIdKeyInput;
 	addResourcesToEnvironment: ResourceIdInput;
@@ -339,6 +356,10 @@ export type RenderEndpointOutputs = {
 	updateMaintenance: /* unknown: provider-specific lifecycle acknowledgement */ unknown;
 	triggerMaintenance: /* unknown: provider-specific lifecycle acknowledgement */ unknown;
 	triggerCronJobRun: /* unknown: provider-specific lifecycle acknowledgement */ unknown;
+	createWebhook: z.infer<typeof ResourceOutputSchema>;
+	retrieveWebhook: z.infer<typeof ResourceOutputSchema>;
+	updateWebhook: z.infer<typeof ResourceOutputSchema>;
+	deleteWebhook: z.infer<typeof EmptyOutputSchema>;
 	addHeaders: z.infer<typeof ResourceOutputSchema>;
 	addOrUpdateSecretFile: z.infer<typeof ResourceOutputSchema>;
 	addResourcesToEnvironment: z.infer<typeof ResourceOutputSchema>;
@@ -462,6 +483,10 @@ export const RenderEndpointInputSchemas = {
 	updateMaintenance: UpdateMaintenanceInputSchema,
 	triggerMaintenance: ResourceIdInputSchema,
 	triggerCronJobRun: ResourceIdInputSchema,
+	createWebhook: CreateWebhookInputSchema,
+	retrieveWebhook: ResourceIdInputSchema,
+	updateWebhook: UpdateWebhookInputSchema,
+	deleteWebhook: ResourceIdInputSchema,
 	addHeaders: ResourceIdInputSchema,
 	addOrUpdateSecretFile: ResourceIdKeyInputSchema,
 	addResourcesToEnvironment: ResourceIdInputSchema,
@@ -590,6 +615,10 @@ export const RenderEndpointOutputSchemas = {
 		/* unknown: provider-specific lifecycle acknowledgement */ z.unknown(),
 	triggerCronJobRun:
 		/* unknown: provider-specific lifecycle acknowledgement */ z.unknown(),
+	createWebhook: ResourceOutputSchema,
+	retrieveWebhook: ResourceOutputSchema,
+	updateWebhook: ResourceOutputSchema,
+	deleteWebhook: EmptyOutputSchema,
 	addHeaders: ResourceOutputSchema,
 	addOrUpdateSecretFile: ResourceOutputSchema,
 	addResourcesToEnvironment: ResourceOutputSchema,

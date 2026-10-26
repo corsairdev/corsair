@@ -112,3 +112,13 @@ export const triggerCronJobRun: RenderEndpoints['triggerCronJobRun'] = (
 	ctx,
 	input,
 ) => postWithoutBody(ctx, '/v1/cron-jobs/{id}/runs', input);
+export const createWebhook: RenderEndpoints['createWebhook'] = (ctx, input) =>
+	request(ctx, '/v1/webhooks', 'POST', input);
+export const retrieveWebhook: RenderEndpoints['retrieveWebhook'] = (
+	ctx,
+	input,
+) => request(ctx, '/v1/webhooks/{id}', 'GET', input);
+export const updateWebhook: RenderEndpoints['updateWebhook'] = (ctx, input) =>
+	request(ctx, '/v1/webhooks/{id}', 'PATCH', input);
+export const deleteWebhook: RenderEndpoints['deleteWebhook'] = (ctx, input) =>
+	request(ctx, '/v1/webhooks/{id}', 'DELETE', input);

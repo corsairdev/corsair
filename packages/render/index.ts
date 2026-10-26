@@ -29,6 +29,7 @@ import {
 	createProject,
 	createRegistryCredential,
 	createServiceJob,
+	createWebhook,
 	deleteDisk,
 	deleteEnvGroup,
 	deleteEnvGroupEnvVar,
@@ -40,6 +41,7 @@ import {
 	deleteRegistryCredential,
 	deleteSecretFile,
 	deleteService,
+	deleteWebhook,
 	disconnectBlueprint,
 	getActiveConnections,
 	getBandwidthSources,
@@ -108,6 +110,7 @@ import {
 	retrieveSecretFile,
 	retrieveService,
 	retrieveServiceJob,
+	retrieveWebhook,
 	rollbackDeploy,
 	streamTaskRunsEvents,
 	subscribeLogs,
@@ -133,6 +136,7 @@ import {
 	updateRoutes,
 	updateSecretFilesForService,
 	updateService,
+	updateWebhook,
 	verifyCustomDomain,
 } from './endpoints';
 
@@ -241,6 +245,10 @@ export type RenderEndpoints = {
 	updateMaintenance: RenderEndpoint<'updateMaintenance'>;
 	triggerMaintenance: RenderEndpoint<'triggerMaintenance'>;
 	triggerCronJobRun: RenderEndpoint<'triggerCronJobRun'>;
+	createWebhook: RenderEndpoint<'createWebhook'>;
+	retrieveWebhook: RenderEndpoint<'retrieveWebhook'>;
+	updateWebhook: RenderEndpoint<'updateWebhook'>;
+	deleteWebhook: RenderEndpoint<'deleteWebhook'>;
 	addHeaders: RenderEndpoint<'addHeaders'>;
 	addOrUpdateSecretFile: RenderEndpoint<'addOrUpdateSecretFile'>;
 	addResourcesToEnvironment: RenderEndpoint<'addResourcesToEnvironment'>;
@@ -382,6 +390,10 @@ const renderEndpointsNested = {
 		updateMaintenance,
 		triggerMaintenance,
 		triggerCronJobRun,
+		createWebhook,
+		retrieveWebhook,
+		updateWebhook,
+		deleteWebhook,
 	},
 	final: {
 		addHeaders,
@@ -744,6 +756,22 @@ export const renderEndpointSchemas = {
 	'automation.triggerCronJobRun': {
 		input: RenderEndpointInputSchemas.triggerCronJobRun,
 		output: RenderEndpointOutputSchemas.triggerCronJobRun,
+	},
+	'automation.createWebhook': {
+		input: RenderEndpointInputSchemas.createWebhook,
+		output: RenderEndpointOutputSchemas.createWebhook,
+	},
+	'automation.retrieveWebhook': {
+		input: RenderEndpointInputSchemas.retrieveWebhook,
+		output: RenderEndpointOutputSchemas.retrieveWebhook,
+	},
+	'automation.updateWebhook': {
+		input: RenderEndpointInputSchemas.updateWebhook,
+		output: RenderEndpointOutputSchemas.updateWebhook,
+	},
+	'automation.deleteWebhook': {
+		input: RenderEndpointInputSchemas.deleteWebhook,
+		output: RenderEndpointOutputSchemas.deleteWebhook,
 	},
 	'final.addHeaders': {
 		input: RenderEndpointInputSchemas.addHeaders,
@@ -1243,6 +1271,22 @@ const renderEndpointMeta = {
 	'automation.triggerCronJobRun': {
 		riskLevel: 'write',
 		description: 'Trigger a run of a Render cron job',
+	},
+	'automation.createWebhook': {
+		riskLevel: 'write',
+		description: 'Create a webhook for a Render owner',
+	},
+	'automation.retrieveWebhook': {
+		riskLevel: 'read',
+		description: 'Retrieve a Render webhook',
+	},
+	'automation.updateWebhook': {
+		riskLevel: 'write',
+		description: 'Update a Render webhook',
+	},
+	'automation.deleteWebhook': {
+		riskLevel: 'destructive',
+		description: 'Delete a Render webhook',
 	},
 	'final.addHeaders': { riskLevel: 'write', description: 'Render addHeaders' },
 	'final.addOrUpdateSecretFile': {
