@@ -11,8 +11,11 @@ export {
 	listWorkflowVersions,
 	restoreDiskSnapshot,
 	retrieveDisk,
+	retrieveMaintenance,
 	streamTaskRunsEvents,
+	triggerMaintenance,
 	updateDisk,
+	updateMaintenance,
 } from './automation';
 export {
 	createEnvGroup,

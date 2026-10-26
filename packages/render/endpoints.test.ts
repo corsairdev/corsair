@@ -20,13 +20,16 @@ import {
 	restoreDiskSnapshot,
 	retrieveDisk,
 	retrieveEnvironment,
+	retrieveMaintenance,
 	retrieveOwner,
 	retrieveProject,
 	retrieveService,
 	rollbackDeploy,
 	streamTaskRunsEvents,
 	triggerDeploy,
+	triggerMaintenance,
 	updateDisk,
+	updateMaintenance,
 	updateOwnerLogStream,
 	updateRoutes,
 } from './endpoints';
@@ -286,6 +289,31 @@ describe('Render service endpoints', () => {
 			'/v1/disks/disk-1/snapshots/restore',
 			'secret',
 			{ method: 'POST', body: { snapshotKey: 'snap-1' } },
+		);
+	});
+
+	it('manages maintenance runs on the documented routes', async () => {
+		request.mockResolvedValue({});
+		const ctx = { key: 'secret' } as never;
+		await retrieveMaintenance(ctx, { id: 'mnt-1' });
+		await updateMaintenance(ctx, {
+			id: 'mnt-1',
+			scheduledAt: '2026-11-01T00:00:00.000Z',
+		});
+		await triggerMaintenance(ctx, { id: 'mnt-1' });
+
+		expect(request).toHaveBeenCalledWith('/v1/maintenance/mnt-1', 'secret', {
+			method: 'GET',
+			query: {},
+		});
+		expect(request).toHaveBeenCalledWith('/v1/maintenance/mnt-1', 'secret', {
+			method: 'PATCH',
+			body: { scheduledAt: '2026-11-01T00:00:00.000Z' },
+		});
+		expect(request).toHaveBeenCalledWith(
+			'/v1/maintenance/mnt-1/trigger',
+			'secret',
+			{ method: 'POST', body: undefined },
 		);
 	});
 

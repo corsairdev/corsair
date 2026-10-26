@@ -99,6 +99,7 @@ import {
 	retrieveEnvGroupSecretFile,
 	retrieveEnvironment,
 	retrieveEnvVar,
+	retrieveMaintenance,
 	retrieveOwner,
 	retrieveOwnerNotificationSettings,
 	retrievePostgres,
@@ -112,6 +113,7 @@ import {
 	subscribeLogs,
 	suspendService,
 	triggerDeploy,
+	triggerMaintenance,
 	updateDisk,
 	updateEnvGroup,
 	updateEnvGroupEnvVar,
@@ -120,6 +122,7 @@ import {
 	updateEnvVar,
 	updateEnvVarsForService,
 	updateHeaders,
+	updateMaintenance,
 	updateOwnerLogStream,
 	updateOwnerNotificationSettings,
 	updatePostgres,
@@ -233,6 +236,9 @@ export type RenderEndpoints = {
 	deleteDisk: RenderEndpoint<'deleteDisk'>;
 	listDiskSnapshots: RenderEndpoint<'listDiskSnapshots'>;
 	restoreDiskSnapshot: RenderEndpoint<'restoreDiskSnapshot'>;
+	retrieveMaintenance: RenderEndpoint<'retrieveMaintenance'>;
+	updateMaintenance: RenderEndpoint<'updateMaintenance'>;
+	triggerMaintenance: RenderEndpoint<'triggerMaintenance'>;
 	addHeaders: RenderEndpoint<'addHeaders'>;
 	addOrUpdateSecretFile: RenderEndpoint<'addOrUpdateSecretFile'>;
 	addResourcesToEnvironment: RenderEndpoint<'addResourcesToEnvironment'>;
@@ -370,6 +376,9 @@ const renderEndpointsNested = {
 		deleteDisk,
 		listDiskSnapshots,
 		restoreDiskSnapshot,
+		retrieveMaintenance,
+		updateMaintenance,
+		triggerMaintenance,
 	},
 	final: {
 		addHeaders,
@@ -716,6 +725,18 @@ export const renderEndpointSchemas = {
 	'automation.restoreDiskSnapshot': {
 		input: RenderEndpointInputSchemas.restoreDiskSnapshot,
 		output: RenderEndpointOutputSchemas.restoreDiskSnapshot,
+	},
+	'automation.retrieveMaintenance': {
+		input: RenderEndpointInputSchemas.retrieveMaintenance,
+		output: RenderEndpointOutputSchemas.retrieveMaintenance,
+	},
+	'automation.updateMaintenance': {
+		input: RenderEndpointInputSchemas.updateMaintenance,
+		output: RenderEndpointOutputSchemas.updateMaintenance,
+	},
+	'automation.triggerMaintenance': {
+		input: RenderEndpointInputSchemas.triggerMaintenance,
+		output: RenderEndpointOutputSchemas.triggerMaintenance,
 	},
 	'final.addHeaders': {
 		input: RenderEndpointInputSchemas.addHeaders,
@@ -1199,6 +1220,18 @@ const renderEndpointMeta = {
 	'automation.restoreDiskSnapshot': {
 		riskLevel: 'write',
 		description: 'Restore a snapshot to a Render disk',
+	},
+	'automation.retrieveMaintenance': {
+		riskLevel: 'read',
+		description: 'Retrieve a Render maintenance run',
+	},
+	'automation.updateMaintenance': {
+		riskLevel: 'write',
+		description: 'Update a Render maintenance run',
+	},
+	'automation.triggerMaintenance': {
+		riskLevel: 'write',
+		description: 'Trigger a Render maintenance run',
 	},
 	'final.addHeaders': { riskLevel: 'write', description: 'Render addHeaders' },
 	'final.addOrUpdateSecretFile': {

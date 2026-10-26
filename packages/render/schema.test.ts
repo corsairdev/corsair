@@ -110,6 +110,9 @@ describe('Render schema', () => {
 			'updateDisk',
 			'deleteDisk',
 			'listDiskSnapshots',
+			'retrieveMaintenance',
+			'updateMaintenance',
+			'triggerMaintenance',
 		] as const;
 		for (const operation of idOperations) {
 			const schema = RenderEndpointInputSchemas[operation];

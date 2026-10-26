@@ -40,6 +40,15 @@ const request = <T>(
 	});
 };
 
+// Render lifecycle triggers return 202 with no request body.
+const postWithoutBody = (ctx: Context, template: string, input: Input) => {
+	const { id } = input;
+	return makeRenderRequest(renderPathParameter(template, 'id', id), ctx.key, {
+		method: 'POST',
+		body: undefined,
+	});
+};
+
 export const listDisks: RenderEndpoints['listDisks'] = (ctx, input) =>
 	get(ctx, '/v1/disks', input);
 export const listMaintenance: RenderEndpoints['listMaintenance'] = (
@@ -87,3 +96,15 @@ export const restoreDiskSnapshot: RenderEndpoints['restoreDiskSnapshot'] = (
 	ctx,
 	input,
 ) => request(ctx, '/v1/disks/{id}/snapshots/restore', 'POST', input);
+export const retrieveMaintenance: RenderEndpoints['retrieveMaintenance'] = (
+	ctx,
+	input,
+) => request(ctx, '/v1/maintenance/{id}', 'GET', input);
+export const updateMaintenance: RenderEndpoints['updateMaintenance'] = (
+	ctx,
+	input,
+) => request(ctx, '/v1/maintenance/{id}', 'PATCH', input);
+export const triggerMaintenance: RenderEndpoints['triggerMaintenance'] = (
+	ctx,
+	input,
+) => postWithoutBody(ctx, '/v1/maintenance/{id}/trigger', input);

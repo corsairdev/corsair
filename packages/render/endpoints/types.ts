@@ -118,6 +118,9 @@ const RestoreDiskSnapshotInputSchema = ResourceIdInputSchema.extend({
 	snapshotKey: z.string().min(1),
 	instanceId: z.string().min(1).optional(),
 });
+const UpdateMaintenanceInputSchema = ResourceIdInputSchema.extend({
+	scheduledAt: z.string().datetime().optional(),
+});
 
 export type ListServicesInput = z.infer<typeof ListServicesInputSchema>;
 export type ListServicesOutput = z.infer<typeof ListServicesOutputSchema>;
@@ -210,6 +213,9 @@ export type RenderEndpointInputs = {
 	deleteDisk: ResourceIdInput;
 	listDiskSnapshots: ResourceIdInput;
 	restoreDiskSnapshot: z.infer<typeof RestoreDiskSnapshotInputSchema>;
+	retrieveMaintenance: ResourceIdInput;
+	updateMaintenance: z.infer<typeof UpdateMaintenanceInputSchema>;
+	triggerMaintenance: ResourceIdInput;
 	addHeaders: ResourceIdInput;
 	addOrUpdateSecretFile: ResourceIdKeyInput;
 	addResourcesToEnvironment: ResourceIdInput;
@@ -328,6 +334,9 @@ export type RenderEndpointOutputs = {
 	deleteDisk: z.infer<typeof EmptyOutputSchema>;
 	listDiskSnapshots: z.infer<typeof ResourceListOutputSchema>;
 	restoreDiskSnapshot: z.infer<typeof ResourceOutputSchema>;
+	retrieveMaintenance: z.infer<typeof ResourceOutputSchema>;
+	updateMaintenance: /* unknown: provider-specific lifecycle acknowledgement */ unknown;
+	triggerMaintenance: /* unknown: provider-specific lifecycle acknowledgement */ unknown;
 	addHeaders: z.infer<typeof ResourceOutputSchema>;
 	addOrUpdateSecretFile: z.infer<typeof ResourceOutputSchema>;
 	addResourcesToEnvironment: z.infer<typeof ResourceOutputSchema>;
@@ -447,6 +456,9 @@ export const RenderEndpointInputSchemas = {
 	deleteDisk: ResourceIdInputSchema,
 	listDiskSnapshots: ResourceIdInputSchema,
 	restoreDiskSnapshot: RestoreDiskSnapshotInputSchema,
+	retrieveMaintenance: ResourceIdInputSchema,
+	updateMaintenance: UpdateMaintenanceInputSchema,
+	triggerMaintenance: ResourceIdInputSchema,
 	addHeaders: ResourceIdInputSchema,
 	addOrUpdateSecretFile: ResourceIdKeyInputSchema,
 	addResourcesToEnvironment: ResourceIdInputSchema,
@@ -568,6 +580,11 @@ export const RenderEndpointOutputSchemas = {
 	deleteDisk: EmptyOutputSchema,
 	listDiskSnapshots: ResourceListOutputSchema,
 	restoreDiskSnapshot: ResourceOutputSchema,
+	retrieveMaintenance: ResourceOutputSchema,
+	updateMaintenance:
+		/* unknown: provider-specific lifecycle acknowledgement */ z.unknown(),
+	triggerMaintenance:
+		/* unknown: provider-specific lifecycle acknowledgement */ z.unknown(),
 	addHeaders: ResourceOutputSchema,
 	addOrUpdateSecretFile: ResourceOutputSchema,
 	addResourcesToEnvironment: ResourceOutputSchema,
