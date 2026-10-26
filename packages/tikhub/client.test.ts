@@ -26,6 +26,8 @@ function respond(
 	);
 }
 
+// unknown: callers pass any endpoint's promise, and a rejection can be any
+// value until the instanceof check below narrows it.
 async function failure(promise: Promise<unknown>): Promise<TikHubAPIError> {
 	const error = await promise.catch((e: unknown) => e);
 	expect(error).toBeInstanceOf(TikHubAPIError);

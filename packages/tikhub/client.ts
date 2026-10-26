@@ -76,6 +76,8 @@ function detailOf(body: unknown): Record<string, unknown> | undefined {
 	return asRecord(record.detail) ?? record;
 }
 
+// unknown: the record is an untyped error body (see detailOf); these two
+// helpers narrow one field at a time instead of trusting its shape.
 function readString(
 	record: Record<string, unknown> | undefined,
 	key: string,

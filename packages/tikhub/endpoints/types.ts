@@ -26,6 +26,9 @@ const Region = z
 const NumericId = z.string().regex(/^\d+$/, 'Expected a numeric ID string');
 
 // Refinement for endpoints that take one of several identifiers.
+// unknown: one helper serves six input schemas with different shapes; it only
+// reads the named keys and checks they are present and non-empty, so it does
+// not need each schema's own type.
 function requireOneOf<K extends string>(...keys: K[]) {
 	return [
 		(input: Partial<Record<K, unknown>>) =>

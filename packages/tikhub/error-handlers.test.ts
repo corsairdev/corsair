@@ -45,6 +45,15 @@ describe('TikHub error handlers', () => {
 		expect(classify(error)).toBe('INSUFFICIENT_BALANCE_ERROR');
 	});
 
+	it('keeps the status-based retry when a 429 mentions insufficient balance', async () => {
+		const error = new TikHubAPIError('TikHub 429: insufficient balance', {
+			status: 429,
+			retryAfter: 2000,
+		});
+		expect(classify(error)).toBe('RATE_LIMIT_ERROR');
+		expect(await strategy(error)).toMatchObject({ maxRetries: 3 });
+	});
+
 	it('classifies a failure code from a 200 envelope by that code', () => {
 		const error = new TikHubAPIError('TikHub 402: Insufficient balance', {
 			body: { code: 402, message: 'Insufficient balance' },

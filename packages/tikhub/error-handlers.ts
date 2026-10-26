@@ -27,11 +27,13 @@ export const errorHandlers = {
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// 402: the balance (or free credit, for endpoints that accept it) cannot
-	// cover the call. Waiting does not add funds.
+	// cover the call. Waiting does not add funds. The message check only
+	// applies when there is no status, so a 429 or 5xx keeps its own retries.
 	INSUFFICIENT_BALANCE_ERROR: {
 		match: (error: Error) =>
 			statusOf(error) === 402 ||
 			(error instanceof TikHubAPIError &&
+				statusOf(error) === undefined &&
 				messageIncludes(error, ['insufficient balance'])),
 		handler: async () => ({ maxRetries: 0 }),
 	},
