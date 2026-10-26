@@ -1,5 +1,6 @@
 import { render, renderEndpointSchemas } from './index';
 import { RenderSchema } from './schema';
+import { RenderEndpointInputSchemas } from './endpoints/types';
 
 jest.mock('./client', () => ({
 	makeRenderRequest: jest.fn(),
@@ -54,6 +55,30 @@ describe('Render schema', () => {
 		await expect(
 			plugin.endpoints.services.delete(ctx, { serviceId: 'service-1' }),
 		).resolves.toBeUndefined();
+	});
+
+	it('requires identifiers for resource operations with path parameters', () => {
+		const idOperations = [
+			'retrieveEnvironment',
+			'updateEnvironment',
+			'deleteEnvironment',
+			'retrieveEnvGroup',
+			'updateEnvGroup',
+			'deleteEnvGroup',
+			'retrieveProject',
+			'updateProject',
+			'retrievePostgres',
+			'updatePostgres',
+			'retrieveRegistryCredential',
+			'updateRegistryCredential',
+			'deleteRegistryCredential',
+		] as const;
+
+		for (const operation of idOperations) {
+			const schema = RenderEndpointInputSchemas[operation];
+			expect(schema.safeParse({}).success).toBe(false);
+			expect(schema.safeParse({ id: 'resource-1' }).success).toBe(true);
+		}
 	});
 
 	it('provides executable input and output contracts for every operation', () => {

@@ -54,6 +54,12 @@ const ResourceInputSchema = z
 		cursor: z.string().optional(),
 	})
 	.passthrough();
+const ResourceIdInputSchema = ResourceInputSchema.extend({
+	id: z.string().min(1),
+});
+const ResourceIdKeyInputSchema = ResourceIdInputSchema.extend({
+	key: z.string().min(1),
+});
 // Stricter typing is not feasible because Render resource payloads are
 // provider-defined and may gain fields independently. Some Render responses
 // also return a resource collection from an operation whose endpoint metadata
@@ -73,6 +79,9 @@ export type ListServicesInput = z.infer<typeof ListServicesInputSchema>;
 export type ListServicesOutput = z.infer<typeof ListServicesOutputSchema>;
 export type ServiceIdInput = z.infer<typeof ServiceIdInputSchema>;
 export type ServiceOutput = z.infer<typeof ServiceOutputSchema>;
+type ResourceInput = z.infer<typeof ResourceInputSchema>;
+type ResourceIdInput = z.infer<typeof ResourceIdInputSchema>;
+type ResourceIdKeyInput = z.infer<typeof ResourceIdKeyInputSchema>;
 
 export type RenderEndpointInputs = {
 	listServices: ListServicesInput;
@@ -89,27 +98,27 @@ export type RenderEndpointInputs = {
 	resumeService: ServiceIdInput;
 	listEnvironments: z.infer<typeof ResourceInputSchema>;
 	createEnvironment: z.infer<typeof ResourceInputSchema>;
-	retrieveEnvironment: z.infer<typeof ResourceInputSchema>;
-	updateEnvironment: z.infer<typeof ResourceInputSchema>;
-	deleteEnvironment: z.infer<typeof ResourceInputSchema>;
+	retrieveEnvironment: ResourceIdInput;
+	updateEnvironment: ResourceIdInput;
+	deleteEnvironment: ResourceIdInput;
 	listEnvGroups: z.infer<typeof ResourceInputSchema>;
 	createEnvGroup: z.infer<typeof ResourceInputSchema>;
-	retrieveEnvGroup: z.infer<typeof ResourceInputSchema>;
-	updateEnvGroup: z.infer<typeof ResourceInputSchema>;
-	deleteEnvGroup: z.infer<typeof ResourceInputSchema>;
+	retrieveEnvGroup: ResourceIdInput;
+	updateEnvGroup: ResourceIdInput;
+	deleteEnvGroup: ResourceIdInput;
 	listProjects: z.infer<typeof ResourceInputSchema>;
 	createProject: z.infer<typeof ResourceInputSchema>;
-	retrieveProject: z.infer<typeof ResourceInputSchema>;
-	updateProject: z.infer<typeof ResourceInputSchema>;
+	retrieveProject: ResourceIdInput;
+	updateProject: ResourceIdInput;
 	listPostgres: z.infer<typeof ResourceInputSchema>;
 	createPostgres: z.infer<typeof ResourceInputSchema>;
-	retrievePostgres: z.infer<typeof ResourceInputSchema>;
-	updatePostgres: z.infer<typeof ResourceInputSchema>;
+	retrievePostgres: ResourceIdInput;
+	updatePostgres: ResourceIdInput;
 	listRegistryCredentials: z.infer<typeof ResourceInputSchema>;
 	createRegistryCredential: z.infer<typeof ResourceInputSchema>;
-	retrieveRegistryCredential: z.infer<typeof ResourceInputSchema>;
-	updateRegistryCredential: z.infer<typeof ResourceInputSchema>;
-	deleteRegistryCredential: z.infer<typeof ResourceInputSchema>;
+	retrieveRegistryCredential: ResourceIdInput;
+	updateRegistryCredential: ResourceIdInput;
+	deleteRegistryCredential: ResourceIdInput;
 	listOwners: z.infer<typeof ResourceInputSchema>;
 	retrieveOwner: z.infer<typeof ResourceInputSchema>;
 	listOwnerMembers: z.infer<typeof ResourceInputSchema>;
@@ -294,27 +303,27 @@ export const RenderEndpointInputSchemas = {
 	resumeService: ServiceIdInputSchema,
 	listEnvironments: ResourceInputSchema,
 	createEnvironment: ResourceInputSchema,
-	retrieveEnvironment: ResourceInputSchema,
-	updateEnvironment: ResourceInputSchema,
-	deleteEnvironment: ResourceInputSchema,
+	retrieveEnvironment: ResourceIdInputSchema,
+	updateEnvironment: ResourceIdInputSchema,
+	deleteEnvironment: ResourceIdInputSchema,
 	listEnvGroups: ResourceInputSchema,
 	createEnvGroup: ResourceInputSchema,
-	retrieveEnvGroup: ResourceInputSchema,
-	updateEnvGroup: ResourceInputSchema,
-	deleteEnvGroup: ResourceInputSchema,
+	retrieveEnvGroup: ResourceIdInputSchema,
+	updateEnvGroup: ResourceIdInputSchema,
+	deleteEnvGroup: ResourceIdInputSchema,
 	listProjects: ResourceInputSchema,
 	createProject: ResourceInputSchema,
-	retrieveProject: ResourceInputSchema,
-	updateProject: ResourceInputSchema,
+	retrieveProject: ResourceIdInputSchema,
+	updateProject: ResourceIdInputSchema,
 	listPostgres: ResourceInputSchema,
 	createPostgres: ResourceInputSchema,
-	retrievePostgres: ResourceInputSchema,
-	updatePostgres: ResourceInputSchema,
+	retrievePostgres: ResourceIdInputSchema,
+	updatePostgres: ResourceIdInputSchema,
 	listRegistryCredentials: ResourceInputSchema,
 	createRegistryCredential: ResourceInputSchema,
-	retrieveRegistryCredential: ResourceInputSchema,
-	updateRegistryCredential: ResourceInputSchema,
-	deleteRegistryCredential: ResourceInputSchema,
+	retrieveRegistryCredential: ResourceIdInputSchema,
+	updateRegistryCredential: ResourceIdInputSchema,
+	deleteRegistryCredential: ResourceIdInputSchema,
 	listOwners: ResourceInputSchema,
 	retrieveOwner: ResourceInputSchema,
 	listOwnerMembers: ResourceInputSchema,
