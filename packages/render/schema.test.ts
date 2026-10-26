@@ -1,6 +1,6 @@
+import { RenderEndpointInputSchemas } from './endpoints/types';
 import { render, renderEndpointSchemas } from './index';
 import { RenderSchema } from './schema';
-import { RenderEndpointInputSchemas } from './endpoints/types';
 
 jest.mock('./client', () => ({
 	makeRenderRequest: jest.fn(),

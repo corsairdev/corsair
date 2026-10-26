@@ -1,11 +1,11 @@
 import { makeRenderRequest } from './client';
 import {
 	deleteService,
+	getUser,
 	listBlueprints,
 	listDisks,
 	listEnvironments,
 	listOwners,
-	getUser,
 	listProjects,
 	listRoutes,
 	listServices,
@@ -167,9 +167,9 @@ describe('Render service endpoints', () => {
 	});
 
 	it('rejects missing identifiers in every path-based adapter family', async () => {
-		expect(() =>
-			retrieveEnvironment({ key: 'secret' } as never, {}),
-		).toThrow('Invalid Render id');
+		expect(() => retrieveEnvironment({ key: 'secret' } as never, {})).toThrow(
+			'Invalid Render id',
+		);
 		expect(() => retrieveProject({ key: 'secret' } as never, {})).toThrow(
 			'Invalid Render id',
 		);
