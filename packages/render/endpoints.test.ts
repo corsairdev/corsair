@@ -26,6 +26,7 @@ import {
 	retrieveService,
 	rollbackDeploy,
 	streamTaskRunsEvents,
+	triggerCronJobRun,
 	triggerDeploy,
 	triggerMaintenance,
 	updateDisk,
@@ -314,6 +315,20 @@ describe('Render service endpoints', () => {
 			'/v1/maintenance/mnt-1/trigger',
 			'secret',
 			{ method: 'POST', body: undefined },
+		);
+	});
+
+	it('triggers a cron job run on the documented route', async () => {
+		request.mockResolvedValue({});
+		await triggerCronJobRun({ key: 'secret' } as never, { id: 'cron-1' });
+
+		expect(request).toHaveBeenCalledWith(
+			'/v1/cron-jobs/cron-1/runs',
+			'secret',
+			{
+				method: 'POST',
+				body: undefined,
+			},
 		);
 	});
 

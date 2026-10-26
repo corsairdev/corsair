@@ -108,3 +108,7 @@ export const triggerMaintenance: RenderEndpoints['triggerMaintenance'] = (
 	ctx,
 	input,
 ) => postWithoutBody(ctx, '/v1/maintenance/{id}/trigger', input);
+export const triggerCronJobRun: RenderEndpoints['triggerCronJobRun'] = (
+	ctx,
+	input,
+) => postWithoutBody(ctx, '/v1/cron-jobs/{id}/runs', input);

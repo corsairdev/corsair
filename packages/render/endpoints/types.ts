@@ -216,6 +216,7 @@ export type RenderEndpointInputs = {
 	retrieveMaintenance: ResourceIdInput;
 	updateMaintenance: z.infer<typeof UpdateMaintenanceInputSchema>;
 	triggerMaintenance: ResourceIdInput;
+	triggerCronJobRun: ResourceIdInput;
 	addHeaders: ResourceIdInput;
 	addOrUpdateSecretFile: ResourceIdKeyInput;
 	addResourcesToEnvironment: ResourceIdInput;
@@ -337,6 +338,7 @@ export type RenderEndpointOutputs = {
 	retrieveMaintenance: z.infer<typeof ResourceOutputSchema>;
 	updateMaintenance: /* unknown: provider-specific lifecycle acknowledgement */ unknown;
 	triggerMaintenance: /* unknown: provider-specific lifecycle acknowledgement */ unknown;
+	triggerCronJobRun: /* unknown: provider-specific lifecycle acknowledgement */ unknown;
 	addHeaders: z.infer<typeof ResourceOutputSchema>;
 	addOrUpdateSecretFile: z.infer<typeof ResourceOutputSchema>;
 	addResourcesToEnvironment: z.infer<typeof ResourceOutputSchema>;
@@ -459,6 +461,7 @@ export const RenderEndpointInputSchemas = {
 	retrieveMaintenance: ResourceIdInputSchema,
 	updateMaintenance: UpdateMaintenanceInputSchema,
 	triggerMaintenance: ResourceIdInputSchema,
+	triggerCronJobRun: ResourceIdInputSchema,
 	addHeaders: ResourceIdInputSchema,
 	addOrUpdateSecretFile: ResourceIdKeyInputSchema,
 	addResourcesToEnvironment: ResourceIdInputSchema,
@@ -584,6 +587,8 @@ export const RenderEndpointOutputSchemas = {
 	updateMaintenance:
 		/* unknown: provider-specific lifecycle acknowledgement */ z.unknown(),
 	triggerMaintenance:
+		/* unknown: provider-specific lifecycle acknowledgement */ z.unknown(),
+	triggerCronJobRun:
 		/* unknown: provider-specific lifecycle acknowledgement */ z.unknown(),
 	addHeaders: ResourceOutputSchema,
 	addOrUpdateSecretFile: ResourceOutputSchema,

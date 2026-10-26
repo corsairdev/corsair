@@ -113,6 +113,7 @@ describe('Render schema', () => {
 			'retrieveMaintenance',
 			'updateMaintenance',
 			'triggerMaintenance',
+			'triggerCronJobRun',
 		] as const;
 		for (const operation of idOperations) {
 			const schema = RenderEndpointInputSchemas[operation];

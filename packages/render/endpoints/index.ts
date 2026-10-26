@@ -13,6 +13,7 @@ export {
 	retrieveDisk,
 	retrieveMaintenance,
 	streamTaskRunsEvents,
+	triggerCronJobRun,
 	triggerMaintenance,
 	updateDisk,
 	updateMaintenance,

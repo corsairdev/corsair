@@ -112,6 +112,7 @@ import {
 	streamTaskRunsEvents,
 	subscribeLogs,
 	suspendService,
+	triggerCronJobRun,
 	triggerDeploy,
 	triggerMaintenance,
 	updateDisk,
@@ -239,6 +240,7 @@ export type RenderEndpoints = {
 	retrieveMaintenance: RenderEndpoint<'retrieveMaintenance'>;
 	updateMaintenance: RenderEndpoint<'updateMaintenance'>;
 	triggerMaintenance: RenderEndpoint<'triggerMaintenance'>;
+	triggerCronJobRun: RenderEndpoint<'triggerCronJobRun'>;
 	addHeaders: RenderEndpoint<'addHeaders'>;
 	addOrUpdateSecretFile: RenderEndpoint<'addOrUpdateSecretFile'>;
 	addResourcesToEnvironment: RenderEndpoint<'addResourcesToEnvironment'>;
@@ -379,6 +381,7 @@ const renderEndpointsNested = {
 		retrieveMaintenance,
 		updateMaintenance,
 		triggerMaintenance,
+		triggerCronJobRun,
 	},
 	final: {
 		addHeaders,
@@ -737,6 +740,10 @@ export const renderEndpointSchemas = {
 	'automation.triggerMaintenance': {
 		input: RenderEndpointInputSchemas.triggerMaintenance,
 		output: RenderEndpointOutputSchemas.triggerMaintenance,
+	},
+	'automation.triggerCronJobRun': {
+		input: RenderEndpointInputSchemas.triggerCronJobRun,
+		output: RenderEndpointOutputSchemas.triggerCronJobRun,
 	},
 	'final.addHeaders': {
 		input: RenderEndpointInputSchemas.addHeaders,
@@ -1232,6 +1239,10 @@ const renderEndpointMeta = {
 	'automation.triggerMaintenance': {
 		riskLevel: 'write',
 		description: 'Trigger a Render maintenance run',
+	},
+	'automation.triggerCronJobRun': {
+		riskLevel: 'write',
+		description: 'Trigger a run of a Render cron job',
 	},
 	'final.addHeaders': { riskLevel: 'write', description: 'Render addHeaders' },
 	'final.addOrUpdateSecretFile': {
