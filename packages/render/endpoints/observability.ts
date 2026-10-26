@@ -39,7 +39,7 @@ export const listOwnerMembers: RenderEndpoints['listOwnerMembers'] = (
 	input,
 ) => call(ctx, '/v1/owners/{id}/members', 'GET', input);
 export const getUser: RenderEndpoints['getUser'] = (ctx, input) =>
-	call(ctx, '/v1/user', 'GET', input);
+	call(ctx, '/v1/users', 'GET', input);
 export const listLogs: RenderEndpoints['listLogs'] = (ctx, input) =>
 	call(ctx, '/v1/logs', 'GET', input);
 export const listLogsValues: RenderEndpoints['listLogsValues'] = (ctx, input) =>

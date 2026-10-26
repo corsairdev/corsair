@@ -5,6 +5,7 @@ import {
 	listDisks,
 	listEnvironments,
 	listOwners,
+	getUser,
 	listProjects,
 	listRoutes,
 	listServices,
@@ -77,6 +78,14 @@ describe('Render service endpoints', () => {
 			query: {},
 		});
 		expect(request).toHaveBeenCalledWith('/v1/blueprints', 'secret', {
+			method: 'GET',
+			query: {},
+		});
+	});
+
+	it('uses the documented current-user route', async () => {
+		await getUser({ key: 'secret' } as never, {});
+		expect(request).toHaveBeenCalledWith('/v1/users', 'secret', {
 			method: 'GET',
 			query: {},
 		});
