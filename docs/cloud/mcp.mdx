@@ -1,6 +1,6 @@
 ---
 title: Corsair MCP
-description: One address, https://mcp.corsair.cloud/mcp, that lets Claude, ChatGPT, Cursor and other agents use the apps you've connected to Corsair.
+description: One address, https://mcp.corsair.dev/mcp, that lets Claude, ChatGPT, Cursor and other agents use the apps you've connected to Corsair.
 ---
 
 Corsair MCP lets an AI agent use the apps you've connected to Corsair. It can read your inbox, post in Slack, open a GitHub issue, search data Corsair has synced, or set up an automation that runs when something happens in one of your apps.
@@ -8,7 +8,7 @@ Corsair MCP lets an AI agent use the apps you've connected to Corsair. It can re
 Every client uses the same address:
 
 ```
-https://mcp.corsair.cloud/mcp
+https://mcp.corsair.dev/mcp
 ```
 
 You add it once, sign in to Corsair, and choose which of your links the client uses.
@@ -42,24 +42,24 @@ One connection uses one link. To switch links, remove Corsair from the client, a
 <Tabs>
   <Tab title="Claude">
     1. In Claude, open **Customize → Connectors → Add custom connector**.
-    2. Name it Corsair, paste `https://mcp.corsair.cloud/mcp` and add it.
+    2. Name it Corsair, paste `https://mcp.corsair.dev/mcp` and add it.
     3. Select **Connect** and sign in to Corsair.
 
     On a Team or Enterprise plan, an owner adds connectors under Organization settings.
   </Tab>
   <Tab title="ChatGPT">
-    1. In ChatGPT, add a custom MCP server and paste `https://mcp.corsair.cloud/mcp`.
+    1. In ChatGPT, add a custom MCP server and paste `https://mcp.corsair.dev/mcp`.
     2. Choose OAuth, then sign in to Corsair.
 
     On personal plans, ChatGPT currently uses only the read tools from a custom server, so Corsair can look things up but not make changes. Write tools such as `run_script` need a Business or Enterprise/Edu workspace, where an admin adds the server or gives you permission to. OpenAI's [guide to custom MCP servers](https://help.openai.com/en/articles/12584461-connecting-custom-mcp-servers-in-chatgpt) has the current rules.
   </Tab>
   <Tab title="Cursor">
-    [Add to Cursor](cursor://anysphere.cursor-deeplink/mcp/install?name=corsair&config=eyJ1cmwiOiJodHRwczovL21jcC5jb3JzYWlyLmNsb3VkL21jcCJ9), or add this to `~/.cursor/mcp.json`:
+    [Add to Cursor](cursor://anysphere.cursor-deeplink/mcp/install?name=corsair&config=eyJ1cmwiOiJodHRwczovL21jcC5jb3JzYWlyLmRldi9tY3AifQ==), or add this to `~/.cursor/mcp.json`:
 
     ```json
     {
       "mcpServers": {
-        "corsair": { "url": "https://mcp.corsair.cloud/mcp" }
+        "corsair": { "url": "https://mcp.corsair.dev/mcp" }
       }
     }
     ```
@@ -72,7 +72,7 @@ One connection uses one link. To switch links, remove Corsair from the client, a
     ```json
     {
       "servers": {
-        "corsair": { "type": "http", "url": "https://mcp.corsair.cloud/mcp" }
+        "corsair": { "type": "http", "url": "https://mcp.corsair.dev/mcp" }
       }
     }
     ```
@@ -81,20 +81,20 @@ One connection uses one link. To switch links, remove Corsair from the client, a
   </Tab>
   <Tab title="Claude Code">
     ```bash
-    claude mcp add --transport http corsair https://mcp.corsair.cloud/mcp
+    claude mcp add --transport http corsair https://mcp.corsair.dev/mcp
     ```
 
     Then run `/mcp` in Claude Code to sign in. Add `--scope user` to have it in every project.
   </Tab>
   <Tab title="Codex">
     ```bash
-    codex mcp add corsair --url https://mcp.corsair.cloud/mcp
+    codex mcp add corsair --url https://mcp.corsair.dev/mcp
     codex mcp login corsair
     ```
   </Tab>
   <Tab title="Gemini CLI">
     ```bash
-    gemini mcp add --transport http corsair https://mcp.corsair.cloud/mcp
+    gemini mcp add --transport http corsair https://mcp.corsair.dev/mcp
     ```
 
     Then run `/mcp auth corsair` to sign in.
@@ -105,7 +105,7 @@ One connection uses one link. To switch links, remove Corsair from the client, a
     ```json
     {
       "context_servers": {
-        "corsair": { "url": "https://mcp.corsair.cloud/mcp" }
+        "corsair": { "url": "https://mcp.corsair.dev/mcp" }
       }
     }
     ```
@@ -169,6 +169,9 @@ Change a link's mode at [hub.corsair.dev/me](https://hub.corsair.dev/me).
   </Accordion>
   <Accordion title="I want this client to use a different link">
     Remove Corsair from the client, add it again and pick the other link when you sign in.
+  </Accordion>
+  <Accordion title="I added https://mcp.corsair.cloud/mcp earlier">
+    That address still works and reaches the same server, so nothing needs to change. New setups use `https://mcp.corsair.dev/mcp`.
   </Accordion>
 </AccordionGroup>
 
