@@ -40,6 +40,7 @@ export class GmicloudAPIError extends Error {
 	constructor(
 		message: string,
 		cause?: Error,
+		// unknown: the raw error body of a response read outside the shared client.
 		details: { status?: number; body?: unknown; retryAfter?: number } = {},
 	) {
 		super(message, cause ? { cause } : undefined);
@@ -112,6 +113,7 @@ export async function downloadSandboxFile(
 	});
 	if (!response.ok) {
 		const text = await response.text();
+		// unknown: a JSON error body when it parses, otherwise the text.
 		let body: unknown = text;
 		try {
 			body = JSON.parse(text);
@@ -192,6 +194,7 @@ export async function makeGmicloudRequest(
 	};
 
 	try {
+		// unknown: the endpoint's zod output schema parses the body.
 		return await request<unknown>(config, requestOptions, {
 			rateLimitConfig: GMI_RATE_LIMIT_CONFIG,
 		});

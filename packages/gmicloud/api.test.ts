@@ -85,6 +85,15 @@ function lastCall() {
 	};
 }
 
+// unknown: a rejection can carry any value; each test asserts the error it expects.
+const rejectionOf = (promise: Promise<unknown>): Promise<unknown> =>
+	promise.then(
+		() => {
+			throw new Error('expected the call to reject');
+		},
+		(error: unknown) => error,
+	);
+
 beforeAll(() => {
 	// unknown: the jest mock lacks fetch's static members, so it needs a two-step cast.
 	global.fetch = fetchMock as unknown as typeof fetch;
@@ -157,6 +166,7 @@ describe('inference', () => {
 		const ctx = createContext();
 
 		const result = (await endpoint('models.list')(ctx, {})) as {
+			// unknown: overrides is a list of tiered prices; the test only checks it is kept.
 			data: { id: string; pricing?: { overrides?: unknown } }[];
 		};
 
@@ -203,6 +213,51 @@ describe('inference', () => {
 		expect(result.choices[0]!.message.reasoning_content).toBe(
 			'We need to reply with single word "pong".',
 		);
+	});
+
+	it('chat.createCompletion accepts a tool-call history without assistant content', async () => {
+		respond(200, LIVE_RESPONSES.chatCreateCompletion);
+		const messages = [
+			{ role: 'user', content: 'What is the weather in Denver?' },
+			{
+				role: 'assistant',
+				tool_calls: [
+					{
+						id: 'call_1',
+						type: 'function',
+						function: { name: 'get_weather', arguments: '{"city":"Denver"}' },
+					},
+				],
+			},
+			{ role: 'tool', tool_call_id: 'call_1', content: '{"temp_f":61}' },
+		];
+		const tools = [
+			{
+				type: 'function',
+				function: {
+					name: 'get_weather',
+					parameters: {
+						type: 'object',
+						properties: { city: { type: 'string' } },
+					},
+				},
+			},
+		];
+
+		await endpoint('chat.createCompletion')(createContext(), {
+			model: 'deepseek-ai/DeepSeek-V4-Flash',
+			messages,
+			tools,
+			tool_choice: 'auto',
+		});
+
+		expect(lastCall().body).toEqual({
+			model: 'deepseek-ai/DeepSeek-V4-Flash',
+			messages,
+			tools,
+			tool_choice: 'auto',
+			stream: false,
+		});
 	});
 
 	it('chat.createCompletion rejects a temperature above 2 before calling the API', async () => {
@@ -433,10 +488,12 @@ describe('sandbox files', () => {
 
 	it('download maps an error body to GmicloudAPIError', async () => {
 		respond(404, { code: 'File.NotFound', message: 'no such file' });
-		const error = await endpoint('sandboxFiles.download')(createContext(), {
-			...target,
-			path: '/missing',
-		}).catch((e: unknown) => e);
+		const error = await rejectionOf(
+			endpoint('sandboxFiles.download')(createContext(), {
+				...target,
+				path: '/missing',
+			}),
+		);
 		expect(error).toBeInstanceOf(GmicloudAPIError);
 		expect(error).toMatchObject({
 			status: 404,
@@ -465,6 +522,23 @@ describe('sandbox files', () => {
 		expect(result).toEqual([
 			{ name: 'run.sh', path: '/home/user/run.sh', type: 'file' },
 		]);
+	});
+});
+
+describe('sandboxes.list filters', () => {
+	it('sends metadata as metadata[key]=value and repeats state', async () => {
+		respond(200, SPEC_CASES['sandboxes.list']!.response);
+
+		await endpoint('sandboxes.list')(createContext(), {
+			page: 2,
+			page_size: 10,
+			state: ['running', 'failed'],
+			metadata: { team: 'blue', env: 'prod' },
+		});
+
+		expect(lastCall().url.search).toBe(
+			'?page=2&page_size=10&state=running&state=failed&metadata%5Bteam%5D=blue&metadata%5Benv%5D=prod',
+		);
 	});
 });
 
@@ -524,8 +598,8 @@ describe('client', () => {
 
 	it('surfaces the IAM error message and status', async () => {
 		respond(401, { code: 200, group: 'api-key', message: 'Invalid API key.' });
-		const error = await endpoint('containers.list')(createContext(), {}).catch(
-			(e: unknown) => e,
+		const error = await rejectionOf(
+			endpoint('containers.list')(createContext(), {}),
 		);
 		expect(error).toBeInstanceOf(GmicloudAPIError);
 		expect(error).toMatchObject({
@@ -557,8 +631,8 @@ describe('client', () => {
 			},
 			{ 'Retry-After': '3' },
 		);
-		const error = await endpoint('sandboxes.list')(createContext(), {}).catch(
-			(e: unknown) => e,
+		const error = await rejectionOf(
+			endpoint('sandboxes.list')(createContext(), {}),
 		);
 		expect(error).toMatchObject({
 			status: 429,
