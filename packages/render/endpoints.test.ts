@@ -3,6 +3,7 @@ import {
 	deleteService,
 	getUser,
 	listBlueprints,
+	listDeploys,
 	listDisks,
 	listEnvironments,
 	listOwners,
@@ -155,6 +156,20 @@ describe('Render service endpoints', () => {
 			method: 'DELETE',
 			body: undefined,
 		});
+	});
+
+	it('lists deployments using the documented service route', async () => {
+		request.mockResolvedValue([]);
+		await listDeploys({ key: 'secret' } as never, {
+			serviceId: 'srv-1',
+			status: ['live'],
+			limit: 10,
+		});
+		expect(request).toHaveBeenCalledWith(
+			'/v1/services/srv-1/deploys',
+			'secret',
+			{ method: 'GET', query: { status: ['live'], limit: 10 } },
+		);
 	});
 
 	it('rejects missing and unsafe final-route identifiers', async () => {

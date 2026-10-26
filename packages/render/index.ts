@@ -51,6 +51,7 @@ import {
 	listApplicationFilterValues,
 	listBlueprints,
 	listDisks,
+	listDeploys,
 	listEnvGroups,
 	listEnvironments,
 	listInstances,
@@ -146,6 +147,7 @@ export type RenderEndpoints = {
 	deleteService: RenderEndpoint<'deleteService'>;
 	updateService: RenderEndpoint<'updateService'>;
 	triggerDeploy: RenderEndpoint<'triggerDeploy'>;
+	listDeploys: RenderEndpoint<'listDeploys'>;
 	restartService: RenderEndpoint<'restartService'>;
 	suspendService: RenderEndpoint<'suspendService'>;
 	resumeService: RenderEndpoint<'resumeService'>;
@@ -247,6 +249,7 @@ const renderEndpointsNested = {
 		delete: deleteService,
 		update: updateService,
 		triggerDeploy,
+		listDeploys,
 		restart: restartService,
 		suspend: suspendService,
 		resume: resumeService,
@@ -382,6 +385,10 @@ export const renderEndpointSchemas = {
 	'services.triggerDeploy': {
 		input: RenderEndpointInputSchemas.triggerDeploy,
 		output: RenderEndpointOutputSchemas.triggerDeploy,
+	},
+	'services.listDeploys': {
+		input: RenderEndpointInputSchemas.listDeploys,
+		output: RenderEndpointOutputSchemas.listDeploys,
 	},
 	'services.restart': {
 		input: RenderEndpointInputSchemas.restartService,
@@ -816,6 +823,10 @@ const renderEndpointMeta = {
 	'services.triggerDeploy': {
 		riskLevel: 'write',
 		description: 'Trigger a Render deployment',
+	},
+	'services.listDeploys': {
+		riskLevel: 'read',
+		description: 'List deployments for a Render service',
 	},
 	'services.restart': {
 		riskLevel: 'write',

@@ -102,6 +102,7 @@ export {
 export {
 	deleteService,
 	listServices,
+	listDeploys,
 	restartService,
 	resumeService,
 	retrieveService,

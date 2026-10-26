@@ -37,6 +37,17 @@ const ListServicesOutputSchema = z.array(
 );
 
 const ServiceIdInputSchema = z.object({ serviceId: z.string().min(1) });
+const ListDeploysInputSchema = ServiceIdInputSchema.extend({
+	status: z.array(z.string()).optional(),
+	createdBefore: z.string().datetime().optional(),
+	createdAfter: z.string().datetime().optional(),
+	updatedBefore: z.string().datetime().optional(),
+	updatedAfter: z.string().datetime().optional(),
+	finishedBefore: z.string().datetime().optional(),
+	finishedAfter: z.string().datetime().optional(),
+	cursor: z.string().optional(),
+	limit: z.number().int().min(1).max(100).optional(),
+});
 const TriggerDeployInputSchema = ServiceIdInputSchema.extend({
 	commitId: z.string().min(1).optional(),
 	buildId: z.string().min(1).optional(),
@@ -100,6 +111,7 @@ export type RenderEndpointInputs = {
 		imageUrl?: string;
 		deployMode?: 'deploy_only' | 'build_and_deploy';
 	};
+	listDeploys: z.infer<typeof ListDeploysInputSchema>;
 	restartService: ServiceIdInput;
 	suspendService: ServiceIdInput;
 	resumeService: ServiceIdInput;
@@ -202,6 +214,7 @@ export type RenderEndpointOutputs = {
 	// Stricter typing is not feasible because these commands return
 	// provider-specific deployment acknowledgements.
 	triggerDeploy: /* unknown: provider-specific deployment acknowledgement */ unknown;
+	listDeploys: z.infer<typeof ResourceListOutputSchema>;
 	restartService: /* unknown: provider-specific lifecycle acknowledgement */ unknown;
 	suspendService: /* unknown: provider-specific lifecycle acknowledgement */ unknown;
 	resumeService: /* unknown: provider-specific lifecycle acknowledgement */ unknown;
@@ -305,6 +318,7 @@ export const RenderEndpointInputSchemas = {
 		autoDeployTrigger: z.string().optional(),
 	}),
 	triggerDeploy: TriggerDeployInputSchema,
+	listDeploys: ListDeploysInputSchema,
 	restartService: ServiceIdInputSchema,
 	suspendService: ServiceIdInputSchema,
 	resumeService: ServiceIdInputSchema,
@@ -407,6 +421,7 @@ export const RenderEndpointOutputSchemas = {
 	// unknown: lifecycle acknowledgements differ by Render service type.
 	triggerDeploy:
 		/* unknown: provider-specific deployment acknowledgement */ z.unknown(),
+	listDeploys: ResourceListOutputSchema,
 	restartService:
 		/* unknown: provider-specific lifecycle acknowledgement */ z.unknown(),
 	suspendService:

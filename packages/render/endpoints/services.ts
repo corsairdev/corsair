@@ -1,7 +1,9 @@
 import { logEventFromContext } from 'corsair/core';
-import type { RenderEndpoints } from '..';
+import type { RenderEndpoints } from '../index';
 import { makeRenderRequest } from '../client';
 import type { ListServicesOutput, ServiceOutput } from './types';
+
+type RenderResourceList = Record<string, unknown>[];
 
 export const listServices: RenderEndpoints['listServices'] = async (
 	ctx,
@@ -70,6 +72,24 @@ export const triggerDeploy: RenderEndpoints['triggerDeploy'] = async (
 ) => {
 	const { serviceId, ...body } = input;
 	return serviceRequest<unknown>(ctx, serviceId, '/deploys', 'POST', body);
+};
+
+export const listDeploys: RenderEndpoints['listDeploys'] = async (
+	ctx,
+	input,
+) => {
+	const { serviceId, ...query } = input;
+	return makeRenderRequest<RenderResourceList>(
+		`/v1/services/${encodeServiceId(serviceId)}/deploys`,
+		ctx.key,
+		{
+			method: 'GET',
+			query: query as Record<
+				string,
+				string | number | boolean | string[] | undefined
+			>,
+		},
+	);
 };
 
 export const restartService: RenderEndpoints['restartService'] = async (
