@@ -6,8 +6,10 @@ import {
 	createServiceJob,
 	createWebhook,
 	deleteDisk,
+	deletePostgresUser,
 	deleteService,
 	deleteWebhook,
+	failoverPostgres,
 	getUser,
 	listBlueprints,
 	listDeploys,
@@ -19,16 +21,22 @@ import {
 	listRoutes,
 	listServices,
 	purgeServiceCache,
+	recoverPostgres,
+	restartPostgres,
 	restoreDiskSnapshot,
+	resumePostgres,
 	retrieveDisk,
 	retrieveEnvironment,
 	retrieveMaintenance,
 	retrieveOwner,
+	retrievePostgresConnectionInfo,
+	retrievePostgresRecoveryInfo,
 	retrieveProject,
 	retrieveService,
 	retrieveWebhook,
 	rollbackDeploy,
 	streamTaskRunsEvents,
+	suspendPostgres,
 	triggerCronJobRun,
 	triggerDeploy,
 	triggerMaintenance,
@@ -360,6 +368,77 @@ describe('Render service endpoints', () => {
 		});
 	});
 
+	it('routes Postgres lifecycle operations to the documented instance routes', async () => {
+		request.mockResolvedValue({});
+		const ctx = { key: 'secret' } as never;
+		await restartPostgres(ctx, { id: 'pg-1' });
+		await suspendPostgres(ctx, { id: 'pg-1' });
+		await resumePostgres(ctx, { id: 'pg-1' });
+		await failoverPostgres(ctx, { id: 'pg-1' });
+		await retrievePostgresConnectionInfo(ctx, { id: 'pg-1' });
+		await retrievePostgresRecoveryInfo(ctx, { id: 'pg-1' });
+		await recoverPostgres(ctx, {
+			id: 'pg-1',
+			restoreTime: '2026-10-01T00:00:00.000Z',
+		});
+		await deletePostgresUser(ctx, { id: 'pg-1', username: 'app_user' });
+
+		expect(request).toHaveBeenCalledWith(
+			'/v1/postgres/pg-1/restart',
+			'secret',
+			{
+				method: 'POST',
+				body: undefined,
+			},
+		);
+		expect(request).toHaveBeenCalledWith(
+			'/v1/postgres/pg-1/suspend',
+			'secret',
+			{
+				method: 'POST',
+				body: undefined,
+			},
+		);
+		expect(request).toHaveBeenCalledWith('/v1/postgres/pg-1/resume', 'secret', {
+			method: 'POST',
+			body: undefined,
+		});
+		expect(request).toHaveBeenCalledWith(
+			'/v1/postgres/pg-1/failover',
+			'secret',
+			{
+				method: 'POST',
+				body: undefined,
+			},
+		);
+		expect(request).toHaveBeenCalledWith(
+			'/v1/postgres/pg-1/connection-info',
+			'secret',
+			{ method: 'GET', query: {} },
+		);
+		expect(request).toHaveBeenCalledWith(
+			'/v1/postgres/pg-1/recovery',
+			'secret',
+			{
+				method: 'GET',
+				query: {},
+			},
+		);
+		expect(request).toHaveBeenCalledWith(
+			'/v1/postgres/pg-1/recovery',
+			'secret',
+			{
+				method: 'POST',
+				body: { restoreTime: '2026-10-01T00:00:00.000Z' },
+			},
+		);
+		expect(request).toHaveBeenCalledWith(
+			'/v1/postgres/pg-1/credentials/app_user',
+			'secret',
+			{ method: 'DELETE', body: undefined },
+		);
+	});
+
 	it('triggers a cron job run on the documented route', async () => {
 		request.mockResolvedValue({});
 		await triggerCronJobRun({ key: 'secret' } as never, { id: 'cron-1' });
@@ -378,7 +457,9 @@ describe('Render service endpoints', () => {
 		expect(() => retrieveDisk({ key: 'secret' } as never, {} as never)).toThrow(
 			'Invalid Render id',
 		);
-
+		expect(() =>
+			deletePostgresUser({ key: 'secret' } as never, { id: 'pg-1' } as never),
+		).toThrow('Invalid Render username');
 		expect(request).not.toHaveBeenCalled();
 	});
 

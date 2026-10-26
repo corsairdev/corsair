@@ -38,11 +38,13 @@ import {
 	deleteKeyValue,
 	deleteOwnerLogStream,
 	deleteOwnerMetricsStream,
+	deletePostgresUser,
 	deleteRegistryCredential,
 	deleteSecretFile,
 	deleteService,
 	deleteWebhook,
 	disconnectBlueprint,
+	failoverPostgres,
 	getActiveConnections,
 	getBandwidthSources,
 	getCpu,
@@ -90,8 +92,11 @@ import {
 	purgeServiceCache,
 	RenderEndpointInputSchemas,
 	RenderEndpointOutputSchemas,
+	recoverPostgres,
+	restartPostgres,
 	restartService,
 	restoreDiskSnapshot,
+	resumePostgres,
 	resumeService,
 	retrieveCustomDomain,
 	retrieveDeploy,
@@ -105,6 +110,8 @@ import {
 	retrieveOwner,
 	retrieveOwnerNotificationSettings,
 	retrievePostgres,
+	retrievePostgresConnectionInfo,
+	retrievePostgresRecoveryInfo,
 	retrieveProject,
 	retrieveRegistryCredential,
 	retrieveSecretFile,
@@ -114,6 +121,7 @@ import {
 	rollbackDeploy,
 	streamTaskRunsEvents,
 	subscribeLogs,
+	suspendPostgres,
 	suspendService,
 	triggerCronJobRun,
 	triggerDeploy,
@@ -201,6 +209,14 @@ export type RenderEndpoints = {
 	createPostgres: RenderEndpoint<'createPostgres'>;
 	retrievePostgres: RenderEndpoint<'retrievePostgres'>;
 	updatePostgres: RenderEndpoint<'updatePostgres'>;
+	restartPostgres: RenderEndpoint<'restartPostgres'>;
+	suspendPostgres: RenderEndpoint<'suspendPostgres'>;
+	resumePostgres: RenderEndpoint<'resumePostgres'>;
+	failoverPostgres: RenderEndpoint<'failoverPostgres'>;
+	retrievePostgresConnectionInfo: RenderEndpoint<'retrievePostgresConnectionInfo'>;
+	retrievePostgresRecoveryInfo: RenderEndpoint<'retrievePostgresRecoveryInfo'>;
+	recoverPostgres: RenderEndpoint<'recoverPostgres'>;
+	deletePostgresUser: RenderEndpoint<'deletePostgresUser'>;
 	listRegistryCredentials: RenderEndpoint<'listRegistryCredentials'>;
 	createRegistryCredential: RenderEndpoint<'createRegistryCredential'>;
 	retrieveRegistryCredential: RenderEndpoint<'retrieveRegistryCredential'>;
@@ -336,6 +352,14 @@ const renderEndpointsNested = {
 		create: createPostgres,
 		retrieve: retrievePostgres,
 		update: updatePostgres,
+		restart: restartPostgres,
+		suspend: suspendPostgres,
+		resume: resumePostgres,
+		failover: failoverPostgres,
+		connectionInfo: retrievePostgresConnectionInfo,
+		recoveryInfo: retrievePostgresRecoveryInfo,
+		recover: recoverPostgres,
+		deleteUser: deletePostgresUser,
 	},
 	registryCredentials: {
 		list: listRegistryCredentials,
@@ -580,6 +604,38 @@ export const renderEndpointSchemas = {
 	'postgres.update': {
 		input: RenderEndpointInputSchemas.updatePostgres,
 		output: RenderEndpointOutputSchemas.updatePostgres,
+	},
+	'postgres.restart': {
+		input: RenderEndpointInputSchemas.restartPostgres,
+		output: RenderEndpointOutputSchemas.restartPostgres,
+	},
+	'postgres.suspend': {
+		input: RenderEndpointInputSchemas.suspendPostgres,
+		output: RenderEndpointOutputSchemas.suspendPostgres,
+	},
+	'postgres.resume': {
+		input: RenderEndpointInputSchemas.resumePostgres,
+		output: RenderEndpointOutputSchemas.resumePostgres,
+	},
+	'postgres.failover': {
+		input: RenderEndpointInputSchemas.failoverPostgres,
+		output: RenderEndpointOutputSchemas.failoverPostgres,
+	},
+	'postgres.connectionInfo': {
+		input: RenderEndpointInputSchemas.retrievePostgresConnectionInfo,
+		output: RenderEndpointOutputSchemas.retrievePostgresConnectionInfo,
+	},
+	'postgres.recoveryInfo': {
+		input: RenderEndpointInputSchemas.retrievePostgresRecoveryInfo,
+		output: RenderEndpointOutputSchemas.retrievePostgresRecoveryInfo,
+	},
+	'postgres.recover': {
+		input: RenderEndpointInputSchemas.recoverPostgres,
+		output: RenderEndpointOutputSchemas.recoverPostgres,
+	},
+	'postgres.deleteUser': {
+		input: RenderEndpointInputSchemas.deletePostgresUser,
+		output: RenderEndpointOutputSchemas.deletePostgresUser,
 	},
 	'registryCredentials.list': {
 		input: RenderEndpointInputSchemas.listRegistryCredentials,
@@ -1107,6 +1163,40 @@ const renderEndpointMeta = {
 	'postgres.update': {
 		riskLevel: 'write',
 		description: 'Update a Render Postgres database',
+	},
+	'postgres.restart': {
+		riskLevel: 'write',
+		description: 'Restart a Render Postgres instance',
+	},
+	'postgres.suspend': {
+		riskLevel: 'write',
+		description: 'Suspend a Render Postgres instance',
+	},
+	'postgres.resume': {
+		riskLevel: 'write',
+		description: 'Resume a Render Postgres instance',
+	},
+	'postgres.failover': {
+		riskLevel: 'write',
+		description: 'Trigger a failover for a Render Postgres instance',
+	},
+	'postgres.connectionInfo': {
+		riskLevel: 'read',
+		description: 'Retrieve connection info for a Render Postgres instance',
+	},
+	'postgres.recoveryInfo': {
+		riskLevel: 'read',
+		description:
+			'Retrieve point-in-time recovery status for a Render Postgres instance',
+	},
+	'postgres.recover': {
+		riskLevel: 'write',
+		description:
+			'Trigger point-in-time recovery for a Render Postgres instance',
+	},
+	'postgres.deleteUser': {
+		riskLevel: 'destructive',
+		description: 'Delete a user on a Render Postgres instance',
 	},
 	'registryCredentials.list': {
 		riskLevel: 'read',

@@ -117,6 +117,13 @@ describe('Render schema', () => {
 			'retrieveWebhook',
 			'updateWebhook',
 			'deleteWebhook',
+			'restartPostgres',
+			'suspendPostgres',
+			'resumePostgres',
+			'failoverPostgres',
+			'retrievePostgresConnectionInfo',
+			'retrievePostgresRecoveryInfo',
+			'recoverPostgres',
 		] as const;
 		for (const operation of idOperations) {
 			const schema = RenderEndpointInputSchemas[operation];
@@ -157,6 +164,19 @@ describe('Render schema', () => {
 			RenderEndpointInputSchemas.linkServiceToEnvGroup.safeParse({
 				id: 'group-1',
 				serviceId: 'service-1',
+			}).success,
+		).toBe(true);
+
+		// Multi-parameter paths require every segment identifier.
+		expect(
+			RenderEndpointInputSchemas.deletePostgresUser.safeParse({
+				id: 'postgres-1',
+			}).success,
+		).toBe(false);
+		expect(
+			RenderEndpointInputSchemas.deletePostgresUser.safeParse({
+				id: 'postgres-1',
+				username: 'app_user',
 			}).success,
 		).toBe(true);
 
@@ -261,6 +281,7 @@ describe('Render schema', () => {
 				serviceId: 'service-1',
 			},
 			{ id: 'resource-1', snapshotKey: 'snapshot-1' },
+			{ id: 'resource-1', username: 'user-1' },
 			{
 				ownerId: 'owner-1',
 				name: 'hook',

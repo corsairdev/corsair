@@ -53,6 +53,51 @@ export const retrievePostgres: RenderEndpoints['retrievePostgres'] = (
 export const updatePostgres: RenderEndpoints['updatePostgres'] = (ctx, input) =>
 	request(ctx, '/v1/postgres/{id}', 'PATCH', input);
 
+// Render Postgres lifecycle triggers return 202 with no request body.
+const postWithoutBody = (ctx: Context, template: string, input: Input) =>
+	makeRenderRequest(renderPathParameter(template, 'id', input.id), ctx.key, {
+		method: 'POST',
+		body: undefined,
+	});
+
+export const restartPostgres: RenderEndpoints['restartPostgres'] = (
+	ctx,
+	input,
+) => postWithoutBody(ctx, '/v1/postgres/{id}/restart', input);
+export const suspendPostgres: RenderEndpoints['suspendPostgres'] = (
+	ctx,
+	input,
+) => postWithoutBody(ctx, '/v1/postgres/{id}/suspend', input);
+export const resumePostgres: RenderEndpoints['resumePostgres'] = (ctx, input) =>
+	postWithoutBody(ctx, '/v1/postgres/{id}/resume', input);
+export const failoverPostgres: RenderEndpoints['failoverPostgres'] = (
+	ctx,
+	input,
+) => postWithoutBody(ctx, '/v1/postgres/{id}/failover', input);
+export const retrievePostgresConnectionInfo: RenderEndpoints['retrievePostgresConnectionInfo'] =
+	(ctx, input) =>
+		request(ctx, '/v1/postgres/{id}/connection-info', 'GET', input);
+export const retrievePostgresRecoveryInfo: RenderEndpoints['retrievePostgresRecoveryInfo'] =
+	(ctx, input) => request(ctx, '/v1/postgres/{id}/recovery', 'GET', input);
+export const recoverPostgres: RenderEndpoints['recoverPostgres'] = (
+	ctx,
+	input,
+) => request(ctx, '/v1/postgres/{id}/recovery', 'POST', input);
+export const deletePostgresUser: RenderEndpoints['deletePostgresUser'] = (
+	ctx,
+	input,
+) => {
+	const path = renderPathParameter(
+		'/v1/postgres/{id}/credentials/{username}',
+		'username',
+		input.username,
+	);
+	return makeRenderRequest(renderPathParameter(path, 'id', input.id), ctx.key, {
+		method: 'DELETE',
+		body: undefined,
+	});
+};
+
 export const listRegistryCredentials: RenderEndpoints['listRegistryCredentials'] =
 	(ctx, input) => request(ctx, '/v1/registrycredentials', 'GET', input);
 export const createRegistryCredential: RenderEndpoints['createRegistryCredential'] =

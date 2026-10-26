@@ -134,6 +134,13 @@ const UpdateWebhookInputSchema = ResourceIdInputSchema.extend({
 	enabled: z.boolean().optional(),
 	eventFilter: z.array(z.string()).optional(),
 });
+const RecoverPostgresInputSchema = ResourceIdInputSchema.extend({
+	restoreName: z.string().min(1).optional(),
+	restoreTime: z.string().datetime().optional(),
+});
+const PostgresUsernameInputSchema = ResourceIdInputSchema.extend({
+	username: z.string().min(1),
+});
 
 export type ListServicesInput = z.infer<typeof ListServicesInputSchema>;
 export type ListServicesOutput = z.infer<typeof ListServicesOutputSchema>;
@@ -186,6 +193,14 @@ export type RenderEndpointInputs = {
 	createPostgres: z.infer<typeof ResourceInputSchema>;
 	retrievePostgres: ResourceIdInput;
 	updatePostgres: ResourceIdInput;
+	restartPostgres: ResourceIdInput;
+	suspendPostgres: ResourceIdInput;
+	resumePostgres: ResourceIdInput;
+	failoverPostgres: ResourceIdInput;
+	retrievePostgresConnectionInfo: ResourceIdInput;
+	retrievePostgresRecoveryInfo: ResourceIdInput;
+	recoverPostgres: z.infer<typeof RecoverPostgresInputSchema>;
+	deletePostgresUser: z.infer<typeof PostgresUsernameInputSchema>;
 	listRegistryCredentials: z.infer<typeof ResourceInputSchema>;
 	createRegistryCredential: z.infer<typeof ResourceInputSchema>;
 	retrieveRegistryCredential: ResourceIdInput;
@@ -312,6 +327,14 @@ export type RenderEndpointOutputs = {
 	createPostgres: z.infer<typeof ResourceOutputSchema>;
 	retrievePostgres: z.infer<typeof ResourceOutputSchema>;
 	updatePostgres: z.infer<typeof ResourceOutputSchema>;
+	restartPostgres: /* unknown: provider-specific lifecycle acknowledgement */ unknown;
+	suspendPostgres: /* unknown: provider-specific lifecycle acknowledgement */ unknown;
+	resumePostgres: /* unknown: provider-specific lifecycle acknowledgement */ unknown;
+	failoverPostgres: /* unknown: provider-specific lifecycle acknowledgement */ unknown;
+	retrievePostgresConnectionInfo: z.infer<typeof ResourceOutputSchema>;
+	retrievePostgresRecoveryInfo: z.infer<typeof ResourceOutputSchema>;
+	recoverPostgres: z.infer<typeof ResourceOutputSchema>;
+	deletePostgresUser: z.infer<typeof EmptyOutputSchema>;
 	listRegistryCredentials: z.infer<typeof ResourceListOutputSchema>;
 	createRegistryCredential: z.infer<typeof ResourceOutputSchema>;
 	retrieveRegistryCredential: z.infer<typeof ResourceOutputSchema>;
@@ -439,6 +462,14 @@ export const RenderEndpointInputSchemas = {
 	createPostgres: ResourceInputSchema,
 	retrievePostgres: ResourceIdInputSchema,
 	updatePostgres: ResourceIdInputSchema,
+	restartPostgres: ResourceIdInputSchema,
+	suspendPostgres: ResourceIdInputSchema,
+	resumePostgres: ResourceIdInputSchema,
+	failoverPostgres: ResourceIdInputSchema,
+	retrievePostgresConnectionInfo: ResourceIdInputSchema,
+	retrievePostgresRecoveryInfo: ResourceIdInputSchema,
+	recoverPostgres: RecoverPostgresInputSchema,
+	deletePostgresUser: PostgresUsernameInputSchema,
 	listRegistryCredentials: ResourceInputSchema,
 	createRegistryCredential: ResourceInputSchema,
 	retrieveRegistryCredential: ResourceIdInputSchema,
@@ -568,6 +599,18 @@ export const RenderEndpointOutputSchemas = {
 	createPostgres: ResourceOutputSchema,
 	retrievePostgres: ResourceOutputSchema,
 	updatePostgres: ResourceOutputSchema,
+	restartPostgres:
+		/* unknown: provider-specific lifecycle acknowledgement */ z.unknown(),
+	suspendPostgres:
+		/* unknown: provider-specific lifecycle acknowledgement */ z.unknown(),
+	resumePostgres:
+		/* unknown: provider-specific lifecycle acknowledgement */ z.unknown(),
+	failoverPostgres:
+		/* unknown: provider-specific lifecycle acknowledgement */ z.unknown(),
+	retrievePostgresConnectionInfo: ResourceOutputSchema,
+	retrievePostgresRecoveryInfo: ResourceOutputSchema,
+	recoverPostgres: ResourceOutputSchema,
+	deletePostgresUser: EmptyOutputSchema,
 	listRegistryCredentials: ResourceListOutputSchema,
 	createRegistryCredential: ResourceOutputSchema,
 	retrieveRegistryCredential: ResourceOutputSchema,
