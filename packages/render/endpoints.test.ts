@@ -1,5 +1,6 @@
 import { makeRenderRequest } from './client';
 import {
+	cancelDeploy,
 	deleteService,
 	getUser,
 	listBlueprints,
@@ -10,10 +11,12 @@ import {
 	listProjects,
 	listRoutes,
 	listServices,
+	purgeServiceCache,
 	retrieveEnvironment,
 	retrieveOwner,
 	retrieveProject,
 	retrieveService,
+	rollbackDeploy,
 	streamTaskRunsEvents,
 	triggerDeploy,
 	updateOwnerLogStream,
@@ -172,8 +175,45 @@ describe('Render service endpoints', () => {
 		);
 	});
 
+	it('routes service lifecycle operations to the current Render paths', async () => {
+		request.mockResolvedValue({});
+		await purgeServiceCache({ key: 'secret' } as never, {
+			serviceId: 'srv-1',
+		});
+		await cancelDeploy({ key: 'secret' } as never, {
+			serviceId: 'srv-1',
+			deployId: 'dep-1',
+		});
+		await rollbackDeploy({ key: 'secret' } as never, {
+			serviceId: 'srv-1',
+			deployId: 'dep-1',
+		});
+
+		expect(request).toHaveBeenCalledWith(
+			'/v1/services/srv-1/cache/purge',
+			'secret',
+			{
+				method: 'POST',
+				body: undefined,
+			},
+		);
+		expect(request).toHaveBeenCalledWith(
+			'/v1/services/srv-1/deploys/dep-1/cancel',
+			'secret',
+			{ method: 'POST', body: undefined },
+		);
+		expect(request).toHaveBeenCalledWith(
+			'/v1/services/srv-1/rollback',
+			'secret',
+			{
+				method: 'POST',
+				body: { deployId: 'dep-1' },
+			},
+		);
+	});
+
 	it('rejects missing and unsafe final-route identifiers', async () => {
-		expect(() => listRoutes({ key: 'secret' } as never, {})).toThrow(
+		expect(() => listRoutes({ key: 'secret' } as never, {} as never)).toThrow(
 			'Invalid Render id',
 		);
 		expect(() =>
@@ -183,15 +223,15 @@ describe('Render service endpoints', () => {
 	});
 
 	it('rejects missing identifiers in every path-based adapter family', async () => {
-		expect(() => retrieveEnvironment({ key: 'secret' } as never, {})).toThrow(
-			'Invalid Render id',
-		);
-		expect(() => retrieveProject({ key: 'secret' } as never, {})).toThrow(
-			'Invalid Render id',
-		);
-		expect(() => retrieveOwner({ key: 'secret' } as never, {})).toThrow(
-			'Invalid Render id',
-		);
+		expect(() =>
+			retrieveEnvironment({ key: 'secret' } as never, {} as never),
+		).toThrow('Invalid Render id');
+		expect(() =>
+			retrieveProject({ key: 'secret' } as never, {} as never),
+		).toThrow('Invalid Render id');
+		expect(() =>
+			retrieveOwner({ key: 'secret' } as never, {} as never),
+		).toThrow('Invalid Render id');
 		expect(request).not.toHaveBeenCalled();
 	});
 

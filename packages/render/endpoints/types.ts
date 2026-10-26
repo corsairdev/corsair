@@ -48,6 +48,15 @@ const ListDeploysInputSchema = ServiceIdInputSchema.extend({
 	cursor: z.string().optional(),
 	limit: z.number().int().min(1).max(100).optional(),
 });
+const CancelDeployInputSchema = ServiceIdInputSchema.extend({
+	deployId: z.string().min(1),
+});
+const RollbackDeployInputSchema = ServiceIdInputSchema.extend({
+	deployId: z.string().min(1),
+});
+const ServiceJobInputSchema = ServiceIdInputSchema.extend({
+	jobId: z.string().min(1),
+});
 const TriggerDeployInputSchema = ServiceIdInputSchema.extend({
 	commitId: z.string().min(1).optional(),
 	buildId: z.string().min(1).optional(),
@@ -112,6 +121,13 @@ export type RenderEndpointInputs = {
 		deployMode?: 'deploy_only' | 'build_and_deploy';
 	};
 	listDeploys: z.infer<typeof ListDeploysInputSchema>;
+	purgeServiceCache: ServiceIdInput;
+	cancelDeploy: z.infer<typeof CancelDeployInputSchema>;
+	rollbackDeploy: z.infer<typeof RollbackDeployInputSchema>;
+	listServiceEvents: ServiceIdInput;
+	listOutboundIps: ServiceIdInput;
+	listServiceJobs: ServiceIdInput;
+	retrieveServiceJob: z.infer<typeof ServiceJobInputSchema>;
 	restartService: ServiceIdInput;
 	suspendService: ServiceIdInput;
 	resumeService: ServiceIdInput;
@@ -215,6 +231,13 @@ export type RenderEndpointOutputs = {
 	// provider-specific deployment acknowledgements.
 	triggerDeploy: /* unknown: provider-specific deployment acknowledgement */ unknown;
 	listDeploys: z.infer<typeof ResourceListOutputSchema>;
+	purgeServiceCache: unknown;
+	cancelDeploy: unknown;
+	rollbackDeploy: unknown;
+	listServiceEvents: z.infer<typeof ResourceListOutputSchema>;
+	listOutboundIps: z.infer<typeof ResourceListOutputSchema>;
+	listServiceJobs: z.infer<typeof ResourceListOutputSchema>;
+	retrieveServiceJob: z.infer<typeof ResourceOutputSchema>;
 	restartService: /* unknown: provider-specific lifecycle acknowledgement */ unknown;
 	suspendService: /* unknown: provider-specific lifecycle acknowledgement */ unknown;
 	resumeService: /* unknown: provider-specific lifecycle acknowledgement */ unknown;
@@ -319,6 +342,13 @@ export const RenderEndpointInputSchemas = {
 	}),
 	triggerDeploy: TriggerDeployInputSchema,
 	listDeploys: ListDeploysInputSchema,
+	purgeServiceCache: ServiceIdInputSchema,
+	cancelDeploy: CancelDeployInputSchema,
+	rollbackDeploy: RollbackDeployInputSchema,
+	listServiceEvents: ServiceIdInputSchema,
+	listOutboundIps: ServiceIdInputSchema,
+	listServiceJobs: ServiceIdInputSchema,
+	retrieveServiceJob: ServiceJobInputSchema,
 	restartService: ServiceIdInputSchema,
 	suspendService: ServiceIdInputSchema,
 	resumeService: ServiceIdInputSchema,
@@ -422,6 +452,13 @@ export const RenderEndpointOutputSchemas = {
 	triggerDeploy:
 		/* unknown: provider-specific deployment acknowledgement */ z.unknown(),
 	listDeploys: ResourceListOutputSchema,
+	purgeServiceCache: z.unknown(),
+	cancelDeploy: z.unknown(),
+	rollbackDeploy: z.unknown(),
+	listServiceEvents: ResourceListOutputSchema,
+	listOutboundIps: ResourceListOutputSchema,
+	listServiceJobs: ResourceListOutputSchema,
+	retrieveServiceJob: ResourceOutputSchema,
 	restartService:
 		/* unknown: provider-specific lifecycle acknowledgement */ z.unknown(),
 	suspendService:

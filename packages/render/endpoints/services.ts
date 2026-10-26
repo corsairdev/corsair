@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { RenderEndpoints } from '../index';
 import { makeRenderRequest } from '../client';
+import type { RenderEndpoints } from '../index';
 import type { ListServicesOutput, ServiceOutput } from './types';
 
 type RenderResourceList = Record<string, unknown>[];
@@ -91,6 +91,64 @@ export const listDeploys: RenderEndpoints['listDeploys'] = async (
 		},
 	);
 };
+
+export const purgeServiceCache: RenderEndpoints['purgeServiceCache'] = async (
+	ctx,
+	input,
+) => serviceRequest<unknown>(ctx, input.serviceId, '/cache/purge', 'POST');
+
+export const cancelDeploy: RenderEndpoints['cancelDeploy'] = async (
+	ctx,
+	input,
+) =>
+	serviceRequest<unknown>(
+		ctx,
+		input.serviceId,
+		`/deploys/${encodeServiceId(input.deployId)}/cancel`,
+		'POST',
+	);
+
+export const rollbackDeploy: RenderEndpoints['rollbackDeploy'] = async (
+	ctx,
+	input,
+) => {
+	const { serviceId, deployId } = input;
+	return serviceRequest<unknown>(ctx, serviceId, '/rollback', 'POST', {
+		deployId,
+	});
+};
+
+export const listServiceEvents: RenderEndpoints['listServiceEvents'] = (
+	ctx,
+	input,
+) => serviceRequest<RenderResourceList>(ctx, input.serviceId, '/events', 'GET');
+
+export const listOutboundIps: RenderEndpoints['listOutboundIps'] = (
+	ctx,
+	input,
+) =>
+	serviceRequest<RenderResourceList>(
+		ctx,
+		input.serviceId,
+		'/outbound-ips',
+		'GET',
+	);
+
+export const listServiceJobs: RenderEndpoints['listServiceJobs'] = (
+	ctx,
+	input,
+) => serviceRequest<RenderResourceList>(ctx, input.serviceId, '/jobs', 'GET');
+
+export const retrieveServiceJob: RenderEndpoints['retrieveServiceJob'] = (
+	ctx,
+	input,
+) =>
+	serviceRequest<Record<string, unknown>>(
+		ctx,
+		input.serviceId,
+		`/jobs/${encodeServiceId(input.jobId)}`,
+		'GET',
+	);
 
 export const restartService: RenderEndpoints['restartService'] = async (
 	ctx,

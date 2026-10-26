@@ -148,6 +148,17 @@ describe('Render schema', () => {
 				serviceId: 'service-1',
 			}).success,
 		).toBe(true);
+
+		// Service-scoped operations require the service identifier plus their
+		// route parameter or command payload.
+		for (const [operation, required] of [
+			['cancelDeploy', { serviceId: 'service-1', deployId: 'deploy-1' }],
+			['rollbackDeploy', { serviceId: 'service-1', deployId: 'deploy-1' }],
+		] as const) {
+			const schema = RenderEndpointInputSchemas[operation];
+			expect(schema.safeParse({ id: 'resource-1' }).success).toBe(false);
+			expect(schema.safeParse(required).success).toBe(true);
+		}
 	});
 
 	it('provides executable input and output contracts for every operation', () => {
@@ -197,6 +208,8 @@ describe('Render schema', () => {
 			{ id: 'resource-1' },
 			{ key: 'resource-key' },
 			{},
+			{ serviceId: 'service-1', deployId: 'deploy-1' },
+			{ serviceId: 'service-1', jobId: 'job-1' },
 		];
 		const outputCandidates = [
 			[],

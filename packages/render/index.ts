@@ -19,6 +19,7 @@ import {
 	addOrUpdateSecretFile,
 	addResourcesToEnvironment,
 	addRoute,
+	cancelDeploy,
 	createCustomDomain,
 	createEnvGroup,
 	createEnvironment,
@@ -50,8 +51,8 @@ import {
 	linkServiceToEnvGroup,
 	listApplicationFilterValues,
 	listBlueprints,
-	listDisks,
 	listDeploys,
+	listDisks,
 	listEnvGroups,
 	listEnvironments,
 	listInstances,
@@ -60,6 +61,7 @@ import {
 	listLogsValues,
 	listMaintenance,
 	listNotificationOverrides,
+	listOutboundIps,
 	listOwnerMembers,
 	listOwners,
 	listPostgres,
@@ -70,12 +72,15 @@ import {
 	listResourceLogStreams,
 	listRoutes,
 	listSecretFiles,
+	listServiceEvents,
+	listServiceJobs,
 	listServices,
 	listTaskRuns,
 	listTasks,
 	listWebhooks,
 	listWorkflows,
 	listWorkflowVersions,
+	purgeServiceCache,
 	RenderEndpointInputSchemas,
 	RenderEndpointOutputSchemas,
 	restartService,
@@ -94,6 +99,8 @@ import {
 	retrieveRegistryCredential,
 	retrieveSecretFile,
 	retrieveService,
+	retrieveServiceJob,
+	rollbackDeploy,
 	streamTaskRunsEvents,
 	subscribeLogs,
 	suspendService,
@@ -148,6 +155,13 @@ export type RenderEndpoints = {
 	updateService: RenderEndpoint<'updateService'>;
 	triggerDeploy: RenderEndpoint<'triggerDeploy'>;
 	listDeploys: RenderEndpoint<'listDeploys'>;
+	purgeServiceCache: RenderEndpoint<'purgeServiceCache'>;
+	cancelDeploy: RenderEndpoint<'cancelDeploy'>;
+	rollbackDeploy: RenderEndpoint<'rollbackDeploy'>;
+	listServiceEvents: RenderEndpoint<'listServiceEvents'>;
+	listOutboundIps: RenderEndpoint<'listOutboundIps'>;
+	listServiceJobs: RenderEndpoint<'listServiceJobs'>;
+	retrieveServiceJob: RenderEndpoint<'retrieveServiceJob'>;
 	restartService: RenderEndpoint<'restartService'>;
 	suspendService: RenderEndpoint<'suspendService'>;
 	resumeService: RenderEndpoint<'resumeService'>;
@@ -250,6 +264,15 @@ const renderEndpointsNested = {
 		update: updateService,
 		triggerDeploy,
 		listDeploys,
+		purgeCache: purgeServiceCache,
+		cancelDeploy,
+		rollbackDeploy,
+		listEvents: listServiceEvents,
+		listOutboundIps,
+		jobs: {
+			list: listServiceJobs,
+			retrieve: retrieveServiceJob,
+		},
 		restart: restartService,
 		suspend: suspendService,
 		resume: resumeService,
@@ -389,6 +412,34 @@ export const renderEndpointSchemas = {
 	'services.listDeploys': {
 		input: RenderEndpointInputSchemas.listDeploys,
 		output: RenderEndpointOutputSchemas.listDeploys,
+	},
+	'services.purgeCache': {
+		input: RenderEndpointInputSchemas.purgeServiceCache,
+		output: RenderEndpointOutputSchemas.purgeServiceCache,
+	},
+	'services.cancelDeploy': {
+		input: RenderEndpointInputSchemas.cancelDeploy,
+		output: RenderEndpointOutputSchemas.cancelDeploy,
+	},
+	'services.rollbackDeploy': {
+		input: RenderEndpointInputSchemas.rollbackDeploy,
+		output: RenderEndpointOutputSchemas.rollbackDeploy,
+	},
+	'services.listEvents': {
+		input: RenderEndpointInputSchemas.listServiceEvents,
+		output: RenderEndpointOutputSchemas.listServiceEvents,
+	},
+	'services.listOutboundIps': {
+		input: RenderEndpointInputSchemas.listOutboundIps,
+		output: RenderEndpointOutputSchemas.listOutboundIps,
+	},
+	'services.jobs.list': {
+		input: RenderEndpointInputSchemas.listServiceJobs,
+		output: RenderEndpointOutputSchemas.listServiceJobs,
+	},
+	'services.jobs.retrieve': {
+		input: RenderEndpointInputSchemas.retrieveServiceJob,
+		output: RenderEndpointOutputSchemas.retrieveServiceJob,
 	},
 	'services.restart': {
 		input: RenderEndpointInputSchemas.restartService,
@@ -827,6 +878,34 @@ const renderEndpointMeta = {
 	'services.listDeploys': {
 		riskLevel: 'read',
 		description: 'List deployments for a Render service',
+	},
+	'services.purgeCache': {
+		riskLevel: 'write',
+		description: 'Purge the cache for a Render service',
+	},
+	'services.cancelDeploy': {
+		riskLevel: 'write',
+		description: 'Cancel a Render deployment',
+	},
+	'services.rollbackDeploy': {
+		riskLevel: 'write',
+		description: 'Roll back a Render service deployment',
+	},
+	'services.listEvents': {
+		riskLevel: 'read',
+		description: 'List events for a Render service',
+	},
+	'services.listOutboundIps': {
+		riskLevel: 'read',
+		description: 'List outbound IPs for a Render service',
+	},
+	'services.jobs.list': {
+		riskLevel: 'read',
+		description: 'List jobs for a Render service',
+	},
+	'services.jobs.retrieve': {
+		riskLevel: 'read',
+		description: 'Retrieve a Render service job',
 	},
 	'services.restart': {
 		riskLevel: 'write',
