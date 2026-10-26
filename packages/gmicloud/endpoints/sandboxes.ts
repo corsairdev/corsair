@@ -1,7 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { GmicloudEndpoints } from '..';
 import { makeGmicloudRequest } from '../client';
-import { forgetRecord, saveRecords } from './persistence';
+import { forgetRecord, mergeRecords, saveRecords } from './persistence';
 import {
 	GmicloudEndpointInputSchemas,
 	GmicloudEndpointOutputSchemas,
@@ -18,7 +18,7 @@ export const list: GmicloudEndpoints['sandboxesList'] = async (ctx, input) => {
 			query: { page, page_size, idc_name, state, metadata },
 		}),
 	);
-	await saveRecords(ctx.db.sandboxes, result.items);
+	await mergeRecords(ctx.db.sandboxes, result.items);
 	await logEventFromContext(
 		ctx,
 		'gmicloud.sandboxes.list',
