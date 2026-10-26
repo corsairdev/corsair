@@ -435,6 +435,25 @@ describe('persistence', () => {
 		);
 	});
 
+	it('sandboxes.create caches the new sandbox without its access tokens', async () => {
+		const sample = SPEC_CASES['sandboxes.create']!;
+		const created = (sample.response as { data: Record<string, string> }).data;
+		respond(200, sample.response);
+		const ctx = createContext();
+
+		await endpoint('sandboxes.create')(ctx, sample.input);
+
+		const [id, saved] = ctx.db.sandboxes.upsertByEntityId.mock.calls[0]!;
+		expect(id).toBe(created.id);
+		expect(saved).toEqual({
+			id: created.id,
+			sandbox_key: created.sandbox_key,
+			template_id: created.template_id,
+			domain: created.domain,
+		});
+		expect(JSON.stringify(saved)).not.toContain('token');
+	});
+
 	it('a full get replaces the cached record, so a removed field does not linger', async () => {
 		const sample = SPEC_CASES['containers.get']!;
 		const { eipAddress: _detached, ...withoutEip } = sample.response as Record<
