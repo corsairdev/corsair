@@ -81,6 +81,75 @@ describe('Render schema', () => {
 		}
 	});
 
+	it('requires every path parameter at the schema boundary', () => {
+		const idOperations = [
+			'retrieveOwner',
+			'listOwnerMembers',
+			'deleteOwnerLogStream',
+			'updateOwnerLogStream',
+			'addHeaders',
+			'addResourcesToEnvironment',
+			'addRoute',
+			'createCustomDomain',
+			'deleteKeyValue',
+			'disconnectBlueprint',
+			'listInstances',
+			'listPostgresExport',
+			'listPostgresUsers',
+			'listRoutes',
+			'listSecretFiles',
+			'retrieveOwnerNotificationSettings',
+			'updateEnvVarsForService',
+			'updateHeaders',
+			'updateResourceLogStream',
+			'updateSecretFilesForService',
+			'deleteOwnerMetricsStream',
+			'updateOwnerNotificationSettings',
+			'updateRoutes',
+		] as const;
+		for (const operation of idOperations) {
+			const schema = RenderEndpointInputSchemas[operation];
+			expect(schema.safeParse({}).success).toBe(false);
+			expect(schema.safeParse({ id: 'resource-1' }).success).toBe(true);
+		}
+
+		const keyOperations = [
+			'addOrUpdateSecretFile',
+			'deleteEnvGroupEnvVar',
+			'deleteEnvGroupSecretFile',
+			'deleteSecretFile',
+			'retrieveCustomDomain',
+			'retrieveDeploy',
+			'retrieveEnvGroupEnvVar',
+			'retrieveEnvGroupSecretFile',
+			'retrieveEnvVar',
+			'retrieveSecretFile',
+			'updateEnvGroupEnvVar',
+			'updateEnvGroupSecretFile',
+			'updateEnvVar',
+			'verifyCustomDomain',
+		] as const;
+		for (const operation of keyOperations) {
+			const schema = RenderEndpointInputSchemas[operation];
+			expect(schema.safeParse({ id: 'resource-1' }).success).toBe(false);
+			expect(
+				schema.safeParse({ id: 'resource-1', key: 'resource-key' }).success,
+			).toBe(true);
+		}
+
+		expect(
+			RenderEndpointInputSchemas.linkServiceToEnvGroup.safeParse({
+				id: 'group-1',
+			}).success,
+		).toBe(false);
+		expect(
+			RenderEndpointInputSchemas.linkServiceToEnvGroup.safeParse({
+				id: 'group-1',
+				serviceId: 'service-1',
+			}).success,
+		).toBe(true);
+	});
+
 	it('provides executable input and output contracts for every operation', () => {
 		for (const schemas of Object.values(renderEndpointSchemas)) {
 			expect(typeof schemas.input.safeParse).toBe('function');
@@ -131,6 +200,7 @@ describe('Render schema', () => {
 		];
 		const outputCandidates = [
 			[],
+			{ data: 'event: task.completed\\ndata: {}\\n\\n' },
 			{
 				id: 'resource-1',
 				name: 'resource',
@@ -162,7 +232,11 @@ describe('Render schema', () => {
 				const output = outputCandidates.find(
 					(candidate) => contract.output.safeParse(candidate).success,
 				);
-				request.mockResolvedValue(output);
+				request.mockResolvedValue(
+					path === 'automation.streamTaskRunsEvents'
+						? 'event: task.completed\\ndata: {}\\n\\n'
+						: output,
+				);
 				await (value as (context: unknown, args: unknown) => Promise<unknown>)(
 					ctx,
 					input,

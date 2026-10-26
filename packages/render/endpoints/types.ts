@@ -62,6 +62,9 @@ const ResourceIdInputSchema = ResourceInputSchema.extend({
 const ResourceIdKeyInputSchema = ResourceIdInputSchema.extend({
 	key: z.string().min(1),
 });
+const ResourceIdServiceIdInputSchema = ResourceIdInputSchema.extend({
+	serviceId: z.string().min(1),
+});
 // Stricter typing is not feasible because Render resource payloads are
 // provider-defined and may gain fields independently. Some Render responses
 // also return a resource collection from an operation whose endpoint metadata
@@ -124,15 +127,15 @@ export type RenderEndpointInputs = {
 	updateRegistryCredential: ResourceIdInput;
 	deleteRegistryCredential: ResourceIdInput;
 	listOwners: z.infer<typeof ResourceInputSchema>;
-	retrieveOwner: z.infer<typeof ResourceInputSchema>;
-	listOwnerMembers: z.infer<typeof ResourceInputSchema>;
+	retrieveOwner: ResourceIdInput;
+	listOwnerMembers: ResourceIdInput;
 	getUser: z.infer<typeof ResourceInputSchema>;
 	listLogs: z.infer<typeof ResourceInputSchema>;
 	listLogsValues: z.infer<typeof ResourceInputSchema>;
 	subscribeLogs: z.infer<typeof ResourceInputSchema>;
 	listResourceLogStreams: z.infer<typeof ResourceInputSchema>;
-	deleteOwnerLogStream: z.infer<typeof ResourceInputSchema>;
-	updateOwnerLogStream: z.infer<typeof ResourceInputSchema>;
+	deleteOwnerLogStream: ResourceIdInput;
+	updateOwnerLogStream: ResourceIdInput;
 	getActiveConnections: z.infer<typeof ResourceInputSchema>;
 	getBandwidthSources: z.infer<typeof ResourceInputSchema>;
 	getCpu: z.infer<typeof ResourceInputSchema>;
@@ -152,43 +155,43 @@ export type RenderEndpointInputs = {
 	listWorkflows: z.infer<typeof ResourceInputSchema>;
 	listWorkflowVersions: z.infer<typeof ResourceInputSchema>;
 	listWebhooks: z.infer<typeof ResourceInputSchema>;
-	addHeaders: z.infer<typeof ResourceInputSchema>;
-	addOrUpdateSecretFile: z.infer<typeof ResourceInputSchema>;
-	addResourcesToEnvironment: z.infer<typeof ResourceInputSchema>;
-	addRoute: z.infer<typeof ResourceInputSchema>;
-	createCustomDomain: z.infer<typeof ResourceInputSchema>;
-	deleteEnvGroupEnvVar: z.infer<typeof ResourceInputSchema>;
-	deleteEnvGroupSecretFile: z.infer<typeof ResourceInputSchema>;
-	deleteKeyValue: z.infer<typeof ResourceInputSchema>;
-	deleteSecretFile: z.infer<typeof ResourceInputSchema>;
-	disconnectBlueprint: z.infer<typeof ResourceInputSchema>;
-	linkServiceToEnvGroup: z.infer<typeof ResourceInputSchema>;
+	addHeaders: ResourceIdInput;
+	addOrUpdateSecretFile: ResourceIdKeyInput;
+	addResourcesToEnvironment: ResourceIdInput;
+	addRoute: ResourceIdInput;
+	createCustomDomain: ResourceIdInput;
+	deleteEnvGroupEnvVar: ResourceIdKeyInput;
+	deleteEnvGroupSecretFile: ResourceIdKeyInput;
+	deleteKeyValue: ResourceIdInput;
+	deleteSecretFile: ResourceIdKeyInput;
+	disconnectBlueprint: ResourceIdInput;
+	linkServiceToEnvGroup: z.infer<typeof ResourceIdServiceIdInputSchema>;
 	listBlueprints: z.infer<typeof ResourceInputSchema>;
-	listInstances: z.infer<typeof ResourceInputSchema>;
+	listInstances: ResourceIdInput;
 	listKeyValue: z.infer<typeof ResourceInputSchema>;
 	listNotificationOverrides: z.infer<typeof ResourceInputSchema>;
-	listPostgresExport: z.infer<typeof ResourceInputSchema>;
-	listPostgresUsers: z.infer<typeof ResourceInputSchema>;
-	listRoutes: z.infer<typeof ResourceInputSchema>;
-	listSecretFiles: z.infer<typeof ResourceInputSchema>;
-	retrieveCustomDomain: z.infer<typeof ResourceInputSchema>;
-	retrieveDeploy: z.infer<typeof ResourceInputSchema>;
-	retrieveEnvGroupEnvVar: z.infer<typeof ResourceInputSchema>;
-	retrieveEnvGroupSecretFile: z.infer<typeof ResourceInputSchema>;
-	retrieveEnvVar: z.infer<typeof ResourceInputSchema>;
-	retrieveOwnerNotificationSettings: z.infer<typeof ResourceInputSchema>;
-	retrieveSecretFile: z.infer<typeof ResourceInputSchema>;
-	updateEnvGroupEnvVar: z.infer<typeof ResourceInputSchema>;
-	updateEnvGroupSecretFile: z.infer<typeof ResourceInputSchema>;
-	updateEnvVar: z.infer<typeof ResourceInputSchema>;
-	updateEnvVarsForService: z.infer<typeof ResourceInputSchema>;
-	updateHeaders: z.infer<typeof ResourceInputSchema>;
-	updateResourceLogStream: z.infer<typeof ResourceInputSchema>;
-	updateSecretFilesForService: z.infer<typeof ResourceInputSchema>;
-	verifyCustomDomain: z.infer<typeof ResourceInputSchema>;
-	deleteOwnerMetricsStream: z.infer<typeof ResourceInputSchema>;
-	updateOwnerNotificationSettings: z.infer<typeof ResourceInputSchema>;
-	updateRoutes: z.infer<typeof ResourceInputSchema>;
+	listPostgresExport: ResourceIdInput;
+	listPostgresUsers: ResourceIdInput;
+	listRoutes: ResourceIdInput;
+	listSecretFiles: ResourceIdInput;
+	retrieveCustomDomain: ResourceIdKeyInput;
+	retrieveDeploy: ResourceIdKeyInput;
+	retrieveEnvGroupEnvVar: ResourceIdKeyInput;
+	retrieveEnvGroupSecretFile: ResourceIdKeyInput;
+	retrieveEnvVar: ResourceIdKeyInput;
+	retrieveOwnerNotificationSettings: ResourceIdInput;
+	retrieveSecretFile: ResourceIdKeyInput;
+	updateEnvGroupEnvVar: ResourceIdKeyInput;
+	updateEnvGroupSecretFile: ResourceIdKeyInput;
+	updateEnvVar: ResourceIdKeyInput;
+	updateEnvVarsForService: ResourceIdInput;
+	updateHeaders: ResourceIdInput;
+	updateResourceLogStream: ResourceIdInput;
+	updateSecretFilesForService: ResourceIdInput;
+	verifyCustomDomain: ResourceIdKeyInput;
+	deleteOwnerMetricsStream: ResourceIdInput;
+	updateOwnerNotificationSettings: ResourceIdInput;
+	updateRoutes: ResourceIdInput;
 };
 
 export type RenderEndpointOutputs = {
@@ -250,7 +253,7 @@ export type RenderEndpointOutputs = {
 	listMaintenance: z.infer<typeof ResourceListOutputSchema>;
 	listTaskRuns: z.infer<typeof ResourceListOutputSchema>;
 	listTasks: z.infer<typeof ResourceListOutputSchema>;
-	streamTaskRunsEvents: z.infer<typeof ResourceOutputSchema>;
+	streamTaskRunsEvents: { data: string };
 	listWorkflows: z.infer<typeof ResourceListOutputSchema>;
 	listWorkflowVersions: z.infer<typeof ResourceListOutputSchema>;
 	listWebhooks: z.infer<typeof ResourceListOutputSchema>;
@@ -329,15 +332,15 @@ export const RenderEndpointInputSchemas = {
 	updateRegistryCredential: ResourceIdInputSchema,
 	deleteRegistryCredential: ResourceIdInputSchema,
 	listOwners: ResourceInputSchema,
-	retrieveOwner: ResourceInputSchema,
-	listOwnerMembers: ResourceInputSchema,
+	retrieveOwner: ResourceIdInputSchema,
+	listOwnerMembers: ResourceIdInputSchema,
 	getUser: ResourceInputSchema,
 	listLogs: ResourceInputSchema,
 	listLogsValues: ResourceInputSchema,
 	subscribeLogs: ResourceInputSchema,
 	listResourceLogStreams: ResourceInputSchema,
-	deleteOwnerLogStream: ResourceInputSchema,
-	updateOwnerLogStream: ResourceInputSchema,
+	deleteOwnerLogStream: ResourceIdInputSchema,
+	updateOwnerLogStream: ResourceIdInputSchema,
 	getActiveConnections: ResourceInputSchema,
 	getBandwidthSources: ResourceInputSchema,
 	getCpu: ResourceInputSchema,
@@ -357,43 +360,43 @@ export const RenderEndpointInputSchemas = {
 	listWorkflows: ResourceInputSchema,
 	listWorkflowVersions: ResourceInputSchema,
 	listWebhooks: ResourceInputSchema,
-	addHeaders: ResourceInputSchema,
-	addOrUpdateSecretFile: ResourceInputSchema,
-	addResourcesToEnvironment: ResourceInputSchema,
-	addRoute: ResourceInputSchema,
-	createCustomDomain: ResourceInputSchema,
-	deleteEnvGroupEnvVar: ResourceInputSchema,
-	deleteEnvGroupSecretFile: ResourceInputSchema,
-	deleteKeyValue: ResourceInputSchema,
-	deleteSecretFile: ResourceInputSchema,
-	disconnectBlueprint: ResourceInputSchema,
-	linkServiceToEnvGroup: ResourceInputSchema,
+	addHeaders: ResourceIdInputSchema,
+	addOrUpdateSecretFile: ResourceIdKeyInputSchema,
+	addResourcesToEnvironment: ResourceIdInputSchema,
+	addRoute: ResourceIdInputSchema,
+	createCustomDomain: ResourceIdInputSchema,
+	deleteEnvGroupEnvVar: ResourceIdKeyInputSchema,
+	deleteEnvGroupSecretFile: ResourceIdKeyInputSchema,
+	deleteKeyValue: ResourceIdInputSchema,
+	deleteSecretFile: ResourceIdKeyInputSchema,
+	disconnectBlueprint: ResourceIdInputSchema,
+	linkServiceToEnvGroup: ResourceIdServiceIdInputSchema,
 	listBlueprints: ResourceInputSchema,
-	listInstances: ResourceInputSchema,
+	listInstances: ResourceIdInputSchema,
 	listKeyValue: ResourceInputSchema,
 	listNotificationOverrides: ResourceInputSchema,
-	listPostgresExport: ResourceInputSchema,
-	listPostgresUsers: ResourceInputSchema,
-	listRoutes: ResourceInputSchema,
-	listSecretFiles: ResourceInputSchema,
-	retrieveCustomDomain: ResourceInputSchema,
-	retrieveDeploy: ResourceInputSchema,
-	retrieveEnvGroupEnvVar: ResourceInputSchema,
-	retrieveEnvGroupSecretFile: ResourceInputSchema,
-	retrieveEnvVar: ResourceInputSchema,
-	retrieveOwnerNotificationSettings: ResourceInputSchema,
-	retrieveSecretFile: ResourceInputSchema,
-	updateEnvGroupEnvVar: ResourceInputSchema,
-	updateEnvGroupSecretFile: ResourceInputSchema,
-	updateEnvVar: ResourceInputSchema,
-	updateEnvVarsForService: ResourceInputSchema,
-	updateHeaders: ResourceInputSchema,
-	updateResourceLogStream: ResourceInputSchema,
-	updateSecretFilesForService: ResourceInputSchema,
-	verifyCustomDomain: ResourceInputSchema,
-	deleteOwnerMetricsStream: ResourceInputSchema,
-	updateOwnerNotificationSettings: ResourceInputSchema,
-	updateRoutes: ResourceInputSchema,
+	listPostgresExport: ResourceIdInputSchema,
+	listPostgresUsers: ResourceIdInputSchema,
+	listRoutes: ResourceIdInputSchema,
+	listSecretFiles: ResourceIdInputSchema,
+	retrieveCustomDomain: ResourceIdKeyInputSchema,
+	retrieveDeploy: ResourceIdKeyInputSchema,
+	retrieveEnvGroupEnvVar: ResourceIdKeyInputSchema,
+	retrieveEnvGroupSecretFile: ResourceIdKeyInputSchema,
+	retrieveEnvVar: ResourceIdKeyInputSchema,
+	retrieveOwnerNotificationSettings: ResourceIdInputSchema,
+	retrieveSecretFile: ResourceIdKeyInputSchema,
+	updateEnvGroupEnvVar: ResourceIdKeyInputSchema,
+	updateEnvGroupSecretFile: ResourceIdKeyInputSchema,
+	updateEnvVar: ResourceIdKeyInputSchema,
+	updateEnvVarsForService: ResourceIdInputSchema,
+	updateHeaders: ResourceIdInputSchema,
+	updateResourceLogStream: ResourceIdInputSchema,
+	updateSecretFilesForService: ResourceIdInputSchema,
+	verifyCustomDomain: ResourceIdKeyInputSchema,
+	deleteOwnerMetricsStream: ResourceIdInputSchema,
+	updateOwnerNotificationSettings: ResourceIdInputSchema,
+	updateRoutes: ResourceIdInputSchema,
 } as const;
 
 export const RenderEndpointOutputSchemas = {
@@ -458,7 +461,7 @@ export const RenderEndpointOutputSchemas = {
 	listMaintenance: ResourceListOutputSchema,
 	listTaskRuns: ResourceListOutputSchema,
 	listTasks: ResourceListOutputSchema,
-	streamTaskRunsEvents: ResourceOutputSchema,
+	streamTaskRunsEvents: z.object({ data: z.string() }),
 	listWorkflows: ResourceListOutputSchema,
 	listWorkflowVersions: ResourceListOutputSchema,
 	listWebhooks: ResourceListOutputSchema,
