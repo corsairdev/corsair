@@ -15,7 +15,7 @@ export const list: GmicloudEndpoints['sandboxesList'] = async (ctx, input) => {
 			api: 'console',
 			method: 'GET',
 			url: 'v2/sandboxes',
-			query: { page, page_size, idc_name, state, 'metadata[key]': metadata },
+			query: { page, page_size, idc_name, state, metadata },
 		}),
 	);
 	await saveRecords(ctx.db.sandboxes, result.items);
