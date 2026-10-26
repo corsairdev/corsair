@@ -106,6 +106,10 @@ describe('Render schema', () => {
 			'deleteOwnerMetricsStream',
 			'updateOwnerNotificationSettings',
 			'updateRoutes',
+			'retrieveDisk',
+			'updateDisk',
+			'deleteDisk',
+			'listDiskSnapshots',
 		] as const;
 		for (const operation of idOperations) {
 			const schema = RenderEndpointInputSchemas[operation];
@@ -156,11 +160,27 @@ describe('Render schema', () => {
 			['rollbackDeploy', { serviceId: 'service-1', deployId: 'deploy-1' }],
 			['cancelServiceJob', { serviceId: 'service-1', jobId: 'job-1' }],
 			['createServiceJob', { serviceId: 'service-1', startCommand: 'echo hi' }],
+			['restoreDiskSnapshot', { id: 'disk-1', snapshotKey: 'snapshot-1' }],
 		] as const) {
 			const schema = RenderEndpointInputSchemas[operation];
 			expect(schema.safeParse({ id: 'resource-1' }).success).toBe(false);
 			expect(schema.safeParse(required).success).toBe(true);
 		}
+
+		// Creation operations validate their full documented payloads.
+		expect(
+			RenderEndpointInputSchemas.createDisk.safeParse({
+				name: 'disk-1',
+			}).success,
+		).toBe(false);
+		expect(
+			RenderEndpointInputSchemas.createDisk.safeParse({
+				name: 'disk-1',
+				sizeGB: 5,
+				mountPath: '/data',
+				serviceId: 'service-1',
+			}).success,
+		).toBe(true);
 	});
 
 	it('provides executable input and output contracts for every operation', () => {
@@ -213,6 +233,13 @@ describe('Render schema', () => {
 			{ serviceId: 'service-1', deployId: 'deploy-1' },
 			{ serviceId: 'service-1', jobId: 'job-1' },
 			{ serviceId: 'service-1', startCommand: 'echo hi', planId: 'plan-1' },
+			{
+				name: 'disk-1',
+				sizeGB: 5,
+				mountPath: '/data',
+				serviceId: 'service-1',
+			},
+			{ id: 'resource-1', snapshotKey: 'snapshot-1' },
 		];
 		const outputCandidates = [
 			[],

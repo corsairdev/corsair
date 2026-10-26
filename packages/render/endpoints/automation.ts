@@ -1,5 +1,6 @@
 import type { RenderEndpoints } from '..';
 import { makeRenderRequest } from '../client';
+import { renderPathParameter } from './path';
 
 type Context = { key: string };
 // Stricter typing is not feasible for this shared adapter because each Render
@@ -15,6 +16,29 @@ const get = <T>(ctx: Context, path: string, input: Input) =>
 			string | number | boolean | string[] | undefined
 		>,
 	});
+
+const request = <T>(
+	ctx: Context,
+	template: string,
+	method: 'GET' | 'POST' | 'PATCH' | 'DELETE',
+	input: Input,
+) => {
+	const { id, ...values } = input;
+	const path = template.includes('{id}')
+		? renderPathParameter(template, 'id', id)
+		: template;
+	return makeRenderRequest<T>(path, ctx.key, {
+		method,
+		body: method === 'GET' || method === 'DELETE' ? undefined : values,
+		query:
+			method === 'GET'
+				? (values as Record<
+						string,
+						string | number | boolean | string[] | undefined
+					>)
+				: undefined,
+	});
+};
 
 export const listDisks: RenderEndpoints['listDisks'] = (ctx, input) =>
 	get(ctx, '/v1/disks', input);
@@ -47,3 +71,19 @@ export const listWorkflowVersions: RenderEndpoints['listWorkflowVersions'] = (
 ) => get(ctx, '/v1/workflowversions', input);
 export const listWebhooks: RenderEndpoints['listWebhooks'] = (ctx, input) =>
 	get(ctx, '/v1/webhooks', input);
+export const createDisk: RenderEndpoints['createDisk'] = (ctx, input) =>
+	request(ctx, '/v1/disks', 'POST', input);
+export const retrieveDisk: RenderEndpoints['retrieveDisk'] = (ctx, input) =>
+	request(ctx, '/v1/disks/{id}', 'GET', input);
+export const updateDisk: RenderEndpoints['updateDisk'] = (ctx, input) =>
+	request(ctx, '/v1/disks/{id}', 'PATCH', input);
+export const deleteDisk: RenderEndpoints['deleteDisk'] = (ctx, input) =>
+	request(ctx, '/v1/disks/{id}', 'DELETE', input);
+export const listDiskSnapshots: RenderEndpoints['listDiskSnapshots'] = (
+	ctx,
+	input,
+) => request(ctx, '/v1/disks/{id}/snapshots', 'GET', input);
+export const restoreDiskSnapshot: RenderEndpoints['restoreDiskSnapshot'] = (
+	ctx,
+	input,
+) => request(ctx, '/v1/disks/{id}/snapshots/restore', 'POST', input);

@@ -1,4 +1,7 @@
 export {
+	createDisk,
+	deleteDisk,
+	listDiskSnapshots,
 	listDisks,
 	listMaintenance,
 	listTaskRuns,
@@ -6,7 +9,10 @@ export {
 	listWebhooks,
 	listWorkflows,
 	listWorkflowVersions,
+	restoreDiskSnapshot,
+	retrieveDisk,
 	streamTaskRunsEvents,
+	updateDisk,
 } from './automation';
 export {
 	createEnvGroup,

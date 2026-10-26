@@ -103,6 +103,21 @@ const ServiceJobStartInputSchema = ServiceIdInputSchema.extend({
 	startCommand: z.string().min(1),
 	planId: z.string().min(1).optional(),
 });
+const CreateDiskInputSchema = z.object({
+	name: z.string().min(1),
+	sizeGB: z.number().int(),
+	mountPath: z.string().min(1),
+	serviceId: z.string().min(1),
+});
+const UpdateDiskInputSchema = ResourceIdInputSchema.extend({
+	name: z.string().min(1).optional(),
+	sizeGB: z.number().int().optional(),
+	mountPath: z.string().min(1).optional(),
+});
+const RestoreDiskSnapshotInputSchema = ResourceIdInputSchema.extend({
+	snapshotKey: z.string().min(1),
+	instanceId: z.string().min(1).optional(),
+});
 
 export type ListServicesInput = z.infer<typeof ListServicesInputSchema>;
 export type ListServicesOutput = z.infer<typeof ListServicesOutputSchema>;
@@ -189,6 +204,12 @@ export type RenderEndpointInputs = {
 	listWorkflows: z.infer<typeof ResourceInputSchema>;
 	listWorkflowVersions: z.infer<typeof ResourceInputSchema>;
 	listWebhooks: z.infer<typeof ResourceInputSchema>;
+	createDisk: z.infer<typeof CreateDiskInputSchema>;
+	retrieveDisk: ResourceIdInput;
+	updateDisk: z.infer<typeof UpdateDiskInputSchema>;
+	deleteDisk: ResourceIdInput;
+	listDiskSnapshots: ResourceIdInput;
+	restoreDiskSnapshot: z.infer<typeof RestoreDiskSnapshotInputSchema>;
 	addHeaders: ResourceIdInput;
 	addOrUpdateSecretFile: ResourceIdKeyInput;
 	addResourcesToEnvironment: ResourceIdInput;
@@ -301,6 +322,12 @@ export type RenderEndpointOutputs = {
 	listWorkflows: z.infer<typeof ResourceListOutputSchema>;
 	listWorkflowVersions: z.infer<typeof ResourceListOutputSchema>;
 	listWebhooks: z.infer<typeof ResourceListOutputSchema>;
+	createDisk: z.infer<typeof ResourceOutputSchema>;
+	retrieveDisk: z.infer<typeof ResourceOutputSchema>;
+	updateDisk: z.infer<typeof ResourceOutputSchema>;
+	deleteDisk: z.infer<typeof EmptyOutputSchema>;
+	listDiskSnapshots: z.infer<typeof ResourceListOutputSchema>;
+	restoreDiskSnapshot: z.infer<typeof ResourceOutputSchema>;
 	addHeaders: z.infer<typeof ResourceOutputSchema>;
 	addOrUpdateSecretFile: z.infer<typeof ResourceOutputSchema>;
 	addResourcesToEnvironment: z.infer<typeof ResourceOutputSchema>;
@@ -414,6 +441,12 @@ export const RenderEndpointInputSchemas = {
 	listWorkflows: ResourceInputSchema,
 	listWorkflowVersions: ResourceInputSchema,
 	listWebhooks: ResourceInputSchema,
+	createDisk: CreateDiskInputSchema,
+	retrieveDisk: ResourceIdInputSchema,
+	updateDisk: UpdateDiskInputSchema,
+	deleteDisk: ResourceIdInputSchema,
+	listDiskSnapshots: ResourceIdInputSchema,
+	restoreDiskSnapshot: RestoreDiskSnapshotInputSchema,
 	addHeaders: ResourceIdInputSchema,
 	addOrUpdateSecretFile: ResourceIdKeyInputSchema,
 	addResourcesToEnvironment: ResourceIdInputSchema,
@@ -529,6 +562,12 @@ export const RenderEndpointOutputSchemas = {
 	listWorkflows: ResourceListOutputSchema,
 	listWorkflowVersions: ResourceListOutputSchema,
 	listWebhooks: ResourceListOutputSchema,
+	createDisk: ResourceOutputSchema,
+	retrieveDisk: ResourceOutputSchema,
+	updateDisk: ResourceOutputSchema,
+	deleteDisk: EmptyOutputSchema,
+	listDiskSnapshots: ResourceListOutputSchema,
+	restoreDiskSnapshot: ResourceOutputSchema,
 	addHeaders: ResourceOutputSchema,
 	addOrUpdateSecretFile: ResourceOutputSchema,
 	addResourcesToEnvironment: ResourceOutputSchema,

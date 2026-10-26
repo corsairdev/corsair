@@ -2,11 +2,14 @@ import { makeRenderRequest } from './client';
 import {
 	cancelDeploy,
 	cancelServiceJob,
+	createDisk,
 	createServiceJob,
+	deleteDisk,
 	deleteService,
 	getUser,
 	listBlueprints,
 	listDeploys,
+	listDiskSnapshots,
 	listDisks,
 	listEnvironments,
 	listOwners,
@@ -14,6 +17,8 @@ import {
 	listRoutes,
 	listServices,
 	purgeServiceCache,
+	restoreDiskSnapshot,
+	retrieveDisk,
 	retrieveEnvironment,
 	retrieveOwner,
 	retrieveProject,
@@ -21,6 +26,7 @@ import {
 	rollbackDeploy,
 	streamTaskRunsEvents,
 	triggerDeploy,
+	updateDisk,
 	updateOwnerLogStream,
 	updateRoutes,
 } from './endpoints';
@@ -235,6 +241,60 @@ describe('Render service endpoints', () => {
 			'secret',
 			{ method: 'POST', body: undefined },
 		);
+	});
+
+	it('covers the disk lifecycle on the current Render disk routes', async () => {
+		request.mockResolvedValue({});
+		const ctx = { key: 'secret' } as never;
+		await createDisk(ctx, {
+			name: 'data',
+			sizeGB: 5,
+			mountPath: '/data',
+			serviceId: 'srv-1',
+		});
+		await retrieveDisk(ctx, { id: 'disk-1' });
+		await updateDisk(ctx, { id: 'disk-1', sizeGB: 10 });
+		await deleteDisk(ctx, { id: 'disk-1' });
+		await listDiskSnapshots(ctx, { id: 'disk-1' });
+		await restoreDiskSnapshot(ctx, { id: 'disk-1', snapshotKey: 'snap-1' });
+
+		expect(request).toHaveBeenCalledWith('/v1/disks', 'secret', {
+			method: 'POST',
+			body: { name: 'data', sizeGB: 5, mountPath: '/data', serviceId: 'srv-1' },
+		});
+		expect(request).toHaveBeenCalledWith('/v1/disks/disk-1', 'secret', {
+			method: 'GET',
+			query: {},
+		});
+		expect(request).toHaveBeenCalledWith('/v1/disks/disk-1', 'secret', {
+			method: 'PATCH',
+			body: { sizeGB: 10 },
+		});
+		expect(request).toHaveBeenCalledWith('/v1/disks/disk-1', 'secret', {
+			method: 'DELETE',
+			body: undefined,
+		});
+		expect(request).toHaveBeenCalledWith(
+			'/v1/disks/disk-1/snapshots',
+			'secret',
+			{
+				method: 'GET',
+				query: {},
+			},
+		);
+		expect(request).toHaveBeenCalledWith(
+			'/v1/disks/disk-1/snapshots/restore',
+			'secret',
+			{ method: 'POST', body: { snapshotKey: 'snap-1' } },
+		);
+	});
+
+	it('rejects missing identifiers on the new path-based operations', async () => {
+		expect(() => retrieveDisk({ key: 'secret' } as never, {} as never)).toThrow(
+			'Invalid Render id',
+		);
+
+		expect(request).not.toHaveBeenCalled();
 	});
 
 	it('rejects missing and unsafe final-route identifiers', async () => {

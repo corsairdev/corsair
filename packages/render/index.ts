@@ -22,12 +22,14 @@ import {
 	cancelDeploy,
 	cancelServiceJob,
 	createCustomDomain,
+	createDisk,
 	createEnvGroup,
 	createEnvironment,
 	createPostgres,
 	createProject,
 	createRegistryCredential,
 	createServiceJob,
+	deleteDisk,
 	deleteEnvGroup,
 	deleteEnvGroupEnvVar,
 	deleteEnvGroupSecretFile,
@@ -54,6 +56,7 @@ import {
 	listApplicationFilterValues,
 	listBlueprints,
 	listDeploys,
+	listDiskSnapshots,
 	listDisks,
 	listEnvGroups,
 	listEnvironments,
@@ -86,9 +89,11 @@ import {
 	RenderEndpointInputSchemas,
 	RenderEndpointOutputSchemas,
 	restartService,
+	restoreDiskSnapshot,
 	resumeService,
 	retrieveCustomDomain,
 	retrieveDeploy,
+	retrieveDisk,
 	retrieveEnvGroup,
 	retrieveEnvGroupEnvVar,
 	retrieveEnvGroupSecretFile,
@@ -107,6 +112,7 @@ import {
 	subscribeLogs,
 	suspendService,
 	triggerDeploy,
+	updateDisk,
 	updateEnvGroup,
 	updateEnvGroupEnvVar,
 	updateEnvGroupSecretFile,
@@ -221,6 +227,12 @@ export type RenderEndpoints = {
 	listWorkflows: RenderEndpoint<'listWorkflows'>;
 	listWorkflowVersions: RenderEndpoint<'listWorkflowVersions'>;
 	listWebhooks: RenderEndpoint<'listWebhooks'>;
+	createDisk: RenderEndpoint<'createDisk'>;
+	retrieveDisk: RenderEndpoint<'retrieveDisk'>;
+	updateDisk: RenderEndpoint<'updateDisk'>;
+	deleteDisk: RenderEndpoint<'deleteDisk'>;
+	listDiskSnapshots: RenderEndpoint<'listDiskSnapshots'>;
+	restoreDiskSnapshot: RenderEndpoint<'restoreDiskSnapshot'>;
 	addHeaders: RenderEndpoint<'addHeaders'>;
 	addOrUpdateSecretFile: RenderEndpoint<'addOrUpdateSecretFile'>;
 	addResourcesToEnvironment: RenderEndpoint<'addResourcesToEnvironment'>;
@@ -352,6 +364,12 @@ const renderEndpointsNested = {
 		listWorkflows,
 		listWorkflowVersions,
 		listWebhooks,
+		createDisk,
+		retrieveDisk,
+		updateDisk,
+		deleteDisk,
+		listDiskSnapshots,
+		restoreDiskSnapshot,
 	},
 	final: {
 		addHeaders,
@@ -674,6 +692,30 @@ export const renderEndpointSchemas = {
 	'automation.listWebhooks': {
 		input: RenderEndpointInputSchemas.listWebhooks,
 		output: RenderEndpointOutputSchemas.listWebhooks,
+	},
+	'automation.createDisk': {
+		input: RenderEndpointInputSchemas.createDisk,
+		output: RenderEndpointOutputSchemas.createDisk,
+	},
+	'automation.retrieveDisk': {
+		input: RenderEndpointInputSchemas.retrieveDisk,
+		output: RenderEndpointOutputSchemas.retrieveDisk,
+	},
+	'automation.updateDisk': {
+		input: RenderEndpointInputSchemas.updateDisk,
+		output: RenderEndpointOutputSchemas.updateDisk,
+	},
+	'automation.deleteDisk': {
+		input: RenderEndpointInputSchemas.deleteDisk,
+		output: RenderEndpointOutputSchemas.deleteDisk,
+	},
+	'automation.listDiskSnapshots': {
+		input: RenderEndpointInputSchemas.listDiskSnapshots,
+		output: RenderEndpointOutputSchemas.listDiskSnapshots,
+	},
+	'automation.restoreDiskSnapshot': {
+		input: RenderEndpointInputSchemas.restoreDiskSnapshot,
+		output: RenderEndpointOutputSchemas.restoreDiskSnapshot,
 	},
 	'final.addHeaders': {
 		input: RenderEndpointInputSchemas.addHeaders,
@@ -1133,6 +1175,30 @@ const renderEndpointMeta = {
 	'automation.listWebhooks': {
 		riskLevel: 'read',
 		description: 'List Render webhooks',
+	},
+	'automation.createDisk': {
+		riskLevel: 'write',
+		description: 'Create a disk for a Render service',
+	},
+	'automation.retrieveDisk': {
+		riskLevel: 'read',
+		description: 'Retrieve a Render disk',
+	},
+	'automation.updateDisk': {
+		riskLevel: 'write',
+		description: 'Update a Render disk',
+	},
+	'automation.deleteDisk': {
+		riskLevel: 'destructive',
+		description: 'Delete a Render disk',
+	},
+	'automation.listDiskSnapshots': {
+		riskLevel: 'read',
+		description: 'List snapshots for a Render disk',
+	},
+	'automation.restoreDiskSnapshot': {
+		riskLevel: 'write',
+		description: 'Restore a snapshot to a Render disk',
 	},
 	'final.addHeaders': { riskLevel: 'write', description: 'Render addHeaders' },
 	'final.addOrUpdateSecretFile': {
