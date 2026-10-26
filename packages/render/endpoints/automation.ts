@@ -29,7 +29,16 @@ export const listTasks: RenderEndpoints['listTasks'] = (ctx, input) =>
 export const streamTaskRunsEvents: RenderEndpoints['streamTaskRunsEvents'] = (
 	ctx,
 	input,
-) => get(ctx, '/v1/task-runs/events', input);
+) =>
+	makeRenderRequest<string>('/v1/task-runs/events', ctx.key, {
+		method: 'GET',
+		query: input as Record<
+			string,
+			string | number | boolean | string[] | undefined
+		>,
+		headers: { Accept: 'text/event-stream' },
+		mediaType: 'text/event-stream',
+	}).then((data) => ({ data }));
 export const listWorkflows: RenderEndpoints['listWorkflows'] = (ctx, input) =>
 	get(ctx, '/v1/workflows', input);
 export const listWorkflowVersions: RenderEndpoints['listWorkflowVersions'] = (

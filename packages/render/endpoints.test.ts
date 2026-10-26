@@ -13,6 +13,7 @@ import {
 	retrieveOwner,
 	retrieveProject,
 	retrieveService,
+	streamTaskRunsEvents,
 	triggerDeploy,
 	updateOwnerLogStream,
 	updateRoutes,
@@ -203,5 +204,20 @@ describe('Render service endpoints', () => {
 				body: { url: 'https://logs.example.test', labels: ['app'] },
 			}),
 		);
+	});
+
+	it('requests task-run events as an SSE stream', async () => {
+		request.mockResolvedValue('event: task.completed\ndata: {}\n\n');
+		await expect(
+			streamTaskRunsEvents({ key: 'secret' } as never, {
+				taskRunIds: ['trn-1'],
+			}),
+		).resolves.toEqual({ data: 'event: task.completed\ndata: {}\n\n' });
+		expect(request).toHaveBeenCalledWith('/v1/task-runs/events', 'secret', {
+			method: 'GET',
+			query: { taskRunIds: ['trn-1'] },
+			headers: { Accept: 'text/event-stream' },
+			mediaType: 'text/event-stream',
+		});
 	});
 });

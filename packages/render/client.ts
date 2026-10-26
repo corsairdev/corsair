@@ -40,9 +40,11 @@ export async function makeRenderRequest<T>(
 		body?: /* unknown: provider-specific object or replacement-array body */
 		Record<string, unknown> | unknown[];
 		query?: Record<string, string | string[] | number | boolean | undefined>;
+		headers?: Record<string, string>;
+		mediaType?: string;
 	} = {},
 ): Promise<T> {
-	const { method = 'GET', body, query } = options;
+	const { method = 'GET', body, query, headers, mediaType } = options;
 
 	const config: OpenAPIConfig = {
 		BASE: RENDER_API_BASE,
@@ -53,6 +55,7 @@ export async function makeRenderRequest<T>(
 		HEADERS: {
 			'Content-Type': 'application/json',
 			Authorization: `Bearer ${apiKey}`,
+			...headers,
 		},
 	};
 
@@ -63,7 +66,7 @@ export async function makeRenderRequest<T>(
 			method === 'POST' || method === 'PUT' || method === 'PATCH'
 				? body
 				: undefined,
-		mediaType: 'application/json; charset=utf-8',
+		mediaType: mediaType ?? 'application/json; charset=utf-8',
 		query: method === 'GET' ? query : undefined,
 	};
 
