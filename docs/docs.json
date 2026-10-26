@@ -1441,19 +1441,19 @@
                 ]
               },
               {
+                "group": "Context.dev",
+                "pages": [
+                  "plugins/contextdev/overview",
+                  "plugins/contextdev/api",
+                  "plugins/contextdev/database"
+                ]
+              },
+              {
                 "group": "Context7",
                 "pages": [
                   "plugins/contextsevenmcp/overview",
                   "plugins/contextsevenmcp/api",
                   "plugins/contextsevenmcp/database"
-                ]
-              },
-              {
-                "group": "ContextDev",
-                "pages": [
-                  "plugins/contextdev/overview",
-                  "plugins/contextdev/api",
-                  "plugins/contextdev/database"
                 ]
               },
               {
