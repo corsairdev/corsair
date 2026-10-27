@@ -309,6 +309,7 @@ export function bindEndpointsRecursively({
 				// Set once Hub has charged for this call; a failure from here on is
 				// reported so the charge is given back.
 				let meteredCall: ManagedPricingCall | undefined;
+				// unknown: whatever the call, a hook or the permission record threw.
 				const reportIfCharged = async (error: unknown) => {
 					if (meteredCall && hubConfig) {
 						await reportManagedPricingCallFailed(hubConfig, meteredCall, error);
@@ -405,13 +406,15 @@ export function bindEndpointsRecursively({
 
 				if (!endpointHooks?.before && !endpointHooks?.after) {
 					let res: Awaited<ReturnType<typeof call>>;
+					// Recording a completed approval is inside: if it throws, the
+					// caller gets an error, so the call is refunded like any other.
 					try {
 						res = await call(0, { ...ctx, key }, args);
+						await onPermissionComplete?.();
 					} catch (error) {
 						await reportIfCharged(error);
 						throw error;
 					}
-					await onPermissionComplete?.();
 					if (plugin && hubConfig) {
 						reportPluginConnectionStatusFromBinding({
 							hub: hubConfig,
@@ -448,11 +451,11 @@ export function bindEndpointsRecursively({
 						res,
 						beforeResult.passToAfter,
 					);
+					await onPermissionComplete?.();
 				} catch (error) {
 					await reportIfCharged(error);
 					throw error;
 				}
-				await onPermissionComplete?.();
 				if (plugin && hubConfig) {
 					reportPluginConnectionStatusFromBinding({
 						hub: hubConfig,

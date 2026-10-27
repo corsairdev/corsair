@@ -9,6 +9,8 @@ const hub: HubConfig = {
 	instanceKey: 'main',
 };
 
+// Binding reads only the plugin's id and options.authType (to pick managed
+// pricing), so the rest of a CorsairPlugin is left out of this fixture.
 const plugin = {
 	id: 'reducto',
 	options: { authType: 'managed_pricing' as const },
@@ -18,8 +20,12 @@ const META: Record<string, EndpointMetaEntry> = {
 	'parse.parse': { riskLevel: 'read' },
 };
 
+// unknown: the test endpoints take no real input and the tests read results
+// with matchers, so neither side needs a type.
 type Api = { parse: { parse: (args: unknown) => Promise<unknown> } };
 
+// unknown: bind takes any endpoint context, hooks and tree, as
+// bindEndpointsRecursively does; the tests check only what reaches Hub.
 function bind(
 	run: (ctx: Record<string, unknown>) => Promise<unknown>,
 	hooks?: Record<string, unknown>,
@@ -38,9 +44,12 @@ function bind(
 		hubConfig: hub,
 		plugin,
 	});
+	// bindEndpointsRecursively writes the bound function at each path of
+	// `endpoints` above, so the tree has exactly the Api shape.
 	return tree as Api;
 }
 
+// unknown: request bodies are parsed JSON, read with matchers.
 type Sent = { url: string; body: Record<string, unknown>; headers: Headers };
 
 // Hub answers the key request; the outcome report gets `outcomeStatus`.
@@ -76,6 +85,20 @@ afterEach(() => {
 });
 
 describe('a managed call that fails', () => {
+	it('is reported even when the thrown value cannot be printed', async () => {
+		const hubCalls = mockHub();
+		const unprintable = Object.create(null);
+		const api = bind(async () => {
+			throw unprintable;
+		});
+
+		await expect(api.parse.parse({})).rejects.toBe(unprintable);
+		expect(hubCalls.outcomes()[0]?.body).toMatchObject({
+			outcome: 'failed',
+			error: 'Unprintable thrown value',
+		});
+	});
+
 	it('is reported under the idempotency key it was charged with, and still throws', async () => {
 		const hubCalls = mockHub();
 		const api = bind(async () => {
@@ -129,6 +152,7 @@ describe('a managed call that fails', () => {
 		const api = bind(run, {
 			parse: {
 				parse: {
+					// unknown: the hook passes both through untouched.
 					before: async (ctx: unknown, args: unknown) => ({
 						ctx,
 						args,
