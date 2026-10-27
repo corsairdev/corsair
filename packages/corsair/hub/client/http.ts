@@ -149,10 +149,12 @@ export async function hubApiGet<T>(input: {
 	path: string;
 	notFoundMessage?: string;
 	parseResponse: (payload: unknown) => T;
+	signal?: AbortSignal;
 }): Promise<T> {
 	const apiUrl = normalizeHubApiUrl(input.hub.apiUrl);
 	const response = await fetch(`${apiUrl}${input.path}`, {
 		method: 'GET',
+		...(input.signal ? { signal: input.signal } : {}),
 		headers: {
 			authorization: `Bearer ${input.hub.projectApiKey}`,
 			...appDeliveryUrlHeader(input.hub),

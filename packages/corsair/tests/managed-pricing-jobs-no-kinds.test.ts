@@ -10,6 +10,8 @@ const hub: HubConfig = {
 	apiUrl: 'https://hub.test',
 	instanceKey: 'main',
 };
+// Binding reads only the plugin's id and options.authType (to pick managed
+// pricing), so the rest of a CorsairPlugin is left out of this fixture.
 const plugin = {
 	id: 'firecrawl',
 	options: { authType: 'managed_pricing' as const },
@@ -20,6 +22,7 @@ afterEach(() => {
 });
 
 it('a Hub with no job kinds gets the calls it got before', async () => {
+	// unknown: request bodies are parsed JSON, read with matchers.
 	const sent: { url: string; body: Record<string, unknown> }[] = [];
 	jest.spyOn(globalThis, 'fetch').mockImplementation(async (input, init) => {
 		const url = String(input);
@@ -34,6 +37,7 @@ it('a Hub with no job kinds gets the calls it got before', async () => {
 			{ status, headers: { 'content-type': 'application/json' } },
 		);
 	});
+	// unknown: bind writes bound functions of any shape into the tree.
 	const tree: Record<string, unknown> = {};
 	bindEndpointsRecursively({
 		endpoints: {
@@ -49,7 +53,8 @@ it('a Hub with no job kinds gets the calls it got before', async () => {
 		hubConfig: hub,
 		plugin,
 	});
-	// bindEndpointsRecursively writes the bound function at crawl.start.
+	// bindEndpointsRecursively writes the bound function at crawl.start; the
+	// test endpoint takes any input and is read with matchers, hence unknown.
 	const api = tree as { crawl: { start: (args: unknown) => Promise<unknown> } };
 
 	await expect(

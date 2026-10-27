@@ -38,6 +38,9 @@ const KINDS_TTL_MS = 10 * 60_000;
 /** A failed read is retried soon, but not on every call. */
 const KINDS_FAILURE_TTL_MS = 30_000;
 const REPORT_TIMEOUT_MS = 3_000;
+/** Every managed call waits on this read when the cache is cold, so a Hub
+ *  that stalls must not hold the call up for long. */
+const KINDS_TIMEOUT_MS = 2_000;
 
 const kindsByCache = new WeakMap<
 	object,
@@ -82,6 +85,7 @@ export async function getManagedJobKinds(
 				hub,
 				path: '/managed-pricing/job-kinds',
 				parseResponse: parseKinds,
+				signal: AbortSignal.timeout(KINDS_TIMEOUT_MS),
 			});
 			byScope.set(scope, { kinds, until: Date.now() + KINDS_TTL_MS });
 			return kinds;
@@ -162,7 +166,8 @@ async function post(
 /**
  * Tells Hub what a job operation that succeeded returned: a start's job id, so
  * Hub ties the job to its charge, or what a read saw, so Hub settles the job
- * the first time a read sees it end.
+ * the first time a read sees it end. `startedJob` says a running job was
+ * reported, whose charge must not then be given back as a failed call.
  */
 export async function reportManagedJobCall(
 	hub: HubConfig,
@@ -172,16 +177,16 @@ export async function reportManagedJobCall(
 	// unknown: the endpoint's own arguments and result.
 	args: unknown,
 	result: unknown,
-): Promise<void> {
+): Promise<{ startedJob: boolean }> {
 	if (kind.role === 'start') {
 		const providerJobId = readString(result, kind.id_path);
-		if (!providerJobId || !call.idempotencyKey) return;
+		if (!providerJobId || !call.idempotencyKey) return { startedJob: false };
 		await post(hub, '/managed-pricing/jobs', { ...call, providerJobId });
-		return;
+		return { startedJob: true };
 	}
 	const providerJobId = readString(args, kind.id_arg);
 	const providerStatus = readString(result, kind.status_path);
-	if (!providerJobId || !providerStatus) return;
+	if (!providerJobId || !providerStatus) return { startedJob: false };
 	const units = kind.usage_path
 		? readUsageUnits(result, kind.usage_path)
 		: undefined;
@@ -193,4 +198,5 @@ export async function reportManagedJobCall(
 		providerStatus,
 		...(units !== undefined && { units }),
 	});
+	return { startedJob: false };
 }

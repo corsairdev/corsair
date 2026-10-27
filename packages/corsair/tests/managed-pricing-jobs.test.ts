@@ -48,8 +48,13 @@ const KINDS = [
 type Fn = (args: unknown) => Promise<unknown>;
 type Api = { crawl: { start: Fn; get: Fn }; scrape: { run: Fn } };
 
-// unknown: each endpoint answers with the canned result the test gives it.
-function bind(results: Record<string, () => Promise<unknown>>): Api {
+// unknown: each endpoint answers with the canned result the test gives it, and
+// hooks are any endpoint hooks, as bindEndpointsRecursively takes them.
+function bind(
+	results: Record<string, () => Promise<unknown>>,
+	hooks?: Record<string, unknown>,
+	hubConfig: HubConfig = hub,
+): Api {
 	const tree: Record<string, unknown> = {};
 	const endpoint = (path: string) => async () => results[path]!();
 	bindEndpointsRecursively({
@@ -57,6 +62,7 @@ function bind(results: Record<string, () => Promise<unknown>>): Api {
 			crawl: { start: endpoint('crawl.start'), get: endpoint('crawl.get') },
 			scrape: { run: endpoint('scrape.run') },
 		},
+		hooks,
 		ctx: {},
 		tree,
 		pluginId: 'firecrawl',
@@ -64,7 +70,7 @@ function bind(results: Record<string, () => Promise<unknown>>): Api {
 		currentPath: [],
 		endpointMeta: META,
 		tenantId: 'me',
-		hubConfig: hub,
+		hubConfig,
 		plugin,
 	});
 	// bindEndpointsRecursively writes the bound function at each path of
@@ -75,7 +81,13 @@ function bind(results: Record<string, () => Promise<unknown>>): Api {
 // unknown: request bodies are parsed JSON, read with matchers.
 type Sent = { url: string; method: string; body: Record<string, unknown> };
 
-function mockHub({ kinds = true }: { kinds?: boolean } = {}) {
+function mockHub({
+	kinds = true,
+	stallKinds = false,
+}: {
+	kinds?: boolean;
+	stallKinds?: boolean;
+} = {}) {
 	const sent: Sent[] = [];
 	jest.spyOn(globalThis, 'fetch').mockImplementation(async (input, init) => {
 		const url = String(input);
@@ -87,6 +99,14 @@ function mockHub({ kinds = true }: { kinds?: boolean } = {}) {
 				headers: { 'content-type': 'application/json' },
 			});
 		if (url.endsWith('/managed-pricing/job-kinds')) {
+			if (stallKinds) {
+				// A Hub that never answers: only the request's own deadline ends it.
+				return new Promise<Response>((_, reject) => {
+					init?.signal?.addEventListener('abort', () =>
+						reject(init.signal?.reason),
+					);
+				});
+			}
 			return kinds
 				? json(200, { kinds: KINDS })
 				: json(404, { error: 'Not found' });
@@ -217,5 +237,75 @@ describe('the job kinds', () => {
 		expect(hubCalls.credentials()[0]?.body).not.toHaveProperty('jobId');
 		expect(hubCalls.starts()).toHaveLength(0);
 		expect(hubCalls.reports()).toHaveLength(0);
+	});
+});
+
+describe('around a job call', () => {
+	it('records a started job even when a hook after the call throws, and gives nothing back', async () => {
+		const hubCalls = mockHub();
+		const api = bind(
+			{ 'crawl.start': async () => ({ success: true, id: 'crawl-abc' }) },
+			{
+				crawl: {
+					start: {
+						after: async () => {
+							throw new Error('cache write failed');
+						},
+					},
+				},
+			},
+		);
+		await expect(
+			api.crawl.start({ url: 'https://example.com', limit: 50 }),
+		).rejects.toThrow('cache write failed');
+		expect(hubCalls.starts()).toHaveLength(1);
+		expect(hubCalls.outcomes()).toHaveLength(0);
+	});
+
+	it('refuses a hook that changes the cap Hub held credits for, and gives the hold back', async () => {
+		const hubCalls = mockHub();
+		let ran = false;
+		const api = bind(
+			{
+				'crawl.start': async () => {
+					ran = true;
+					return { success: true, id: 'crawl-abc' };
+				},
+			},
+			{
+				crawl: {
+					start: {
+						// unknown: hooks receive any context and arguments.
+						before: async (ctx: unknown, args: unknown) => ({
+							ctx,
+							args: { ...(args as Record<string, unknown>), limit: 900 },
+							continue: true,
+						}),
+					},
+				},
+			},
+		);
+		await expect(
+			api.crawl.start({ url: 'https://example.com', limit: 50 }),
+		).rejects.toThrow("changed crawl.start's cap");
+		expect(ran).toBe(false);
+		expect(hubCalls.outcomes()[0]?.body).toMatchObject({ outcome: 'failed' });
+		expect(hubCalls.starts()).toHaveLength(0);
+	});
+
+	it('does not wait on a Hub that never answers for its job kinds', async () => {
+		const hubCalls = mockHub({ stallKinds: true });
+		// Its own Hub, so the job kinds cached by the tests above don't answer.
+		const api = bind(
+			{ 'scrape.run': async () => ({ success: true }) },
+			undefined,
+			{ ...hub, apiUrl: 'https://stalled-hub.test' },
+		);
+		const started = Date.now();
+		await expect(
+			api.scrape.run({ url: 'https://example.com' }),
+		).resolves.toMatchObject({ success: true });
+		expect(Date.now() - started).toBeLessThan(5_000);
+		expect(hubCalls.credentials()).toHaveLength(1);
 	});
 });

@@ -324,24 +324,37 @@ export function bindEndpointsRecursively({
 				// Set when the call starts a provider job or reads one back on
 				// Corsair's key (managed-pricing-jobs.ts).
 				let managedJob: ManagedJobKind | undefined;
+				// Set once a started job is reported: it is running at the provider,
+				// so a later local failure must not give its hold back.
+				let startedJob = false;
 				// unknown: whatever the call, a hook or the permission record threw.
 				const reportIfCharged = async (error: unknown) => {
 					// A job read is never charged, so it has nothing to give back.
-					if (meteredCall && hubConfig && managedJob?.role !== 'status') {
+					if (
+						meteredCall &&
+						hubConfig &&
+						managedJob?.role !== 'status' &&
+						!startedJob
+					) {
 						await reportManagedPricingCallFailed(hubConfig, meteredCall, error);
 					}
 				};
+				// Right after the provider answers, before any hook or approval
+				// record that could still throw: the job exists either way.
+				// unknown: the arguments the provider got and what it returned.
+				const reportJob = async (callArgs: unknown, result: unknown) => {
+					if (!managedJob || !hubConfig || !meteredCall) return;
+					const reported = await reportManagedJobCall(
+						hubConfig,
+						managedJob,
+						meteredCall,
+						callArgs,
+						result,
+					);
+					startedJob = reported.startedJob;
+				};
 				// unknown: each plugin's result has its own shape; only the path is known.
 				const reportUsage = async (result: unknown) => {
-					if (managedJob && hubConfig && meteredCall) {
-						await reportManagedJobCall(
-							hubConfig,
-							managedJob,
-							meteredCall,
-							args,
-							result,
-						);
-					}
 					if (!meteredCall || !hubConfig || !usagePath) return;
 					const units = readUsageUnits(result, usagePath);
 					if (units !== undefined) {
@@ -451,6 +464,7 @@ export function bindEndpointsRecursively({
 					// caller gets an error, so the call is refunded like any other.
 					try {
 						res = await call(0, { ...ctx, key }, args);
+						await reportJob(args, res);
 						await onPermissionComplete?.();
 					} catch (error) {
 						await reportIfCharged(error);
@@ -487,7 +501,22 @@ export function bindEndpointsRecursively({
 						await reportIfCharged(new Error('Stopped by a before hook'));
 						return;
 					}
+					// Hub held credits for the cap, or checked the job id, it was
+					// sent with the key request; a hook may not change either after.
+					if (managedJob) {
+						const sent = managedJobRequestFields(managedJob, args);
+						const final = managedJobRequestFields(
+							managedJob,
+							beforeResult.args,
+						);
+						if (sent.cap !== final.cap || sent.jobId !== final.jobId) {
+							throw new Error(
+								`A before hook changed ${operationPath}'s ${managedJob.role === 'start' ? 'cap' : 'job id'} after Corsair checked it, so the call did not run.`,
+							);
+						}
+					}
 					res = await call(0, beforeResult.ctx, beforeResult.args);
+					await reportJob(beforeResult.args, res);
 					await endpointHooks.after?.(
 						beforeResult.ctx,
 						res,
