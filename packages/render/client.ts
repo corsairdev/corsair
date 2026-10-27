@@ -21,7 +21,7 @@ const RENDER_API_BASE = 'https://api.render.com';
 
 const RATE_LIMIT_CONFIG: RateLimitConfig = {
 	enabled: true,
-	maxRetries: 3,
+	maxRetries: 0,
 	initialRetryDelay: 1000,
 	backoffMultiplier: 2,
 	headerNames: { retryAfter: 'Retry-After' },

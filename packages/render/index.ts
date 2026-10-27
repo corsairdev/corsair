@@ -21,15 +21,27 @@ import {
 	addRoute,
 	cancelDeploy,
 	cancelServiceJob,
+	cancelTaskRun,
+	createBuildSource,
 	createCustomDomain,
+	createDedicatedIp,
 	createDisk,
 	createEnvGroup,
 	createEnvironment,
 	createPostgres,
+	createPostgresExport,
+	createPostgresUser,
 	createProject,
 	createRegistryCredential,
 	createServiceJob,
+	createTaskRun,
 	createWebhook,
+	createWorkflow,
+	createWorkflowVersion,
+	deleteBuildSource,
+	deleteBuildSourceEnvVar,
+	deleteBuildSourceSecretFile,
+	deleteDedicatedIp,
 	deleteDisk,
 	deleteEnvGroup,
 	deleteEnvGroupEnvVar,
@@ -38,11 +50,13 @@ import {
 	deleteKeyValue,
 	deleteOwnerLogStream,
 	deleteOwnerMetricsStream,
+	deletePostgres,
 	deletePostgresUser,
 	deleteRegistryCredential,
 	deleteSecretFile,
 	deleteService,
 	deleteWebhook,
+	deleteWorkflow,
 	disconnectBlueprint,
 	failoverPostgres,
 	getActiveConnections,
@@ -56,10 +70,16 @@ import {
 	getMemoryLimit,
 	getMemoryTarget,
 	getUser,
+	linkEnvGroupToBuildSource,
 	linkServiceToEnvGroup,
 	listApplicationFilterValues,
 	listBlueprintSyncs,
 	listBlueprints,
+	listBuildSourceBuilds,
+	listBuildSourceEnvVars,
+	listBuildSourceSecretFiles,
+	listBuildSources,
+	listDedicatedIps,
 	listDeploys,
 	listDiskSnapshots,
 	listDisks,
@@ -78,6 +98,10 @@ import {
 	listOwners,
 	listPostgres,
 	listPostgresExport,
+	listPostgresProcesses,
+	listPostgresSizes,
+	listPostgresTableScans,
+	listPostgresTopQueries,
 	listPostgresUsers,
 	listProjects,
 	listRegistryCredentials,
@@ -102,7 +126,13 @@ import {
 	resumeKeyValue,
 	resumePostgres,
 	resumeService,
+	retrieveBlueprint,
+	retrieveBuildSource,
+	retrieveBuildSourceBuild,
+	retrieveBuildSourceEnvVar,
+	retrieveBuildSourceSecretFile,
 	retrieveCustomDomain,
+	retrieveDedicatedIp,
 	retrieveDeploy,
 	retrieveDisk,
 	retrieveEnvGroup,
@@ -122,16 +152,27 @@ import {
 	retrieveSecretFile,
 	retrieveService,
 	retrieveServiceJob,
+	retrieveTask,
+	retrieveTaskRun,
 	retrieveWebhook,
+	retrieveWorkflow,
+	retrieveWorkflowVersion,
 	rollbackDeploy,
-	streamTaskRunsEvents,
-	subscribeLogs,
 	suspendKeyValue,
 	suspendPostgres,
 	suspendService,
+	triggerBuildSourceBuild,
 	triggerCronJobRun,
 	triggerDeploy,
 	triggerMaintenance,
+	unlinkEnvGroupFromBuildSource,
+	updateBlueprint,
+	updateBuildSource,
+	updateBuildSourceEnvVar,
+	updateBuildSourceEnvVars,
+	updateBuildSourceSecretFile,
+	updateBuildSourceSecretFiles,
+	updateDedicatedIp,
 	updateDisk,
 	updateEnvGroup,
 	updateEnvGroupEnvVar,
@@ -151,6 +192,8 @@ import {
 	updateSecretFilesForService,
 	updateService,
 	updateWebhook,
+	updateWorkflow,
+	validateBlueprint,
 	verifyCustomDomain,
 } from './endpoints';
 
@@ -236,7 +279,6 @@ export type RenderEndpoints = {
 	getUser: RenderEndpoint<'getUser'>;
 	listLogs: RenderEndpoint<'listLogs'>;
 	listLogsValues: RenderEndpoint<'listLogsValues'>;
-	subscribeLogs: RenderEndpoint<'subscribeLogs'>;
 	listResourceLogStreams: RenderEndpoint<'listResourceLogStreams'>;
 	deleteOwnerLogStream: RenderEndpoint<'deleteOwnerLogStream'>;
 	updateOwnerLogStream: RenderEndpoint<'updateOwnerLogStream'>;
@@ -255,7 +297,6 @@ export type RenderEndpoints = {
 	listMaintenance: RenderEndpoint<'listMaintenance'>;
 	listTaskRuns: RenderEndpoint<'listTaskRuns'>;
 	listTasks: RenderEndpoint<'listTasks'>;
-	streamTaskRunsEvents: RenderEndpoint<'streamTaskRunsEvents'>;
 	listWorkflows: RenderEndpoint<'listWorkflows'>;
 	listWorkflowVersions: RenderEndpoint<'listWorkflowVersions'>;
 	listWebhooks: RenderEndpoint<'listWebhooks'>;
@@ -314,6 +355,51 @@ export type RenderEndpoints = {
 	deleteOwnerMetricsStream: RenderEndpoint<'deleteOwnerMetricsStream'>;
 	updateOwnerNotificationSettings: RenderEndpoint<'updateOwnerNotificationSettings'>;
 	updateRoutes: RenderEndpoint<'updateRoutes'>;
+	createBuildSource: RenderEndpoint<'createBuildSource'>;
+	listBuildSources: RenderEndpoint<'listBuildSources'>;
+	retrieveBuildSource: RenderEndpoint<'retrieveBuildSource'>;
+	updateBuildSource: RenderEndpoint<'updateBuildSource'>;
+	deleteBuildSource: RenderEndpoint<'deleteBuildSource'>;
+	listBuildSourceBuilds: RenderEndpoint<'listBuildSourceBuilds'>;
+	triggerBuildSourceBuild: RenderEndpoint<'triggerBuildSourceBuild'>;
+	retrieveBuildSourceBuild: RenderEndpoint<'retrieveBuildSourceBuild'>;
+	listBuildSourceEnvVars: RenderEndpoint<'listBuildSourceEnvVars'>;
+	updateBuildSourceEnvVars: RenderEndpoint<'updateBuildSourceEnvVars'>;
+	retrieveBuildSourceEnvVar: RenderEndpoint<'retrieveBuildSourceEnvVar'>;
+	updateBuildSourceEnvVar: RenderEndpoint<'updateBuildSourceEnvVar'>;
+	deleteBuildSourceEnvVar: RenderEndpoint<'deleteBuildSourceEnvVar'>;
+	listBuildSourceSecretFiles: RenderEndpoint<'listBuildSourceSecretFiles'>;
+	updateBuildSourceSecretFiles: RenderEndpoint<'updateBuildSourceSecretFiles'>;
+	retrieveBuildSourceSecretFile: RenderEndpoint<'retrieveBuildSourceSecretFile'>;
+	updateBuildSourceSecretFile: RenderEndpoint<'updateBuildSourceSecretFile'>;
+	deleteBuildSourceSecretFile: RenderEndpoint<'deleteBuildSourceSecretFile'>;
+	linkEnvGroupToBuildSource: RenderEndpoint<'linkEnvGroupToBuildSource'>;
+	unlinkEnvGroupFromBuildSource: RenderEndpoint<'unlinkEnvGroupFromBuildSource'>;
+	validateBlueprint: RenderEndpoint<'validateBlueprint'>;
+	retrieveBlueprint: RenderEndpoint<'retrieveBlueprint'>;
+	updateBlueprint: RenderEndpoint<'updateBlueprint'>;
+	listDedicatedIps: RenderEndpoint<'listDedicatedIps'>;
+	createDedicatedIp: RenderEndpoint<'createDedicatedIp'>;
+	retrieveDedicatedIp: RenderEndpoint<'retrieveDedicatedIp'>;
+	updateDedicatedIp: RenderEndpoint<'updateDedicatedIp'>;
+	deleteDedicatedIp: RenderEndpoint<'deleteDedicatedIp'>;
+	deletePostgres: RenderEndpoint<'deletePostgres'>;
+	createPostgresExport: RenderEndpoint<'createPostgresExport'>;
+	createPostgresUser: RenderEndpoint<'createPostgresUser'>;
+	listPostgresProcesses: RenderEndpoint<'listPostgresProcesses'>;
+	listPostgresTopQueries: RenderEndpoint<'listPostgresTopQueries'>;
+	listPostgresSizes: RenderEndpoint<'listPostgresSizes'>;
+	listPostgresTableScans: RenderEndpoint<'listPostgresTableScans'>;
+	createWorkflow: RenderEndpoint<'createWorkflow'>;
+	retrieveWorkflow: RenderEndpoint<'retrieveWorkflow'>;
+	updateWorkflow: RenderEndpoint<'updateWorkflow'>;
+	deleteWorkflow: RenderEndpoint<'deleteWorkflow'>;
+	createWorkflowVersion: RenderEndpoint<'createWorkflowVersion'>;
+	retrieveWorkflowVersion: RenderEndpoint<'retrieveWorkflowVersion'>;
+	retrieveTask: RenderEndpoint<'retrieveTask'>;
+	createTaskRun: RenderEndpoint<'createTaskRun'>;
+	retrieveTaskRun: RenderEndpoint<'retrieveTaskRun'>;
+	cancelTaskRun: RenderEndpoint<'cancelTaskRun'>;
 };
 
 const renderEndpointsNested = {
@@ -372,6 +458,13 @@ const renderEndpointsNested = {
 		recoveryInfo: retrievePostgresRecoveryInfo,
 		recover: recoverPostgres,
 		deleteUser: deletePostgresUser,
+		delete: deletePostgres,
+		createExport: createPostgresExport,
+		createUser: createPostgresUser,
+		processes: listPostgresProcesses,
+		topQueries: listPostgresTopQueries,
+		sizes: listPostgresSizes,
+		tableScans: listPostgresTableScans,
 	},
 	registryCredentials: {
 		list: listRegistryCredentials,
@@ -396,12 +489,51 @@ const renderEndpointsNested = {
 	},
 	blueprints: {
 		listSyncs: listBlueprintSyncs,
+		validate: validateBlueprint,
+		retrieve: retrieveBlueprint,
+		update: updateBlueprint,
+	},
+	dedicatedIps: {
+		list: listDedicatedIps,
+		create: createDedicatedIp,
+		retrieve: retrieveDedicatedIp,
+		update: updateDedicatedIp,
+		delete: deleteDedicatedIp,
+	},
+	buildSources: {
+		create: createBuildSource,
+		list: listBuildSources,
+		retrieve: retrieveBuildSource,
+		update: updateBuildSource,
+		delete: deleteBuildSource,
+		builds: {
+			list: listBuildSourceBuilds,
+			trigger: triggerBuildSourceBuild,
+			retrieve: retrieveBuildSourceBuild,
+		},
+		envVars: {
+			list: listBuildSourceEnvVars,
+			update: updateBuildSourceEnvVars,
+			retrieve: retrieveBuildSourceEnvVar,
+			upsert: updateBuildSourceEnvVar,
+			delete: deleteBuildSourceEnvVar,
+		},
+		secretFiles: {
+			list: listBuildSourceSecretFiles,
+			update: updateBuildSourceSecretFiles,
+			retrieve: retrieveBuildSourceSecretFile,
+			upsert: updateBuildSourceSecretFile,
+			delete: deleteBuildSourceSecretFile,
+		},
+		envGroups: {
+			link: linkEnvGroupToBuildSource,
+			unlink: unlinkEnvGroupFromBuildSource,
+		},
 	},
 	user: { get: getUser },
 	logs: {
 		list: listLogs,
 		values: listLogsValues,
-		subscribe: subscribeLogs,
 		resourceStreams: listResourceLogStreams,
 		deleteOwnerStream: deleteOwnerLogStream,
 		updateOwnerStream: updateOwnerLogStream,
@@ -424,7 +556,6 @@ const renderEndpointsNested = {
 		listMaintenance,
 		listTaskRuns,
 		listTasks,
-		streamTaskRunsEvents,
 		listWorkflows,
 		listWorkflowVersions,
 		listWebhooks,
@@ -442,6 +573,16 @@ const renderEndpointsNested = {
 		retrieveWebhook,
 		updateWebhook,
 		deleteWebhook,
+		createWorkflow,
+		retrieveWorkflow,
+		updateWorkflow,
+		deleteWorkflow,
+		createWorkflowVersion,
+		retrieveWorkflowVersion,
+		retrieveTask,
+		createTaskRun,
+		retrieveTaskRun,
+		cancelTaskRun,
 	},
 	final: {
 		addHeaders,
@@ -713,10 +854,6 @@ export const renderEndpointSchemas = {
 		input: RenderEndpointInputSchemas.listLogsValues,
 		output: RenderEndpointOutputSchemas.listLogsValues,
 	},
-	'logs.subscribe': {
-		input: RenderEndpointInputSchemas.subscribeLogs,
-		output: RenderEndpointOutputSchemas.subscribeLogs,
-	},
 	'logs.resourceStreams': {
 		input: RenderEndpointInputSchemas.listResourceLogStreams,
 		output: RenderEndpointOutputSchemas.listResourceLogStreams,
@@ -788,10 +925,6 @@ export const renderEndpointSchemas = {
 	'automation.listTasks': {
 		input: RenderEndpointInputSchemas.listTasks,
 		output: RenderEndpointOutputSchemas.listTasks,
-	},
-	'automation.streamTaskRunsEvents': {
-		input: RenderEndpointInputSchemas.streamTaskRunsEvents,
-		output: RenderEndpointOutputSchemas.streamTaskRunsEvents,
 	},
 	'automation.listWorkflows': {
 		input: RenderEndpointInputSchemas.listWorkflows,
@@ -1024,6 +1157,186 @@ export const renderEndpointSchemas = {
 	'final.updateRoutes': {
 		input: RenderEndpointInputSchemas.updateRoutes,
 		output: RenderEndpointOutputSchemas.updateRoutes,
+	},
+	'buildSources.create': {
+		input: RenderEndpointInputSchemas.createBuildSource,
+		output: RenderEndpointOutputSchemas.createBuildSource,
+	},
+	'buildSources.list': {
+		input: RenderEndpointInputSchemas.listBuildSources,
+		output: RenderEndpointOutputSchemas.listBuildSources,
+	},
+	'buildSources.retrieve': {
+		input: RenderEndpointInputSchemas.retrieveBuildSource,
+		output: RenderEndpointOutputSchemas.retrieveBuildSource,
+	},
+	'buildSources.update': {
+		input: RenderEndpointInputSchemas.updateBuildSource,
+		output: RenderEndpointOutputSchemas.updateBuildSource,
+	},
+	'buildSources.delete': {
+		input: RenderEndpointInputSchemas.deleteBuildSource,
+		output: RenderEndpointOutputSchemas.deleteBuildSource,
+	},
+	'buildSources.builds.list': {
+		input: RenderEndpointInputSchemas.listBuildSourceBuilds,
+		output: RenderEndpointOutputSchemas.listBuildSourceBuilds,
+	},
+	'buildSources.builds.trigger': {
+		input: RenderEndpointInputSchemas.triggerBuildSourceBuild,
+		output: RenderEndpointOutputSchemas.triggerBuildSourceBuild,
+	},
+	'buildSources.builds.retrieve': {
+		input: RenderEndpointInputSchemas.retrieveBuildSourceBuild,
+		output: RenderEndpointOutputSchemas.retrieveBuildSourceBuild,
+	},
+	'buildSources.envVars.list': {
+		input: RenderEndpointInputSchemas.listBuildSourceEnvVars,
+		output: RenderEndpointOutputSchemas.listBuildSourceEnvVars,
+	},
+	'buildSources.envVars.update': {
+		input: RenderEndpointInputSchemas.updateBuildSourceEnvVars,
+		output: RenderEndpointOutputSchemas.updateBuildSourceEnvVars,
+	},
+	'buildSources.envVars.retrieve': {
+		input: RenderEndpointInputSchemas.retrieveBuildSourceEnvVar,
+		output: RenderEndpointOutputSchemas.retrieveBuildSourceEnvVar,
+	},
+	'buildSources.envVars.upsert': {
+		input: RenderEndpointInputSchemas.updateBuildSourceEnvVar,
+		output: RenderEndpointOutputSchemas.updateBuildSourceEnvVar,
+	},
+	'buildSources.envVars.delete': {
+		input: RenderEndpointInputSchemas.deleteBuildSourceEnvVar,
+		output: RenderEndpointOutputSchemas.deleteBuildSourceEnvVar,
+	},
+	'buildSources.secretFiles.list': {
+		input: RenderEndpointInputSchemas.listBuildSourceSecretFiles,
+		output: RenderEndpointOutputSchemas.listBuildSourceSecretFiles,
+	},
+	'buildSources.secretFiles.update': {
+		input: RenderEndpointInputSchemas.updateBuildSourceSecretFiles,
+		output: RenderEndpointOutputSchemas.updateBuildSourceSecretFiles,
+	},
+	'buildSources.secretFiles.retrieve': {
+		input: RenderEndpointInputSchemas.retrieveBuildSourceSecretFile,
+		output: RenderEndpointOutputSchemas.retrieveBuildSourceSecretFile,
+	},
+	'buildSources.secretFiles.upsert': {
+		input: RenderEndpointInputSchemas.updateBuildSourceSecretFile,
+		output: RenderEndpointOutputSchemas.updateBuildSourceSecretFile,
+	},
+	'buildSources.secretFiles.delete': {
+		input: RenderEndpointInputSchemas.deleteBuildSourceSecretFile,
+		output: RenderEndpointOutputSchemas.deleteBuildSourceSecretFile,
+	},
+	'buildSources.envGroups.link': {
+		input: RenderEndpointInputSchemas.linkEnvGroupToBuildSource,
+		output: RenderEndpointOutputSchemas.linkEnvGroupToBuildSource,
+	},
+	'buildSources.envGroups.unlink': {
+		input: RenderEndpointInputSchemas.unlinkEnvGroupFromBuildSource,
+		output: RenderEndpointOutputSchemas.unlinkEnvGroupFromBuildSource,
+	},
+	'blueprints.validate': {
+		input: RenderEndpointInputSchemas.validateBlueprint,
+		output: RenderEndpointOutputSchemas.validateBlueprint,
+	},
+	'blueprints.retrieve': {
+		input: RenderEndpointInputSchemas.retrieveBlueprint,
+		output: RenderEndpointOutputSchemas.retrieveBlueprint,
+	},
+	'blueprints.update': {
+		input: RenderEndpointInputSchemas.updateBlueprint,
+		output: RenderEndpointOutputSchemas.updateBlueprint,
+	},
+	'dedicatedIps.list': {
+		input: RenderEndpointInputSchemas.listDedicatedIps,
+		output: RenderEndpointOutputSchemas.listDedicatedIps,
+	},
+	'dedicatedIps.create': {
+		input: RenderEndpointInputSchemas.createDedicatedIp,
+		output: RenderEndpointOutputSchemas.createDedicatedIp,
+	},
+	'dedicatedIps.retrieve': {
+		input: RenderEndpointInputSchemas.retrieveDedicatedIp,
+		output: RenderEndpointOutputSchemas.retrieveDedicatedIp,
+	},
+	'dedicatedIps.update': {
+		input: RenderEndpointInputSchemas.updateDedicatedIp,
+		output: RenderEndpointOutputSchemas.updateDedicatedIp,
+	},
+	'dedicatedIps.delete': {
+		input: RenderEndpointInputSchemas.deleteDedicatedIp,
+		output: RenderEndpointOutputSchemas.deleteDedicatedIp,
+	},
+	'postgres.delete': {
+		input: RenderEndpointInputSchemas.deletePostgres,
+		output: RenderEndpointOutputSchemas.deletePostgres,
+	},
+	'postgres.createExport': {
+		input: RenderEndpointInputSchemas.createPostgresExport,
+		output: RenderEndpointOutputSchemas.createPostgresExport,
+	},
+	'postgres.createUser': {
+		input: RenderEndpointInputSchemas.createPostgresUser,
+		output: RenderEndpointOutputSchemas.createPostgresUser,
+	},
+	'postgres.processes': {
+		input: RenderEndpointInputSchemas.listPostgresProcesses,
+		output: RenderEndpointOutputSchemas.listPostgresProcesses,
+	},
+	'postgres.topQueries': {
+		input: RenderEndpointInputSchemas.listPostgresTopQueries,
+		output: RenderEndpointOutputSchemas.listPostgresTopQueries,
+	},
+	'postgres.sizes': {
+		input: RenderEndpointInputSchemas.listPostgresSizes,
+		output: RenderEndpointOutputSchemas.listPostgresSizes,
+	},
+	'postgres.tableScans': {
+		input: RenderEndpointInputSchemas.listPostgresTableScans,
+		output: RenderEndpointOutputSchemas.listPostgresTableScans,
+	},
+	'automation.createWorkflow': {
+		input: RenderEndpointInputSchemas.createWorkflow,
+		output: RenderEndpointOutputSchemas.createWorkflow,
+	},
+	'automation.retrieveWorkflow': {
+		input: RenderEndpointInputSchemas.retrieveWorkflow,
+		output: RenderEndpointOutputSchemas.retrieveWorkflow,
+	},
+	'automation.updateWorkflow': {
+		input: RenderEndpointInputSchemas.updateWorkflow,
+		output: RenderEndpointOutputSchemas.updateWorkflow,
+	},
+	'automation.deleteWorkflow': {
+		input: RenderEndpointInputSchemas.deleteWorkflow,
+		output: RenderEndpointOutputSchemas.deleteWorkflow,
+	},
+	'automation.createWorkflowVersion': {
+		input: RenderEndpointInputSchemas.createWorkflowVersion,
+		output: RenderEndpointOutputSchemas.createWorkflowVersion,
+	},
+	'automation.retrieveWorkflowVersion': {
+		input: RenderEndpointInputSchemas.retrieveWorkflowVersion,
+		output: RenderEndpointOutputSchemas.retrieveWorkflowVersion,
+	},
+	'automation.retrieveTask': {
+		input: RenderEndpointInputSchemas.retrieveTask,
+		output: RenderEndpointOutputSchemas.retrieveTask,
+	},
+	'automation.createTaskRun': {
+		input: RenderEndpointInputSchemas.createTaskRun,
+		output: RenderEndpointOutputSchemas.createTaskRun,
+	},
+	'automation.retrieveTaskRun': {
+		input: RenderEndpointInputSchemas.retrieveTaskRun,
+		output: RenderEndpointOutputSchemas.retrieveTaskRun,
+	},
+	'automation.cancelTaskRun': {
+		input: RenderEndpointInputSchemas.cancelTaskRun,
+		output: RenderEndpointOutputSchemas.cancelTaskRun,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof renderEndpointsNested
@@ -1289,10 +1602,6 @@ const renderEndpointMeta = {
 	},
 	'logs.list': { riskLevel: 'read', description: 'List Render logs' },
 	'logs.values': { riskLevel: 'read', description: 'List Render log values' },
-	'logs.subscribe': {
-		riskLevel: 'read',
-		description: 'Subscribe to Render logs',
-	},
 	'logs.resourceStreams': {
 		riskLevel: 'read',
 		description: 'List resource log streams',
@@ -1361,10 +1670,6 @@ const renderEndpointMeta = {
 	'automation.listTasks': {
 		riskLevel: 'read',
 		description: 'List Render tasks',
-	},
-	'automation.streamTaskRunsEvents': {
-		riskLevel: 'read',
-		description: 'Stream Render task run events',
 	},
 	'automation.listWorkflows': {
 		riskLevel: 'read',
@@ -1588,6 +1893,187 @@ const renderEndpointMeta = {
 	'final.updateRoutes': {
 		riskLevel: 'write',
 		description: 'Render updateRoutes',
+	},
+	'buildSources.create': {
+		riskLevel: 'write',
+		description: 'Create a Render build source',
+	},
+	'buildSources.list': {
+		riskLevel: 'read',
+		description: 'List Render build sources',
+	},
+	'buildSources.retrieve': {
+		riskLevel: 'read',
+		description: 'Retrieve a Render build source',
+	},
+	'buildSources.update': {
+		riskLevel: 'write',
+		description: 'Update a Render build source',
+	},
+	'buildSources.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a Render build source',
+	},
+	'buildSources.builds.list': {
+		riskLevel: 'read',
+		description: 'List builds for a Render build source',
+	},
+	'buildSources.builds.trigger': {
+		riskLevel: 'write',
+		description: 'Trigger a Render build source build',
+	},
+	'buildSources.builds.retrieve': {
+		riskLevel: 'read',
+		description: 'Retrieve a Render build source build',
+	},
+	'buildSources.envVars.list': {
+		riskLevel: 'read',
+		description: 'List environment variables for a Render build source',
+	},
+	'buildSources.envVars.update': {
+		riskLevel: 'write',
+		description: 'Replace environment variables for a Render build source',
+	},
+	'buildSources.envVars.retrieve': {
+		riskLevel: 'read',
+		description: 'Retrieve an environment variable for a Render build source',
+	},
+	'buildSources.envVars.upsert': {
+		riskLevel: 'write',
+		description:
+			'Add or update an environment variable for a Render build source',
+	},
+	'buildSources.envVars.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete an environment variable from a Render build source',
+	},
+	'buildSources.secretFiles.list': {
+		riskLevel: 'read',
+		description: 'List secret files for a Render build source',
+	},
+	'buildSources.secretFiles.update': {
+		riskLevel: 'write',
+		description: 'Replace secret files for a Render build source',
+	},
+	'buildSources.secretFiles.retrieve': {
+		riskLevel: 'read',
+		description: 'Retrieve a secret file for a Render build source',
+	},
+	'buildSources.secretFiles.upsert': {
+		riskLevel: 'write',
+		description: 'Add or update a secret file for a Render build source',
+	},
+	'buildSources.secretFiles.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a secret file from a Render build source',
+	},
+	'buildSources.envGroups.link': {
+		riskLevel: 'write',
+		description: 'Link an environment group to a Render build source',
+	},
+	'buildSources.envGroups.unlink': {
+		riskLevel: 'destructive',
+		description: 'Unlink an environment group from a Render build source',
+	},
+	'blueprints.validate': {
+		riskLevel: 'read',
+		description: 'Validate a Render Blueprint configuration',
+	},
+	'blueprints.retrieve': {
+		riskLevel: 'read',
+		description: 'Retrieve a Render Blueprint',
+	},
+	'blueprints.update': {
+		riskLevel: 'write',
+		description: 'Update a Render Blueprint',
+	},
+	'dedicatedIps.list': {
+		riskLevel: 'read',
+		description: 'List Render dedicated IP sets',
+	},
+	'dedicatedIps.create': {
+		riskLevel: 'write',
+		description: 'Create a Render dedicated IP set',
+	},
+	'dedicatedIps.retrieve': {
+		riskLevel: 'read',
+		description: 'Retrieve a Render dedicated IP set',
+	},
+	'dedicatedIps.update': {
+		riskLevel: 'write',
+		description: 'Update a Render dedicated IP set',
+	},
+	'dedicatedIps.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a Render dedicated IP set',
+	},
+	'postgres.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a Render Postgres database',
+	},
+	'postgres.createExport': {
+		riskLevel: 'write',
+		description: 'Create an export of a Render Postgres database',
+	},
+	'postgres.createUser': {
+		riskLevel: 'write',
+		description: 'Create a user for a Render Postgres database',
+	},
+	'postgres.processes': {
+		riskLevel: 'read',
+		description: 'List active queries for a Render Postgres database',
+	},
+	'postgres.topQueries': {
+		riskLevel: 'read',
+		description: 'List top queries for a Render Postgres database',
+	},
+	'postgres.sizes': {
+		riskLevel: 'read',
+		description: 'List database sizes for a Render Postgres database',
+	},
+	'postgres.tableScans': {
+		riskLevel: 'read',
+		description: 'List table scans for a Render Postgres database',
+	},
+	'automation.createWorkflow': {
+		riskLevel: 'write',
+		description: 'Create a Render workflow',
+	},
+	'automation.retrieveWorkflow': {
+		riskLevel: 'read',
+		description: 'Retrieve a Render workflow',
+	},
+	'automation.updateWorkflow': {
+		riskLevel: 'write',
+		description: 'Update a Render workflow',
+	},
+	'automation.deleteWorkflow': {
+		riskLevel: 'destructive',
+		description: 'Delete a Render workflow',
+	},
+	'automation.createWorkflowVersion': {
+		riskLevel: 'write',
+		description: 'Create and deploy a Render workflow version',
+	},
+	'automation.retrieveWorkflowVersion': {
+		riskLevel: 'read',
+		description: 'Retrieve a Render workflow version',
+	},
+	'automation.retrieveTask': {
+		riskLevel: 'read',
+		description: 'Retrieve a Render workflow task',
+	},
+	'automation.createTaskRun': {
+		riskLevel: 'write',
+		description: 'Start a Render workflow task run',
+	},
+	'automation.retrieveTaskRun': {
+		riskLevel: 'read',
+		description: 'Retrieve a Render workflow task run',
+	},
+	'automation.cancelTaskRun': {
+		riskLevel: 'destructive',
+		description: 'Cancel a Render workflow task run',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof renderEndpointsNested>;
 

@@ -2,17 +2,37 @@ import { makeRenderRequest } from './client';
 import {
 	cancelDeploy,
 	cancelServiceJob,
+	cancelTaskRun,
+	createBuildSource,
+	createDedicatedIp,
 	createDisk,
+	createPostgresExport,
+	createPostgresUser,
 	createServiceJob,
+	createTaskRun,
 	createWebhook,
+	createWorkflow,
+	createWorkflowVersion,
+	deleteBuildSource,
+	deleteBuildSourceEnvVar,
+	deleteBuildSourceSecretFile,
+	deleteDedicatedIp,
 	deleteDisk,
+	deletePostgres,
 	deletePostgresUser,
 	deleteService,
 	deleteWebhook,
+	deleteWorkflow,
 	failoverPostgres,
 	getUser,
+	linkEnvGroupToBuildSource,
 	listBlueprintSyncs,
 	listBlueprints,
+	listBuildSourceBuilds,
+	listBuildSourceEnvVars,
+	listBuildSourceSecretFiles,
+	listBuildSources,
+	listDedicatedIps,
 	listDeploys,
 	listDiskSnapshots,
 	listDisks,
@@ -20,6 +40,10 @@ import {
 	listOrganizationAuditLogs,
 	listOwnerAuditLogs,
 	listOwners,
+	listPostgresProcesses,
+	listPostgresSizes,
+	listPostgresTableScans,
+	listPostgresTopQueries,
 	listProjects,
 	listRoutes,
 	listServices,
@@ -29,6 +53,12 @@ import {
 	restoreDiskSnapshot,
 	resumeKeyValue,
 	resumePostgres,
+	retrieveBlueprint,
+	retrieveBuildSource,
+	retrieveBuildSourceBuild,
+	retrieveBuildSourceEnvVar,
+	retrieveBuildSourceSecretFile,
+	retrieveDedicatedIp,
 	retrieveDisk,
 	retrieveEnvironment,
 	retrieveKeyValueConnectionInfo,
@@ -38,19 +68,33 @@ import {
 	retrievePostgresRecoveryInfo,
 	retrieveProject,
 	retrieveService,
+	retrieveTask,
+	retrieveTaskRun,
 	retrieveWebhook,
+	retrieveWorkflow,
+	retrieveWorkflowVersion,
 	rollbackDeploy,
-	streamTaskRunsEvents,
 	suspendKeyValue,
 	suspendPostgres,
+	triggerBuildSourceBuild,
 	triggerCronJobRun,
 	triggerDeploy,
 	triggerMaintenance,
+	unlinkEnvGroupFromBuildSource,
+	updateBlueprint,
+	updateBuildSource,
+	updateBuildSourceEnvVar,
+	updateBuildSourceEnvVars,
+	updateBuildSourceSecretFile,
+	updateBuildSourceSecretFiles,
+	updateDedicatedIp,
 	updateDisk,
 	updateMaintenance,
 	updateOwnerLogStream,
 	updateRoutes,
 	updateWebhook,
+	updateWorkflow,
+	validateBlueprint,
 } from './endpoints';
 
 jest.mock('./client', () => ({
@@ -91,6 +135,29 @@ describe('Render service endpoints', () => {
 		});
 	});
 
+	it('serializes Render service filters as comma-separated query values', async () => {
+		await listServices(
+			{
+				key: 'secret',
+				$getAccountId: jest.fn().mockResolvedValue('account-1'),
+			} as never,
+			{
+				name: ['api', 'worker'],
+				env: ['node', 'python'],
+				region: ['oregon', 'frankfurt'],
+			},
+		);
+
+		expect(request).toHaveBeenCalledWith('/v1/services', 'secret', {
+			method: 'GET',
+			query: {
+				name: 'api,worker',
+				env: 'node,python',
+				region: 'oregon,frankfurt',
+			},
+		});
+	});
+
 	it('covers the resource, observability, metrics, automation, and final groups', async () => {
 		const ctx = { key: 'secret' } as never;
 		await listEnvironments(ctx, {});
@@ -119,6 +186,179 @@ describe('Render service endpoints', () => {
 			method: 'GET',
 			query: {},
 		});
+	});
+
+	it('covers Build Source routes with exact methods, paths, and bodies', async () => {
+		request.mockResolvedValue({});
+		const ctx = { key: 'secret' } as never;
+		const id = { buildSourceId: 'bs-1' };
+		const key = { ...id, envVarKey: 'TOKEN' };
+		await createBuildSource(ctx, { ownerId: 'own-1', name: 'shared-build' });
+		await listBuildSources(ctx, { ownerId: 'own-1' });
+		await retrieveBuildSource(ctx, id);
+		await updateBuildSource(ctx, { ...id, body: { name: 'renamed' } });
+		await deleteBuildSource(ctx, id);
+		await listBuildSourceBuilds(ctx, id);
+		await triggerBuildSourceBuild(ctx, id);
+		await retrieveBuildSourceBuild(ctx, { ...id, buildId: 'build-1' });
+		await listBuildSourceEnvVars(ctx, id);
+		await updateBuildSourceEnvVars(ctx, {
+			...id,
+			body: [{ key: 'A', value: 'B' }],
+		});
+		await retrieveBuildSourceEnvVar(ctx, key);
+		await updateBuildSourceEnvVar(ctx, { ...key, body: { value: 'next' } });
+		await deleteBuildSourceEnvVar(ctx, key);
+		await listBuildSourceSecretFiles(ctx, id);
+		await updateBuildSourceSecretFiles(ctx, {
+			...id,
+			body: [{ name: 'config', content: 'x' }],
+		});
+		await retrieveBuildSourceSecretFile(ctx, key);
+		await updateBuildSourceSecretFile(ctx, {
+			...key,
+			body: { content: 'next' },
+		});
+		await deleteBuildSourceSecretFile(ctx, key);
+		await linkEnvGroupToBuildSource(ctx, { ...id, envGroupId: 'eg-1' });
+		await unlinkEnvGroupFromBuildSource(ctx, { ...id, envGroupId: 'eg-1' });
+
+		expect(request).toHaveBeenCalledWith('/v1/build-sources', 'secret', {
+			method: 'POST',
+			body: { ownerId: 'own-1', name: 'shared-build' },
+		});
+		expect(request).toHaveBeenCalledWith('/v1/build-sources', 'secret', {
+			method: 'GET',
+			query: { ownerId: 'own-1' },
+		});
+		expect(request).toHaveBeenCalledWith('/v1/build-sources/bs-1', 'secret', {
+			method: 'PATCH',
+			body: { name: 'renamed' },
+		});
+		expect(request).toHaveBeenCalledWith('/v1/build-sources/bs-1', 'secret', {
+			method: 'DELETE',
+			body: undefined,
+		});
+		expect(request).toHaveBeenCalledWith(
+			'/v1/build-sources/bs-1/builds/build-1',
+			'secret',
+			{
+				method: 'GET',
+				query: {},
+			},
+		);
+		expect(request).toHaveBeenCalledWith(
+			'/v1/build-sources/bs-1/env-vars',
+			'secret',
+			{
+				method: 'PUT',
+				body: [{ key: 'A', value: 'B' }],
+			},
+		);
+		expect(request).toHaveBeenCalledWith(
+			'/v1/build-sources/bs-1/env-vars/TOKEN',
+			'secret',
+			{
+				method: 'PUT',
+				body: { value: 'next' },
+			},
+		);
+		expect(request).toHaveBeenCalledWith(
+			'/v1/build-sources/bs-1/secret-files',
+			'secret',
+			{
+				method: 'PUT',
+				body: [{ name: 'config', content: 'x' }],
+			},
+		);
+		expect(request).toHaveBeenCalledWith(
+			'/v1/build-sources/bs-1/secret-files/TOKEN',
+			'secret',
+			{
+				method: 'DELETE',
+				body: undefined,
+			},
+		);
+		expect(request).toHaveBeenCalledWith(
+			'/v1/build-sources/bs-1/env-groups/eg-1',
+			'secret',
+			{
+				method: 'POST',
+				body: undefined,
+			},
+		);
+		expect(request).toHaveBeenCalledWith(
+			'/v1/build-sources/bs-1/env-groups/eg-1',
+			'secret',
+			{
+				method: 'DELETE',
+				body: undefined,
+			},
+		);
+	});
+
+	it('covers Blueprint, Dedicated IP, Postgres, and workflow task routes', async () => {
+		request.mockResolvedValue({});
+		const ctx = { key: 'secret' } as never;
+		await validateBlueprint(ctx, { ownerId: 'own-1', blueprint: {} });
+		await retrieveBlueprint(ctx, { id: 'bp-1' });
+		await updateBlueprint(ctx, { id: 'bp-1', body: { name: 'updated' } });
+		await listDedicatedIps(ctx, {});
+		await createDedicatedIp(ctx, { ownerId: 'own-1', name: 'egress' });
+		await retrieveDedicatedIp(ctx, { id: 'ip-1' });
+		await updateDedicatedIp(ctx, { id: 'ip-1', body: { name: 'updated' } });
+		await deleteDedicatedIp(ctx, { id: 'ip-1' });
+		await deletePostgres(ctx, { id: 'pg-1' });
+		await createPostgresExport(ctx, { id: 'pg-1' });
+		await createPostgresUser(ctx, { id: 'pg-1', body: { username: 'app' } });
+		await listPostgresProcesses(ctx, { id: 'pg-1' });
+		await listPostgresTopQueries(ctx, { id: 'pg-1' });
+		await listPostgresSizes(ctx, { id: 'pg-1' });
+		await listPostgresTableScans(ctx, { id: 'pg-1' });
+		await createWorkflow(ctx, { ownerId: 'own-1', name: 'flow' });
+		await retrieveWorkflow(ctx, { id: 'wf-1' });
+		await updateWorkflow(ctx, { id: 'wf-1', body: { name: 'updated' } });
+		await deleteWorkflow(ctx, { id: 'wf-1' });
+		await createWorkflowVersion(ctx, { workflowId: 'wf-1' });
+		await retrieveWorkflowVersion(ctx, { id: 'wv-1' });
+		await retrieveTask(ctx, { id: 'task-1' });
+		await createTaskRun(ctx, { taskId: 'task-1' });
+		await retrieveTaskRun(ctx, { id: 'run-1' });
+		await cancelTaskRun(ctx, { id: 'run-1' });
+
+		for (const [path, method, body] of [
+			['/v1/blueprints/validate', 'POST', { ownerId: 'own-1', blueprint: {} }],
+			['/v1/blueprints/bp-1', 'GET', undefined],
+			['/v1/blueprints/bp-1', 'PATCH', { name: 'updated' }],
+			['/v1/dedicated-ips', 'GET', undefined],
+			['/v1/dedicated-ips', 'POST', { ownerId: 'own-1', name: 'egress' }],
+			['/v1/dedicated-ips/ip-1', 'GET', undefined],
+			['/v1/dedicated-ips/ip-1', 'PATCH', { name: 'updated' }],
+			['/v1/dedicated-ips/ip-1', 'DELETE', undefined],
+			['/v1/postgres/pg-1', 'DELETE', undefined],
+			['/v1/postgres/pg-1/export', 'POST', undefined],
+			['/v1/postgres/pg-1/credentials', 'POST', { username: 'app' }],
+			['/v1/postgres/pg-1/query/processes', 'GET', undefined],
+			['/v1/postgres/pg-1/query/top-queries', 'GET', undefined],
+			['/v1/postgres/pg-1/query/sizes', 'GET', undefined],
+			['/v1/postgres/pg-1/query/table-scans', 'GET', undefined],
+			['/v1/workflows', 'POST', { ownerId: 'own-1', name: 'flow' }],
+			['/v1/workflows/wf-1', 'GET', undefined],
+			['/v1/workflows/wf-1', 'PATCH', { name: 'updated' }],
+			['/v1/workflows/wf-1', 'DELETE', undefined],
+			['/v1/workflowversions', 'POST', { workflowId: 'wf-1' }],
+			['/v1/workflowversions/wv-1', 'GET', undefined],
+			['/v1/tasks/task-1', 'GET', undefined],
+			['/v1/task-runs', 'POST', { taskId: 'task-1' }],
+			['/v1/task-runs/run-1', 'GET', undefined],
+			['/v1/task-runs/run-1', 'DELETE', undefined],
+		] as const) {
+			expect(request).toHaveBeenCalledWith(
+				path,
+				'secret',
+				method === 'GET' ? { method, query: {} } : { method, body },
+			);
+		}
 	});
 
 	it('uses the documented current-user route', async () => {
@@ -579,20 +819,5 @@ describe('Render service endpoints', () => {
 				body: { url: 'https://logs.example.test', labels: ['app'] },
 			}),
 		);
-	});
-
-	it('requests task-run events as an SSE stream', async () => {
-		request.mockResolvedValue('event: task.completed\ndata: {}\n\n');
-		await expect(
-			streamTaskRunsEvents({ key: 'secret' } as never, {
-				taskRunIds: ['trn-1'],
-			}),
-		).resolves.toEqual({ data: 'event: task.completed\ndata: {}\n\n' });
-		expect(request).toHaveBeenCalledWith('/v1/task-runs/events', 'secret', {
-			method: 'GET',
-			query: { taskRunIds: ['trn-1'] },
-			headers: { Accept: 'text/event-stream' },
-			mediaType: 'text/event-stream',
-		});
 	});
 });

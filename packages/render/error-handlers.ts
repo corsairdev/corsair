@@ -13,7 +13,7 @@ export const errorHandlers = {
 		handler: async (error: Error) => {
 			let retryAfterMs: number | undefined;
 			if (isStatusError(error) && error.retryAfter !== undefined) {
-				retryAfterMs = error.retryAfter;
+				retryAfterMs = Math.min(error.retryAfter, 60_000);
 			}
 			return { maxRetries: 5, headersRetryAfterMs: retryAfterMs };
 		},

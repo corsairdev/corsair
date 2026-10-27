@@ -16,7 +16,7 @@ const ListServicesInputSchema = z.object({
 	name: z.array(z.string()).optional(),
 	type: z.array(z.string()).optional(),
 	environmentId: z.array(z.string()).optional(),
-	runtime: z.array(z.string()).optional(),
+	env: z.array(z.string()).optional(),
 	region: z.array(z.string()).optional(),
 	suspended: z.array(z.enum(['suspended', 'not_suspended'])).optional(),
 	ownerId: z.array(z.string()).optional(),
@@ -149,6 +149,37 @@ const AuditLogsInputSchema = ResourceIdInputSchema.extend({
 	startTime: z.string().datetime().optional(),
 	endTime: z.string().datetime().optional(),
 });
+const BuildSourceIdInputSchema = z.object({ buildSourceId: z.string().min(1) });
+const BuildSourceEnvVarInputSchema = BuildSourceIdInputSchema.extend({
+	envVarKey: z.string().min(1),
+});
+const BuildSourceBuildInputSchema = BuildSourceIdInputSchema.extend({
+	buildId: z.string().min(1),
+});
+const BuildSourceEnvGroupInputSchema = BuildSourceIdInputSchema.extend({
+	envGroupId: z.string().min(1),
+});
+const CreateBuildSourceInputSchema = z
+	.object({
+		ownerId: z.string().min(1),
+		name: z.string().min(1),
+		projectId: z.string().min(1).optional(),
+		git: z.record(z.string(), z.unknown()).optional(),
+		image: z.record(z.string(), z.unknown()).optional(),
+	})
+	.passthrough();
+const BuildSourceBodyInputSchema = BuildSourceIdInputSchema.extend({
+	body: z.union([z.record(z.string(), z.unknown()), z.array(z.unknown())]),
+});
+const BuildSourceEnvVarBodyInputSchema = BuildSourceEnvVarInputSchema.extend({
+	body: z.record(z.string(), z.unknown()),
+});
+const ResourceBodyInputSchema = ResourceIdInputSchema.extend({
+	body: z.record(z.string(), z.unknown()),
+});
+const CreateResourceInputSchema = z
+	.record(z.string(), z.unknown())
+	.refine((value) => Object.keys(value).length > 0);
 
 export type ListServicesInput = z.infer<typeof ListServicesInputSchema>;
 export type ListServicesOutput = z.infer<typeof ListServicesOutputSchema>;
@@ -222,7 +253,6 @@ export type RenderEndpointInputs = {
 	getUser: z.infer<typeof ResourceInputSchema>;
 	listLogs: z.infer<typeof ResourceInputSchema>;
 	listLogsValues: z.infer<typeof ResourceInputSchema>;
-	subscribeLogs: z.infer<typeof ResourceInputSchema>;
 	listResourceLogStreams: z.infer<typeof ResourceInputSchema>;
 	deleteOwnerLogStream: ResourceIdInput;
 	updateOwnerLogStream: ResourceIdInput;
@@ -241,7 +271,6 @@ export type RenderEndpointInputs = {
 	listMaintenance: z.infer<typeof ResourceInputSchema>;
 	listTaskRuns: z.infer<typeof ResourceInputSchema>;
 	listTasks: z.infer<typeof ResourceInputSchema>;
-	streamTaskRunsEvents: z.infer<typeof ResourceInputSchema>;
 	listWorkflows: z.infer<typeof ResourceInputSchema>;
 	listWorkflowVersions: z.infer<typeof ResourceInputSchema>;
 	listWebhooks: z.infer<typeof ResourceInputSchema>;
@@ -300,6 +329,51 @@ export type RenderEndpointInputs = {
 	deleteOwnerMetricsStream: ResourceIdInput;
 	updateOwnerNotificationSettings: ResourceIdInput;
 	updateRoutes: ResourceIdInput;
+	createBuildSource: z.infer<typeof CreateBuildSourceInputSchema>;
+	listBuildSources: z.infer<typeof ResourceInputSchema>;
+	retrieveBuildSource: z.infer<typeof BuildSourceIdInputSchema>;
+	updateBuildSource: z.infer<typeof BuildSourceBodyInputSchema>;
+	deleteBuildSource: z.infer<typeof BuildSourceIdInputSchema>;
+	listBuildSourceBuilds: z.infer<typeof BuildSourceIdInputSchema>;
+	triggerBuildSourceBuild: z.infer<typeof BuildSourceIdInputSchema>;
+	retrieveBuildSourceBuild: z.infer<typeof BuildSourceBuildInputSchema>;
+	listBuildSourceEnvVars: z.infer<typeof BuildSourceIdInputSchema>;
+	updateBuildSourceEnvVars: z.infer<typeof BuildSourceBodyInputSchema>;
+	retrieveBuildSourceEnvVar: z.infer<typeof BuildSourceEnvVarInputSchema>;
+	updateBuildSourceEnvVar: z.infer<typeof BuildSourceEnvVarBodyInputSchema>;
+	deleteBuildSourceEnvVar: z.infer<typeof BuildSourceEnvVarInputSchema>;
+	listBuildSourceSecretFiles: z.infer<typeof BuildSourceIdInputSchema>;
+	updateBuildSourceSecretFiles: z.infer<typeof BuildSourceBodyInputSchema>;
+	retrieveBuildSourceSecretFile: z.infer<typeof BuildSourceEnvVarInputSchema>;
+	updateBuildSourceSecretFile: z.infer<typeof BuildSourceEnvVarBodyInputSchema>;
+	deleteBuildSourceSecretFile: z.infer<typeof BuildSourceEnvVarInputSchema>;
+	linkEnvGroupToBuildSource: z.infer<typeof BuildSourceEnvGroupInputSchema>;
+	unlinkEnvGroupFromBuildSource: z.infer<typeof BuildSourceEnvGroupInputSchema>;
+	validateBlueprint: z.infer<typeof CreateResourceInputSchema>;
+	retrieveBlueprint: ResourceIdInput;
+	updateBlueprint: z.infer<typeof ResourceBodyInputSchema>;
+	listDedicatedIps: z.infer<typeof ResourceInputSchema>;
+	createDedicatedIp: z.infer<typeof CreateResourceInputSchema>;
+	retrieveDedicatedIp: ResourceIdInput;
+	updateDedicatedIp: z.infer<typeof ResourceBodyInputSchema>;
+	deleteDedicatedIp: ResourceIdInput;
+	deletePostgres: ResourceIdInput;
+	createPostgresExport: ResourceIdInput;
+	createPostgresUser: z.infer<typeof ResourceBodyInputSchema>;
+	listPostgresProcesses: ResourceIdInput;
+	listPostgresTopQueries: ResourceIdInput;
+	listPostgresSizes: ResourceIdInput;
+	listPostgresTableScans: ResourceIdInput;
+	createWorkflow: z.infer<typeof CreateResourceInputSchema>;
+	retrieveWorkflow: ResourceIdInput;
+	updateWorkflow: z.infer<typeof ResourceBodyInputSchema>;
+	deleteWorkflow: ResourceIdInput;
+	createWorkflowVersion: z.infer<typeof CreateResourceInputSchema>;
+	retrieveWorkflowVersion: ResourceIdInput;
+	retrieveTask: ResourceIdInput;
+	createTaskRun: z.infer<typeof CreateResourceInputSchema>;
+	retrieveTaskRun: ResourceIdInput;
+	cancelTaskRun: ResourceIdInput;
 };
 
 export type RenderEndpointOutputs = {
@@ -362,7 +436,6 @@ export type RenderEndpointOutputs = {
 	getUser: z.infer<typeof ResourceOutputSchema>;
 	listLogs: z.infer<typeof ResourceOutputSchema>;
 	listLogsValues: z.infer<typeof ResourceOutputSchema>;
-	subscribeLogs: z.infer<typeof ResourceOutputSchema>;
 	listResourceLogStreams: z.infer<typeof ResourceListOutputSchema>;
 	deleteOwnerLogStream: z.infer<typeof EmptyOutputSchema>;
 	updateOwnerLogStream: z.infer<typeof ResourceOutputSchema>;
@@ -381,7 +454,6 @@ export type RenderEndpointOutputs = {
 	listMaintenance: z.infer<typeof ResourceListOutputSchema>;
 	listTaskRuns: z.infer<typeof ResourceListOutputSchema>;
 	listTasks: z.infer<typeof ResourceListOutputSchema>;
-	streamTaskRunsEvents: { data: string };
 	listWorkflows: z.infer<typeof ResourceListOutputSchema>;
 	listWorkflowVersions: z.infer<typeof ResourceListOutputSchema>;
 	listWebhooks: z.infer<typeof ResourceListOutputSchema>;
@@ -440,6 +512,51 @@ export type RenderEndpointOutputs = {
 	deleteOwnerMetricsStream: z.infer<typeof EmptyOutputSchema>;
 	updateOwnerNotificationSettings: z.infer<typeof ResourceOutputSchema>;
 	updateRoutes: z.infer<typeof ResourceOutputSchema>;
+	createBuildSource: z.infer<typeof ResourceOutputSchema>;
+	listBuildSources: z.infer<typeof ResourceListOutputSchema>;
+	retrieveBuildSource: z.infer<typeof ResourceOutputSchema>;
+	updateBuildSource: z.infer<typeof ResourceOutputSchema>;
+	deleteBuildSource: z.infer<typeof EmptyOutputSchema>;
+	listBuildSourceBuilds: z.infer<typeof ResourceListOutputSchema>;
+	triggerBuildSourceBuild: z.infer<typeof ResourceOutputSchema>;
+	retrieveBuildSourceBuild: z.infer<typeof ResourceOutputSchema>;
+	listBuildSourceEnvVars: z.infer<typeof ResourceListOutputSchema>;
+	updateBuildSourceEnvVars: z.infer<typeof ResourceListOutputSchema>;
+	retrieveBuildSourceEnvVar: z.infer<typeof ResourceOutputSchema>;
+	updateBuildSourceEnvVar: z.infer<typeof ResourceOutputSchema>;
+	deleteBuildSourceEnvVar: z.infer<typeof EmptyOutputSchema>;
+	listBuildSourceSecretFiles: z.infer<typeof ResourceListOutputSchema>;
+	updateBuildSourceSecretFiles: z.infer<typeof ResourceListOutputSchema>;
+	retrieveBuildSourceSecretFile: z.infer<typeof ResourceOutputSchema>;
+	updateBuildSourceSecretFile: z.infer<typeof ResourceOutputSchema>;
+	deleteBuildSourceSecretFile: z.infer<typeof EmptyOutputSchema>;
+	linkEnvGroupToBuildSource: z.infer<typeof ResourceOutputSchema>;
+	unlinkEnvGroupFromBuildSource: z.infer<typeof EmptyOutputSchema>;
+	validateBlueprint: z.infer<typeof ResourceOutputSchema>;
+	retrieveBlueprint: z.infer<typeof ResourceOutputSchema>;
+	updateBlueprint: z.infer<typeof ResourceOutputSchema>;
+	listDedicatedIps: z.infer<typeof ResourceListOutputSchema>;
+	createDedicatedIp: z.infer<typeof ResourceOutputSchema>;
+	retrieveDedicatedIp: z.infer<typeof ResourceOutputSchema>;
+	updateDedicatedIp: z.infer<typeof ResourceOutputSchema>;
+	deleteDedicatedIp: z.infer<typeof EmptyOutputSchema>;
+	deletePostgres: z.infer<typeof EmptyOutputSchema>;
+	createPostgresExport: z.infer<typeof ResourceOutputSchema>;
+	createPostgresUser: z.infer<typeof ResourceOutputSchema>;
+	listPostgresProcesses: z.infer<typeof ResourceListOutputSchema>;
+	listPostgresTopQueries: z.infer<typeof ResourceListOutputSchema>;
+	listPostgresSizes: z.infer<typeof ResourceListOutputSchema>;
+	listPostgresTableScans: z.infer<typeof ResourceListOutputSchema>;
+	createWorkflow: z.infer<typeof ResourceOutputSchema>;
+	retrieveWorkflow: z.infer<typeof ResourceOutputSchema>;
+	updateWorkflow: z.infer<typeof ResourceOutputSchema>;
+	deleteWorkflow: z.infer<typeof EmptyOutputSchema>;
+	createWorkflowVersion: z.infer<typeof ResourceOutputSchema>;
+	retrieveWorkflowVersion: z.infer<typeof ResourceOutputSchema>;
+	retrieveTask: z.infer<typeof ResourceOutputSchema>;
+	createTaskRun: z.infer<typeof ResourceOutputSchema>;
+	retrieveTaskRun: z.infer<typeof ResourceOutputSchema>;
+	cancelTaskRun: z.infer<typeof EmptyOutputSchema>;
 };
 
 export const RenderEndpointInputSchemas = {
@@ -503,7 +620,6 @@ export const RenderEndpointInputSchemas = {
 	getUser: ResourceInputSchema,
 	listLogs: ResourceInputSchema,
 	listLogsValues: ResourceInputSchema,
-	subscribeLogs: ResourceInputSchema,
 	listResourceLogStreams: ResourceInputSchema,
 	deleteOwnerLogStream: ResourceIdInputSchema,
 	updateOwnerLogStream: ResourceIdInputSchema,
@@ -522,7 +638,6 @@ export const RenderEndpointInputSchemas = {
 	listMaintenance: ResourceInputSchema,
 	listTaskRuns: ResourceInputSchema,
 	listTasks: ResourceInputSchema,
-	streamTaskRunsEvents: ResourceInputSchema,
 	listWorkflows: ResourceInputSchema,
 	listWorkflowVersions: ResourceInputSchema,
 	listWebhooks: ResourceInputSchema,
@@ -581,6 +696,51 @@ export const RenderEndpointInputSchemas = {
 	deleteOwnerMetricsStream: ResourceIdInputSchema,
 	updateOwnerNotificationSettings: ResourceIdInputSchema,
 	updateRoutes: ResourceIdInputSchema,
+	createBuildSource: CreateBuildSourceInputSchema,
+	listBuildSources: ResourceInputSchema,
+	retrieveBuildSource: BuildSourceIdInputSchema,
+	updateBuildSource: BuildSourceBodyInputSchema,
+	deleteBuildSource: BuildSourceIdInputSchema,
+	listBuildSourceBuilds: BuildSourceIdInputSchema,
+	triggerBuildSourceBuild: BuildSourceIdInputSchema,
+	retrieveBuildSourceBuild: BuildSourceBuildInputSchema,
+	listBuildSourceEnvVars: BuildSourceIdInputSchema,
+	updateBuildSourceEnvVars: BuildSourceBodyInputSchema,
+	retrieveBuildSourceEnvVar: BuildSourceEnvVarInputSchema,
+	updateBuildSourceEnvVar: BuildSourceEnvVarBodyInputSchema,
+	deleteBuildSourceEnvVar: BuildSourceEnvVarInputSchema,
+	listBuildSourceSecretFiles: BuildSourceIdInputSchema,
+	updateBuildSourceSecretFiles: BuildSourceBodyInputSchema,
+	retrieveBuildSourceSecretFile: BuildSourceEnvVarInputSchema,
+	updateBuildSourceSecretFile: BuildSourceEnvVarBodyInputSchema,
+	deleteBuildSourceSecretFile: BuildSourceEnvVarInputSchema,
+	linkEnvGroupToBuildSource: BuildSourceEnvGroupInputSchema,
+	unlinkEnvGroupFromBuildSource: BuildSourceEnvGroupInputSchema,
+	validateBlueprint: CreateResourceInputSchema,
+	retrieveBlueprint: ResourceIdInputSchema,
+	updateBlueprint: ResourceBodyInputSchema,
+	listDedicatedIps: ResourceInputSchema,
+	createDedicatedIp: CreateResourceInputSchema,
+	retrieveDedicatedIp: ResourceIdInputSchema,
+	updateDedicatedIp: ResourceBodyInputSchema,
+	deleteDedicatedIp: ResourceIdInputSchema,
+	deletePostgres: ResourceIdInputSchema,
+	createPostgresExport: ResourceIdInputSchema,
+	createPostgresUser: ResourceBodyInputSchema,
+	listPostgresProcesses: ResourceIdInputSchema,
+	listPostgresTopQueries: ResourceIdInputSchema,
+	listPostgresSizes: ResourceIdInputSchema,
+	listPostgresTableScans: ResourceIdInputSchema,
+	createWorkflow: CreateResourceInputSchema,
+	retrieveWorkflow: ResourceIdInputSchema,
+	updateWorkflow: ResourceBodyInputSchema,
+	deleteWorkflow: ResourceIdInputSchema,
+	createWorkflowVersion: CreateResourceInputSchema,
+	retrieveWorkflowVersion: ResourceIdInputSchema,
+	retrieveTask: ResourceIdInputSchema,
+	createTaskRun: CreateResourceInputSchema,
+	retrieveTaskRun: ResourceIdInputSchema,
+	cancelTaskRun: ResourceIdInputSchema,
 } as const;
 
 export const RenderEndpointOutputSchemas = {
@@ -650,7 +810,6 @@ export const RenderEndpointOutputSchemas = {
 	getUser: ResourceOutputSchema,
 	listLogs: ResourceOutputSchema,
 	listLogsValues: ResourceOutputSchema,
-	subscribeLogs: ResourceOutputSchema,
 	listResourceLogStreams: ResourceListOutputSchema,
 	deleteOwnerLogStream: EmptyOutputSchema,
 	updateOwnerLogStream: ResourceOutputSchema,
@@ -669,7 +828,6 @@ export const RenderEndpointOutputSchemas = {
 	listMaintenance: ResourceListOutputSchema,
 	listTaskRuns: ResourceListOutputSchema,
 	listTasks: ResourceListOutputSchema,
-	streamTaskRunsEvents: z.object({ data: z.string() }),
 	listWorkflows: ResourceListOutputSchema,
 	listWorkflowVersions: ResourceListOutputSchema,
 	listWebhooks: ResourceListOutputSchema,
@@ -733,4 +891,49 @@ export const RenderEndpointOutputSchemas = {
 	deleteOwnerMetricsStream: EmptyOutputSchema,
 	updateOwnerNotificationSettings: ResourceOutputSchema,
 	updateRoutes: ResourceOutputSchema,
+	createBuildSource: ResourceOutputSchema,
+	listBuildSources: ResourceListOutputSchema,
+	retrieveBuildSource: ResourceOutputSchema,
+	updateBuildSource: ResourceOutputSchema,
+	deleteBuildSource: EmptyOutputSchema,
+	listBuildSourceBuilds: ResourceListOutputSchema,
+	triggerBuildSourceBuild: ResourceOutputSchema,
+	retrieveBuildSourceBuild: ResourceOutputSchema,
+	listBuildSourceEnvVars: ResourceListOutputSchema,
+	updateBuildSourceEnvVars: ResourceListOutputSchema,
+	retrieveBuildSourceEnvVar: ResourceOutputSchema,
+	updateBuildSourceEnvVar: ResourceOutputSchema,
+	deleteBuildSourceEnvVar: EmptyOutputSchema,
+	listBuildSourceSecretFiles: ResourceListOutputSchema,
+	updateBuildSourceSecretFiles: ResourceListOutputSchema,
+	retrieveBuildSourceSecretFile: ResourceOutputSchema,
+	updateBuildSourceSecretFile: ResourceOutputSchema,
+	deleteBuildSourceSecretFile: EmptyOutputSchema,
+	linkEnvGroupToBuildSource: ResourceOutputSchema,
+	unlinkEnvGroupFromBuildSource: EmptyOutputSchema,
+	validateBlueprint: ResourceOutputSchema,
+	retrieveBlueprint: ResourceOutputSchema,
+	updateBlueprint: ResourceOutputSchema,
+	listDedicatedIps: ResourceListOutputSchema,
+	createDedicatedIp: ResourceOutputSchema,
+	retrieveDedicatedIp: ResourceOutputSchema,
+	updateDedicatedIp: ResourceOutputSchema,
+	deleteDedicatedIp: EmptyOutputSchema,
+	deletePostgres: EmptyOutputSchema,
+	createPostgresExport: ResourceOutputSchema,
+	createPostgresUser: ResourceOutputSchema,
+	listPostgresProcesses: ResourceListOutputSchema,
+	listPostgresTopQueries: ResourceListOutputSchema,
+	listPostgresSizes: ResourceListOutputSchema,
+	listPostgresTableScans: ResourceListOutputSchema,
+	createWorkflow: ResourceOutputSchema,
+	retrieveWorkflow: ResourceOutputSchema,
+	updateWorkflow: ResourceOutputSchema,
+	deleteWorkflow: EmptyOutputSchema,
+	createWorkflowVersion: ResourceOutputSchema,
+	retrieveWorkflowVersion: ResourceOutputSchema,
+	retrieveTask: ResourceOutputSchema,
+	createTaskRun: ResourceOutputSchema,
+	retrieveTaskRun: ResourceOutputSchema,
+	cancelTaskRun: EmptyOutputSchema,
 } as const;

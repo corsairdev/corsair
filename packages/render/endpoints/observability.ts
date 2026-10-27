@@ -53,8 +53,6 @@ export const listLogs: RenderEndpoints['listLogs'] = (ctx, input) =>
 	call(ctx, '/v1/logs', 'GET', input);
 export const listLogsValues: RenderEndpoints['listLogsValues'] = (ctx, input) =>
 	call(ctx, '/v1/logs/values', 'GET', input);
-export const subscribeLogs: RenderEndpoints['subscribeLogs'] = (ctx, input) =>
-	call(ctx, '/v1/logs/subscribe', 'GET', input);
 export const listResourceLogStreams: RenderEndpoints['listResourceLogStreams'] =
 	(ctx, input) => call(ctx, '/v1/logs/streams/resource', 'GET', input);
 export const deleteOwnerLogStream: RenderEndpoints['deleteOwnerLogStream'] = (

@@ -296,6 +296,18 @@ describe('Render schema', () => {
 			},
 			{ id: 'resource-1', snapshotKey: 'snapshot-1' },
 			{ id: 'resource-1', username: 'user-1' },
+			{ buildSourceId: 'build-source-1' },
+			{ buildSourceId: 'build-source-1', buildId: 'build-1' },
+			{ buildSourceId: 'build-source-1', envVarKey: 'TOKEN' },
+			{ buildSourceId: 'build-source-1', envVarKey: 'TOKEN', body: {} },
+			{ buildSourceId: 'build-source-1', envGroupId: 'env-group-1' },
+			{ buildSourceId: 'build-source-1', body: {} },
+			{ buildSourceId: 'build-source-1', body: [] },
+			{ ownerId: 'owner-1', name: 'build-source' },
+			{ ownerId: 'owner-1', name: 'resource' },
+			{ id: 'resource-1', body: {} },
+			{ workflowId: 'workflow-1' },
+			{ taskId: 'task-1' },
 			{
 				ownerId: 'owner-1',
 				name: 'hook',
@@ -338,11 +350,7 @@ describe('Render schema', () => {
 				const output = outputCandidates.find(
 					(candidate) => contract.output.safeParse(candidate).success,
 				);
-				request.mockResolvedValue(
-					path === 'automation.streamTaskRunsEvents'
-						? 'event: task.completed\\ndata: {}\\n\\n'
-						: output,
-				);
+				request.mockResolvedValue(output);
 				await (value as (context: unknown, args: unknown) => Promise<unknown>)(
 					ctx,
 					input,

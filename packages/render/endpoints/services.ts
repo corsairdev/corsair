@@ -9,10 +9,16 @@ export const listServices: RenderEndpoints['listServices'] = async (
 	ctx,
 	input,
 ) => {
+	const query = Object.fromEntries(
+		Object.entries(input).map(([key, value]) => [
+			key,
+			Array.isArray(value) ? value.join(',') : value,
+		]),
+	);
 	const response = await makeRenderRequest<ListServicesOutput>(
 		'/v1/services',
 		ctx.key,
-		{ method: 'GET', query: input },
+		{ method: 'GET', query },
 	);
 
 	await logEventFromContext(ctx, 'render.services.list', input, 'completed');
