@@ -3184,6 +3184,14 @@
                 ]
               },
               {
+                "group": "TypeSafe",
+                "pages": [
+                  "plugins/typesafe/overview",
+                  "plugins/typesafe/api",
+                  "plugins/typesafe/database"
+                ]
+              },
+              {
                 "group": "UniOne",
                 "pages": [
                   "plugins/unione/overview",
