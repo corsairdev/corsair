@@ -322,6 +322,7 @@ const ROUTES: Route[] = [
 					undefined,
 					parsed?.plugin,
 					internal.encryptDataAtRest ? internal.kek : undefined,
+					internal.encryptDataAtRest,
 				);
 			}
 			return json(200, { ok: true });

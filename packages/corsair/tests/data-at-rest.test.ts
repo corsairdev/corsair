@@ -13,7 +13,7 @@ import type { CorsairKyselyDatabase } from '../db/kysely/database';
 import { createCorsairDatabase } from '../db/kysely/database';
 import { SqliteDatePlugin } from '../db/kysely/sqlite-date-plugin';
 import { createPluginOrm } from '../db/orm';
-import { logEvent } from '../plugins/utils/events';
+import { logEvent, logEventFromContext } from '../plugins/utils/events';
 import { setupCorsair } from '../setup';
 
 const KEK = 'kek-for-tests';
@@ -271,6 +271,30 @@ describe('encryptDataAtRest database', () => {
 		});
 		const freshRead = await fresh.slack.db.channels.findByEntityId('c1');
 		expect(freshRead?.data).toEqual({ title: 'secret title' });
+	});
+
+	it('rejects an event write when the flag is on and kek is empty', async () => {
+		await expect(
+			logEvent(
+				undefined,
+				'acct',
+				'note.created',
+				{ body: 'secret body' },
+				'pending',
+				'',
+			),
+		).rejects.toThrow('encryptDataAtRest requires kek');
+		await expect(
+			logEventFromContext(
+				{
+					$getAccountId: async () => 'acct',
+					encryptDataAtRest: true,
+					kek: '',
+				},
+				'note.created',
+				{ body: 'secret body' },
+			),
+		).rejects.toThrow('encryptDataAtRest requires kek');
 	});
 
 	it('rejects an entity write when the flag is on and kek is missing', async () => {

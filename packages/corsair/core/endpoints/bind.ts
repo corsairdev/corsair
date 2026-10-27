@@ -344,6 +344,7 @@ export function bindEndpointsRecursively({
 							tenantId: err.tenantId ?? tenantId,
 							plugin: err.plugin,
 							connectUrl: err.connectUrl,
+							encryptDataAtRest,
 							kek: encryptDataAtRest ? kek : undefined,
 						});
 						throw err;
@@ -380,6 +381,7 @@ export function bindEndpointsRecursively({
 									tenantId: enriched.tenantId ?? tenantId,
 									plugin: enriched.pluginId,
 									connectUrl: enriched.connectUrl,
+									encryptDataAtRest,
 									kek: encryptDataAtRest ? kek : undefined,
 								});
 							}

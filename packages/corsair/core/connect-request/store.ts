@@ -24,6 +24,11 @@ export type RecordConnectRequestInput = {
 	tenantId: string;
 	plugin: string;
 	connectUrl: string;
+	/**
+	 * When true, the payload must be sealed. An empty `kek` rejects the write
+	 * instead of storing the document in plaintext.
+	 */
+	encryptDataAtRest?: boolean;
 	/** Set only when encryptDataAtRest is on. Seals the event payload. */
 	kek?: string;
 };
@@ -114,7 +119,11 @@ async function appendConnectEvent(
 	payload: Record<string, unknown>,
 	now: number,
 	kek?: string,
+	encryptDataAtRest?: boolean,
 ): Promise<void> {
+	if (encryptDataAtRest && !kek) {
+		throw new Error('encryptDataAtRest requires kek');
+	}
 	const stamp = await nextConnectEventCreatedAt(database, accountId, now);
 	const at = new Date(stamp);
 	const stored = kek
@@ -151,6 +160,7 @@ export async function recordConnectRequest(
 		{ plugin: input.plugin, connectUrl: input.connectUrl },
 		now,
 		input.kek,
+		input.encryptDataAtRest,
 	);
 }
 
@@ -223,7 +233,13 @@ async function latestConnectEventForAccount(
 	}
 	if (isSealed(raw)) {
 		if (!kek) return null;
-		raw = openJson(raw, await loadAccountDek(database.db, accountId, kek));
+		try {
+			// A missing DEK or an auth-tag mismatch (for example after a KEK
+			// change) must not 500 the tenant read. Same outcome as a malformed payload.
+			raw = openJson(raw, await loadAccountDek(database.db, accountId, kek));
+		} catch {
+			return null;
+		}
 	}
 	const payload = parseConnectRequestPayload(raw);
 	if (!payload) return null;
@@ -288,6 +304,7 @@ export async function clearConnectRequest(
 	now: number = Date.now(),
 	plugin?: string,
 	kek?: string,
+	encryptDataAtRest?: boolean,
 ): Promise<void> {
 	let accountId: string | null;
 	if (plugin) {
@@ -312,6 +329,7 @@ export async function clearConnectRequest(
 		{},
 		now,
 		kek,
+		encryptDataAtRest,
 	);
 }
 
@@ -324,6 +342,7 @@ export async function recordConnectRequestBestEffort(
 		tenantId: string | undefined;
 		plugin: string | null | undefined;
 		connectUrl: string | null | undefined;
+		encryptDataAtRest?: boolean;
 		kek?: string;
 	},
 ): Promise<void> {
@@ -333,6 +352,7 @@ export async function recordConnectRequestBestEffort(
 			tenantId: input.tenantId ?? 'default',
 			plugin: input.plugin,
 			connectUrl: input.connectUrl,
+			encryptDataAtRest: input.encryptDataAtRest,
 			kek: input.kek,
 		});
 	} catch {}

@@ -31,6 +31,9 @@ export async function logEvent(
 	status: 'pending' | 'processing' | 'completed' | 'failed' = 'pending',
 	kek?: string,
 ): Promise<string | null> {
+	if (kek === '') {
+		throw new Error('encryptDataAtRest requires kek');
+	}
 	if (!database) {
 		return null;
 	}
@@ -75,11 +78,11 @@ export async function logEventFromContext(
 	payload: Record<string, unknown>,
 	status: 'pending' | 'processing' | 'completed' | 'failed' = 'pending',
 ): Promise<string | null> {
+	if (ctx.encryptDataAtRest && !ctx.kek) {
+		throw new Error('encryptDataAtRest requires kek');
+	}
 	try {
 		const accountId = await ctx.$getAccountId();
-		if (ctx.encryptDataAtRest && !ctx.kek) {
-			throw new Error('encryptDataAtRest requires kek');
-		}
 		return logEvent(
 			ctx.database,
 			accountId,
