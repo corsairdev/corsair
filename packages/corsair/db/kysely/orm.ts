@@ -280,13 +280,25 @@ export function createKyselyEntityClient<DataSchema extends ZodTypeAny>(
 
 	async function parseRow(
 		row: CorsairEntity,
+		dek?: string,
 	): Promise<TypedEntity<DataSchema>> {
 		let data = parseJsonLike(row.data);
-		if (atRest) data = openJson(data, await accountDek(row.account_id));
+		if (atRest)
+			data = openJson(data, dek ?? (await accountDek(row.account_id)));
 		return {
 			...row,
 			data: dataSchema.parse(data),
 		} as TypedEntity<DataSchema>;
+	}
+
+	async function parseRows(
+		rows: CorsairEntity[],
+		accountId: string,
+	): Promise<TypedEntity<DataSchema>[]> {
+		if (rows.length === 0) return [];
+		// One account owns every row in the query. Load its key once.
+		const dek = atRest ? await accountDek(accountId) : undefined;
+		return Promise.all(rows.map((row) => parseRow(row, dek)));
 	}
 
 	async function storedData(
@@ -343,7 +355,7 @@ export function createKyselyEntityClient<DataSchema extends ZodTypeAny>(
 			const rows = await baseQuery(db, accountId, entityTypeName)
 				.where('entity_id', 'in', entityIds)
 				.execute();
-			return Promise.all(rows.map(parseRow));
+			return parseRows(rows, accountId);
 		},
 
 		list: async (options) => {
@@ -352,7 +364,7 @@ export function createKyselyEntityClient<DataSchema extends ZodTypeAny>(
 			if (typeof options?.limit === 'number') q = q.limit(options.limit);
 			if (typeof options?.offset === 'number') q = q.offset(options.offset);
 			const rows = await q.execute();
-			return Promise.all(rows.map(parseRow));
+			return parseRows(rows, accountId);
 		},
 
 		search: async (options) => {
@@ -387,7 +399,7 @@ export function createKyselyEntityClient<DataSchema extends ZodTypeAny>(
 			if (typeof options.offset === 'number') q = q.offset(options.offset);
 
 			const rows = await q.execute();
-			return Promise.all(rows.map(parseRow));
+			return parseRows(rows, accountId);
 		},
 
 		upsertByEntityId: async (entityId, data) => {

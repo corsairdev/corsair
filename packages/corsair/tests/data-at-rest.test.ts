@@ -104,6 +104,18 @@ function createTestDb() {
 	};
 }
 
+function countAccountReads(db: Kysely<CorsairKyselyDatabase>): () => number {
+	let reads = 0;
+	const original = db.selectFrom.bind(db);
+	db.selectFrom = ((
+		table: Parameters<Kysely<CorsairKyselyDatabase>['selectFrom']>[0],
+	) => {
+		if (table === 'corsair_accounts') reads += 1;
+		return original(table);
+	}) as Kysely<CorsairKyselyDatabase>['selectFrom'];
+	return () => reads;
+}
+
 describe('encryptDataAtRest', () => {
 	it('defaults to off', () => {
 		const corsair = createCorsair({ plugins: [] });
@@ -310,5 +322,39 @@ describe('encryptDataAtRest database', () => {
 			title: 'later',
 		});
 		expect(saved.data).toEqual({ title: 'later' });
+	});
+
+	it('loads the account key once per multi-row read', async () => {
+		const corsair = createCorsair({
+			kek: KEK,
+			plugins: [notePlugin],
+			database: testDb.db,
+			encryptDataAtRest: true,
+		});
+		await setupCorsair(corsair, { silent: true });
+		await corsair.slack.db.channels.upsertByEntityId('c1', { title: 'one' });
+		await corsair.slack.db.channels.upsertByEntityId('c2', { title: 'two' });
+		await corsair.slack.db.channels.upsertByEntityId('c3', { title: 'three' });
+
+		const reads = countAccountReads(testDb.db);
+		const listed = await corsair.slack.db.channels.list();
+		expect(listed.map((row) => row.data.title).sort()).toEqual([
+			'one',
+			'three',
+			'two',
+		]);
+		expect(reads()).toBe(1);
+
+		const many = await corsair.slack.db.channels.findManyByEntityIds([
+			'c1',
+			'c2',
+			'c3',
+		]);
+		expect(many).toHaveLength(3);
+		expect(reads()).toBe(2);
+
+		const searched = await corsair.slack.db.channels.search({ limit: 10 });
+		expect(searched).toHaveLength(3);
+		expect(reads()).toBe(3);
 	});
 });
