@@ -381,6 +381,7 @@ export const BaseProviders = [
 	'twitterapiio',
 	'twochat',
 	'typeform',
+	'typesafe',
 	'unione',
 	'unipile',
 	'uniswapapi',
@@ -788,6 +789,7 @@ export const ProviderDisplayNames = {
 	twitterapiio: 'Twitter API IO',
 	twochat: 'TwoChat',
 	typeform: 'Typeform',
+	typesafe: 'TypeSafe',
 	unione: 'Unione',
 	unipile: 'Unipile',
 	uniswapapi: 'Uniswap',
@@ -1202,6 +1204,7 @@ export type AllProviders =
 	| 'twitterapiio'
 	| 'twochat'
 	| 'typeform'
+	| 'typesafe'
 	| 'unione'
 	| 'unipile'
 	| 'uniswapapi'
