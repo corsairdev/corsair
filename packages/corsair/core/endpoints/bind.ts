@@ -8,6 +8,13 @@ import {
 	reportManagedPricingCallUsage,
 	resolveManagedPricingCall,
 } from '../../hub/managed-pricing-auth';
+import type { ManagedJobKind } from '../../hub/managed-pricing-jobs';
+import {
+	getManagedJobKinds,
+	managedJobKindFor,
+	managedJobRequestFields,
+	reportManagedJobCall,
+} from '../../hub/managed-pricing-jobs';
 import { reportPluginConnectionStatusFromBinding } from '../../hub/report-connection-status';
 import { throwAuthMissingEndpointError } from '../auth/auth-missing-message';
 import { AuthMissingError } from '../auth/errors/auth-missing';
@@ -314,14 +321,27 @@ export function bindEndpointsRecursively({
 				// Set when Hub prices the call per unit: where the result says how
 				// many units it used.
 				let usagePath: string | undefined;
+				// Set when the call starts a provider job or reads one back on
+				// Corsair's key (managed-pricing-jobs.ts).
+				let managedJob: ManagedJobKind | undefined;
 				// unknown: whatever the call, a hook or the permission record threw.
 				const reportIfCharged = async (error: unknown) => {
-					if (meteredCall && hubConfig) {
+					// A job read is never charged, so it has nothing to give back.
+					if (meteredCall && hubConfig && managedJob?.role !== 'status') {
 						await reportManagedPricingCallFailed(hubConfig, meteredCall, error);
 					}
 				};
 				// unknown: each plugin's result has its own shape; only the path is known.
 				const reportUsage = async (result: unknown) => {
+					if (managedJob && hubConfig && meteredCall) {
+						await reportManagedJobCall(
+							hubConfig,
+							managedJob,
+							meteredCall,
+							args,
+							result,
+						);
+					}
 					if (!meteredCall || !hubConfig || !usagePath) return;
 					const units = readUsageUnits(result, usagePath);
 					if (units !== undefined) {
@@ -334,6 +354,12 @@ export function bindEndpointsRecursively({
 				const pluginAuthType = plugin ? getPluginAuthType(plugin) : undefined;
 				try {
 					if (pluginAuthType === 'managed_pricing' && hubConfig) {
+						const cache = managedPricingCacheFor(pluginId);
+						managedJob = managedJobKindFor(
+							await getManagedJobKinds(hubConfig, cache),
+							pluginId,
+							operationPath,
+						);
 						const resolved = await resolveManagedPricingCall(
 							{
 								hub: hubConfig,
@@ -342,8 +368,9 @@ export function bindEndpointsRecursively({
 							},
 							{
 								plugin: pluginId,
-								cache: managedPricingCacheFor(pluginId),
+								cache,
 								operation: operationPath,
+								...managedJobRequestFields(managedJob, args),
 							},
 						);
 						key = resolved.apiKey;

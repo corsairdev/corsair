@@ -32,6 +32,10 @@ export type GetManagedPricingApiKeyOptions = {
 	 * through without a charge.
 	 */
 	idempotencyKey?: string;
+	/** A job start's bound, which Hub holds credits for (managed-pricing-jobs.ts). */
+	cap?: number;
+	/** The provider's job id a job read asks about. */
+	jobId?: string;
 };
 
 /** Context from keyBuilder when the runtime is executing a metered endpoint. */
@@ -173,6 +177,8 @@ export async function getManagedPricingApiKey(
 				tenantId: ctx.tenantId,
 				operation,
 				...(idempotencyKey ? { idempotencyKey } : {}),
+				...(options.cap !== undefined ? { cap: options.cap } : {}),
+				...(options.jobId ? { jobId: options.jobId } : {}),
 			},
 			extraHeaders: {
 				...runtimeProofHeaders(ctx.hub, {
@@ -234,7 +240,13 @@ export type ManagedPricingCall = {
  */
 export async function resolveManagedPricingCall(
 	ctx: ManagedPricingKeyBuilderContext,
-	input: { plugin: string; cache: object; operation?: string },
+	input: {
+		plugin: string;
+		cache: object;
+		operation?: string;
+		cap?: number;
+		jobId?: string;
+	},
 ): Promise<{ apiKey: string; call: ManagedPricingCall; usagePath?: string }> {
 	requireHubForManagedPricing(input.plugin, ctx.hub);
 	const tenantId = ctx.tenantId?.trim();
@@ -265,7 +277,7 @@ export async function resolveManagedPricingCall(
 				tenantId,
 				cache: input.cache,
 			},
-			{ operation, idempotencyKey },
+			{ operation, idempotencyKey, cap: input.cap, jobId: input.jobId },
 		);
 		return {
 			apiKey: result.apiKey,
