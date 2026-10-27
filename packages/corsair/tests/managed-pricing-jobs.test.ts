@@ -84,10 +84,16 @@ type Sent = { url: string; method: string; body: Record<string, unknown> };
 function mockHub({
 	kinds = true,
 	stallKinds = false,
+	credentialsJob,
+	failStarts = 0,
 }: {
 	kinds?: boolean;
 	stallKinds?: boolean;
+	// unknown: the job descriptor Hub's answer carries, as JSON.
+	credentialsJob?: Record<string, unknown>;
+	failStarts?: number;
 } = {}) {
+	let startsFailed = 0;
 	const sent: Sent[] = [];
 	jest.spyOn(globalThis, 'fetch').mockImplementation(async (input, init) => {
 		const url = String(input);
@@ -112,7 +118,15 @@ function mockHub({
 				: json(404, { error: 'Not found' });
 		}
 		if (url.endsWith('/managed-pricing/credentials')) {
-			return json(200, { api_key: 'fc-test-key', expires_in: 300 });
+			return json(200, {
+				api_key: 'fc-test-key',
+				expires_in: 300,
+				...(credentialsJob ? { job: credentialsJob } : {}),
+			});
+		}
+		if (url.endsWith('/managed-pricing/jobs') && startsFailed < failStarts) {
+			startsFailed++;
+			return json(503, { error: 'Hub is restarting' });
 		}
 		return json(200, { job: { id: 'mpj_1', status: 'running' } });
 	});
@@ -307,5 +321,60 @@ describe('around a job call', () => {
 		).resolves.toMatchObject({ success: true });
 		expect(Date.now() - started).toBeLessThan(5_000);
 		expect(hubCalls.credentials()).toHaveLength(1);
+	});
+});
+
+describe('after review', () => {
+	it('refuses a hook that changes the cap in place, on the same object', async () => {
+		const hubCalls = mockHub();
+		const api = bind(
+			{ 'crawl.start': async () => ({ success: true, id: 'crawl-abc' }) },
+			{
+				crawl: {
+					start: {
+						// unknown: hooks receive any context and arguments.
+						before: async (ctx: unknown, args: unknown) => {
+							(args as Record<string, unknown>).limit = 900;
+							return { ctx, args, continue: true };
+						},
+					},
+				},
+			},
+		);
+		await expect(
+			api.crawl.start({ url: 'https://example.com', limit: 50 }),
+		).rejects.toThrow("changed crawl.start's cap");
+		expect(hubCalls.starts()).toHaveLength(0);
+	});
+
+	it("records a start from Hub's own answer when the job table can't be read", async () => {
+		const hubCalls = mockHub({
+			kinds: false,
+			credentialsJob: {
+				role: 'start',
+				id_path: 'id',
+				status_operation: 'crawl.get',
+			},
+		});
+		// Its own Hub, so the job kinds cached by the tests above don't answer.
+		const api = bind(
+			{ 'crawl.start': async () => ({ success: true, id: 'crawl-xyz' }) },
+			undefined,
+			{ ...hub, apiUrl: 'https://kindless-hub.test' },
+		);
+		await api.crawl.start({ url: 'https://example.com', limit: 50 });
+		expect(hubCalls.starts()[0]?.body).toMatchObject({
+			providerJobId: 'crawl-xyz',
+		});
+	});
+
+	it('tries the start report again when Hub fails it', async () => {
+		const hubCalls = mockHub({ failStarts: 2 });
+		const api = bind({
+			'crawl.start': async () => ({ success: true, id: 'crawl-abc' }),
+		});
+		await api.crawl.start({ url: 'https://example.com', limit: 50 });
+		expect(hubCalls.starts()).toHaveLength(3);
+		expect(hubCalls.outcomes()).toHaveLength(0);
 	});
 });

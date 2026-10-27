@@ -324,6 +324,9 @@ export function bindEndpointsRecursively({
 				// Set when the call starts a provider job or reads one back on
 				// Corsair's key (managed-pricing-jobs.ts).
 				let managedJob: ManagedJobKind | undefined;
+				// What the key request carried, kept rather than re-read: a before
+				// hook may change `args` in place.
+				let sentJobFields: { cap?: number; jobId?: string } = {};
 				// Set once a started job is reported: it is running at the provider,
 				// so a later local failure must not give its hold back.
 				let startedJob = false;
@@ -373,6 +376,7 @@ export function bindEndpointsRecursively({
 							pluginId,
 							operationPath,
 						);
+						sentJobFields = managedJobRequestFields(managedJob, args);
 						const resolved = await resolveManagedPricingCall(
 							{
 								hub: hubConfig,
@@ -383,9 +387,20 @@ export function bindEndpointsRecursively({
 								plugin: pluginId,
 								cache,
 								operation: operationPath,
-								...managedJobRequestFields(managedJob, args),
+								...sentJobFields,
 							},
 						);
+						// Hub names a job start in its own answer too, so the job is
+						// recorded even when its table could not be read.
+						if (!managedJob && resolved.startedJobIdPath) {
+							managedJob = {
+								plugin: pluginId,
+								operation: operationPath,
+								role: 'start',
+								id_path: resolved.startedJobIdPath,
+								status_operation: '',
+							};
+						}
 						key = resolved.apiKey;
 						meteredCall = resolved.call;
 						usagePath = resolved.usagePath;
@@ -504,12 +519,14 @@ export function bindEndpointsRecursively({
 					// Hub held credits for the cap, or checked the job id, it was
 					// sent with the key request; a hook may not change either after.
 					if (managedJob) {
-						const sent = managedJobRequestFields(managedJob, args);
 						const final = managedJobRequestFields(
 							managedJob,
 							beforeResult.args,
 						);
-						if (sent.cap !== final.cap || sent.jobId !== final.jobId) {
+						if (
+							sentJobFields.cap !== final.cap ||
+							sentJobFields.jobId !== final.jobId
+						) {
 							throw new Error(
 								`A before hook changed ${operationPath}'s ${managedJob.role === 'start' ? 'cap' : 'job id'} after Corsair checked it, so the call did not run.`,
 							);

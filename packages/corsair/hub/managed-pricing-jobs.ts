@@ -35,8 +35,13 @@ export type ManagedJobKind =
 
 /** Hub's table changes with a deploy, not per call. */
 const KINDS_TTL_MS = 10 * 60_000;
-/** A failed read is retried soon, but not on every call. */
-const KINDS_FAILURE_TTL_MS = 30_000;
+/** A failed read is retried soon, but not on every call. Short, because while
+ *  it lasts starts go out without their cap and reads without their job id,
+ *  which Hub refuses; a start is still recorded from Hub's own answer. */
+const KINDS_FAILURE_TTL_MS = 5_000;
+/** Without its row a started job can't be read or settled, so the start report
+ *  is retried; Hub answers a repeat as the same job. */
+const START_REPORT_ATTEMPTS = 3;
 const REPORT_TIMEOUT_MS = 3_000;
 /** Every managed call waits on this read when the cache is cold, so a Hub
  *  that stalls must not hold the call up for long. */
@@ -149,18 +154,26 @@ async function post(
 	hub: HubConfig,
 	path: string,
 	body: Record<string, unknown>,
-) {
-	try {
-		await hubApiPost({
-			hub,
-			path,
-			body,
-			parseResponse: (payload) => payload,
-			signal: AbortSignal.timeout(REPORT_TIMEOUT_MS),
-		});
-	} catch {
-		// Unreported: the hold stands, and Hub's deadline flags the job.
+	attempts = 1,
+): Promise<boolean> {
+	for (let attempt = 1; attempt <= attempts; attempt++) {
+		try {
+			await hubApiPost({
+				hub,
+				path,
+				body,
+				parseResponse: (payload) => payload,
+				signal: AbortSignal.timeout(REPORT_TIMEOUT_MS),
+			});
+			return true;
+		} catch {
+			if (attempt < attempts) {
+				await new Promise((resolve) => setTimeout(resolve, 250 * attempt));
+			}
+		}
 	}
+	// Unreported: the hold stands. A read reports again; a start has no row.
+	return false;
 }
 
 /**
@@ -181,7 +194,14 @@ export async function reportManagedJobCall(
 	if (kind.role === 'start') {
 		const providerJobId = readString(result, kind.id_path);
 		if (!providerJobId || !call.idempotencyKey) return { startedJob: false };
-		await post(hub, '/managed-pricing/jobs', { ...call, providerJobId });
+		await post(
+			hub,
+			'/managed-pricing/jobs',
+			{ ...call, providerJobId },
+			START_REPORT_ATTEMPTS,
+		);
+		// Started whether or not the report landed: the provider is running it,
+		// so its hold must not be given back as a failed call.
 		return { startedJob: true };
 	}
 	const providerJobId = readString(args, kind.id_arg);

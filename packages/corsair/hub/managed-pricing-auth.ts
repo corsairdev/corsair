@@ -51,6 +51,8 @@ export type ManagedPricingApiKeyResult = {
 	fromCache: boolean;
 	/** Where the result says how much the call used, for a per-unit price. */
 	usagePath?: string;
+	/** Set when the call starts a provider job on Corsair's key. */
+	startedJobIdPath?: string;
 };
 
 type CachedManagedPricingCredential = {
@@ -212,6 +214,7 @@ export async function getManagedPricingApiKey(
 			expiresAt,
 			fromCache: false,
 			...(response.usage_path ? { usagePath: response.usage_path } : {}),
+			...(response.job ? { startedJobIdPath: response.job.id_path } : {}),
 		};
 	});
 }
@@ -247,7 +250,12 @@ export async function resolveManagedPricingCall(
 		cap?: number;
 		jobId?: string;
 	},
-): Promise<{ apiKey: string; call: ManagedPricingCall; usagePath?: string }> {
+): Promise<{
+	apiKey: string;
+	call: ManagedPricingCall;
+	usagePath?: string;
+	startedJobIdPath?: string;
+}> {
 	requireHubForManagedPricing(input.plugin, ctx.hub);
 	const tenantId = ctx.tenantId?.trim();
 	if (!tenantId) {
@@ -283,6 +291,9 @@ export async function resolveManagedPricingCall(
 			apiKey: result.apiKey,
 			call,
 			...(result.usagePath ? { usagePath: result.usagePath } : {}),
+			...(result.startedJobIdPath
+				? { startedJobIdPath: result.startedJobIdPath }
+				: {}),
 		};
 	} catch (error) {
 		// Hub may have charged a key request whose answer never arrived (it
