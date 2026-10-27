@@ -3,7 +3,9 @@ import type { HubConfig } from '../../hub';
 import type { ManagedPricingCall } from '../../hub/managed-pricing-auth';
 import {
 	createManagedPricingCredentialCache,
+	readUsageUnits,
 	reportManagedPricingCallFailed,
+	reportManagedPricingCallUsage,
 	resolveManagedPricingCall,
 } from '../../hub/managed-pricing-auth';
 import { reportPluginConnectionStatusFromBinding } from '../../hub/report-connection-status';
@@ -309,10 +311,21 @@ export function bindEndpointsRecursively({
 				// Set once Hub has charged for this call; a failure from here on is
 				// reported so the charge is given back.
 				let meteredCall: ManagedPricingCall | undefined;
+				// Set when Hub prices the call per unit: where the result says how
+				// many units it used.
+				let usagePath: string | undefined;
 				// unknown: whatever the call, a hook or the permission record threw.
 				const reportIfCharged = async (error: unknown) => {
 					if (meteredCall && hubConfig) {
 						await reportManagedPricingCallFailed(hubConfig, meteredCall, error);
+					}
+				};
+				// unknown: each plugin's result has its own shape; only the path is known.
+				const reportUsage = async (result: unknown) => {
+					if (!meteredCall || !hubConfig || !usagePath) return;
+					const units = readUsageUnits(result, usagePath);
+					if (units !== undefined) {
+						await reportManagedPricingCallUsage(hubConfig, meteredCall, units);
 					}
 				};
 				const endpointCtx = { ...ctx, meteredOperationId: operationPath };
@@ -335,6 +348,7 @@ export function bindEndpointsRecursively({
 						);
 						key = resolved.apiKey;
 						meteredCall = resolved.call;
+						usagePath = resolved.usagePath;
 					} else if (keyBuilder) {
 						key = await keyBuilder(endpointCtx, 'endpoint');
 					}
@@ -415,6 +429,7 @@ export function bindEndpointsRecursively({
 						await reportIfCharged(error);
 						throw error;
 					}
+					await reportUsage(res);
 					if (plugin && hubConfig) {
 						reportPluginConnectionStatusFromBinding({
 							hub: hubConfig,
@@ -456,6 +471,7 @@ export function bindEndpointsRecursively({
 					await reportIfCharged(error);
 					throw error;
 				}
+				await reportUsage(res);
 				if (plugin && hubConfig) {
 					reportPluginConnectionStatusFromBinding({
 						hub: hubConfig,
