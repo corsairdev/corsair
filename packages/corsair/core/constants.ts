@@ -49,6 +49,7 @@ export const BaseProviders = [
 	'anchorbrowser',
 	'anonyflow',
 	'anthropicadministrator',
+	'anyapi',
 	'apaleo',
 	'api2pdf',
 	'apibible',
@@ -457,6 +458,7 @@ export const ProviderDisplayNames = {
 	anchorbrowser: 'Anchor Browser',
 	anonyflow: 'Anonyflow',
 	anthropicadministrator: 'Anthropic Administrator',
+	anyapi: 'AnyAPI',
 	apaleo: 'Apaleo',
 	api2pdf: 'API2PDF',
 	apibible: 'API.Bible',
@@ -871,6 +873,7 @@ export type AllProviders =
 	| 'anchorbrowser'
 	| 'anonyflow'
 	| 'anthropicadministrator'
+	| 'anyapi'
 	| 'apaleo'
 	| 'api2pdf'
 	| 'apibible'
