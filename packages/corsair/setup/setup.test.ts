@@ -4,6 +4,7 @@ import { linear } from '@corsair-dev/linear';
 import { slack } from '@corsair-dev/slack';
 import Database from 'better-sqlite3';
 import { Kysely, SqliteDialect } from 'kysely';
+import { z } from 'zod';
 import type { CorsairPlugin } from '../core';
 import { createCorsair } from '../core';
 import type { CorsairKyselyDatabase } from '../db/kysely/database';
@@ -274,5 +275,62 @@ describe('setupCorsair', () => {
 				},
 			}),
 		).rejects.toThrow('integration-level credential shared across all tenants');
+	});
+
+	it('backfill writes through a client that keeps encryptDataAtRest', async () => {
+		const plugin = {
+			id: 'slack' as const,
+			options: { authType: 'api_key' as const },
+			schema: {
+				version: '1',
+				entities: {
+					channels: z.object({ title: z.string() }),
+				},
+			},
+			endpoints: {
+				channels: {
+					list: async (ctx: {
+						db: {
+							channels: {
+								upsertByEntityId: (
+									id: string,
+									data: { title: string },
+								) => Promise<{ data: { title: string } }>;
+							};
+						};
+					}) => {
+						await ctx.db.channels.upsertByEntityId('c1', {
+							title: 'backfill secret',
+						});
+					},
+				},
+			},
+		};
+		const corsair = createCorsair({
+			kek: 'test-kek-32-chars-long-padding-x',
+			plugins: [plugin],
+			database: testDb.db,
+			encryptDataAtRest: true,
+		});
+
+		await setupCorsair(corsair, { silent: true });
+		await corsair.slack.keys.set_api_key('token');
+		const output = await setupCorsair(corsair, {
+			backfill: true,
+			silent: true,
+		});
+
+		expect(output).not.toContain('channels.list failed');
+		const row = await testDb.db
+			.selectFrom('corsair_entities')
+			.selectAll()
+			.executeTakeFirstOrThrow();
+		// unknown: sqlite returns the JSON cell as text. It is a seal envelope or a document.
+		const data: unknown =
+			typeof row.data === 'string'
+				? (JSON.parse(row.data) as unknown)
+				: row.data;
+		expect(data).toEqual({ _corsair_enc: expect.any(String) });
+		expect(JSON.stringify(data)).not.toContain('backfill secret');
 	});
 });

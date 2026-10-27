@@ -786,6 +786,13 @@ export type CorsairIntegration<Plugins extends readonly CorsairPlugin[]> = {
 	 */
 	kek?: string;
 	/**
+	 * Encrypt entity documents and event payloads with the account data key
+	 * before they are written. Defaults to false. JSON field filters and the
+	 * Postgres full-text index cannot see plaintext while this is on: the
+	 * stored document is a single ciphertext field.
+	 */
+	encryptDataAtRest?: boolean;
+	/**
 	 * Global permissions configuration — approval timeouts and sync/async blocking.
 	 * Pair with per-plugin `permissions: { mode, overrides }` on each plugin.
 	 */

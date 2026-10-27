@@ -34,6 +34,7 @@ export type CorsairInternalConfig = {
 	permissions?: CorsairPermissionsOptions;
 	manual?: CorsairManualConfig;
 	hub?: HubConfig;
+	encryptDataAtRest: boolean;
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -83,7 +84,8 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 
 	// Empty kek is tolerated at construction (plugin-only clients, env-less build
 	// steps); it's rejected where used — key access via createMissingConfigProxy,
-	// OAuth state signing/verification in core/auth/state.ts.
+	// OAuth state signing/verification in core/auth/state.ts, and any write while
+	// encryptDataAtRest is on.
 	const kek = config.kek ?? '';
 
 	// Build integration-level keys when database + KEK are configured;
@@ -108,6 +110,7 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 		permissions: rootPermissions,
 		manual: config.manual,
 		hub: config.hub ? resolveHubConfigInput(config.hub) : undefined,
+		encryptDataAtRest: config.encryptDataAtRest === true,
 	};
 
 	const permissions = buildPermissionsNamespace(resolvedDatabase);
