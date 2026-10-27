@@ -2,8 +2,9 @@ import type { Kysely, SelectQueryBuilder } from 'kysely';
 import type { ZodTypeAny } from 'zod';
 import { z } from 'zod';
 
+import { decryptDEK } from '../../core/auth/encryption';
 import { generateUUID } from '../../core/utils';
-import { loadAccountDek, openJson, sealJson } from '../data-at-rest';
+import { openJson, sealJson } from '../data-at-rest';
 import type { CorsairEntity } from '../index';
 import type { PluginEntityClient, TypedEntity } from '../orm';
 import type { CorsairKyselyDatabase } from './database';
@@ -20,6 +21,7 @@ type EntityQueryBuilder = SelectQueryBuilder<
 	CorsairEntity
 >;
 
+// unknown: postgres returns JSONB as an object; sqlite returns the same cell as text.
 function parseJsonLike(value: unknown): unknown {
 	if (typeof value === 'string') {
 		try {
@@ -251,17 +253,29 @@ export function createKyselyEntityClient<DataSchema extends ZodTypeAny>(
 	atRest?: EntityDataAtRest,
 ): PluginEntityClient<DataSchema> {
 	const dataFieldTypes = getDataFieldTypes(dataSchema);
-	const dekCache = new Map<string, Promise<string>>();
+	// Successful unwraps only. A missing or rejected key is not stored, and a
+	// rotated wrapped DEK misses this cache because the ciphertext changed.
+	const dekCache = new Map<string, { wrapped: string; dek: string }>();
 
-	const accountDek = (accountId: string): Promise<string> => {
+	const accountDek = async (accountId: string): Promise<string> => {
 		if (!atRest?.kek) {
 			throw new Error('encryptDataAtRest requires kek');
 		}
+		const row = await db
+			.selectFrom('corsair_accounts')
+			.select('dek')
+			.where('id', '=', accountId)
+			.executeTakeFirst();
+		if (!row?.dek) {
+			throw new Error(
+				`No DEK found for account "${accountId}". Initialize the account first.`,
+			);
+		}
 		const cached = dekCache.get(accountId);
-		if (cached) return cached;
-		const pending = loadAccountDek(db, accountId, atRest.kek);
-		dekCache.set(accountId, pending);
-		return pending;
+		if (cached && cached.wrapped === row.dek) return cached.dek;
+		const dek = await decryptDEK(row.dek, atRest.kek);
+		dekCache.set(accountId, { wrapped: row.dek, dek });
+		return dek;
 	};
 
 	async function parseRow(
@@ -277,9 +291,14 @@ export function createKyselyEntityClient<DataSchema extends ZodTypeAny>(
 
 	async function storedData(
 		accountId: string,
+		// unknown: this is the parsed output of a caller-supplied plugin schema.
+		// The schema is not in scope here, so the JSONB document cannot be named more tightly.
 		data: unknown,
 	): Promise<Record<string, unknown>> {
-		if (!atRest) return data as Record<string, unknown>;
+		if (!atRest) {
+			// unknown: same document. Zod's output is not a Record even though the column stores an object.
+			return data as Record<string, unknown>;
+		}
 		return sealJson(data, await accountDek(accountId));
 	}
 

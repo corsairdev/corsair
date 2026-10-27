@@ -224,6 +224,7 @@ export async function setupCorsair<
 			database: db,
 			kek: internal.kek,
 			multiTenancy: true,
+			...(internal.encryptDataAtRest ? { encryptDataAtRest: true } : {}),
 		}).withTenant(tenantScope.tenantId);
 		await runBackfill(instance, internal.plugins, authReadyPlugins, log, warn);
 		log('[corsair:setup] Backfill complete.');

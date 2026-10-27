@@ -484,8 +484,8 @@ export function buildCorsairClient<
 							entityTypeName,
 							schema.version,
 							dataSchema,
-							internalConfig?.encryptDataAtRest && kek
-								? { encryptDataAtRest: true, kek }
+							internalConfig?.encryptDataAtRest
+								? { encryptDataAtRest: true, kek: kek ?? '' }
 								: undefined,
 						)
 					: createEntityClient(
