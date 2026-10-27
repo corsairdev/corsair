@@ -5529,6 +5529,21 @@
       }
     },
     {
+      "id": "typesafe",
+      "displayName": "TypeSafe",
+      "description": "Ask Jev, TypeSafe's System One model, typed questions about text, JSON or images and get calibrated probabilities back for code to act on.",
+      "npmPackageName": "@corsair-dev/typesafe",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 2,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
       "id": "unione",
       "displayName": "UniOne",
       "description": "Transactional email service for sending bulk mail, templates, and deliverability management.",
@@ -87986,6 +88001,18 @@
       "kind": "webhook",
       "shortPath": "forms.formResponse",
       "haystack": "forms.formresponse typeform.webhooks.forms.formresponse a form was submitted — typeform delivers the full response payload"
+    },
+    {
+      "pluginId": "typesafe",
+      "kind": "api",
+      "shortPath": "models.list",
+      "haystack": "models.list typesafe.api.models.list list the typesafe model names and aliases this key can use, such as jev-latest read"
+    },
+    {
+      "pluginId": "typesafe",
+      "kind": "api",
+      "shortPath": "systemOne.ask",
+      "haystack": "systemone.ask typesafe.api.systemone.ask ask jev typed questions about text, json or images in one call: yes/no (probability), choice (one option), score (ordered levels) or box (locate in an image). answers come back with calibrated probabilities. read"
     },
     {
       "pluginId": "unione",
