@@ -90,6 +90,7 @@ export function bindEndpointsRecursively({
 	kek,
 	allPlugins,
 	multiTenancy,
+	encryptDataAtRest,
 }: {
 	endpoints: Record<string, unknown>;
 	hooks: Record<string, unknown> | undefined;
@@ -119,6 +120,7 @@ export function bindEndpointsRecursively({
 	kek?: string;
 	allPlugins?: readonly CorsairPlugin[];
 	multiTenancy?: boolean;
+	encryptDataAtRest?: boolean;
 }): void {
 	for (const [key, value] of Object.entries(endpoints)) {
 		// we have to retype this now because it's nested webhooks
@@ -342,6 +344,7 @@ export function bindEndpointsRecursively({
 							tenantId: err.tenantId ?? tenantId,
 							plugin: err.plugin,
 							connectUrl: err.connectUrl,
+							kek: encryptDataAtRest ? kek : undefined,
 						});
 						throw err;
 					}
@@ -377,6 +380,7 @@ export function bindEndpointsRecursively({
 									tenantId: enriched.tenantId ?? tenantId,
 									plugin: enriched.pluginId,
 									connectUrl: enriched.connectUrl,
+									kek: encryptDataAtRest ? kek : undefined,
 								});
 							}
 							throw enriched;
@@ -458,6 +462,7 @@ export function bindEndpointsRecursively({
 				kek,
 				allPlugins,
 				multiTenancy,
+				encryptDataAtRest,
 			});
 
 			tree[key] = nestedTree;

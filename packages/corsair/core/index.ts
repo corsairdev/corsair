@@ -34,6 +34,7 @@ export type CorsairInternalConfig = {
 	permissions?: CorsairPermissionsOptions;
 	manual?: CorsairManualConfig;
 	hub?: HubConfig;
+	encryptDataAtRest: boolean;
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -108,6 +109,7 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 		permissions: rootPermissions,
 		manual: config.manual,
 		hub: config.hub ? resolveHubConfigInput(config.hub) : undefined,
+		encryptDataAtRest: config.encryptDataAtRest === true,
 	};
 
 	const permissions = buildPermissionsNamespace(resolvedDatabase);

@@ -3,6 +3,7 @@ import type { ZodTypeAny } from 'zod';
 import { z } from 'zod';
 
 import { generateUUID } from '../../core/utils';
+import { loadAccountDek, openJson, sealJson } from '../data-at-rest';
 import type { CorsairEntity } from '../index';
 import type { PluginEntityClient, TypedEntity } from '../orm';
 import type { CorsairKyselyDatabase } from './database';
@@ -236,21 +237,50 @@ function baseQuery(
 		.where('entity_type', '=', entityTypeName);
 }
 
+export type EntityDataAtRest = {
+	encryptDataAtRest: true;
+	kek: string;
+};
+
 export function createKyselyEntityClient<DataSchema extends ZodTypeAny>(
 	db: Kysely<CorsairKyselyDatabase>,
 	getAccountId: () => Promise<string>,
 	entityTypeName: string,
 	version: string,
 	dataSchema: DataSchema,
+	atRest?: EntityDataAtRest,
 ): PluginEntityClient<DataSchema> {
 	const dataFieldTypes = getDataFieldTypes(dataSchema);
+	const dekCache = new Map<string, Promise<string>>();
 
-	function parseRow(row: CorsairEntity): TypedEntity<DataSchema> {
-		const data = parseJsonLike(row.data);
+	const accountDek = (accountId: string): Promise<string> => {
+		if (!atRest?.kek) {
+			throw new Error('encryptDataAtRest requires kek');
+		}
+		const cached = dekCache.get(accountId);
+		if (cached) return cached;
+		const pending = loadAccountDek(db, accountId, atRest.kek);
+		dekCache.set(accountId, pending);
+		return pending;
+	};
+
+	async function parseRow(
+		row: CorsairEntity,
+	): Promise<TypedEntity<DataSchema>> {
+		let data = parseJsonLike(row.data);
+		if (atRest) data = openJson(data, await accountDek(row.account_id));
 		return {
 			...row,
 			data: dataSchema.parse(data),
 		} as TypedEntity<DataSchema>;
+	}
+
+	async function storedData(
+		accountId: string,
+		data: unknown,
+	): Promise<Record<string, unknown>> {
+		if (!atRest) return data as Record<string, unknown>;
+		return sealJson(data, await accountDek(accountId));
 	}
 
 	return {
@@ -294,7 +324,7 @@ export function createKyselyEntityClient<DataSchema extends ZodTypeAny>(
 			const rows = await baseQuery(db, accountId, entityTypeName)
 				.where('entity_id', 'in', entityIds)
 				.execute();
-			return rows.map(parseRow);
+			return Promise.all(rows.map(parseRow));
 		},
 
 		list: async (options) => {
@@ -303,10 +333,20 @@ export function createKyselyEntityClient<DataSchema extends ZodTypeAny>(
 			if (typeof options?.limit === 'number') q = q.limit(options.limit);
 			if (typeof options?.offset === 'number') q = q.offset(options.offset);
 			const rows = await q.execute();
-			return rows.map(parseRow);
+			return Promise.all(rows.map(parseRow));
 		},
 
 		search: async (options) => {
+			if (
+				atRest &&
+				options.data &&
+				typeof options.data === 'object' &&
+				Object.keys(options.data).length > 0
+			) {
+				throw new Error(
+					'Entity JSON field search cannot run while encryptDataAtRest is enabled. The stored document is ciphertext.',
+				);
+			}
 			const accountId = await getAccountId();
 			let q = baseQuery(db, accountId, entityTypeName);
 
@@ -328,12 +368,13 @@ export function createKyselyEntityClient<DataSchema extends ZodTypeAny>(
 			if (typeof options.offset === 'number') q = q.offset(options.offset);
 
 			const rows = await q.execute();
-			return rows.map(parseRow);
+			return Promise.all(rows.map(parseRow));
 		},
 
 		upsertByEntityId: async (entityId, data) => {
 			const accountId = await getAccountId();
 			const parsed = dataSchema.parse(data);
+			const dataToStore = await storedData(accountId, parsed);
 			const now = new Date();
 
 			const existing = await baseQuery(db, accountId, entityTypeName)
@@ -346,7 +387,7 @@ export function createKyselyEntityClient<DataSchema extends ZodTypeAny>(
 					.updateTable('corsair_entities')
 					.set({
 						version,
-						data: parsed as Record<string, unknown>,
+						data: dataToStore,
 						updated_at: now,
 					})
 					.where('id', '=', existing.id)
@@ -370,7 +411,7 @@ export function createKyselyEntityClient<DataSchema extends ZodTypeAny>(
 					entity_id: entityId,
 					entity_type: entityTypeName,
 					version,
-					data: parsed as Record<string, unknown>,
+					data: dataToStore,
 				})
 				.execute();
 

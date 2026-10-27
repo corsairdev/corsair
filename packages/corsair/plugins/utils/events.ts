@@ -1,4 +1,5 @@
 import { generateUUID } from '../../core/utils';
+import { loadAccountDek, sealJson } from '../../db/data-at-rest';
 import type { CorsairDatabase } from '../../db/kysely/database';
 
 /**
@@ -7,6 +8,9 @@ import type { CorsairDatabase } from '../../db/kysely/database';
 export interface EventLoggingContext {
 	database?: CorsairDatabase | undefined;
 	$getAccountId: () => Promise<string>;
+	/** When true, `logEventFromContext` seals the payload with the account DEK. */
+	encryptDataAtRest?: boolean;
+	kek?: string;
 }
 
 /**
@@ -25,6 +29,7 @@ export async function logEvent(
 	eventType: string,
 	payload: Record<string, unknown>,
 	status: 'pending' | 'processing' | 'completed' | 'failed' = 'pending',
+	kek?: string,
 ): Promise<string | null> {
 	if (!database) {
 		return null;
@@ -32,6 +37,9 @@ export async function logEvent(
 	try {
 		const eventId = generateUUID();
 		const now = new Date();
+		const stored = kek
+			? sealJson(payload, await loadAccountDek(database.db, accountId, kek))
+			: payload;
 		await database.db
 			.insertInto('corsair_events')
 			.values({
@@ -40,7 +48,7 @@ export async function logEvent(
 				updated_at: now,
 				account_id: accountId,
 				event_type: eventType,
-				payload,
+				payload: stored,
 				status,
 			})
 			.execute();
@@ -69,7 +77,17 @@ export async function logEventFromContext(
 ): Promise<string | null> {
 	try {
 		const accountId = await ctx.$getAccountId();
-		return logEvent(ctx.database, accountId, eventType, payload, status);
+		if (ctx.encryptDataAtRest && !ctx.kek) {
+			throw new Error('encryptDataAtRest requires kek');
+		}
+		return logEvent(
+			ctx.database,
+			accountId,
+			eventType,
+			payload,
+			status,
+			ctx.encryptDataAtRest ? ctx.kek : undefined,
+		);
 	} catch (error) {
 		console.warn('Failed to log event:', error);
 		return null;

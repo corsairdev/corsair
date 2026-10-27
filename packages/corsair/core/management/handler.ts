@@ -296,7 +296,13 @@ const ROUTES: Route[] = [
 			const tenantId =
 				resolveScopedTenant(scopedTenant, query.tenantId) ?? 'default';
 			const request = internal.database
-				? await readConnectRequest(internal.database, tenantId)
+				? await readConnectRequest(
+						internal.database,
+						tenantId,
+						undefined,
+						undefined,
+						internal.encryptDataAtRest ? internal.kek : undefined,
+					)
 				: null;
 			// Tenant-scoped connect link — never let a shared cache reuse it.
 			return json(200, { request }, { 'cache-control': 'no-store' });
@@ -315,6 +321,7 @@ const ROUTES: Route[] = [
 					tenantId,
 					undefined,
 					parsed?.plugin,
+					internal.encryptDataAtRest ? internal.kek : undefined,
 				);
 			}
 			return json(200, { ok: true });
