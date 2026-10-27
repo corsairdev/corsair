@@ -19,6 +19,7 @@ const plugin = {
 const META: Record<string, EndpointMetaEntry> = {
 	'crawl.start': { riskLevel: 'write' },
 	'crawl.get': { riskLevel: 'read' },
+	'crawl.cancel': { riskLevel: 'write' },
 	'scrape.run': { riskLevel: 'read' },
 };
 
@@ -35,6 +36,12 @@ const KINDS = [
 	},
 	{
 		plugin: 'firecrawl',
+		operation: 'crawl.cancel',
+		role: 'scoped',
+		id_arg: 'id',
+	},
+	{
+		plugin: 'firecrawl',
 		operation: 'crawl.get',
 		role: 'status',
 		id_arg: 'id',
@@ -46,7 +53,7 @@ const KINDS = [
 // unknown: the test endpoints echo whatever the test hands them, and the tests
 // read results with matchers.
 type Fn = (args: unknown) => Promise<unknown>;
-type Api = { crawl: { start: Fn; get: Fn }; scrape: { run: Fn } };
+type Api = { crawl: { start: Fn; get: Fn; cancel: Fn }; scrape: { run: Fn } };
 
 // unknown: each endpoint answers with the canned result the test gives it, and
 // hooks are any endpoint hooks, as bindEndpointsRecursively takes them.
@@ -59,7 +66,11 @@ function bind(
 	const endpoint = (path: string) => async () => results[path]!();
 	bindEndpointsRecursively({
 		endpoints: {
-			crawl: { start: endpoint('crawl.start'), get: endpoint('crawl.get') },
+			crawl: {
+				start: endpoint('crawl.start'),
+				get: endpoint('crawl.get'),
+				cancel: endpoint('crawl.cancel'),
+			},
 			scrape: { run: endpoint('scrape.run') },
 		},
 		hooks,
@@ -375,6 +386,24 @@ describe('after review', () => {
 		});
 		await api.crawl.start({ url: 'https://example.com', limit: 50 });
 		expect(hubCalls.starts()).toHaveLength(3);
+		expect(hubCalls.outcomes()).toHaveLength(0);
+	});
+});
+
+describe('a call scoped to a job', () => {
+	it('sends the job id, reports nothing, and gives nothing back when it fails', async () => {
+		const hubCalls = mockHub();
+		const api = bind({
+			'crawl.cancel': async () => {
+				throw new Error('409 already finished');
+			},
+		});
+		await expect(api.crawl.cancel({ id: 'crawl-abc' })).rejects.toThrow('409');
+		expect(hubCalls.credentials()[0]?.body).toMatchObject({
+			operation: 'crawl.cancel',
+			jobId: 'crawl-abc',
+		});
+		expect(hubCalls.reports()).toHaveLength(0);
 		expect(hubCalls.outcomes()).toHaveLength(0);
 	});
 });

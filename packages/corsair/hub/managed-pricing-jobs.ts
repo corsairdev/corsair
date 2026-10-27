@@ -31,6 +31,14 @@ export type ManagedJobKind =
 			id_arg: string;
 			status_path: string;
 			usage_path?: string;
+	  }
+	| {
+			plugin: string;
+			operation: string;
+			/** Another call that takes the job's id (cancel it, read a step): it
+			 *  sends the id so Hub can check whose job it is, and reports nothing. */
+			role: 'scoped';
+			id_arg: string;
 	  };
 
 /** Hub's table changes with a deploy, not per call. */
@@ -62,6 +70,7 @@ function parseKinds(payload: unknown): ManagedJobKind[] {
 		if (!str(k?.plugin) || !str(k?.operation)) return false;
 		if (k.role === 'start') return str(k.id_path);
 		if (k.role === 'status') return str(k.id_arg) && str(k.status_path);
+		if (k.role === 'scoped') return str(k.id_arg);
 		return false;
 	});
 }
@@ -141,7 +150,7 @@ export function managedJobRequestFields(
 		const cap = readAtPath(args, kind.cap_path);
 		return typeof cap === 'number' ? { cap } : {};
 	}
-	if (kind?.role === 'status') {
+	if (kind?.role === 'status' || kind?.role === 'scoped') {
 		const jobId = readString(args, kind.id_arg);
 		return jobId ? { jobId } : {};
 	}
@@ -191,6 +200,7 @@ export async function reportManagedJobCall(
 	args: unknown,
 	result: unknown,
 ): Promise<{ startedJob: boolean }> {
+	if (kind.role === 'scoped') return { startedJob: false };
 	if (kind.role === 'start') {
 		const providerJobId = readString(result, kind.id_path);
 		if (!providerJobId || !call.idempotencyKey) return { startedJob: false };

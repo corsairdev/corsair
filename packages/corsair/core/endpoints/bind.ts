@@ -332,11 +332,13 @@ export function bindEndpointsRecursively({
 				let startedJob = false;
 				// unknown: whatever the call, a hook or the permission record threw.
 				const reportIfCharged = async (error: unknown) => {
-					// A job read is never charged, so it has nothing to give back.
+					// A job read or a call scoped to a job is never charged, so it has
+					// nothing to give back.
 					if (
 						meteredCall &&
 						hubConfig &&
 						managedJob?.role !== 'status' &&
+						managedJob?.role !== 'scoped' &&
 						!startedJob
 					) {
 						await reportManagedPricingCallFailed(hubConfig, meteredCall, error);
