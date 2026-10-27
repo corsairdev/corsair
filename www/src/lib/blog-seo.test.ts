@@ -82,8 +82,21 @@ describe('faqsVisibleInBody', () => {
 	});
 
 	it('ignores case and punctuation differences', () => {
-		const body = [block('h3', 'are google APIs free')];
+		const body = [
+			block('h3', 'are google APIs free'),
+			block('normal', 'MOSTLY'),
+		];
 		assert.equal(faqsVisibleInBody(faqs, body).length, 1);
+	});
+
+	it('drops an item whose answer in the body was changed or removed', () => {
+		const edited = [
+			block('normal', 'Are Google APIs free?'),
+			block('normal', 'Only some of them.'),
+		];
+		assert.deepEqual(faqsVisibleInBody(faqs, edited), []);
+		const questionOnly = [block('normal', 'Do I need CASA?')];
+		assert.deepEqual(faqsVisibleInBody(faqs, questionOnly), []);
 	});
 
 	it('drops everything when the body has no FAQ', () => {

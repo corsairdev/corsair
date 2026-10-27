@@ -20,8 +20,12 @@ export type BlogJsonLdInput = {
 	imageUrl?: string;
 };
 
+// The jsonLd field is free-form JSON typed by editors, so its values have no
+// schema we can trust; they stay unknown until isObject/typeof checks narrow them.
 type JsonObject = Record<string, unknown>;
 
+// Accepts unknown because it is the type guard that narrows parsed JSON and
+// Portable Text children, whose shape isn't guaranteed.
 function isObject(value: unknown): value is JsonObject {
 	return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
@@ -37,6 +41,7 @@ function hasType(node: JsonObject, type: string) {
 export function faqsFromJsonLd(raw: string | null | undefined): BlogFaq[] {
 	if (!raw?.trim()) return [];
 
+	// JSON.parse can return any JSON value; unknown forces the checks below.
 	let parsed: unknown;
 	try {
 		parsed = JSON.parse(raw);
@@ -84,8 +89,9 @@ function normalize(text: string) {
 }
 
 // Posts write their FAQ into the body, and the FAQs field repeats it. Google
-// only accepts FAQ markup for questions the reader can see, so keep the ones
-// whose question text appears in the body.
+// only accepts FAQ markup for content the reader can see, and the field can
+// drift from the body when one is edited, so keep an item only when both its
+// question and its answer appear in the body.
 export function faqsVisibleInBody(faqs: BlogFaq[], body: PortableTextBlock[]) {
 	const bodyText = normalize(
 		body
@@ -95,7 +101,13 @@ export function faqsVisibleInBody(faqs: BlogFaq[], body: PortableTextBlock[]) {
 	);
 	return faqs.filter((faq) => {
 		const question = normalize(faq.question);
-		return question.length > 0 && bodyText.includes(question);
+		const answer = normalize(faq.answer);
+		return (
+			question.length > 0 &&
+			answer.length > 0 &&
+			bodyText.includes(question) &&
+			bodyText.includes(answer)
+		);
 	});
 }
 
@@ -161,6 +173,8 @@ export function buildBlogPostJsonLd(post: BlogJsonLdInput) {
 	return { '@context': 'https://schema.org', '@graph': graph };
 }
 
+// Takes unknown like JSON.stringify does: callers pass whatever JSON-LD
+// object they built, and its shape doesn't matter for escaping.
 export function serializeJsonLd(value: unknown) {
 	return JSON.stringify(value)
 		.replace(/&/g, '\\u0026')
