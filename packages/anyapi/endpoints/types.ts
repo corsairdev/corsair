@@ -210,6 +210,15 @@ const ApisRunResultSchema = z
 	.object({ output: z.unknown(), ...envelopeFields })
 	.loose();
 
+// A re-read is free but echoes the original run's costUsd.
+const ResultsGetResponseSchema = ApisRunResultSchema.extend({
+	costUsd: z
+		.number()
+		.describe(
+			'USD charged for the original run. The re-read itself is free, so do not add this to a running total.',
+		),
+});
+
 // A durable endpoint that is still working answers with a request snapshot.
 const ApisRunResponseSchema = z.union([
 	ApisRunResultSchema,
@@ -515,7 +524,7 @@ export const AnyApiEndpointOutputSchemas = {
 	apisGet: ApisGetResponseSchema,
 	apisQuote: ApisQuoteResponseSchema,
 	apisRun: ApisRunResponseSchema,
-	resultsGet: ApisRunResultSchema,
+	resultsGet: ResultsGetResponseSchema,
 	requestsGet: RequestSnapshotSchema,
 	accountGetBalance: AccountGetBalanceResponseSchema,
 	googleSearch: runResult(GoogleSearchDataSchema),

@@ -92,12 +92,13 @@ export const errorHandlers = {
 			(statusOf(error) === undefined && timedOut(error)),
 		handler: async () => ({ maxRetries: 0 }),
 	},
-	// 500/502 with no payment in the body: every source failed and nothing
-	// was charged.
+	// 500 and 502 are AnyAPI's documented answers when every source failed.
+	// With no payment in the body nothing was charged, so they are retried.
+	// Other 5xx statuses fall through to DEFAULT and are not retried.
 	SERVER_ERROR: {
 		match: (error: Error) => {
 			const status = statusOf(error);
-			return status !== undefined && status >= 500;
+			return status === 500 || status === 502;
 		},
 		handler: async () => ({
 			maxRetries: 2,

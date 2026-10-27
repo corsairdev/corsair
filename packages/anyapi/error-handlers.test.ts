@@ -91,14 +91,23 @@ describe('AnyAPI error handlers', () => {
 		});
 	});
 
-	it('retries an uncharged 502 twice', async () => {
-		const error = apiError(502);
+	it.each([500, 502])('retries an uncharged %i twice', async (status) => {
+		const error = apiError(status);
 		expect(classify(error)).toBe('SERVER_ERROR');
 		expect(await strategy(error)).toEqual({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff',
 		});
 	});
+
+	it.each([501, 503, 505, 599])(
+		'does not retry an undocumented %i',
+		async (status) => {
+			const error = apiError(status);
+			expect(classify(error)).toBe('DEFAULT');
+			expect(await strategy(error)).toEqual({ maxRetries: 0 });
+		},
+	);
 
 	it('does not replay a 504 or a client timeout', async () => {
 		expect(classify(apiError(504))).toBe('TIMEOUT_ERROR');

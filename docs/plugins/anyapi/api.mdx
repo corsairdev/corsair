@@ -938,7 +938,7 @@ await corsair.anyapi.api.results.get({ resultId: 'd668386e-e52f-4383-8951-8f6b9a
 |------|------|----------|-------------|
 | `output` | `any` | Yes | — |
 | `provider` | `string` | No | — |
-| `costUsd` | `number` | Yes | USD charged for this call |
+| `costUsd` | `number` | Yes | USD charged for the original run. The re-read itself is free, so do not add this to a running total. |
 | `items` | `number` | No | — |
 | `replayed` | `boolean` | No | — |
 | `source` | `object` | No | — |
