@@ -17,6 +17,7 @@ async function strategy(error: Error) {
 	return errorHandlers[classify(error)].handler(error);
 }
 
+// unknown: extra error-body fields (code, payment) vary per case.
 function apiError(
 	status: number,
 	extra: Record<string, unknown> = {},

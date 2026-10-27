@@ -35,7 +35,8 @@ export const quote: AnyApiEndpoints['apisQuote'] = (ctx, input) =>
 	}));
 
 export const run: AnyApiEndpoints['apisRun'] = (ctx, input) => {
-	// The SKU is logged once the input is parsed, so read it the same way.
+	// unknown: the raw input before its schema runs; only a string SKU is
+	// read here, for the log line.
 	const sku =
 		typeof (input as { sku?: unknown } | undefined)?.sku === 'string'
 			? (input as { sku: string }).sku

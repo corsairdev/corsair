@@ -19,6 +19,7 @@ export function runResult(data: unknown, costUsd = 0.0011, items = 1) {
 	};
 }
 
+// unknown: extra fields (code, requestId, payment, alternatives) vary by error.
 export function errorBody(error: string, extra: Record<string, unknown> = {}) {
 	return { error, ...extra };
 }

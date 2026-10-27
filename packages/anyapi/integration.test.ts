@@ -100,6 +100,7 @@ describe('AnyAPI plugin through createCorsair', () => {
 				402,
 			);
 
+			// unknown: a rejection can be any value until toBeInstanceOf narrows it.
 			const error = await corsair.anyapi.api.linkedin
 				.getCompany({ url: companyUrl })
 				.catch((e: unknown) => e);

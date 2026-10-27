@@ -81,6 +81,8 @@ afterEach(() => {
 	fetchMock.mockRestore();
 });
 
+// unknown: the cases cover sixteen operations whose inputs, responses and
+// request bodies all differ; each case's check() reads its own result.
 type Case = {
 	operation: string;
 	endpoint: AnyEndpoint;
@@ -411,6 +413,7 @@ describe('run controls', () => {
 	it('returns a durable run that is still working as a request snapshot', async () => {
 		respond(requestSnapshot, 202);
 
+		// unknown: read back with pick(), which narrows one key at a time.
 		const result = (await invoke(Apis.run, {
 			sku: 'email_verification.bounceban',
 			input: { email: 'someone@fieldkit.example' },
@@ -423,6 +426,7 @@ describe('run controls', () => {
 	it('accepts a target that does not exist as found false', async () => {
 		respond(runResult(null, 0.0011, 0));
 
+		// unknown: read back with pick(), which narrows one key at a time.
 		const result = (await invoke(LinkedIn.getCompany, {
 			url: 'https://www.linkedin.com/company/does-not-exist',
 		})) as unknown;
@@ -497,6 +501,7 @@ describe('errors', () => {
 			400,
 		);
 
+		// unknown: a rejection can be any value until toBeInstanceOf narrows it.
 		const error = await invoke(Apis.run, {
 			sku: 'linkedin.company',
 			input: { website: 'fieldkit.example' },

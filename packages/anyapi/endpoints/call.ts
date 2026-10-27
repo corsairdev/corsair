@@ -78,6 +78,8 @@ export async function call<K extends AnyApiOperation>(
 
 	// A re-read echoes the original run's costUsd but is free, so only a run
 	// logs what it cost.
+	// unknown: every output schema is an object, but only some carry
+	// costUsd and items, so both are read with a typeof check.
 	const record = result as Record<string, unknown>;
 	const billed = operation !== 'resultsGet';
 	await logEventFromContext(
