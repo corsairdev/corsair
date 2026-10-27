@@ -12,29 +12,66 @@ pnpm add @corsair-dev/render
 
 | Operation | Operation ID | Risk | Description |
 |-----------|--------------|------|-------------|
+| `automation.cancelTaskRun` | `render.api.automation.cancelTaskRun` | `destructive` | Cancel a Render workflow task run |
 | `automation.createDisk` | `render.api.automation.createDisk` | `write` | Create a disk for a Render service |
+| `automation.createTaskRun` | `render.api.automation.createTaskRun` | `write` | Start a Render workflow task run |
 | `automation.createWebhook` | `render.api.automation.createWebhook` | `write` | Create a webhook for a Render owner |
+| `automation.createWorkflow` | `render.api.automation.createWorkflow` | `write` | Create a Render workflow |
+| `automation.createWorkflowVersion` | `render.api.automation.createWorkflowVersion` | `write` | Create and deploy a Render workflow version |
 | `automation.deleteDisk` | `render.api.automation.deleteDisk` | `destructive` | Delete a Render disk |
 | `automation.deleteWebhook` | `render.api.automation.deleteWebhook` | `destructive` | Delete a Render webhook |
-| `automation.listDiskSnapshots` | `render.api.automation.listDiskSnapshots` | `read` | List snapshots for a Render disk |
+| `automation.deleteWorkflow` | `render.api.automation.deleteWorkflow` | `destructive` | Delete a Render workflow |
 | `automation.listDisks` | `render.api.automation.listDisks` | `read` | List Render disks |
+| `automation.listDiskSnapshots` | `render.api.automation.listDiskSnapshots` | `read` | List snapshots for a Render disk |
 | `automation.listMaintenance` | `render.api.automation.listMaintenance` | `read` | List Render maintenance windows |
 | `automation.listTaskRuns` | `render.api.automation.listTaskRuns` | `read` | List Render task runs |
 | `automation.listTasks` | `render.api.automation.listTasks` | `read` | List Render tasks |
 | `automation.listWebhooks` | `render.api.automation.listWebhooks` | `read` | List Render webhooks |
-| `automation.listWorkflowVersions` | `render.api.automation.listWorkflowVersions` | `read` | List Render workflow versions |
 | `automation.listWorkflows` | `render.api.automation.listWorkflows` | `read` | List Render workflows |
+| `automation.listWorkflowVersions` | `render.api.automation.listWorkflowVersions` | `read` | List Render workflow versions |
 | `automation.restoreDiskSnapshot` | `render.api.automation.restoreDiskSnapshot` | `write` | Restore a snapshot to a Render disk |
 | `automation.retrieveDisk` | `render.api.automation.retrieveDisk` | `read` | Retrieve a Render disk |
 | `automation.retrieveMaintenance` | `render.api.automation.retrieveMaintenance` | `read` | Retrieve a Render maintenance run |
+| `automation.retrieveTask` | `render.api.automation.retrieveTask` | `read` | Retrieve a Render workflow task |
+| `automation.retrieveTaskRun` | `render.api.automation.retrieveTaskRun` | `read` | Retrieve a Render workflow task run |
 | `automation.retrieveWebhook` | `render.api.automation.retrieveWebhook` | `read` | Retrieve a Render webhook |
-| `automation.streamTaskRunsEvents` | `render.api.automation.streamTaskRunsEvents` | `read` | Stream Render task run events |
+| `automation.retrieveWorkflow` | `render.api.automation.retrieveWorkflow` | `read` | Retrieve a Render workflow |
+| `automation.retrieveWorkflowVersion` | `render.api.automation.retrieveWorkflowVersion` | `read` | Retrieve a Render workflow version |
 | `automation.triggerCronJobRun` | `render.api.automation.triggerCronJobRun` | `write` | Trigger a run of a Render cron job |
 | `automation.triggerMaintenance` | `render.api.automation.triggerMaintenance` | `write` | Trigger a Render maintenance run |
 | `automation.updateDisk` | `render.api.automation.updateDisk` | `write` | Update a Render disk |
 | `automation.updateMaintenance` | `render.api.automation.updateMaintenance` | `write` | Update a Render maintenance run |
 | `automation.updateWebhook` | `render.api.automation.updateWebhook` | `write` | Update a Render webhook |
+| `automation.updateWorkflow` | `render.api.automation.updateWorkflow` | `write` | Update a Render workflow |
 | `blueprints.listSyncs` | `render.api.blueprints.listSyncs` | `read` | List syncs for a Render blueprint |
+| `blueprints.retrieve` | `render.api.blueprints.retrieve` | `read` | Retrieve a Render Blueprint |
+| `blueprints.update` | `render.api.blueprints.update` | `write` | Update a Render Blueprint |
+| `blueprints.validate` | `render.api.blueprints.validate` | `read` | Validate a Render Blueprint configuration |
+| `buildSources.builds.list` | `render.api.buildSources.builds.list` | `read` | List builds for a Render build source |
+| `buildSources.builds.retrieve` | `render.api.buildSources.builds.retrieve` | `read` | Retrieve a Render build source build |
+| `buildSources.builds.trigger` | `render.api.buildSources.builds.trigger` | `write` | Trigger a Render build source build |
+| `buildSources.create` | `render.api.buildSources.create` | `write` | Create a Render build source |
+| `buildSources.delete` | `render.api.buildSources.delete` | `destructive` | Delete a Render build source |
+| `buildSources.envGroups.link` | `render.api.buildSources.envGroups.link` | `write` | Link an environment group to a Render build source |
+| `buildSources.envGroups.unlink` | `render.api.buildSources.envGroups.unlink` | `destructive` | Unlink an environment group from a Render build source |
+| `buildSources.envVars.delete` | `render.api.buildSources.envVars.delete` | `destructive` | Delete an environment variable from a Render build source |
+| `buildSources.envVars.list` | `render.api.buildSources.envVars.list` | `read` | List environment variables for a Render build source |
+| `buildSources.envVars.retrieve` | `render.api.buildSources.envVars.retrieve` | `read` | Retrieve an environment variable for a Render build source |
+| `buildSources.envVars.update` | `render.api.buildSources.envVars.update` | `write` | Replace environment variables for a Render build source |
+| `buildSources.envVars.upsert` | `render.api.buildSources.envVars.upsert` | `write` | Add or update an environment variable for a Render build source |
+| `buildSources.list` | `render.api.buildSources.list` | `read` | List Render build sources |
+| `buildSources.retrieve` | `render.api.buildSources.retrieve` | `read` | Retrieve a Render build source |
+| `buildSources.secretFiles.delete` | `render.api.buildSources.secretFiles.delete` | `destructive` | Delete a secret file from a Render build source |
+| `buildSources.secretFiles.list` | `render.api.buildSources.secretFiles.list` | `read` | List secret files for a Render build source |
+| `buildSources.secretFiles.retrieve` | `render.api.buildSources.secretFiles.retrieve` | `read` | Retrieve a secret file for a Render build source |
+| `buildSources.secretFiles.update` | `render.api.buildSources.secretFiles.update` | `write` | Replace secret files for a Render build source |
+| `buildSources.secretFiles.upsert` | `render.api.buildSources.secretFiles.upsert` | `write` | Add or update a secret file for a Render build source |
+| `buildSources.update` | `render.api.buildSources.update` | `write` | Update a Render build source |
+| `dedicatedIps.create` | `render.api.dedicatedIps.create` | `write` | Create a Render dedicated IP set |
+| `dedicatedIps.delete` | `render.api.dedicatedIps.delete` | `destructive` | Delete a Render dedicated IP set |
+| `dedicatedIps.list` | `render.api.dedicatedIps.list` | `read` | List Render dedicated IP sets |
+| `dedicatedIps.retrieve` | `render.api.dedicatedIps.retrieve` | `read` | Retrieve a Render dedicated IP set |
+| `dedicatedIps.update` | `render.api.dedicatedIps.update` | `write` | Update a Render dedicated IP set |
 | `final.addHeaders` | `render.api.final.addHeaders` | `write` | Render addHeaders |
 | `final.addOrUpdateSecretFile` | `render.api.final.addOrUpdateSecretFile` | `write` | Render addOrUpdateSecretFile |
 | `final.addResourcesToEnvironment` | `render.api.final.addResourcesToEnvironment` | `write` | Render addResourcesToEnvironment |
@@ -78,7 +115,6 @@ pnpm add @corsair-dev/render
 | `logs.deleteOwnerStream` | `render.api.logs.deleteOwnerStream` | `destructive` | Delete an owner log stream |
 | `logs.list` | `render.api.logs.list` | `read` | List Render logs |
 | `logs.resourceStreams` | `render.api.logs.resourceStreams` | `read` | List resource log streams |
-| `logs.subscribe` | `render.api.logs.subscribe` | `read` | Subscribe to Render logs |
 | `logs.updateOwnerStream` | `render.api.logs.updateOwnerStream` | `write` | Update an owner log stream |
 | `logs.values` | `render.api.logs.values` | `read` | List Render log values |
 | `metrics.activeConnections` | `render.api.metrics.activeConnections` | `read` | Read active Render connections |
@@ -99,15 +135,22 @@ pnpm add @corsair-dev/render
 | `owners.retrieve` | `render.api.owners.retrieve` | `read` | Retrieve a Render owner |
 | `postgres.connectionInfo` | `render.api.postgres.connectionInfo` | `read` | Retrieve connection info for a Render Postgres instance |
 | `postgres.create` | `render.api.postgres.create` | `write` | Create a Render Postgres database |
+| `postgres.createExport` | `render.api.postgres.createExport` | `write` | Create an export of a Render Postgres database |
+| `postgres.createUser` | `render.api.postgres.createUser` | `write` | Create a user for a Render Postgres database |
+| `postgres.delete` | `render.api.postgres.delete` | `destructive` | Delete a Render Postgres database |
 | `postgres.deleteUser` | `render.api.postgres.deleteUser` | `destructive` | Delete a user on a Render Postgres instance |
 | `postgres.failover` | `render.api.postgres.failover` | `write` | Trigger a failover for a Render Postgres instance |
 | `postgres.list` | `render.api.postgres.list` | `read` | List Render Postgres databases |
+| `postgres.processes` | `render.api.postgres.processes` | `read` | List active queries for a Render Postgres database |
 | `postgres.recover` | `render.api.postgres.recover` | `write` | Trigger point-in-time recovery for a Render Postgres instance |
 | `postgres.recoveryInfo` | `render.api.postgres.recoveryInfo` | `read` | Retrieve point-in-time recovery status for a Render Postgres instance |
 | `postgres.restart` | `render.api.postgres.restart` | `write` | Restart a Render Postgres instance |
 | `postgres.resume` | `render.api.postgres.resume` | `write` | Resume a Render Postgres instance |
 | `postgres.retrieve` | `render.api.postgres.retrieve` | `read` | Retrieve a Render Postgres database |
+| `postgres.sizes` | `render.api.postgres.sizes` | `read` | List database sizes for a Render Postgres database |
 | `postgres.suspend` | `render.api.postgres.suspend` | `write` | Suspend a Render Postgres instance |
+| `postgres.tableScans` | `render.api.postgres.tableScans` | `read` | List table scans for a Render Postgres database |
+| `postgres.topQueries` | `render.api.postgres.topQueries` | `read` | List top queries for a Render Postgres database |
 | `postgres.update` | `render.api.postgres.update` | `write` | Update a Render Postgres database |
 | `projects.create` | `render.api.projects.create` | `write` | Create a Render project |
 | `projects.list` | `render.api.projects.list` | `read` | List Render projects |
@@ -138,7 +181,7 @@ pnpm add @corsair-dev/render
 | `services.listDeploys` | `render.api.services.listDeploys` | `read` | List deployments for a Render service |
 | `services.listEvents` | `render.api.services.listEvents` | `read` | List events for a Render service |
 | `services.listOutboundIps` | `render.api.services.listOutboundIps` | `read` | List outbound IPs for a Render service |
-| `services.purgeServiceCache` | `render.api.services.purgeServiceCache` | `write` | Purge the cache for a Render service |
+| `services.purgeCache` | `render.api.services.purgeCache` | `write` | Purge the cache for a Render service |
 | `services.restart` | `render.api.services.restart` | `write` | Restart a Render service |
 | `services.resume` | `render.api.services.resume` | `write` | Resume a Render service |
 | `services.retrieve` | `render.api.services.retrieve` | `read` | Retrieve a Render service |
