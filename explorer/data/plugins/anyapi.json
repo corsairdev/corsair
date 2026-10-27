@@ -1026,7 +1026,7 @@
             "key": "costUsd",
             "optional": false,
             "type": "number",
-            "description": "USD charged for this call"
+            "description": "USD charged for the original run. The re-read itself is free, so do not add this to a running total."
           },
           {
             "key": "items",
