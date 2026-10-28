@@ -1,18 +1,23 @@
 import { makeRenderRequest } from './client';
 import {
+	cancelCronJobRun,
 	cancelDeploy,
 	cancelServiceJob,
 	cancelTaskRun,
 	createBuildSource,
 	createDedicatedIp,
 	createDisk,
+	createKeyValue,
 	createPostgresExport,
 	createPostgresUser,
+	createService,
 	createServiceJob,
+	createServicePreview,
 	createTaskRun,
 	createWebhook,
 	createWorkflow,
 	createWorkflowVersion,
+	deleteAutoscaling,
 	deleteBuildSource,
 	deleteBuildSourceEnvVar,
 	deleteBuildSourceSecretFile,
@@ -20,10 +25,23 @@ import {
 	deleteDisk,
 	deletePostgres,
 	deletePostgresUser,
+	deleteProject,
+	deleteResourceLogStream,
 	deleteService,
+	deleteServiceCustomDomain,
+	deleteServiceEnvVar,
+	deleteServiceHeader,
+	deleteServiceRoute,
 	deleteWebhook,
 	deleteWorkflow,
 	failoverPostgres,
+	getBandwidth,
+	getCpuTarget,
+	getHttpLatency,
+	getHttpRequests,
+	getReplicationLag,
+	getTaskRunsCompleted,
+	getTaskRunsQueued,
 	getUser,
 	linkEnvGroupToBuildSource,
 	listBlueprintSyncs,
@@ -37,18 +55,27 @@ import {
 	listDiskSnapshots,
 	listDisks,
 	listEnvironments,
+	listHttpFilterValues,
 	listOrganizationAuditLogs,
 	listOwnerAuditLogs,
 	listOwners,
+	listPathFilterValues,
 	listPostgresProcesses,
 	listPostgresSizes,
 	listPostgresTableScans,
 	listPostgresTopQueries,
 	listProjects,
 	listRoutes,
+	listServiceCustomDomains,
+	listServiceEnvVars,
+	listServiceHeaders,
 	listServices,
+	listWebhookEvents,
+	patchServiceRoute,
 	purgeServiceCache,
 	recoverPostgres,
+	removeResourcesFromEnvironment,
+	removeWorkspaceMember,
 	restartPostgres,
 	restoreDiskSnapshot,
 	resumeKeyValue,
@@ -61,19 +88,26 @@ import {
 	retrieveDedicatedIp,
 	retrieveDisk,
 	retrieveEnvironment,
+	retrieveEvent,
+	retrieveKeyValue,
 	retrieveKeyValueConnectionInfo,
 	retrieveMaintenance,
 	retrieveOwner,
+	retrieveOwnerLogStream,
+	retrieveOwnerMetricsStream,
 	retrievePostgresConnectionInfo,
 	retrievePostgresRecoveryInfo,
 	retrieveProject,
+	retrieveResourceLogStream,
 	retrieveService,
+	retrieveServiceNotificationOverrides,
 	retrieveTask,
 	retrieveTaskRun,
 	retrieveWebhook,
 	retrieveWorkflow,
 	retrieveWorkflowVersion,
 	rollbackDeploy,
+	scaleService,
 	suspendKeyValue,
 	suspendPostgres,
 	triggerBuildSourceBuild,
@@ -81,6 +115,8 @@ import {
 	triggerDeploy,
 	triggerMaintenance,
 	unlinkEnvGroupFromBuildSource,
+	unlinkServiceFromEnvGroup,
+	updateAutoscaling,
 	updateBlueprint,
 	updateBuildSource,
 	updateBuildSourceEnvVar,
@@ -89,11 +125,15 @@ import {
 	updateBuildSourceSecretFiles,
 	updateDedicatedIp,
 	updateDisk,
+	updateKeyValue,
 	updateMaintenance,
 	updateOwnerLogStream,
 	updateRoutes,
+	updateServiceNotificationOverrides,
 	updateWebhook,
 	updateWorkflow,
+	updateWorkspaceMember,
+	upsertOwnerMetricsStream,
 	validateBlueprint,
 } from './endpoints';
 
@@ -158,6 +198,80 @@ describe('Render service endpoints', () => {
 		});
 	});
 
+	it('creates a Render service with the exact body', async () => {
+		const input = { type: 'web_service', name: 'api', ownerId: 'own-1' };
+		await createService({ key: 'secret' } as never, input);
+		expect(request).toHaveBeenCalledWith('/v1/services', 'secret', {
+			method: 'POST',
+			body: input,
+		});
+	});
+
+	it('uses exact service subresource routes and guards every path identifier', async () => {
+		const ctx = { key: 'secret' } as never;
+		await listServiceEnvVars(ctx, {
+			serviceId: 'srv-1',
+			cursor: 'next',
+			limit: 20,
+		});
+		await deleteServiceEnvVar(ctx, {
+			serviceId: 'srv-1',
+			envVarKey: 'API_KEY',
+		});
+		await listServiceHeaders(ctx, {
+			serviceId: 'srv-1',
+			name: ['Cache-Control'],
+		});
+		await listServiceCustomDomains(ctx, {
+			serviceId: 'srv-1',
+			domainType: 'apex',
+		});
+		await deleteServiceCustomDomain(ctx, {
+			serviceId: 'srv-1',
+			customDomainNameOrID: 'www.example.com',
+		});
+
+		expect(request).toHaveBeenCalledWith(
+			'/v1/services/srv-1/env-vars',
+			'secret',
+			{
+				method: 'GET',
+				query: { cursor: 'next', limit: 20 },
+			},
+		);
+		expect(request).toHaveBeenCalledWith(
+			'/v1/services/srv-1/env-vars/API_KEY',
+			'secret',
+			{
+				method: 'DELETE',
+			},
+		);
+		expect(request).toHaveBeenCalledWith(
+			'/v1/services/srv-1/headers',
+			'secret',
+			{
+				method: 'GET',
+				query: { name: ['Cache-Control'] },
+			},
+		);
+		expect(request).toHaveBeenCalledWith(
+			'/v1/services/srv-1/custom-domains',
+			'secret',
+			{
+				method: 'GET',
+				query: { domainType: 'apex' },
+			},
+		);
+		expect(request).toHaveBeenCalledWith(
+			'/v1/services/srv-1/custom-domains/www.example.com',
+			'secret',
+			{ method: 'DELETE' },
+		);
+		expect(() =>
+			deleteServiceEnvVar(ctx, { serviceId: 'srv-1', envVarKey: '../key' }),
+		).toThrow('Invalid Render service ID');
+	});
+
 	it('covers the resource, observability, metrics, automation, and final groups', async () => {
 		const ctx = { key: 'secret' } as never;
 		await listEnvironments(ctx, {});
@@ -186,6 +300,235 @@ describe('Render service endpoints', () => {
 			method: 'GET',
 			query: {},
 		});
+	});
+
+	it('covers the remaining Render metric routes', async () => {
+		const ctx = { key: 'secret' } as never;
+		const input = { ownerId: 'own-1', startTime: '2026-01-01T00:00:00Z' };
+
+		await getCpuTarget(ctx, input);
+		await getHttpRequests(ctx, input);
+		await getHttpLatency(ctx, input);
+		await getBandwidth(ctx, input);
+		await getReplicationLag(ctx, input);
+		await listHttpFilterValues(ctx, input);
+		await listPathFilterValues(ctx, input);
+		await getTaskRunsQueued(ctx, input);
+		await getTaskRunsCompleted(ctx, input);
+
+		for (const path of [
+			'/v1/metrics/cpu-target',
+			'/v1/metrics/http-requests',
+			'/v1/metrics/http-latency',
+			'/v1/metrics/bandwidth',
+			'/v1/metrics/replication-lag',
+			'/v1/metrics/filters/http',
+			'/v1/metrics/filters/path',
+			'/v1/metrics/task-runs-queued',
+			'/v1/metrics/task-runs-completed',
+		]) {
+			expect(request).toHaveBeenCalledWith(path, 'secret', {
+				method: 'GET',
+				query: input,
+			});
+		}
+	});
+
+	it('updates and removes workspace members on the documented routes', async () => {
+		const ctx = { key: 'secret' } as never;
+		const input = { ownerId: 'own-1', userId: 'usr-1' };
+
+		await updateWorkspaceMember(ctx, { ...input, role: 'ADMIN' });
+		await removeWorkspaceMember(ctx, input);
+
+		expect(request).toHaveBeenCalledWith(
+			'/v1/owners/own-1/members/usr-1',
+			'secret',
+			{
+				method: 'PATCH',
+				body: { role: 'ADMIN' },
+			},
+		);
+		expect(request).toHaveBeenCalledWith(
+			'/v1/owners/own-1/members/usr-1',
+			'secret',
+			{
+				method: 'DELETE',
+			},
+		);
+		expect(() =>
+			updateWorkspaceMember(ctx, {
+				...input,
+				ownerId: '../own',
+				role: 'ADMIN',
+			}),
+		).toThrow('Invalid Render ownerId');
+		expect(() =>
+			removeWorkspaceMember(ctx, { ...input, userId: 'usr/1' }),
+		).toThrow('Invalid Render userId');
+	});
+
+	it('retrieves and updates service notification overrides', async () => {
+		const ctx = { key: 'secret' } as never;
+		const input = { serviceId: 'srv-1' };
+
+		await retrieveServiceNotificationOverrides(ctx, input);
+		await updateServiceNotificationOverrides(ctx, {
+			...input,
+			previewNotificationsEnabled: 'true',
+			notificationsToSend: 'failure',
+		});
+
+		expect(request).toHaveBeenCalledWith(
+			'/v1/notification-settings/overrides/services/srv-1',
+			'secret',
+			{ method: 'GET', query: {} },
+		);
+		expect(request).toHaveBeenCalledWith(
+			'/v1/notification-settings/overrides/services/srv-1',
+			'secret',
+			{
+				method: 'PATCH',
+				body: {
+					previewNotificationsEnabled: 'true',
+					notificationsToSend: 'failure',
+				},
+			},
+		);
+		expect(() =>
+			retrieveServiceNotificationOverrides(ctx, { serviceId: '../srv' }),
+		).toThrow('Invalid Render serviceId');
+	});
+
+	it('scales and manages Render service autoscaling', async () => {
+		const ctx = { key: 'secret' } as never;
+		const serviceId = 'srv-1';
+		const criteria = {
+			cpu: { enabled: true, percentage: 70 },
+			memory: { enabled: false, percentage: 80 },
+		};
+
+		await scaleService(ctx, { serviceId, numInstances: 3 });
+		await updateAutoscaling(ctx, {
+			serviceId,
+			enabled: true,
+			min: 1,
+			max: 5,
+			criteria,
+		});
+		await deleteAutoscaling(ctx, { serviceId });
+
+		expect(request).toHaveBeenCalledWith('/v1/services/srv-1/scale', 'secret', {
+			method: 'POST',
+			body: { numInstances: 3 },
+		});
+		expect(request).toHaveBeenCalledWith(
+			'/v1/services/srv-1/autoscaling',
+			'secret',
+			{
+				method: 'PUT',
+				body: { enabled: true, min: 1, max: 5, criteria },
+			},
+		);
+		expect(request).toHaveBeenCalledWith(
+			'/v1/services/srv-1/autoscaling',
+			'secret',
+			{
+				method: 'DELETE',
+				body: undefined,
+			},
+		);
+		await expect(
+			scaleService(ctx, { serviceId: '../srv', numInstances: 3 }),
+		).rejects.toThrow('Invalid Render service ID');
+	});
+
+	it('creates an image-backed Render service preview', async () => {
+		await createServicePreview({ key: 'secret' } as never, {
+			serviceId: 'srv-1',
+			imagePath: 'docker.io/library/nginx:latest',
+			name: 'preview',
+			plan: 'starter',
+		});
+
+		expect(request).toHaveBeenCalledWith(
+			'/v1/services/srv-1/preview',
+			'secret',
+			{
+				method: 'POST',
+				body: {
+					imagePath: 'docker.io/library/nginx:latest',
+					name: 'preview',
+					plan: 'starter',
+				},
+			},
+		);
+	});
+
+	it('updates and deletes Render service routes and headers', async () => {
+		const ctx = { key: 'secret' } as never;
+		await deleteServiceHeader(ctx, { serviceId: 'srv-1', headerId: 'hdr-1' });
+		await patchServiceRoute(ctx, {
+			serviceId: 'srv-1',
+			routeId: 'rte-1',
+			body: { type: 'redirect' },
+		});
+		await deleteServiceRoute(ctx, { serviceId: 'srv-1', routeId: 'rte-1' });
+
+		expect(request).toHaveBeenCalledWith(
+			'/v1/services/srv-1/headers/hdr-1',
+			'secret',
+			{
+				method: 'DELETE',
+				body: undefined,
+			},
+		);
+		expect(request).toHaveBeenCalledWith(
+			'/v1/services/srv-1/routes/rte-1',
+			'secret',
+			{
+				method: 'PATCH',
+				body: { type: 'redirect' },
+			},
+		);
+		expect(request).toHaveBeenCalledWith(
+			'/v1/services/srv-1/routes/rte-1',
+			'secret',
+			{
+				method: 'DELETE',
+				body: undefined,
+			},
+		);
+	});
+
+	it('retrieves Render events and lists webhook delivery events', async () => {
+		const ctx = { key: 'secret' } as never;
+		await retrieveEvent(ctx, { eventId: 'evt-1' });
+		await listWebhookEvents(ctx, {
+			webhookId: 'whk-1',
+			sentAfter: '2026-01-01T00:00:00Z',
+			limit: 20,
+			cursor: 'next',
+		});
+
+		expect(request).toHaveBeenCalledWith('/v1/events/evt-1', 'secret', {
+			method: 'GET',
+		});
+		expect(request).toHaveBeenCalledWith(
+			'/v1/webhooks/whk-1/events',
+			'secret',
+			{
+				method: 'GET',
+				query: {
+					sentAfter: '2026-01-01T00:00:00Z',
+					limit: 20,
+					cursor: 'next',
+				},
+			},
+		);
+		expect(() => retrieveEvent(ctx, { eventId: '../event' })).toThrow(
+			'Invalid Render eventId',
+		);
 	});
 
 	it('covers Build Source routes with exact methods, paths, and bodies', async () => {
@@ -294,6 +637,111 @@ describe('Render service endpoints', () => {
 				method: 'DELETE',
 				body: undefined,
 			},
+		);
+	});
+
+	it('uses exact routes for remaining audited normal HTTP operations', async () => {
+		const ctx = { key: 'secret' } as never;
+		await cancelCronJobRun(ctx, { cronJobId: 'cron-1' });
+		await retrieveOwnerLogStream(ctx, { ownerId: 'own-1' });
+		await retrieveResourceLogStream(ctx, { resourceId: 'srv-1' });
+		await deleteResourceLogStream(ctx, { resourceId: 'srv-1' });
+		await retrieveOwnerMetricsStream(ctx, { ownerId: 'own-1' });
+		await upsertOwnerMetricsStream(ctx, {
+			ownerId: 'own-1',
+			provider: 'CUSTOM',
+			url: 'https://metrics.example.com',
+			token: 'token',
+		});
+		await createKeyValue(ctx, {
+			name: 'cache',
+			ownerId: 'own-1',
+			plan: 'starter',
+		});
+		await retrieveKeyValue(ctx, { redisId: 'red-1' });
+		await updateKeyValue(ctx, { redisId: 'red-1', name: 'cache-next' });
+		await deleteProject(ctx, { id: 'prj-1' });
+		await removeResourcesFromEnvironment(ctx, {
+			environmentId: 'env-1',
+			resourceIds: ['srv-1', 'red-1'],
+		});
+		await unlinkServiceFromEnvGroup(ctx, {
+			envGroupId: 'eg-1',
+			serviceId: 'srv-1',
+		});
+
+		expect(request).toHaveBeenCalledWith(
+			'/v1/cron-jobs/cron-1/runs',
+			'secret',
+			{
+				method: 'DELETE',
+			},
+		);
+		expect(request).toHaveBeenCalledWith(
+			'/v1/logs/streams/owner/own-1',
+			'secret',
+			{
+				method: 'GET',
+			},
+		);
+		expect(request).toHaveBeenCalledWith(
+			'/v1/logs/streams/resource/srv-1',
+			'secret',
+			{
+				method: 'GET',
+			},
+		);
+		expect(request).toHaveBeenCalledWith(
+			'/v1/logs/streams/resource/srv-1',
+			'secret',
+			{
+				method: 'DELETE',
+			},
+		);
+		expect(request).toHaveBeenCalledWith('/v1/metrics-stream/own-1', 'secret', {
+			method: 'GET',
+		});
+		expect(request).toHaveBeenCalledWith('/v1/metrics-stream/own-1', 'secret', {
+			method: 'PUT',
+			body: {
+				provider: 'CUSTOM',
+				url: 'https://metrics.example.com',
+				token: 'token',
+			},
+		});
+		expect(request).toHaveBeenCalledWith('/v1/key-value', 'secret', {
+			method: 'POST',
+			body: { name: 'cache', ownerId: 'own-1', plan: 'starter' },
+		});
+		expect(request).toHaveBeenCalledWith('/v1/key-value/red-1', 'secret', {
+			method: 'GET',
+		});
+		expect(request).toHaveBeenCalledWith('/v1/key-value/red-1', 'secret', {
+			method: 'PATCH',
+			body: { name: 'cache-next' },
+		});
+		expect(request).toHaveBeenCalledWith('/v1/projects/prj-1', 'secret', {
+			method: 'DELETE',
+			body: undefined,
+			query: undefined,
+		});
+		expect(request).toHaveBeenCalledWith(
+			'/v1/environments/env-1/resources',
+			'secret',
+			{
+				method: 'DELETE',
+				query: { resourceIds: ['srv-1', 'red-1'] },
+			},
+		);
+		expect(request).toHaveBeenCalledWith(
+			'/v1/env-groups/eg-1/services/srv-1',
+			'secret',
+			{
+				method: 'DELETE',
+			},
+		);
+		expect(() => retrieveKeyValue(ctx, { redisId: '../red' })).toThrow(
+			'Invalid Render redisId',
 		);
 	});
 
