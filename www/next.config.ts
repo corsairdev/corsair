@@ -16,6 +16,19 @@ const nextConfig: NextConfig = {
 				destination: '/oss',
 				permanent: true,
 			},
+			// The MCP vs CLI benchmark page was removed; other sites still link to it.
+			{
+				source: '/mcp-vs-cli',
+				destination: '/',
+				permanent: true,
+			},
+			// Old slug of this post, still linked from other pages.
+			{
+				source:
+					'/blog/connecting-notion-jira-github-and-slack-to-your-ai-agent-without-separate-integrations',
+				destination: '/blog/connect-notion-jira-github-slack-ai-agent-mcp',
+				permanent: true,
+			},
 		];
 	},
 	// PostHog reverse proxy (US region): assets served from us-assets, everything
