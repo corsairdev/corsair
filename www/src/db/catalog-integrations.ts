@@ -175,6 +175,14 @@ export async function fetchCatalogIntegrationById(
 		displayName: integration.displayName,
 		blurb: integration.description,
 		description: integration.description,
+		// Default first: some rows list a default that's missing from auth_types
+		// (Telegram defaults to bot_token), and some list no auth types at all.
+		authTypes: [
+			...new Set([
+				parseAuthType(integration.defaultAuthType ?? integration.authTypes[0]),
+				...integration.authTypes.map(parseAuthType),
+			]),
+		],
 		popularOperationIds: [],
 		faqs: faqRows,
 		counts,
