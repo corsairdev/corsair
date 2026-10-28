@@ -16,6 +16,7 @@ type Partially<T> = Partial<T> & Record<string, unknown>;
 async function saveAll<T>(
 	label: string,
 	rows: readonly T[],
+	// unknown: only whether the write settled matters, not what it returned.
 	write: (row: T) => Promise<unknown> | undefined,
 ): Promise<void> {
 	const results = await Promise.allSettled(rows.map(async (row) => write(row)));
@@ -71,13 +72,43 @@ export async function saveLeads(
 	);
 }
 
-export async function forgetLead(
+// Rows for records deleted in Instantly, so local search stops returning
+// them. Accounts are keyed by email, the rest by ID.
+
+export async function forgetAccounts(
 	ctx: InstantlyContext,
-	id: string,
+	emails: readonly string[],
+): Promise<void> {
+	const store = ctx.db?.accounts;
+	if (!store) return;
+	await saveAll('accounts', emails, (email) => store.deleteByEntityId(email));
+}
+
+export async function forgetCampaigns(
+	ctx: InstantlyContext,
+	ids: readonly string[],
+): Promise<void> {
+	const store = ctx.db?.campaigns;
+	if (!store) return;
+	await saveAll('campaigns', ids, (id) => store.deleteByEntityId(id));
+}
+
+export async function forgetLeads(
+	ctx: InstantlyContext,
+	ids: readonly string[],
 ): Promise<void> {
 	const store = ctx.db?.leads;
 	if (!store) return;
-	await saveAll('leads', [id], (leadId) => store.deleteByEntityId(leadId));
+	await saveAll('leads', ids, (id) => store.deleteByEntityId(id));
+}
+
+export async function forgetEmails(
+	ctx: InstantlyContext,
+	ids: readonly string[],
+): Promise<void> {
+	const store = ctx.db?.emails;
+	if (!store) return;
+	await saveAll('emails', ids, (id) => store.deleteByEntityId(id));
 }
 
 export async function saveEmails(

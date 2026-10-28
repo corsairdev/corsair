@@ -10,10 +10,13 @@ import { InstantlyAPIError } from './client';
 // plugin retry. Writes are never retried: a failed reply, lead upload or
 // campaign change may have gone through.
 
+// unknown: a catch clause can receive any value, not only Errors; the
+// instanceof check narrows it.
 function statusOf(error: unknown): number | undefined {
 	return error instanceof InstantlyAPIError ? error.status : undefined;
 }
 
+// unknown: as above; only an Error, or an Error's cause, has a name to read.
 function causeName(error: unknown): string | undefined {
 	if (!(error instanceof Error)) return undefined;
 	return (error.cause as Error | undefined)?.name ?? error.name;

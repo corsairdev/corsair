@@ -47,7 +47,7 @@ pnpm add @corsair-dev/instantly
 | `blocklist.removeMany` | `instantly.api.blocklist.removeMany` | `destructive` | Remove blocklist entries by ID, so campaigns can email those addresses again |
 | `blocklist.update` | `instantly.api.blocklist.update` | `write` | Change the email or domain a blocklist entry blocks |
 | `campaigns.activate` | `instantly.api.campaigns.activate` | `write` | Start or resume a campaign. This SENDS REAL EMAIL to the campaign's leads from the connected accounts, on its schedule |
-| `campaigns.addVariables` | `instantly.api.campaigns.addVariables` | `write` | Add custom variable names to a campaign, for use as {{variable}} in its copy |
+| `campaigns.addVariables` | `instantly.api.campaigns.addVariables` | `write` | Add custom variable names to a campaign, for use as `{{variable}}` in its copy |
 | `campaigns.countLaunched` | `instantly.api.campaigns.countLaunched` | `read` | Count the campaigns ever launched in the workspace |
 | `campaigns.create` | `instantly.api.campaigns.create` | `write` | Create a campaign as a draft: schedule, one sequence of email steps with A/B variants, sending accounts, daily limit and stop rules (stop_on_reply, stop_for_company). Sends nothing until campaigns.activate |
 | `campaigns.createFromShared` | `instantly.api.campaigns.createFromShared` | `write` | Create a campaign in this workspace from one shared with campaigns.share |
@@ -67,7 +67,7 @@ pnpm add @corsair-dev/instantly
 | `campaigns.update` | `instantly.api.campaigns.update` | `write` | Change a campaign's name, schedule, sequence steps, sending accounts, daily limit or stop rules; only the fields passed change |
 | `crmActions.deletePhoneNumber` | `instantly.api.crmActions.deletePhoneNumber` | `destructive` | Release a phone number from the workspace and its provider |
 | `crmActions.listPhoneNumbers` | `instantly.api.crmActions.listPhoneNumbers` | `read` | List the workspace's phone numbers |
-| `customPromptTemplates.create` | `instantly.api.customPromptTemplates.create` | `write` | Create a custom AI prompt template; {{property}} placeholders take lead fields |
+| `customPromptTemplates.create` | `instantly.api.customPromptTemplates.create` | `write` | Create a custom AI prompt template; `{{property}}` placeholders take lead fields |
 | `customPromptTemplates.delete` | `instantly.api.customPromptTemplates.delete` | `destructive` | Delete a custom AI prompt template |
 | `customPromptTemplates.get` | `instantly.api.customPromptTemplates.get` | `read` | Get one custom AI prompt template |
 | `customPromptTemplates.list` | `instantly.api.customPromptTemplates.list` | `read` | List custom AI prompt templates, including public ones |
@@ -96,7 +96,7 @@ pnpm add @corsair-dev/instantly
 | `emailTemplates.list` | `instantly.api.emailTemplates.list` | `read` | List saved email templates |
 | `emailVerification.getStatus` | `instantly.api.emailVerification.getStatus` | `read` | Get the result of an email verification started with emailVerification.verify |
 | `emailVerification.verify` | `instantly.api.emailVerification.verify` | `write` | Verify one email address. SPENDS Instantly email-verification credits (the response reports credits and credits_used) and is never retried automatically. A slow check answers pending; read the result with emailVerification.getStatus |
-| `engageItems.deleteMany` | `instantly.api.engageItems.deleteMany` | `destructive` | Delete several Engage items (campaigns, agents, automations...) at once |
+| `engageItems.deleteMany` | `instantly.api.engageItems.deleteMany` | `destructive` | Delete up to 100 AI agents or automations from Engage at once |
 | `engageItems.list` | `instantly.api.engageItems.list` | `read` | List Engage items: campaigns, AI agents, automations, broadcasts and journeys in one list |
 | `inboxPlacementAnalytics.get` | `instantly.api.inboxPlacementAnalytics.get` | `read` | Get one inbox placement result |
 | `inboxPlacementAnalytics.getDeliverabilityInsights` | `instantly.api.inboxPlacementAnalytics.getDeliverabilityInsights` | `read` | Deliverability insights for one inbox placement test, optionally against an earlier period; changes nothing |
@@ -105,7 +105,7 @@ pnpm add @corsair-dev/instantly
 | `inboxPlacementAnalytics.list` | `instantly.api.inboxPlacementAnalytics.list` | `read` | Where each inbox placement test email landed, per recipient; filter by test, date, provider or sender |
 | `inboxPlacementReports.get` | `instantly.api.inboxPlacementReports.get` | `read` | Get one blacklist and SpamAssassin report |
 | `inboxPlacementReports.list` | `instantly.api.inboxPlacementReports.list` | `read` | List blacklist and SpamAssassin reports for inbox placement tests |
-| `inboxPlacementTests.create` | `instantly.api.inboxPlacementTests.create` | `write` | Create an inbox placement test: a test email sent to seed inboxes to see where it lands (inbox, spam or a category tab). With sending_method 1 it This SENDS REAL EMAIL from the given accounts; with 2 you send it from outside Instantly |
+| `inboxPlacementTests.create` | `instantly.api.inboxPlacementTests.create` | `write` | Create an inbox placement test: a test email sent to seed inboxes to see where it lands (inbox, spam or a category tab). With sending_method 1, Instantly SENDS REAL EMAIL from the given accounts; with 2, you send it from outside Instantly |
 | `inboxPlacementTests.delete` | `instantly.api.inboxPlacementTests.delete` | `destructive` | Delete an inbox placement test |
 | `inboxPlacementTests.get` | `instantly.api.inboxPlacementTests.get` | `read` | Get one inbox placement test |
 | `inboxPlacementTests.list` | `instantly.api.inboxPlacementTests.list` | `read` | List inbox placement tests |

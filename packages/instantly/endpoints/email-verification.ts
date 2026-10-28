@@ -28,5 +28,5 @@ export const getStatus: InstantlyEndpoints['emailVerificationGetStatus'] = (
 			method: 'GET',
 			path: `/email-verification/${segment(email)}`,
 		}),
-		{ log: ({ email }) => ({ email }) },
+		{},
 	);

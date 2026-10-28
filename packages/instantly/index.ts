@@ -895,7 +895,7 @@ const instantlyEndpointMeta = {
 	'campaigns.addVariables': {
 		riskLevel: 'write',
 		description:
-			'Add custom variable names to a campaign, for use as {{variable}} in its copy',
+			'Add custom variable names to a campaign, for use as `{{variable}}` in its copy',
 	},
 	'campaigns.getSendingStatus': {
 		riskLevel: 'read',
@@ -1155,7 +1155,7 @@ const instantlyEndpointMeta = {
 	'inboxPlacementTests.create': {
 		riskLevel: 'write',
 		description:
-			'Create an inbox placement test: a test email sent to seed inboxes to see where it lands (inbox, spam or a category tab). With sending_method 1 it This SENDS REAL EMAIL from the given accounts; with 2 you send it from outside Instantly',
+			'Create an inbox placement test: a test email sent to seed inboxes to see where it lands (inbox, spam or a category tab). With sending_method 1, Instantly SENDS REAL EMAIL from the given accounts; with 2, you send it from outside Instantly',
 	},
 	'inboxPlacementTests.list': {
 		riskLevel: 'read',
@@ -1348,7 +1348,7 @@ const instantlyEndpointMeta = {
 	'customPromptTemplates.create': {
 		riskLevel: 'write',
 		description:
-			'Create a custom AI prompt template; {{property}} placeholders take lead fields',
+			'Create a custom AI prompt template; `{{property}}` placeholders take lead fields',
 	},
 	'customPromptTemplates.update': {
 		riskLevel: 'write',
@@ -1377,7 +1377,7 @@ const instantlyEndpointMeta = {
 		riskLevel: 'destructive',
 		irreversible: true,
 		description:
-			'Delete several Engage items (campaigns, agents, automations...) at once',
+			'Delete up to 100 AI agents or automations from Engage at once',
 	},
 	'domainForwarding.get': {
 		riskLevel: 'read',

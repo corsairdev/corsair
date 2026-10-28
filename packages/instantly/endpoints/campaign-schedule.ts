@@ -28,7 +28,7 @@ export const ScheduleSchema = z.object({
 			'6': Weekday.describe('Saturday'),
 		})
 		.describe(
-			'Days to send on: "0" is Sunday through "6" Saturday, e.g. { "1": true, ..., "5": true } for weekdays',
+			'Days to send on: "0" is Sunday through "6" Saturday, e.g. `{ "1": true, ..., "5": true }` for weekdays',
 		),
 	timezone: z
 		.enum(ACCEPTED_TIMEZONES, {
@@ -57,12 +57,12 @@ export const VariantSchema = z.object({
 	subject: z
 		.string()
 		.describe(
-			'Subject line; leave empty on a follow-up to thread it under the previous email. Variables like {{firstName}} work',
+			'Subject line; leave empty on a follow-up to thread it under the previous email. Variables like `{{firstName}}` work',
 		),
 	body: z
 		.string()
 		.describe(
-			'Email body as HTML; use <br/> for line breaks. Variables: {{firstName}}, {{lastName}}, {{companyName}}, {{personalization}} and custom variables',
+			'Email body as HTML; use `<br/>` for line breaks. Variables: `{{firstName}}`, `{{lastName}}`, `{{companyName}}`, `{{personalization}}` and custom variables',
 		),
 	v_disabled: z.boolean().optional().describe('Turn this variant off'),
 });

@@ -1,7 +1,7 @@
 import type { InstantlyEndpoints } from '..';
 import { segment } from '../client';
 import { call } from './call';
-import { saveAccounts } from './store';
+import { forgetAccounts, saveAccounts } from './store';
 
 export const list: InstantlyEndpoints['accountsList'] = (ctx, input) =>
 	call(
@@ -143,7 +143,10 @@ export const remove: InstantlyEndpoints['accountsDelete'] = (ctx, input) =>
 		'accounts.delete',
 		input,
 		({ email }) => ({ method: 'DELETE', path: `/accounts/${segment(email)}` }),
-		{ log: ({ email }) => ({ email }) },
+		{
+			log: ({ email }) => ({ account: email }),
+			onSuccess: ({ email }) => forgetAccounts(ctx, [email]),
+		},
 	);
 
 export const getDailyAnalytics: InstantlyEndpoints['accountsGetDailyAnalytics'] =

@@ -3,6 +3,8 @@ import {
 	ACCEPTED_TIMEZONES,
 	INSTANTLY_TIMEZONE_ALIASES,
 	INSTANTLY_TIMEZONES,
+	resolveAlias,
+	sameRules,
 	TIMEZONE_ALIAS_SUMMARY,
 	toInstantlyTimezone,
 } from './endpoints/timezones';
@@ -110,5 +112,37 @@ describe('time zone aliases', () => {
 		for (const [alias, target] of aliases) {
 			expect(TIMEZONE_ALIAS_SUMMARY).toContain(`${alias} -> ${target}`);
 		}
+	});
+
+	it.each([
+		'America/Winnipeg',
+		'Canada/Central',
+		'America/Toronto',
+		'Canada/Eastern',
+		'America/Halifax',
+		'America/Edmonton',
+		'America/Vancouver',
+	])('does not accept Canadian zone %s, whose rules are changing', (zone) => {
+		expect(ACCEPTED_TIMEZONES).not.toContain(zone);
+	});
+});
+
+describe('the run-time alias check', () => {
+	it('sends an alias only while the runtime agrees on its rules', () => {
+		expect(resolveAlias('America/New_York', 'America/Detroit')).toBe(
+			'America/Detroit',
+		);
+		expect(() =>
+			resolveAlias('America/Winnipeg', 'America/Chicago', () => false),
+		).toThrow(/no longer follows the same offsets and DST rules/);
+	});
+
+	it('compares real ICU data hour by hour for the coming year', () => {
+		expect(sameRules('America/New_York', 'America/Detroit')).toBe(true);
+		expect(sameRules('America/Los_Angeles', 'America/Dawson')).toBe(false);
+	});
+
+	it('fails closed for a zone the runtime does not know', () => {
+		expect(sameRules('Mars/Olympus_Mons', 'America/Detroit')).toBe(false);
 	});
 });

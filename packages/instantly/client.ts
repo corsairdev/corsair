@@ -118,6 +118,7 @@ export function segment(value: string): string {
 export async function makeInstantlyRequest(
 	apiKey: string,
 	{ method, path, query, body }: InstantlyRequest,
+	// unknown: the JSON (or CSV text) Instantly answered, not yet validated.
 ): Promise<unknown> {
 	const config: OpenAPIConfig = {
 		BASE: INSTANTLY_API_BASE,
@@ -138,6 +139,7 @@ export async function makeInstantlyRequest(
 	};
 
 	try {
+		// unknown: validated by the caller's output schema, see above.
 		return await request<unknown>(config, requestOptions, {
 			rateLimitConfig: INSTANTLY_RATE_LIMIT_CONFIG,
 		});

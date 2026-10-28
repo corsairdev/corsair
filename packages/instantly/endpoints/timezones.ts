@@ -111,23 +111,24 @@ export type InstantlyTimezone = (typeof INSTANTLY_TIMEZONES)[number];
 
 /**
  * Common IANA zones missing from Instantly's list, each mapped to a listed
- * zone with the same UTC offsets and DST rules (checked hour by hour against
- * the ICU time zone data in timezones.test.ts). Zones with no exact match
- * stay rejected. Pacific time is one: Instantly's America/Dawson stays at
- * UTC-7 all year (Yukon dropped DST in 2020), while America/Los_Angeles is
- * UTC-8 from November to March.
+ * zone with the same UTC offsets and DST rules: checked hour by hour against
+ * tzdata 2026f and in timezones.test.ts, and again at run time by
+ * toInstantlyTimezone. Zones with no exact match stay rejected. Pacific time
+ * is one: Instantly's America/Dawson stays at UTC-7 all year (Yukon dropped
+ * DST in 2020), while America/Los_Angeles is UTC-8 from November to March.
+ *
+ * Canadian zones are left out on purpose. British Columbia, Alberta, the
+ * Northwest Territories and Manitoba all moved to permanent time in 2026
+ * (tzdata 2026b to 2026e), so whether a Canadian zone matches a listed one
+ * depends on which tzdata a runtime ships.
  */
 export const INSTANTLY_TIMEZONE_ALIASES = {
-	// US and Canada
+	// United States
 	'America/New_York': 'America/Detroit',
 	'US/Eastern': 'America/Detroit',
-	'America/Toronto': 'America/Detroit',
-	'Canada/Eastern': 'America/Detroit',
 	'America/Indiana/Indianapolis': 'America/Detroit',
 	'America/Kentucky/Louisville': 'America/Detroit',
 	'US/Central': 'America/Chicago',
-	'Canada/Central': 'America/Chicago',
-	'America/Winnipeg': 'America/Chicago',
 	'America/Denver': 'America/Boise',
 	'US/Mountain': 'America/Boise',
 	'America/Phoenix': 'America/Creston',
@@ -135,7 +136,6 @@ export const INSTANTLY_TIMEZONE_ALIASES = {
 	'US/Alaska': 'America/Anchorage',
 	'Pacific/Honolulu': 'Etc/GMT+10',
 	'US/Hawaii': 'Etc/GMT+10',
-	'America/Halifax': 'America/Glace_Bay',
 	// Latin America
 	'America/Mexico_City': 'America/Bahia_Banderas',
 	'America/Lima': 'America/Bogota',
@@ -209,11 +209,78 @@ function isInstantlyTimezone(zone: string): zone is InstantlyTimezone {
 	return LISTED.has(zone);
 }
 
+const HOUR_MS = 3_600_000;
+// About 13 months ahead: every DST switch of the coming year, hour by hour.
+const CHECK_HOURS = 400 * 24;
+
+const offsetFormats = new Map<string, Intl.DateTimeFormat>();
+
+function offsetAt(zone: string, instant: number): string | undefined {
+	let format = offsetFormats.get(zone);
+	if (!format) {
+		format = new Intl.DateTimeFormat('en-US', {
+			timeZone: zone,
+			timeZoneName: 'longOffset',
+		});
+		offsetFormats.set(zone, format);
+	}
+	return format
+		.formatToParts(instant)
+		.find((part) => part.type === 'timeZoneName')?.value;
+}
+
+/**
+ * Whether two zones have the same UTC offset every hour of the coming year in
+ * this runtime's time zone data. False when the runtime does not know a zone.
+ */
+export function sameRules(a: string, b: string, from = Date.now()): boolean {
+	try {
+		for (let hour = 0; hour < CHECK_HOURS; hour++) {
+			const instant = from + hour * HOUR_MS;
+			const left = offsetAt(a, instant);
+			if (left === undefined || left !== offsetAt(b, instant)) return false;
+		}
+		return true;
+	} catch {
+		// RangeError: a zone this runtime's ICU does not know.
+		return false;
+	}
+}
+
+const aliasChecks = new Map<string, boolean>();
+
+/**
+ * Sends `alias` as `target` only while this runtime agrees they follow the
+ * same rules (checked once per process). A tzdata update that separates them
+ * then fails closed instead of scheduling sends at the wrong hour.
+ */
+export function resolveAlias(
+	alias: string,
+	target: InstantlyTimezone,
+	matches: (a: string, b: string) => boolean = sameRules,
+): InstantlyTimezone {
+	// Only the real check is cached; a test's stand-in is asked every time.
+	const cached = matches === sameRules;
+	let ok = cached ? aliasChecks.get(alias) : undefined;
+	if (ok === undefined) {
+		ok = matches(alias, target);
+		if (cached) aliasChecks.set(alias, ok);
+	}
+	if (!ok) {
+		throw new Error(
+			`${alias} no longer follows the same offsets and DST rules as ${target} in this runtime's time zone data, so it is not sent as ${target}. Pass a zone from Instantly's list instead.`,
+		);
+	}
+	return target;
+}
+
 /** The zone Instantly is sent: a listed zone as is, an alias as its target. */
 export function toInstantlyTimezone(
 	zone: InstantlyTimezone | InstantlyTimezoneAlias,
 ): InstantlyTimezone {
-	return isInstantlyTimezone(zone) ? zone : INSTANTLY_TIMEZONE_ALIASES[zone];
+	return isInstantlyTimezone(zone)
+		? zone
+		: resolveAlias(zone, INSTANTLY_TIMEZONE_ALIASES[zone]);
 }
 
 /** "America/New_York -> America/Detroit, ...", for schema descriptions. */

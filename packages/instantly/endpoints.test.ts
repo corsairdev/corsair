@@ -58,6 +58,7 @@ type FakeContext = {
 	key: string;
 	options?: { webhookSecret?: string };
 	keys?: { get_webhook_signature: () => Promise<string | null> };
+	// unknown: fake entity stores of different shapes.
 	db?: Record<string, unknown>;
 };
 
@@ -110,6 +111,7 @@ afterEach(() => {
 type Case = {
 	operation: string;
 	endpoint: AnyEndpoint;
+	// unknown: each case has its own input and response shape.
 	input: Record<string, unknown>;
 	response: unknown;
 	method: string;
@@ -1227,5 +1229,161 @@ describe('the rest of the API: behaviour beyond the request shape', () => {
 		} finally {
 			jest.useRealTimers();
 		}
+	});
+});
+
+describe('webhook secrets never come back', () => {
+	const SECRET = 'opt-secret-4d1f9';
+	const ctx = { key: API_KEY, options: { webhookSecret: SECRET } };
+	const withSecret = {
+		...webhookSubscription,
+		headers: {
+			'x-corsair-webhook-secret': SECRET,
+			authorization: `Bearer ${SECRET}`,
+		},
+		// A test delivery's response may echo what the target received.
+		last_response: `received x-corsair-webhook-secret=${SECRET}`,
+	};
+	// Wrong types for id (webhook objects) and success (test results) fail
+	// the write schemas, so writes take the raw path.
+	const malformed = { ...withSecret, id: 12345, success: 'yes' };
+	const target = {
+		target_hook_url: 'https://app.example.com/api/webhook',
+		event_type: 'reply_received',
+	};
+
+	// unknown: each webhook operation takes its own input.
+	const ops: [string, AnyEndpoint, Record<string, unknown>, boolean][] = [
+		['list', Webhooks.list, {}, false],
+		['get', Webhooks.get, { id: WEBHOOK_ID }, false],
+		['create', Webhooks.create, target, true],
+		['update', Webhooks.update, { id: WEBHOOK_ID, name: 'Replies' }, true],
+		['resume', Webhooks.resume, { id: WEBHOOK_ID }, true],
+		['test', Webhooks.test, { id: WEBHOOK_ID }, true],
+		['delete', Webhooks.remove, { id: WEBHOOK_ID }, true],
+	];
+
+	it.each(ops)(
+		'webhooks.%s masks the secret',
+		async (name, endpoint, input) => {
+			respond(name === 'list' ? { items: [withSecret] } : withSecret);
+			const result = await invoke(endpoint, input, ctx);
+			expect(JSON.stringify(result)).not.toContain(SECRET);
+			expect(JSON.stringify(result)).toContain('[redacted]');
+		},
+	);
+
+	it.each(ops.filter(([, , , write]) => write))(
+		'webhooks.%s masks the secret in an unverified (parse_warning) result',
+		async (_, endpoint, input) => {
+			respond(malformed);
+			const result = await invoke(endpoint, input, ctx);
+			expect(result).toMatchObject({ parse_warning: expect.any(String) });
+			expect(JSON.stringify(result)).not.toContain(SECRET);
+		},
+	);
+
+	it('refuses to send the secret to an http:// URL', async () => {
+		await expect(
+			invoke(
+				Webhooks.create,
+				{ ...target, target_hook_url: 'http://app.example.com/hook' },
+				ctx,
+			),
+		).rejects.toThrow(
+			/Refusing to send the webhook secret to an http:\/\/ URL/,
+		);
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+});
+
+describe('deletes drop local rows', () => {
+	function store() {
+		return {
+			upsertByEntityId: jest.fn().mockResolvedValue({ id: 'row' }),
+			deleteByEntityId: jest.fn().mockResolvedValue(true),
+		};
+	}
+
+	it.each([
+		[
+			'campaigns.delete',
+			Campaigns.remove,
+			{ id: CAMPAIGN_ID },
+			'campaigns',
+			CAMPAIGN_ID,
+		],
+		['accounts.delete', Accounts.remove, { email: SENDER }, 'accounts', SENDER],
+		['emails.delete', Emails.remove, { id: EMAIL_ID }, 'emails', EMAIL_ID],
+		['leads.delete', Leads.remove, { id: LEAD_ID }, 'leads', LEAD_ID],
+		[
+			'leads.merge',
+			Leads.merge,
+			{ lead_id: LEAD_ID, destination_lead_id: 'lead-2' },
+			'leads',
+			LEAD_ID,
+		],
+		[
+			'leads.deleteMany',
+			Leads.deleteMany,
+			{ campaign_id: CAMPAIGN_ID, ids: [LEAD_ID] },
+			'leads',
+			LEAD_ID,
+		],
+	] as const)(
+		'%s removes the stored row',
+		async (_, endpoint, input, entity, entityId) => {
+			const db = { [entity]: store() };
+			respond({ id: entityId });
+			await invoke(endpoint, input, { key: API_KEY, db });
+			expect(db[entity]?.deleteByEntityId).toHaveBeenCalledWith(entityId);
+		},
+	);
+
+	it('removes the row even when the delete response is unverified', async () => {
+		const db = { emails: store() };
+		// id as a number fails the email schema, so the write comes back raw.
+		respond({ id: 12345 });
+		const result = await invoke(
+			Emails.remove,
+			{ id: EMAIL_ID },
+			{ key: API_KEY, db },
+		);
+		expect(result).toMatchObject({ parse_warning: expect.any(String) });
+		expect(db.emails.deleteByEntityId).toHaveBeenCalledWith(EMAIL_ID);
+	});
+
+	it('keeps rows when Instantly refuses the delete', async () => {
+		const db = { campaigns: store() };
+		respond(
+			{ statusCode: 404, error: 'Not Found', message: 'Campaign not found' },
+			404,
+		);
+		await expect(
+			invoke(Campaigns.remove, { id: CAMPAIGN_ID }, { key: API_KEY, db }),
+		).rejects.toMatchObject({ status: 404 });
+		expect(db.campaigns.deleteByEntityId).not.toHaveBeenCalled();
+	});
+
+	it('leaves rows alone for a bulk delete by filter, which names no leads', async () => {
+		const db = { leads: store() };
+		respond({ count: 3 });
+		await invoke(
+			Leads.deleteMany,
+			{ campaign_id: CAMPAIGN_ID },
+			{ key: API_KEY, db },
+		);
+		expect(db.leads.deleteByEntityId).not.toHaveBeenCalled();
+	});
+
+	it('does not log the address being verified', async () => {
+		respond({
+			email: 'jordan@acme-logistics.com',
+			verification_status: 'valid',
+		});
+		await invoke(EmailVerification.getStatus, {
+			email: 'jordan@acme-logistics.com',
+		});
+		expect(JSON.stringify(mockLog.mock.calls.at(-1)?.[2])).not.toContain('@');
 	});
 });

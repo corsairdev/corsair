@@ -334,6 +334,7 @@ export const replyPayload = {
 export function errorBody(
 	statusCode: number,
 	message: string,
+	// unknown: extra Fastify fields (code) vary by error.
 	extra: Record<string, unknown> = {},
 ) {
 	const reasons: Record<number, string> = {

@@ -6,16 +6,19 @@ import { call } from './call';
 // An API key is returned in full only by apiKeys.create. Listing and
 // revoking mask it, like webhook header values, so it never reaches an agent
 // through a read.
+// unknown: API key records are passed through as returned; only `key` is read.
 function redactKey<T extends Record<string, unknown>>(record: T): T {
 	return typeof record.key === 'string'
 		? { ...record, key: '[redacted]' }
 		: record;
 }
 
+// unknown: as for redactKey.
 export function redactApiKey<T extends Record<string, unknown>>(record: T): T {
 	return redactKey(record);
 }
 
+// unknown: as for redactKey.
 export function redactApiKeys<T extends { items: Record<string, unknown>[] }>(
 	page: T,
 ): T {

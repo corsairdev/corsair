@@ -32,7 +32,7 @@ export {
 const CustomVariables = z
 	.record(z.string(), z.union([z.string(), z.number(), z.boolean(), z.null()]))
 	.describe(
-		'Custom variables for personalization, e.g. { "pain_point": "slow onboarding" }. Values must be strings, numbers, booleans or null; use them in copy as {{pain_point}}',
+		'Custom variables for personalization, e.g. `{ "pain_point": "slow onboarding" }`. Values must be strings, numbers, booleans or null; use them in copy as `{{pain_point}}`',
 	);
 
 const InterestValue = z
@@ -459,7 +459,7 @@ const LeadFields = {
 	personalization: z
 		.string()
 		.nullish()
-		.describe('Personalized opening line, used as {{personalization}}'),
+		.describe('Personalized opening line, used as `{{personalization}}`'),
 	pl_value_lead: z.string().nullish().describe('Potential value of the lead'),
 	assigned_to: z.string().nullish().describe('Workspace user ID'),
 	custom_variables: CustomVariables.optional(),
@@ -775,7 +775,7 @@ const EmailsListInputSchema = z.object({
 	search: z
 		.string()
 		.optional()
-		.describe('A lead email, or thread:<thread_id> for one thread'),
+		.describe('A lead email, or `thread:<thread_id>` for one thread'),
 	is_unread: z.boolean().optional(),
 	i_status: z.number().int().optional().describe('Interest status'),
 	mode: z
@@ -817,7 +817,7 @@ const EmailsReplyInputSchema = z.object({
 	subject: z.string().describe('Subject, usually "Re: " plus the original'),
 	body: z
 		.object({
-			html: z.string().optional().describe('HTML; use <br/> for line breaks'),
+			html: z.string().optional().describe('HTML; use `<br/>` for line breaks'),
 			text: z.string().optional(),
 		})
 		.refine((body) => Boolean(body.html || body.text), {

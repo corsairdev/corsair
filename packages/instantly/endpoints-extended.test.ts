@@ -52,6 +52,7 @@ type Case = {
 	method: string;
 	path: string;
 	query: Record<string, string>;
+	// unknown: the JSON body each operation sends.
 	body: unknown;
 	write: boolean;
 	csv: boolean;

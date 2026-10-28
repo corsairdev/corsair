@@ -2,7 +2,7 @@ import type { InstantlyEndpoints } from '..';
 import { segment } from '../client';
 import { call } from './call';
 import { withInstantlyTimezones } from './campaign-schedule';
-import { saveCampaigns } from './store';
+import { forgetCampaigns, saveCampaigns } from './store';
 
 export const list: InstantlyEndpoints['campaignsList'] = (ctx, input) =>
 	call(
@@ -166,7 +166,10 @@ export const remove: InstantlyEndpoints['campaignsDelete'] = (ctx, input) =>
 		'campaigns.delete',
 		input,
 		({ id }) => ({ method: 'DELETE', path: `/campaigns/${segment(id)}` }),
-		{ log: ({ id }) => ({ id }) },
+		{
+			log: ({ id }) => ({ campaignId: id }),
+			onSuccess: ({ id }) => forgetCampaigns(ctx, [id]),
+		},
 	);
 
 export const searchByLead: InstantlyEndpoints['campaignsSearchByLead'] = (

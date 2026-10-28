@@ -1,6 +1,16 @@
 import { z } from 'zod';
 import { CampaignScheduleSchema, SequencesSchema } from './campaign-schedule';
-import { bool, num, obj, page, str, write } from './schema-helpers';
+import {
+	bool,
+	freeForm,
+	list,
+	num,
+	obj,
+	page,
+	str,
+	untyped,
+	write,
+} from './schema-helpers';
 import { ACCEPTED_TIMEZONES } from './timezones';
 
 // Schemas for the rest of Instantly API v2: everything beyond the cold-email
@@ -728,7 +738,7 @@ const LeadsAssignInput = z.object({
 					.describe(
 						'reply Reply, email-open Email Opened, last-contacted Last Contacted, link-click Link Click, lead-status Lead Status, lead-status-change Lead Status Change',
 					),
-				values: z.record(z.string(), z.unknown()),
+				values: freeForm(),
 			}),
 		)
 		.optional(),
@@ -783,7 +793,7 @@ const LeadsMoveInput = z.object({
 					'lead-status',
 					'lead-status-change',
 				]),
-				values: z.record(z.string(), z.unknown()),
+				values: freeForm(),
 			}),
 		)
 		.optional(),
@@ -1549,10 +1559,8 @@ const InboxPlacementTestsCreateInput = z.object({
 	automations: z
 		.array(
 			z.object({
-				when: z.record(z.string(), z.unknown()),
-				then: z
-					.record(z.string(), z.unknown())
-					.describe('Actions to take when condition is met'),
+				when: freeForm(),
+				then: freeForm().describe('Actions to take when condition is met'),
 			}),
 		)
 		.nullable()
@@ -1650,10 +1658,8 @@ const InboxPlacementTestsUpdateInput = z.object({
 	automations: z
 		.array(
 			z.object({
-				when: z.record(z.string(), z.unknown()),
-				then: z
-					.record(z.string(), z.unknown())
-					.describe('Actions to take when condition is met'),
+				when: freeForm(),
+				then: freeForm().describe('Actions to take when condition is met'),
 			}),
 		)
 		.nullable()
@@ -2351,7 +2357,7 @@ const CustomPromptTemplatesCreateInput = z.object({
 	name: z.string().describe('Template name'),
 	prompt: z
 		.string()
-		.describe('Prompt text; {{property}} placeholders take lead fields'),
+		.describe('Prompt text; `{{property}}` placeholders take lead fields'),
 	category: z
 		.union([
 			z.literal(1),
@@ -2376,7 +2382,7 @@ const CustomPromptTemplatesUpdateInput = z.object({
 	prompt: z
 		.string()
 		.optional()
-		.describe('Prompt text; {{property}} placeholders take lead fields'),
+		.describe('Prompt text; `{{property}}` placeholders take lead fields'),
 	category: z
 		.union([
 			z.literal(1),
@@ -2756,8 +2762,8 @@ const AccountsGetTrackingDomainStatusOutput = z
 const AccountsTestVitalsOutput = z
 	.object({
 		status: str,
-		success_list: z.array(z.unknown()).nullish(),
-		failure_list: z.array(z.unknown()).nullish(),
+		success_list: list,
+		failure_list: list,
 	})
 	.loose();
 
@@ -2795,7 +2801,7 @@ const CampaignsSearchByLeadOutput = page(
 			),
 			is_evergreen: bool.describe('Whether the campaign is evergreen'),
 			campaign_schedule: obj.describe('Campaign schedule'),
-			sequences: z.array(z.unknown()).nullish(),
+			sequences: list,
 			timestamp_created: str.describe(
 				'Timestamp when the campaign was created',
 			),
@@ -2845,7 +2851,7 @@ const CampaignsSearchByLeadOutput = page(
 			owned_by: str.describe('Owner ID'),
 			created_by: str.describe('ID of the user who created the campaign'),
 			ai_sdr_id: str.describe('AI Sales Agent ID that created this campaign'),
-			provider_routing_rules: z.array(z.unknown()).nullish(),
+			provider_routing_rules: list,
 		})
 		.loose(),
 );
@@ -2899,7 +2905,7 @@ const CampaignsCreateFromSharedOutput = z
 		),
 		is_evergreen: bool.describe('Whether the campaign is evergreen'),
 		campaign_schedule: obj.describe('Campaign schedule'),
-		sequences: z.array(z.unknown()).nullish(),
+		sequences: list,
 		timestamp_created: str.describe('Timestamp when the campaign was created'),
 		timestamp_updated: str.describe(
 			'Timestamp when the campaign was last updated',
@@ -2947,7 +2953,7 @@ const CampaignsCreateFromSharedOutput = z
 		owned_by: str.describe('Owner ID'),
 		created_by: str.describe('ID of the user who created the campaign'),
 		ai_sdr_id: str.describe('AI Sales Agent ID that created this campaign'),
-		provider_routing_rules: z.array(z.unknown()).nullish(),
+		provider_routing_rules: list,
 	})
 	.loose();
 
@@ -2961,7 +2967,7 @@ const CampaignsExportOutput = z
 		),
 		is_evergreen: bool.describe('Whether the campaign is evergreen'),
 		campaign_schedule: obj.describe('Campaign schedule'),
-		sequences: z.array(z.unknown()).nullish(),
+		sequences: list,
 		timestamp_created: str.describe('Timestamp when the campaign was created'),
 		timestamp_updated: str.describe(
 			'Timestamp when the campaign was last updated',
@@ -3009,7 +3015,7 @@ const CampaignsExportOutput = z
 		owned_by: str.describe('Owner ID'),
 		created_by: str.describe('ID of the user who created the campaign'),
 		ai_sdr_id: str.describe('AI Sales Agent ID that created this campaign'),
-		provider_routing_rules: z.array(z.unknown()).nullish(),
+		provider_routing_rules: list,
 	})
 	.loose();
 
@@ -3023,7 +3029,7 @@ const CampaignsDuplicateOutput = z
 		),
 		is_evergreen: bool.describe('Whether the campaign is evergreen'),
 		campaign_schedule: obj.describe('Campaign schedule'),
-		sequences: z.array(z.unknown()).nullish(),
+		sequences: list,
 		timestamp_created: str.describe('Timestamp when the campaign was created'),
 		timestamp_updated: str.describe(
 			'Timestamp when the campaign was last updated',
@@ -3071,7 +3077,7 @@ const CampaignsDuplicateOutput = z
 		owned_by: str.describe('Owner ID'),
 		created_by: str.describe('ID of the user who created the campaign'),
 		ai_sdr_id: str.describe('AI Sales Agent ID that created this campaign'),
-		provider_routing_rules: z.array(z.unknown()).nullish(),
+		provider_routing_rules: list,
 	})
 	.loose();
 
@@ -3087,7 +3093,7 @@ const CampaignsAddVariablesOutput = z
 		),
 		is_evergreen: bool.describe('Whether the campaign is evergreen'),
 		campaign_schedule: obj.describe('Campaign schedule'),
-		sequences: z.array(z.unknown()).nullish(),
+		sequences: list,
 		timestamp_created: str.describe('Timestamp when the campaign was created'),
 		timestamp_updated: str.describe(
 			'Timestamp when the campaign was last updated',
@@ -3135,7 +3141,7 @@ const CampaignsAddVariablesOutput = z
 		owned_by: str.describe('Owner ID'),
 		created_by: str.describe('ID of the user who created the campaign'),
 		ai_sdr_id: str.describe('AI Sales Agent ID that created this campaign'),
-		provider_routing_rules: z.array(z.unknown()).nullish(),
+		provider_routing_rules: list,
 	})
 	.loose();
 
@@ -3167,7 +3173,7 @@ const SubsequencesCreateOutput = z
 		subsequence_schedule: obj.describe(
 			"Schedule configuration for the subsequence. When omitted on create, inherits the parent campaign's schedule.",
 		),
-		sequences: z.array(z.unknown()).nullish(),
+		sequences: list,
 		auto_variant_select: obj.describe(
 			'Automatically select the winning variant for each step using open, click, or reply rate. Set to `null` to disable automatic selection.',
 		),
@@ -3205,7 +3211,7 @@ const SubsequencesListOutput = page(
 			subsequence_schedule: obj.describe(
 				"Schedule configuration for the subsequence. When omitted on create, inherits the parent campaign's schedule.",
 			),
-			sequences: z.array(z.unknown()).nullish(),
+			sequences: list,
 			auto_variant_select: obj.describe(
 				'Automatically select the winning variant for each step using open, click, or reply rate. Set to `null` to disable automatic selection.',
 			),
@@ -3241,7 +3247,7 @@ const SubsequencesGetOutput = z
 		subsequence_schedule: obj.describe(
 			"Schedule configuration for the subsequence. When omitted on create, inherits the parent campaign's schedule.",
 		),
-		sequences: z.array(z.unknown()).nullish(),
+		sequences: list,
 		auto_variant_select: obj.describe(
 			'Automatically select the winning variant for each step using open, click, or reply rate. Set to `null` to disable automatic selection.',
 		),
@@ -3276,7 +3282,7 @@ const SubsequencesUpdateOutput = z
 		subsequence_schedule: obj.describe(
 			"Schedule configuration for the subsequence. When omitted on create, inherits the parent campaign's schedule.",
 		),
-		sequences: z.array(z.unknown()).nullish(),
+		sequences: list,
 		auto_variant_select: obj.describe(
 			'Automatically select the winning variant for each step using open, click, or reply rate. Set to `null` to disable automatic selection.',
 		),
@@ -3311,7 +3317,7 @@ const SubsequencesDeleteOutput = z
 		subsequence_schedule: obj.describe(
 			"Schedule configuration for the subsequence. When omitted on create, inherits the parent campaign's schedule.",
 		),
-		sequences: z.array(z.unknown()).nullish(),
+		sequences: list,
 		auto_variant_select: obj.describe(
 			'Automatically select the winning variant for each step using open, click, or reply rate. Set to `null` to disable automatic selection.',
 		),
@@ -3346,7 +3352,7 @@ const SubsequencesDuplicateOutput = z
 		subsequence_schedule: obj.describe(
 			"Schedule configuration for the subsequence. When omitted on create, inherits the parent campaign's schedule.",
 		),
-		sequences: z.array(z.unknown()).nullish(),
+		sequences: list,
 		auto_variant_select: obj.describe(
 			'Automatically select the winning variant for each step using open, click, or reply rate. Set to `null` to disable automatic selection.',
 		),
@@ -3381,7 +3387,7 @@ const SubsequencesPauseOutput = z
 		subsequence_schedule: obj.describe(
 			"Schedule configuration for the subsequence. When omitted on create, inherits the parent campaign's schedule.",
 		),
-		sequences: z.array(z.unknown()).nullish(),
+		sequences: list,
 		auto_variant_select: obj.describe(
 			'Automatically select the winning variant for each step using open, click, or reply rate. Set to `null` to disable automatic selection.',
 		),
@@ -3416,7 +3422,7 @@ const SubsequencesResumeOutput = z
 		subsequence_schedule: obj.describe(
 			"Schedule configuration for the subsequence. When omitted on create, inherits the parent campaign's schedule.",
 		),
-		sequences: z.array(z.unknown()).nullish(),
+		sequences: list,
 		auto_variant_select: obj.describe(
 			'Automatically select the winning variant for each step using open, click, or reply rate. Set to `null` to disable automatic selection.',
 		),
@@ -3855,7 +3861,7 @@ const LeadLabelsCreateOutput = z
 		use_with_ai: bool.describe(
 			'Whether this label should be used with AI features',
 		),
-		access_grants: z.array(z.unknown()).nullish(),
+		access_grants: list,
 	})
 	.loose();
 
@@ -3885,7 +3891,7 @@ const LeadLabelsListOutput = page(
 			use_with_ai: bool.describe(
 				'Whether this label should be used with AI features',
 			),
-			access_grants: z.array(z.unknown()).nullish(),
+			access_grants: list,
 		})
 		.loose(),
 );
@@ -3915,7 +3921,7 @@ const LeadLabelsGetOutput = z
 		use_with_ai: bool.describe(
 			'Whether this label should be used with AI features',
 		),
-		access_grants: z.array(z.unknown()).nullish(),
+		access_grants: list,
 	})
 	.loose();
 
@@ -3944,7 +3950,7 @@ const LeadLabelsUpdateOutput = z
 		use_with_ai: bool.describe(
 			'Whether this label should be used with AI features',
 		),
-		access_grants: z.array(z.unknown()).nullish(),
+		access_grants: list,
 	})
 	.loose();
 
@@ -3973,7 +3979,7 @@ const LeadLabelsDeleteOutput = z
 		use_with_ai: bool.describe(
 			'Whether this label should be used with AI features',
 		),
-		access_grants: z.array(z.unknown()).nullish(),
+		access_grants: list,
 	})
 	.loose();
 
@@ -4169,9 +4175,9 @@ const EmailsForwardOutput = z
 		attachment_json: obj.describe(
 			'Attachment metadata for the email. This field is null when there are no attachments.',
 		),
-		from_address_json: z.array(z.unknown()).nullish(),
-		to_address_json: z.array(z.unknown()).nullish(),
-		cc_address_json: z.array(z.unknown()).nullish(),
+		from_address_json: list,
+		to_address_json: list,
+		cc_address_json: list,
 		ai_agent_id: str.describe(
 			'ID of the AI agent that sent this email (if applicable)',
 		),
@@ -4247,9 +4253,9 @@ const EmailsUpdateOutput = z
 		attachment_json: obj.describe(
 			'Attachment metadata for the email. This field is null when there are no attachments.',
 		),
-		from_address_json: z.array(z.unknown()).nullish(),
-		to_address_json: z.array(z.unknown()).nullish(),
-		cc_address_json: z.array(z.unknown()).nullish(),
+		from_address_json: list,
+		to_address_json: list,
+		cc_address_json: list,
 		ai_agent_id: str.describe(
 			'ID of the AI agent that sent this email (if applicable)',
 		),
@@ -4325,9 +4331,9 @@ const EmailsDeleteOutput = z
 		attachment_json: obj.describe(
 			'Attachment metadata for the email. This field is null when there are no attachments.',
 		),
-		from_address_json: z.array(z.unknown()).nullish(),
-		to_address_json: z.array(z.unknown()).nullish(),
-		cc_address_json: z.array(z.unknown()).nullish(),
+		from_address_json: list,
+		to_address_json: list,
+		cc_address_json: list,
 		ai_agent_id: str.describe(
 			'ID of the AI agent that sent this email (if applicable)',
 		),
@@ -4343,7 +4349,7 @@ const EmailVerificationVerifyOutput = z
 		verification_status: str.describe(
 			'The verification status.; pending The verification is pending, verified The verification is verified, invalid The verification is invalid',
 		),
-		catch_all: z.unknown().optional(),
+		catch_all: untyped,
 		credits: num.describe(
 			'The number of verification credits available after the verification',
 		),
@@ -4360,7 +4366,7 @@ const EmailVerificationGetStatusOutput = z
 		verification_status: str.describe(
 			'The verification status.; pending The verification is pending, verified The verification is verified, invalid The verification is invalid',
 		),
-		catch_all: z.unknown().optional(),
+		catch_all: untyped,
 		credits: num.describe(
 			'The number of verification credits available after the verification',
 		),
@@ -4678,14 +4684,14 @@ const InboxPlacementTestsCreateOutput = z
 		tags: z.array(z.string()).nullish(),
 		text_only: bool.describe('Disables open tracking'),
 		recipients: z.array(z.string()).nullish(),
-		recipients_labels: z.array(z.unknown()).nullish(),
+		recipients_labels: list,
 		timestamp_created: str.describe(
 			'Timestamp when the inbox placement test was created',
 		),
 		timestamp_next_run: str.describe(
 			'Timestamp when the inbox placement test will run next',
 		),
-		automations: z.array(z.unknown()).nullish(),
+		automations: list,
 		status: num.describe(
 			'Status of the inbox placement test; 1 Active, 2 Paused, 3 Completed',
 		),
@@ -4724,14 +4730,14 @@ const InboxPlacementTestsListOutput = page(
 			tags: z.array(z.string()).nullish(),
 			text_only: bool.describe('Disables open tracking'),
 			recipients: z.array(z.string()).nullish(),
-			recipients_labels: z.array(z.unknown()).nullish(),
+			recipients_labels: list,
 			timestamp_created: str.describe(
 				'Timestamp when the inbox placement test was created',
 			),
 			timestamp_next_run: str.describe(
 				'Timestamp when the inbox placement test will run next',
 			),
-			automations: z.array(z.unknown()).nullish(),
+			automations: list,
 			status: num.describe(
 				'Status of the inbox placement test; 1 Active, 2 Paused, 3 Completed',
 			),
@@ -4770,14 +4776,14 @@ const InboxPlacementTestsGetOutput = z
 		tags: z.array(z.string()).nullish(),
 		text_only: bool.describe('Disables open tracking'),
 		recipients: z.array(z.string()).nullish(),
-		recipients_labels: z.array(z.unknown()).nullish(),
+		recipients_labels: list,
 		timestamp_created: str.describe(
 			'Timestamp when the inbox placement test was created',
 		),
 		timestamp_next_run: str.describe(
 			'Timestamp when the inbox placement test will run next',
 		),
-		automations: z.array(z.unknown()).nullish(),
+		automations: list,
 		status: num.describe(
 			'Status of the inbox placement test; 1 Active, 2 Paused, 3 Completed',
 		),
@@ -4818,14 +4824,14 @@ const InboxPlacementTestsUpdateOutput = z
 		tags: z.array(z.string()).nullish(),
 		text_only: bool.describe('Disables open tracking'),
 		recipients: z.array(z.string()).nullish(),
-		recipients_labels: z.array(z.unknown()).nullish(),
+		recipients_labels: list,
 		timestamp_created: str.describe(
 			'Timestamp when the inbox placement test was created',
 		),
 		timestamp_next_run: str.describe(
 			'Timestamp when the inbox placement test will run next',
 		),
-		automations: z.array(z.unknown()).nullish(),
+		automations: list,
 		status: num.describe(
 			'Status of the inbox placement test; 1 Active, 2 Paused, 3 Completed',
 		),
@@ -4863,14 +4869,14 @@ const InboxPlacementTestsDeleteOutput = z
 		tags: z.array(z.string()).nullish(),
 		text_only: bool.describe('Disables open tracking'),
 		recipients: z.array(z.string()).nullish(),
-		recipients_labels: z.array(z.unknown()).nullish(),
+		recipients_labels: list,
 		timestamp_created: str.describe(
 			'Timestamp when the inbox placement test was created',
 		),
 		timestamp_next_run: str.describe(
 			'Timestamp when the inbox placement test will run next',
 		),
-		automations: z.array(z.unknown()).nullish(),
+		automations: list,
 		status: num.describe(
 			'Status of the inbox placement test; 1 Active, 2 Paused, 3 Completed',
 		),
@@ -5242,7 +5248,7 @@ const WorkspaceGetWhitelabelDomainOutput = z
 	.object({
 		verified: bool.describe('Whether the domain is verified'),
 		name: str.describe('The domain name'),
-		verification: z.array(z.unknown()).nullish(),
+		verification: list,
 	})
 	.loose();
 
@@ -5549,7 +5555,7 @@ const BillingGetPlanDetailsOutput = z
 
 const BillingGetSubscriptionDetailsOutput = z
 	.object({
-		subscriptions: z.array(z.unknown()).nullish(),
+		subscriptions: list,
 		all_subs_cancelled: bool.describe(
 			'Indicates whether all subscriptions are either already canceled or scheduled to be canceled at the end of their current billing cycles',
 		),
@@ -5733,7 +5739,7 @@ const CustomPromptTemplatesListOutput = page(
 			is_public: bool,
 			description: str,
 			// unknown: live responses send an array here.
-			properties: z.unknown().optional(),
+			properties: untyped,
 			template_type: str.describe('custom or public'),
 			like_count: num,
 			execution_count: num,
@@ -5755,7 +5761,7 @@ const CustomPromptTemplatesGetOutput = z
 		is_public: bool,
 		description: str,
 		// unknown: live responses send an array here.
-		properties: z.unknown().optional(),
+		properties: untyped,
 		template_type: str.describe('custom or public'),
 		like_count: num,
 		execution_count: num,
@@ -5776,7 +5782,7 @@ const CustomPromptTemplatesCreateOutput = z
 		is_public: bool,
 		description: str,
 		// unknown: live responses send an array here.
-		properties: z.unknown().optional(),
+		properties: untyped,
 		template_type: str.describe('custom or public'),
 		like_count: num,
 		execution_count: num,
@@ -5797,7 +5803,7 @@ const CustomPromptTemplatesUpdateOutput = z
 		is_public: bool,
 		description: str,
 		// unknown: live responses send an array here.
-		properties: z.unknown().optional(),
+		properties: untyped,
 		template_type: str.describe('custom or public'),
 		like_count: num,
 		execution_count: num,
@@ -5818,7 +5824,7 @@ const CustomPromptTemplatesDeleteOutput = z
 		is_public: bool,
 		description: str,
 		// unknown: live responses send an array here.
-		properties: z.unknown().optional(),
+		properties: untyped,
 		template_type: str.describe('custom or public'),
 		like_count: num,
 		execution_count: num,
@@ -5894,7 +5900,7 @@ const EngageItemsListOutput = page(
 			metadata: obj.describe('Additional metadata for the outreach item'),
 			timestamp_created: str.describe('Creation timestamp'),
 			timestamp_updated: str.describe('Last update timestamp'),
-			tags: z.array(z.unknown()).nullish(),
+			tags: list,
 		})
 		.loose(),
 );
@@ -5902,7 +5908,7 @@ const EngageItemsListOutput = page(
 const EngageItemsDeleteManyOutput = z
 	.object({
 		deleted_ids: z.array(z.string()).nullish(),
-		failed: z.array(z.unknown()).nullish(),
+		failed: list,
 	})
 	.loose();
 

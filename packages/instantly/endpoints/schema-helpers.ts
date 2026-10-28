@@ -7,6 +7,14 @@ export const num = z.number().nullish();
 export const bool = z.boolean().nullish();
 // unknown: nested settings objects are passed through as returned.
 export const obj = z.record(z.string(), z.unknown()).nullish();
+// unknown: a nested list the spec does not type item by item; passed
+// through as returned.
+export const list = z.array(z.unknown()).nullish();
+// unknown: a free-form object the API accepts or returns as-is (lead filter
+// values, automation rules, schedule entries past the typed depth).
+export const freeForm = () => z.record(z.string(), z.unknown());
+// unknown: a value the spec leaves untyped, or whose live type varies.
+export const untyped = z.unknown().optional();
 
 export const Id = (what: string) =>
 	z.string().min(1).describe(`${what} ID (UUID)`);

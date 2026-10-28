@@ -1,7 +1,7 @@
 import type { InstantlyEndpoints } from '..';
 import { segment } from '../client';
 import { call } from './call';
-import { saveEmails } from './store';
+import { forgetEmails, saveEmails } from './store';
 
 // Limited to 20 requests a minute (the rest of the API allows 6,000).
 export const list: InstantlyEndpoints['emailsList'] = (ctx, input) =>
@@ -122,5 +122,8 @@ export const remove: InstantlyEndpoints['emailsDelete'] = (ctx, input) =>
 		'emails.delete',
 		input,
 		({ id }) => ({ method: 'DELETE', path: `/emails/${segment(id)}` }),
-		{ log: ({ id }) => ({ id }) },
+		{
+			log: ({ id }) => ({ emailId: id }),
+			onSuccess: ({ id }) => forgetEmails(ctx, [id]),
+		},
 	);

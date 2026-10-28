@@ -1,7 +1,7 @@
 import type { InstantlyEndpoints } from '..';
 import { segment } from '../client';
 import { call } from './call';
-import { forgetLead, saveLeads } from './store';
+import { forgetLeads, saveLeads } from './store';
 
 // POST because the filters do not fit a query string; it only reads.
 export const list: InstantlyEndpoints['leadsList'] = (ctx, input) =>
@@ -125,7 +125,7 @@ export const remove: InstantlyEndpoints['leadsDelete'] = (ctx, input) =>
 		({ id }) => ({ method: 'DELETE', path: `/leads/${segment(id)}` }),
 		{
 			log: ({ id }) => ({ leadId: id }),
-			after: (_, { id }) => forgetLead(ctx, id),
+			onSuccess: ({ id }) => forgetLeads(ctx, [id]),
 		},
 	);
 
@@ -136,7 +136,11 @@ export const deleteMany: InstantlyEndpoints['leadsDeleteMany'] = (ctx, input) =>
 		'leads.deleteMany',
 		input,
 		(body) => ({ method: 'DELETE', path: '/leads', body }),
-		{},
+		{
+			// Only deletes by ID can be mirrored locally; a delete by campaign,
+			// list or status does not say which leads it removed.
+			onSuccess: ({ ids }) => forgetLeads(ctx, ids ?? []),
+		},
 	);
 
 export const merge: InstantlyEndpoints['leadsMerge'] = (ctx, input) =>
@@ -146,7 +150,14 @@ export const merge: InstantlyEndpoints['leadsMerge'] = (ctx, input) =>
 		'leads.merge',
 		input,
 		(body) => ({ method: 'POST', path: '/leads/merge', body }),
-		{},
+		{
+			log: ({ lead_id, destination_lead_id }) => ({
+				leadId: lead_id,
+				destinationLeadId: destination_lead_id,
+			}),
+			// lead_id is merged into destination_lead_id and goes away.
+			onSuccess: ({ lead_id }) => forgetLeads(ctx, [lead_id]),
+		},
 	);
 
 export const removeFromSubsequence: InstantlyEndpoints['leadsRemoveFromSubsequence'] =
