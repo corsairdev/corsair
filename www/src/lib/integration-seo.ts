@@ -37,7 +37,7 @@ export function integrationMetaDescription(
 	displayName: string,
 	toolCount: number,
 ) {
-	const tools = `${toolCount} ${displayName} ${toolCount === 1 ? 'tool' : 'tools'}`;
+	const tools = `${toolCount} ${displayName} ${toolCount === 1 ? 'operation' : 'operations'}`;
 	const candidates = [
 		`Connect ${displayName} to Claude, ChatGPT, Cursor and other AI agents with Corsair's MCP server: ${tools}, sign-in handled, and approval before risky actions.`,
 		`Connect ${displayName} to Claude, ChatGPT and Cursor with Corsair's MCP server: ${tools} and approval before risky actions.`,
@@ -93,9 +93,12 @@ export function integrationApprovalSummary(
 	risk: RiskCounts,
 ) {
 	if (risk.destructive > 0) {
-		return `In the default Cautious mode, ${displayName}'s read and write tools run right away and its ${plural(risk.destructive, 'destructive tool waits', 'destructive tools wait')} for your approval. Strict mode asks before every write, and Read mode allows reads only.`;
+		return `In the default Cautious mode, ${displayName}'s read and write operations run right away and its ${plural(risk.destructive, 'destructive operation waits', 'destructive operations wait')} for your approval. Strict mode asks before every write, and Read mode allows reads only.`;
 	}
-	return `None of ${displayName}'s tools are destructive, so in the default Cautious mode they all run right away. Strict mode asks before each of its ${plural(risk.write, 'write', 'writes')}, and Read mode allows reads only.`;
+	if (risk.write === 0) {
+		return `Every ${displayName} operation only reads data, so it runs right away in every mode.`;
+	}
+	return `None of ${displayName}'s operations are destructive, so in the default Cautious mode they all run right away. Strict mode asks before each of its ${plural(risk.write, 'write', 'writes')}, and Read mode allows reads only.`;
 }
 
 export function integrationMcpFaqs(
@@ -104,8 +107,10 @@ export function integrationMcpFaqs(
 ): IntegrationFaqItem[] {
 	const destructive =
 		risk.destructive > 0
-			? `The default Cautious mode asks only before the ${plural(risk.destructive, `destructive ${displayName} tool`, `destructive ${displayName} tools`)}.`
-			: `None of the ${displayName} tools are destructive, so the default Cautious mode runs them all without asking.`;
+			? `The default Cautious mode asks only before the ${plural(risk.destructive, `destructive ${displayName} operation`, `destructive ${displayName} operations`)}.`
+			: risk.write > 0
+				? `None of the ${displayName} operations are destructive, so the default Cautious mode runs them all without asking.`
+				: `Every ${displayName} operation only reads data, so there are no changes to approve today.`;
 
 	return [
 		{

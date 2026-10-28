@@ -1,6 +1,5 @@
 import { IntegrationCapabilityTabs } from '@/components/integrations/detail/integration-capability-tabs';
 import type { IntegrationDetailData } from '@/lib/integration-page.types';
-import { withMcp } from '@/lib/integration-seo';
 
 export function IntegrationCapabilitiesSection({
 	displayName,
@@ -15,7 +14,7 @@ export function IntegrationCapabilitiesSection({
 		<section className="pt-7 pb-4 md:pt-8 md:pb-5">
 			<div className="mx-auto max-w-[960px] px-4 sm:px-6 md:px-10">
 				<h2 className="font-[family-name:var(--landing-font-mono)] text-xs font-medium uppercase tracking-[0.06em] text-[#1c1c1c66]">
-					{withMcp(displayName)} tools
+					{displayName} operations available through MCP
 				</h2>
 				<IntegrationCapabilityTabs groups={operations} showPopular />
 

@@ -59,14 +59,17 @@ describe('integrationMetaTitle', () => {
 });
 
 describe('integrationMetaDescription', () => {
-	it('stays within 160 characters and mentions the tool count', () => {
+	it('stays within 160 characters and mentions the operation count', () => {
 		for (const name of ['Gmail', 'Accredible Certificates Suite']) {
 			const text = integrationMetaDescription(name, 23);
 			assert.ok(text.length <= 160, `${name}: ${text.length}`);
 			assert.match(text, /Corsair's MCP server/);
 		}
-		assert.match(integrationMetaDescription('Gmail', 23), /23 Gmail tools/);
-		assert.match(integrationMetaDescription('Gmail', 1), /1 Gmail tool,/);
+		assert.match(
+			integrationMetaDescription('Gmail', 23),
+			/23 Gmail operations/,
+		);
+		assert.match(integrationMetaDescription('Gmail', 1), /1 Gmail operation,/);
 	});
 });
 
@@ -127,22 +130,38 @@ describe('integrationAuthSummary', () => {
 });
 
 describe('integrationApprovalSummary', () => {
-	it('says how many destructive tools wait for approval', () => {
+	it('says how many destructive operations wait for approval', () => {
 		const text = integrationApprovalSummary(
 			'Gmail',
 			countToolsByRisk(gmailOps),
 		);
-		assert.match(text, /its 1 destructive tool waits for your approval/);
+		assert.match(text, /its 1 destructive operation waits for your approval/);
 	});
 
-	it('handles apps with no destructive tools', () => {
+	it('handles apps with no destructive operations', () => {
 		const text = integrationApprovalSummary('Weather', {
 			read: 4,
 			write: 1,
 			destructive: 0,
 		});
-		assert.match(text, /None of Weather's tools are destructive/);
+		assert.match(text, /None of Weather's operations are destructive/);
 		assert.match(text, /each of its 1 write,/);
+	});
+});
+
+describe('read-only apps', () => {
+	it('skip the write-approval clause when there are no writes', () => {
+		const risk = { read: 2, write: 0, destructive: 0 };
+		const text = integrationApprovalSummary('Webvizio', risk);
+		assert.equal(
+			text,
+			'Every Webvizio operation only reads data, so it runs right away in every mode.',
+		);
+		assert.doesNotMatch(text, /0 writes/);
+		assert.match(
+			integrationMcpFaqs('Webvizio', risk)[1].answer,
+			/no changes to approve/,
+		);
 	});
 });
 
@@ -154,7 +173,7 @@ describe('integrationMcpFaqs', () => {
 			['mcp-clients', 'mcp-approval'],
 		);
 		assert.match(faqs[0].answer, /mcp\.corsair\.dev\/mcp/);
-		assert.match(faqs[1].answer, /1 destructive Gmail tool\./);
+		assert.match(faqs[1].answer, /1 destructive Gmail operation\./);
 	});
 });
 
