@@ -43,6 +43,7 @@ it('a Hub with no job kinds gets the calls it got before', async () => {
 		endpoints: {
 			crawl: { start: async () => ({ success: true, id: 'crawl-abc' }) },
 		},
+		hooks: undefined,
 		ctx: {},
 		tree,
 		pluginId: 'firecrawl',
