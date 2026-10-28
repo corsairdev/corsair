@@ -120,25 +120,28 @@ Some clients can't sign in to an MCP server, such as GitHub Copilot's coding age
 
 ## What the agent can do
 
-| Tool | What it does | Changes anything |
+| Tool | What it does | Type |
 | --- | --- | --- |
-| `list_integrations` | Lists the apps on this link and whether each is ready, or searches the apps Corsair supports | No |
-| `list_integration_operations` | Shows what a connected app can do and the arguments each action takes | No |
-| `add_integrations` | Starts connecting an app and returns a sign-in link for you to open | Adds the app once you sign in |
-| `search_data` | Searches data Corsair has synced from your apps, such as Slack messages, email and calendar events | No |
-| `read_data` | Reads your apps live with a short script. It stops before any action that would change something | No |
-| `run_script` | Makes changes in your apps with a short script: send, create, update or delete | Yes |
-| `add_triggers` | Sets up an automation that runs on an app event or a schedule | Yes |
-| `list_triggers` | Lists the automations on this link | No |
-| `remove_triggers` | Stops an automation. Its steps stay saved so it can be turned back on | Yes |
-| `list_runs` | Lists recent automation runs and how each went | No |
-| `get_run` | Shows one run step by step, with the error if it failed | No |
+| `list_integrations` | Lists the apps on this link and whether each is ready, or searches the apps Corsair supports | Read |
+| `list_integration_operations` | Shows what a connected app can do and the arguments each action takes | Read |
+| `add_integrations` | Starts connecting an app and returns a sign-in link for you to open. The app is added once you sign in | Write |
+| `search_data` | Searches data Corsair has synced from your apps, such as Slack messages, email and calendar events | Read |
+| `fetch_record` | Opens results from `search_data` in full, from Corsair's synced copy | Read |
+| `read_data` | Reads your apps live with a short script. It stops before any action that would change something | Read |
+| `run_script` | Makes changes in your apps with a short script: send, create, update or delete | Sensitive write |
+| `add_triggers` | Sets up an automation that runs on an app event or a schedule | Sensitive write |
+| `list_triggers` | Lists the automations on this link | Read |
+| `remove_triggers` | Stops an automation. Its steps stay saved so it can be turned back on | Write |
+| `list_runs` | Lists recent automation runs and how each went | Read |
+| `get_run` | Shows one run step by step, with the error if it failed | Read |
+
+Read tools never change anything. Write tools change only your Corsair setup, and you can undo them. Sensitive writes act in your apps, or set up an automation that will act later without asking, so a client should ask you before every call.
 
 Scripts run in a sandbox that can only call your connected apps' actions. They have no network, filesystem or other system access, and the agent never sees your app credentials.
 
 Not every link shows every tool. A link that isn't allowed to add apps has no `add_integrations`, and a Read link has no `add_triggers` or `remove_triggers`.
 
-`read_data`, `search_data` and the `list_` and `get_` tools are marked read-only, so most clients run them without asking. Clients usually ask you before running the others.
+`read_data`, `search_data`, `fetch_record` and the `list_` and `get_` tools are marked read-only, so most clients run them without asking. Clients usually ask you before running the others.
 
 ## Modes and approvals
 
