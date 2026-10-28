@@ -30,6 +30,7 @@ import type {
 } from '../packages/corsair/core/inspect/index.ts';
 import { introspectPluginForDocs } from '../packages/corsair/core/inspect/index.ts';
 import type { CorsairPlugin } from '../packages/corsair/core/plugins/index.ts';
+import { escapeMdxText } from './mdx-escape.ts';
 
 /** Optional per-plugin overrides for the doc generator (next to package.json). */
 const PLUGIN_DOCS_FILE = 'plugin-docs.yaml';
@@ -1316,27 +1317,6 @@ ${dbSection}${webhooksSection}## What's next
 ${cards.join('\n')}
 </CardGroup>
 `;
-}
-
-/**
- * Provider descriptions can contain `<name>`, `<>` or `{ type: "world" }`. In MDX
- * prose those parse as JSX or JS expressions, the page fails to compile, and
- * Mintlify drops it (404). Escape them outside inline code spans.
- */
-function escapeMdxText(s: string | undefined): string {
-	if (!s) return '';
-	return s
-		.split(/(`[^`]*`)/)
-		.map((part) =>
-			part.startsWith('`')
-				? part
-				: part
-						.replace(/</g, '&lt;')
-						.replace(/>/g, '&gt;')
-						.replace(/\{/g, '&#123;')
-						.replace(/\}/g, '&#125;'),
-		)
-		.join('');
 }
 
 function escapeCell(s: string | undefined): string {
