@@ -10,18 +10,16 @@ describe('socialMetadata', () => {
 			description: 'Serphouse in the catalog.',
 			path: '/oss/serphouse',
 		});
-		const og = meta.openGraph as Record<string, unknown>;
-		assert.equal(og.title, 'Serphouse | Corsair OSS');
-		assert.equal(og.description, 'Serphouse in the catalog.');
-		assert.equal(og.url, '/oss/serphouse');
-		assert.equal(og.siteName, 'Corsair');
-		assert.equal(og.type, 'website');
+		assert.equal(meta.openGraph.title, 'Serphouse | Corsair OSS');
+		assert.equal(meta.openGraph.description, 'Serphouse in the catalog.');
+		assert.equal(meta.openGraph.url, '/oss/serphouse');
+		assert.equal(meta.openGraph.siteName, 'Corsair');
+		assert.equal(meta.openGraph.type, 'website');
 		assert.deepEqual(
-			(og.images as { url: string }[]).map((image) => image.url),
+			meta.openGraph.images.map((image) => image.url),
 			['/og-image.png'],
 		);
-		const twitter = meta.twitter as Record<string, unknown>;
-		assert.equal(twitter.card, 'summary_large_image');
-		assert.equal(twitter.title, 'Serphouse | Corsair OSS');
+		assert.equal(meta.twitter.card, 'summary_large_image');
+		assert.equal(meta.twitter.title, 'Serphouse | Corsair OSS');
 	});
 });

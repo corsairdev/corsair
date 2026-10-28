@@ -22,7 +22,7 @@ export function socialMetadata({
 	title: string;
 	description: string;
 	path: string;
-}): Pick<Metadata, 'openGraph' | 'twitter'> {
+}) {
 	return {
 		openGraph: {
 			title,
@@ -39,5 +39,5 @@ export function socialMetadata({
 			description,
 			images: [SHARE_IMAGE.url],
 		},
-	};
+	} satisfies Pick<Metadata, 'openGraph' | 'twitter'>;
 }
