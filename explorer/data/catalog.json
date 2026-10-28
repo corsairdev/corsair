@@ -4941,8 +4941,8 @@
     },
     {
       "id": "spoki",
-      "displayName": "Spoki integration for Corsair",
-      "description": "Spoki integration for Corsair",
+      "displayName": "Spoki",
+      "description": "WhatsApp Business platform for contacts, message templates, campaigns, tickets and automations.",
       "npmPackageName": "@corsair-dev/spoki",
       "authTypes": [
         "api_key"
