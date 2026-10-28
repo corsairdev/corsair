@@ -39,19 +39,26 @@ const CLIENTS: { name: string; wide?: boolean; body: ReactNode }[] = [
 		name: 'Cursor',
 		wide: true,
 		body: (
-			<pre className="mt-1 overflow-x-auto rounded-sm border border-[#1c1c1c1a] bg-[#fafafa] px-3 py-2 font-[family-name:var(--landing-font-mono)] text-[12px] leading-relaxed text-[#1c1c1c]">
-				<code>{CURSOR_CONFIG}</code>
-			</pre>
+			<>
+				Add this to <code>~/.cursor/mcp.json</code>. Cursor opens Corsair to
+				sign in the first time it connects.
+				<pre className="mt-2 overflow-x-auto rounded-sm border border-[#1c1c1c1a] bg-[#fafafa] px-3 py-2 font-[family-name:var(--landing-font-mono)] text-[12px] leading-relaxed text-[#1c1c1c]">
+					<code>{CURSOR_CONFIG}</code>
+				</pre>
+			</>
 		),
 	},
 	{
 		name: 'Claude Code',
 		wide: true,
 		body: (
-			<CopyableCodeSnippet
-				code={`claude mcp add --transport http corsair ${MCP_URL}`}
-				className="mt-1"
-			/>
+			<>
+				Run this, then run <code>/mcp</code> in Claude Code to sign in.
+				<CopyableCodeSnippet
+					code={`claude mcp add --transport http corsair ${MCP_URL}`}
+					className="mt-2"
+				/>
+			</>
 		),
 	},
 ];

@@ -71,11 +71,23 @@ describe('integrationMetaDescription', () => {
 });
 
 describe('countToolsByRisk', () => {
-	it('counts actions by risk level across groups', () => {
+	it('counts actions by risk level, treating unlabeled ones as writes', () => {
 		assert.deepEqual(countToolsByRisk(gmailOps), {
 			read: 2,
 			write: 2,
 			destructive: 1,
+		});
+		const unlabeled: IntegrationCapabilityGroup[] = [
+			{
+				resource: 'x',
+				resourceLabel: 'X',
+				actions: [{ id: 'x.run', label: 'Run' }],
+			},
+		];
+		assert.deepEqual(countToolsByRisk(unlabeled), {
+			read: 0,
+			write: 1,
+			destructive: 0,
 		});
 		assert.deepEqual(countToolsByRisk([]), {
 			read: 0,

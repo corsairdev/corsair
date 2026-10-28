@@ -54,7 +54,8 @@ export function countToolsByRisk(
 	const counts: RiskCounts = { read: 0, write: 0, destructive: 0 };
 	for (const group of operations) {
 		for (const action of group.actions) {
-			if (action.riskLevel) counts[action.riskLevel] += 1;
+			// The runtime treats an action with no risk level as a write.
+			counts[action.riskLevel ?? 'write'] += 1;
 		}
 	}
 	return counts;
