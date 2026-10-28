@@ -24,7 +24,11 @@ export async function generateMetadata({
 
 	try {
 		const integration = await getIntegrationSummaryForPage(slug);
-		return { title: integration.name };
+		return {
+			title: integration.name,
+			description: `${integration.name} in Corsair's open-source integration catalog: what it does, its status, and how to contribute.`,
+			alternates: { canonical: `/oss/${slug}` },
+		};
 	} catch {
 		return { title: 'Integration not found' };
 	}

@@ -19,6 +19,7 @@ export async function generateMetadata({
 		return {
 			title: `${profile.name} (@${profile.githubUsername})`,
 			description: `OSS contributor profile for ${profile.name}. ${profile.integrations.length} integration${profile.integrations.length === 1 ? '' : 's'} claimed.`,
+			alternates: { canonical: `/oss/u/${username.toLowerCase()}` },
 		};
 	} catch {
 		return { title: 'Contributor not found' };

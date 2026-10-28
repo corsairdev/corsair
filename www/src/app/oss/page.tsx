@@ -22,6 +22,7 @@ export const metadata: Metadata = {
 	title: 'OSS Integrations',
 	description:
 		"Build integrations in the open and earn AI credits — 1 point = $1. Your code ships to thousands of developers via Corsair's open catalog.",
+	alternates: { canonical: '/oss' },
 };
 
 type PageProps = {
