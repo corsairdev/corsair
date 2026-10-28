@@ -100,7 +100,7 @@ export type InstantlyQuery = Record<
 >;
 
 export type InstantlyRequest = {
-	method: 'GET' | 'POST' | 'PATCH' | 'DELETE';
+	method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 	path: string;
 	query?: InstantlyQuery;
 	// Bodiless POSTs (activate, pause, mark as read) send no body and no

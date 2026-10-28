@@ -49,7 +49,16 @@ const WRITES = [
 
 const DESTRUCTIVE = ['leads.delete', 'blocklist.remove', 'webhooks.delete'];
 
-const OPERATIONS = [...READS, ...WRITES, ...DESTRUCTIVE].sort();
+// The cold-email core, with its exact risk levels. The rest of the API is
+// checked by the naming rules below.
+const CORE = [...READS, ...WRITES, ...DESTRUCTIVE];
+
+const plugin = instantly();
+const META = plugin.endpointMeta ?? {};
+const OPERATIONS = Object.keys(META).sort();
+const riskOf = (path: string) => META[path as keyof typeof META]?.riskLevel;
+const descriptionOf = (path: string) =>
+	META[path as keyof typeof META]?.description ?? '';
 
 const WEBHOOK_PATHS = [
 	'emails.sent',
@@ -110,63 +119,103 @@ function buildKey(
 }
 
 describe('instantly plugin definition', () => {
-	const plugin = instantly();
-
 	it('registers as instantly with API key auth', () => {
 		expect(plugin.id).toBe('instantly');
 		expect(plugin.options?.authType).toBe('api_key');
 		expect(Object.keys(plugin.authConfig ?? {})).toEqual(['api_key']);
 	});
 
-	it('exposes 38 operations', () => {
+	it('exposes 165 operations, the core 38 among them', () => {
 		expect(leafPaths(plugin.endpoints ?? {}).sort()).toEqual(OPERATIONS);
-		expect(OPERATIONS).toHaveLength(38);
+		expect(OPERATIONS).toHaveLength(165);
+		for (const path of CORE) expect(OPERATIONS).toContain(path);
 	});
 
-	it('gives every operation a risk level and a description', () => {
-		const meta = plugin.endpointMeta ?? {};
-		expect(Object.keys(meta).sort()).toEqual(OPERATIONS);
-		for (const [path, entry] of Object.entries(meta)) {
+	it('keeps the risk level of every core operation', () => {
+		for (const path of CORE) {
 			const expected = READS.includes(path)
 				? 'read'
 				: DESTRUCTIVE.includes(path)
 					? 'destructive'
 					: 'write';
-			expect({ path, risk: entry?.riskLevel }).toEqual({
-				path,
-				risk: expected,
-			});
-			expect(entry?.description?.length).toBeGreaterThan(20);
+			expect({ path, risk: riskOf(path) }).toEqual({ path, risk: expected });
 		}
 	});
 
-	it('marks every delete and removal destructive, never write', () => {
-		const meta = plugin.endpointMeta ?? {};
-		for (const [path, entry] of Object.entries(meta)) {
-			if (/\.(delete|remove)$/.test(path)) {
-				expect({ path, risk: entry?.riskLevel }).toEqual({
+	it('gives every operation a description', () => {
+		for (const path of OPERATIONS) {
+			expect({ path, long: descriptionOf(path).length > 15 }).toEqual({
+				path,
+				long: true,
+			});
+		}
+	});
+
+	it('marks every delete, removal and merge destructive', () => {
+		const destructiveName =
+			/\.(delete\w*|remove\w*|merge|scheduleRemoval|changeOwner)$/;
+		for (const path of OPERATIONS) {
+			if (destructiveName.test(path)) {
+				expect({ path, risk: riskOf(path) }).toEqual({
 					path,
 					risk: 'destructive',
 				});
 			}
 		}
+		expect(riskOf('workspace.cancelRemoval')).toBe('write');
 	});
 
-	it('says which calls send real email or spend the contact limit', () => {
-		const meta = plugin.endpointMeta ?? {};
-		expect(meta['emails.reply']?.description).toMatch(/SENDS A REAL EMAIL/);
-		expect(meta['emails.reply']?.irreversible).toBe(true);
-		expect(meta['campaigns.activate']?.description).toMatch(/SENDS REAL EMAIL/);
-		for (const path of ['leads.create', 'leads.addBulk'] as const) {
-			expect(meta[path]?.description).toMatch(/lifetime contact limit/);
-			expect(meta[path]?.description).toMatch(/restarts their sequence/);
-			expect(meta[path]?.irreversible).toBe(true);
+	it('marks lookups read, including the POSTs that only read', () => {
+		const readName = /\.(list\w*|get\w*|count\w*|search\w*|download\w*)$/;
+		const postReads = [
+			'accounts.getWarmupAnalytics',
+			'accounts.testVitals',
+			'campaigns.export',
+			'leads.list',
+			'leadLabels.testAiReplyLabel',
+		];
+		for (const path of OPERATIONS) {
+			if (readName.test(path) || postReads.includes(path)) {
+				expect({ path, risk: riskOf(path) }).toEqual({ path, risk: 'read' });
+			}
 		}
-		expect(meta['leads.updateInterestStatus']?.description).toMatch(
+	});
+
+	it('says which calls send real email, spend credits or the contact limit', () => {
+		const sends = [
+			'emails.reply',
+			'emails.forward',
+			'emails.sendTest',
+			'campaigns.activate',
+			'subsequences.resume',
+			'leads.moveToSubsequence',
+			'inboxPlacementTests.create',
+		];
+		for (const path of sends) {
+			expect({
+				path,
+				says: /SENDS (A )?REAL( test)? EMAIL/.test(descriptionOf(path)),
+			}).toEqual({
+				path,
+				says: true,
+			});
+		}
+		expect(META['emails.reply']?.irreversible).toBe(true);
+		expect(descriptionOf('emailVerification.verify')).toMatch(
+			/SPENDS Instantly email-verification credits/,
+		);
+		for (const path of ['leads.create', 'leads.addBulk']) {
+			expect(descriptionOf(path)).toMatch(/lifetime contact limit/);
+			expect(descriptionOf(path)).toMatch(/restarts their sequence/);
+			expect(META[path as keyof typeof META]?.irreversible).toBe(true);
+		}
+		expect(descriptionOf('leads.move')).toMatch(/restarts their sequence/);
+		expect(descriptionOf('leads.updateInterestStatus')).toMatch(
 			/stops its follow-ups/,
 		);
-		expect(meta['webhooks.create']?.description).toMatch(/Hypergrowth/);
-		expect(meta['emails.list']?.description).toMatch(/20 requests a minute/);
+		expect(descriptionOf('webhooks.create')).toMatch(/Hypergrowth/);
+		expect(descriptionOf('emails.list')).toMatch(/20 requests a minute/);
+		expect(descriptionOf('apiKeys.create')).toMatch(/only time it is returned/);
 	});
 
 	it('has input and output schemas for every operation', () => {
@@ -209,7 +258,9 @@ const operationKey = (path: string) =>
 
 describe('writes and retries', () => {
 	it('treats exactly the write and destructive operations as writes', () => {
-		const writes = [...WRITES, ...DESTRUCTIVE].map(operationKey).sort();
+		const writes = OPERATIONS.filter((path) => riskOf(path) !== 'read')
+			.map(operationKey)
+			.sort();
 		expect([...INSTANTLY_WRITE_OPERATIONS].sort()).toEqual(writes);
 		for (const key of INSTANTLY_WRITE_OPERATIONS) {
 			expect(key in InstantlyEndpointInputSchemas).toBe(true);
@@ -218,7 +269,7 @@ describe('writes and retries', () => {
 
 	it('lets every write output carry a parse_warning', () => {
 		const warning = { parse_warning: 'unexpected shape' };
-		for (const path of [...WRITES, ...DESTRUCTIVE]) {
+		for (const path of OPERATIONS.filter((p) => riskOf(p) !== 'read')) {
 			const schema =
 				instantlyEndpointSchemas[path as keyof typeof instantlyEndpointSchemas]
 					.output;

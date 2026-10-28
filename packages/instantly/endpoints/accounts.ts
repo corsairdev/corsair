@@ -111,3 +111,131 @@ export const disableWarmup: InstantlyEndpoints['accountsDisableWarmup'] = (
 		}),
 		{ log: ({ emails }, job) => ({ accounts: emails.length, jobId: job.id }) },
 	);
+
+export const create: InstantlyEndpoints['accountsCreate'] = (ctx, input) =>
+	call(
+		ctx,
+		'accountsCreate',
+		'accounts.create',
+		input,
+		(body) => ({ method: 'POST', path: '/accounts', body }),
+		{},
+	);
+
+export const update: InstantlyEndpoints['accountsUpdate'] = (ctx, input) =>
+	call(
+		ctx,
+		'accountsUpdate',
+		'accounts.update',
+		input,
+		({ email, ...body }) => ({
+			method: 'PATCH',
+			path: `/accounts/${segment(email)}`,
+			body,
+		}),
+		{ log: ({ email }) => ({ email }) },
+	);
+
+export const remove: InstantlyEndpoints['accountsDelete'] = (ctx, input) =>
+	call(
+		ctx,
+		'accountsDelete',
+		'accounts.delete',
+		input,
+		({ email }) => ({ method: 'DELETE', path: `/accounts/${segment(email)}` }),
+		{ log: ({ email }) => ({ email }) },
+	);
+
+export const getDailyAnalytics: InstantlyEndpoints['accountsGetDailyAnalytics'] =
+	(ctx, input) =>
+		call(
+			ctx,
+			'accountsGetDailyAnalytics',
+			'accounts.getDailyAnalytics',
+			input,
+			(query) => ({ method: 'GET', path: '/accounts/analytics/daily', query }),
+			{ log: (_, result) => ({ count: result.length }) },
+		);
+
+export const pauseMany: InstantlyEndpoints['accountsPauseMany'] = (
+	ctx,
+	input,
+) =>
+	call(
+		ctx,
+		'accountsPauseMany',
+		'accounts.pauseMany',
+		input,
+		(body) => ({ method: 'POST', path: '/accounts/pause', body }),
+		{},
+	);
+
+export const markFixed: InstantlyEndpoints['accountsMarkFixed'] = (
+	ctx,
+	input,
+) =>
+	call(
+		ctx,
+		'accountsMarkFixed',
+		'accounts.markFixed',
+		input,
+		({ email }) => ({
+			method: 'POST',
+			path: `/accounts/${segment(email)}/mark-fixed`,
+		}),
+		{ log: ({ email }) => ({ email }) },
+	);
+
+export const getTrackingDomainStatus: InstantlyEndpoints['accountsGetTrackingDomainStatus'] =
+	(ctx, input) =>
+		call(
+			ctx,
+			'accountsGetTrackingDomainStatus',
+			'accounts.getTrackingDomainStatus',
+			input,
+			(query) => ({ method: 'GET', path: '/accounts/ctd/status', query }),
+			{},
+		);
+
+export const testVitals: InstantlyEndpoints['accountsTestVitals'] = (
+	ctx,
+	input,
+) =>
+	call(
+		ctx,
+		'accountsTestVitals',
+		'accounts.testVitals',
+		input,
+		(body) => ({ method: 'POST', path: '/accounts/test/vitals', body }),
+		{},
+	);
+
+export const moveToWorkspace: InstantlyEndpoints['accountsMoveToWorkspace'] = (
+	ctx,
+	input,
+) =>
+	call(
+		ctx,
+		'accountsMoveToWorkspace',
+		'accounts.moveToWorkspace',
+		input,
+		(body) => ({ method: 'POST', path: '/accounts/move', body }),
+		{},
+	);
+
+export const listCampaigns: InstantlyEndpoints['accountsListCampaigns'] = (
+	ctx,
+	input,
+) =>
+	call(
+		ctx,
+		'accountsListCampaigns',
+		'accounts.listCampaigns',
+		input,
+		({ email, ...query }) => ({
+			method: 'GET',
+			path: `/account-campaign-mappings/${segment(email)}`,
+			query,
+		}),
+		{ log: ({ email }) => ({ email }) },
+	);

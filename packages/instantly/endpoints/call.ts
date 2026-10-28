@@ -80,7 +80,9 @@ export async function call<K extends InstantlyOperation>(
 	const request = toRequest(parsed);
 	const isWrite = INSTANTLY_WRITE_OPERATIONS.has(operation);
 	const send = () => makeInstantlyRequest(ctx.key, request);
-	const raw = isWrite ? await send() : await withReadRetries(send, event);
+	const answer = isWrite ? await send() : await withReadRetries(send, event);
+	// A 204 (share, delete) has no body; treat it as an empty object.
+	const raw = answer === undefined ? {} : answer;
 
 	const checked = InstantlyEndpointOutputSchemas[operation].safeParse(raw);
 	if (!checked.success) {

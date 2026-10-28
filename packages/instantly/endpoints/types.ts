@@ -1,51 +1,33 @@
 import { z } from 'zod';
-import { ACCEPTED_TIMEZONES, TIMEZONE_ALIAS_SUMMARY } from './timezones';
+import { CampaignScheduleSchema, SequencesSchema } from './campaign-schedule';
+import type { UnverifiedWriteResult } from './schema-helpers';
+import {
+	bool,
+	Id,
+	IsoDate,
+	num,
+	obj,
+	Paging,
+	page,
+	str,
+	write,
+} from './schema-helpers';
+import {
+	INSTANTLY_EXTENDED_WRITE_OPERATIONS,
+	InstantlyExtendedInputSchemas,
+	InstantlyExtendedOutputSchemas,
+} from './types-extended';
+
+export {
+	type UnverifiedWriteResult,
+	UnverifiedWriteResultSchema,
+} from './schema-helpers';
 
 // Inputs follow https://api.instantly.ai/openapi/api_v2.json and keep its
 // snake_case names, so they match Instantly's docs. Outputs type the fields
 // agents use and pass everything else through (`.loose()`); every field is
 // nullish because live responses omit many of them (and some differ from the
 // spec: accounts come back with `added_by: "api"`, not a UUID).
-
-const str = z.string().nullish();
-const num = z.number().nullish();
-const bool = z.boolean().nullish();
-// unknown: nested settings objects are passed through as returned.
-const obj = z.record(z.string(), z.unknown()).nullish();
-
-const Id = (what: string) => z.string().min(1).describe(`${what} ID (UUID)`);
-
-const Limit = z
-	.number()
-	.int()
-	.min(1)
-	.max(100)
-	.optional()
-	.describe('Items per page, 1 to 100');
-
-const StartingAfter = z
-	.string()
-	.min(1)
-	.optional()
-	.describe('Cursor: `next_starting_after` from the previous page');
-
-const Paging = { limit: Limit, starting_after: StartingAfter };
-
-function page<T extends z.ZodType>(item: T) {
-	return z
-		.object({
-			items: z.array(item),
-			next_starting_after: str.describe(
-				'Pass as starting_after to get the next page; absent on the last page',
-			),
-		})
-		.loose();
-}
-
-const IsoDate = z
-	.string()
-	.regex(/^\d{4}-\d{2}-\d{2}/, 'Expected YYYY-MM-DD or an ISO 8601 timestamp')
-	.describe('YYYY-MM-DD (UTC midnight) or an ISO 8601 timestamp');
 
 const CustomVariables = z
 	.record(z.string(), z.union([z.string(), z.number(), z.boolean(), z.null()]))
@@ -207,89 +189,6 @@ const BackgroundJobSchema = z
 	.loose();
 
 // ── Campaigns ─────────────────────────────────────────────────────────────
-
-const HourMinute = z
-	.string()
-	.regex(/^([01]\d|2[0-3]):[0-5]\d$/, 'Expected HH:MM, 24-hour')
-	.describe('HH:MM, 24-hour, e.g. 09:00');
-
-const Weekday = z.boolean().optional();
-
-const ScheduleSchema = z.object({
-	name: z.string().min(1).describe('Schedule name, e.g. Weekdays'),
-	timing: z.object({ from: HourMinute, to: HourMinute }),
-	days: z
-		.object({
-			'0': Weekday.describe('Sunday'),
-			'1': Weekday.describe('Monday'),
-			'2': Weekday.describe('Tuesday'),
-			'3': Weekday.describe('Wednesday'),
-			'4': Weekday.describe('Thursday'),
-			'5': Weekday.describe('Friday'),
-			'6': Weekday.describe('Saturday'),
-		})
-		.describe(
-			'Days to send on: "0" is Sunday through "6" Saturday, e.g. { "1": true, ..., "5": true } for weekdays',
-		),
-	timezone: z
-		.enum(ACCEPTED_TIMEZONES, {
-			error:
-				"Not a time zone Instantly accepts. Use one from Instantly's list or a mapped alias such as America/New_York. Pacific time (America/Los_Angeles) has no exact match: Instantly's America/Dawson stays at UTC-7 all year.",
-		})
-		.describe(
-			`A zone from Instantly's list (not all of IANA), or a common IANA zone it lacks, which is sent as the listed zone with the same offsets and DST rules: ${TIMEZONE_ALIAS_SUMMARY}. Zones with no exact match are rejected, including Pacific time (America/Los_Angeles, America/Vancouver): Instantly's America/Dawson stays at UTC-7 all year`,
-		),
-});
-
-const CampaignScheduleSchema = z.object({
-	schedules: z.array(ScheduleSchema).min(1),
-	start_date: z
-		.string()
-		.regex(/^\d{4}-\d{2}-\d{2}$/, 'Expected YYYY-MM-DD')
-		.nullish()
-		.describe("YYYY-MM-DD in the schedule's time zone"),
-	end_date: z
-		.string()
-		.regex(/^\d{4}-\d{2}-\d{2}$/, 'Expected YYYY-MM-DD')
-		.nullish(),
-});
-
-const VariantSchema = z.object({
-	subject: z
-		.string()
-		.describe(
-			'Subject line; leave empty on a follow-up to thread it under the previous email. Variables like {{firstName}} work',
-		),
-	body: z
-		.string()
-		.describe(
-			'Email body as HTML; use <br/> for line breaks. Variables: {{firstName}}, {{lastName}}, {{companyName}}, {{personalization}} and custom variables',
-		),
-	v_disabled: z.boolean().optional().describe('Turn this variant off'),
-});
-
-const StepSchema = z.object({
-	type: z.literal('email').default('email'),
-	delay: z
-		.number()
-		.min(0)
-		.max(527_040)
-		.describe(
-			'How long to wait after this step before sending the NEXT step (not before this one), in delay_unit',
-		),
-	delay_unit: z.enum(['minutes', 'hours', 'days']).optional(),
-	variants: z
-		.array(VariantSchema)
-		.min(1)
-		.describe('A/B variants of this step; at least one'),
-});
-
-const SequencesSchema = z
-	.array(z.object({ steps: z.array(StepSchema).min(1) }))
-	.length(1)
-	.describe(
-		'Exactly one sequence holding every step: Instantly reads only the first element',
-	);
 
 const CampaignSettings = {
 	campaign_schedule: CampaignScheduleSchema,
@@ -1132,29 +1031,8 @@ export const InstantlyEndpointInputSchemas = {
 	webhooksDelete: WebhookIdInputSchema,
 	webhooksListEventTypes: EmptyInputSchema,
 	workspaceGet: EmptyInputSchema,
+	...InstantlyExtendedInputSchemas,
 } as const;
-
-/**
- * What a write or delete returns when Instantly accepted it but answered in
- * a shape the plugin did not expect: the raw body plus parse_warning. The
- * change already happened, so the call must not fail (an agent would repeat
- * an upload that already counted toward the contact limit, or a reply).
- */
-export const UnverifiedWriteResultSchema = z
-	.object({
-		parse_warning: z
-			.string()
-			.describe(
-				'Instantly accepted the request but its response had an unexpected shape; the change was made, do not repeat it',
-			),
-	})
-	.loose();
-
-export type UnverifiedWriteResult = z.infer<typeof UnverifiedWriteResultSchema>;
-
-function write<T extends z.ZodType>(schema: T) {
-	return z.union([schema, UnverifiedWriteResultSchema]);
-}
 
 /** Operations that change something in Instantly; see UnverifiedWriteResult. */
 export const INSTANTLY_WRITE_OPERATIONS: ReadonlySet<string> = new Set([
@@ -1178,6 +1056,7 @@ export const INSTANTLY_WRITE_OPERATIONS: ReadonlySet<string> = new Set([
 	'blocklistRemove',
 	'webhooksCreate',
 	'webhooksDelete',
+	...INSTANTLY_EXTENDED_WRITE_OPERATIONS,
 ]);
 
 export const InstantlyEndpointOutputSchemas = {
@@ -1220,6 +1099,7 @@ export const InstantlyEndpointOutputSchemas = {
 	webhooksDelete: write(WebhookSchema.partial().loose()),
 	webhooksListEventTypes: WebhookEventTypesSchema,
 	workspaceGet: WorkspaceSchema,
+	...InstantlyExtendedOutputSchemas,
 } as const;
 
 export type InstantlyOperation = keyof typeof InstantlyEndpointInputSchemas;

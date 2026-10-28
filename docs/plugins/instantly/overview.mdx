@@ -1,6 +1,6 @@
 ---
 title: Overview
-description: "Cold email at scale through Instantly API v2 - campaigns and sequences, leads, the Unibox (replies), sending accounts and warmup, the blocklist, and webhooks."
+description: "Instantly API v2 for cold email - campaigns, subsequences and leads, the Unibox, sending accounts and warmup, inbox placement tests, email verification, the blocklist, webhooks and workspace admin."
 ---
 
 Use **Instantly** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
@@ -11,13 +11,16 @@ Create an API v2 key in Instantly under Settings, Integrations, API keys, with t
 - **Lifetime contact limit.** Every lead uploaded counts toward the plan's lifetime contact limit (1,000 on Growth), including re-uploads and the same person in a second campaign. `leads.create` and `leads.addBulk` default `skip_if_in_workspace` to `true` for that reason. Re-adding or moving a lead who already replied restarts their sequence at step 1.
 - **Stopping a lead.** A lead's `status` is read-only. To stop follow-ups (for example after they answered on LinkedIn), call `leads.updateInterestStatus`, which completes the lead in its campaign.
 - **Replies without webhooks.** Webhooks need the Hypergrowth plan or higher. On Growth, poll `emails.list` with `email_type: 'received'`; it allows 20 requests a minute.
+- **Credits.** `emailVerification.verify` spends Instantly email-verification credits and is never retried. `leadLabels.testAiReplyLabel` is limited to 500 calls per 30 days per workspace.
+- **Secrets.** `apiKeys.create` returns the new key once; `apiKeys.list` and `apiKeys.delete` redact it, as webhook results redact header values.
+- **Not covered yet:** Instantly's AI agents (sales, inbox manager, lead finder, deliverability), SuperSearch enrichment, company lists, done-for-you account orders and the Google/Microsoft OAuth account connection.
 - **Time zones.** Campaign schedules take Instantly's own time zone list plus 68 common IANA zones it lacks (`America/New_York`, `Europe/London`, `UTC` and more), each sent as the listed zone with the same offsets and DST rules: `America/New_York` goes out as `America/Detroit`. Zones with no exact match are rejected, including Pacific time: Instantly's `America/Dawson` stays at UTC-7 all year.
 
 **Webhook verification.** Instantly does not sign deliveries, but each webhook can carry custom headers. Store a random secret with `corsair.instantly.keys.set_webhook_signature(secret)` (or pass `webhookSecret`); `webhooks.create` then sends it as the `x-corsair-webhook-secret` header and the plugin rejects any delivery without it. For a webhook made in the Instantly UI, add that header by hand. Deliveries route to a tenant by their `workspace` ID: store it with `keys.set_tenant_external_id(workspaceId)` (the ID `workspace.get` returns).
 
 **What you get:**
 
-- 38 typed API operations
+- 165 typed API operations
 - 4 synced entities (`accounts`, `campaigns`, `emails`, `leads`) for fast `.search()` / `.list()`
 - 19 incoming webhook event types
 

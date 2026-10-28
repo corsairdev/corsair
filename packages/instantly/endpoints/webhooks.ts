@@ -103,3 +103,54 @@ export const listEventTypes: InstantlyEndpoints['webhooksListEventTypes'] = (
 		() => ({ method: 'GET', path: '/webhooks/event-types' }),
 		{ log: (_, result) => ({ count: result.event_types?.length ?? 0 }) },
 	);
+
+export const get: InstantlyEndpoints['webhooksGet'] = async (ctx, input) =>
+	redactHeaders(
+		await call(
+			ctx,
+			'webhooksGet',
+			'webhooks.get',
+			input,
+			({ id }) => ({ method: 'GET', path: `/webhooks/${segment(id)}` }),
+			{ log: ({ id }) => ({ id }) },
+		),
+	);
+
+export const update: InstantlyEndpoints['webhooksUpdate'] = async (
+	ctx,
+	input,
+) =>
+	redactHeaders(
+		await call(
+			ctx,
+			'webhooksUpdate',
+			'webhooks.update',
+			input,
+			({ id, ...body }) => ({
+				method: 'PATCH',
+				path: `/webhooks/${segment(id)}`,
+				body,
+			}),
+			{ log: ({ id }) => ({ id }) },
+		),
+	);
+
+export const test: InstantlyEndpoints['webhooksTest'] = (ctx, input) =>
+	call(
+		ctx,
+		'webhooksTest',
+		'webhooks.test',
+		input,
+		({ id }) => ({ method: 'POST', path: `/webhooks/${segment(id)}/test` }),
+		{ log: ({ id }) => ({ id }) },
+	);
+
+export const resume: InstantlyEndpoints['webhooksResume'] = (ctx, input) =>
+	call(
+		ctx,
+		'webhooksResume',
+		'webhooks.resume',
+		input,
+		({ id }) => ({ method: 'POST', path: `/webhooks/${segment(id)}/resume` }),
+		{ log: ({ id }) => ({ id }) },
+	);

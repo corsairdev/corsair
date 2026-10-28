@@ -1,24 +1,8 @@
 import type { InstantlyEndpoints } from '..';
 import { segment } from '../client';
 import { call } from './call';
+import { withInstantlyTimezones } from './campaign-schedule';
 import { saveCampaigns } from './store';
-import { toInstantlyTimezone } from './timezones';
-import type { InstantlyParsedInputs } from './types';
-
-type CampaignSchedule =
-	InstantlyParsedInputs['campaignsCreate']['campaign_schedule'];
-
-// Aliases such as America/New_York are sent as the listed zone Instantly
-// accepts (America/Detroit); see INSTANTLY_TIMEZONE_ALIASES.
-function withInstantlyTimezones(schedule: CampaignSchedule): CampaignSchedule {
-	return {
-		...schedule,
-		schedules: schedule.schedules.map((entry) => ({
-			...entry,
-			timezone: toInstantlyTimezone(entry.timezone),
-		})),
-	};
-}
 
 export const list: InstantlyEndpoints['campaignsList'] = (ctx, input) =>
 	call(
@@ -173,4 +157,137 @@ export const getStepAnalytics: InstantlyEndpoints['campaignsGetStepAnalytics'] =
 					rows: result.length,
 				}),
 			},
+		);
+
+export const remove: InstantlyEndpoints['campaignsDelete'] = (ctx, input) =>
+	call(
+		ctx,
+		'campaignsDelete',
+		'campaigns.delete',
+		input,
+		({ id }) => ({ method: 'DELETE', path: `/campaigns/${segment(id)}` }),
+		{ log: ({ id }) => ({ id }) },
+	);
+
+export const searchByLead: InstantlyEndpoints['campaignsSearchByLead'] = (
+	ctx,
+	input,
+) =>
+	call(
+		ctx,
+		'campaignsSearchByLead',
+		'campaigns.searchByLead',
+		input,
+		(query) => ({ method: 'GET', path: '/campaigns/search-by-contact', query }),
+		{ log: (_, result) => ({ count: result.items.length }) },
+	);
+
+export const getDailyAnalytics: InstantlyEndpoints['campaignsGetDailyAnalytics'] =
+	(ctx, input) =>
+		call(
+			ctx,
+			'campaignsGetDailyAnalytics',
+			'campaigns.getDailyAnalytics',
+			input,
+			(query) => ({ method: 'GET', path: '/campaigns/analytics/daily', query }),
+			{ log: (_, result) => ({ count: result.length }) },
+		);
+
+export const share: InstantlyEndpoints['campaignsShare'] = (ctx, input) =>
+	call(
+		ctx,
+		'campaignsShare',
+		'campaigns.share',
+		input,
+		({ id }) => ({ method: 'POST', path: `/campaigns/${segment(id)}/share` }),
+		{ log: ({ id }) => ({ id }) },
+	);
+
+export const createFromShared: InstantlyEndpoints['campaignsCreateFromShared'] =
+	(ctx, input) =>
+		call(
+			ctx,
+			'campaignsCreateFromShared',
+			'campaigns.createFromShared',
+			input,
+			({ id }) => ({
+				method: 'POST',
+				path: `/campaigns/${segment(id)}/from-export`,
+			}),
+			{ log: ({ id }) => ({ id }) },
+		);
+
+export const exportCampaign: InstantlyEndpoints['campaignsExport'] = (
+	ctx,
+	input,
+) =>
+	call(
+		ctx,
+		'campaignsExport',
+		'campaigns.export',
+		input,
+		({ id }) => ({ method: 'POST', path: `/campaigns/${segment(id)}/export` }),
+		{ log: ({ id }) => ({ id }) },
+	);
+
+export const duplicate: InstantlyEndpoints['campaignsDuplicate'] = (
+	ctx,
+	input,
+) =>
+	call(
+		ctx,
+		'campaignsDuplicate',
+		'campaigns.duplicate',
+		input,
+		({ id, ...body }) => ({
+			method: 'POST',
+			path: `/campaigns/${segment(id)}/duplicate`,
+			body,
+		}),
+		{ log: ({ id }) => ({ id }) },
+	);
+
+export const countLaunched: InstantlyEndpoints['campaignsCountLaunched'] = (
+	ctx,
+	input,
+) =>
+	call(
+		ctx,
+		'campaignsCountLaunched',
+		'campaigns.countLaunched',
+		input,
+		() => ({ method: 'GET', path: '/campaigns/count-launched' }),
+		{},
+	);
+
+export const addVariables: InstantlyEndpoints['campaignsAddVariables'] = (
+	ctx,
+	input,
+) =>
+	call(
+		ctx,
+		'campaignsAddVariables',
+		'campaigns.addVariables',
+		input,
+		({ id, ...body }) => ({
+			method: 'POST',
+			path: `/campaigns/${segment(id)}/variables`,
+			body,
+		}),
+		{ log: ({ id }) => ({ id }) },
+	);
+
+export const getSendingStatus: InstantlyEndpoints['campaignsGetSendingStatus'] =
+	(ctx, input) =>
+		call(
+			ctx,
+			'campaignsGetSendingStatus',
+			'campaigns.getSendingStatus',
+			input,
+			({ id, ...query }) => ({
+				method: 'GET',
+				path: `/campaigns/${segment(id)}/sending-status`,
+				query,
+			}),
+			{ log: ({ id }) => ({ id }) },
 		);

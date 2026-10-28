@@ -128,3 +128,67 @@ export const remove: InstantlyEndpoints['leadsDelete'] = (ctx, input) =>
 			after: (_, { id }) => forgetLead(ctx, id),
 		},
 	);
+
+export const deleteMany: InstantlyEndpoints['leadsDeleteMany'] = (ctx, input) =>
+	call(
+		ctx,
+		'leadsDeleteMany',
+		'leads.deleteMany',
+		input,
+		(body) => ({ method: 'DELETE', path: '/leads', body }),
+		{},
+	);
+
+export const merge: InstantlyEndpoints['leadsMerge'] = (ctx, input) =>
+	call(
+		ctx,
+		'leadsMerge',
+		'leads.merge',
+		input,
+		(body) => ({ method: 'POST', path: '/leads/merge', body }),
+		{},
+	);
+
+export const removeFromSubsequence: InstantlyEndpoints['leadsRemoveFromSubsequence'] =
+	(ctx, input) =>
+		call(
+			ctx,
+			'leadsRemoveFromSubsequence',
+			'leads.removeFromSubsequence',
+			input,
+			(body) => ({ method: 'POST', path: '/leads/subsequence/remove', body }),
+			{},
+		);
+
+export const assign: InstantlyEndpoints['leadsAssign'] = (ctx, input) =>
+	call(
+		ctx,
+		'leadsAssign',
+		'leads.assign',
+		input,
+		(body) => ({ method: 'POST', path: '/leads/bulk-assign', body }),
+		{},
+	);
+
+export const move: InstantlyEndpoints['leadsMove'] = (ctx, input) =>
+	call(
+		ctx,
+		'leadsMove',
+		'leads.move',
+		input,
+		(body) => ({ method: 'POST', path: '/leads/move', body }),
+		{},
+	);
+
+export const moveToSubsequence: InstantlyEndpoints['leadsMoveToSubsequence'] = (
+	ctx,
+	input,
+) =>
+	call(
+		ctx,
+		'leadsMoveToSubsequence',
+		'leads.moveToSubsequence',
+		input,
+		(body) => ({ method: 'POST', path: '/leads/subsequence/move', body }),
+		{},
+	);

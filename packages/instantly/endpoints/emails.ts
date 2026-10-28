@@ -80,3 +80,47 @@ export const countUnread: InstantlyEndpoints['emailsCountUnread'] = (
 		() => ({ method: 'GET', path: '/emails/unread/count' }),
 		{ log: (_, result) => ({ count: result.count }) },
 	);
+
+export const sendTest: InstantlyEndpoints['emailsSendTest'] = (ctx, input) =>
+	call(
+		ctx,
+		'emailsSendTest',
+		'emails.sendTest',
+		input,
+		(body) => ({ method: 'POST', path: '/emails/test', body }),
+		{},
+	);
+
+export const forward: InstantlyEndpoints['emailsForward'] = (ctx, input) =>
+	call(
+		ctx,
+		'emailsForward',
+		'emails.forward',
+		input,
+		(body) => ({ method: 'POST', path: '/emails/forward', body }),
+		{},
+	);
+
+export const update: InstantlyEndpoints['emailsUpdate'] = (ctx, input) =>
+	call(
+		ctx,
+		'emailsUpdate',
+		'emails.update',
+		input,
+		({ id, ...body }) => ({
+			method: 'PATCH',
+			path: `/emails/${segment(id)}`,
+			body,
+		}),
+		{ log: ({ id }) => ({ id }) },
+	);
+
+export const remove: InstantlyEndpoints['emailsDelete'] = (ctx, input) =>
+	call(
+		ctx,
+		'emailsDelete',
+		'emails.delete',
+		input,
+		({ id }) => ({ method: 'DELETE', path: `/emails/${segment(id)}` }),
+		{ log: ({ id }) => ({ id }) },
+	);

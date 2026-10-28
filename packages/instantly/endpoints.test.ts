@@ -1,11 +1,15 @@
 import { logEventFromContext } from 'corsair/core';
 import {
 	Accounts,
+	ApiKeys,
 	Blocklist,
 	Campaigns,
 	Emails,
+	EmailVerification,
+	InboxPlacement,
 	LeadLists,
 	Leads,
+	Subsequences,
 	Webhooks,
 	Workspace,
 } from './endpoints';
@@ -1072,5 +1076,156 @@ describe('webhook secret on create', () => {
 		expect(lastRequest().body).toMatchObject({
 			headers: { 'x-corsair-webhook-secret': 'stored-secret' },
 		});
+	});
+});
+
+describe('the rest of the API: behaviour beyond the request shape', () => {
+	const scheduleIn = (timezone: string) => ({
+		schedules: [{ ...schedule.schedules[0], timezone }],
+	});
+
+	it('maps time zone aliases in a subsequence schedule', async () => {
+		respond({ id: 'sub-1' });
+		await invoke(Subsequences.create, {
+			parent_campaign: CAMPAIGN_ID,
+			name: 'Replied: book a call',
+			conditions: { lead_activity: [2] },
+			subsequence_schedule: scheduleIn('America/New_York'),
+			sequences: [
+				{
+					steps: [
+						{
+							delay: 1,
+							pre_delay: 2,
+							variants: [{ subject: '', body: 'Want to pick a time?' }],
+						},
+					],
+				},
+			],
+		});
+		const body = lastRequest().body as {
+			subsequence_schedule: { schedules: { timezone: string }[] };
+			sequences: { steps: { type: string; pre_delay: number }[] }[];
+		};
+		expect(body.subsequence_schedule.schedules[0]?.timezone).toBe(
+			'America/Detroit',
+		);
+		expect(body.sequences[0]?.steps[0]).toMatchObject({
+			type: 'email',
+			pre_delay: 2,
+		});
+	});
+
+	it('rejects Pacific time in a subsequence schedule, as for campaigns', async () => {
+		await expect(
+			invoke(Subsequences.update, {
+				id: 'sub-1',
+				subsequence_schedule: scheduleIn('America/Los_Angeles'),
+			}),
+		).rejects.toThrow(/America\/Dawson stays at UTC-7/);
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('maps a time zone alias in an inbox placement test schedule', async () => {
+		respond({ id: 'ipt-1' });
+		await invoke(InboxPlacement.createTest, {
+			name: 'Weekly seed test',
+			type: 2,
+			sending_method: 1,
+			email_subject: 'Quick question',
+			email_body: 'Hi there',
+			emails: [SENDER],
+			schedule: { timezone: 'Europe/London', days: { '1': true } },
+		});
+		expect(lastRequest().body).toMatchObject({
+			schedule: { timezone: 'Europe/Isle_of_Man' },
+		});
+	});
+
+	it('redacts API keys when listing and revoking, but not on create', async () => {
+		respond({ items: [{ id: 'k1', name: 'ci', key: 'live-key-1' }] });
+		const listed = await invoke(ApiKeys.list, {});
+		expect(JSON.stringify(listed)).not.toContain('live-key-1');
+		expect(listed).toMatchObject({ items: [{ key: '[redacted]' }] });
+
+		respond({ id: 'k1', key: 'live-key-1' });
+		const revoked = await invoke(ApiKeys.remove, { id: 'k1' });
+		expect(revoked).toMatchObject({ key: '[redacted]' });
+
+		respond({ id: 'k2', key: 'new-key-2' });
+		const created = await invoke(ApiKeys.create, {
+			name: 'ci',
+			scopes: ['all:read'],
+		});
+		expect(created).toMatchObject({ key: 'new-key-2' });
+	});
+
+	it('redacts header values on webhook get and update', async () => {
+		respond(webhookSubscription);
+		expect(
+			JSON.stringify(await invoke(Webhooks.get, { id: WEBHOOK_ID })),
+		).not.toContain('whsec-live-value');
+		respond(webhookSubscription);
+		expect(
+			JSON.stringify(
+				await invoke(Webhooks.update, { id: WEBHOOK_ID, name: 'Replies' }),
+			),
+		).not.toContain('whsec-live-value');
+	});
+
+	it('returns the blocklist CSV as text', async () => {
+		fetchMock.mockResolvedValueOnce(
+			new Response('bl_value\ncompetitor.com\n', {
+				status: 200,
+				headers: { 'Content-Type': 'text/csv' },
+			}),
+		);
+		await expect(invoke(Blocklist.downloadCsv, {})).resolves.toBe(
+			'bl_value\ncompetitor.com\n',
+		);
+	});
+
+	it('treats an empty 204 (campaign share) as success, not a parse warning', async () => {
+		fetchMock.mockResolvedValueOnce(new Response(null, { status: 204 }));
+		await expect(invoke(Campaigns.share, { id: CAMPAIGN_ID })).resolves.toEqual(
+			{},
+		);
+	});
+
+	it('never retries an email verification, which spends credits', async () => {
+		respond(
+			{ statusCode: 500, error: 'Internal Server Error', message: 'x' },
+			500,
+		);
+		await expect(
+			invoke(EmailVerification.verify, { email: 'jordan@acme-logistics.com' }),
+		).rejects.toMatchObject({ status: 500 });
+		expect(fetchMock).toHaveBeenCalledTimes(1);
+	});
+
+	it('refuses subsequences.list without a parent campaign filter', async () => {
+		await expect(invoke(Subsequences.list, {})).rejects.toThrow(
+			/parent_campaign or parent_campaign_not/,
+		);
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('retries a read from the wider API too', async () => {
+		respond(
+			{ statusCode: 503, error: 'Service Unavailable', message: 'x' },
+			503,
+		);
+		respond({ items: [] });
+		jest.useFakeTimers({ doNotFake: ['nextTick', 'setImmediate'] });
+		try {
+			const pending = invoke(Subsequences.list, {
+				parent_campaign: CAMPAIGN_ID,
+			});
+			await jest.advanceTimersByTimeAsync(1_000);
+			await expect(pending).resolves.toEqual({ items: [] });
+			expect(fetchMock).toHaveBeenCalledTimes(2);
+		} finally {
+			jest.useRealTimers();
+		}
 	});
 });
