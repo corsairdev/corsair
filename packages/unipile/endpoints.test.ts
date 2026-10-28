@@ -722,3 +722,88 @@ describe('Unipile webhook endpoint secrets', () => {
 		expect(JSON.stringify(mockLog.mock.calls)).not.toContain(SECRET);
 	});
 });
+
+describe('Unipile writes never fail after Unipile accepted them', () => {
+	beforeEach(() => {
+		jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+	});
+
+	it('returns an unparseable 201 from relationRequests.create with a warning', async () => {
+		respond({ object: 'RelationRequest', status: 'queued' }, 201);
+
+		const result = await invoke(RelationRequests.create, {
+			account_id: ACCOUNT_ID,
+			user_id: MEMBER_ID,
+		});
+
+		expect(result).toMatchObject({
+			parse_warning: expect.stringContaining('do not resend'),
+			raw: { object: 'RelationRequest', status: 'queued' },
+		});
+		expect(fetchMock).toHaveBeenCalledTimes(1);
+		expect(mockLog).toHaveBeenCalledWith(
+			expect.anything(),
+			'unipile.relationRequests.create',
+			expect.objectContaining({ account_id: ACCOUNT_ID, unparsed_response: 1 }),
+			'completed',
+		);
+	});
+
+	it('returns an unparseable messages.send body with a warning', async () => {
+		respond('queued');
+
+		const result = await invoke(Messages.send, {
+			account_id: ACCOUNT_ID,
+			chat_id: chat.id,
+			text: 'Hi',
+		});
+
+		expect(result).toMatchObject({
+			parse_warning: expect.any(String),
+			raw: 'queued',
+		});
+	});
+
+	it('returns an empty 201 from chats.start with a warning', async () => {
+		fetchMock.mockResolvedValueOnce(
+			new Response(null, {
+				status: 201,
+				headers: { 'Content-Type': 'application/json' },
+			}),
+		);
+		jest.spyOn(console, 'error').mockImplementation(() => undefined);
+
+		const result = await invoke(Chats.start, {
+			account_id: ACCOUNT_ID,
+			users_ids: MEMBER_ID,
+			text: 'Hi',
+		});
+
+		expect(result).toMatchObject({ parse_warning: expect.any(String) });
+	});
+
+	it('still returns a sent message when event logging fails', async () => {
+		mockLog.mockRejectedValueOnce(new Error('database is locked'));
+		respond({ object: 'MessageSent', message_id: 'msg_3' });
+
+		const result = await invoke(Messages.send, {
+			account_id: ACCOUNT_ID,
+			chat_id: chat.id,
+			text: 'Hi',
+		});
+
+		expect(result).toMatchObject({ message_id: 'msg_3' });
+		expect(console.warn).toHaveBeenCalledWith(
+			expect.stringContaining('could not log unipile.messages.send'),
+			'database is locked',
+		);
+	});
+
+	it('still rejects an unparseable read, which is safe to retry', async () => {
+		respond({ object: 'Chat' });
+
+		await expect(
+			invoke(Chats.get, { account_id: ACCOUNT_ID, chat_id: chat.id }),
+		).rejects.toThrow();
+	});
+});

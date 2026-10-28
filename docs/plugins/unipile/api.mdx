@@ -1155,7 +1155,7 @@ await corsair.unipile.api.users.getChat({ account_id: 'acc_9f2c1d7e', user_id: '
 
 `users.getProfile`
 
-Get a LinkedIn profile by member ID or public identifier: headline, location, network distance, invitation status, and optional experience, education and skills. Counts toward LinkedIn profile-view limits (about 80-100 a day)
+Get a LinkedIn profile by member ID or public identifier: headline, location, network distance, invitation status, and optional experience, education and skills. Each call counts toward LinkedIn's profile-view limit (about 80-100 a day), so it is not retried after a timeout or 5xx, only after Unipile's own rate limit
 
 **Risk:** `read`
 
@@ -1531,7 +1531,7 @@ await corsair.unipile.api.users.listRelations({ account_id: 'acc_9f2c1d7e', sear
 
 `users.visitProfile`
 
-Report a profile visit to LinkedIn so the member sees you in 'Who viewed your profile', using the notify_visit_token from users.getProfile
+Report a profile visit to LinkedIn so the member sees you in 'Who viewed your profile', using the notify_visit_token from users.getProfile. Counts toward LinkedIn's profile-view limit and is not retried after a timeout or 5xx
 
 **Risk:** `write`
 

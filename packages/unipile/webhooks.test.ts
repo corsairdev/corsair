@@ -134,12 +134,13 @@ describe('verifyUnipileWebhookSignature', () => {
 		});
 	});
 
-	it('reads the header case-insensitively and accepts any listed v0', () => {
+	it('accepts any listed v0, so a rotated secret still verifies', () => {
+		// processWebhook lowercases header names before handlers see them.
 		const request = signedRequest(body);
 		const header = request.headers['unipile-signature'];
 		const rotated = {
 			...request,
-			headers: { 'Unipile-Signature': `${header},v0=${'0'.repeat(64)}` },
+			headers: { 'unipile-signature': `v0=${'0'.repeat(64)},${header}` },
 		};
 		expect(
 			verifyUnipileWebhookSignature(rotated, WEBHOOK_SECRET, {
@@ -147,7 +148,7 @@ describe('verifyUnipileWebhookSignature', () => {
 			}).valid,
 		).toBe(true);
 		expect(
-			parseUnipileSignatureHeader(rotated.headers['Unipile-Signature']),
+			parseUnipileSignatureHeader(rotated.headers['unipile-signature']),
 		).toMatchObject({ timestamp: String(NOW) });
 	});
 
@@ -278,5 +279,23 @@ describe('Unipile webhook matchers', () => {
 		expect(
 			matchUnipileTenantWebhook({ headers: {}, body: { type: 'x' } }),
 		).toBeNull();
+	});
+
+	it('reads a JSON-string body the same way in every matcher', () => {
+		const body = JSON.stringify(events['message.new']);
+		const headers = { 'unipile-signature': `t=${NOW},v0=abc` };
+		expect(matchUnipileTenantWebhook({ headers: {}, body })).toEqual({
+			linkType: 'application_id',
+			externalId: 'app_1a2b3c',
+		});
+		expect(matchUnipilePluginWebhook({ headers, body })).toBe(true);
+		expect(MessageWebhooks.new.match({ headers, body })).toBe(true);
+		for (const broken of ['not json', '[1,2]', 'null']) {
+			expect(
+				matchUnipileTenantWebhook({ headers: {}, body: broken }),
+			).toBeNull();
+			expect(matchUnipilePluginWebhook({ headers, body: broken })).toBe(false);
+			expect(MessageWebhooks.new.match({ headers, body: broken })).toBe(false);
+		}
 	});
 });

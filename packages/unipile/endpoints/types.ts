@@ -941,8 +941,51 @@ export type UnipileEndpointInputs = {
 	[K in UnipileOperation]: z.input<(typeof UnipileEndpointInputSchemas)[K]>;
 };
 
-export type UnipileEndpointOutputs = {
+/**
+ * Operations that act on Unipile or LinkedIn (risk level write or
+ * destructive). plugin.test.ts checks this against the endpoint metadata.
+ */
+export const UNIPILE_WRITE_OPERATIONS = [
+	'accountsRemove',
+	'accountsCreateAuthLink',
+	'usersVisitProfile',
+	'relationRequestsCreate',
+	'relationRequestsCancel',
+	'relationRequestsAccept',
+	'chatsStart',
+	'messagesSend',
+	'webhookEndpointsCreate',
+	'webhookEndpointsUpdate',
+	'webhookEndpointsDelete',
+] as const satisfies ReadonlyArray<UnipileOperation>;
+
+export type UnipileWriteOperation = (typeof UNIPILE_WRITE_OPERATIONS)[number];
+
+/**
+ * What a write returns when Unipile answered 2xx but the body did not match
+ * the expected shape. The action already happened (the invitation or message
+ * went out), so this is returned instead of an error: do not resend.
+ */
+export type UnipileUnparsedWriteResponse = {
+	parse_warning: string;
+	// unknown: the body exactly as Unipile sent it.
+	raw: unknown;
+};
+
+type ParsedOutputs = {
 	[K in UnipileOperation]: z.infer<(typeof UnipileEndpointOutputSchemas)[K]>;
+};
+
+/**
+ * Reads return the parsed response. Writes return it too, or an
+ * UnipileUnparsedWriteResponse; check `parse_warning` before reading fields.
+ */
+export type UnipileEndpointOutputs = {
+	[K in UnipileOperation]: K extends UnipileWriteOperation
+		?
+				| (ParsedOutputs[K] & { parse_warning?: undefined })
+				| UnipileUnparsedWriteResponse
+		: ParsedOutputs[K];
 };
 
 export { AccountSchema, MessageSchema, UserRelationSchema };

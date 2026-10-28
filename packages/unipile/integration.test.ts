@@ -1,4 +1,5 @@
 import { processWebhook } from 'corsair';
+import type { CorsairErrorHandler } from 'corsair/core';
 import { createCorsair } from 'corsair/core';
 import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
 import { UnipileAPIError } from './client';
@@ -14,13 +15,17 @@ import {
 	WEBHOOK_SECRET,
 } from './test-fixtures';
 
-async function createClient(options: Parameters<typeof unipile>[0]) {
+async function createClient(
+	options: Parameters<typeof unipile>[0],
+	rootErrorHandlers?: CorsairErrorHandler,
+) {
 	const testDb = createTestDatabase();
 	await createIntegrationAndAccount(testDb.db, 'unipile', 'default');
 	const corsair = createCorsair({
 		plugins: [unipile(options)],
 		database: testDb.db,
 		kek: process.env.CORSAIR_KEK ?? '0123456789abcdef0123456789abcdef',
+		...(rootErrorHandlers ? { errorHandlers: rootErrorHandlers } : {}),
 	});
 	return { corsair, testDb };
 }
@@ -156,6 +161,9 @@ describe('Unipile plugin through createCorsair', () => {
 				text: 'Hi',
 			});
 
+			// A write can return { parse_warning, raw }; narrow before reading fields.
+			if (result.parse_warning !== undefined)
+				throw new Error(result.parse_warning);
 			expect(result.message_id).toBe('msg_9');
 			expect(fetchMock).toHaveBeenCalledTimes(2);
 		} finally {
@@ -179,6 +187,69 @@ describe('Unipile plugin through createCorsair', () => {
 				}),
 			).rejects.toMatchObject({ type: 'provider/too_many_requests' });
 			expect(fetchMock).toHaveBeenCalledTimes(1);
+		} finally {
+			testDb.cleanup();
+		}
+	});
+});
+
+describe('Unipile retries with a root-level DEFAULT handler', () => {
+	// The documented root catch-all; corsair puts root keys first.
+	const rootDefault = jest.fn(async () => ({ maxRetries: 0 }));
+	const root: CorsairErrorHandler = {
+		DEFAULT: { match: () => true, handler: rootDefault },
+	};
+
+	beforeEach(() => {
+		rootDefault.mockClear();
+	});
+
+	it('still retries a read after a 502', async () => {
+		const { corsair, testDb } = await createClient(
+			{ key: 'uk-test-key' },
+			root,
+		);
+		try {
+			jest.spyOn(Math, 'random').mockReturnValue(0);
+			respond(problem(502, 'provider/server_error', 'Bad Gateway'), 502);
+			respond({ data: [chat], next_cursor: null });
+
+			const result = await corsair.unipile.api.chats.list({
+				account_id: ACCOUNT_ID,
+			});
+
+			expect(result.data[0]?.id).toBe(chat.id);
+			expect(fetchMock).toHaveBeenCalledTimes(2);
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	it('still never replays a LinkedIn 429 or a send after a 502', async () => {
+		const { corsair, testDb } = await createClient(
+			{ key: 'uk-test-key' },
+			root,
+		);
+		try {
+			respond(
+				problem(429, 'provider/too_many_requests', 'Too Many Requests'),
+				429,
+				{ 'retry-after': '1' },
+			);
+			await expect(
+				corsair.unipile.api.chats.list({ account_id: ACCOUNT_ID }),
+			).rejects.toMatchObject({ type: 'provider/too_many_requests' });
+			expect(fetchMock).toHaveBeenCalledTimes(1);
+
+			respond(problem(502, 'provider/server_error', 'Bad Gateway'), 502);
+			await expect(
+				corsair.unipile.api.messages.send({
+					account_id: ACCOUNT_ID,
+					chat_id: chat.id,
+					text: 'Hi',
+				}),
+			).rejects.toMatchObject({ status: 502 });
+			expect(fetchMock).toHaveBeenCalledTimes(2);
 		} finally {
 			testDb.cleanup();
 		}

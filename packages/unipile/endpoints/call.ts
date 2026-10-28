@@ -1,13 +1,22 @@
-import { logEventFromContext } from 'corsair/core';
 import type { z } from 'zod';
 import type { UnipileContext } from '..';
 import type { UnipileRequest } from '../client';
 import { makeUnipileRequest, segment } from '../client';
-import type { UnipileEndpointOutputs, UnipileOperation } from './types';
+import { logCompleted } from '../log-event';
+import type {
+	UnipileEndpointOutputs,
+	UnipileOperation,
+	UnipileUnparsedWriteResponse,
+} from './types';
 import {
+	UNIPILE_WRITE_OPERATIONS,
 	UnipileEndpointInputSchemas,
 	UnipileEndpointOutputSchemas,
 } from './types';
+
+const WRITE_OPERATIONS: ReadonlySet<UnipileOperation> = new Set(
+	UNIPILE_WRITE_OPERATIONS,
+);
 
 /** An operation's input after its schema ran (defaults filled in). */
 export type ParsedInput<K extends UnipileOperation> = z.output<
@@ -47,12 +56,33 @@ function logFields(
 	if (typeof result.message_id === 'string') {
 		fields.message_id = result.message_id;
 	}
+	if (typeof result.parse_warning === 'string') fields.unparsed_response = 1;
 	return fields;
+}
+
+function unparsedWrite(
+	event: string,
+	error: z.ZodError,
+	// unknown: the 2xx body that failed the output schema.
+	body: unknown,
+): UnipileUnparsedWriteResponse {
+	const issues = error.issues
+		.slice(0, 3)
+		.map((issue) => `${issue.path.join('.') || '(body)'}: ${issue.message}`)
+		.join('; ');
+	const parse_warning = `Unipile accepted ${event} but its response did not match the expected shape (${issues}). The action already happened; do not resend it.`;
+	console.warn(`[corsair:unipile] ${parse_warning}`);
+	return { parse_warning, raw: body };
 }
 
 /**
  * Validates the input, sends one request, validates the response and logs the
  * ids involved. Retries are decided by error-handlers.ts, never here.
+ *
+ * Once Unipile has answered 2xx to a write, the invitation or message has
+ * gone out, so nothing after that point may throw: a response that fails the
+ * output schema comes back as `{ parse_warning, raw }`, and logging errors are
+ * swallowed. Either would otherwise look like a failure and invite a resend.
  */
 export async function call<K extends UnipileOperation>(
 	ctx: UnipileContext,
@@ -71,12 +101,25 @@ export async function call<K extends UnipileOperation>(
 	const parsed = UnipileEndpointInputSchemas[operation].parse(
 		input ?? {},
 	) as ParsedInput<K>;
-	const raw = await makeUnipileRequest(ctx.key, toRequest(parsed));
-	const result = UnipileEndpointOutputSchemas[operation].parse(
-		prepare(raw),
-	) as UnipileEndpointOutputs[K];
+	const body = prepare(await makeUnipileRequest(ctx.key, toRequest(parsed)));
+	const checked = UnipileEndpointOutputSchemas[operation].safeParse(body);
 
-	await logEventFromContext(
+	let result: UnipileEndpointOutputs[K];
+	if (checked.success) {
+		// Same generic-index widening as the input parse above.
+		result = checked.data as UnipileEndpointOutputs[K];
+	} else if (WRITE_OPERATIONS.has(operation)) {
+		// K is a write operation here, whose output type includes this shape.
+		result = unparsedWrite(
+			event,
+			checked.error,
+			body,
+		) as UnipileEndpointOutputs[K];
+	} else {
+		throw checked.error;
+	}
+
+	await logCompleted(
 		ctx,
 		`unipile.${event}`,
 		// Every input and output schema is a z.object, so both are records.
@@ -84,7 +127,6 @@ export async function call<K extends UnipileOperation>(
 			parsed as Record<string, unknown>,
 			result as Record<string, unknown>,
 		),
-		'completed',
 	);
 	return result;
 }

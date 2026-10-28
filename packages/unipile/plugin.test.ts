@@ -1,5 +1,9 @@
 import { AuthMissingError } from 'corsair/core';
-import { RETRY_SAFE_OPERATIONS } from './error-handlers';
+import { UNIPILE_WRITE_OPERATIONS } from './endpoints/types';
+import {
+	PROFILE_VIEW_OPERATIONS,
+	RETRY_SAFE_OPERATIONS,
+} from './error-handlers';
 import { unipile, unipileEndpointSchemas } from './index';
 
 const READ = [
@@ -136,8 +140,27 @@ describe('unipile plugin definition', () => {
 		}
 	});
 
-	it('retries after a 5xx or timeout only for read operations', () => {
-		expect([...RETRY_SAFE_OPERATIONS].sort()).toEqual([...READ].sort());
+	it('retries after a 5xx or timeout only for reads that are not profile views', () => {
+		expect([...PROFILE_VIEW_OPERATIONS].sort()).toEqual([
+			'users.getProfile',
+			'users.visitProfile',
+		]);
+		expect([...RETRY_SAFE_OPERATIONS].sort()).toEqual(
+			READ.filter((op) => op !== 'users.getProfile').sort(),
+		);
+	});
+
+	it('lists exactly the write and destructive operations as writes', () => {
+		// accountsCreateAuthLink -> accounts.createAuthLink
+		const dotted = UNIPILE_WRITE_OPERATIONS.map((key) => {
+			const path = Object.keys(unipileEndpointSchemas).find(
+				(candidate) =>
+					candidate.replace('.', '').toLowerCase() === key.toLowerCase(),
+			);
+			if (!path) throw new Error(`no endpoint for ${key}`);
+			return path;
+		});
+		expect(dotted.sort()).toEqual([...WRITE, ...DESTRUCTIVE].sort());
 	});
 
 	it('declares the 13 webhook events with schemas', () => {
@@ -163,7 +186,8 @@ describe('unipile plugin definition', () => {
 		const names = Object.keys(custom.errorHandlers ?? {});
 		expect(names.at(-1)).toBe('DEFAULT');
 		expect(names).toContain('QUOTA_ERROR');
-		expect(names[0]).toBe('LINKEDIN_LIMIT_ERROR');
+		expect(names[0]).toBe('UNIPILE_LINKEDIN_LIMIT');
+		expect(names.indexOf('QUOTA_ERROR')).toBe(names.length - 2);
 	});
 });
 

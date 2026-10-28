@@ -3,6 +3,7 @@ import type {
 	RawWebhookRequest,
 	WebhookRequest,
 } from 'corsair/core';
+import { getHeader, readBodyRecord } from 'corsair/core';
 import crypto from 'crypto';
 import { z } from 'zod';
 import {
@@ -159,40 +160,28 @@ export type UnipileWebhookOutputs = {
 	accountUnlocked: AccountUnlockedEvent;
 };
 
-// `body` is unknown because webhook transport may deliver a raw JSON string or
-// an already-parsed object; neither shape is knowable at the type boundary.
-export function parseBody(body: unknown): Record<string, unknown> | null {
-	let value = body;
-	if (typeof value === 'string') {
-		try {
-			value = JSON.parse(value);
-		} catch {
-			return null;
-		}
-	}
-	if (value === null || typeof value !== 'object' || Array.isArray(value)) {
+/**
+ * The event body as an object, whether the transport delivered a JSON string
+ * or an already-parsed object. Every Unipile matcher reads the body through
+ * this, so they all see the same thing.
+ */
+export function readUnipileEventBody(
+	request: RawWebhookRequest,
+): Record<string, unknown> | null {
+	if (typeof request.body !== 'string') return readBodyRecord(request);
+	try {
+		// unknown: JSON.parse output; readBodyRecord keeps only plain objects.
+		const body: unknown = JSON.parse(request.body);
+		return readBodyRecord({ ...request, body });
+	} catch {
 		return null;
 	}
-	// Narrowed to a plain object by the checks above.
-	return value as Record<string, unknown>;
-}
-
-function getHeader(
-	headers: RawWebhookRequest['headers'],
-	name: string,
-): string | undefined {
-	const lower = name.toLowerCase();
-	for (const [key, value] of Object.entries(headers)) {
-		if (key.toLowerCase() !== lower) continue;
-		return Array.isArray(value) ? value[0] : value;
-	}
-	return undefined;
 }
 
 /** Matches one Unipile event type. */
 export function createUnipileMatch(eventType: string): CorsairWebhookMatcher {
 	return (request: RawWebhookRequest) =>
-		parseBody(request.body)?.type === eventType;
+		readUnipileEventBody(request)?.type === eventType;
 }
 
 /**
@@ -202,7 +191,7 @@ export function createUnipileMatch(eventType: string): CorsairWebhookMatcher {
  */
 export function matchUnipilePluginWebhook(request: RawWebhookRequest): boolean {
 	if (!getHeader(request.headers, UNIPILE_SIGNATURE_HEADER)) return false;
-	const body = parseBody(request.body);
+	const body = readUnipileEventBody(request);
 	return (
 		body !== null &&
 		typeof body.type === 'string' &&

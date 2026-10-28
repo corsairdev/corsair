@@ -1,6 +1,6 @@
-import { logEventFromContext } from 'corsair/core';
 import type { z } from 'zod';
 import type { UnipileWebhook } from '..';
+import { logCompleted } from '../log-event';
 import type { UnipileWebhookOutputs } from './types';
 import { createUnipileMatch, verifyUnipileWebhookSignature } from './types';
 
@@ -36,12 +36,11 @@ export function defineUnipileWebhook<K extends keyof UnipileWebhookOutputs>(
 			}
 
 			const event = parsed.data;
-			await logEventFromContext(
-				ctx,
-				`unipile.webhook.${name}`,
-				{ event_id: event.id, type: event.type, account_id: event.account_id },
-				'completed',
-			);
+			await logCompleted(ctx, `unipile.webhook.${name}`, {
+				event_id: event.id,
+				type: event.type,
+				account_id: event.account_id,
+			});
 
 			return { success: true, data: event };
 		},
