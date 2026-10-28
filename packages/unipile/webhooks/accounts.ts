@@ -1,6 +1,9 @@
 import { defineUnipileWebhook } from './define';
 import {
 	AccountAddEventSchema,
+	AccountInitialSyncCompletedEventSchema,
+	AccountInitialSyncFailedEventSchema,
+	AccountInitialSyncRunningEventSchema,
 	AccountLockedEventSchema,
 	AccountReconnectEventSchema,
 	AccountRemoveEventSchema,
@@ -76,4 +79,22 @@ export const accountUnlocked = defineUnipileWebhook(
 	'accountUnlocked',
 	'account.unlocked',
 	AccountUnlockedEventSchema,
+);
+
+export const accountInitialSyncRunning = defineUnipileWebhook(
+	'accountInitialSyncRunning',
+	'account.initial_sync.running',
+	AccountInitialSyncRunningEventSchema,
+);
+
+export const accountInitialSyncCompleted = defineUnipileWebhook(
+	'accountInitialSyncCompleted',
+	'account.initial_sync.completed',
+	AccountInitialSyncCompletedEventSchema,
+);
+
+export const accountInitialSyncFailed = defineUnipileWebhook(
+	'accountInitialSyncFailed',
+	'account.initial_sync.failed',
+	AccountInitialSyncFailedEventSchema,
 );

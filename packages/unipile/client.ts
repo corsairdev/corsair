@@ -23,10 +23,9 @@ const UNIPILE_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	headerNames: { retryAfter: 'retry-after' },
 };
 
-export type UnipileQuery = Record<
-	string,
-	string | number | boolean | string[] | undefined
->;
+// unknown: values are validated by each endpoint's input schema; arrays repeat
+// the key and objects become key[field]=value, as the Unipile SDK sends them.
+export type UnipileQuery = Record<string, unknown>;
 
 /**
  * Unipile errors follow RFC 7807:
@@ -160,4 +159,98 @@ export async function makeUnipileRequest(
 		}
 		throw new UnipileAPIError('Unknown Unipile error');
 	}
+}
+
+/** A downloaded file (picture or attachment). */
+export type UnipileFile = {
+	contentType: string;
+	sizeBytes: number;
+	filename?: string;
+	/** Present unless the file was larger than `maxBytes`. */
+	bytes?: Uint8Array;
+};
+
+function filenameFrom(disposition: string | null): string | undefined {
+	if (!disposition) return undefined;
+	const star = /filename\*=(?:UTF-8'')?([^;]+)/i.exec(disposition);
+	if (star?.[1]) {
+		try {
+			return decodeURIComponent(star[1].trim().replace(/^"|"$/g, ''));
+		} catch {
+			return star[1].trim();
+		}
+	}
+	const plain = /filename="?([^";]+)"?/i.exec(disposition);
+	return plain?.[1]?.trim();
+}
+
+/**
+ * GETs a binary route (pictures, attachments). corsair/http reads non-JSON
+ * bodies as text, which corrupts bytes, so this uses fetch directly with the
+ * same key, timeout and error shape as makeUnipileRequest. The body is only
+ * kept when it is at most `maxBytes`; otherwise just its size is reported.
+ */
+export async function makeUnipileFileRequest(
+	apiKey: string,
+	path: string,
+	maxBytes: number,
+): Promise<UnipileFile> {
+	let response: Response;
+	try {
+		response = await fetch(`${UNIPILE_API_BASE}${path}`, {
+			method: 'GET',
+			headers: { Accept: '*/*', 'X-API-KEY': apiKey },
+			signal: AbortSignal.timeout(UNIPILE_TIMEOUT_MS),
+		});
+	} catch (error) {
+		// DOMException (fetch timeouts) can fail instanceof Error across realms.
+		const cause = error as Error;
+		throw new UnipileAPIError(cause?.message ?? 'Unknown Unipile error', {
+			cause,
+		});
+	}
+
+	if (!response.ok) {
+		const text = await response.text().catch(() => '');
+		// unknown: an RFC 7807 body, or text from a proxy.
+		let body: unknown = text;
+		try {
+			body = JSON.parse(text);
+		} catch {
+			// keep the text
+		}
+		const retryAfterSeconds = Number.parseInt(
+			response.headers.get('retry-after') ?? '',
+			10,
+		);
+		throw new UnipileAPIError(
+			describeUnipileError(response.status, body, response.statusText),
+			{
+				status: response.status,
+				body,
+				retryAfter: Number.isNaN(retryAfterSeconds)
+					? undefined
+					: retryAfterSeconds * 1000,
+			},
+		);
+	}
+
+	const contentType =
+		response.headers.get('content-type') ?? 'application/octet-stream';
+	const filename = filenameFrom(response.headers.get('content-disposition'));
+	const declared = Number.parseInt(
+		response.headers.get('content-length') ?? '',
+		10,
+	);
+	if (!Number.isNaN(declared) && declared > maxBytes) {
+		await response.body?.cancel().catch(() => undefined);
+		return { contentType, sizeBytes: declared, filename };
+	}
+	const bytes = new Uint8Array(await response.arrayBuffer());
+	return {
+		contentType,
+		sizeBytes: bytes.byteLength,
+		filename,
+		bytes: bytes.byteLength <= maxBytes ? bytes : undefined,
+	};
 }

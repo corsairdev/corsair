@@ -1,9 +1,12 @@
+import type { CorsairEndpoint } from 'corsair/core';
 import type { z } from 'zod';
 import type { UnipileContext } from '..';
-import type { UnipileRequest } from '../client';
-import { makeUnipileRequest, segment } from '../client';
+import type { UnipileQuery, UnipileRequest } from '../client';
+import { makeUnipileFileRequest, makeUnipileRequest, segment } from '../client';
 import { logCompleted } from '../log-event';
+import { DEFAULT_MAX_FILE_BYTES } from './schemas/shared';
 import type {
+	UnipileEndpointInputs,
 	UnipileEndpointOutputs,
 	UnipileOperation,
 	UnipileUnparsedWriteResponse,
@@ -58,6 +61,13 @@ function logFields(
 	}
 	if (typeof result.parse_warning === 'string') fields.unparsed_response = 1;
 	return fields;
+}
+
+// unknown: an endpoint result, which is usually but not always an object.
+function asRecord(value: unknown): Record<string, unknown> {
+	return value !== null && typeof value === 'object' && !Array.isArray(value)
+		? (value as Record<string, unknown>)
+		: {};
 }
 
 function unparsedWrite(
@@ -122,11 +132,142 @@ export async function call<K extends UnipileOperation>(
 	await logCompleted(
 		ctx,
 		`unipile.${event}`,
-		// Every input and output schema is a z.object, so both are records.
-		logFields(
-			parsed as Record<string, unknown>,
-			result as Record<string, unknown>,
-		),
+		// Every input schema is a z.object; outputs are objects except
+		// linkedin.request, which asRecord turns into an empty record.
+		logFields(parsed as Record<string, unknown>, asRecord(result)),
 	);
 	return result;
+}
+
+/** How a generated operation maps its flat input onto the HTTP request. */
+export type RouteSpec = {
+	method: UnipileRequest['method'];
+	/** Path template; `{name}` is filled from the input and URL-encoded. */
+	path: string;
+	/** Input keys sent as query parameters. */
+	query?: readonly string[];
+	/** Input keys sent in the JSON body, or 'rest' for every other key. */
+	body?: readonly string[] | 'rest';
+	/** Input key -> wire name, where a body field clashes with a path one. */
+	rename?: Readonly<Record<string, string>>;
+};
+
+export function routeRequest(
+	// unknown: a parsed input; its schema already validated every value.
+	parsed: Record<string, unknown>,
+	spec: RouteSpec,
+): UnipileRequest {
+	const used = new Set<string>();
+	const path = spec.path.replace(/\{(\w+)\}/g, (_match, name: string) => {
+		used.add(name);
+		const value = parsed[name];
+		if (typeof value !== 'string' && typeof value !== 'number') {
+			throw new Error(`Missing path parameter ${name}`);
+		}
+		return segment(String(value));
+	});
+
+	let query: UnipileQuery | undefined;
+	for (const key of spec.query ?? []) {
+		used.add(key);
+		if (parsed[key] === undefined) continue;
+		query ??= {};
+		query[key] = parsed[key];
+	}
+
+	let body: Record<string, unknown> | undefined;
+	if (spec.body) {
+		body = {};
+		const keys =
+			spec.body === 'rest'
+				? Object.keys(parsed).filter((key) => !used.has(key))
+				: spec.body;
+		for (const key of keys) {
+			if (parsed[key] === undefined) continue;
+			body[spec.rename?.[key] ?? key] = parsed[key];
+		}
+	}
+
+	return { method: spec.method, path, query, body };
+}
+
+type Endpoint<K extends UnipileOperation> = CorsairEndpoint<
+	UnipileContext,
+	UnipileEndpointInputs[K],
+	UnipileEndpointOutputs[K]
+>;
+
+/** An endpoint whose request is fully described by `spec`. */
+export function defineOperation<K extends UnipileOperation>(
+	operation: K,
+	event: string,
+	spec: RouteSpec,
+	// unknown: see call().
+	prepare?: (raw: unknown) => unknown,
+): Endpoint<K> {
+	return (ctx, input) =>
+		call(
+			ctx,
+			operation,
+			event,
+			input,
+			// Every input schema is a z.object, so the parsed input is a record.
+			(parsed) => routeRequest(parsed as Record<string, unknown>, spec),
+			prepare,
+		);
+}
+
+function toBase64(bytes: Uint8Array): string {
+	return Buffer.from(bytes.buffer, bytes.byteOffset, bytes.byteLength).toString(
+		'base64',
+	);
+}
+
+/**
+ * A GET that returns a file. Only its type and size come back unless the
+ * caller sets include_content, and never more than max_bytes of it.
+ */
+export function defineBinaryOperation<K extends UnipileOperation>(
+	operation: K,
+	event: string,
+	spec: RouteSpec,
+): Endpoint<K> {
+	return async (ctx, input) => {
+		// Same generic-index widening as in call().
+		const parsed = UnipileEndpointInputSchemas[operation].parse(
+			input ?? {},
+		) as Record<string, unknown> & {
+			include_content?: boolean;
+			max_bytes?: number;
+		};
+		const { path } = routeRequest(parsed, spec);
+		const maxBytes = parsed.max_bytes ?? DEFAULT_MAX_FILE_BYTES;
+		const file = await makeUnipileFileRequest(ctx.key, path, maxBytes);
+		const include = parsed.include_content === true;
+		const body: Record<string, string | number> = {
+			content_type: file.contentType,
+			size_bytes: file.sizeBytes,
+		};
+		if (file.filename) body.filename = file.filename;
+		if (include && file.bytes) body.content_base64 = toBase64(file.bytes);
+		if (include && !file.bytes) {
+			body.content_omitted = `File is ${file.sizeBytes} bytes, over max_bytes (${maxBytes})`;
+		}
+		const result = UnipileEndpointOutputSchemas[operation].parse(
+			body,
+		) as UnipileEndpointOutputs[K];
+		await logCompleted(ctx, `unipile.${event}`, {
+			...logFields(parsed, {}),
+			size_bytes: file.sizeBytes,
+		});
+		return result;
+	};
+}
+
+/** For 204 routes: an empty body means the action succeeded. */
+// unknown: the raw body, which is empty on a 204.
+export function noContent(raw: unknown): unknown {
+	return raw === undefined || raw === null || raw === ''
+		? { success: true }
+		: raw;
 }

@@ -1,6 +1,6 @@
 import type { UnipileEndpoints } from '..';
 import { segment } from '../client';
-import { call } from './call';
+import { call, defineOperation } from './call';
 
 // Hosted Auth links are short-lived on purpose; one hour unless the caller
 // asks for longer.
@@ -52,3 +52,16 @@ export const createAuthLink: UnipileEndpoints['accountsCreateAuthLink'] = (
 			},
 		}),
 	);
+
+// Update an Account (PATCH /v2/accounts/{account_id})
+export const update = defineOperation('accountsUpdate', 'accounts.update', {
+	method: 'PATCH',
+	path: '/v2/accounts/{account_id}',
+	body: [
+		'account_scope_id',
+		'metadata',
+		'auto_proxy_country',
+		'allow_country_fallback',
+		'proxy',
+	],
+});

@@ -1,64 +1,43 @@
 import { AuthMissingError } from 'corsair/core';
-import { UNIPILE_WRITE_OPERATIONS } from './endpoints/types';
+import { UNIPILE_WRITE_OPERATIONS, WebhookEventTypes } from './endpoints/types';
 import {
-	PROFILE_VIEW_OPERATIONS,
+	LINKEDIN_BUDGET_OPERATIONS,
 	RETRY_SAFE_OPERATIONS,
 } from './error-handlers';
 import { unipile, unipileEndpointSchemas } from './index';
 
-const READ = [
-	'accounts.list',
-	'accounts.get',
-	'users.getProfile',
-	'users.listRelations',
-	'users.getChat',
-	'users.listReactions',
-	'users.listComments',
-	'relationRequests.list',
-	'chats.list',
-	'chats.get',
-	'messages.list',
-	'posts.list',
-	'posts.listReactions',
-	'posts.listComments',
-	'webhookEndpoints.list',
-	'webhookEndpoints.get',
-];
-
-const WRITE = [
-	'accounts.createAuthLink',
-	'users.visitProfile',
+// Operations that send, post or start something visible to other people.
+const SENDS = [
 	'relationRequests.create',
-	'relationRequests.accept',
 	'chats.start',
+	'inboxes.startChat',
 	'messages.send',
-	'webhookEndpoints.create',
-	'webhookEndpoints.update',
+	'messages.forward',
+	'emails.send',
+	'drafts.send',
+	'posts.create',
+	'posts.createStory',
+	'posts.addComment',
+	'posts.replyToComment',
+	'linkedin.inviteToFollowCompany',
+	'linkedin.endorseSkill',
 ];
 
-const DESTRUCTIVE = [
-	'accounts.remove',
-	'relationRequests.cancel',
-	'webhookEndpoints.delete',
+// Reads that take a POST body (searches, list browsing) but change nothing.
+const POST_READS = [
+	'linkedin.searchFromUrl',
+	'linkedin.searchPeople',
+	'linkedin.searchCompanies',
+	'linkedin.searchPosts',
+	'linkedin.searchJobs',
+	'salesNavigator.searchFromUrl',
+	'salesNavigator.searchPeople',
+	'salesNavigator.searchCompanies',
+	'salesNavigator.browseLeadList',
+	'salesNavigator.browseAccountList',
 ];
 
-const OPERATIONS = [...READ, ...WRITE, ...DESTRUCTIVE];
-
-const WEBHOOKS = [
-	'relations.new',
-	'messages.new',
-	'messages.receiptRead',
-	'accounts.statusRunning',
-	'accounts.statusPartial',
-	'accounts.statusDegraded',
-	'accounts.statusErrored',
-	'accounts.statusDisconnected',
-	'accounts.add',
-	'accounts.reconnect',
-	'accounts.remove',
-	'accounts.locked',
-	'accounts.unlocked',
-];
+const OPERATION_COUNT = 148;
 
 // The key builder only reads authType and keys.
 function keyContext(
@@ -94,6 +73,10 @@ function paths(tree: Record<string, Record<string, unknown>>): string[] {
 
 describe('unipile plugin definition', () => {
 	const plugin = unipile();
+	const meta = plugin.endpointMeta ?? {};
+	const levels = Object.fromEntries(
+		Object.entries(meta).map(([path, entry]) => [path, entry.riskLevel]),
+	);
 
 	it('registers as unipile with API key auth routed by application_id', () => {
 		expect(plugin.id).toBe('unipile');
@@ -103,51 +86,84 @@ describe('unipile plugin definition', () => {
 		});
 	});
 
-	it('exposes all 27 operations', () => {
-		expect(paths(plugin.endpoints ?? {}).sort()).toEqual(
-			[...OPERATIONS].sort(),
-		);
-		expect(Object.keys(unipileEndpointSchemas).sort()).toEqual(
-			[...OPERATIONS].sort(),
-		);
+	it(`exposes ${OPERATION_COUNT} operations, each with metadata and schemas`, () => {
+		const tree = paths(plugin.endpoints ?? {}).sort();
+		expect(tree).toHaveLength(OPERATION_COUNT);
+		expect(Object.keys(meta).sort()).toEqual(tree);
+		expect(Object.keys(unipileEndpointSchemas).sort()).toEqual(tree);
 		for (const schemas of Object.values(unipileEndpointSchemas)) {
 			expect(typeof schemas.input.safeParse).toBe('function');
 			expect(typeof schemas.output.safeParse).toBe('function');
 		}
-	});
-
-	it.each([
-		['read', READ],
-		['write', WRITE],
-		['destructive', DESTRUCTIVE],
-	])('marks the %s operations', (level, operations) => {
-		const meta = plugin.endpointMeta ?? {};
-		for (const op of operations) {
-			expect([op, meta[op as keyof typeof meta]?.riskLevel]).toEqual([
-				op,
-				level,
+		for (const [path, entry] of Object.entries(meta)) {
+			expect([path, (entry.description?.length ?? 0) > 20]).toEqual([
+				path,
+				true,
 			]);
 		}
 	});
 
-	it('marks every removal, cancel and delete destructive', () => {
-		const meta = plugin.endpointMeta ?? {};
-		for (const [path, entry] of Object.entries(meta)) {
-			if (/\.(remove|cancel|delete)$/.test(path)) {
-				expect([path, entry.riskLevel]).toEqual([path, 'destructive']);
-			}
-			expect(entry.description?.length).toBeGreaterThan(20);
+	it('marks every delete, removal, cancel, trash and unfollow destructive', () => {
+		const destructive = Object.keys(levels).filter((path) =>
+			/\.(delete\w*|remove\w*|cancel|trash|unfollow)$/.test(path),
+		);
+		expect(destructive.length).toBeGreaterThan(20);
+		for (const path of destructive) {
+			expect([path, levels[path]]).toEqual([path, 'destructive']);
+		}
+		for (const [path, level] of Object.entries(levels)) {
+			if (level === 'destructive') expect(destructive).toContain(path);
 		}
 	});
 
-	it('retries after a 5xx or timeout only for reads that are not profile views', () => {
-		expect([...PROFILE_VIEW_OPERATIONS].sort()).toEqual([
-			'users.getProfile',
-			'users.visitProfile',
-		]);
-		expect([...RETRY_SAFE_OPERATIONS].sort()).toEqual(
-			READ.filter((op) => op !== 'users.getProfile').sort(),
+	it('marks every send, post and create a write', () => {
+		const creates = Object.keys(levels).filter((path) =>
+			/\.(create\w*|send|start\w*|add\w*|update\w*|edit|forward|follow|pin|mark\w*|modify|respond|restore|save\w*|select\w*|invite\w*|endorse\w*|request|replay|reply\w*|set\w*|solve\w*|resend\w*|visit\w*|accept)$/.test(
+				path,
+			),
 		);
+		for (const path of [...SENDS, ...creates]) {
+			expect([path, levels[path]]).toEqual([path, 'write']);
+		}
+		expect(levels['linkedin.request']).toBe('write');
+	});
+
+	it('treats searches and list browsing as reads, though they POST', () => {
+		for (const path of POST_READS) {
+			expect([path, levels[path]]).toEqual([path, 'read']);
+		}
+	});
+
+	it('says which writes publish or spend credits', () => {
+		for (const path of [
+			'posts.create',
+			'posts.createStory',
+			'posts.addComment',
+			'posts.replyToComment',
+			'users.updateProfile',
+		]) {
+			expect([path, meta[path as keyof typeof meta]?.description]).toEqual([
+				path,
+				expect.stringMatching(/public/i),
+			]);
+		}
+		expect(meta['linkedin.inviteToFollowCompany']?.description).toMatch(
+			/credits/i,
+		);
+		expect(meta['linkedin.request']?.description).toMatch(/^Advanced/);
+	});
+
+	it('retries after a 5xx or timeout only for reads outside the LinkedIn budget', () => {
+		const reads = Object.keys(levels).filter((path) => levels[path] === 'read');
+		expect([...RETRY_SAFE_OPERATIONS].sort()).toEqual(
+			reads.filter((path) => !LINKEDIN_BUDGET_OPERATIONS.has(path)).sort(),
+		);
+		for (const path of SENDS) {
+			expect(RETRY_SAFE_OPERATIONS.has(path)).toBe(false);
+		}
+		for (const path of LINKEDIN_BUDGET_OPERATIONS) {
+			expect(path in levels).toBe(true);
+		}
 	});
 
 	it('lists exactly the write and destructive operations as writes', () => {
@@ -160,17 +176,20 @@ describe('unipile plugin definition', () => {
 			if (!path) throw new Error(`no endpoint for ${key}`);
 			return path;
 		});
-		expect(dotted.sort()).toEqual([...WRITE, ...DESTRUCTIVE].sort());
+		expect(dotted.sort()).toEqual(
+			Object.keys(levels)
+				.filter((path) => levels[path] !== 'read')
+				.sort(),
+		);
 	});
 
-	it('declares the 13 webhook events with schemas', () => {
-		expect(
-			paths(
-				(plugin.webhooks ?? {}) as Record<string, Record<string, unknown>>,
-			).sort(),
-		).toEqual([...WEBHOOKS].sort());
+	it('declares a webhook for every Unipile event type', () => {
+		const webhooks = paths(
+			(plugin.webhooks ?? {}) as Record<string, Record<string, unknown>>,
+		);
+		expect(webhooks).toHaveLength(WebhookEventTypes.length);
 		expect(Object.keys(plugin.webhookSchemas ?? {}).sort()).toEqual(
-			[...WEBHOOKS].sort(),
+			webhooks.sort(),
 		);
 	});
 

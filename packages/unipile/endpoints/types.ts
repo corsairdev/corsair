@@ -1,4 +1,21 @@
 import { z } from 'zod';
+import { AdminInputSchemas, AdminOutputSchemas } from './schemas/admin';
+import {
+	CalendarInputSchemas,
+	CalendarOutputSchemas,
+} from './schemas/calendar';
+import { EmailInputSchemas, EmailOutputSchemas } from './schemas/email';
+import {
+	LinkedinInputSchemas,
+	LinkedinOutputSchemas,
+} from './schemas/linkedin';
+import {
+	MessagingInputSchemas,
+	MessagingOutputSchemas,
+} from './schemas/messaging';
+import { PostsInputSchemas, PostsOutputSchemas } from './schemas/posts';
+import { AccountId } from './schemas/shared';
+import { UsersInputSchemas, UsersOutputSchemas } from './schemas/users';
 
 // Shapes follow the official Unipile v2 SDK (unipile-node types.gen.ts, API
 // 2.62) and https://developer.unipile.com/v2.0/reference. Unipile v2 is in
@@ -16,13 +33,6 @@ const looseList = z.array(z.unknown()).nullish();
 const looseRecord = z.record(z.string(), z.unknown()).nullish();
 
 // ── Shared inputs ─────────────────────────────────────────────────────────
-
-const AccountId = z
-	.string()
-	.min(1)
-	.describe(
-		'Unipile account ID (acc_…) of the connected account to act as, from accounts.list',
-	);
 
 const UserId = z
 	.string()
@@ -903,6 +913,13 @@ export const UnipileEndpointInputSchemas = {
 	webhookEndpointsCreate: WebhookEndpointsCreateInputSchema,
 	webhookEndpointsUpdate: WebhookEndpointsUpdateInputSchema,
 	webhookEndpointsDelete: WebhookEndpointIdInputSchema,
+	...MessagingInputSchemas,
+	...UsersInputSchemas,
+	...EmailInputSchemas,
+	...CalendarInputSchemas,
+	...PostsInputSchemas,
+	...LinkedinInputSchemas,
+	...AdminInputSchemas,
 } as const;
 
 export const UnipileEndpointOutputSchemas = {
@@ -933,6 +950,13 @@ export const UnipileEndpointOutputSchemas = {
 	webhookEndpointsCreate: CreatedWebhookEndpointSchema,
 	webhookEndpointsUpdate: WebhookEndpointSchema,
 	webhookEndpointsDelete: SuccessAck,
+	...MessagingOutputSchemas,
+	...UsersOutputSchemas,
+	...EmailOutputSchemas,
+	...CalendarOutputSchemas,
+	...PostsOutputSchemas,
+	...LinkedinOutputSchemas,
+	...AdminOutputSchemas,
 } as const;
 
 export type UnipileOperation = keyof typeof UnipileEndpointInputSchemas;
@@ -957,6 +981,74 @@ export const UNIPILE_WRITE_OPERATIONS = [
 	'webhookEndpointsCreate',
 	'webhookEndpointsUpdate',
 	'webhookEndpointsDelete',
+	'inboxesStartChat',
+	'chatsUpdate',
+	'chatsDelete',
+	'chatsAddParticipant',
+	'chatsRemoveParticipant',
+	'chatsSetComposing',
+	'messagesDelete',
+	'messagesForward',
+	'messagesEdit',
+	'messagesMarkRead',
+	'messagesPin',
+	'messagesAddReaction',
+	'messagesRemoveReaction',
+	'usersSetPresence',
+	'usersUpdateProfile',
+	'usersRemoveRelation',
+	'usersFollow',
+	'usersUnfollow',
+	'emailsTrash',
+	'emailsModify',
+	'emailsMarkRead',
+	'emailsMarkUnread',
+	'emailsSend',
+	'draftsCreate',
+	'draftsUpdate',
+	'draftsDelete',
+	'draftsSend',
+	'foldersCreate',
+	'foldersUpdate',
+	'foldersDelete',
+	'calendarsCreate',
+	'calendarsUpdate',
+	'calendarsDelete',
+	'calendarEventsCreate',
+	'calendarEventsUpdate',
+	'calendarEventsDelete',
+	'calendarEventsRespond',
+	'calendarEventsCancel',
+	'calendarEventsRestore',
+	'postsCreate',
+	'postsUpdate',
+	'postsDelete',
+	'postsCreateStory',
+	'postsAddReaction',
+	'postsRemoveReaction',
+	'postsAddComment',
+	'postsUpdateComment',
+	'postsDeleteComment',
+	'postsReplyToComment',
+	'postsAddCommentReaction',
+	'postsRemoveCommentReaction',
+	'linkedinSelectContract',
+	'linkedinInviteToFollowCompany',
+	'linkedinEndorseSkill',
+	'linkedinRequest',
+	'salesNavigatorSaveLead',
+	'salesNavigatorSaveAccount',
+	'accountsUpdate',
+	'authStartIntent',
+	'authSolveCheckpoint',
+	'authRequestCheckpoint',
+	'authResendCheckpoint',
+	'scopesCreate',
+	'scopesUpdate',
+	'scopesDelete',
+	'apiKeysCreate',
+	'apiKeysDelete',
+	'webhookEventsReplay',
 ] as const satisfies ReadonlyArray<UnipileOperation>;
 
 export type UnipileWriteOperation = (typeof UNIPILE_WRITE_OPERATIONS)[number];
@@ -988,7 +1080,13 @@ export type UnipileEndpointOutputs = {
 		: ParsedOutputs[K];
 };
 
-export { AccountSchema, MessageSchema, UserRelationSchema };
+export {
+	AccountSchema,
+	ChatSchema,
+	MessageSchema,
+	UserRelationSchema,
+	UserSchema,
+};
 
 export type UnipileAccount = z.infer<typeof AccountSchema>;
 export type UnipileUser = z.infer<typeof UserSchema>;

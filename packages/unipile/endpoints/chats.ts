@@ -1,6 +1,12 @@
 import type { UnipileEndpoints } from '..';
 import { segment } from '../client';
-import { accountPath, call } from './call';
+import {
+	accountPath,
+	call,
+	defineBinaryOperation,
+	defineOperation,
+	noContent,
+} from './call';
 
 export const list: UnipileEndpoints['chatsList'] = (ctx, input) =>
 	call(ctx, 'chatsList', 'chats.list', input, (parsed) => ({
@@ -34,3 +40,78 @@ export const start: UnipileEndpoints['chatsStart'] = (ctx, input) =>
 			body,
 		};
 	});
+
+// Update a Chat (PATCH /v2/{account_id}/chats/{chat_id})
+export const update = defineOperation('chatsUpdate', 'chats.update', {
+	method: 'PATCH',
+	path: '/v2/{account_id}/chats/{chat_id}',
+	body: [
+		'name',
+		'pin_status',
+		'archive_status',
+		'label',
+		'muted_until',
+		'read_status',
+	],
+});
+
+// Delete a Chat (DELETE /v2/{account_id}/chats/{chat_id})
+export const remove = defineOperation(
+	'chatsDelete',
+	'chats.delete',
+	{
+		method: 'DELETE',
+		path: '/v2/{account_id}/chats/{chat_id}',
+	},
+	noContent,
+);
+
+// Get a Chat Picture (GET /v2/{account_id}/chats/{chat_id}/picture)
+export const getPicture = defineBinaryOperation(
+	'chatsGetPicture',
+	'chats.getPicture',
+	{ method: 'GET', path: '/v2/{account_id}/chats/{chat_id}/picture' },
+);
+
+// List all Chat Participants (GET /v2/{account_id}/chats/{chat_id}/participants)
+export const listParticipants = defineOperation(
+	'chatsListParticipants',
+	'chats.listParticipants',
+	{
+		method: 'GET',
+		path: '/v2/{account_id}/chats/{chat_id}/participants',
+		query: ['offset', 'cursor', 'limit'],
+	},
+);
+
+// Add a Chat Participant (POST /v2/{account_id}/chats/{chat_id}/participants)
+export const addParticipant = defineOperation(
+	'chatsAddParticipant',
+	'chats.addParticipant',
+	{
+		method: 'POST',
+		path: '/v2/{account_id}/chats/{chat_id}/participants',
+		body: ['user_id'],
+	},
+);
+
+// Remove a Chat Participant (DELETE /v2/{account_id}/chats/{chat_id}/participants/{user_id})
+export const removeParticipant = defineOperation(
+	'chatsRemoveParticipant',
+	'chats.removeParticipant',
+	{
+		method: 'DELETE',
+		path: '/v2/{account_id}/chats/{chat_id}/participants/{user_id}',
+	},
+);
+
+// Set Composing Status (POST /v2/{account_id}/chats/{chat_id}/composing)
+export const setComposing = defineOperation(
+	'chatsSetComposing',
+	'chats.setComposing',
+	{
+		method: 'POST',
+		path: '/v2/{account_id}/chats/{chat_id}/composing',
+		query: ['action'],
+	},
+);

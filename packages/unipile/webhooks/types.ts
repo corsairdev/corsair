@@ -8,8 +8,10 @@ import crypto from 'crypto';
 import { z } from 'zod';
 import {
 	AccountSchema,
+	ChatSchema,
 	MessageSchema,
 	UserRelationSchema,
+	UserSchema,
 } from '../endpoints/types';
 
 // Event object and payloads:
@@ -118,6 +120,178 @@ export const AccountUnlockedEventSchema = event(
 	TimestampPayload,
 );
 
+// ── Email, calendar, chat, message, follower and tracking events ──────────
+// Payload objects are typed by the fields an agent routes on; the rest of
+// each Email, Draft, Folder, Calendar or Event object passes through.
+
+const IdPayload = z.object({ id: z.string() }).loose();
+
+const EmailPayloadObject = z
+	.object({
+		id: z.string(),
+		thread_id: str,
+		subject: str,
+		snippet: str,
+		date: str,
+		is_unread: z.boolean().nullish(),
+	})
+	.loose();
+
+const DraftPayloadObject = z
+	.object({ id: z.string(), thread_id: str, subject: str, snippet: str })
+	.loose();
+
+const FolderPayloadObject = z
+	.object({ id: z.string(), name: str, role: str, parent_id: str })
+	.loose();
+
+const CalendarPayloadObject = z
+	.object({ id: z.string(), name: str, is_default: z.boolean().nullish() })
+	.loose();
+
+const CalendarEventPayloadObject = z
+	.object({
+		id: z.string(),
+		calendar_id: str,
+		title: str,
+		is_cancelled: z.boolean().nullish(),
+		// unknown: start and end are a date-time or an all-day date object.
+		start: z.unknown().optional(),
+		end: z.unknown().optional(),
+	})
+	.loose();
+
+const MessageRefPayload = z
+	.object({
+		chat_id: z.string(),
+		message_id: z.string(),
+		user_id: z.string(),
+		timestamp: z.string(),
+	})
+	.loose();
+
+const ReactionPayload = z
+	.object({
+		chat_id: z.string(),
+		message_id: z.string(),
+		reaction: z.record(z.string(), z.unknown()).nullish(),
+	})
+	.loose();
+
+const TrackingPayload = z
+	.object({
+		date: z.string(),
+		ip: str,
+		user_agent: str,
+		label: str.describe('tracking_options label given to emails.send'),
+	})
+	.loose();
+
+export const EmailNewEventSchema = event(
+	'email.new',
+	z
+		.object({
+			folder_id: z.string().describe('Folder (or label) the email landed in'),
+			email: EmailPayloadObject,
+		})
+		.loose(),
+);
+export const EmailBounceEventSchema = event(
+	'email.new.bounce',
+	z
+		.object({
+			reason: str,
+			date: str,
+			addresses: str.describe('Comma-separated bounced recipients'),
+			type: str,
+			code: str,
+			email: EmailPayloadObject.nullish(),
+		})
+		.loose(),
+);
+export const EmailDeleteEventSchema = event(
+	'email.delete',
+	z.object({ folder_id: z.string(), email: IdPayload }).loose(),
+);
+export const EmailDraftNewEventSchema = event(
+	'email.draft.new',
+	DraftPayloadObject,
+);
+export const EmailDraftDeleteEventSchema = event(
+	'email.draft.delete',
+	IdPayload,
+);
+export const EmailFolderCreateEventSchema = event(
+	'email.folder.create',
+	FolderPayloadObject,
+);
+export const EmailFolderUpdateEventSchema = event(
+	'email.folder.update',
+	FolderPayloadObject,
+);
+export const EmailFolderDeleteEventSchema = event(
+	'email.folder.delete',
+	IdPayload,
+);
+export const CalendarCreateEventSchema = event(
+	'calendar.create',
+	CalendarPayloadObject,
+);
+export const CalendarUpdateEventSchema = event(
+	'calendar.update',
+	CalendarPayloadObject,
+);
+export const CalendarDeleteEventSchema = event('calendar.delete', IdPayload);
+export const CalendarEventNewEventSchema = event(
+	'calendar.event.new',
+	CalendarEventPayloadObject,
+);
+export const CalendarEventUpdateEventSchema = event(
+	'calendar.event.update',
+	CalendarEventPayloadObject,
+);
+export const CalendarEventDeleteEventSchema = event(
+	'calendar.event.delete',
+	z.object({ calendar_id: z.string(), id: z.string() }).loose(),
+);
+export const ChatUpdateEventSchema = event('chat.update', ChatSchema);
+export const ChatDeleteEventSchema = event('chat.delete', IdPayload);
+export const MessageUpdateEventSchema = event('message.update', MessageSchema);
+export const MessageDeleteEventSchema = event(
+	'message.delete',
+	z.object({ chat_id: z.string(), id: z.string() }).loose(),
+);
+export const MessageReceiptDeliveryEventSchema = event(
+	'message.receipt.delivery',
+	MessageRefPayload,
+);
+export const MessageReactionNewEventSchema = event(
+	'message.reaction.new',
+	ReactionPayload,
+);
+export const MessageReactionDeleteEventSchema = event(
+	'message.reaction.delete',
+	ReactionPayload,
+);
+export const FollowerNewEventSchema = event('follower.new', UserSchema);
+export const TrackingOpenEventSchema = event('tracking.open', TrackingPayload);
+export const TrackingClickEventSchema = event(
+	'tracking.click',
+	TrackingPayload.extend({ url: z.string().describe('The clicked link') }),
+);
+export const AccountInitialSyncRunningEventSchema = event(
+	'account.initial_sync.running',
+	TimestampPayload,
+);
+export const AccountInitialSyncCompletedEventSchema = event(
+	'account.initial_sync.completed',
+	TimestampPayload,
+);
+export const AccountInitialSyncFailedEventSchema = event(
+	'account.initial_sync.failed',
+	TimestampPayload,
+);
+
 export type RelationNewEvent = z.infer<typeof RelationNewEventSchema>;
 export type MessageNewEvent = z.infer<typeof MessageNewEventSchema>;
 export type MessageReceiptReadEvent = z.infer<
@@ -158,6 +332,37 @@ export type UnipileWebhookOutputs = {
 	accountRemove: AccountRemoveEvent;
 	accountLocked: AccountLockedEvent;
 	accountUnlocked: AccountUnlockedEvent;
+	emailNew: z.infer<typeof EmailNewEventSchema>;
+	emailBounce: z.infer<typeof EmailBounceEventSchema>;
+	emailDelete: z.infer<typeof EmailDeleteEventSchema>;
+	emailDraftNew: z.infer<typeof EmailDraftNewEventSchema>;
+	emailDraftDelete: z.infer<typeof EmailDraftDeleteEventSchema>;
+	emailFolderCreate: z.infer<typeof EmailFolderCreateEventSchema>;
+	emailFolderUpdate: z.infer<typeof EmailFolderUpdateEventSchema>;
+	emailFolderDelete: z.infer<typeof EmailFolderDeleteEventSchema>;
+	calendarCreate: z.infer<typeof CalendarCreateEventSchema>;
+	calendarUpdate: z.infer<typeof CalendarUpdateEventSchema>;
+	calendarDelete: z.infer<typeof CalendarDeleteEventSchema>;
+	calendarEventNew: z.infer<typeof CalendarEventNewEventSchema>;
+	calendarEventUpdate: z.infer<typeof CalendarEventUpdateEventSchema>;
+	calendarEventDelete: z.infer<typeof CalendarEventDeleteEventSchema>;
+	chatUpdate: z.infer<typeof ChatUpdateEventSchema>;
+	chatDelete: z.infer<typeof ChatDeleteEventSchema>;
+	messageUpdate: z.infer<typeof MessageUpdateEventSchema>;
+	messageDelete: z.infer<typeof MessageDeleteEventSchema>;
+	messageReceiptDelivery: z.infer<typeof MessageReceiptDeliveryEventSchema>;
+	messageReactionNew: z.infer<typeof MessageReactionNewEventSchema>;
+	messageReactionDelete: z.infer<typeof MessageReactionDeleteEventSchema>;
+	followerNew: z.infer<typeof FollowerNewEventSchema>;
+	trackingOpen: z.infer<typeof TrackingOpenEventSchema>;
+	trackingClick: z.infer<typeof TrackingClickEventSchema>;
+	accountInitialSyncRunning: z.infer<
+		typeof AccountInitialSyncRunningEventSchema
+	>;
+	accountInitialSyncCompleted: z.infer<
+		typeof AccountInitialSyncCompletedEventSchema
+	>;
+	accountInitialSyncFailed: z.infer<typeof AccountInitialSyncFailedEventSchema>;
 };
 
 /**

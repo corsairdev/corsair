@@ -244,6 +244,93 @@ export const events = {
 	'account.unlocked': envelope('account.unlocked', {
 		timestamp: '2026-10-28T09:00:00.000Z',
 	}),
+	'account.initial_sync.running': envelope('account.initial_sync.running', {
+		timestamp: '2026-10-28T09:00:00.000Z',
+	}),
+	'account.initial_sync.completed': envelope('account.initial_sync.completed', {
+		timestamp: '2026-10-28T09:00:00.000Z',
+	}),
+	'account.initial_sync.failed': envelope('account.initial_sync.failed', {
+		timestamp: '2026-10-28T09:00:00.000Z',
+	}),
+	'email.new': envelope('email.new', {
+		folder_id: 'INBOX',
+		email: { id: 'em_1', subject: 'Re: intro', is_unread: true },
+	}),
+	'email.new.bounce': envelope('email.new.bounce', {
+		reason: 'Mailbox not found',
+		addresses: 'nobody@example.com',
+		type: 'hard',
+		code: '550',
+		email: { id: 'em_2' },
+	}),
+	'email.delete': envelope('email.delete', {
+		folder_id: 'INBOX',
+		email: { id: 'em_1' },
+	}),
+	'email.draft.new': envelope('email.draft.new', {
+		id: 'dr_1',
+		subject: 'Draft',
+	}),
+	'email.draft.delete': envelope('email.draft.delete', { id: 'dr_1' }),
+	'email.folder.create': envelope('email.folder.create', {
+		id: 'fo_1',
+		name: 'Leads',
+	}),
+	'email.folder.update': envelope('email.folder.update', {
+		id: 'fo_1',
+		name: 'Hot leads',
+	}),
+	'email.folder.delete': envelope('email.folder.delete', { id: 'fo_1' }),
+	'calendar.create': envelope('calendar.create', { id: 'cal_1', name: 'Work' }),
+	'calendar.update': envelope('calendar.update', { id: 'cal_1', name: 'Team' }),
+	'calendar.delete': envelope('calendar.delete', { id: 'cal_1' }),
+	'calendar.event.new': envelope('calendar.event.new', {
+		id: 'ev_1',
+		calendar_id: 'cal_1',
+		title: 'Intro call',
+		start: { date_time: '2026-11-02T10:00:00', timezone: 'UTC' },
+	}),
+	'calendar.event.update': envelope('calendar.event.update', {
+		id: 'ev_1',
+		calendar_id: 'cal_1',
+		title: 'Intro call (moved)',
+	}),
+	'calendar.event.delete': envelope('calendar.event.delete', {
+		calendar_id: 'cal_1',
+		id: 'ev_1',
+	}),
+	'chat.update': envelope('chat.update', chat),
+	'chat.delete': envelope('chat.delete', { id: chat.id }),
+	'message.update': envelope('message.update', { ...message, is_edited: true }),
+	'message.delete': envelope('message.delete', {
+		chat_id: chat.id,
+		id: message.id,
+	}),
+	'message.receipt.delivery': envelope('message.receipt.delivery', {
+		chat_id: chat.id,
+		message_id: message.id,
+		user_id: MEMBER_ID,
+		timestamp: '2026-10-28T09:00:00.000Z',
+	}),
+	'message.reaction.new': envelope('message.reaction.new', {
+		chat_id: chat.id,
+		message_id: message.id,
+		reaction: { value: '👍', sender_id: MEMBER_ID },
+	}),
+	'message.reaction.delete': envelope('message.reaction.delete', {
+		chat_id: chat.id,
+		message_id: message.id,
+	}),
+	'follower.new': envelope('follower.new', user),
+	'tracking.open': envelope('tracking.open', {
+		date: '2026-10-28T09:00:00.000Z',
+		label: 'intro-v1',
+	}),
+	'tracking.click': envelope('tracking.click', {
+		date: '2026-10-28T09:00:00.000Z',
+		url: 'https://example.com/pricing',
+	}),
 } as const;
 
 /** Headers Unipile would send with `rawBody`, signed with `secret`. */

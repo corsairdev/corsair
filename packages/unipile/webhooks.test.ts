@@ -1,14 +1,23 @@
 import { logEventFromContext } from 'corsair/core';
 import crypto from 'crypto';
+import { WebhookEventTypes } from './endpoints/types';
 import { events, signedHeaders, WEBHOOK_SECRET } from './test-fixtures';
 import {
 	AccountWebhooks,
+	CalendarEventWebhooks,
+	CalendarWebhooks,
+	ChatWebhooks,
+	EmailDraftWebhooks,
+	EmailFolderWebhooks,
+	EmailWebhooks,
+	FollowerWebhooks,
 	MessageWebhooks,
 	matchUnipilePluginWebhook,
 	matchUnipileTenantWebhook,
 	parseUnipileSignatureHeader,
 	RelationWebhooks,
 	signUnipilePayload,
+	TrackingWebhooks,
 	verifyUnipileWebhookSignature,
 } from './webhooks';
 
@@ -165,8 +174,16 @@ describe('verifyUnipileWebhookSignature', () => {
 describe('Unipile webhook matchers', () => {
 	const webhooks = {
 		'relation.new': RelationWebhooks.new,
+		'follower.new': FollowerWebhooks.new,
 		'message.new': MessageWebhooks.new,
+		'message.update': MessageWebhooks.update,
+		'message.delete': MessageWebhooks.delete,
 		'message.receipt.read': MessageWebhooks.receiptRead,
+		'message.receipt.delivery': MessageWebhooks.receiptDelivery,
+		'message.reaction.new': MessageWebhooks.reactionNew,
+		'message.reaction.delete': MessageWebhooks.reactionDelete,
+		'chat.update': ChatWebhooks.update,
+		'chat.delete': ChatWebhooks.delete,
 		'account.status.running': AccountWebhooks.statusRunning,
 		'account.status.partial': AccountWebhooks.statusPartial,
 		'account.status.degraded': AccountWebhooks.statusDegraded,
@@ -177,9 +194,32 @@ describe('Unipile webhook matchers', () => {
 		'account.remove': AccountWebhooks.remove,
 		'account.locked': AccountWebhooks.locked,
 		'account.unlocked': AccountWebhooks.unlocked,
+		'account.initial_sync.running': AccountWebhooks.initialSyncRunning,
+		'account.initial_sync.completed': AccountWebhooks.initialSyncCompleted,
+		'account.initial_sync.failed': AccountWebhooks.initialSyncFailed,
+		'email.new': EmailWebhooks.new,
+		'email.new.bounce': EmailWebhooks.bounce,
+		'email.delete': EmailWebhooks.delete,
+		'email.draft.new': EmailDraftWebhooks.new,
+		'email.draft.delete': EmailDraftWebhooks.delete,
+		'email.folder.create': EmailFolderWebhooks.create,
+		'email.folder.update': EmailFolderWebhooks.update,
+		'email.folder.delete': EmailFolderWebhooks.delete,
+		'calendar.create': CalendarWebhooks.create,
+		'calendar.update': CalendarWebhooks.update,
+		'calendar.delete': CalendarWebhooks.delete,
+		'calendar.event.new': CalendarEventWebhooks.new,
+		'calendar.event.update': CalendarEventWebhooks.update,
+		'calendar.event.delete': CalendarEventWebhooks.delete,
+		'tracking.open': TrackingWebhooks.open,
+		'tracking.click': TrackingWebhooks.click,
 	} as const;
 
 	const types = Object.keys(webhooks) as Array<keyof typeof webhooks>;
+
+	it('has a webhook for every Unipile event type', () => {
+		expect([...types].sort()).toEqual([...WebhookEventTypes].sort());
+	});
 
 	it.each(types)('%s matches only its own event type', (type) => {
 		for (const other of types) {

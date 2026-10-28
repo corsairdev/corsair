@@ -17,24 +17,38 @@ import { unipileEndpointMeta } from './endpoints/meta';
 // surfaced to the caller instead.
 
 /**
- * Calls that count toward LinkedIn's profile-view limit (about 80-100 a day).
- * A replay after a timeout or 5xx may spend a second view, so these are only
- * replayed when Unipile itself refused them with a Retry-After.
+ * Calls that spend a LinkedIn daily budget: profile views (about 80-100 a
+ * day), company views, post reads and search results (about 1,000 a day,
+ * 2,500 on Sales Navigator). A replay after a timeout or 5xx may spend the
+ * budget twice, so these are only replayed when Unipile itself refused them
+ * with a Retry-After.
+ * https://developer.unipile.com/v2.0/docs/provider-limits-and-restrictions
  */
-export const PROFILE_VIEW_OPERATIONS: ReadonlySet<string> = new Set([
+export const LINKEDIN_BUDGET_OPERATIONS: ReadonlySet<string> = new Set([
 	'users.getProfile',
 	'users.visitProfile',
+	'posts.list',
+	'posts.get',
+	'linkedin.getCompany',
+	'linkedin.searchFromUrl',
+	'linkedin.searchPeople',
+	'linkedin.searchCompanies',
+	'linkedin.searchPosts',
+	'linkedin.searchJobs',
+	'salesNavigator.searchFromUrl',
+	'salesNavigator.searchPeople',
+	'salesNavigator.searchCompanies',
 ]);
 
 /**
  * Operations replayed after a timeout, 5xx or dropped connection: every
- * `read` in the endpoint metadata except the profile views above.
+ * `read` in the endpoint metadata except the budgeted LinkedIn calls above.
  */
 export const RETRY_SAFE_OPERATIONS: ReadonlySet<string> = new Set(
 	Object.entries(unipileEndpointMeta)
 		.filter(([, meta]) => meta.riskLevel === 'read')
 		.map(([path]) => path)
-		.filter((path) => !PROFILE_VIEW_OPERATIONS.has(path)),
+		.filter((path) => !LINKEDIN_BUDGET_OPERATIONS.has(path)),
 );
 
 /** Longest Retry-After the plugin waits out in-process. Longer ones surface. */
@@ -129,8 +143,9 @@ const unipileHandlers = {
 	},
 	// 429 api/too_many_requests: Unipile stopped the request before it reached
 	// LinkedIn, so even a send is safe to replay. Retry-After is honoured up to
-	// MAX_RETRY_AFTER_MS; a longer window (a daily limit) is surfaced. Profile
-	// views need the Retry-After; a 429 without a type only replays reads.
+	// MAX_RETRY_AFTER_MS; a longer window (a daily limit) is surfaced. Budgeted
+	// LinkedIn calls need the Retry-After; a 429 without a type only replays
+	// reads.
 	UNIPILE_RATE_LIMIT: {
 		match: (error: Error) => statusOf(error) === 429,
 		handler: async (
@@ -142,7 +157,7 @@ const unipileHandlers = {
 			const stoppedByUnipile = typeOf(error) === 'api/too_many_requests';
 			if (!stoppedByUnipile && !isRetrySafe(context)) return NO_RETRY;
 			if (retryAfter === undefined) {
-				return PROFILE_VIEW_OPERATIONS.has(context.operation)
+				return LINKEDIN_BUDGET_OPERATIONS.has(context.operation)
 					? NO_RETRY
 					: { maxRetries: 2, retryStrategy: 'exponential_backoff' };
 			}

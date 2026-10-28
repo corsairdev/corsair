@@ -80,7 +80,20 @@ const RETRY_READ = {
 };
 const NO_RETRY = { maxRetries: 0 };
 
-const SENDS = ['messages.send', 'chats.start', 'relationRequests.create'];
+const SENDS = [
+	'messages.send',
+	'chats.start',
+	'relationRequests.create',
+	'inboxes.startChat',
+	'messages.forward',
+	'emails.send',
+	'drafts.send',
+	'posts.create',
+	'posts.addComment',
+	'posts.replyToComment',
+	'linkedin.inviteToFollowCompany',
+	'linkedin.request',
+];
 const OTHER_WRITES = [
 	'accounts.createAuthLink',
 	'users.visitProfile',
@@ -91,8 +104,22 @@ const OTHER_WRITES = [
 	'webhookEndpoints.update',
 	'webhookEndpoints.delete',
 ];
-const READS = ['chats.list', 'messages.list', 'accounts.list', 'posts.list'];
-const PROFILE_VIEWS = ['users.getProfile', 'users.visitProfile'];
+const READS = [
+	'chats.list',
+	'messages.list',
+	'accounts.list',
+	'emails.list',
+	'calendarEvents.list',
+	'inboxes.listChats',
+];
+const PROFILE_VIEWS = [
+	'users.getProfile',
+	'users.visitProfile',
+	'posts.get',
+	'linkedin.getCompany',
+	'linkedin.searchPeople',
+	'salesNavigator.searchPeople',
+];
 
 const TRANSIENT: Array<[string, () => Error]> = [
 	['500 api/internal_error', () => apiError(500, 'api/internal_error')],
@@ -210,7 +237,7 @@ describe('Unipile error handlers: sends are never replayed blindly', () => {
 	);
 });
 
-describe('Unipile error handlers: profile views', () => {
+describe('Unipile error handlers: LinkedIn budget calls', () => {
 	it.each(PROFILE_VIEWS)(
 		'%s is not retried after a timeout or 5xx',
 		async (op) => {
