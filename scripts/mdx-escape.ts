@@ -10,7 +10,9 @@ const MDX_ENTITIES: Record<string, string> = {
  * prose those parse as JSX or JS expressions, the page fails to compile, and
  * Mintlify drops it (404). Escape them, except inside inline code spans, which
  * MDX leaves alone. A code span opens with a run of backticks and closes at the
- * next run of the same length (CommonMark); an unmatched run is plain text.
+ * next run of the same length (CommonMark); an unmatched run is plain text, and
+ * so is an escaped backtick outside a span. Inside a span backslashes are
+ * literal, so closingRun doesn't skip them.
  */
 export function escapeMdxText(s: string | undefined): string {
 	if (!s) return '';
@@ -18,6 +20,12 @@ export function escapeMdxText(s: string | undefined): string {
 	let i = 0;
 	while (i < s.length) {
 		const ch = s[i]!;
+		// A backslash-escaped backtick is literal text and can't open a span.
+		if (ch === '\\' && s[i + 1] === '`') {
+			out += '\\`';
+			i += 2;
+			continue;
+		}
 		if (ch !== '`') {
 			out += MDX_ENTITIES[ch] ?? ch;
 			i++;

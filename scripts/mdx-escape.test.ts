@@ -30,6 +30,11 @@ test('treats an unmatched backtick run as plain text', () => {
 	assert.equal(escapeMdxText('``x` <y>'), '``x` &lt;y&gt;');
 });
 
+test('does not open a code span at an escaped backtick', () => {
+	assert.equal(escapeMdxText('Show \\` <x> `'), 'Show \\` &lt;x&gt; `');
+	assert.equal(escapeMdxText('`a\\` <b>'), '`a\\` &lt;b&gt;');
+});
+
 test('returns an empty string for missing input', () => {
 	assert.equal(escapeMdxText(undefined), '');
 	assert.equal(escapeMdxText(''), '');
