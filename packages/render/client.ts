@@ -67,7 +67,7 @@ export async function makeRenderRequest<T>(
 				? body
 				: undefined,
 		mediaType: mediaType ?? 'application/json; charset=utf-8',
-		query: method === 'GET' ? query : undefined,
+		query: method === 'GET' || method === 'DELETE' ? query : undefined,
 	};
 
 	try {

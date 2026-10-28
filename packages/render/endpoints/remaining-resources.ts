@@ -3,6 +3,9 @@ import { makeRenderRequest } from '../client';
 import { renderPathParameter } from './path';
 
 type Context = { key: string };
+// Stricter typing is not feasible because the grouped resource operations
+// have provider-defined object and replacement-array bodies. Endpoint schemas
+// validate each operation before this shared adapter receives the input.
 type Input = Record<string, unknown>;
 
 const request = <T>(
