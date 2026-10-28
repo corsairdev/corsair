@@ -1,6 +1,6 @@
-import { and, count, desc, eq, like } from 'drizzle-orm';
+import { and, count, desc, eq, inArray, like } from 'drizzle-orm';
 import type { DB } from '@/db';
-import { account, user } from '@/db/auth-schema';
+import { account } from '@/db/auth-schema';
 import {
 	getLatestStatusForIntegration,
 	insertIntegrationStatus,
@@ -68,21 +68,22 @@ async function findClaimsForPullRequest(db: DB, prNumber: number) {
 	return claims;
 }
 
+/** The GitHub and Discord accounts the claimer connected on their OSS profile. */
 async function claimerProfile(db: DB, userId: string) {
-	const [row] = await db
-		.select({ githubUsername: user.githubUsername })
-		.from(user)
-		.where(eq(user.id, userId))
-		.limit(1);
-	// Filled in once the contributor connects Discord on their OSS profile.
-	const [discord] = await db
-		.select({ discordUserId: account.accountId })
+	const linked = await db
+		.select({ providerId: account.providerId, accountId: account.accountId })
 		.from(account)
-		.where(and(eq(account.userId, userId), eq(account.providerId, 'discord')))
-		.limit(1);
+		.where(
+			and(
+				eq(account.userId, userId),
+				inArray(account.providerId, ['github', 'discord']),
+			),
+		);
+	const idFor = (providerId: string) =>
+		linked.find((row) => row.providerId === providerId)?.accountId ?? null;
 	return {
-		githubUsername: row?.githubUsername ?? null,
-		discordUserId: discord?.discordUserId ?? null,
+		githubUserId: idFor('github'),
+		discordUserId: idFor('discord'),
 	};
 }
 
@@ -147,8 +148,8 @@ export async function handleMergedPullRequest(
 			: null;
 		const candidateDecision = decideMergeCredit({
 			latestPhase: candidate.latest?.phase ?? null,
-			claimerGithubLogin: candidateProfile?.githubUsername ?? null,
-			prAuthorLogin: pr.user.login,
+			claimerGithubId: candidateProfile?.githubUserId ?? null,
+			prAuthorId: pr.user.id,
 		});
 		if (!picked || candidateDecision.kind === 'credit') {
 			picked = {
@@ -200,6 +201,11 @@ export async function handleMergedPullRequest(
 				discordUserId: profile.discordUserId,
 				firstMerge: (await finishedCount(db, claim.latest.userId)) === 1,
 			};
+		} else if (decision.kind === 'unverified') {
+			console.info(
+				"[oss-shipped] claimer hasn't connected GitHub; leaving the claim for an admin",
+				{ pr: pr.number, integrationId: claim.integration.id },
+			);
 		} else if (decision.kind === 'author_mismatch') {
 			console.warn(
 				'[oss-shipped] merged PR is linked to a claim by someone else; not finishing it',

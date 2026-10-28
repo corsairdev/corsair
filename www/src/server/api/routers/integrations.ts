@@ -1233,6 +1233,8 @@ export const integrationsRouter = createTRPCRouter({
 				userId: ctx.user.id,
 				phase: 'finished',
 				greptileScore: latestStatus.greptileScore,
+				// Self-marked: nothing checked that the PR merged.
+				metadata: { source: 'self' },
 			});
 
 			return {

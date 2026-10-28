@@ -7,7 +7,13 @@ export type ShippedPullRequest = {
 	title: string;
 	html_url: string;
 	merged_at: string | null;
-	user: { login: string; avatar_url: string; html_url: string; type?: string };
+	user: {
+		id: number;
+		login: string;
+		avatar_url: string;
+		html_url: string;
+		type?: string;
+	};
 	merged_by?: { login: string } | null;
 	author_association?: string;
 };
