@@ -7,7 +7,12 @@ import {
 	integrationApprovalSummary,
 	integrationAuthSummary,
 } from '@/lib/integration-seo';
-import { hubWwwPluginLoginUrl, MCP_DOCS_URL, MCP_URL } from '@/lib/site-links';
+import {
+	CURSOR_INSTALL_URL,
+	hubWwwPluginLoginUrl,
+	MCP_DOCS_URL,
+	MCP_URL,
+} from '@/lib/site-links';
 
 const CURSOR_CONFIG = `{
   "mcpServers": {
@@ -40,7 +45,15 @@ const CLIENTS: { name: string; wide?: boolean; body: ReactNode }[] = [
 		wide: true,
 		body: (
 			<>
-				Add this to <code>~/.cursor/mcp.json</code>. Cursor opens Corsair to
+				<a
+					href={CURSOR_INSTALL_URL}
+					target="_blank"
+					rel="noopener noreferrer"
+					className="mt-1 mb-3 flex w-fit items-center rounded-md bg-[#1c1c1c] px-3 py-1.5 text-[13px] font-medium text-white no-underline transition-colors hover:bg-[#333]"
+				>
+					Add to Cursor
+				</a>
+				Or add this to <code>~/.cursor/mcp.json</code>. Cursor opens Corsair to
 				sign in the first time it connects.
 				<pre className="mt-2 overflow-x-auto rounded-sm border border-[#1c1c1c1a] bg-[#fafafa] px-3 py-2 font-[family-name:var(--landing-font-mono)] text-[12px] leading-relaxed text-[#1c1c1c]">
 					<code>{CURSOR_CONFIG}</code>
