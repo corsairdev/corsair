@@ -1,6 +1,8 @@
-import type { ErrorContext } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
-import { InstantlyAPIError } from './client';
+import {
+	INSTANTLY_WRITE_OPERATIONS,
+	InstantlyEndpointInputSchemas,
+} from './endpoints/types';
 import { instantly, instantlyEndpointSchemas } from './index';
 import { webhookPayload } from './test-fixtures';
 
@@ -66,9 +68,9 @@ const WEBHOOK_PATHS = [
 	'leads.outOfOffice',
 	'leads.wrongPerson',
 	'leads.noShow',
-	'leads.customLabel',
 	'campaigns.completed',
 	'accounts.error',
+	'events.other',
 ].sort();
 
 // unknown: walks a nested endpoint or webhook tree of any shape.
@@ -201,43 +203,57 @@ describe('instantly plugin definition', () => {
 	});
 });
 
-describe('retry policy wiring', () => {
-	const handlers = instantly().errorHandlers ?? {};
-	const rateLimited = new InstantlyAPIError('Instantly 429', {
-		status: 429,
-		retryAfter: 2000,
+// leads.addBulk -> leadsAddBulk, the key used in the schema maps.
+const operationKey = (path: string) =>
+	path.replace(/\.(\w)/, (_, letter: string) => letter.toUpperCase());
+
+describe('writes and retries', () => {
+	it('treats exactly the write and destructive operations as writes', () => {
+		const writes = [...WRITES, ...DESTRUCTIVE].map(operationKey).sort();
+		expect([...INSTANTLY_WRITE_OPERATIONS].sort()).toEqual(writes);
+		for (const key of INSTANTLY_WRITE_OPERATIONS) {
+			expect(key in InstantlyEndpointInputSchemas).toBe(true);
+		}
 	});
 
-	function retriesFor(operation: string) {
-		const context: ErrorContext = {
-			pluginId: 'instantly',
-			operation,
-			input: {},
-			originalError: rateLimited,
-		};
-		return handlers.RATE_LIMIT_ERROR?.handler(rateLimited, context);
-	}
-
-	it.each(READS)('retries a rate-limited %s', async (operation) => {
-		expect((await retriesFor(operation))?.maxRetries).toBe(3);
+	it('lets every write output carry a parse_warning', () => {
+		const warning = { parse_warning: 'unexpected shape' };
+		for (const path of [...WRITES, ...DESTRUCTIVE]) {
+			const schema =
+				instantlyEndpointSchemas[path as keyof typeof instantlyEndpointSchemas]
+					.output;
+			expect({ path, accepts: schema.safeParse(warning).success }).toEqual({
+				path,
+				accepts: true,
+			});
+		}
 	});
 
-	it.each([...WRITES, ...DESTRUCTIVE])(
-		'does not retry a rate-limited %s',
-		async (operation) => {
-			expect(await retriesFor(operation)).toEqual({ maxRetries: 0 });
-		},
-	);
+	it('registers only prefixed error handlers with the catch-all last', () => {
+		const names = Object.keys(instantly().errorHandlers ?? {});
+		for (const name of names) expect(name).toMatch(/^INSTANTLY_/);
+		expect(names.at(-1)).toBe('INSTANTLY_FALLBACK');
+	});
 
-	it('keeps DEFAULT last when caller handlers are merged', () => {
+	it('keeps INSTANTLY_FALLBACK last when caller handlers are merged', () => {
 		const custom = instantly({
 			errorHandlers: {
 				QUOTA_ERROR: { match: () => false, handler: async () => ({}) },
+				DEFAULT: { match: () => true, handler: async () => ({}) },
 			},
 		});
 		const names = Object.keys(custom.errorHandlers ?? {});
-		expect(names.at(-1)).toBe('DEFAULT');
-		expect(names).toContain('QUOTA_ERROR');
+		expect(names[0]).toBe('QUOTA_ERROR');
+		expect(names).not.toContain('DEFAULT');
+		expect(names.at(-1)).toBe('INSTANTLY_FALLBACK');
+	});
+
+	it('describes attach_secret as failing, not skipping, without a secret', () => {
+		const description =
+			InstantlyEndpointInputSchemas.webhooksCreate.shape.attach_secret
+				.description;
+		expect(description).toMatch(/fails before anything is created/);
+		expect(description).not.toMatch(/skipped/);
 	});
 });
 
@@ -270,6 +286,16 @@ describe('instantly key builder', () => {
 		await expect(buildKey(instantly(), ctx, 'webhook')).resolves.toBe(
 			'stored-secret',
 		);
+	});
+
+	it('trims the webhook secret it hands to verification', async () => {
+		await expect(
+			buildKey(
+				instantly(),
+				keyContext({ webhookSignature: ' stored-secret\n' }),
+				'webhook',
+			),
+		).resolves.toBe('stored-secret');
 	});
 
 	it('returns an empty webhook key when none is set, so verification fails closed', async () => {

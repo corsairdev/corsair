@@ -1,13 +1,15 @@
 import { logEventFromContext } from 'corsair/core';
+import { WEBHOOK_SUBSCRIPTION_EVENTS } from './endpoints/types';
 import { replyPayload, WORKSPACE_ID, webhookPayload } from './test-fixtures';
 import * as Events from './webhooks/events';
+import { resolveWebhookSecret } from './webhooks/secret';
 import { matchInstantlyTenantWebhook } from './webhooks/tenant-matcher';
 import {
 	createInstantlyMatch,
 	INSTANTLY_WEBHOOK_EVENTS,
 	INSTANTLY_WEBHOOK_SECRET_HEADER,
-	matchCustomLabel,
 	matchInstantlyWebhook,
+	matchOtherEvent,
 	verifyInstantlyWebhook,
 } from './webhooks/types';
 
@@ -55,12 +57,15 @@ describe('plugin matcher', () => {
 				body: webhookPayload('email_sent'),
 			}),
 		).toBe(true);
+	});
+
+	it('expects the object processWebhook passes (it parses string bodies first)', () => {
 		expect(
 			matchInstantlyWebhook({
 				headers: {},
 				body: JSON.stringify(webhookPayload('reply_received')),
 			}),
-		).toBe(true);
+		).toBe(false);
 	});
 
 	it.each([
@@ -97,7 +102,7 @@ describe('event matchers', () => {
 				other === event,
 			);
 		}
-		expect(matchCustomLabel({ headers: {}, body })).toBe(false);
+		expect(matchOtherEvent({ headers: {}, body })).toBe(false);
 	});
 
 	it('accepts link_clicked, the name in the payload guide, as a click', () => {
@@ -112,10 +117,37 @@ describe('event matchers', () => {
 		).toBe(true);
 	});
 
-	it('routes an unknown event_type (a custom label) to customLabel', () => {
-		const body = webhookPayload('Demo requested');
-		expect(matchCustomLabel({ headers: {}, body })).toBe(true);
-		expect(Events.customLabel.match({ headers: {}, body })).toBe(true);
+	it.each([
+		['a custom label', 'Demo requested'],
+		['an event type Instantly added later', 'supersearch_enrichment_completed'],
+	])('routes %s to events.other and nothing else', (_, type) => {
+		const body = webhookPayload(type);
+		expect(matchOtherEvent({ headers: {}, body })).toBe(true);
+		expect(Events.otherEvent.match({ headers: {}, body })).toBe(true);
+		for (const types of Object.values(INSTANTLY_WEBHOOK_EVENTS)) {
+			expect(createInstantlyMatch(types)({ headers: {}, body })).toBe(false);
+		}
+	});
+
+	it('does not route a non-Instantly delivery to events.other', () => {
+		expect(
+			matchOtherEvent({
+				headers: {},
+				body: { type: 'event', event_type: 'message.received' },
+			}),
+		).toBe(false);
+	});
+
+	it('can subscribe to every handled event on its own, except auto replies', () => {
+		const subscribable = new Set<string>(WEBHOOK_SUBSCRIPTION_EVENTS);
+		const handled = Object.values(INSTANTLY_WEBHOOK_EVENTS).flat();
+		// link_clicked is the payload guide's name for email_link_clicked, and
+		// Instantly has no auto_reply_received subscription.
+		expect(handled.filter((type) => !subscribable.has(type)).sort()).toEqual([
+			'auto_reply_received',
+			'link_clicked',
+		]);
+		expect(subscribable.has('email_link_clicked')).toBe(true);
 	});
 });
 
@@ -139,6 +171,22 @@ describe('verifyInstantlyWebhook', () => {
 	it('accepts Authorization: Bearer <secret>', () => {
 		const req = request(payload, { authorization: `Bearer ${SECRET}` });
 		expect(verifyInstantlyWebhook(req, SECRET).valid).toBe(true);
+	});
+
+	it.each(['bearer', 'BEARER', 'Bearer'])(
+		'accepts the %s prefix in any case',
+		(prefix) => {
+			const req = request(payload, { authorization: `${prefix} ${SECRET}` });
+			expect(verifyInstantlyWebhook(req, SECRET).valid).toBe(true);
+		},
+	);
+
+	it('trims the stored secret as well as the header', () => {
+		const req = request(payload, {
+			[INSTANTLY_WEBHOOK_SECRET_HEADER]: ` ${SECRET} `,
+		});
+		expect(verifyInstantlyWebhook(req, `${SECRET}\n`).valid).toBe(true);
+		expect(verifyInstantlyWebhook(req, '   ').valid).toBe(false);
 	});
 
 	it('rejects a wrong secret, including one of a different length', () => {
@@ -236,7 +284,7 @@ describe('webhook handlers', () => {
 		['leadMeetingBooked', 'lead_meeting_booked'],
 		['campaignCompleted', 'campaign_completed'],
 		['accountError', 'account_error'],
-		['customLabel', 'Demo requested'],
+		['otherEvent', 'Demo requested'],
 	] as const)('%s handles %s', async (name, type) => {
 		const result = await handle(Events[name], request(webhookPayload(type)));
 		expect(result).toMatchObject({ success: true, data: { event_type: type } });
@@ -257,5 +305,47 @@ describe('tenant matcher', () => {
 		expect(
 			matchInstantlyTenantWebhook({ headers: {}, body: { event_type: 'x' } }),
 		).toBeNull();
+	});
+});
+
+describe('resolveWebhookSecret', () => {
+	const keys = (value: string | null) => ({
+		get_webhook_signature: jest.fn().mockResolvedValue(value),
+	});
+
+	it('prefers the option, then the stored secret, both trimmed', async () => {
+		await expect(
+			resolveWebhookSecret({ webhookSecret: ' opt ' }, keys('stored')),
+		).resolves.toBe('opt');
+		await expect(resolveWebhookSecret({}, keys(' stored\n'))).resolves.toBe(
+			'stored',
+		);
+	});
+
+	it('returns undefined when nothing is set or the lookup fails', async () => {
+		jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+		await expect(resolveWebhookSecret({}, keys('  '))).resolves.toBeUndefined();
+		await expect(
+			resolveWebhookSecret(undefined, undefined),
+		).resolves.toBeUndefined();
+		await expect(
+			resolveWebhookSecret(
+				{},
+				{
+					get_webhook_signature: jest
+						.fn()
+						.mockRejectedValue(new Error('no dek')),
+				},
+			),
+		).resolves.toBeUndefined();
+	});
+});
+
+describe('logging failures', () => {
+	it('still accepts a verified delivery when the event log fails', async () => {
+		jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+		mockLog.mockRejectedValueOnce(new Error('encryptDataAtRest requires kek'));
+		const result = await handle(Events.replyReceived, request(replyPayload));
+		expect(result.success).toBe(true);
 	});
 });

@@ -20,7 +20,6 @@ export const LeadWebhooks = {
 	outOfOffice: Events.leadOutOfOffice,
 	wrongPerson: Events.leadWrongPerson,
 	noShow: Events.leadNoShow,
-	customLabel: Events.customLabel,
 };
 
 export const CampaignWebhooks = {
@@ -31,5 +30,10 @@ export const AccountWebhooks = {
 	error: Events.accountError,
 };
 
+export const OtherWebhooks = {
+	other: Events.otherEvent,
+};
+
+export * from './secret';
 export * from './tenant-matcher';
 export * from './types';

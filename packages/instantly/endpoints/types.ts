@@ -755,7 +755,7 @@ const LeadsAddBulkResponseSchema = z
 				z
 					.object({
 						index: num.describe('Position in the request'),
-						id: z.string(),
+						id: str,
 						email: str,
 						first_name: str,
 						last_name: str,
@@ -973,6 +973,11 @@ const BlocklistRemoveInputSchema = z.object({ id: Id('Blocklist entry') });
 
 // ── Webhooks ──────────────────────────────────────────────────────────────
 
+// Every event_type POST /api/v2/webhooks accepts (its OpenAPI enum). A link
+// click subscribes as email_link_clicked; Instantly's payload guide also
+// names it link_clicked, and the handler accepts both. auto_reply_received
+// is not accepted here (nor listed by GET /webhooks/event-types), so auto
+// replies only arrive on an all_events webhook.
 export const WEBHOOK_SUBSCRIPTION_EVENTS = [
 	'all_events',
 	'email_sent',
@@ -992,6 +997,7 @@ export const WEBHOOK_SUBSCRIPTION_EVENTS = [
 	'lead_out_of_office',
 	'lead_wrong_person',
 	'lead_no_show',
+	'supersearch_enrichment_completed',
 ] as const;
 
 const WebhookSchema = z
@@ -1047,7 +1053,7 @@ const WebhooksCreateInputSchema = z.object({
 		.boolean()
 		.default(true)
 		.describe(
-			"Send the plugin's webhook secret as the x-corsair-webhook-secret header so Corsair can verify deliveries (default true; skipped when no secret is set)",
+			"Send the plugin's webhook secret as the x-corsair-webhook-secret header so Corsair can verify deliveries (default true). If no secret is set, the call fails before anything is created; pass false for a URL outside Corsair",
 		),
 });
 
@@ -1128,46 +1134,90 @@ export const InstantlyEndpointInputSchemas = {
 	workspaceGet: EmptyInputSchema,
 } as const;
 
+/**
+ * What a write or delete returns when Instantly accepted it but answered in
+ * a shape the plugin did not expect: the raw body plus parse_warning. The
+ * change already happened, so the call must not fail (an agent would repeat
+ * an upload that already counted toward the contact limit, or a reply).
+ */
+export const UnverifiedWriteResultSchema = z
+	.object({
+		parse_warning: z
+			.string()
+			.describe(
+				'Instantly accepted the request but its response had an unexpected shape; the change was made, do not repeat it',
+			),
+	})
+	.loose();
+
+export type UnverifiedWriteResult = z.infer<typeof UnverifiedWriteResultSchema>;
+
+function write<T extends z.ZodType>(schema: T) {
+	return z.union([schema, UnverifiedWriteResultSchema]);
+}
+
+/** Operations that change something in Instantly; see UnverifiedWriteResult. */
+export const INSTANTLY_WRITE_OPERATIONS: ReadonlySet<string> = new Set([
+	'accountsPause',
+	'accountsResume',
+	'accountsEnableWarmup',
+	'accountsDisableWarmup',
+	'campaignsCreate',
+	'campaignsUpdate',
+	'campaignsActivate',
+	'campaignsPause',
+	'leadsCreate',
+	'leadsAddBulk',
+	'leadsUpdate',
+	'leadsUpdateInterestStatus',
+	'leadsDelete',
+	'leadListsCreate',
+	'emailsReply',
+	'emailsMarkThreadRead',
+	'blocklistAdd',
+	'blocklistRemove',
+	'webhooksCreate',
+	'webhooksDelete',
+]);
+
 export const InstantlyEndpointOutputSchemas = {
 	accountsList: page(AccountSchema),
 	accountsGet: AccountSchema,
 	accountsGetWarmupAnalytics: AccountsGetWarmupAnalyticsResponseSchema,
-	accountsPause: AccountSchema,
-	accountsResume: AccountSchema,
-	accountsEnableWarmup: BackgroundJobSchema,
-	accountsDisableWarmup: BackgroundJobSchema,
+	accountsPause: write(AccountSchema),
+	accountsResume: write(AccountSchema),
+	accountsEnableWarmup: write(BackgroundJobSchema),
+	accountsDisableWarmup: write(BackgroundJobSchema),
 	campaignsList: page(CampaignSchema),
 	campaignsGet: CampaignSchema,
-	campaignsCreate: CampaignSchema,
-	campaignsUpdate: CampaignSchema,
-	campaignsActivate: CampaignSchema,
-	campaignsPause: CampaignSchema,
+	campaignsCreate: write(CampaignSchema),
+	campaignsUpdate: write(CampaignSchema),
+	campaignsActivate: write(CampaignSchema),
+	campaignsPause: write(CampaignSchema),
 	campaignsGetAnalytics: z.array(CampaignAnalyticsSchema),
 	campaignsGetAnalyticsOverview: CampaignAnalyticsOverviewSchema,
 	campaignsGetStepAnalytics: z.array(StepAnalyticsSchema),
 	leadsList: page(LeadSchema),
 	leadsGet: LeadSchema,
 	// A create skipped by skip_if_in_workspace may answer without an id.
-	leadsCreate: LeadSchema.partial().loose(),
-	leadsAddBulk: LeadsAddBulkResponseSchema,
-	leadsUpdate: LeadSchema,
-	leadsUpdateInterestStatus: AcceptedSchema,
-	leadsDelete: LeadSchema.partial().loose(),
+	leadsCreate: write(LeadSchema.partial().loose()),
+	leadsAddBulk: write(LeadsAddBulkResponseSchema),
+	leadsUpdate: write(LeadSchema),
+	leadsUpdateInterestStatus: write(AcceptedSchema),
+	leadsDelete: write(LeadSchema.partial().loose()),
 	leadListsList: page(LeadListSchema),
-	leadListsCreate: LeadListSchema,
+	leadListsCreate: write(LeadListSchema),
 	emailsList: page(EmailSchema),
 	emailsGet: EmailSchema,
-	// The reply is already sent once Instantly answers, so its schema accepts
-	// anything object-shaped rather than fail a delivered send.
-	emailsReply: EmailSchema.partial().loose(),
-	emailsMarkThreadRead: SuccessSchema,
+	emailsReply: write(EmailSchema.partial().loose()),
+	emailsMarkThreadRead: write(SuccessSchema),
 	emailsCountUnread: CountSchema,
 	blocklistList: page(BlocklistEntrySchema),
-	blocklistAdd: BlocklistEntrySchema,
-	blocklistRemove: BlocklistEntrySchema.partial().loose(),
+	blocklistAdd: write(BlocklistEntrySchema),
+	blocklistRemove: write(BlocklistEntrySchema.partial().loose()),
 	webhooksList: page(WebhookSchema),
-	webhooksCreate: WebhookSchema,
-	webhooksDelete: WebhookSchema.partial().loose(),
+	webhooksCreate: write(WebhookSchema),
+	webhooksDelete: write(WebhookSchema.partial().loose()),
 	webhooksListEventTypes: WebhookEventTypesSchema,
 	workspaceGet: WorkspaceSchema,
 } as const;
@@ -1183,6 +1233,14 @@ export type InstantlyEndpointInputs = {
 export type InstantlyParsedInputs = {
 	[K in InstantlyOperation]: z.output<
 		(typeof InstantlyEndpointInputSchemas)[K]
+	>;
+};
+
+/** Outputs whose response matched its schema (never an UnverifiedWriteResult). */
+export type InstantlyVerifiedOutputs = {
+	[K in InstantlyOperation]: Exclude<
+		InstantlyEndpointOutputs[K],
+		UnverifiedWriteResult
 	>;
 };
 

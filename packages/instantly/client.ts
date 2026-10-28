@@ -1,3 +1,4 @@
+import { asRecord } from 'corsair/core';
 import type {
 	ApiRequestOptions,
 	OpenAPIConfig,
@@ -60,16 +61,9 @@ export class InstantlyAPIError extends Error {
 	}
 }
 
-// unknown: the body is untrusted until these guards run.
-function asRecord(value: unknown): Record<string, unknown> | undefined {
-	return value !== null && typeof value === 'object' && !Array.isArray(value)
-		? (value as Record<string, unknown>)
-		: undefined;
-}
-
 // unknown: the record is an untyped error body; read one field at a time.
 function readString(
-	record: Record<string, unknown> | undefined,
+	record: Record<string, unknown> | null,
 	key: string,
 ): string | undefined {
 	const value = record?.[key];

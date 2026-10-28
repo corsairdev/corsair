@@ -924,3 +924,153 @@ describe('local copies', () => {
 		expect(result).toMatchObject({ id: LEAD_ID });
 	});
 });
+
+describe('writes never fail after Instantly accepted them', () => {
+	it('returns an unexpected bulk-add response with a parse_warning instead of throwing', async () => {
+		respond({
+			...bulkAddResult,
+			created_leads: [
+				{ index: 0, id: 12345, email: 'jordan@acme-logistics.com' },
+			],
+			leads_uploaded: '1',
+		});
+
+		const result = await invoke(Leads.addBulk, {
+			campaign_id: CAMPAIGN_ID,
+			leads: [{ email: 'jordan@acme-logistics.com' }],
+		});
+
+		expect(fetchMock).toHaveBeenCalledTimes(1);
+		expect(result).toMatchObject({
+			leads_uploaded: '1',
+			created_leads: [{ id: 12345 }],
+			parse_warning: expect.stringMatching(/do not repeat it/),
+		});
+		expect(mockLog).toHaveBeenCalledWith(
+			expect.anything(),
+			'instantly.leads.addBulk',
+			{ parseWarning: true },
+			'completed',
+		);
+	});
+
+	it('wraps a non-object create response', async () => {
+		fetchMock.mockResolvedValueOnce(
+			new Response('created', {
+				status: 200,
+				headers: { 'Content-Type': 'text/plain' },
+			}),
+		);
+
+		const result = await invoke(Leads.create, {
+			campaign: CAMPAIGN_ID,
+			email: 'jordan@acme-logistics.com',
+		});
+
+		expect(result).toMatchObject({
+			body: 'created',
+			parse_warning: expect.any(String),
+		});
+	});
+
+	it('returns a sent reply whose response does not match, without retrying', async () => {
+		respond({ id: 98765, ue_type: 'sent' });
+
+		const result = await invoke(Emails.reply, {
+			reply_to_uuid: EMAIL_ID,
+			eaccount: SENDER,
+			subject: 'Re',
+			body: { text: 'Tuesday works.' },
+		});
+
+		expect(fetchMock).toHaveBeenCalledTimes(1);
+		expect(result).toMatchObject({
+			id: 98765,
+			parse_warning: expect.any(String),
+		});
+	});
+
+	it('still redacts webhook headers in an unverified create response', async () => {
+		respond({ ...webhookSubscription, status: 'active' });
+
+		const result = await invoke(
+			Webhooks.create,
+			{
+				target_hook_url: 'https://app.example.com/api/webhook',
+				event_type: 'all_events',
+			},
+			{ key: API_KEY, options: { webhookSecret: 'option-secret' } },
+		);
+
+		expect(result).toMatchObject({ parse_warning: expect.any(String) });
+		expect(JSON.stringify(result)).not.toContain('whsec-live-value');
+	});
+
+	it('still throws when a read comes back in the wrong shape', async () => {
+		respond({ email: 'no id here' });
+		await expect(invoke(Leads.get, { id: LEAD_ID })).rejects.toMatchObject({
+			name: 'ZodError',
+		});
+	});
+
+	it('returns a write result when the event log fails', async () => {
+		mockLog.mockRejectedValueOnce(new Error('encryptDataAtRest requires kek'));
+		respond({ ...email, id: 'reply-1' });
+
+		const result = await invoke(Emails.reply, {
+			reply_to_uuid: EMAIL_ID,
+			eaccount: SENDER,
+			subject: 'Re',
+			body: { text: 'Tuesday works.' },
+		});
+
+		expect(result).toMatchObject({ id: 'reply-1' });
+	});
+});
+
+describe('local copies are written concurrently', () => {
+	it('tries every row and keeps the list when one write fails', async () => {
+		const upsert = jest.fn().mockResolvedValue({ id: 'row' });
+		upsert.mockRejectedValueOnce(new Error('disk full'));
+		const warn = jest
+			.spyOn(console, 'warn')
+			.mockImplementation(() => undefined);
+		const leads = ['a', 'b', 'c'].map((id) => ({ ...lead, id }));
+		respond({ items: leads });
+
+		const result = await invoke(
+			Leads.list,
+			{},
+			{ key: API_KEY, db: { leads: { upsertByEntityId: upsert } } },
+		);
+
+		expect(upsert).toHaveBeenCalledTimes(3);
+		expect(result).toMatchObject({
+			items: [{ id: 'a' }, { id: 'b' }, { id: 'c' }],
+		});
+		expect(warn).toHaveBeenCalledWith(
+			'Failed to save 1 of 3 Instantly leads:',
+			expect.any(Error),
+		);
+	});
+});
+
+describe('webhook secret on create', () => {
+	it('sends the trimmed secret', async () => {
+		respond(webhookSubscription);
+		await invoke(
+			Webhooks.create,
+			{
+				target_hook_url: 'https://app.example.com/api/webhook',
+				event_type: 'reply_received',
+			},
+			{
+				key: API_KEY,
+				keys: { get_webhook_signature: async () => ' stored-secret\n' },
+			},
+		);
+		expect(lastRequest().body).toMatchObject({
+			headers: { 'x-corsair-webhook-secret': 'stored-secret' },
+		});
+	});
+});

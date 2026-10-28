@@ -22,9 +22,10 @@ The Instantly plugin handles incoming webhooks. Point your provider’s subscrip
   - `opened` (`emails.opened`)
   - `replyReceived` (`emails.replyReceived`)
   - `sent` (`emails.sent`)
+- `events`
+  - `other` (`events.other`)
 - `leads`
   - `closed` (`leads.closed`)
-  - `customLabel` (`leads.customLabel`)
   - `interested` (`leads.interested`)
   - `meetingBooked` (`leads.meetingBooked`)
   - `meetingCompleted` (`leads.meetingCompleted`)
@@ -223,7 +224,7 @@ instantly({
 
 `emails.autoReplyReceived`
 
-An auto-reply (such as out of office) arrived. Webhooks need the Hypergrowth plan or higher; on Growth, poll emails.list with email_type received instead
+An auto-reply (such as out of office) arrived. Only all_events webhooks get it: Instantly has no auto_reply_received subscription. Webhooks need the Hypergrowth plan or higher; on Growth, poll emails.list with email_type received instead
 
 **Payload**
 
@@ -705,6 +706,89 @@ instantly({
 
 ---
 
+## Events
+
+### Other
+
+`events.other`
+
+An event with no dedicated handler: a custom lead label (event_type is the label's name) or an event type Instantly added later. Instantly's payload does not say which, so check event_type before acting. Webhooks need the Hypergrowth plan or higher; on Growth, poll emails.list with email_type received instead
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_type` | `string` | Yes | — |
+| `timestamp` | `string` | Yes | When the event happened (ISO 8601) |
+| `workspace` | `string` | Yes | Workspace ID |
+| `campaign_id` | `string` | No | — |
+| `campaign_name` | `string` | No | — |
+| `lead_email` | `string` | No | — |
+| `email_account` | `string` | No | Sending account involved |
+| `step` | `number \| string` | No | Sequence step, from 1 |
+| `variant` | `number \| string` | No | Step variant, from 1 |
+| `is_first` | `boolean` | No | First event of this type for the lead |
+| `email_id` | `string` | No | Email ID; pass as reply_to_uuid to emails.reply to answer it |
+| `email_subject` | `string` | No | — |
+| `email_text` | `string` | No | — |
+| `email_html` | `string` | No | — |
+| `unibox_url` | `string` | No | — |
+| `reply_subject` | `string` | No | — |
+| `reply_text_snippet` | `string` | No | — |
+| `reply_text` | `string` | No | — |
+| `reply_html` | `string` | No | — |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event_type: string,
+  timestamp: string,
+  workspace: string,
+  campaign_id?: string | null,
+  campaign_name?: string | null,
+  lead_email?: string | null,
+  email_account?: string | null,
+  step?: number | string | null,
+  variant?: number | string | null,
+  is_first?: boolean | null,
+  email_id?: string | null,
+  email_subject?: string | null,
+  email_text?: string | null,
+  email_html?: string | null,
+  unibox_url?: string | null,
+  reply_subject?: string | null,
+  reply_text_snippet?: string | null,
+  reply_text?: string | null,
+  reply_html?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+instantly({
+    webhookHooks: {
+        events: {
+            other: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
 ## Leads
 
 ### Closed
@@ -775,87 +859,6 @@ instantly({
     webhookHooks: {
         leads: {
             closed: {
-                before(ctx, args) {
-                    return { ctx, args };
-                },
-                after(ctx, response) {
-                },
-            },
-        },
-    },
-})
-```
-
----
-
-### Custom Label
-
-`leads.customLabel`
-
-A lead got one of the workspace's custom labels; event_type is the label's name. Webhooks need the Hypergrowth plan or higher; on Growth, poll emails.list with email_type received instead
-
-**Payload**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `event_type` | `string` | Yes | — |
-| `timestamp` | `string` | Yes | When the event happened (ISO 8601) |
-| `workspace` | `string` | Yes | Workspace ID |
-| `campaign_id` | `string` | No | — |
-| `campaign_name` | `string` | No | — |
-| `lead_email` | `string` | No | — |
-| `email_account` | `string` | No | Sending account involved |
-| `step` | `number \| string` | No | Sequence step, from 1 |
-| `variant` | `number \| string` | No | Step variant, from 1 |
-| `is_first` | `boolean` | No | First event of this type for the lead |
-| `email_id` | `string` | No | Email ID; pass as reply_to_uuid to emails.reply to answer it |
-| `email_subject` | `string` | No | — |
-| `email_text` | `string` | No | — |
-| `email_html` | `string` | No | — |
-| `unibox_url` | `string` | No | — |
-| `reply_subject` | `string` | No | — |
-| `reply_text_snippet` | `string` | No | — |
-| `reply_text` | `string` | No | — |
-| `reply_html` | `string` | No | — |
-
-
-
-<AccordionGroup>
-<Accordion title="Response data full type">
-
-```ts
-{
-  event_type: string,
-  timestamp: string,
-  workspace: string,
-  campaign_id?: string | null,
-  campaign_name?: string | null,
-  lead_email?: string | null,
-  email_account?: string | null,
-  step?: number | string | null,
-  variant?: number | string | null,
-  is_first?: boolean | null,
-  email_id?: string | null,
-  email_subject?: string | null,
-  email_text?: string | null,
-  email_html?: string | null,
-  unibox_url?: string | null,
-  reply_subject?: string | null,
-  reply_text_snippet?: string | null,
-  reply_text?: string | null,
-  reply_html?: string | null
-}
-```
-</Accordion>
-</AccordionGroup>
-
-**`webhookHooks` example**
-
-```ts
-instantly({
-    webhookHooks: {
-        leads: {
-            customLabel: {
                 before(ctx, args) {
                     return { ctx, args };
                 },

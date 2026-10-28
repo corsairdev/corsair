@@ -33,13 +33,15 @@ import {
 	InstantlyEndpointInputSchemas,
 	InstantlyEndpointOutputSchemas,
 } from './endpoints/types';
-import { createErrorHandlers, mergeErrorHandlers } from './error-handlers';
+import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 import { InstantlySchema } from './schema';
 import {
 	AccountWebhooks,
 	CampaignWebhooks,
 	EmailWebhooks,
 	LeadWebhooks,
+	OtherWebhooks,
+	resolveWebhookSecret,
 } from './webhooks';
 import { matchInstantlyTenantWebhook } from './webhooks/tenant-matcher';
 import type {
@@ -164,6 +166,7 @@ const instantlyWebhooksNested = {
 	leads: LeadWebhooks,
 	campaigns: CampaignWebhooks,
 	accounts: AccountWebhooks,
+	events: OtherWebhooks,
 } as const;
 
 function schemas<K extends keyof typeof InstantlyEndpointInputSchemas>(key: K) {
@@ -244,7 +247,7 @@ const instantlyWebhookSchemas = {
 	),
 	'emails.autoReplyReceived': webhookSchema(
 		'autoReplyReceived',
-		'An auto-reply (such as out of office) arrived',
+		'An auto-reply (such as out of office) arrived. Only all_events webhooks get it: Instantly has no auto_reply_received subscription',
 	),
 	'leads.unsubscribed': webhookSchema(
 		'leadUnsubscribed',
@@ -277,10 +280,6 @@ const instantlyWebhookSchemas = {
 		'A lead moved to Wrong person',
 	),
 	'leads.noShow': webhookSchema('leadNoShow', 'A lead moved to No show'),
-	'leads.customLabel': webhookSchema(
-		'customLabel',
-		"A lead got one of the workspace's custom labels; event_type is the label's name",
-	),
 	'campaigns.completed': webhookSchema(
 		'campaignCompleted',
 		'A campaign finished every lead',
@@ -288,6 +287,10 @@ const instantlyWebhookSchemas = {
 	'accounts.error': webhookSchema(
 		'accountError',
 		'A sending account hit a connection or sending error',
+	),
+	'events.other': webhookSchema(
+		'other',
+		"An event with no dedicated handler: a custom lead label (event_type is the label's name) or an event type Instantly added later. Instantly's payload does not say which, so check event_type before acting",
 	),
 } as const satisfies RequiredPluginWebhookSchemas<
 	typeof instantlyWebhooksNested
@@ -486,13 +489,6 @@ const instantlyEndpointMeta = {
 	typeof instantlyEndpointsNested
 >;
 
-/** Operation paths that only read, and so are safe to retry. */
-const instantlyReadOperations: ReadonlySet<string> = new Set(
-	Object.entries(instantlyEndpointMeta)
-		.filter(([, meta]) => meta.riskLevel === 'read')
-		.map(([path]) => path),
-);
-
 export const instantlyAuthConfig = {
 	api_key: {
 		account: ['tenant_external_id'] as const,
@@ -537,17 +533,11 @@ export function instantly<const T extends InstantlyPluginOptions>(
 		webhookSchemas: instantlyWebhookSchemas,
 		pluginWebhookMatcher: matchInstantlyWebhook,
 		pluginTenantWebhookMatcher: matchInstantlyTenantWebhook,
-		errorHandlers: mergeErrorHandlers(
-			createErrorHandlers((operation) =>
-				instantlyReadOperations.has(operation),
-			),
-			options.errorHandlers,
-		),
+		errorHandlers: mergeErrorHandlers(errorHandlers, options.errorHandlers),
 		keyBuilder: async (ctx: InstantlyKeyBuilderContext, source) => {
 			if (source === 'webhook') {
-				if (options.webhookSecret) return options.webhookSecret;
 				// An empty key makes verification fail closed with a clear error.
-				return (await ctx.keys.get_webhook_signature()) ?? '';
+				return (await resolveWebhookSecret(options, ctx.keys)) ?? '';
 			}
 
 			if (options.key) return options.key;

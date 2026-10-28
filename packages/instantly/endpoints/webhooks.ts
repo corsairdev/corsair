@@ -1,32 +1,24 @@
-import type { InstantlyContext, InstantlyEndpoints } from '..';
+import { asRecord } from 'corsair/core';
+import type { InstantlyEndpoints } from '..';
 import { segment } from '../client';
+import { resolveWebhookSecret } from '../webhooks/secret';
 import { INSTANTLY_WEBHOOK_SECRET_HEADER } from '../webhooks/types';
 import { call } from './call';
-import type { InstantlyWebhookSubscription } from './types';
 
 // Instantly returns each webhook's headers, including the secret Corsair
-// verifies deliveries with. Values are masked so they never reach an agent.
-export function redactHeaders<T extends Partial<InstantlyWebhookSubscription>>(
+// verifies deliveries with. Values are masked so they never reach an agent,
+// also when the response is returned unverified (raw body + parse_warning).
+export function redactHeaders<T extends Record<string, unknown>>(
 	webhook: T,
 ): T {
-	if (!webhook.headers) return webhook;
+	const headers = asRecord(webhook.headers);
+	if (!headers) return webhook;
 	return {
 		...webhook,
 		headers: Object.fromEntries(
-			Object.keys(webhook.headers).map((name) => [name, '[redacted]']),
+			Object.keys(headers).map((name) => [name, '[redacted]']),
 		),
 	};
-}
-
-async function webhookSecret(
-	ctx: InstantlyContext,
-): Promise<string | undefined> {
-	if (ctx.options?.webhookSecret) return ctx.options.webhookSecret;
-	try {
-		return (await ctx.keys?.get_webhook_signature()) ?? undefined;
-	} catch {
-		return undefined;
-	}
 }
 
 export const list: InstantlyEndpoints['webhooksList'] = async (ctx, input) => {
@@ -46,7 +38,7 @@ export const create: InstantlyEndpoints['webhooksCreate'] = async (
 	ctx,
 	input,
 ) => {
-	const secret = await webhookSecret(ctx);
+	const secret = await resolveWebhookSecret(ctx.options, ctx.keys);
 	const result = await call(
 		ctx,
 		'webhooksCreate',

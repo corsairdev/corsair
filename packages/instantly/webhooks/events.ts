@@ -1,12 +1,12 @@
 import type { CorsairWebhook, CorsairWebhookMatcher } from 'corsair/core';
-import { logEventFromContext } from 'corsair/core';
 import type { z } from 'zod';
 import type { InstantlyContext } from '..';
+import { safeLog } from '../endpoints/call';
 import type { InstantlyWebhookPayload } from './types';
 import {
 	createInstantlyMatch,
 	INSTANTLY_WEBHOOK_EVENTS as EVENTS,
-	matchCustomLabel,
+	matchOtherEvent,
 	InstantlyWebhookEventSchemas as Schemas,
 	verifyInstantlyWebhook,
 } from './types';
@@ -14,7 +14,7 @@ import {
 /**
  * One handler per Corsair webhook path: verify the secret header, parse the
  * payload, log IDs only (payloads carry lead emails and reply text) and
- * return the event.
+ * return the event. A logging failure does not fail the delivery.
  */
 function handlerFor<S extends z.ZodType<InstantlyWebhookPayload>>(
 	event: string,
@@ -43,18 +43,13 @@ function handlerFor<S extends z.ZodType<InstantlyWebhookPayload>>(
 			}
 
 			const data = parsed.data;
-			await logEventFromContext(
-				ctx,
-				`instantly.webhook.${event}`,
-				{
-					eventType: data.event_type,
-					campaignId: data.campaign_id,
-					step: data.step,
-					isFirst: data.is_first,
-					emailId: data.email_id,
-				},
-				'completed',
-			);
+			await safeLog(ctx, `instantly.webhook.${event}`, () => ({
+				eventType: data.event_type,
+				campaignId: data.campaign_id,
+				step: data.step,
+				isFirst: data.is_first,
+				emailId: data.email_id,
+			}));
 
 			return { success: true, data };
 		},
@@ -159,9 +154,6 @@ export const accountError = known(
 	Schemas.accountError,
 	EVENTS.accountError,
 );
-// A custom lead label arrives with the label's name as event_type.
-export const customLabel = handlerFor(
-	'customLabel',
-	Schemas.customLabel,
-	matchCustomLabel,
-);
+// Custom lead labels (event_type is the label's name) and event types this
+// plugin does not know yet. Check event_type before acting.
+export const otherEvent = handlerFor('other', Schemas.other, matchOtherEvent);

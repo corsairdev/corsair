@@ -4,6 +4,7 @@ import type {
 	RawWebhookRequest,
 	WebhookRequest,
 } from 'corsair/core';
+import { readBodyRecord } from 'corsair/core';
 import { z } from 'zod';
 
 // ── Verification ──────────────────────────────────────────────────────────
@@ -48,7 +49,8 @@ export function verifyInstantlyWebhook(
 	secret: string | undefined,
 ): { valid: boolean; error?: string } {
 	if (request.hubVerified) return { valid: true };
-	if (!secret) {
+	const expected = secret?.trim();
+	if (!expected) {
 		return {
 			valid: false,
 			error:
@@ -60,17 +62,16 @@ export function verifyInstantlyWebhook(
 		request.headers,
 		INSTANTLY_WEBHOOK_SECRET_HEADER,
 	);
-	if (provided !== undefined && safeEqual(provided.trim(), secret)) {
+	if (provided !== undefined && safeEqual(provided.trim(), expected)) {
 		return { valid: true };
 	}
 
-	// Also accept `Authorization: Bearer <secret>`, the header Instantly's own
-	// example uses.
+	// Also accept `Authorization: Bearer <secret>` (any case), the header
+	// Instantly's own example uses.
 	const authorization = headerValue(request.headers, 'authorization');
-	if (authorization?.startsWith('Bearer ')) {
-		if (safeEqual(authorization.slice('Bearer '.length).trim(), secret)) {
-			return { valid: true };
-		}
+	const bearer = authorization?.match(/^\s*bearer\s+(.+)$/i)?.[1];
+	if (bearer !== undefined && safeEqual(bearer.trim(), expected)) {
+		return { valid: true };
 	}
 
 	return {
@@ -134,7 +135,9 @@ function eventSchema<const T extends readonly [string, ...string[]]>(types: T) {
 /**
  * Corsair webhook path → the `event_type` values it handles. Instantly's
  * subscription API calls a click `email_link_clicked`, while its payload
- * guide says `link_clicked`; both are accepted.
+ * guide says `link_clicked`; both are accepted. `auto_reply_received` is in
+ * the payload guide but cannot be subscribed to on its own (see
+ * WEBHOOK_SUBSCRIPTION_EVENTS), so it only arrives on all_events webhooks.
  */
 export const INSTANTLY_WEBHOOK_EVENTS = {
 	emailSent: ['email_sent'],
@@ -184,8 +187,11 @@ export const InstantlyWebhookEventSchemas = {
 	leadNoShow: eventSchema(INSTANTLY_WEBHOOK_EVENTS.leadNoShow),
 	campaignCompleted: eventSchema(INSTANTLY_WEBHOOK_EVENTS.campaignCompleted),
 	accountError: eventSchema(INSTANTLY_WEBHOOK_EVENTS.accountError),
-	// A custom lead label arrives with the label itself as event_type.
-	customLabel: InstantlyWebhookPayloadSchema,
+	// Anything else: a custom lead label (Instantly sends the label's name as
+	// event_type, https://developer.instantly.ai/guides/webhook-events) or an
+	// event type added after this plugin. The payload has no field that tells
+	// the two apart, so they share one handler and keep their event_type.
+	other: InstantlyWebhookPayloadSchema,
 } as const;
 
 export type InstantlyWebhookEvent = keyof typeof InstantlyWebhookEventSchemas;
@@ -198,22 +204,8 @@ export type InstantlyWebhookOutputs = {
 
 // ── Matching ──────────────────────────────────────────────────────────────
 
-// `body` is unknown because the transport may deliver a raw JSON string or
-// an already-parsed object.
-export function parseBody(body: unknown): Record<string, unknown> | null {
-	let value = body;
-	if (typeof value === 'string') {
-		try {
-			value = JSON.parse(value);
-		} catch {
-			return null;
-		}
-	}
-	return value !== null && typeof value === 'object' && !Array.isArray(value)
-		? // Narrowed by the typeof and Array checks above.
-			(value as Record<string, unknown>)
-		: null;
-}
+// processWebhook parses string bodies before any matcher runs, so the body
+// is an object here (readBodyRecord returns null otherwise).
 
 /**
  * Plugin-level matcher: the shape every Instantly delivery shares (string
@@ -221,7 +213,7 @@ export function parseBody(body: unknown): Record<string, unknown> | null {
  * here, so a delivery without it still reaches a handler and gets a 401.
  */
 export function matchInstantlyWebhook(request: RawWebhookRequest): boolean {
-	const body = parseBody(request.body);
+	const body = readBodyRecord(request);
 	return (
 		body !== null &&
 		typeof body.event_type === 'string' &&
@@ -231,19 +223,26 @@ export function matchInstantlyWebhook(request: RawWebhookRequest): boolean {
 	);
 }
 
+function eventTypeOf(request: RawWebhookRequest): string | undefined {
+	if (!matchInstantlyWebhook(request)) return undefined;
+	const eventType = readBodyRecord(request)?.event_type;
+	return typeof eventType === 'string' ? eventType : undefined;
+}
+
 export function createInstantlyMatch(
 	eventTypes: readonly string[],
 ): CorsairWebhookMatcher {
 	return (request: RawWebhookRequest) => {
-		if (!matchInstantlyWebhook(request)) return false;
-		const eventType = parseBody(request.body)?.event_type;
-		return typeof eventType === 'string' && eventTypes.includes(eventType);
+		const eventType = eventTypeOf(request);
+		return eventType !== undefined && eventTypes.includes(eventType);
 	};
 }
 
-/** Matches any event_type this plugin does not model: custom lead labels. */
-export const matchCustomLabel: CorsairWebhookMatcher = (request) => {
-	if (!matchInstantlyWebhook(request)) return false;
-	const eventType = parseBody(request.body)?.event_type;
-	return typeof eventType === 'string' && !KNOWN_EVENT_TYPES.has(eventType);
+/**
+ * Matches a delivery whose event_type has no dedicated handler (custom lead
+ * labels and event types Instantly adds later). Never matches a known type.
+ */
+export const matchOtherEvent: CorsairWebhookMatcher = (request) => {
+	const eventType = eventTypeOf(request);
+	return eventType !== undefined && !KNOWN_EVENT_TYPES.has(eventType);
 };

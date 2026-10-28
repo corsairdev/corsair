@@ -1,4 +1,5 @@
 import { processWebhook } from 'corsair';
+import type { CorsairErrorHandler } from 'corsair/core';
 import { createCorsair } from 'corsair/core';
 import { createCorsairOrm } from 'corsair/orm';
 import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
@@ -19,13 +20,17 @@ import { INSTANTLY_WEBHOOK_SECRET_HEADER } from './webhooks/types';
 
 const KEK = process.env.CORSAIR_KEK ?? '0123456789abcdef0123456789abcdef';
 
-async function createClient(options: Parameters<typeof instantly>[0] = {}) {
+async function createClient(
+	options: Parameters<typeof instantly>[0] = {},
+	rootErrorHandlers?: CorsairErrorHandler,
+) {
 	const testDb = createTestDatabase();
 	await createIntegrationAndAccount(testDb.db, 'instantly', 'default');
 	const corsair = createCorsair({
 		plugins: [instantly(options)],
 		database: testDb.db,
 		kek: KEK,
+		...(rootErrorHandlers ? { errorHandlers: rootErrorHandlers } : {}),
 	});
 	await corsair.instantly.keys.issue_new_dek();
 	return { corsair, testDb };
@@ -185,6 +190,53 @@ describe('Instantly plugin through createCorsair', () => {
 				where: { event_type: 'instantly.leads.list' },
 			});
 			expect(events).toHaveLength(1);
+		} finally {
+			testDb.cleanup();
+		}
+	});
+});
+
+describe('with a root DEFAULT error handler that matches everything', () => {
+	// Corsair's docs suggest `DEFAULT: { match: () => true }` at the root.
+	// Core merges root handlers ahead of plugin handlers and takes the first
+	// match, so the plugin's read retries must not depend on that order.
+	function rootDefault() {
+		return {
+			DEFAULT: {
+				match: () => true,
+				handler: jest.fn(async () => ({ maxRetries: 0 })),
+			},
+		};
+	}
+
+	it('still retries a rate-limited read', async () => {
+		const root = rootDefault();
+		const { corsair, testDb } = await createClient({ key: 'in-key' }, root);
+		try {
+			respond(errorBody(429, 'Too many requests'), 429, { 'Retry-After': '1' });
+			respond({ items: [lead] });
+
+			const result = await corsair.instantly.api.leads.list({});
+
+			expect(result.items).toHaveLength(1);
+			expect(fetchMock).toHaveBeenCalledTimes(2);
+			expect(root.DEFAULT.handler).not.toHaveBeenCalled();
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	it('still sends a reply once, and hands the error to the root handler', async () => {
+		const root = rootDefault();
+		const { corsair, testDb } = await createClient({ key: 'in-key' }, root);
+		try {
+			respond(errorBody(429, 'Too many requests'), 429, { 'Retry-After': '1' });
+
+			await expect(
+				corsair.instantly.api.emails.reply(reply),
+			).rejects.toMatchObject({ status: 429 });
+			expect(fetchMock).toHaveBeenCalledTimes(1);
+			expect(root.DEFAULT.handler).toHaveBeenCalledTimes(1);
 		} finally {
 			testDb.cleanup();
 		}

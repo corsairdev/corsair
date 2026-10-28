@@ -1,36 +1,12 @@
 import type { CorsairErrorHandler, ErrorContext } from 'corsair/core';
 import { ZodError } from 'zod';
 import { InstantlyAPIError } from './client';
-import { createErrorHandlers, mergeErrorHandlers } from './error-handlers';
-
-const READS = new Set(['leads.list', 'emails.list', 'accounts.list']);
-const handlers = createErrorHandlers((operation) => READS.has(operation));
-
-function context(operation: string): ErrorContext {
-	return {
-		pluginId: 'instantly',
-		operation,
-		input: {},
-		originalError: new Error('x'),
-	};
-}
-
-// Mirrors corsair core: the first handler whose match() passes, in key order.
-function classify(error: Error, operation: string): string {
-	const ctx = context(operation);
-	const name = Object.keys(handlers).find((key) =>
-		handlers[key]?.match(error, ctx),
-	);
-	if (!name) throw new Error('DEFAULT should always match');
-	return name;
-}
-
-async function strategy(error: Error, operation: string) {
-	const name = classify(error, operation);
-	const entry = handlers[name];
-	if (!entry) throw new Error(`no handler ${name}`);
-	return entry.handler(error, context(operation));
-}
+import {
+	errorHandlers,
+	mergeErrorHandlers,
+	readRetryDelay,
+	withReadRetries,
+} from './error-handlers';
 
 function apiError(status: number, retryAfter?: number) {
 	return new InstantlyAPIError(`Instantly ${status}: failed`, {
@@ -40,94 +16,157 @@ function apiError(status: number, retryAfter?: number) {
 	});
 }
 
-function timeoutError() {
-	const cause = new Error('The operation was aborted due to timeout');
-	cause.name = 'TimeoutError';
+function wrapped(name: string) {
+	const cause = new Error(name);
+	cause.name = name;
 	return new InstantlyAPIError(cause.message, { cause });
 }
 
-function networkError() {
-	return new InstantlyAPIError('fetch failed', {
+const timeoutError = () => wrapped('TimeoutError');
+const abortError = () => wrapped('AbortError');
+const networkError = () =>
+	new InstantlyAPIError('fetch failed', {
 		cause: new TypeError('fetch failed'),
 	});
+
+describe('readRetryDelay', () => {
+	it('waits for Retry-After on a 429, up to three times', () => {
+		expect(readRetryDelay(apiError(429, 5000), 'leads.list', 1)).toBe(5000);
+		expect(readRetryDelay(apiError(429, 5000), 'leads.list', 3)).toBe(5000);
+		expect(
+			readRetryDelay(apiError(429, 5000), 'leads.list', 4),
+		).toBeUndefined();
+	});
+
+	it('backs off when Retry-After is missing, and caps a long Retry-After', () => {
+		expect(readRetryDelay(apiError(429), 'leads.list', 1)).toBe(1000);
+		expect(readRetryDelay(apiError(429), 'leads.list', 2)).toBe(2000);
+		expect(readRetryDelay(apiError(429, 600_000), 'leads.list', 1)).toBe(
+			60_000,
+		);
+	});
+
+	it('spaces emails.list retries 3 seconds apart (20 requests a minute)', () => {
+		expect(readRetryDelay(apiError(429), 'emails.list', 1)).toBe(3000);
+		expect(readRetryDelay(apiError(429), 'emails.list', 2)).toBe(3000);
+	});
+
+	it('retries 5xx twice, a timeout once and a network failure twice', () => {
+		expect(readRetryDelay(apiError(503), 'accounts.list', 2)).toBe(2000);
+		expect(readRetryDelay(apiError(504), 'accounts.list', 3)).toBeUndefined();
+		expect(readRetryDelay(timeoutError(), 'accounts.list', 1)).toBe(2000);
+		expect(readRetryDelay(timeoutError(), 'accounts.list', 2)).toBeUndefined();
+		expect(readRetryDelay(networkError(), 'accounts.list', 2)).toBe(2000);
+	});
+
+	it('never retries a request the caller cancelled', () => {
+		expect(readRetryDelay(abortError(), 'leads.list', 1)).toBeUndefined();
+	});
+
+	it.each([400, 401, 402, 403, 404, 422])('never retries a %i', (status) => {
+		expect(readRetryDelay(apiError(status), 'leads.list', 1)).toBeUndefined();
+	});
+
+	it('never retries anything that is not an Instantly error', () => {
+		expect(readRetryDelay(new ZodError([]), 'leads.list', 1)).toBeUndefined();
+		expect(readRetryDelay('boom', 'leads.list', 1)).toBeUndefined();
+	});
+});
+
+describe('withReadRetries', () => {
+	const noWait = jest.fn(async (_ms: number) => undefined);
+	beforeEach(() => noWait.mockClear());
+
+	it('retries until the read succeeds', async () => {
+		const send = jest
+			.fn()
+			.mockRejectedValueOnce(apiError(429, 1500))
+			.mockRejectedValueOnce(apiError(502))
+			.mockResolvedValueOnce({ items: [] });
+
+		await expect(withReadRetries(send, 'leads.list', noWait)).resolves.toEqual({
+			items: [],
+		});
+		expect(send).toHaveBeenCalledTimes(3);
+		expect(noWait.mock.calls.map(([ms]) => ms)).toEqual([1500, 2000]);
+	});
+
+	it('gives up after the last retry and throws the error', async () => {
+		const send = jest.fn().mockRejectedValue(apiError(500));
+		await expect(
+			withReadRetries(send, 'leads.list', noWait),
+		).rejects.toMatchObject({ status: 500 });
+		expect(send).toHaveBeenCalledTimes(3);
+	});
+
+	it('does not retry a cancelled request', async () => {
+		const send = jest.fn().mockRejectedValue(abortError());
+		await expect(withReadRetries(send, 'leads.list', noWait)).rejects.toThrow(
+			'AbortError',
+		);
+		expect(send).toHaveBeenCalledTimes(1);
+		expect(noWait).not.toHaveBeenCalled();
+	});
+});
+
+const context: ErrorContext = {
+	pluginId: 'instantly',
+	operation: 'leads.list',
+	input: {},
+	originalError: new Error('x'),
+};
+
+// Mirrors corsair core: the first handler whose match() passes, in key order.
+function classify(handlers: CorsairErrorHandler, error: Error): string {
+	const name = Object.keys(handlers).find((key) =>
+		handlers[key]?.match(error, context),
+	);
+	if (!name) throw new Error('a catch-all should always match');
+	return name;
 }
 
-describe('Instantly error handlers', () => {
-	it.each([
-		[400, 'VALIDATION_ERROR'],
-		[401, 'AUTH_ERROR'],
-		[402, 'PLAN_ERROR'],
-		[403, 'PERMISSION_ERROR'],
-		[404, 'NOT_FOUND_ERROR'],
-	])('never retries a %i, even on a read', async (status, name) => {
-		const error = apiError(status);
-		expect(classify(error, 'leads.list')).toBe(name);
-		expect(await strategy(error, 'leads.list')).toEqual({ maxRetries: 0 });
-	});
-
-	it('does not retry input that failed zod validation', async () => {
-		const error = new ZodError([]);
-		expect(classify(error, 'leads.addBulk')).toBe('VALIDATION_ERROR');
-		expect(await strategy(error, 'leads.addBulk')).toEqual({ maxRetries: 0 });
-	});
-
-	it('retries a rate-limited read after Retry-After', async () => {
-		expect(await strategy(apiError(429, 5000), 'leads.list')).toEqual({
-			maxRetries: 3,
-			headersRetryAfterMs: 5000,
-			retryStrategy: 'exponential_backoff_jitter',
-		});
-	});
-
-	it('spaces emails.list retries 3 seconds apart when Retry-After is missing', async () => {
-		expect(await strategy(apiError(429), 'emails.list')).toEqual({
-			maxRetries: 3,
-			headersRetryAfterMs: 3000,
-		});
+describe('Corsair error handlers', () => {
+	it('prefixes every key and keeps the catch-all last', () => {
+		const names = Object.keys(errorHandlers);
+		for (const name of names) expect(name).toMatch(/^INSTANTLY_/);
+		expect(names).not.toContain('DEFAULT');
+		expect(names.at(-1)).toBe('INSTANTLY_FALLBACK');
 	});
 
 	it.each([
-		'emails.reply',
-		'leads.addBulk',
-		'leads.create',
-		'campaigns.activate',
-	])('never retries %s, whatever failed', async (operation) => {
-		for (const error of [
-			apiError(429, 1000),
-			apiError(500),
-			apiError(502),
-			apiError(504),
-			timeoutError(),
-			networkError(),
-		]) {
-			expect(await strategy(error, operation)).toEqual({ maxRetries: 0 });
-		}
-	});
+		[apiError(400), 'INSTANTLY_VALIDATION'],
+		[new ZodError([]), 'INSTANTLY_VALIDATION'],
+		[apiError(401), 'INSTANTLY_AUTH'],
+		[apiError(402), 'INSTANTLY_PLAN'],
+		[apiError(403), 'INSTANTLY_PERMISSION'],
+		[apiError(404), 'INSTANTLY_NOT_FOUND'],
+		[apiError(429), 'INSTANTLY_RATE_LIMIT'],
+		[apiError(504), 'INSTANTLY_SERVER'],
+		[timeoutError(), 'INSTANTLY_TIMEOUT'],
+		[abortError(), 'INSTANTLY_CANCELLED'],
+		[networkError(), 'INSTANTLY_NETWORK'],
+		[new Error('odd'), 'INSTANTLY_FALLBACK'],
+	])(
+		'classifies %p as %s and never asks Corsair to retry',
+		async (error, name) => {
+			expect(classify(errorHandlers, error)).toBe(name);
+			const entry = errorHandlers[name as keyof typeof errorHandlers];
+			expect(await entry.handler()).toEqual({ maxRetries: 0 });
+		},
+	);
 
-	it('retries a read on 5xx, timeouts and network failures', async () => {
-		expect(classify(apiError(503), 'accounts.list')).toBe('SERVER_ERROR');
-		expect(await strategy(apiError(503), 'accounts.list')).toEqual({
-			maxRetries: 2,
-			retryStrategy: 'exponential_backoff',
-		});
-
-		expect(classify(timeoutError(), 'accounts.list')).toBe('TIMEOUT_ERROR');
-		expect(await strategy(timeoutError(), 'accounts.list')).toEqual({
-			maxRetries: 1,
-			retryStrategy: 'linear_2s',
-		});
-
-		expect(classify(networkError(), 'accounts.list')).toBe('NETWORK_ERROR');
-		expect(await strategy(networkError(), 'accounts.list')).toEqual({
-			maxRetries: 2,
-			retryStrategy: 'exponential_backoff',
-		});
-	});
-
-	it('falls through to DEFAULT for anything else', async () => {
-		const error = new Error('something odd');
-		expect(classify(error, 'leads.list')).toBe('DEFAULT');
-		expect(await strategy(error, 'leads.list')).toEqual({ maxRetries: 0 });
+	it("does not take a root DEFAULT's position when core merges handlers", () => {
+		// core/client/index.ts merges { ...rootErrorHandlers, ...plugin.errorHandlers }.
+		const rootDefault = {
+			match: () => true,
+			handler: async () => ({ maxRetries: 0 }),
+		};
+		const merged: CorsairErrorHandler = {
+			...{ DEFAULT: rootDefault },
+			...mergeErrorHandlers(errorHandlers, undefined),
+		};
+		expect(merged.DEFAULT).toBe(rootDefault);
+		expect(Object.keys(merged).at(-1)).toBe('INSTANTLY_FALLBACK');
 	});
 });
 
@@ -136,23 +175,32 @@ describe('mergeErrorHandlers', () => {
 		match: () => false,
 		handler: async () => ({ maxRetries: 0 }),
 	};
+	const always = {
+		match: () => true,
+		handler: async () => ({ maxRetries: 1 }),
+	};
 
-	it('keeps DEFAULT last when the caller adds handlers', () => {
-		const merged = mergeErrorHandlers(handlers, { QUOTA_ERROR: never });
+	it("puts the caller's handlers first and the catch-all last", () => {
+		const merged = mergeErrorHandlers(errorHandlers, { QUOTA_ERROR: never });
 		const names = Object.keys(merged);
-		expect(names.at(-1)).toBe('DEFAULT');
-		expect(names).toContain('QUOTA_ERROR');
-		expect(names).toContain('RATE_LIMIT_ERROR');
+		expect(names[0]).toBe('QUOTA_ERROR');
+		expect(names).toContain('INSTANTLY_RATE_LIMIT');
+		expect(names.at(-1)).toBe('INSTANTLY_FALLBACK');
 	});
 
-	it("uses the caller's DEFAULT and overrides", () => {
-		const custom: CorsairErrorHandler = {
-			RATE_LIMIT_ERROR: never,
-			DEFAULT: never,
-		};
-		const merged = mergeErrorHandlers(handlers, custom);
-		expect(merged.RATE_LIMIT_ERROR).toBe(never);
-		expect(merged.DEFAULT).toBe(never);
-		expect(mergeErrorHandlers(handlers, undefined)).toBe(handlers);
+	it('files a caller DEFAULT under INSTANTLY_FALLBACK, last', () => {
+		const merged = mergeErrorHandlers(errorHandlers, { DEFAULT: always });
+		expect(merged.DEFAULT).toBeUndefined();
+		expect(merged.INSTANTLY_FALLBACK).toBe(always);
+		expect(Object.keys(merged).at(-1)).toBe('INSTANTLY_FALLBACK');
+		expect(classify(merged, apiError(429))).toBe('INSTANTLY_RATE_LIMIT');
+	});
+
+	it('lets the caller override a built-in handler by its key', () => {
+		const merged = mergeErrorHandlers(errorHandlers, {
+			INSTANTLY_RATE_LIMIT: always,
+		});
+		expect(merged.INSTANTLY_RATE_LIMIT).toBe(always);
+		expect(mergeErrorHandlers(errorHandlers, undefined)).toBe(errorHandlers);
 	});
 });
