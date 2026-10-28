@@ -93,7 +93,7 @@ export function integrationApprovalSummary(
 	risk: RiskCounts,
 ) {
 	if (risk.destructive > 0) {
-		return `In the default Cautious mode, ${displayName}'s read and write operations run right away and its ${plural(risk.destructive, 'destructive operation waits', 'destructive operations wait')} for your approval. Strict mode asks before every write, and Read mode allows reads only.`;
+		return `In the default Cautious mode, ${displayName}'s read and write operations run right away and its ${plural(risk.destructive, 'destructive operation waits', 'destructive operations wait')} for your approval. Strict mode asks before every write and refuses destructive operations, and Read mode allows reads only.`;
 	}
 	if (risk.write === 0) {
 		return `Every ${displayName} operation only reads data, so it runs right away in every mode.`;
