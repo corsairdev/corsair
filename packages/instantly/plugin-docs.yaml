@@ -1,0 +1,139 @@
+displayName: Instantly
+description: Cold email at scale through Instantly API v2 - campaigns and sequences, leads, the Unibox (replies), sending accounts and warmup, the blocklist, and webhooks.
+domain: instantly.ai
+recommendedAuth: api_key
+overviewNote: |
+  Create an API v2 key in Instantly under Settings, Integrations, API keys, with the scopes you need. Things to know before you send:
+
+  - **Real email.** `campaigns.activate` starts sending to the campaign's leads and `emails.reply` sends a reply straight away. Neither is ever retried automatically; only read operations are.
+  - **Lifetime contact limit.** Every lead uploaded counts toward the plan's lifetime contact limit (1,000 on Growth), including re-uploads and the same person in a second campaign. `leads.create` and `leads.addBulk` default `skip_if_in_workspace` to `true` for that reason. Re-adding or moving a lead who already replied restarts their sequence at step 1.
+  - **Stopping a lead.** A lead's `status` is read-only. To stop follow-ups (for example after they answered on LinkedIn), call `leads.updateInterestStatus`, which completes the lead in its campaign.
+  - **Replies without webhooks.** Webhooks need the Hypergrowth plan or higher. On Growth, poll `emails.list` with `email_type: 'received'`; it allows 20 requests a minute.
+  - **Time zones.** Campaign schedules take Instantly's own time zone list, not all of IANA: US Eastern is `America/Detroit`.
+
+  **Webhook verification.** Instantly does not sign deliveries, but each webhook can carry custom headers. Store a random secret with `corsair.instantly.keys.set_webhook_signature(secret)` (or pass `webhookSecret`); `webhooks.create` then sends it as the `x-corsair-webhook-secret` header and the plugin rejects any delivery without it. For a webhook made in the Instantly UI, add that header by hand. Deliveries route to a tenant by their `workspace` ID: store it with `keys.set_tenant_external_id(workspaceId)` (the ID `workspace.get` returns).
+examples:
+  read:
+    path: emails.list
+    title: Read unread Unibox emails
+    args:
+      is_unread: true
+      min_timestamp_created: '2026-10-28T00:00:00Z'
+      limit: 20
+  write:
+    path: leads.addBulk
+    title: Add leads to a campaign
+    args:
+      campaign_id: 01a181d1-c62c-745b-b842-870ce5b29862
+      leads:
+        - email: jordan@acme-logistics.com
+          first_name: Jordan
+          company_name: Acme Logistics
+          custom_variables:
+            pain_point: slow onboarding
+exampleWebhook:
+  path: emails.replyReceived
+  note: Stop the lead's other outreach the moment they reply.
+  after: |
+    console.log('Reply from', result.data?.lead_email, result.data?.reply_text_snippet);
+dbExample:
+  entity: leads
+  note: Leads seen through leads.list and leads.get are kept locally.
+  data:
+    company_name: Acme Logistics
+  limit: 10
+apiExamples:
+  accounts.list:
+    call: "{ filter: 'ACC_FILTER_W_ACTIVE', limit: 50 }"
+  accounts.get:
+    call: "{ email: 'sam@fieldkit-mail.com' }"
+  accounts.getWarmupAnalytics:
+    call: "{ emails: ['sam@fieldkit-mail.com'] }"
+  accounts.pause:
+    call: "{ email: 'sam@fieldkit-mail.com' }"
+  accounts.resume:
+    call: "{ email: 'sam@fieldkit-mail.com' }"
+  accounts.enableWarmup:
+    call: "{ emails: ['sam@fieldkit-mail.com'] }"
+  accounts.disableWarmup:
+    call: "{ emails: ['sam@fieldkit-mail.com'] }"
+  campaigns.list:
+    call: "{ status: 1, limit: 20 }"
+  campaigns.get:
+    call: "{ id: '01a181d1-c62c-745b-b842-870ce5b29862' }"
+  campaigns.create:
+    call: |
+      {
+        name: 'Northeast IT leads',
+        campaign_schedule: {
+          schedules: [{
+            name: 'Weekdays',
+            timing: { from: '09:00', to: '17:00' },
+            days: { '1': true, '2': true, '3': true, '4': true, '5': true },
+            timezone: 'America/Detroit',
+          }],
+        },
+        sequences: [{
+          steps: [
+            { delay: 3, variants: [{ subject: 'Quick question, {{firstName}}', body: 'Hi {{firstName}},<br/><br/>{{personalization}}' }] },
+            { delay: 0, variants: [{ subject: '', body: 'Following up, {{firstName}}.' }] },
+          ],
+        }],
+        email_list: ['sam@fieldkit-mail.com'],
+        daily_limit: 30,
+        stop_on_reply: true,
+        stop_for_company: true,
+      }
+  campaigns.update:
+    call: "{ id: '01a181d1-c62c-745b-b842-870ce5b29862', daily_limit: 50, stop_on_auto_reply: true }"
+  campaigns.activate:
+    call: "{ id: '01a181d1-c62c-745b-b842-870ce5b29862' }"
+  campaigns.pause:
+    call: "{ id: '01a181d1-c62c-745b-b842-870ce5b29862' }"
+  campaigns.getAnalytics:
+    call: "{ id: '01a181d1-c62c-745b-b842-870ce5b29862', exclude_total_leads_count: true }"
+  campaigns.getAnalyticsOverview:
+    call: "{ start_date: '2026-10-01', end_date: '2026-10-28' }"
+  campaigns.getStepAnalytics:
+    call: "{ campaign_id: '01a181d1-c62c-745b-b842-870ce5b29862', include_opportunities_count: true }"
+  leads.list:
+    call: "{ campaign: '01a181d1-c62c-745b-b842-870ce5b29862', filter: 'FILTER_VAL_REPLIED', limit: 50 }"
+  leads.get:
+    call: "{ id: '01a181d1-c62c-745b-b842-870d0c3a11f4' }"
+  leads.create:
+    call: "{ campaign: '01a181d1-c62c-745b-b842-870ce5b29862', email: 'jordan@acme-logistics.com', first_name: 'Jordan' }"
+  leads.addBulk:
+    call: "{ campaign_id: '01a181d1-c62c-745b-b842-870ce5b29862', leads: [{ email: 'jordan@acme-logistics.com', first_name: 'Jordan' }] }"
+  leads.update:
+    call: "{ id: '01a181d1-c62c-745b-b842-870d0c3a11f4', job_title: 'CIO', custom_variables: { tier: 1 } }"
+  leads.updateInterestStatus:
+    call: "{ lead_email: 'jordan@acme-logistics.com', interest_value: 2, campaign_id: '01a181d1-c62c-745b-b842-870ce5b29862' }"
+  leads.delete:
+    call: "{ id: '01a181d1-c62c-745b-b842-870d0c3a11f4' }"
+  leadLists.list:
+    call: "{ search: 'Boston' }"
+  leadLists.create:
+    call: "{ name: 'Boston IT directors' }"
+  emails.list:
+    call: "{ email_type: 'received', is_unread: true, limit: 20 }"
+  emails.get:
+    call: "{ id: '01a181d1-c62c-745b-b842-870e55aa2c19' }"
+  emails.reply:
+    call: "{ reply_to_uuid: '01a181d1-c62c-745b-b842-870e55aa2c19', eaccount: 'sam@fieldkit-mail.com', subject: 'Re: Quick question, Jordan', body: { text: 'Tuesday 10am works.' } }"
+  emails.markThreadRead:
+    call: "{ thread_id: '01a181d1-c62c-745b-b842-870f8d0b9e33' }"
+  emails.countUnread: {}
+  blocklist.list:
+    call: "{ domains_only: true }"
+  blocklist.add:
+    call: "{ bl_value: 'competitor.com' }"
+  blocklist.remove:
+    call: "{ id: '01a181d1-c62c-745b-b842-8710aa4f2e01' }"
+  webhooks.list:
+    call: "{ event_type: 'reply_received' }"
+  webhooks.create:
+    call: "{ target_hook_url: 'https://app.example.com/api/webhook', event_type: 'reply_received' }"
+  webhooks.delete:
+    call: "{ id: '01a181d1-c62c-745b-b842-870a582f48f0' }"
+  webhooks.listEventTypes: {}
+  workspace.get: {}
