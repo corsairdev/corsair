@@ -2876,7 +2876,7 @@
                 ]
               },
               {
-                "group": "Spoki integration for Corsair",
+                "group": "Spoki",
                 "pages": [
                   "plugins/spoki/overview",
                   "plugins/spoki/api",
