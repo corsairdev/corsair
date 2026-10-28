@@ -1,0 +1,1770 @@
+---
+title: API
+description: "API reference for Unipile: every `unipile.api.*` operation with input and output types."
+---
+
+Every `unipile.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Accounts
+
+### createAuthLink
+
+`accounts.createAuthLink`
+
+Create a Hosted Auth link for a user to connect a LinkedIn (or other) account, or to reconnect one with account_id; LinkedIn sign-in can offer credentials, cookies or the UniLogin extension
+
+**Risk:** `write`
+
+```ts
+await corsair.unipile.api.accounts.createAuthLink({ providers: 'linkedin', redirect_uri: 'https://app.example.com/linkedin/connected', state: 'user_123', config: { linkedin: { allow_methods: ['unilogin', 'credentials'] } } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `providers` | `* \| *:MESSAGING \| *:EMAILS \| *:CALENDAR \| *:SOCIAL \| linkedin \| mock \| whatsapp \| google \| outlook \| imap \| telegram \| instagram \| linkedin \| mock \| whatsapp \| google \| outlook \| imap \| telegram \| instagram[]` | No | Providers to offer when linking a new account, e.g. linkedin. Omit when reconnecting with account_id |
+| `account_id` | `string` | No | Reconnect or reconfigure this existing account instead of linking a new one |
+| `expires_on` | `string` | No | When the link stops working, ISO 8601 with a timezone. Defaults to one hour from now |
+| `redirect_uri` | `string` | Yes | Where to send the user afterwards. On success Unipile adds account_id, provider and state to the query; on failure error_title |
+| `state` | `string` | No | Your own ID for this user or session. Unipile returns it on the redirect and in the account.add / account.reconnect webhook |
+| `account_scope_id` | `string` | No | Scope to assign the account to |
+| `domain` | `string` | No | White-label Hosted Auth hostname already verified by Unipile |
+| `config` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="config full type">
+
+```ts
+{
+  linkedin?: {
+    allow_methods?: credentials | cookies | unilogin[],
+    products?: classic | company | recruiter | sales_navigator[],
+    allow_product_selection?: boolean,
+    auto_proxy_config?: {
+      country?: string,
+      ip?: string,
+      allow_country_fallback?: boolean
+    }
+  },
+  global?: {
+    login_hint?: string,
+    allow_user_proxy_override?: boolean,
+    allow_user_country_override?: boolean
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `string` | No | — |
+| `link` | `string` | Yes | Hosted Auth URL to send the user to |
+
+
+
+---
+
+### get
+
+`accounts.get`
+
+Get one connected account: provider, status (running, disconnected, errored…), lock state and connection method
+
+**Risk:** `read`
+
+```ts
+await corsair.unipile.api.accounts.get({ account_id: 'acc_9f2c1d7e' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | Yes | Unipile account ID (acc_…) of the connected account to act as, from accounts.list |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `string` | No | — |
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `user_id` | `string` | No | The owner's user ID on the provider |
+| `provider` | `string` | Yes | — |
+| `status` | `string` | Yes | running, errored, disconnected (needs re-authentication), degraded or partial |
+| `is_locked` | `boolean` | No | — |
+| `created_at` | `string` | No | — |
+| `application_id` | `string` | No | — |
+| `account_scope_id` | `string` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+  connection_method?: string | null,
+  products_connection_status?: {
+  } | null,
+  custom_data?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`accounts.list`
+
+List connected Unipile accounts (LinkedIn and others) with their acc_ IDs, provider and status; filter by provider or status
+
+**Risk:** `read`
+
+```ts
+await corsair.unipile.api.accounts.list({ provider: 'linkedin', status: 'running' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `provider` | `linkedin \| mock \| whatsapp \| google \| outlook \| imap \| telegram \| instagram` | No | — |
+| `status` | `running \| errored \| disconnected \| degraded \| partial` | No | — |
+| `search` | `string` | No | Match on account name or id |
+| `account_scope_id` | `string` | No | Scope ID, or `none` for accounts without a scope |
+| `offset` | `number` | No | Number of items to skip |
+| `limit` | `number` | No | Number of items to return |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `string` | No | — |
+| `data` | `object[]` | Yes | — |
+| `has_more` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  object?: string | null,
+  id: string,
+  name?: string | null,
+  user_id?: string | null,
+  provider: string,
+  status: string,
+  is_locked?: boolean | null,
+  created_at?: string | null,
+  application_id?: string | null,
+  account_scope_id?: string | null,
+  metadata?: {
+    connection_method?: string | null,
+    products_connection_status?: {
+    } | null,
+    custom_data?: {
+    } | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`accounts.remove`
+
+Disconnect an account from Unipile and delete all its Unipile data. The user must link it again to use it
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.unipile.api.accounts.remove({ account_id: 'acc_9f2c1d7e' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | Yes | Unipile account ID (acc_…) of the connected account to act as, from accounts.list |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+## Chats
+
+### get
+
+`chats.get`
+
+Get one chat: participants, unread count, last message and whether sending is restricted
+
+**Risk:** `read`
+
+```ts
+await corsair.unipile.api.chats.get({ account_id: 'acc_9f2c1d7e', chat_id: 'chat_5a6b7c' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | Yes | Unipile account ID (acc_…) of the connected account to act as, from accounts.list |
+| `chat_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `string` | No | — |
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `type` | `string` | No | 1to1, group or channel |
+| `provider` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `last_message_timestamp` | `string` | No | — |
+| `unread_count` | `number` | No | — |
+| `is_archived` | `boolean` | No | — |
+| `is_readonly` | `boolean` | No | — |
+| `is_group` | `boolean` | No | — |
+| `is_1to1` | `boolean` | No | — |
+| `participants_count` | `number` | No | — |
+| `restrictions` | `string[]` | No | — |
+| `folders` | `string[]` | No | — |
+| `user` | `object` | No | — |
+| `participants` | `object[]` | No | — |
+| `last_message` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id: string,
+  object?: string | null,
+  type?: string | null,
+  public_identifier?: string | null,
+  display_name?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  profile_url?: string | null,
+  public_picture_url?: string | null,
+  description?: string | null,
+  specifics?: {
+    location?: string | null,
+    network_distance?: string | null,
+    industry?: string | null,
+    is_following?: boolean | null,
+    followers_count?: number | null,
+    relations_count?: number | null,
+    shared_relations_count?: number | null,
+    is_premium?: boolean | null,
+    is_verified?: boolean | null
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="participants full type">
+
+```ts
+{
+  id: string,
+  object?: string | null,
+  type?: string | null,
+  public_identifier?: string | null,
+  display_name?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  profile_url?: string | null,
+  public_picture_url?: string | null,
+  description?: string | null,
+  specifics?: {
+    location?: string | null,
+    network_distance?: string | null,
+    industry?: string | null,
+    is_following?: boolean | null,
+    followers_count?: number | null,
+    relations_count?: number | null,
+    shared_relations_count?: number | null,
+    is_premium?: boolean | null,
+    is_verified?: boolean | null
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="last_message full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`chats.list`
+
+List the account's chats, newest first, filtered by type, date, unread or archived
+
+**Risk:** `read`
+
+```ts
+await corsair.unipile.api.chats.list({ account_id: 'acc_9f2c1d7e', is_unread: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | Yes | Unipile account ID (acc_…) of the connected account to act as, from accounts.list |
+| `type` | `1to1 \| group \| channel` | No | — |
+| `before` | `string` | No | Only chats with a last message before this date-time |
+| `after` | `string` | No | Only chats with a last message after this date-time |
+| `is_archived` | `boolean` | No | — |
+| `is_unread` | `boolean` | No | — |
+| `offset` | `number` | No | Offset pagination: add the previous limit to get the next page. Use `cursor` instead when the previous page returned next_cursor |
+| `cursor` | `string` | No | next_cursor from the previous page. Send it alone, without offset |
+| `limit` | `number` | No | Page size. Leave unset to use the provider's own page size, which Unipile recommends |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `total_count` | `number` | No | — |
+| `next_cursor` | `string` | No | Pass as cursor to get the next page; absent on the last page |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  object?: string | null,
+  id: string,
+  name?: string | null,
+  type?: string | null,
+  provider?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  last_message_timestamp?: string | null,
+  unread_count?: number | null,
+  is_archived?: boolean | null,
+  is_readonly?: boolean | null,
+  is_group?: boolean | null,
+  is_1to1?: boolean | null,
+  participants_count?: number | null,
+  restrictions?: string[] | null,
+  folders?: string[] | null,
+  user?: {
+    id: string,
+    object?: string | null,
+    type?: string | null,
+    public_identifier?: string | null,
+    display_name?: string | null,
+    first_name?: string | null,
+    last_name?: string | null,
+    profile_url?: string | null,
+    public_picture_url?: string | null,
+    description?: string | null,
+    specifics?: {
+      location?: string | null,
+      network_distance?: string | null,
+      industry?: string | null,
+      is_following?: boolean | null,
+      followers_count?: number | null,
+      relations_count?: number | null,
+      shared_relations_count?: number | null,
+      is_premium?: boolean | null,
+      is_verified?: boolean | null
+    } | null
+  } | null,
+  participants?: {
+    id: string,
+    object?: string | null,
+    type?: string | null,
+    public_identifier?: string | null,
+    display_name?: string | null,
+    first_name?: string | null,
+    last_name?: string | null,
+    profile_url?: string | null,
+    public_picture_url?: string | null,
+    description?: string | null,
+    specifics?: {
+      location?: string | null,
+      network_distance?: string | null,
+      industry?: string | null,
+      is_following?: boolean | null,
+      followers_count?: number | null,
+      relations_count?: number | null,
+      shared_relations_count?: number | null,
+      is_premium?: boolean | null,
+      is_verified?: boolean | null
+    } | null
+  }[] | null,
+  last_message?: {
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### start
+
+`chats.start`
+
+Start a LinkedIn chat with one person (or a group) by sending the first message; can send as InMail. Use messages.send when a chat already exists
+
+**Risk:** `write`
+
+```ts
+await corsair.unipile.api.chats.start({ account_id: 'acc_9f2c1d7e', users_ids: 'ACoAAB1cDeFgHiJkLmNoPqRsTuVwXyZ0123456', text: 'Thanks for connecting, Maya!' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | Yes | Unipile account ID (acc_…) of the connected account to act as, from accounts.list |
+| `users_ids` | `string \| string[]` | Yes | One user ID (string) starts a 1-to-1 chat; an array starts a group |
+| `text` | `string` | Yes | First message. Plain text; Unipile advises against HTML or Markdown |
+| `name` | `string` | No | Group name, where allowed |
+| `attachments` | `object[]` | No | — |
+| `specifics` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="attachments full type">
+
+```ts
+{
+  filename: string,
+  content: string,
+  content_type: string,
+  send_mode?: file | native
+}[]
+```
+</Accordion>
+
+<Accordion title="specifics full type">
+
+```ts
+{
+  linkedin?: {
+    classic?: {
+      inmail?: boolean,
+      relation_request_id?: string,
+      company_topic?: SERVICE_REQUEST | REQUEST_A_DEMO | SUPPORT | CAREERS | OTHER
+    },
+    sales_navigator?: {
+      subject: string
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `string` | No | — |
+| `chat_id` | `string` | Yes | — |
+| `message_id` | `string \| string[]` | No | — |
+
+
+
+---
+
+## Messages
+
+### list
+
+`messages.list`
+
+List the messages in a chat, newest first, with sender, read and delivery state
+
+**Risk:** `read`
+
+```ts
+await corsair.unipile.api.messages.list({ account_id: 'acc_9f2c1d7e', chat_id: 'chat_5a6b7c' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | Yes | Unipile account ID (acc_…) of the connected account to act as, from accounts.list |
+| `chat_id` | `string` | Yes | — |
+| `before` | `string` | No | — |
+| `after` | `string` | No | — |
+| `user_id` | `string` | No | Only messages from this sender |
+| `offset` | `number` | No | Offset pagination: add the previous limit to get the next page. Use `cursor` instead when the previous page returned next_cursor |
+| `cursor` | `string` | No | next_cursor from the previous page. Send it alone, without offset |
+| `limit` | `number` | No | Page size. Leave unset to use the provider's own page size, which Unipile recommends |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `total_count` | `number` | No | — |
+| `next_cursor` | `string` | No | Pass as cursor to get the next page; absent on the last page |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  object?: string | null,
+  id: string,
+  chat_id: string,
+  sender_id: string,
+  text?: string | null,
+  timestamp: string,
+  is_sender?: boolean | null,
+  is_seen?: boolean | null,
+  is_delivered?: boolean | null,
+  is_deleted?: boolean | null,
+  is_edited?: boolean | null,
+  is_event?: boolean | null,
+  provider?: string | null,
+  attachments?: any[] | null,
+  sender?: {
+    id: string,
+    object?: string | null,
+    type?: string | null,
+    public_identifier?: string | null,
+    display_name?: string | null,
+    first_name?: string | null,
+    last_name?: string | null,
+    profile_url?: string | null,
+    public_picture_url?: string | null,
+    description?: string | null,
+    specifics?: {
+      location?: string | null,
+      network_distance?: string | null,
+      industry?: string | null,
+      is_following?: boolean | null,
+      followers_count?: number | null,
+      relations_count?: number | null,
+      shared_relations_count?: number | null,
+      is_premium?: boolean | null,
+      is_verified?: boolean | null
+    } | null
+  } | null,
+  quoted?: {
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### send
+
+`messages.send`
+
+Send a message, optionally with attachments or as a reply, in an existing chat
+
+**Risk:** `write`
+
+```ts
+await corsair.unipile.api.messages.send({ account_id: 'acc_9f2c1d7e', chat_id: 'chat_5a6b7c', text: 'Does Tuesday at 10 work?' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | Yes | Unipile account ID (acc_…) of the connected account to act as, from accounts.list |
+| `chat_id` | `string` | Yes | — |
+| `text` | `string` | Yes | Message text. Plain text; Unipile advises against HTML |
+| `quote_id` | `string` | No | ID of a message to reply to |
+| `attachments` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="attachments full type">
+
+```ts
+{
+  filename: string,
+  content: string,
+  content_type: string,
+  send_mode?: file | native
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `string` | No | — |
+| `message_id` | `string \| string[]` | No | — |
+
+
+
+---
+
+## Posts
+
+### list
+
+`posts.list`
+
+List a user's LinkedIn posts with reaction, comment and repost counts
+
+**Risk:** `read`
+
+```ts
+await corsair.unipile.api.posts.list({ account_id: 'acc_9f2c1d7e', user_id: 'williamhgates' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | Yes | Unipile account ID (acc_…) of the connected account to act as, from accounts.list |
+| `user_id` | `string` | Yes | Provider user ID. For LinkedIn, the member ID (ACo…) or public identifier from a profile URL; `me` is the account owner |
+| `offset` | `number` | No | Offset pagination: add the previous limit to get the next page. Use `cursor` instead when the previous page returned next_cursor |
+| `cursor` | `string` | No | next_cursor from the previous page. Send it alone, without offset |
+| `limit` | `number` | No | Page size. Leave unset to use the provider's own page size, which Unipile recommends |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `total_count` | `number` | No | — |
+| `next_cursor` | `string` | No | Pass as cursor to get the next page; absent on the last page |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  object?: string | null,
+  id: string,
+  share_url?: string | null,
+  created_at?: string | null,
+  title?: string | null,
+  text?: string | null,
+  author?: {
+    id: string,
+    object?: string | null,
+    type?: string | null,
+    public_identifier?: string | null,
+    display_name?: string | null,
+    first_name?: string | null,
+    last_name?: string | null,
+    profile_url?: string | null,
+    public_picture_url?: string | null,
+    description?: string | null,
+    specifics?: {
+      location?: string | null,
+      network_distance?: string | null,
+      industry?: string | null,
+      is_following?: boolean | null,
+      followers_count?: number | null,
+      relations_count?: number | null,
+      shared_relations_count?: number | null,
+      is_premium?: boolean | null,
+      is_verified?: boolean | null
+    } | null
+  } | null,
+  is_repost?: boolean | null,
+  comments_counter?: number | null,
+  reposts_counter?: number | null,
+  reactions_counter?: {
+    reaction: string,
+    count: number
+  }[] | null,
+  attachments?: any[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listComments
+
+`posts.listComments`
+
+List the comments on a post with each author, newest or most relevant first
+
+**Risk:** `read`
+
+```ts
+await corsair.unipile.api.posts.listComments({ account_id: 'acc_9f2c1d7e', post_id: 'urn:li:activity:7250000000000000000', sort_by: 'MOST_RECENT' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | Yes | Unipile account ID (acc_…) of the connected account to act as, from accounts.list |
+| `post_id` | `string` | Yes | Post ID from posts.list (Unipile post IDs, not share URLs) |
+| `sort_by` | `MOST_RECENT \| MOST_RELEVANT` | No | — |
+| `offset` | `number` | No | Offset pagination: add the previous limit to get the next page. Use `cursor` instead when the previous page returned next_cursor |
+| `cursor` | `string` | No | next_cursor from the previous page. Send it alone, without offset |
+| `limit` | `number` | No | Page size. Leave unset to use the provider's own page size, which Unipile recommends |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `total_count` | `number` | No | — |
+| `next_cursor` | `string` | No | Pass as cursor to get the next page; absent on the last page |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  object?: string | null,
+  id: string,
+  thread_id?: string | null,
+  created_at?: string | null,
+  text?: string | null,
+  is_sender?: boolean | null,
+  reply_counter?: number | null,
+  author?: {
+    id: string,
+    object?: string | null,
+    type?: string | null,
+    public_identifier?: string | null,
+    display_name?: string | null,
+    first_name?: string | null,
+    last_name?: string | null,
+    profile_url?: string | null,
+    public_picture_url?: string | null,
+    description?: string | null,
+    specifics?: {
+      location?: string | null,
+      network_distance?: string | null,
+      industry?: string | null,
+      is_following?: boolean | null,
+      followers_count?: number | null,
+      relations_count?: number | null,
+      shared_relations_count?: number | null,
+      is_premium?: boolean | null,
+      is_verified?: boolean | null
+    } | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listReactions
+
+`posts.listReactions`
+
+List the people who reacted to a post, with their profile summary, to find engaged leads
+
+**Risk:** `read`
+
+```ts
+await corsair.unipile.api.posts.listReactions({ account_id: 'acc_9f2c1d7e', post_id: 'urn:li:activity:7250000000000000000' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | Yes | Unipile account ID (acc_…) of the connected account to act as, from accounts.list |
+| `post_id` | `string` | Yes | Post ID from posts.list (Unipile post IDs, not share URLs) |
+| `offset` | `number` | No | Offset pagination: add the previous limit to get the next page. Use `cursor` instead when the previous page returned next_cursor |
+| `cursor` | `string` | No | next_cursor from the previous page. Send it alone, without offset |
+| `limit` | `number` | No | Page size. Leave unset to use the provider's own page size, which Unipile recommends |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `total_count` | `number` | No | — |
+| `next_cursor` | `string` | No | Pass as cursor to get the next page; absent on the last page |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  object?: string | null,
+  value: string,
+  is_sender?: boolean | null,
+  sender: {
+    id: string,
+    object?: string | null,
+    type?: string | null,
+    public_identifier?: string | null,
+    display_name?: string | null,
+    first_name?: string | null,
+    last_name?: string | null,
+    profile_url?: string | null,
+    public_picture_url?: string | null,
+    description?: string | null,
+    specifics?: {
+      location?: string | null,
+      network_distance?: string | null,
+      industry?: string | null,
+      is_following?: boolean | null,
+      followers_count?: number | null,
+      relations_count?: number | null,
+      shared_relations_count?: number | null,
+      is_premium?: boolean | null,
+      is_verified?: boolean | null
+    } | null
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Relation Requests
+
+### accept
+
+`relationRequests.accept`
+
+Accept a LinkedIn invitation the account received
+
+**Risk:** `write`
+
+```ts
+await corsair.unipile.api.relationRequests.accept({ account_id: 'acc_9f2c1d7e', request_id: 'inv_7d8e9f' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | Yes | Unipile account ID (acc_…) of the connected account to act as, from accounts.list |
+| `request_id` | `string` | Yes | Relation request ID from relationRequests.list |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `string` | Yes | — |
+
+
+
+---
+
+### cancel
+
+`relationRequests.cancel`
+
+Withdraw a sent LinkedIn invitation or decline a received one. LinkedIn may block re-inviting the same person for weeks
+
+**Risk:** `destructive`
+
+```ts
+await corsair.unipile.api.relationRequests.cancel({ account_id: 'acc_9f2c1d7e', request_id: 'inv_7d8e9f' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | Yes | Unipile account ID (acc_…) of the connected account to act as, from accounts.list |
+| `request_id` | `string` | Yes | Relation request ID from relationRequests.list |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `string` | Yes | — |
+
+
+
+---
+
+### create
+
+`relationRequests.create`
+
+Send a LinkedIn connection invitation to a member ID (ACo…), with an optional note. LinkedIn allows roughly 100-200 a week; pace sends and never retry a failed one blindly
+
+**Risk:** `write`
+
+```ts
+await corsair.unipile.api.relationRequests.create({ account_id: 'acc_9f2c1d7e', user_id: 'ACoAAB1cDeFgHiJkLmNoPqRsTuVwXyZ0123456', message: 'Hi Maya, I enjoyed your post on field data.' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | Yes | Unipile account ID (acc_…) of the connected account to act as, from accounts.list |
+| `user_id` | `string` | Yes | LinkedIn member ID (ACo…) of the person to invite |
+| `message` | `string` | No | Invitation note. LinkedIn caps it at 300 characters (200 on free accounts) and allows few notes a month on free accounts |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `string` | No | — |
+| `id` | `string` | Yes | — |
+| `type` | `string` | Yes | sent or received |
+| `created_at` | `string` | No | — |
+| `message` | `string` | No | — |
+| `user` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id: string,
+  object?: string | null,
+  type?: string | null,
+  public_identifier?: string | null,
+  display_name?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  profile_url?: string | null,
+  public_picture_url?: string | null,
+  description?: string | null,
+  specifics?: {
+    location?: string | null,
+    network_distance?: string | null,
+    industry?: string | null,
+    is_following?: boolean | null,
+    followers_count?: number | null,
+    relations_count?: number | null,
+    shared_relations_count?: number | null,
+    is_premium?: boolean | null,
+    is_verified?: boolean | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`relationRequests.list`
+
+List pending LinkedIn invitations the account sent or received, with the other person and any note
+
+**Risk:** `read`
+
+```ts
+await corsair.unipile.api.relationRequests.list({ account_id: 'acc_9f2c1d7e', type: 'received' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | Yes | Unipile account ID (acc_…) of the connected account to act as, from accounts.list |
+| `type` | `sent \| received` | Yes | sent: invitations you sent; received: invitations to you |
+| `offset` | `number` | No | Offset pagination: add the previous limit to get the next page. Use `cursor` instead when the previous page returned next_cursor |
+| `cursor` | `string` | No | next_cursor from the previous page. Send it alone, without offset |
+| `limit` | `number` | No | Page size. Leave unset to use the provider's own page size, which Unipile recommends |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `total_count` | `number` | No | — |
+| `next_cursor` | `string` | No | Pass as cursor to get the next page; absent on the last page |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  object?: string | null,
+  id: string,
+  type: string,
+  created_at?: string | null,
+  message?: string | null,
+  user?: {
+    id: string,
+    object?: string | null,
+    type?: string | null,
+    public_identifier?: string | null,
+    display_name?: string | null,
+    first_name?: string | null,
+    last_name?: string | null,
+    profile_url?: string | null,
+    public_picture_url?: string | null,
+    description?: string | null,
+    specifics?: {
+      location?: string | null,
+      network_distance?: string | null,
+      industry?: string | null,
+      is_following?: boolean | null,
+      followers_count?: number | null,
+      relations_count?: number | null,
+      shared_relations_count?: number | null,
+      is_premium?: boolean | null,
+      is_verified?: boolean | null
+    } | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Users
+
+### getChat
+
+`users.getChat`
+
+Find the existing 1-to-1 chat IDs with a user, to send into instead of starting a new chat
+
+**Risk:** `read`
+
+```ts
+await corsair.unipile.api.users.getChat({ account_id: 'acc_9f2c1d7e', user_id: 'ACoAAB1cDeFgHiJkLmNoPqRsTuVwXyZ0123456' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | Yes | Unipile account ID (acc_…) of the connected account to act as, from accounts.list |
+| `user_id` | `string` | Yes | Provider user ID. For LinkedIn, the member ID (ACo…) or public identifier from a profile URL; `me` is the account owner |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `string` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  chat_id: string,
+  inbox_id?: string | null,
+  has_history?: boolean | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getProfile
+
+`users.getProfile`
+
+Get a LinkedIn profile by member ID or public identifier: headline, location, network distance, invitation status, and optional experience, education and skills. Counts toward LinkedIn profile-view limits (about 80-100 a day)
+
+**Risk:** `read`
+
+```ts
+await corsair.unipile.api.users.getProfile({ account_id: 'acc_9f2c1d7e', user_id: 'williamhgates', with_sections: ['linkedin_experience'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | Yes | Unipile account ID (acc_…) of the connected account to act as, from accounts.list |
+| `user_id` | `string` | Yes | Provider user ID. For LinkedIn, the member ID (ACo…) or public identifier from a profile URL; `me` is the account owner |
+| `with_sections` | `linkedin_* \| linkedin_experience \| linkedin_education \| linkedin_languages \| linkedin_skills \| linkedin_certifications \| linkedin_volunteer_experience \| linkedin_projects \| linkedin_recommendations \| linkedin_recruiting_activity \| linkedin_interests \| linkedin_*_preview \| linkedin_experience_preview \| linkedin_education_preview \| linkedin_languages_preview \| linkedin_skills_preview \| linkedin_certifications_preview \| linkedin_volunteer_experience_preview \| linkedin_projects_preview \| linkedin_recommendations_preview \| linkedin_recruiting_activity_preview \| linkedin_interests_preview[]` | No | Extra LinkedIn sections to load, e.g. linkedin_experience. Each one is another request to LinkedIn |
+| `variant` | `linkedin_classic \| linkedin_recruiter \| linkedin_sales_navigator` | No | Which LinkedIn product to read the profile through |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `string` | No | — |
+| `id` | `string` | Yes | — |
+| `provider` | `string` | No | — |
+| `type` | `string` | No | — |
+| `public_identifier` | `string` | No | — |
+| `display_name` | `string` | No | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `profile_url` | `string` | No | — |
+| `public_picture_url` | `string` | No | — |
+| `description` | `string` | No | Headline on LinkedIn |
+| `bio` | `string` | No | — |
+| `location` | `string` | No | — |
+| `followers_count` | `number` | No | — |
+| `relations_count` | `number` | No | — |
+| `shared_relations_count` | `number` | No | — |
+| `is_premium` | `boolean` | No | — |
+| `is_blocked` | `boolean` | No | — |
+| `emails` | `string[]` | No | — |
+| `phone_numbers` | `string[]` | No | — |
+| `websites` | `string[]` | No | — |
+| `specifics` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="specifics full type">
+
+```ts
+{
+  member_id?: string | null,
+  industry?: string | null,
+  network_distance?: string | null,
+  relation_request_status?: string | null,
+  can_send_inmail?: boolean | null,
+  is_open_profile?: boolean | null,
+  is_premium?: boolean | null,
+  is_open_to_work?: boolean | null,
+  is_hiring?: boolean | null,
+  notify_visit_token?: string | null,
+  experience?: any[] | null,
+  education?: any[] | null,
+  skills?: any[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listComments
+
+`users.listComments`
+
+List a user's comments on posts (the account owner's by default), with each post
+
+**Risk:** `read`
+
+```ts
+await corsair.unipile.api.users.listComments({ account_id: 'acc_9f2c1d7e', user_id: 'ACoAAB1cDeFgHiJkLmNoPqRsTuVwXyZ0123456' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | Yes | Unipile account ID (acc_…) of the connected account to act as, from accounts.list |
+| `user_id` | `string` | Yes | Provider user ID. For LinkedIn, the member ID (ACo…) or public identifier from a profile URL; `me` is the account owner |
+| `offset` | `number` | No | Offset pagination: add the previous limit to get the next page. Use `cursor` instead when the previous page returned next_cursor |
+| `cursor` | `string` | No | next_cursor from the previous page. Send it alone, without offset |
+| `limit` | `number` | No | Page size. Leave unset to use the provider's own page size, which Unipile recommends |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `total_count` | `number` | No | — |
+| `next_cursor` | `string` | No | Pass as cursor to get the next page; absent on the last page |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  object?: string | null,
+  id: string,
+  thread_id?: string | null,
+  created_at?: string | null,
+  text?: string | null,
+  is_sender?: boolean | null,
+  reply_counter?: number | null,
+  author?: {
+    id: string,
+    object?: string | null,
+    type?: string | null,
+    public_identifier?: string | null,
+    display_name?: string | null,
+    first_name?: string | null,
+    last_name?: string | null,
+    profile_url?: string | null,
+    public_picture_url?: string | null,
+    description?: string | null,
+    specifics?: {
+      location?: string | null,
+      network_distance?: string | null,
+      industry?: string | null,
+      is_following?: boolean | null,
+      followers_count?: number | null,
+      relations_count?: number | null,
+      shared_relations_count?: number | null,
+      is_premium?: boolean | null,
+      is_verified?: boolean | null
+    } | null
+  } | null,
+  parent_post?: {
+    object?: string | null,
+    id: string,
+    share_url?: string | null,
+    created_at?: string | null,
+    title?: string | null,
+    text?: string | null,
+    author?: {
+      id: string,
+      object?: string | null,
+      type?: string | null,
+      public_identifier?: string | null,
+      display_name?: string | null,
+      first_name?: string | null,
+      last_name?: string | null,
+      profile_url?: string | null,
+      public_picture_url?: string | null,
+      description?: string | null,
+      specifics?: {
+        location?: string | null,
+        network_distance?: string | null,
+        industry?: string | null,
+        is_following?: boolean | null,
+        followers_count?: number | null,
+        relations_count?: number | null,
+        shared_relations_count?: number | null,
+        is_premium?: boolean | null,
+        is_verified?: boolean | null
+      } | null
+    } | null,
+    is_repost?: boolean | null,
+    comments_counter?: number | null,
+    reposts_counter?: number | null,
+    reactions_counter?: {
+      reaction: string,
+      count: number
+    }[] | null,
+    attachments?: any[] | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listReactions
+
+`users.listReactions`
+
+List the posts a user reacted to (the account owner's by default), with each post
+
+**Risk:** `read`
+
+```ts
+await corsair.unipile.api.users.listReactions({ account_id: 'acc_9f2c1d7e', user_id: 'ACoAAB1cDeFgHiJkLmNoPqRsTuVwXyZ0123456' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | Yes | Unipile account ID (acc_…) of the connected account to act as, from accounts.list |
+| `user_id` | `string` | Yes | Provider user ID. For LinkedIn, the member ID (ACo…) or public identifier from a profile URL; `me` is the account owner |
+| `offset` | `number` | No | Offset pagination: add the previous limit to get the next page. Use `cursor` instead when the previous page returned next_cursor |
+| `cursor` | `string` | No | next_cursor from the previous page. Send it alone, without offset |
+| `limit` | `number` | No | Page size. Leave unset to use the provider's own page size, which Unipile recommends |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `total_count` | `number` | No | — |
+| `next_cursor` | `string` | No | Pass as cursor to get the next page; absent on the last page |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  object?: string | null,
+  value: string,
+  is_sender?: boolean | null,
+  sender: {
+    id: string,
+    object?: string | null,
+    type?: string | null,
+    public_identifier?: string | null,
+    display_name?: string | null,
+    first_name?: string | null,
+    last_name?: string | null,
+    profile_url?: string | null,
+    public_picture_url?: string | null,
+    description?: string | null,
+    specifics?: {
+      location?: string | null,
+      network_distance?: string | null,
+      industry?: string | null,
+      is_following?: boolean | null,
+      followers_count?: number | null,
+      relations_count?: number | null,
+      shared_relations_count?: number | null,
+      is_premium?: boolean | null,
+      is_verified?: boolean | null
+    } | null
+  },
+  parent_post?: {
+    object?: string | null,
+    id: string,
+    share_url?: string | null,
+    created_at?: string | null,
+    title?: string | null,
+    text?: string | null,
+    author?: {
+      id: string,
+      object?: string | null,
+      type?: string | null,
+      public_identifier?: string | null,
+      display_name?: string | null,
+      first_name?: string | null,
+      last_name?: string | null,
+      profile_url?: string | null,
+      public_picture_url?: string | null,
+      description?: string | null,
+      specifics?: {
+        location?: string | null,
+        network_distance?: string | null,
+        industry?: string | null,
+        is_following?: boolean | null,
+        followers_count?: number | null,
+        relations_count?: number | null,
+        shared_relations_count?: number | null,
+        is_premium?: boolean | null,
+        is_verified?: boolean | null
+      } | null
+    } | null,
+    is_repost?: boolean | null,
+    comments_counter?: number | null,
+    reposts_counter?: number | null,
+    reactions_counter?: {
+      reaction: string,
+      count: number
+    }[] | null,
+    attachments?: any[] | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listRelations
+
+`users.listRelations`
+
+List a user's 1st-degree connections (the account owner's by default), with optional name search and paging
+
+**Risk:** `read`
+
+```ts
+await corsair.unipile.api.users.listRelations({ account_id: 'acc_9f2c1d7e', search: 'Maya' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | Yes | Unipile account ID (acc_…) of the connected account to act as, from accounts.list |
+| `user_id` | `string` | Yes | Provider user ID. For LinkedIn, the member ID (ACo…) or public identifier from a profile URL; `me` is the account owner |
+| `search` | `string` | No | Filter relations by name |
+| `offset` | `number` | No | Offset pagination: add the previous limit to get the next page. Use `cursor` instead when the previous page returned next_cursor |
+| `cursor` | `string` | No | next_cursor from the previous page. Send it alone, without offset |
+| `limit` | `number` | No | Page size. Leave unset to use the provider's own page size, which Unipile recommends |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `total_count` | `number` | No | — |
+| `next_cursor` | `string` | No | Pass as cursor to get the next page; absent on the last page |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  object?: string | null,
+  id: string,
+  created_at?: string | null,
+  user: {
+    id: string,
+    object?: string | null,
+    type?: string | null,
+    public_identifier?: string | null,
+    display_name?: string | null,
+    first_name?: string | null,
+    last_name?: string | null,
+    profile_url?: string | null,
+    public_picture_url?: string | null,
+    description?: string | null,
+    specifics?: {
+      location?: string | null,
+      network_distance?: string | null,
+      industry?: string | null,
+      is_following?: boolean | null,
+      followers_count?: number | null,
+      relations_count?: number | null,
+      shared_relations_count?: number | null,
+      is_premium?: boolean | null,
+      is_verified?: boolean | null
+    } | null
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### visitProfile
+
+`users.visitProfile`
+
+Report a profile visit to LinkedIn so the member sees you in 'Who viewed your profile', using the notify_visit_token from users.getProfile
+
+**Risk:** `write`
+
+```ts
+await corsair.unipile.api.users.visitProfile({ account_id: 'acc_9f2c1d7e', token: 'notify-visit-token-from-getProfile' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | Yes | Unipile account ID (acc_…) of the connected account to act as, from accounts.list |
+| `token` | `string` | Yes | specifics.notify_visit_token from users.getProfile |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `string` | Yes | — |
+
+
+
+---
+
+## Webhook Endpoints
+
+### create
+
+`webhookEndpoints.create`
+
+Register a URL to receive Unipile events such as relation.new and message.new; returns the signing secret. Needs a Service API Key
+
+**Risk:** `write`
+
+```ts
+await corsair.unipile.api.webhookEndpoints.create({ url: 'https://your-app.example.com/api/webhook', trigger_events: ['relation.new', 'message.new', 'account.status.disconnected'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | HTTPS URL that receives event POSTs |
+| `trigger_events` | `account.status.disconnected \| account.status.running \| account.status.errored \| account.status.degraded \| account.status.partial \| account.locked \| account.unlocked \| account.add \| account.reconnect \| account.remove \| account.initial_sync.running \| account.initial_sync.failed \| account.initial_sync.completed \| message.new \| message.update \| message.delete \| message.receipt.read \| message.receipt.delivery \| message.reaction.new \| message.reaction.delete \| chat.delete \| chat.update \| email.new \| email.new.bounce \| email.delete \| email.draft.new \| email.draft.delete \| email.folder.create \| email.folder.update \| email.folder.delete \| calendar.create \| calendar.update \| calendar.delete \| calendar.event.new \| calendar.event.update \| calendar.event.delete \| tracking.open \| tracking.click \| relation.new \| follower.new[]` | Yes | Events to send, e.g. relation.new, message.new |
+| `account_ids` | `string[]` | No | Only send events from these accounts. Omit for all accounts |
+| `description` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `string` | No | — |
+| `id` | `string` | Yes | — |
+| `url` | `string` | Yes | — |
+| `enabled` | `boolean` | No | — |
+| `description` | `string` | No | — |
+| `trigger_events` | `string[]` | Yes | — |
+| `secret` | `string` | No | Signing secret for the unipile-signature header; set it as the plugin webhookSecret |
+| `application_id` | `string` | No | — |
+| `account_ids` | `string[]` | No | — |
+| `account_targets` | `any[]` | No | — |
+
+
+
+---
+
+### delete
+
+`webhookEndpoints.delete`
+
+Delete a Unipile webhook endpoint; its events stop. Needs a Service API Key
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.unipile.api.webhookEndpoints.delete({ id: 'whe_42' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Webhook endpoint ID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### get
+
+`webhookEndpoints.get`
+
+Get one Unipile webhook endpoint, including its signing secret. Needs a Service API Key
+
+**Risk:** `read`
+
+```ts
+await corsair.unipile.api.webhookEndpoints.get({ id: 'whe_42' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Webhook endpoint ID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `string` | No | — |
+| `id` | `string` | Yes | — |
+| `url` | `string` | Yes | — |
+| `enabled` | `boolean` | No | — |
+| `description` | `string` | No | — |
+| `trigger_events` | `string[]` | Yes | — |
+| `secret` | `string` | No | Signing secret for the unipile-signature header; set it as the plugin webhookSecret |
+| `application_id` | `string` | No | — |
+| `account_ids` | `string[]` | No | — |
+| `account_targets` | `any[]` | No | — |
+
+
+
+---
+
+### list
+
+`webhookEndpoints.list`
+
+List the Unipile webhook endpoints, their URLs, events and accounts. Needs a Service API Key
+
+**Risk:** `read`
+
+```ts
+await corsair.unipile.api.webhookEndpoints.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `offset` | `number` | No | Number of items to skip |
+| `limit` | `number` | No | Number of items to return |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `string` | No | — |
+| `data` | `object[]` | Yes | — |
+| `has_more` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  object?: string | null,
+  id: string,
+  url: string,
+  enabled?: boolean | null,
+  description?: string | null,
+  trigger_events: string[],
+  secret?: string | null,
+  application_id?: string | null,
+  account_ids?: string[] | null,
+  account_targets?: any[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`webhookEndpoints.update`
+
+Change a webhook endpoint's URL, events, accounts or description, or enable or disable it. Needs a Service API Key
+
+**Risk:** `write`
+
+```ts
+await corsair.unipile.api.webhookEndpoints.update({ id: 'whe_42', enabled: false });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Webhook endpoint ID |
+| `url` | `string` | No | — |
+| `trigger_events` | `account.status.disconnected \| account.status.running \| account.status.errored \| account.status.degraded \| account.status.partial \| account.locked \| account.unlocked \| account.add \| account.reconnect \| account.remove \| account.initial_sync.running \| account.initial_sync.failed \| account.initial_sync.completed \| message.new \| message.update \| message.delete \| message.receipt.read \| message.receipt.delivery \| message.reaction.new \| message.reaction.delete \| chat.delete \| chat.update \| email.new \| email.new.bounce \| email.delete \| email.draft.new \| email.draft.delete \| email.folder.create \| email.folder.update \| email.folder.delete \| calendar.create \| calendar.update \| calendar.delete \| calendar.event.new \| calendar.event.update \| calendar.event.delete \| tracking.open \| tracking.click \| relation.new \| follower.new[]` | No | — |
+| `account_ids` | `string[]` | No | — |
+| `description` | `string` | No | — |
+| `enabled` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `string` | No | — |
+| `id` | `string` | Yes | — |
+| `url` | `string` | Yes | — |
+| `enabled` | `boolean` | No | — |
+| `description` | `string` | No | — |
+| `trigger_events` | `string[]` | Yes | — |
+| `secret` | `string` | No | Signing secret for the unipile-signature header; set it as the plugin webhookSecret |
+| `application_id` | `string` | No | — |
+| `account_ids` | `string[]` | No | — |
+| `account_targets` | `any[]` | No | — |
+
+
+
+---
+

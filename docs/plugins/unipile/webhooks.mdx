@@ -1,0 +1,1266 @@
+---
+title: Webhooks
+description: "Unipile incoming webhooks: event paths, payloads, and response data."
+---
+
+The Unipile plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/unipile/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `accounts`
+  - `add` (`accounts.add`)
+  - `locked` (`accounts.locked`)
+  - `reconnect` (`accounts.reconnect`)
+  - `remove` (`accounts.remove`)
+  - `statusDegraded` (`accounts.statusDegraded`)
+  - `statusDisconnected` (`accounts.statusDisconnected`)
+  - `statusErrored` (`accounts.statusErrored`)
+  - `statusPartial` (`accounts.statusPartial`)
+  - `statusRunning` (`accounts.statusRunning`)
+  - `unlocked` (`accounts.unlocked`)
+- `messages`
+  - `new` (`messages.new`)
+  - `receiptRead` (`messages.receiptRead`)
+- `relations`
+  - `new` (`relations.new`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+## Events
+
+## Accounts
+
+### Add
+
+`accounts.add`
+
+A new account was connected and is ready; payload.state is the createAuthLink state
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Event ID (evt_…); deliveries can repeat it |
+| `type` | `account.add` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `account_id` | `string` | Yes | Account the event happened on (acc_…) |
+| `account_provider` | `string` | No | — |
+| `account_name` | `string` | No | — |
+| `account_scope_id` | `string` | No | — |
+| `application_id` | `string` | No | — |
+| `application_production` | `boolean` | No | — |
+| `payload` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+  account: {
+    object?: string | null,
+    id: string,
+    name?: string | null,
+    user_id?: string | null,
+    provider: string,
+    status: string,
+    is_locked?: boolean | null,
+    created_at?: string | null,
+    application_id?: string | null,
+    account_scope_id?: string | null,
+    metadata?: {
+      connection_method?: string | null,
+      products_connection_status?: {
+      } | null,
+      custom_data?: {
+      } | null
+    } | null
+  },
+  state?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  type: account.add,
+  created_at: string,
+  account_id: string,
+  account_provider?: string | null,
+  account_name?: string | null,
+  account_scope_id?: string | null,
+  application_id?: string | null,
+  application_production?: boolean | null,
+  payload: {
+    account: {
+      object?: string | null,
+      id: string,
+      name?: string | null,
+      user_id?: string | null,
+      provider: string,
+      status: string,
+      is_locked?: boolean | null,
+      created_at?: string | null,
+      application_id?: string | null,
+      account_scope_id?: string | null,
+      metadata?: {
+        connection_method?: string | null,
+        products_connection_status?: {
+        } | null,
+        custom_data?: {
+        } | null
+      } | null
+    },
+    state?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+unipile({
+    webhookHooks: {
+        accounts: {
+            add: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Locked
+
+`accounts.locked`
+
+API access to an account was locked
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Event ID (evt_…); deliveries can repeat it |
+| `type` | `account.locked` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `account_id` | `string` | Yes | Account the event happened on (acc_…) |
+| `account_provider` | `string` | No | — |
+| `account_name` | `string` | No | — |
+| `account_scope_id` | `string` | No | — |
+| `application_id` | `string` | No | — |
+| `application_production` | `boolean` | No | — |
+| `payload` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+  timestamp: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  type: account.locked,
+  created_at: string,
+  account_id: string,
+  account_provider?: string | null,
+  account_name?: string | null,
+  account_scope_id?: string | null,
+  application_id?: string | null,
+  application_production?: boolean | null,
+  payload: {
+    timestamp: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+unipile({
+    webhookHooks: {
+        accounts: {
+            locked: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Reconnect
+
+`accounts.reconnect`
+
+An existing account was signed in again or reconfigured
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Event ID (evt_…); deliveries can repeat it |
+| `type` | `account.reconnect` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `account_id` | `string` | Yes | Account the event happened on (acc_…) |
+| `account_provider` | `string` | No | — |
+| `account_name` | `string` | No | — |
+| `account_scope_id` | `string` | No | — |
+| `application_id` | `string` | No | — |
+| `application_production` | `boolean` | No | — |
+| `payload` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+  account: {
+    object?: string | null,
+    id: string,
+    name?: string | null,
+    user_id?: string | null,
+    provider: string,
+    status: string,
+    is_locked?: boolean | null,
+    created_at?: string | null,
+    application_id?: string | null,
+    account_scope_id?: string | null,
+    metadata?: {
+      connection_method?: string | null,
+      products_connection_status?: {
+      } | null,
+      custom_data?: {
+      } | null
+    } | null
+  },
+  state?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  type: account.reconnect,
+  created_at: string,
+  account_id: string,
+  account_provider?: string | null,
+  account_name?: string | null,
+  account_scope_id?: string | null,
+  application_id?: string | null,
+  application_production?: boolean | null,
+  payload: {
+    account: {
+      object?: string | null,
+      id: string,
+      name?: string | null,
+      user_id?: string | null,
+      provider: string,
+      status: string,
+      is_locked?: boolean | null,
+      created_at?: string | null,
+      application_id?: string | null,
+      account_scope_id?: string | null,
+      metadata?: {
+        connection_method?: string | null,
+        products_connection_status?: {
+        } | null,
+        custom_data?: {
+        } | null
+      } | null
+    },
+    state?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+unipile({
+    webhookHooks: {
+        accounts: {
+            reconnect: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Remove
+
+`accounts.remove`
+
+An account was removed from Unipile
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Event ID (evt_…); deliveries can repeat it |
+| `type` | `account.remove` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `account_id` | `string` | Yes | Account the event happened on (acc_…) |
+| `account_provider` | `string` | No | — |
+| `account_name` | `string` | No | — |
+| `account_scope_id` | `string` | No | — |
+| `application_id` | `string` | No | — |
+| `application_production` | `boolean` | No | — |
+| `payload` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+  account: {
+    id: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  type: account.remove,
+  created_at: string,
+  account_id: string,
+  account_provider?: string | null,
+  account_name?: string | null,
+  account_scope_id?: string | null,
+  application_id?: string | null,
+  application_production?: boolean | null,
+  payload: {
+    account: {
+      id: string
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+unipile({
+    webhookHooks: {
+        accounts: {
+            remove: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Status Degraded
+
+`accounts.statusDegraded`
+
+A multi-product account has one product running and another interrupted
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Event ID (evt_…); deliveries can repeat it |
+| `type` | `account.status.degraded` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `account_id` | `string` | Yes | Account the event happened on (acc_…) |
+| `account_provider` | `string` | No | — |
+| `account_name` | `string` | No | — |
+| `account_scope_id` | `string` | No | — |
+| `application_id` | `string` | No | — |
+| `application_production` | `boolean` | No | — |
+| `payload` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+  timestamp: string,
+  product?: string | null,
+  reason?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  type: account.status.degraded,
+  created_at: string,
+  account_id: string,
+  account_provider?: string | null,
+  account_name?: string | null,
+  account_scope_id?: string | null,
+  application_id?: string | null,
+  application_production?: boolean | null,
+  payload: {
+    timestamp: string,
+    product?: string | null,
+    reason?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+unipile({
+    webhookHooks: {
+        accounts: {
+            statusDegraded: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Status Disconnected
+
+`accounts.statusDisconnected`
+
+An account needs signing in again; send a reconnect link from accounts.createAuthLink
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Event ID (evt_…); deliveries can repeat it |
+| `type` | `account.status.disconnected` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `account_id` | `string` | Yes | Account the event happened on (acc_…) |
+| `account_provider` | `string` | No | — |
+| `account_name` | `string` | No | — |
+| `account_scope_id` | `string` | No | — |
+| `application_id` | `string` | No | — |
+| `application_production` | `boolean` | No | — |
+| `payload` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+  timestamp: string,
+  product?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  type: account.status.disconnected,
+  created_at: string,
+  account_id: string,
+  account_provider?: string | null,
+  account_name?: string | null,
+  account_scope_id?: string | null,
+  application_id?: string | null,
+  application_production?: boolean | null,
+  payload: {
+    timestamp: string,
+    product?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+unipile({
+    webhookHooks: {
+        accounts: {
+            statusDisconnected: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Status Errored
+
+`accounts.statusErrored`
+
+An account is interrupted by a Unipile, proxy or provider problem
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Event ID (evt_…); deliveries can repeat it |
+| `type` | `account.status.errored` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `account_id` | `string` | Yes | Account the event happened on (acc_…) |
+| `account_provider` | `string` | No | — |
+| `account_name` | `string` | No | — |
+| `account_scope_id` | `string` | No | — |
+| `application_id` | `string` | No | — |
+| `application_production` | `boolean` | No | — |
+| `payload` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+  timestamp: string,
+  product?: string | null,
+  reason?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  type: account.status.errored,
+  created_at: string,
+  account_id: string,
+  account_provider?: string | null,
+  account_name?: string | null,
+  account_scope_id?: string | null,
+  application_id?: string | null,
+  application_production?: boolean | null,
+  payload: {
+    timestamp: string,
+    product?: string | null,
+    reason?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+unipile({
+    webhookHooks: {
+        accounts: {
+            statusErrored: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Status Partial
+
+`accounts.statusPartial`
+
+A multi-product account has one product running and another needing sign-in
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Event ID (evt_…); deliveries can repeat it |
+| `type` | `account.status.partial` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `account_id` | `string` | Yes | Account the event happened on (acc_…) |
+| `account_provider` | `string` | No | — |
+| `account_name` | `string` | No | — |
+| `account_scope_id` | `string` | No | — |
+| `application_id` | `string` | No | — |
+| `application_production` | `boolean` | No | — |
+| `payload` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+  timestamp: string,
+  product?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  type: account.status.partial,
+  created_at: string,
+  account_id: string,
+  account_provider?: string | null,
+  account_name?: string | null,
+  account_scope_id?: string | null,
+  application_id?: string | null,
+  application_production?: boolean | null,
+  payload: {
+    timestamp: string,
+    product?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+unipile({
+    webhookHooks: {
+        accounts: {
+            statusPartial: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Status Running
+
+`accounts.statusRunning`
+
+An account (or one of its products) is working again
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Event ID (evt_…); deliveries can repeat it |
+| `type` | `account.status.running` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `account_id` | `string` | Yes | Account the event happened on (acc_…) |
+| `account_provider` | `string` | No | — |
+| `account_name` | `string` | No | — |
+| `account_scope_id` | `string` | No | — |
+| `application_id` | `string` | No | — |
+| `application_production` | `boolean` | No | — |
+| `payload` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+  timestamp: string,
+  product?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  type: account.status.running,
+  created_at: string,
+  account_id: string,
+  account_provider?: string | null,
+  account_name?: string | null,
+  account_scope_id?: string | null,
+  application_id?: string | null,
+  application_production?: boolean | null,
+  payload: {
+    timestamp: string,
+    product?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+unipile({
+    webhookHooks: {
+        accounts: {
+            statusRunning: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Unlocked
+
+`accounts.unlocked`
+
+API access to an account was restored
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Event ID (evt_…); deliveries can repeat it |
+| `type` | `account.unlocked` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `account_id` | `string` | Yes | Account the event happened on (acc_…) |
+| `account_provider` | `string` | No | — |
+| `account_name` | `string` | No | — |
+| `account_scope_id` | `string` | No | — |
+| `application_id` | `string` | No | — |
+| `application_production` | `boolean` | No | — |
+| `payload` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+  timestamp: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  type: account.unlocked,
+  created_at: string,
+  account_id: string,
+  account_provider?: string | null,
+  account_name?: string | null,
+  account_scope_id?: string | null,
+  application_id?: string | null,
+  application_production?: boolean | null,
+  payload: {
+    timestamp: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+unipile({
+    webhookHooks: {
+        accounts: {
+            unlocked: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Messages
+
+### New
+
+`messages.new`
+
+A message was received or sent in a chat (check payload.is_sender)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Event ID (evt_…); deliveries can repeat it |
+| `type` | `message.new` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `account_id` | `string` | Yes | Account the event happened on (acc_…) |
+| `account_provider` | `string` | No | — |
+| `account_name` | `string` | No | — |
+| `account_scope_id` | `string` | No | — |
+| `application_id` | `string` | No | — |
+| `application_production` | `boolean` | No | — |
+| `payload` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+  object?: string | null,
+  id: string,
+  chat_id: string,
+  sender_id: string,
+  text?: string | null,
+  timestamp: string,
+  is_sender?: boolean | null,
+  is_seen?: boolean | null,
+  is_delivered?: boolean | null,
+  is_deleted?: boolean | null,
+  is_edited?: boolean | null,
+  is_event?: boolean | null,
+  provider?: string | null,
+  attachments?: any[] | null,
+  sender?: {
+    id: string,
+    object?: string | null,
+    type?: string | null,
+    public_identifier?: string | null,
+    display_name?: string | null,
+    first_name?: string | null,
+    last_name?: string | null,
+    profile_url?: string | null,
+    public_picture_url?: string | null,
+    description?: string | null,
+    specifics?: {
+      location?: string | null,
+      network_distance?: string | null,
+      industry?: string | null,
+      is_following?: boolean | null,
+      followers_count?: number | null,
+      relations_count?: number | null,
+      shared_relations_count?: number | null,
+      is_premium?: boolean | null,
+      is_verified?: boolean | null
+    } | null
+  } | null,
+  quoted?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  type: message.new,
+  created_at: string,
+  account_id: string,
+  account_provider?: string | null,
+  account_name?: string | null,
+  account_scope_id?: string | null,
+  application_id?: string | null,
+  application_production?: boolean | null,
+  payload: {
+    object?: string | null,
+    id: string,
+    chat_id: string,
+    sender_id: string,
+    text?: string | null,
+    timestamp: string,
+    is_sender?: boolean | null,
+    is_seen?: boolean | null,
+    is_delivered?: boolean | null,
+    is_deleted?: boolean | null,
+    is_edited?: boolean | null,
+    is_event?: boolean | null,
+    provider?: string | null,
+    attachments?: any[] | null,
+    sender?: {
+      id: string,
+      object?: string | null,
+      type?: string | null,
+      public_identifier?: string | null,
+      display_name?: string | null,
+      first_name?: string | null,
+      last_name?: string | null,
+      profile_url?: string | null,
+      public_picture_url?: string | null,
+      description?: string | null,
+      specifics?: {
+        location?: string | null,
+        network_distance?: string | null,
+        industry?: string | null,
+        is_following?: boolean | null,
+        followers_count?: number | null,
+        relations_count?: number | null,
+        shared_relations_count?: number | null,
+        is_premium?: boolean | null,
+        is_verified?: boolean | null
+      } | null
+    } | null,
+    quoted?: {
+    } | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+unipile({
+    webhookHooks: {
+        messages: {
+            new: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Receipt Read
+
+`messages.receiptRead`
+
+Someone read a message the account sent
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Event ID (evt_…); deliveries can repeat it |
+| `type` | `message.receipt.read` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `account_id` | `string` | Yes | Account the event happened on (acc_…) |
+| `account_provider` | `string` | No | — |
+| `account_name` | `string` | No | — |
+| `account_scope_id` | `string` | No | — |
+| `application_id` | `string` | No | — |
+| `application_production` | `boolean` | No | — |
+| `payload` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+  chat_id: string,
+  message_id: string,
+  user_id: string,
+  timestamp: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  type: message.receipt.read,
+  created_at: string,
+  account_id: string,
+  account_provider?: string | null,
+  account_name?: string | null,
+  account_scope_id?: string | null,
+  application_id?: string | null,
+  application_production?: boolean | null,
+  payload: {
+    chat_id: string,
+    message_id: string,
+    user_id: string,
+    timestamp: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+unipile({
+    webhookHooks: {
+        messages: {
+            receiptRead: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Relations
+
+### New
+
+`relations.new`
+
+A new 1st-degree relation, usually an accepted invitation (LinkedIn can report it up to 6 hours late)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Event ID (evt_…); deliveries can repeat it |
+| `type` | `relation.new` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `account_id` | `string` | Yes | Account the event happened on (acc_…) |
+| `account_provider` | `string` | No | — |
+| `account_name` | `string` | No | — |
+| `account_scope_id` | `string` | No | — |
+| `application_id` | `string` | No | — |
+| `application_production` | `boolean` | No | — |
+| `payload` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+  object?: string | null,
+  id: string,
+  created_at?: string | null,
+  user: {
+    id: string,
+    object?: string | null,
+    type?: string | null,
+    public_identifier?: string | null,
+    display_name?: string | null,
+    first_name?: string | null,
+    last_name?: string | null,
+    profile_url?: string | null,
+    public_picture_url?: string | null,
+    description?: string | null,
+    specifics?: {
+      location?: string | null,
+      network_distance?: string | null,
+      industry?: string | null,
+      is_following?: boolean | null,
+      followers_count?: number | null,
+      relations_count?: number | null,
+      shared_relations_count?: number | null,
+      is_premium?: boolean | null,
+      is_verified?: boolean | null
+    } | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  type: relation.new,
+  created_at: string,
+  account_id: string,
+  account_provider?: string | null,
+  account_name?: string | null,
+  account_scope_id?: string | null,
+  application_id?: string | null,
+  application_production?: boolean | null,
+  payload: {
+    object?: string | null,
+    id: string,
+    created_at?: string | null,
+    user: {
+      id: string,
+      object?: string | null,
+      type?: string | null,
+      public_identifier?: string | null,
+      display_name?: string | null,
+      first_name?: string | null,
+      last_name?: string | null,
+      profile_url?: string | null,
+      public_picture_url?: string | null,
+      description?: string | null,
+      specifics?: {
+        location?: string | null,
+        network_distance?: string | null,
+        industry?: string | null,
+        is_following?: boolean | null,
+        followers_count?: number | null,
+        relations_count?: number | null,
+        shared_relations_count?: number | null,
+        is_premium?: boolean | null,
+        is_verified?: boolean | null
+      } | null
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+unipile({
+    webhookHooks: {
+        relations: {
+            new: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
