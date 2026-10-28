@@ -1,18 +1,20 @@
 ---
 title: Overview
-description: "LinkedIn outreach through Unipile API v2. Read profiles, send and track invitations, list connections, and run chats on connected LinkedIn accounts, with signed webhooks for accepted invitations, new messages and account status."
+description: "Unipile API v2 in one plugin. Messaging on LinkedIn, WhatsApp, Instagram and Telegram, email on Gmail, Outlook and IMAP, Google and Outlook calendars, LinkedIn and Instagram posts, LinkedIn prospecting with Sales Navigator, and signed webhooks for every Unipile event."
 ---
 
 Use **Unipile** through Corsair: one client, typed API calls, and incoming webhooks.
 
-Every LinkedIn call takes the `account_id` (acc_…) of a connected account; connect one with `accounts.createAuthLink` (credentials, cookies or the UniLogin extension). LinkedIn limits invitations to roughly 100-200 a week and profile views to about 80-100 a day, and Unipile does not pace sends for you. Sends (`relationRequests.create`, `chats.start`, `messages.send`) and profile views (`users.getProfile`, `users.visitProfile`) are never retried after a timeout or 5xx, so a lost answer cannot cause a duplicate or spend another view. If Unipile accepts a write but answers with an unexpected body, the call returns `{ parse_warning, raw }` instead of throwing; check `result.parse_warning !== undefined` before reading fields, and do not resend.
+Every account-level call takes the `account_id` (acc_…) of a connected account; connect one with `accounts.createAuthLink` (LinkedIn can sign in with credentials, cookies or the UniLogin extension). One plugin covers 148 operations: chats and messages on any messaging provider, emails, drafts and folders, calendars and events, posts and comments, LinkedIn searches, Sales Navigator lists, and admin (scopes, API keys, webhooks). On LinkedIn, chats are listed with `inboxes.listChats` and started with `inboxes.startChat` (inbox `CLASSIC_PRIMARY`); `chats.list` and `chats.start` cover WhatsApp, Telegram and Instagram.
 
-Managing webhook endpoints needs a Unipile **Service API Key**; Account API Keys get `403 api/insufficient_permissions`. Deliveries are verified with the endpoint's signing secret (`unipile-signature` header, HMAC-SHA256 of the raw body), so pass the raw request body to Corsair and set `webhookSecret` (or store the webhook signature) to that secret. Only `webhookEndpoints.create` returns the secret, once; `list`, `get` and `update` report `secret_set` instead, so store it when you create the endpoint.
+Writes are never retried after a timeout or 5xx, so a lost answer cannot cause a duplicate message, email, invitation or post. LinkedIn calls that spend a daily budget (profile and company views, post reads, searches) are only retried after Unipile's own 429. Unipile does not pace sends for you: LinkedIn allows roughly 100-200 invitations a week and about 80-100 profile views a day. If Unipile accepts a write but answers with an unexpected body, the call returns `{ parse_warning, raw }` instead of throwing; check `result.parse_warning !== undefined` before reading fields, and do not resend. Pictures and attachments return their type and size unless `include_content` is set.
+
+Scopes, API keys and webhook endpoints need a Unipile **Service API Key**; Account API Keys get `403 api/insufficient_permissions`. Deliveries are verified with the endpoint's signing secret (`unipile-signature` header, HMAC-SHA256 of the raw body), so pass the raw request body to Corsair and set `webhookSecret` (or store the webhook signature) to that secret. Secrets are returned once: `webhookEndpoints.create` and `apiKeys.create`; other calls never show them.
 
 **What you get:**
 
-- 27 typed API operations
-- 13 incoming webhook event types
+- 148 typed API operations
+- 40 incoming webhook event types
 
 ## Setup
 
