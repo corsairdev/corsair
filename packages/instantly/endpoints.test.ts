@@ -600,13 +600,13 @@ describe('input validation', () => {
 			},
 		],
 		[
-			'a time zone Instantly does not accept',
+			"a time zone with no exact match on Instantly's list (Pacific)",
 			Campaigns.create,
 			{
 				name: 'x',
 				campaign_schedule: {
 					schedules: [
-						{ ...schedule.schedules[0], timezone: 'America/New_York' },
+						{ ...schedule.schedules[0], timezone: 'America/Los_Angeles' },
 					],
 				},
 			},
@@ -714,6 +714,68 @@ describe('lead safeguards', () => {
 			lead_email: 'jordan@acme-logistics.com',
 			interest_value: null,
 		});
+	});
+});
+
+describe('campaign time zones', () => {
+	const scheduleIn = (timezone: string) => ({
+		schedules: [{ ...schedule.schedules[0], timezone }],
+	});
+
+	function sentTimezone() {
+		const body = lastRequest().body as {
+			campaign_schedule: { schedules: { timezone: string }[] };
+		};
+		return body.campaign_schedule.schedules[0]?.timezone;
+	}
+
+	it('sends America/New_York as America/Detroit on create', async () => {
+		respond(campaign);
+		await invoke(Campaigns.create, {
+			name: 'East Coast IT',
+			campaign_schedule: scheduleIn('America/New_York'),
+		});
+		expect(sentTimezone()).toBe('America/Detroit');
+	});
+
+	it('maps an alias in an updated schedule and keeps listed zones', async () => {
+		respond(campaign);
+		await invoke(Campaigns.update, {
+			id: CAMPAIGN_ID,
+			campaign_schedule: {
+				schedules: [
+					{ ...schedule.schedules[0], timezone: 'Europe/London' },
+					{
+						...schedule.schedules[0],
+						name: 'Chicago',
+						timezone: 'America/Chicago',
+					},
+				],
+			},
+		});
+		const body = lastRequest().body as {
+			campaign_schedule: { schedules: { timezone: string }[] };
+		};
+		expect(body.campaign_schedule.schedules.map((s) => s.timezone)).toEqual([
+			'Europe/Isle_of_Man',
+			'America/Chicago',
+		]);
+	});
+
+	it('leaves the schedule out of an update that does not change it', async () => {
+		respond(campaign);
+		await invoke(Campaigns.update, { id: CAMPAIGN_ID, daily_limit: 40 });
+		expect(lastRequest().body).toEqual({ daily_limit: 40 });
+	});
+
+	it('explains why Pacific time is rejected', async () => {
+		await expect(
+			invoke(Campaigns.create, {
+				name: 'West Coast',
+				campaign_schedule: scheduleIn('America/Los_Angeles'),
+			}),
+		).rejects.toThrow(/America\/Dawson stays at UTC-7/);
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 });
 

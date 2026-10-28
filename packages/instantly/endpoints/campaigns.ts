@@ -2,6 +2,23 @@ import type { InstantlyEndpoints } from '..';
 import { segment } from '../client';
 import { call } from './call';
 import { saveCampaigns } from './store';
+import { toInstantlyTimezone } from './timezones';
+import type { InstantlyParsedInputs } from './types';
+
+type CampaignSchedule =
+	InstantlyParsedInputs['campaignsCreate']['campaign_schedule'];
+
+// Aliases such as America/New_York are sent as the listed zone Instantly
+// accepts (America/Detroit); see INSTANTLY_TIMEZONE_ALIASES.
+function withInstantlyTimezones(schedule: CampaignSchedule): CampaignSchedule {
+	return {
+		...schedule,
+		schedules: schedule.schedules.map((entry) => ({
+			...entry,
+			timezone: toInstantlyTimezone(entry.timezone),
+		})),
+	};
+}
 
 export const list: InstantlyEndpoints['campaignsList'] = (ctx, input) =>
 	call(
@@ -40,7 +57,14 @@ export const create: InstantlyEndpoints['campaignsCreate'] = (ctx, input) =>
 		'campaignsCreate',
 		'campaigns.create',
 		input,
-		(body) => ({ method: 'POST', path: '/campaigns', body }),
+		(body) => ({
+			method: 'POST',
+			path: '/campaigns',
+			body: {
+				...body,
+				campaign_schedule: withInstantlyTimezones(body.campaign_schedule),
+			},
+		}),
 		{
 			log: (_, result) => ({ campaignId: result.id }),
 			after: (result) => saveCampaigns(ctx, [result]),
@@ -53,10 +77,15 @@ export const update: InstantlyEndpoints['campaignsUpdate'] = (ctx, input) =>
 		'campaignsUpdate',
 		'campaigns.update',
 		input,
-		({ id, ...body }) => ({
+		({ id, campaign_schedule, ...body }) => ({
 			method: 'PATCH',
 			path: `/campaigns/${segment(id)}`,
-			body,
+			body: {
+				...body,
+				campaign_schedule: campaign_schedule
+					? withInstantlyTimezones(campaign_schedule)
+					: undefined,
+			},
 		}),
 		{
 			log: ({ id, ...changes }) => ({

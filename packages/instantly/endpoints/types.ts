@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { INSTANTLY_TIMEZONES } from './timezones';
+import { ACCEPTED_TIMEZONES, TIMEZONE_ALIAS_SUMMARY } from './timezones';
 
 // Inputs follow https://api.instantly.ai/openapi/api_v2.json and keep its
 // snake_case names, so they match Instantly's docs. Outputs type the fields
@@ -232,9 +232,12 @@ const ScheduleSchema = z.object({
 			'Days to send on: "0" is Sunday through "6" Saturday, e.g. { "1": true, ..., "5": true } for weekdays',
 		),
 	timezone: z
-		.enum(INSTANTLY_TIMEZONES)
+		.enum(ACCEPTED_TIMEZONES, {
+			error:
+				"Not a time zone Instantly accepts. Use one from Instantly's list or a mapped alias such as America/New_York. Pacific time (America/Los_Angeles) has no exact match: Instantly's America/Dawson stays at UTC-7 all year.",
+		})
 		.describe(
-			"Instantly's own list, not all of IANA: US Eastern is America/Detroit, US Central America/Chicago, India Asia/Kolkata",
+			`A zone from Instantly's list (not all of IANA), or a common IANA zone it lacks, which is sent as the listed zone with the same offsets and DST rules: ${TIMEZONE_ALIAS_SUMMARY}. Zones with no exact match are rejected, including Pacific time (America/Los_Angeles, America/Vancouver): Instantly's America/Dawson stays at UTC-7 all year`,
 		),
 });
 
