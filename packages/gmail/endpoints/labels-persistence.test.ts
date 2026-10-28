@@ -85,6 +85,7 @@ describe('gmail labels persistence', () => {
 		expect(stored?.data.messagesUnread).toBe(3);
 		expect(stored?.data.messagesTotal).toBe(12);
 		expect(stored?.data.threadsUnread).toBe(2);
+		expect(stored?.data.threadsTotal).toBe(10);
 		expect(console.warn).not.toHaveBeenCalled();
 	});
 
@@ -99,6 +100,7 @@ describe('gmail labels persistence', () => {
 		expect(stored?.data.messagesUnread).toBe(3);
 		expect(stored?.data.messagesTotal).toBe(12);
 		expect(stored?.data.threadsUnread).toBe(2);
+		expect(stored?.data.threadsTotal).toBe(10);
 		expect(console.warn).not.toHaveBeenCalled();
 	});
 
@@ -110,6 +112,24 @@ describe('gmail labels persistence', () => {
 		const stored = await corsair.gmail.db.labels.findByEntityId('Label_1');
 		expect(stored?.data.id).toBe('Label_1');
 		expect(stored?.data.name).toBe('Receipts');
+		expect(console.warn).not.toHaveBeenCalled();
+	});
+
+	it('H: list keeps the stored createdAt', async () => {
+		respondWith('Receipts');
+		await corsair.gmail.db.labels.upsertByEntityId('Label_1', {
+			...fullLabel,
+			createdAt: new Date('2020-01-01T00:00:00Z'),
+		});
+
+		await corsair.gmail.api.labels.list({});
+
+		const stored = await corsair.gmail.db.labels.findByEntityId('Label_1');
+		expect(stored?.data.createdAt).toBeInstanceOf(Date);
+		expect(stored?.data.createdAt?.toISOString()).toBe(
+			'2020-01-01T00:00:00.000Z',
+		);
+		expect(stored?.data.messagesUnread).toBe(3);
 		expect(console.warn).not.toHaveBeenCalled();
 	});
 });
