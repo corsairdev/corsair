@@ -2,6 +2,7 @@ import { AuthMissingError } from '../core/auth/errors/auth-missing';
 import { singleFlight } from '../core/auth/single-flight';
 import { hubApiPost, normalizeHubApiUrl } from './client/http';
 import { parseManagedPricingCredentialsResponse } from './contracts/managed-pricing-api';
+import { runtimeProofHeaders } from './runtime-proof';
 import type { HubConfig } from './types';
 
 /** Separates scope segments — must not appear in encoded field values. */
@@ -156,6 +157,12 @@ export async function getManagedPricingApiKey(
 				operation,
 			},
 			extraHeaders: {
+				...runtimeProofHeaders(ctx.hub, {
+					path: '/managed-pricing/credentials',
+					plugin: ctx.plugin,
+					tenantId: ctx.tenantId,
+					operation,
+				}),
 				'x-corsair-metered-operation': operation,
 			},
 			notFoundMessage: 'Managed pricing is not configured for this project',
