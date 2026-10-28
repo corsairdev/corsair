@@ -34,11 +34,11 @@ pnpm add @corsair-dev/unipile
 | `users.listReactions` | `unipile.api.users.listReactions` | `read` | List the posts a user reacted to (the account owner's by default), with each post |
 | `users.listRelations` | `unipile.api.users.listRelations` | `read` | List a user's 1st-degree connections (the account owner's by default), with optional name search and paging |
 | `users.visitProfile` | `unipile.api.users.visitProfile` | `write` | Report a profile visit to LinkedIn so the member sees you in 'Who viewed your profile', using the notify_visit_token from users.getProfile |
-| `webhookEndpoints.create` | `unipile.api.webhookEndpoints.create` | `write` | Register a URL to receive Unipile events such as relation.new and message.new; returns the signing secret. Needs a Service API Key |
+| `webhookEndpoints.create` | `unipile.api.webhookEndpoints.create` | `write` | Register a URL to receive Unipile events such as relation.new and message.new. Returns the signing secret once, and only here: store it as the plugin webhookSecret right away. Needs a Service API Key |
 | `webhookEndpoints.delete` | `unipile.api.webhookEndpoints.delete` | `destructive` | Delete a Unipile webhook endpoint; its events stop. Needs a Service API Key |
-| `webhookEndpoints.get` | `unipile.api.webhookEndpoints.get` | `read` | Get one Unipile webhook endpoint, including its signing secret. Needs a Service API Key |
-| `webhookEndpoints.list` | `unipile.api.webhookEndpoints.list` | `read` | List the Unipile webhook endpoints, their URLs, events and accounts. Needs a Service API Key |
-| `webhookEndpoints.update` | `unipile.api.webhookEndpoints.update` | `write` | Change a webhook endpoint's URL, events, accounts or description, or enable or disable it. Needs a Service API Key |
+| `webhookEndpoints.get` | `unipile.api.webhookEndpoints.get` | `read` | Get one Unipile webhook endpoint: URL, events, accounts and whether it has a signing secret (the secret is never returned). Needs a Service API Key |
+| `webhookEndpoints.list` | `unipile.api.webhookEndpoints.list` | `read` | List the Unipile webhook endpoints, their URLs, events and accounts (signing secrets are never returned). Needs a Service API Key |
+| `webhookEndpoints.update` | `unipile.api.webhookEndpoints.update` | `write` | Change a webhook endpoint's URL, events, accounts or description, or enable or disable it. Keeps the signing secret, which is not returned. Needs a Service API Key |
 
 ## Auth
 

@@ -655,3 +655,70 @@ describe('Unipile endpoints', () => {
 		).rejects.toThrow();
 	});
 });
+
+describe('Unipile webhook endpoint secrets', () => {
+	const SECRET = webhookEndpoint.secret;
+
+	// unknown: an endpoint result whose keys are inspected.
+	function expectRedacted(endpoint: unknown, secretSet: boolean) {
+		expect(endpoint).not.toHaveProperty('secret');
+		expect(endpoint).toHaveProperty('secret_set', secretSet);
+	}
+
+	it('list never returns a signing secret', async () => {
+		respond({
+			object: 'WebhookEndpoints',
+			data: [webhookEndpoint, { ...webhookEndpoint, id: 'whe_43', secret: '' }],
+			has_more: false,
+		});
+
+		const result = await invoke(WebhookEndpoints.list, {});
+
+		const data = pick(result, 'data') as unknown[];
+		expect(data).toHaveLength(2);
+		expectRedacted(data[0], true);
+		expectRedacted(data[1], false);
+		expect(JSON.stringify(result)).not.toContain(SECRET);
+	});
+
+	it('get never returns the signing secret', async () => {
+		respond(webhookEndpoint);
+
+		const result = await invoke(WebhookEndpoints.get, { id: 'whe_42' });
+
+		expectRedacted(result, true);
+		expect(pick(result, 'url')).toBe('https://example.com/unipile-test');
+		expect(JSON.stringify(result)).not.toContain(SECRET);
+	});
+
+	it('update never returns the signing secret Unipile echoes', async () => {
+		respond({ ...webhookEndpoint, enabled: false });
+
+		const result = await invoke(WebhookEndpoints.update, {
+			id: 'whe_42',
+			enabled: false,
+		});
+
+		expectRedacted(result, true);
+		expect(JSON.stringify(result)).not.toContain(SECRET);
+	});
+
+	it('reports secret_set false when Unipile sends no secret', async () => {
+		const { secret: _secret, ...withoutSecret } = webhookEndpoint;
+		respond(withoutSecret);
+
+		expectRedacted(await invoke(WebhookEndpoints.get, { id: 'whe_42' }), false);
+	});
+
+	it('create returns the secret, and only the log gets ids', async () => {
+		respond(webhookEndpoint);
+
+		const result = await invoke(WebhookEndpoints.create, {
+			url: 'https://example.com/unipile-test',
+			trigger_events: ['relation.new'],
+		});
+
+		expect(pick(result, 'secret')).toBe(SECRET);
+		expect(JSON.stringify(mockLog.mock.calls)).not.toContain(SECRET);
+	});
+});

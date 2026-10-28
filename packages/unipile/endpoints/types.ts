@@ -364,20 +364,38 @@ const UserProfileSchema = z
 	})
 	.loose();
 
+const WebhookEndpointFields = {
+	object: str,
+	id: z.string(),
+	url: z.string(),
+	enabled: bool,
+	description: str,
+	trigger_events: z.array(z.string()),
+	application_id: str,
+	account_ids: strList,
+	account_targets: looseList,
+};
+
+// list, get and update: Unipile returns the signing secret on every read, but
+// the plugin only reports whether one exists, so read access cannot leak it.
 const WebhookEndpointSchema = z
 	.object({
-		object: str,
-		id: z.string(),
-		url: z.string(),
-		enabled: bool,
-		description: str,
-		trigger_events: z.array(z.string()),
+		...WebhookEndpointFields,
+		secret_set: z
+			.boolean()
+			.describe(
+				'Whether the endpoint has a signing secret. Only webhookEndpoints.create returns the secret itself',
+			),
+	})
+	.loose();
+
+// create: the one response that carries the secret.
+const CreatedWebhookEndpointSchema = z
+	.object({
+		...WebhookEndpointFields,
 		secret: str.describe(
-			'Signing secret for the unipile-signature header; set it as the plugin webhookSecret',
+			'Signing secret for the unipile-signature header. Shown only once, here: store it now as the plugin webhookSecret (or the stored webhook signature). list, get and update never return it',
 		),
-		application_id: str,
-		account_ids: strList,
-		account_targets: looseList,
 	})
 	.loose();
 
@@ -912,7 +930,7 @@ export const UnipileEndpointOutputSchemas = {
 	postsListComments: page(CommentSchema),
 	webhookEndpointsList: WebhookEndpointsListResponseSchema,
 	webhookEndpointsGet: WebhookEndpointSchema,
-	webhookEndpointsCreate: WebhookEndpointSchema,
+	webhookEndpointsCreate: CreatedWebhookEndpointSchema,
 	webhookEndpointsUpdate: WebhookEndpointSchema,
 	webhookEndpointsDelete: SuccessAck,
 } as const;
@@ -938,6 +956,9 @@ export type UnipileChat = z.infer<typeof ChatSchema>;
 export type UnipileMessage = z.infer<typeof MessageSchema>;
 export type UnipilePost = z.infer<typeof PostSchema>;
 export type UnipileWebhookEndpoint = z.infer<typeof WebhookEndpointSchema>;
+export type UnipileCreatedWebhookEndpoint = z.infer<
+	typeof CreatedWebhookEndpointSchema
+>;
 export type UnipileWebhookEventType = (typeof WebhookEventTypes)[number];
 export type AccountsCreateAuthLinkInput =
 	UnipileEndpointInputs['accountsCreateAuthLink'];

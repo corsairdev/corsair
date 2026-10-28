@@ -1564,7 +1564,7 @@ await corsair.unipile.api.users.visitProfile({ account_id: 'acc_9f2c1d7e', token
 
 `webhookEndpoints.create`
 
-Register a URL to receive Unipile events such as relation.new and message.new; returns the signing secret. Needs a Service API Key
+Register a URL to receive Unipile events such as relation.new and message.new. Returns the signing secret once, and only here: store it as the plugin webhookSecret right away. Needs a Service API Key
 
 **Risk:** `write`
 
@@ -1593,10 +1593,10 @@ await corsair.unipile.api.webhookEndpoints.create({ url: 'https://your-app.examp
 | `enabled` | `boolean` | No | — |
 | `description` | `string` | No | — |
 | `trigger_events` | `string[]` | Yes | — |
-| `secret` | `string` | No | Signing secret for the unipile-signature header; set it as the plugin webhookSecret |
 | `application_id` | `string` | No | — |
 | `account_ids` | `string[]` | No | — |
 | `account_targets` | `any[]` | No | — |
+| `secret` | `string` | No | Signing secret for the unipile-signature header. Shown only once, here: store it now as the plugin webhookSecret (or the stored webhook signature). list, get and update never return it |
 
 
 
@@ -1636,7 +1636,7 @@ await corsair.unipile.api.webhookEndpoints.delete({ id: 'whe_42' });
 
 `webhookEndpoints.get`
 
-Get one Unipile webhook endpoint, including its signing secret. Needs a Service API Key
+Get one Unipile webhook endpoint: URL, events, accounts and whether it has a signing secret (the secret is never returned). Needs a Service API Key
 
 **Risk:** `read`
 
@@ -1662,10 +1662,10 @@ await corsair.unipile.api.webhookEndpoints.get({ id: 'whe_42' });
 | `enabled` | `boolean` | No | — |
 | `description` | `string` | No | — |
 | `trigger_events` | `string[]` | Yes | — |
-| `secret` | `string` | No | Signing secret for the unipile-signature header; set it as the plugin webhookSecret |
 | `application_id` | `string` | No | — |
 | `account_ids` | `string[]` | No | — |
 | `account_targets` | `any[]` | No | — |
+| `secret_set` | `boolean` | Yes | Whether the endpoint has a signing secret. Only webhookEndpoints.create returns the secret itself |
 
 
 
@@ -1675,7 +1675,7 @@ await corsair.unipile.api.webhookEndpoints.get({ id: 'whe_42' });
 
 `webhookEndpoints.list`
 
-List the Unipile webhook endpoints, their URLs, events and accounts. Needs a Service API Key
+List the Unipile webhook endpoints, their URLs, events and accounts (signing secrets are never returned). Needs a Service API Key
 
 **Risk:** `read`
 
@@ -1711,10 +1711,10 @@ await corsair.unipile.api.webhookEndpoints.list({});
   enabled?: boolean | null,
   description?: string | null,
   trigger_events: string[],
-  secret?: string | null,
   application_id?: string | null,
   account_ids?: string[] | null,
-  account_targets?: any[] | null
+  account_targets?: any[] | null,
+  secret_set: boolean
 }[]
 ```
 </Accordion>
@@ -1728,7 +1728,7 @@ await corsair.unipile.api.webhookEndpoints.list({});
 
 `webhookEndpoints.update`
 
-Change a webhook endpoint's URL, events, accounts or description, or enable or disable it. Needs a Service API Key
+Change a webhook endpoint's URL, events, accounts or description, or enable or disable it. Keeps the signing secret, which is not returned. Needs a Service API Key
 
 **Risk:** `write`
 
@@ -1759,10 +1759,10 @@ await corsair.unipile.api.webhookEndpoints.update({ id: 'whe_42', enabled: false
 | `enabled` | `boolean` | No | — |
 | `description` | `string` | No | — |
 | `trigger_events` | `string[]` | Yes | — |
-| `secret` | `string` | No | Signing secret for the unipile-signature header; set it as the plugin webhookSecret |
 | `application_id` | `string` | No | — |
 | `account_ids` | `string[]` | No | — |
 | `account_targets` | `any[]` | No | — |
+| `secret_set` | `boolean` | Yes | Whether the endpoint has a signing secret. Only webhookEndpoints.create returns the secret itself |
 
 
 

@@ -61,6 +61,10 @@ export async function call<K extends UnipileOperation>(
 	// unknown: raw caller input, parsed below by the operation's input schema.
 	input: unknown,
 	toRequest: (parsed: ParsedInput<K>) => UnipileRequest,
+	// unknown: the raw response body, before the output schema parses it.
+	// Output schemas are loose, so fields that must not reach the caller
+	// (such as a signing secret) are removed here rather than by the schema.
+	prepare: (raw: unknown) => unknown = (raw) => raw,
 ): Promise<UnipileEndpointOutputs[K]> {
 	// Indexing the schema map with a generic key yields the union of every
 	// schema; the cast restores the one `operation` names.
@@ -69,7 +73,7 @@ export async function call<K extends UnipileOperation>(
 	) as ParsedInput<K>;
 	const raw = await makeUnipileRequest(ctx.key, toRequest(parsed));
 	const result = UnipileEndpointOutputSchemas[operation].parse(
-		raw,
+		prepare(raw),
 	) as UnipileEndpointOutputs[K];
 
 	await logEventFromContext(

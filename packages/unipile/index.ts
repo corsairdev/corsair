@@ -461,22 +461,22 @@ const unipileEndpointMeta = {
 	'webhookEndpoints.list': {
 		riskLevel: 'read',
 		description:
-			'List the Unipile webhook endpoints, their URLs, events and accounts. Needs a Service API Key',
+			'List the Unipile webhook endpoints, their URLs, events and accounts (signing secrets are never returned). Needs a Service API Key',
 	},
 	'webhookEndpoints.get': {
 		riskLevel: 'read',
 		description:
-			'Get one Unipile webhook endpoint, including its signing secret. Needs a Service API Key',
+			'Get one Unipile webhook endpoint: URL, events, accounts and whether it has a signing secret (the secret is never returned). Needs a Service API Key',
 	},
 	'webhookEndpoints.create': {
 		riskLevel: 'write',
 		description:
-			'Register a URL to receive Unipile events such as relation.new and message.new; returns the signing secret. Needs a Service API Key',
+			'Register a URL to receive Unipile events such as relation.new and message.new. Returns the signing secret once, and only here: store it as the plugin webhookSecret right away. Needs a Service API Key',
 	},
 	'webhookEndpoints.update': {
 		riskLevel: 'write',
 		description:
-			"Change a webhook endpoint's URL, events, accounts or description, or enable or disable it. Needs a Service API Key",
+			"Change a webhook endpoint's URL, events, accounts or description, or enable or disable it. Keeps the signing secret, which is not returned. Needs a Service API Key",
 	},
 	'webhookEndpoints.delete': {
 		riskLevel: 'destructive',
@@ -556,6 +556,7 @@ export type {
 	RelationRequestsCreateInput,
 	UnipileAccount,
 	UnipileChat,
+	UnipileCreatedWebhookEndpoint,
 	UnipileEndpointInputs,
 	UnipileEndpointOutputs,
 	UnipileMessage,
