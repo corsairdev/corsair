@@ -30,6 +30,7 @@ import type {
 } from '../packages/corsair/core/inspect/index.ts';
 import { introspectPluginForDocs } from '../packages/corsair/core/inspect/index.ts';
 import type { CorsairPlugin } from '../packages/corsair/core/plugins/index.ts';
+import { escapeMdxText } from './mdx-escape.ts';
 
 /** Optional per-plugin overrides for the doc generator (next to package.json). */
 const PLUGIN_DOCS_FILE = 'plugin-docs.yaml';
@@ -1466,7 +1467,7 @@ ${renderTypeAccordionItem(kind, shape.type)}
 				detailBlocks.push(renderTypeAccordionItem(f.key, f.type));
 			}
 			const cellType = tableTypeDisplay(f.type);
-			return `| \`${escapeCell(f.key)}\` | \`${escapeCell(cellType)}\` | ${f.optional ? 'No' : 'Yes'} | ${escapeCell(f.description) || '—'} |`;
+			return `| \`${escapeCell(f.key)}\` | \`${escapeCell(cellType)}\` | ${f.optional ? 'No' : 'Yes'} | ${escapeCell(escapeMdxText(f.description)) || '—'} |`;
 		})
 		.join('\n');
 	const detailsSection =
@@ -1523,7 +1524,7 @@ function buildApiMdx(
 				ep.riskLevel !== undefined
 					? `\n\n**Risk:** \`${ep.riskLevel}\`${ep.irreversible ? ' · **Irreversible**' : ''}`
 					: '';
-			const desc = ep.description ? `\n\n${ep.description}` : '';
+			const desc = ep.description ? `\n\n${escapeMdxText(ep.description)}` : '';
 			sections.push(`### ${method}`);
 			sections.push('');
 			sections.push(`\`${ep.shortPath}\`${desc}${risk}`);

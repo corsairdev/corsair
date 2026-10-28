@@ -383,7 +383,7 @@ await corsair.betterstack.api.heartbeats.create({});
 | `heartbeat_group_id` | `number` | No | Set this attribute if you want to add this heartbeat to a heartbeat group |
 | `sort_index` | `number` | No | An index controlling the position of a heartbeat in the heartbeat group. |
 | `paused` | `boolean` | No | Set to true to pause monitoring — we won't notify you about downtime. Set to false to resume monitoring |
-| `server_timezone` | `string` | No | Optional IANA timezone (e.g. Europe/Berlin) used for DST-aware missed-beat detection. Requires period >= 3600 (1 hour) |
+| `server_timezone` | `string` | No | Optional IANA timezone (e.g. Europe/Berlin) used for DST-aware missed-beat detection. Requires period &gt;= 3600 (1 hour) |
 | `maintenance_days` | `string[]` | No | An array of maintenance days to set. If a maintenance window is overnight both affected days should be set. Allowed values are ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'] or  |
 | `maintenance_from` | `string` | No | Start of the maintenance window each day. We won't check your website during this window. Example: '01:00:00' |
 | `maintenance_to` | `string` | No | End of the maintenance window each day. Example: '03:00:00' |
@@ -583,7 +583,7 @@ await corsair.betterstack.api.heartbeats.update({});
 | `maintenance_to` | `string` | No | End of the maintenance window each day. Example: '03:00:00' |
 | `maintenance_timezone` | `string` | No | The timezone to use for the maintenance window each day. Defaults to UTC. The accepted values can be found in the Rails TimeZone documentation. https://api.rubyonrails.org/classes/ |
 | `paused` | `boolean` | No | Set to true to pause monitoring — we won't notify you about downtime. Set to false to resume monitoring |
-| `server_timezone` | `string` | No | Optional IANA timezone (e.g. Europe/Berlin) used for DST-aware missed-beat detection. Requires period >= 3600 (1 hour). Pass an empty string or null to clear |
+| `server_timezone` | `string` | No | Optional IANA timezone (e.g. Europe/Berlin) used for DST-aware missed-beat detection. Requires period &gt;= 3600 (1 hour). Pass an empty string or null to clear |
 | `policy_id` | `number` | No | Set the escalation policy for the monitor. |
 
 
@@ -2597,7 +2597,7 @@ await corsair.betterstack.api.monitors.create({});
 | `remember_cookies` | `boolean` | No | Do you want to keep cookies when redirecting? |
 | `playwright_script` | `string` | No | For Playwright monitors, the JavaScript source code of the scenario. |
 | `scenario_name` | `string` | No | For Playwright monitors, the scenario name identifying the monitor in the UI. |
-| `environment_variables` | `object` | No | For Playwright monitors, the environment variables that can be used in the scenario. Example: { \\"PASSWORD\\": \\"passw0rd\\" }. |
+| `environment_variables` | `object` | No | For Playwright monitors, the environment variables that can be used in the scenario. Example: &#123; \\"PASSWORD\\": \\"passw0rd\\" &#125;. |
 | `proxy_host` | `string` | No | The host of the proxy server to use for the monitor. Can include authentication credentials (e.g., user:pass@proxy.example.com). |
 | `proxy_port` | `string` | No | The port of the proxy server to use for the monitor. |
 
@@ -2882,7 +2882,7 @@ await corsair.betterstack.api.monitors.update({});
 | `remember_cookies` | `boolean` | No | Do you want to keep cookies when redirecting? |
 | `playwright_script` | `string` | No | For Playwright monitors, the JavaScript source code of the scenario. |
 | `scenario_name` | `string` | No | For Playwright monitors, the scenario name identifying the monitor in the UI. |
-| `environment_variables` | `object` | No | For Playwright monitors, the environment variables that can be used in the scenario. Example: { \\"PASSWORD\\": \\"passw0rd\\" }. |
+| `environment_variables` | `object` | No | For Playwright monitors, the environment variables that can be used in the scenario. Example: &#123; \\"PASSWORD\\": \\"passw0rd\\" &#125;. |
 | `proxy_host` | `string` | No | The host of the proxy server to use for the monitor. Can include authentication credentials (e.g., user:pass@proxy.example.com). |
 | `proxy_port` | `string` | No | The port of the proxy server to use for the monitor. |
 
