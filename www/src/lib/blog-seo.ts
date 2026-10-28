@@ -99,14 +99,17 @@ export function faqsVisibleInBody(faqs: BlogFaq[], body: PortableTextBlock[]) {
 			.map(blockText)
 			.join(' '),
 	);
+	// Pad with spaces so matches land on word boundaries: an answer of "Yes."
+	// must not match "Yesterday" in the body.
+	const padded = ` ${bodyText} `;
 	return faqs.filter((faq) => {
 		const question = normalize(faq.question);
 		const answer = normalize(faq.answer);
 		return (
 			question.length > 0 &&
 			answer.length > 0 &&
-			bodyText.includes(question) &&
-			bodyText.includes(answer)
+			padded.includes(` ${question} `) &&
+			padded.includes(` ${answer} `)
 		);
 	});
 }

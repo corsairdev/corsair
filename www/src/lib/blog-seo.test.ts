@@ -99,6 +99,17 @@ describe('faqsVisibleInBody', () => {
 		assert.deepEqual(faqsVisibleInBody(faqs, questionOnly), []);
 	});
 
+	it('matches the answer as whole words', () => {
+		const short = [{ id: 'y', question: 'Is this supported?', answer: 'Yes.' }];
+		const body = [
+			block('normal', 'Is this supported?'),
+			block('normal', 'Yesterday we tested it.'),
+		];
+		assert.deepEqual(faqsVisibleInBody(short, body), []);
+		const visible = [...body, block('normal', 'Yes.')];
+		assert.equal(faqsVisibleInBody(short, visible).length, 1);
+	});
+
 	it('drops everything when the body has no FAQ', () => {
 		assert.deepEqual(faqsVisibleInBody(faqs, [block('normal', 'Intro')]), []);
 		assert.deepEqual(faqsVisibleInBody(faqs, []), []);
