@@ -25,11 +25,14 @@ export const listServices: RenderEndpoints['listServices'] = async (
 	return response;
 };
 
+export const createService: RenderEndpoints['createService'] = (ctx, input) =>
+	makeRenderRequest('/v1/services', ctx.key, { method: 'POST', body: input });
+
 const serviceRequest = async <T>(
 	ctx: { key: string },
 	serviceId: string,
 	path: string,
-	method: 'GET' | 'POST' | 'PATCH' | 'DELETE',
+	method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE',
 	// unknown: service write fields differ by operation and are schema-validated.
 	body?: Record<string, unknown>,
 ) =>
@@ -195,3 +198,117 @@ export const resumeService: RenderEndpoints['resumeService'] = async (
 	ctx,
 	input,
 ) => serviceRequest<unknown>(ctx, input.serviceId, '/resume', 'POST');
+
+export const scaleService: RenderEndpoints['scaleService'] = (ctx, input) =>
+	serviceRequest<unknown>(ctx, input.serviceId, '/scale', 'POST', {
+		numInstances: input.numInstances,
+	});
+
+export const updateAutoscaling: RenderEndpoints['updateAutoscaling'] = (
+	ctx,
+	input,
+) => {
+	const { serviceId, ...body } = input;
+	return serviceRequest(ctx, serviceId, '/autoscaling', 'PUT', body);
+};
+
+export const deleteAutoscaling: RenderEndpoints['deleteAutoscaling'] = (
+	ctx,
+	input,
+) => serviceRequest(ctx, input.serviceId, '/autoscaling', 'DELETE');
+
+export const createServicePreview: RenderEndpoints['createServicePreview'] = (
+	ctx,
+	input,
+) => {
+	const { serviceId, ...body } = input;
+	return serviceRequest(ctx, serviceId, '/preview', 'POST', body);
+};
+
+export const deleteServiceHeader: RenderEndpoints['deleteServiceHeader'] = (
+	ctx,
+	input,
+) =>
+	serviceRequest(
+		ctx,
+		input.serviceId,
+		`/headers/${encodeServiceId(input.headerId)}`,
+		'DELETE',
+	);
+
+export const patchServiceRoute: RenderEndpoints['patchServiceRoute'] = (
+	ctx,
+	input,
+) =>
+	serviceRequest(
+		ctx,
+		input.serviceId,
+		`/routes/${encodeServiceId(input.routeId)}`,
+		'PATCH',
+		input.body,
+	);
+
+export const deleteServiceRoute: RenderEndpoints['deleteServiceRoute'] = (
+	ctx,
+	input,
+) =>
+	serviceRequest(
+		ctx,
+		input.serviceId,
+		`/routes/${encodeServiceId(input.routeId)}`,
+		'DELETE',
+	);
+
+export const listServiceEnvVars: RenderEndpoints['listServiceEnvVars'] = (
+	ctx,
+	input,
+) => {
+	const { serviceId, ...query } = input;
+	return makeRenderRequest(
+		`/v1/services/${encodeServiceId(serviceId)}/env-vars`,
+		ctx.key,
+		{ method: 'GET', query },
+	);
+};
+
+export const deleteServiceEnvVar: RenderEndpoints['deleteServiceEnvVar'] = (
+	ctx,
+	input,
+) =>
+	serviceRequest(
+		ctx,
+		input.serviceId,
+		`/env-vars/${encodeServiceId(input.envVarKey)}`,
+		'DELETE',
+	);
+
+export const listServiceHeaders: RenderEndpoints['listServiceHeaders'] = (
+	ctx,
+	input,
+) => {
+	const { serviceId, ...query } = input;
+	return makeRenderRequest(
+		`/v1/services/${encodeServiceId(serviceId)}/headers`,
+		ctx.key,
+		{ method: 'GET', query },
+	);
+};
+
+export const listServiceCustomDomains: RenderEndpoints['listServiceCustomDomains'] =
+	(ctx, input) => {
+		const { serviceId, ...query } = input;
+		return makeRenderRequest(
+			`/v1/services/${encodeServiceId(serviceId)}/custom-domains`,
+			ctx.key,
+			{ method: 'GET', query },
+		);
+	};
+
+export const deleteServiceCustomDomain: RenderEndpoints['deleteServiceCustomDomain'] =
+	(ctx, input) =>
+		serviceRequest(
+			ctx,
+			input.serviceId,
+			`/custom-domains/${encodeServiceId(input.customDomainNameOrID)}`,
+			'DELETE',
+		);

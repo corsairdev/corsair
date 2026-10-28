@@ -1,5 +1,5 @@
-import type { RenderEndpoints } from '..';
 import { makeRenderRequest } from '../client';
+import type { RenderEndpoints } from '../index';
 import { renderPathParameter } from './path';
 
 type Context = { key: string };
@@ -109,3 +109,40 @@ export const updateWebhook: RenderEndpoints['updateWebhook'] = (ctx, input) =>
 	request(ctx, '/v1/webhooks/{id}', 'PATCH', input);
 export const deleteWebhook: RenderEndpoints['deleteWebhook'] = (ctx, input) =>
 	request(ctx, '/v1/webhooks/{id}', 'DELETE', input);
+export const retrieveEvent: RenderEndpoints['retrieveEvent'] = (ctx, input) =>
+	makeRenderRequest(
+		renderPathParameter('/v1/events/{eventId}', 'eventId', input.eventId),
+		ctx.key,
+		{ method: 'GET' },
+	);
+export const listWebhookEvents: RenderEndpoints['listWebhookEvents'] = (
+	ctx,
+	input,
+) => {
+	const { webhookId, ...query } = input;
+	return makeRenderRequest(
+		renderPathParameter(
+			'/v1/webhooks/{webhookId}/events',
+			'webhookId',
+			webhookId,
+		),
+		ctx.key,
+		{
+			method: 'GET',
+			query,
+		},
+	);
+};
+export const cancelCronJobRun: RenderEndpoints['cancelCronJobRun'] = (
+	ctx,
+	input,
+) =>
+	makeRenderRequest(
+		renderPathParameter(
+			'/v1/cron-jobs/{cronJobId}/runs',
+			'cronJobId',
+			input.cronJobId,
+		),
+		ctx.key,
+		{ method: 'DELETE' },
+	);

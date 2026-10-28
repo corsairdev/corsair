@@ -37,6 +37,35 @@ const ListServicesOutputSchema = z.array(
 );
 
 const ServiceIdInputSchema = z.object({ serviceId: z.string().min(1) });
+const CreateServiceInputSchema = z
+	.object({
+		type: z.string().min(1),
+		name: z.string().min(1),
+		ownerId: z.string().min(1),
+	})
+	.passthrough();
+const ServiceQueryInputSchema = ServiceIdInputSchema.extend({
+	limit: z.number().int().min(1).max(100).optional(),
+	cursor: z.string().optional(),
+});
+const ServiceEnvVarInputSchema = ServiceIdInputSchema.extend({
+	envVarKey: z.string().min(1),
+});
+const ServiceHeadersInputSchema = ServiceQueryInputSchema.extend({
+	path: z.array(z.string()).optional(),
+	name: z.array(z.string()).optional(),
+	value: z.array(z.string()).optional(),
+});
+const ServiceCustomDomainsInputSchema = ServiceQueryInputSchema.extend({
+	name: z.array(z.string()).optional(),
+	domainType: z.enum(['apex', 'subdomain']).optional(),
+	verificationStatus: z.enum(['verified', 'unverified']).optional(),
+	createdBefore: z.string().datetime().optional(),
+	createdAfter: z.string().datetime().optional(),
+});
+const ServiceCustomDomainInputSchema = ServiceIdInputSchema.extend({
+	customDomainNameOrID: z.string().min(1),
+});
 const ListDeploysInputSchema = ServiceIdInputSchema.extend({
 	status: z.array(z.string()).optional(),
 	createdBefore: z.string().datetime().optional(),
@@ -85,6 +114,18 @@ const ResourceIdKeyInputSchema = ResourceIdInputSchema.extend({
 const ResourceIdServiceIdInputSchema = ResourceIdInputSchema.extend({
 	serviceId: z.string().min(1),
 });
+const ServiceNotificationOverrideInputSchema = z.object({
+	serviceId: z.string().min(1),
+});
+const UpdateServiceNotificationOverrideInputSchema =
+	ServiceNotificationOverrideInputSchema.extend({
+		previewNotificationsEnabled: z
+			.enum(['default', 'false', 'true'])
+			.optional(),
+		notificationsToSend: z
+			.enum(['default', 'none', 'failure', 'all'])
+			.optional(),
+	});
 // Stricter typing is not feasible because Render resource payloads are
 // provider-defined and may gain fields independently. Some Render responses
 // also return a resource collection from an operation whose endpoint metadata
@@ -102,6 +143,36 @@ const ResourceListOutputSchema = z.array(ResourceRecordSchema);
 const ServiceJobStartInputSchema = ServiceIdInputSchema.extend({
 	startCommand: z.string().min(1),
 	planId: z.string().min(1).optional(),
+});
+const ScaleServiceInputSchema = ServiceIdInputSchema.extend({
+	numInstances: z.number().int().min(1),
+});
+const AutoscalingCriterionSchema = z.object({
+	enabled: z.boolean(),
+	percentage: z.number().int(),
+});
+const UpdateAutoscalingInputSchema = ServiceIdInputSchema.extend({
+	enabled: z.boolean(),
+	min: z.number().int().min(0),
+	max: z.number().int().min(0),
+	criteria: z.object({
+		cpu: AutoscalingCriterionSchema,
+		memory: AutoscalingCriterionSchema,
+	}),
+});
+const PreviewServiceInputSchema = ServiceIdInputSchema.extend({
+	imagePath: z.string().min(1),
+	name: z.string().min(1).optional(),
+	plan: z.string().min(1).optional(),
+});
+const ServiceHeaderInputSchema = ServiceIdInputSchema.extend({
+	headerId: z.string().min(1),
+});
+const ServiceRouteInputSchema = ServiceIdInputSchema.extend({
+	routeId: z.string().min(1),
+});
+const PatchServiceRouteInputSchema = ServiceRouteInputSchema.extend({
+	body: z.record(z.string(), z.unknown()),
 });
 const CreateDiskInputSchema = z.object({
 	name: z.string().min(1),
@@ -149,6 +220,70 @@ const AuditLogsInputSchema = ResourceIdInputSchema.extend({
 	startTime: z.string().datetime().optional(),
 	endTime: z.string().datetime().optional(),
 });
+const WorkspaceMemberInputSchema = z.object({
+	ownerId: z.string().min(1),
+	userId: z.string().min(1),
+});
+const UpdateWorkspaceMemberInputSchema = WorkspaceMemberInputSchema.extend({
+	role: z.enum([
+		'ADMIN',
+		'DEVELOPER',
+		'WORKSPACE_CONTRIBUTOR',
+		'WORKSPACE_BILLING',
+		'WORKSPACE_VIEWER',
+	]),
+});
+const EventIdInputSchema = z.object({ eventId: z.string().min(1) });
+const CronJobIdInputSchema = z.object({ cronJobId: z.string().min(1) });
+const OwnerIdInputSchema = z.object({ ownerId: z.string().min(1) });
+const ResourceIdPathInputSchema = z.object({ resourceId: z.string().min(1) });
+const OwnerMetricsStreamInputSchema = OwnerIdInputSchema.extend({
+	provider: z
+		.enum([
+			'BETTER_STACK',
+			'GRAFANA',
+			'DATADOG',
+			'NEW_RELIC',
+			'HONEYCOMB',
+			'SIGNOZ',
+			'GROUNDCOVER',
+			'LOGFIRE',
+			'CUSTOM',
+		])
+		.optional(),
+	url: z.string().optional(),
+	token: z.string().optional(),
+});
+const CreateKeyValueInputSchema = z
+	.object({
+		name: z.string().min(1),
+		ownerId: z.string().min(1),
+		plan: z.string().min(1),
+	})
+	.passthrough();
+const KeyValueIdInputSchema = z.object({ redisId: z.string().min(1) });
+const UpdateKeyValueInputSchema = KeyValueIdInputSchema.extend({
+	name: z.string().min(1).optional(),
+	plan: z.string().min(1).optional(),
+	maxmemoryPolicy: z.string().min(1).optional(),
+	persistenceMode: z.string().min(1).optional(),
+	ipAllowList: z.array(z.record(z.string(), z.unknown())).optional(),
+});
+const EnvironmentResourcesInputSchema = z.object({
+	environmentId: z.string().min(1),
+	resourceIds: z.array(z.string().min(1)).min(1),
+});
+const EnvGroupServiceInputSchema = z.object({
+	envGroupId: z.string().min(1),
+	serviceId: z.string().min(1),
+});
+const WebhookEventsInputSchema = z.object({
+	webhookId: z.string().min(1),
+	sentBefore: z.string().datetime().optional(),
+	sentAfter: z.string().datetime().optional(),
+	limit: z.number().int().min(1).max(100).optional(),
+	cursor: z.string().optional(),
+});
 const BuildSourceIdInputSchema = z.object({ buildSourceId: z.string().min(1) });
 const BuildSourceEnvVarInputSchema = BuildSourceIdInputSchema.extend({
 	envVarKey: z.string().min(1),
@@ -191,6 +326,7 @@ type ResourceIdKeyInput = z.infer<typeof ResourceIdKeyInputSchema>;
 
 export type RenderEndpointInputs = {
 	listServices: ListServicesInput;
+	createService: z.infer<typeof CreateServiceInputSchema>;
 	retrieveService: ServiceIdInput;
 	deleteService: ServiceIdInput;
 	updateService: ServiceIdInput & { name?: string; autoDeployTrigger?: string };
@@ -214,20 +350,37 @@ export type RenderEndpointInputs = {
 	restartService: ServiceIdInput;
 	suspendService: ServiceIdInput;
 	resumeService: ServiceIdInput;
+	scaleService: z.infer<typeof ScaleServiceInputSchema>;
+	updateAutoscaling: z.infer<typeof UpdateAutoscalingInputSchema>;
+	deleteAutoscaling: ServiceIdInput;
+	createServicePreview: z.infer<typeof PreviewServiceInputSchema>;
+	deleteServiceHeader: z.infer<typeof ServiceHeaderInputSchema>;
+	patchServiceRoute: z.infer<typeof PatchServiceRouteInputSchema>;
+	deleteServiceRoute: z.infer<typeof ServiceRouteInputSchema>;
+	listServiceEnvVars: z.infer<typeof ServiceQueryInputSchema>;
+	deleteServiceEnvVar: z.infer<typeof ServiceEnvVarInputSchema>;
+	listServiceHeaders: z.infer<typeof ServiceHeadersInputSchema>;
+	listServiceCustomDomains: z.infer<typeof ServiceCustomDomainsInputSchema>;
+	deleteServiceCustomDomain: z.infer<typeof ServiceCustomDomainInputSchema>;
 	listEnvironments: z.infer<typeof ResourceInputSchema>;
 	createEnvironment: z.infer<typeof ResourceInputSchema>;
 	retrieveEnvironment: ResourceIdInput;
 	updateEnvironment: ResourceIdInput;
 	deleteEnvironment: ResourceIdInput;
+	removeResourcesFromEnvironment: z.infer<
+		typeof EnvironmentResourcesInputSchema
+	>;
 	listEnvGroups: z.infer<typeof ResourceInputSchema>;
 	createEnvGroup: z.infer<typeof ResourceInputSchema>;
 	retrieveEnvGroup: ResourceIdInput;
 	updateEnvGroup: ResourceIdInput;
 	deleteEnvGroup: ResourceIdInput;
+	unlinkServiceFromEnvGroup: z.infer<typeof EnvGroupServiceInputSchema>;
 	listProjects: z.infer<typeof ResourceInputSchema>;
 	createProject: z.infer<typeof ResourceInputSchema>;
 	retrieveProject: ResourceIdInput;
 	updateProject: ResourceIdInput;
+	deleteProject: ResourceIdInput;
 	listPostgres: z.infer<typeof ResourceInputSchema>;
 	createPostgres: z.infer<typeof ResourceInputSchema>;
 	retrievePostgres: ResourceIdInput;
@@ -248,6 +401,8 @@ export type RenderEndpointInputs = {
 	listOwners: z.infer<typeof ResourceInputSchema>;
 	retrieveOwner: ResourceIdInput;
 	listOwnerMembers: ResourceIdInput;
+	updateWorkspaceMember: z.infer<typeof UpdateWorkspaceMemberInputSchema>;
+	removeWorkspaceMember: z.infer<typeof WorkspaceMemberInputSchema>;
 	listOwnerAuditLogs: z.infer<typeof AuditLogsInputSchema>;
 	listOrganizationAuditLogs: z.infer<typeof AuditLogsInputSchema>;
 	getUser: z.infer<typeof ResourceInputSchema>;
@@ -256,10 +411,18 @@ export type RenderEndpointInputs = {
 	listResourceLogStreams: z.infer<typeof ResourceInputSchema>;
 	deleteOwnerLogStream: ResourceIdInput;
 	updateOwnerLogStream: ResourceIdInput;
+	retrieveOwnerLogStream: z.infer<typeof OwnerIdInputSchema>;
+	retrieveResourceLogStream: z.infer<typeof ResourceIdPathInputSchema>;
+	deleteResourceLogStream: z.infer<typeof ResourceIdPathInputSchema>;
 	getActiveConnections: z.infer<typeof ResourceInputSchema>;
 	getBandwidthSources: z.infer<typeof ResourceInputSchema>;
 	getCpu: z.infer<typeof ResourceInputSchema>;
 	getCpuLimit: z.infer<typeof ResourceInputSchema>;
+	getCpuTarget: z.infer<typeof ResourceInputSchema>;
+	getHttpRequests: z.infer<typeof ResourceInputSchema>;
+	getHttpLatency: z.infer<typeof ResourceInputSchema>;
+	getBandwidth: z.infer<typeof ResourceInputSchema>;
+	getReplicationLag: z.infer<typeof ResourceInputSchema>;
 	getDiskCapacity: z.infer<typeof ResourceInputSchema>;
 	getDiskUsage: z.infer<typeof ResourceInputSchema>;
 	getInstanceCount: z.infer<typeof ResourceInputSchema>;
@@ -267,6 +430,10 @@ export type RenderEndpointInputs = {
 	getMemoryLimit: z.infer<typeof ResourceInputSchema>;
 	getMemoryTarget: z.infer<typeof ResourceInputSchema>;
 	listApplicationFilterValues: z.infer<typeof ResourceInputSchema>;
+	listHttpFilterValues: z.infer<typeof ResourceInputSchema>;
+	listPathFilterValues: z.infer<typeof ResourceInputSchema>;
+	getTaskRunsQueued: z.infer<typeof ResourceInputSchema>;
+	getTaskRunsCompleted: z.infer<typeof ResourceInputSchema>;
 	listDisks: z.infer<typeof ResourceInputSchema>;
 	listMaintenance: z.infer<typeof ResourceInputSchema>;
 	listTaskRuns: z.infer<typeof ResourceInputSchema>;
@@ -274,6 +441,8 @@ export type RenderEndpointInputs = {
 	listWorkflows: z.infer<typeof ResourceInputSchema>;
 	listWorkflowVersions: z.infer<typeof ResourceInputSchema>;
 	listWebhooks: z.infer<typeof ResourceInputSchema>;
+	retrieveEvent: z.infer<typeof EventIdInputSchema>;
+	listWebhookEvents: z.infer<typeof WebhookEventsInputSchema>;
 	createDisk: z.infer<typeof CreateDiskInputSchema>;
 	retrieveDisk: ResourceIdInput;
 	updateDisk: z.infer<typeof UpdateDiskInputSchema>;
@@ -284,6 +453,7 @@ export type RenderEndpointInputs = {
 	updateMaintenance: z.infer<typeof UpdateMaintenanceInputSchema>;
 	triggerMaintenance: ResourceIdInput;
 	triggerCronJobRun: ResourceIdInput;
+	cancelCronJobRun: z.infer<typeof CronJobIdInputSchema>;
 	createWebhook: z.infer<typeof CreateWebhookInputSchema>;
 	retrieveWebhook: ResourceIdInput;
 	updateWebhook: z.infer<typeof UpdateWebhookInputSchema>;
@@ -306,7 +476,16 @@ export type RenderEndpointInputs = {
 	retrieveKeyValueConnectionInfo: ResourceIdInput;
 	listInstances: ResourceIdInput;
 	listKeyValue: z.infer<typeof ResourceInputSchema>;
+	createKeyValue: z.infer<typeof CreateKeyValueInputSchema>;
+	retrieveKeyValue: z.infer<typeof KeyValueIdInputSchema>;
+	updateKeyValue: z.infer<typeof UpdateKeyValueInputSchema>;
 	listNotificationOverrides: z.infer<typeof ResourceInputSchema>;
+	retrieveServiceNotificationOverrides: z.infer<
+		typeof ServiceNotificationOverrideInputSchema
+	>;
+	updateServiceNotificationOverrides: z.infer<
+		typeof UpdateServiceNotificationOverrideInputSchema
+	>;
 	listPostgresExport: ResourceIdInput;
 	listPostgresUsers: ResourceIdInput;
 	listRoutes: ResourceIdInput;
@@ -327,6 +506,8 @@ export type RenderEndpointInputs = {
 	updateSecretFilesForService: ResourceIdInput;
 	verifyCustomDomain: ResourceIdKeyInput;
 	deleteOwnerMetricsStream: ResourceIdInput;
+	retrieveOwnerMetricsStream: z.infer<typeof OwnerIdInputSchema>;
+	upsertOwnerMetricsStream: z.infer<typeof OwnerMetricsStreamInputSchema>;
 	updateOwnerNotificationSettings: ResourceIdInput;
 	updateRoutes: ResourceIdInput;
 	createBuildSource: z.infer<typeof CreateBuildSourceInputSchema>;
@@ -378,6 +559,7 @@ export type RenderEndpointInputs = {
 
 export type RenderEndpointOutputs = {
 	listServices: ListServicesOutput;
+	createService: z.infer<typeof ResourceOutputSchema>;
 	retrieveService: ServiceOutput;
 	deleteService: z.infer<typeof EmptyOutputSchema>;
 	updateService: ServiceOutput;
@@ -397,20 +579,35 @@ export type RenderEndpointOutputs = {
 	restartService: /* unknown: provider-specific lifecycle acknowledgement */ unknown;
 	suspendService: /* unknown: provider-specific lifecycle acknowledgement */ unknown;
 	resumeService: /* unknown: provider-specific lifecycle acknowledgement */ unknown;
+	scaleService: /* unknown: provider-specific lifecycle acknowledgement */ unknown;
+	updateAutoscaling: z.infer<typeof ResourceOutputSchema>;
+	deleteAutoscaling: z.infer<typeof EmptyOutputSchema>;
+	createServicePreview: z.infer<typeof ResourceOutputSchema>;
+	deleteServiceHeader: z.infer<typeof EmptyOutputSchema>;
+	patchServiceRoute: z.infer<typeof ResourceOutputSchema>;
+	deleteServiceRoute: z.infer<typeof EmptyOutputSchema>;
+	listServiceEnvVars: z.infer<typeof ResourceListOutputSchema>;
+	deleteServiceEnvVar: z.infer<typeof EmptyOutputSchema>;
+	listServiceHeaders: z.infer<typeof ResourceListOutputSchema>;
+	listServiceCustomDomains: z.infer<typeof ResourceListOutputSchema>;
+	deleteServiceCustomDomain: z.infer<typeof EmptyOutputSchema>;
 	listEnvironments: z.infer<typeof ResourceListOutputSchema>;
 	createEnvironment: z.infer<typeof ResourceOutputSchema>;
 	retrieveEnvironment: z.infer<typeof ResourceOutputSchema>;
 	updateEnvironment: z.infer<typeof ResourceOutputSchema>;
 	deleteEnvironment: z.infer<typeof EmptyOutputSchema>;
+	removeResourcesFromEnvironment: z.infer<typeof EmptyOutputSchema>;
 	listEnvGroups: z.infer<typeof ResourceListOutputSchema>;
 	createEnvGroup: z.infer<typeof ResourceOutputSchema>;
 	retrieveEnvGroup: z.infer<typeof ResourceOutputSchema>;
 	updateEnvGroup: z.infer<typeof ResourceOutputSchema>;
 	deleteEnvGroup: z.infer<typeof EmptyOutputSchema>;
+	unlinkServiceFromEnvGroup: z.infer<typeof EmptyOutputSchema>;
 	listProjects: z.infer<typeof ResourceListOutputSchema>;
 	createProject: z.infer<typeof ResourceOutputSchema>;
 	retrieveProject: z.infer<typeof ResourceOutputSchema>;
 	updateProject: z.infer<typeof ResourceOutputSchema>;
+	deleteProject: z.infer<typeof EmptyOutputSchema>;
 	listPostgres: z.infer<typeof ResourceListOutputSchema>;
 	createPostgres: z.infer<typeof ResourceOutputSchema>;
 	retrievePostgres: z.infer<typeof ResourceOutputSchema>;
@@ -431,6 +628,8 @@ export type RenderEndpointOutputs = {
 	listOwners: z.infer<typeof ResourceListOutputSchema>;
 	retrieveOwner: z.infer<typeof ResourceOutputSchema>;
 	listOwnerMembers: z.infer<typeof ResourceListOutputSchema>;
+	updateWorkspaceMember: z.infer<typeof ResourceOutputSchema>;
+	removeWorkspaceMember: z.infer<typeof EmptyOutputSchema>;
 	listOwnerAuditLogs: z.infer<typeof ResourceListOutputSchema>;
 	listOrganizationAuditLogs: z.infer<typeof ResourceListOutputSchema>;
 	getUser: z.infer<typeof ResourceOutputSchema>;
@@ -439,10 +638,18 @@ export type RenderEndpointOutputs = {
 	listResourceLogStreams: z.infer<typeof ResourceListOutputSchema>;
 	deleteOwnerLogStream: z.infer<typeof EmptyOutputSchema>;
 	updateOwnerLogStream: z.infer<typeof ResourceOutputSchema>;
+	retrieveOwnerLogStream: z.infer<typeof ResourceOutputSchema>;
+	retrieveResourceLogStream: z.infer<typeof ResourceOutputSchema>;
+	deleteResourceLogStream: z.infer<typeof EmptyOutputSchema>;
 	getActiveConnections: z.infer<typeof ResourceOutputSchema>;
 	getBandwidthSources: z.infer<typeof ResourceOutputSchema>;
 	getCpu: z.infer<typeof ResourceOutputSchema>;
 	getCpuLimit: z.infer<typeof ResourceOutputSchema>;
+	getCpuTarget: z.infer<typeof ResourceOutputSchema>;
+	getHttpRequests: z.infer<typeof ResourceOutputSchema>;
+	getHttpLatency: z.infer<typeof ResourceOutputSchema>;
+	getBandwidth: z.infer<typeof ResourceOutputSchema>;
+	getReplicationLag: z.infer<typeof ResourceOutputSchema>;
 	getDiskCapacity: z.infer<typeof ResourceOutputSchema>;
 	getDiskUsage: z.infer<typeof ResourceOutputSchema>;
 	getInstanceCount: z.infer<typeof ResourceOutputSchema>;
@@ -450,6 +657,10 @@ export type RenderEndpointOutputs = {
 	getMemoryLimit: z.infer<typeof ResourceOutputSchema>;
 	getMemoryTarget: z.infer<typeof ResourceOutputSchema>;
 	listApplicationFilterValues: z.infer<typeof ResourceListOutputSchema>;
+	listHttpFilterValues: z.infer<typeof ResourceListOutputSchema>;
+	listPathFilterValues: z.infer<typeof ResourceListOutputSchema>;
+	getTaskRunsQueued: z.infer<typeof ResourceOutputSchema>;
+	getTaskRunsCompleted: z.infer<typeof ResourceOutputSchema>;
 	listDisks: z.infer<typeof ResourceListOutputSchema>;
 	listMaintenance: z.infer<typeof ResourceListOutputSchema>;
 	listTaskRuns: z.infer<typeof ResourceListOutputSchema>;
@@ -457,6 +668,8 @@ export type RenderEndpointOutputs = {
 	listWorkflows: z.infer<typeof ResourceListOutputSchema>;
 	listWorkflowVersions: z.infer<typeof ResourceListOutputSchema>;
 	listWebhooks: z.infer<typeof ResourceListOutputSchema>;
+	retrieveEvent: z.infer<typeof ResourceOutputSchema>;
+	listWebhookEvents: z.infer<typeof ResourceListOutputSchema>;
 	createDisk: z.infer<typeof ResourceOutputSchema>;
 	retrieveDisk: z.infer<typeof ResourceOutputSchema>;
 	updateDisk: z.infer<typeof ResourceOutputSchema>;
@@ -467,6 +680,7 @@ export type RenderEndpointOutputs = {
 	updateMaintenance: /* unknown: provider-specific lifecycle acknowledgement */ unknown;
 	triggerMaintenance: /* unknown: provider-specific lifecycle acknowledgement */ unknown;
 	triggerCronJobRun: /* unknown: provider-specific lifecycle acknowledgement */ unknown;
+	cancelCronJobRun: z.infer<typeof EmptyOutputSchema>;
 	createWebhook: z.infer<typeof ResourceOutputSchema>;
 	retrieveWebhook: z.infer<typeof ResourceOutputSchema>;
 	updateWebhook: z.infer<typeof ResourceOutputSchema>;
@@ -489,7 +703,12 @@ export type RenderEndpointOutputs = {
 	retrieveKeyValueConnectionInfo: z.infer<typeof ResourceOutputSchema>;
 	listInstances: z.infer<typeof ResourceListOutputSchema>;
 	listKeyValue: z.infer<typeof ResourceListOutputSchema>;
+	createKeyValue: z.infer<typeof ResourceOutputSchema>;
+	retrieveKeyValue: z.infer<typeof ResourceOutputSchema>;
+	updateKeyValue: z.infer<typeof ResourceOutputSchema>;
 	listNotificationOverrides: z.infer<typeof ResourceListOutputSchema>;
+	retrieveServiceNotificationOverrides: z.infer<typeof ResourceOutputSchema>;
+	updateServiceNotificationOverrides: z.infer<typeof ResourceOutputSchema>;
 	listPostgresExport: z.infer<typeof ResourceListOutputSchema>;
 	listPostgresUsers: z.infer<typeof ResourceListOutputSchema>;
 	listRoutes: z.infer<typeof ResourceListOutputSchema>;
@@ -510,6 +729,8 @@ export type RenderEndpointOutputs = {
 	updateSecretFilesForService: z.infer<typeof ResourceOutputSchema>;
 	verifyCustomDomain: z.infer<typeof ResourceOutputSchema>;
 	deleteOwnerMetricsStream: z.infer<typeof EmptyOutputSchema>;
+	retrieveOwnerMetricsStream: z.infer<typeof ResourceOutputSchema>;
+	upsertOwnerMetricsStream: z.infer<typeof ResourceOutputSchema>;
 	updateOwnerNotificationSettings: z.infer<typeof ResourceOutputSchema>;
 	updateRoutes: z.infer<typeof ResourceOutputSchema>;
 	createBuildSource: z.infer<typeof ResourceOutputSchema>;
@@ -561,6 +782,7 @@ export type RenderEndpointOutputs = {
 
 export const RenderEndpointInputSchemas = {
 	listServices: ListServicesInputSchema,
+	createService: CreateServiceInputSchema,
 	retrieveService: ServiceIdInputSchema,
 	deleteService: ServiceIdInputSchema,
 	updateService: ServiceIdInputSchema.extend({
@@ -581,20 +803,35 @@ export const RenderEndpointInputSchemas = {
 	restartService: ServiceIdInputSchema,
 	suspendService: ServiceIdInputSchema,
 	resumeService: ServiceIdInputSchema,
+	scaleService: ScaleServiceInputSchema,
+	updateAutoscaling: UpdateAutoscalingInputSchema,
+	deleteAutoscaling: ServiceIdInputSchema,
+	createServicePreview: PreviewServiceInputSchema,
+	deleteServiceHeader: ServiceHeaderInputSchema,
+	patchServiceRoute: PatchServiceRouteInputSchema,
+	deleteServiceRoute: ServiceRouteInputSchema,
+	listServiceEnvVars: ServiceQueryInputSchema,
+	deleteServiceEnvVar: ServiceEnvVarInputSchema,
+	listServiceHeaders: ServiceHeadersInputSchema,
+	listServiceCustomDomains: ServiceCustomDomainsInputSchema,
+	deleteServiceCustomDomain: ServiceCustomDomainInputSchema,
 	listEnvironments: ResourceInputSchema,
 	createEnvironment: ResourceInputSchema,
 	retrieveEnvironment: ResourceIdInputSchema,
 	updateEnvironment: ResourceIdInputSchema,
 	deleteEnvironment: ResourceIdInputSchema,
+	removeResourcesFromEnvironment: EnvironmentResourcesInputSchema,
 	listEnvGroups: ResourceInputSchema,
 	createEnvGroup: ResourceInputSchema,
 	retrieveEnvGroup: ResourceIdInputSchema,
 	updateEnvGroup: ResourceIdInputSchema,
 	deleteEnvGroup: ResourceIdInputSchema,
+	unlinkServiceFromEnvGroup: EnvGroupServiceInputSchema,
 	listProjects: ResourceInputSchema,
 	createProject: ResourceInputSchema,
 	retrieveProject: ResourceIdInputSchema,
 	updateProject: ResourceIdInputSchema,
+	deleteProject: ResourceIdInputSchema,
 	listPostgres: ResourceInputSchema,
 	createPostgres: ResourceInputSchema,
 	retrievePostgres: ResourceIdInputSchema,
@@ -615,6 +852,8 @@ export const RenderEndpointInputSchemas = {
 	listOwners: ResourceInputSchema,
 	retrieveOwner: ResourceIdInputSchema,
 	listOwnerMembers: ResourceIdInputSchema,
+	updateWorkspaceMember: UpdateWorkspaceMemberInputSchema,
+	removeWorkspaceMember: WorkspaceMemberInputSchema,
 	listOwnerAuditLogs: AuditLogsInputSchema,
 	listOrganizationAuditLogs: AuditLogsInputSchema,
 	getUser: ResourceInputSchema,
@@ -623,10 +862,18 @@ export const RenderEndpointInputSchemas = {
 	listResourceLogStreams: ResourceInputSchema,
 	deleteOwnerLogStream: ResourceIdInputSchema,
 	updateOwnerLogStream: ResourceIdInputSchema,
+	retrieveOwnerLogStream: OwnerIdInputSchema,
+	retrieveResourceLogStream: ResourceIdPathInputSchema,
+	deleteResourceLogStream: ResourceIdPathInputSchema,
 	getActiveConnections: ResourceInputSchema,
 	getBandwidthSources: ResourceInputSchema,
 	getCpu: ResourceInputSchema,
 	getCpuLimit: ResourceInputSchema,
+	getCpuTarget: ResourceInputSchema,
+	getHttpRequests: ResourceInputSchema,
+	getHttpLatency: ResourceInputSchema,
+	getBandwidth: ResourceInputSchema,
+	getReplicationLag: ResourceInputSchema,
 	getDiskCapacity: ResourceInputSchema,
 	getDiskUsage: ResourceInputSchema,
 	getInstanceCount: ResourceInputSchema,
@@ -634,6 +881,10 @@ export const RenderEndpointInputSchemas = {
 	getMemoryLimit: ResourceInputSchema,
 	getMemoryTarget: ResourceInputSchema,
 	listApplicationFilterValues: ResourceInputSchema,
+	listHttpFilterValues: ResourceInputSchema,
+	listPathFilterValues: ResourceInputSchema,
+	getTaskRunsQueued: ResourceInputSchema,
+	getTaskRunsCompleted: ResourceInputSchema,
 	listDisks: ResourceInputSchema,
 	listMaintenance: ResourceInputSchema,
 	listTaskRuns: ResourceInputSchema,
@@ -641,6 +892,8 @@ export const RenderEndpointInputSchemas = {
 	listWorkflows: ResourceInputSchema,
 	listWorkflowVersions: ResourceInputSchema,
 	listWebhooks: ResourceInputSchema,
+	retrieveEvent: EventIdInputSchema,
+	listWebhookEvents: WebhookEventsInputSchema,
 	createDisk: CreateDiskInputSchema,
 	retrieveDisk: ResourceIdInputSchema,
 	updateDisk: UpdateDiskInputSchema,
@@ -651,6 +904,7 @@ export const RenderEndpointInputSchemas = {
 	updateMaintenance: UpdateMaintenanceInputSchema,
 	triggerMaintenance: ResourceIdInputSchema,
 	triggerCronJobRun: ResourceIdInputSchema,
+	cancelCronJobRun: CronJobIdInputSchema,
 	createWebhook: CreateWebhookInputSchema,
 	retrieveWebhook: ResourceIdInputSchema,
 	updateWebhook: UpdateWebhookInputSchema,
@@ -673,7 +927,13 @@ export const RenderEndpointInputSchemas = {
 	retrieveKeyValueConnectionInfo: ResourceIdInputSchema,
 	listInstances: ResourceIdInputSchema,
 	listKeyValue: ResourceInputSchema,
+	createKeyValue: CreateKeyValueInputSchema,
+	retrieveKeyValue: KeyValueIdInputSchema,
+	updateKeyValue: UpdateKeyValueInputSchema,
 	listNotificationOverrides: ResourceInputSchema,
+	retrieveServiceNotificationOverrides: ServiceNotificationOverrideInputSchema,
+	updateServiceNotificationOverrides:
+		UpdateServiceNotificationOverrideInputSchema,
 	listPostgresExport: ResourceIdInputSchema,
 	listPostgresUsers: ResourceIdInputSchema,
 	listRoutes: ResourceIdInputSchema,
@@ -694,6 +954,8 @@ export const RenderEndpointInputSchemas = {
 	updateSecretFilesForService: ResourceIdInputSchema,
 	verifyCustomDomain: ResourceIdKeyInputSchema,
 	deleteOwnerMetricsStream: ResourceIdInputSchema,
+	retrieveOwnerMetricsStream: OwnerIdInputSchema,
+	upsertOwnerMetricsStream: OwnerMetricsStreamInputSchema,
 	updateOwnerNotificationSettings: ResourceIdInputSchema,
 	updateRoutes: ResourceIdInputSchema,
 	createBuildSource: CreateBuildSourceInputSchema,
@@ -745,6 +1007,7 @@ export const RenderEndpointInputSchemas = {
 
 export const RenderEndpointOutputSchemas = {
 	listServices: ListServicesOutputSchema,
+	createService: ResourceOutputSchema,
 	retrieveService: ServiceOutputSchema,
 	deleteService: EmptyOutputSchema,
 	updateService: ServiceOutputSchema,
@@ -767,20 +1030,36 @@ export const RenderEndpointOutputSchemas = {
 		/* unknown: provider-specific lifecycle acknowledgement */ z.unknown(),
 	resumeService:
 		/* unknown: provider-specific lifecycle acknowledgement */ z.unknown(),
+	scaleService:
+		/* unknown: provider-specific lifecycle acknowledgement */ z.unknown(),
+	updateAutoscaling: ResourceOutputSchema,
+	deleteAutoscaling: EmptyOutputSchema,
+	createServicePreview: ResourceOutputSchema,
+	deleteServiceHeader: EmptyOutputSchema,
+	patchServiceRoute: ResourceOutputSchema,
+	deleteServiceRoute: EmptyOutputSchema,
+	listServiceEnvVars: ResourceListOutputSchema,
+	deleteServiceEnvVar: EmptyOutputSchema,
+	listServiceHeaders: ResourceListOutputSchema,
+	listServiceCustomDomains: ResourceListOutputSchema,
+	deleteServiceCustomDomain: EmptyOutputSchema,
 	listEnvironments: ResourceListOutputSchema,
 	createEnvironment: ResourceOutputSchema,
 	retrieveEnvironment: ResourceOutputSchema,
 	updateEnvironment: ResourceOutputSchema,
 	deleteEnvironment: EmptyOutputSchema,
+	removeResourcesFromEnvironment: EmptyOutputSchema,
 	listEnvGroups: ResourceListOutputSchema,
 	createEnvGroup: ResourceOutputSchema,
 	retrieveEnvGroup: ResourceOutputSchema,
 	updateEnvGroup: ResourceOutputSchema,
 	deleteEnvGroup: EmptyOutputSchema,
+	unlinkServiceFromEnvGroup: EmptyOutputSchema,
 	listProjects: ResourceListOutputSchema,
 	createProject: ResourceOutputSchema,
 	retrieveProject: ResourceOutputSchema,
 	updateProject: ResourceOutputSchema,
+	deleteProject: EmptyOutputSchema,
 	listPostgres: ResourceListOutputSchema,
 	createPostgres: ResourceOutputSchema,
 	retrievePostgres: ResourceOutputSchema,
@@ -805,6 +1084,8 @@ export const RenderEndpointOutputSchemas = {
 	listOwners: ResourceListOutputSchema,
 	retrieveOwner: ResourceOutputSchema,
 	listOwnerMembers: ResourceListOutputSchema,
+	updateWorkspaceMember: ResourceOutputSchema,
+	removeWorkspaceMember: EmptyOutputSchema,
 	listOwnerAuditLogs: ResourceListOutputSchema,
 	listOrganizationAuditLogs: ResourceListOutputSchema,
 	getUser: ResourceOutputSchema,
@@ -813,10 +1094,18 @@ export const RenderEndpointOutputSchemas = {
 	listResourceLogStreams: ResourceListOutputSchema,
 	deleteOwnerLogStream: EmptyOutputSchema,
 	updateOwnerLogStream: ResourceOutputSchema,
+	retrieveOwnerLogStream: ResourceOutputSchema,
+	retrieveResourceLogStream: ResourceOutputSchema,
+	deleteResourceLogStream: EmptyOutputSchema,
 	getActiveConnections: ResourceOutputSchema,
 	getBandwidthSources: ResourceOutputSchema,
 	getCpu: ResourceOutputSchema,
 	getCpuLimit: ResourceOutputSchema,
+	getCpuTarget: ResourceOutputSchema,
+	getHttpRequests: ResourceOutputSchema,
+	getHttpLatency: ResourceOutputSchema,
+	getBandwidth: ResourceOutputSchema,
+	getReplicationLag: ResourceOutputSchema,
 	getDiskCapacity: ResourceOutputSchema,
 	getDiskUsage: ResourceOutputSchema,
 	getInstanceCount: ResourceOutputSchema,
@@ -824,6 +1113,10 @@ export const RenderEndpointOutputSchemas = {
 	getMemoryLimit: ResourceOutputSchema,
 	getMemoryTarget: ResourceOutputSchema,
 	listApplicationFilterValues: ResourceListOutputSchema,
+	listHttpFilterValues: ResourceListOutputSchema,
+	listPathFilterValues: ResourceListOutputSchema,
+	getTaskRunsQueued: ResourceOutputSchema,
+	getTaskRunsCompleted: ResourceOutputSchema,
 	listDisks: ResourceListOutputSchema,
 	listMaintenance: ResourceListOutputSchema,
 	listTaskRuns: ResourceListOutputSchema,
@@ -831,6 +1124,8 @@ export const RenderEndpointOutputSchemas = {
 	listWorkflows: ResourceListOutputSchema,
 	listWorkflowVersions: ResourceListOutputSchema,
 	listWebhooks: ResourceListOutputSchema,
+	retrieveEvent: ResourceOutputSchema,
+	listWebhookEvents: ResourceListOutputSchema,
 	createDisk: ResourceOutputSchema,
 	retrieveDisk: ResourceOutputSchema,
 	updateDisk: ResourceOutputSchema,
@@ -844,6 +1139,7 @@ export const RenderEndpointOutputSchemas = {
 		/* unknown: provider-specific lifecycle acknowledgement */ z.unknown(),
 	triggerCronJobRun:
 		/* unknown: provider-specific lifecycle acknowledgement */ z.unknown(),
+	cancelCronJobRun: EmptyOutputSchema,
 	createWebhook: ResourceOutputSchema,
 	retrieveWebhook: ResourceOutputSchema,
 	updateWebhook: ResourceOutputSchema,
@@ -868,7 +1164,12 @@ export const RenderEndpointOutputSchemas = {
 	retrieveKeyValueConnectionInfo: ResourceOutputSchema,
 	listInstances: ResourceListOutputSchema,
 	listKeyValue: ResourceListOutputSchema,
+	createKeyValue: ResourceOutputSchema,
+	retrieveKeyValue: ResourceOutputSchema,
+	updateKeyValue: ResourceOutputSchema,
 	listNotificationOverrides: ResourceListOutputSchema,
+	retrieveServiceNotificationOverrides: ResourceOutputSchema,
+	updateServiceNotificationOverrides: ResourceOutputSchema,
 	listPostgresExport: ResourceListOutputSchema,
 	listPostgresUsers: ResourceListOutputSchema,
 	listRoutes: ResourceListOutputSchema,
@@ -889,6 +1190,8 @@ export const RenderEndpointOutputSchemas = {
 	updateSecretFilesForService: ResourceOutputSchema,
 	verifyCustomDomain: ResourceOutputSchema,
 	deleteOwnerMetricsStream: EmptyOutputSchema,
+	retrieveOwnerMetricsStream: ResourceOutputSchema,
+	upsertOwnerMetricsStream: ResourceOutputSchema,
 	updateOwnerNotificationSettings: ResourceOutputSchema,
 	updateRoutes: ResourceOutputSchema,
 	createBuildSource: ResourceOutputSchema,

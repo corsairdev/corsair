@@ -1,5 +1,5 @@
-import type { RenderEndpoints } from '..';
 import { makeRenderRequest } from '../client';
+import type { RenderEndpoints } from '../index';
 import { renderPathParameter } from './path';
 
 type Context = { key: string };
@@ -101,9 +101,39 @@ export const listInstances: RenderEndpoints['listInstances'] = (ctx, input) =>
 	call(ctx, '/v1/services/{id}/instances', 'GET', input);
 export const listKeyValue: RenderEndpoints['listKeyValue'] = (ctx, input) =>
 	call(ctx, '/v1/key-value', 'GET', input);
+export const createKeyValue: RenderEndpoints['createKeyValue'] = (ctx, input) =>
+	makeRenderRequest('/v1/key-value', ctx.key, { method: 'POST', body: input });
+export const retrieveKeyValue: RenderEndpoints['retrieveKeyValue'] = (
+	ctx,
+	input,
+) =>
+	makeRenderRequest(
+		renderPathParameter('/v1/key-value/{redisId}', 'redisId', input.redisId),
+		ctx.key,
+		{ method: 'GET' },
+	);
+export const updateKeyValue: RenderEndpoints['updateKeyValue'] = (
+	ctx,
+	input,
+) => {
+	const { redisId, ...body } = input;
+	return makeRenderRequest(
+		renderPathParameter('/v1/key-value/{redisId}', 'redisId', redisId),
+		ctx.key,
+		{ method: 'PATCH', body },
+	);
+};
 export const listNotificationOverrides: RenderEndpoints['listNotificationOverrides'] =
 	(ctx, input) =>
 		call(ctx, '/v1/notification-settings/overrides', 'GET', input);
+export const retrieveServiceNotificationOverrides: RenderEndpoints['retrieveServiceNotificationOverrides'] =
+	(ctx, input) =>
+		call(
+			ctx,
+			'/v1/notification-settings/overrides/services/{serviceId}',
+			'GET',
+			input,
+		);
 export const listPostgresExport: RenderEndpoints['listPostgresExport'] = (
 	ctx,
 	input,
@@ -161,8 +191,36 @@ export const verifyCustomDomain: RenderEndpoints['verifyCustomDomain'] = (
 ) => call(ctx, '/v1/services/{id}/custom-domains/{key}/verify', 'POST', input);
 export const deleteOwnerMetricsStream: RenderEndpoints['deleteOwnerMetricsStream'] =
 	(ctx, input) => call(ctx, '/v1/metrics-stream/{id}', 'DELETE', input);
+export const retrieveOwnerMetricsStream: RenderEndpoints['retrieveOwnerMetricsStream'] =
+	(ctx, input) =>
+		makeRenderRequest(
+			renderPathParameter(
+				'/v1/metrics-stream/{ownerId}',
+				'ownerId',
+				input.ownerId,
+			),
+			ctx.key,
+			{ method: 'GET' },
+		);
+export const upsertOwnerMetricsStream: RenderEndpoints['upsertOwnerMetricsStream'] =
+	(ctx, input) => {
+		const { ownerId, ...body } = input;
+		return makeRenderRequest(
+			renderPathParameter('/v1/metrics-stream/{ownerId}', 'ownerId', ownerId),
+			ctx.key,
+			{ method: 'PUT', body },
+		);
+	};
 export const updateOwnerNotificationSettings: RenderEndpoints['updateOwnerNotificationSettings'] =
 	(ctx, input) =>
 		call(ctx, '/v1/notification-settings/owners/{id}', 'PATCH', input);
+export const updateServiceNotificationOverrides: RenderEndpoints['updateServiceNotificationOverrides'] =
+	(ctx, input) =>
+		call(
+			ctx,
+			'/v1/notification-settings/overrides/services/{serviceId}',
+			'PATCH',
+			input,
+		);
 export const updateRoutes: RenderEndpoints['updateRoutes'] = (ctx, input) =>
 	call(ctx, '/v1/services/{id}/routes', 'PUT', input);

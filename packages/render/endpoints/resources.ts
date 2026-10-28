@@ -1,5 +1,5 @@
-import type { RenderEndpoints } from '..';
 import { makeRenderRequest } from '../client';
+import type { RenderEndpoints } from '../index';
 import { renderPathParameter } from './path';
 
 type Context = { key: string };
@@ -41,6 +41,8 @@ export const retrieveProject: RenderEndpoints['retrieveProject'] = (
 ) => request(ctx, '/v1/projects/{id}', 'GET', input);
 export const updateProject: RenderEndpoints['updateProject'] = (ctx, input) =>
 	request(ctx, '/v1/projects/{id}', 'PATCH', input);
+export const deleteProject: RenderEndpoints['deleteProject'] = (ctx, input) =>
+	request(ctx, '/v1/projects/{id}', 'DELETE', input);
 
 export const listPostgres: RenderEndpoints['listPostgres'] = (ctx, input) =>
 	request(ctx, '/v1/postgres', 'GET', input);

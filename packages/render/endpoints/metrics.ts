@@ -28,6 +28,20 @@ export const getCpu: RenderEndpoints['getCpu'] = (ctx, input) =>
 	metric(ctx, '/v1/metrics/cpu', input);
 export const getCpuLimit: RenderEndpoints['getCpuLimit'] = (ctx, input) =>
 	metric(ctx, '/v1/metrics/cpu-limit', input);
+export const getCpuTarget: RenderEndpoints['getCpuTarget'] = (ctx, input) =>
+	metric(ctx, '/v1/metrics/cpu-target', input);
+export const getHttpRequests: RenderEndpoints['getHttpRequests'] = (
+	ctx,
+	input,
+) => metric(ctx, '/v1/metrics/http-requests', input);
+export const getHttpLatency: RenderEndpoints['getHttpLatency'] = (ctx, input) =>
+	metric(ctx, '/v1/metrics/http-latency', input);
+export const getBandwidth: RenderEndpoints['getBandwidth'] = (ctx, input) =>
+	metric(ctx, '/v1/metrics/bandwidth', input);
+export const getReplicationLag: RenderEndpoints['getReplicationLag'] = (
+	ctx,
+	input,
+) => metric(ctx, '/v1/metrics/replication-lag', input);
 export const getDiskCapacity: RenderEndpoints['getDiskCapacity'] = (
 	ctx,
 	input,
@@ -48,3 +62,19 @@ export const getMemoryTarget: RenderEndpoints['getMemoryTarget'] = (
 ) => metric(ctx, '/v1/metrics/memory-target', input);
 export const listApplicationFilterValues: RenderEndpoints['listApplicationFilterValues'] =
 	(ctx, input) => metric(ctx, '/v1/metrics/filters/application', input);
+export const listHttpFilterValues: RenderEndpoints['listHttpFilterValues'] = (
+	ctx,
+	input,
+) => metric(ctx, '/v1/metrics/filters/http', input);
+export const listPathFilterValues: RenderEndpoints['listPathFilterValues'] = (
+	ctx,
+	input,
+) => metric(ctx, '/v1/metrics/filters/path', input);
+export const getTaskRunsQueued: RenderEndpoints['getTaskRunsQueued'] = (
+	ctx,
+	input,
+) => metric(ctx, '/v1/metrics/task-runs-queued', input);
+export const getTaskRunsCompleted: RenderEndpoints['getTaskRunsCompleted'] = (
+	ctx,
+	input,
+) => metric(ctx, '/v1/metrics/task-runs-completed', input);

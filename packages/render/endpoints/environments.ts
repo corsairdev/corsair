@@ -1,5 +1,5 @@
-import type { RenderEndpoints } from '..';
 import { makeRenderRequest } from '../client';
+import type { RenderEndpoints } from '../index';
 import { renderPathParameter } from './path';
 
 type ResourceContext = { key: string };
@@ -51,6 +51,19 @@ export const deleteEnvironment: RenderEndpoints['deleteEnvironment'] = (
 	ctx,
 	input,
 ) => request(ctx, '/v1/environments/{id}', 'DELETE', input);
+export const removeResourcesFromEnvironment: RenderEndpoints['removeResourcesFromEnvironment'] =
+	(ctx, input) => {
+		const { environmentId, resourceIds } = input;
+		return makeRenderRequest(
+			renderPathParameter(
+				'/v1/environments/{environmentId}/resources',
+				'environmentId',
+				environmentId,
+			),
+			ctx.key,
+			{ method: 'DELETE', query: { resourceIds } },
+		);
+	};
 export const listEnvGroups: RenderEndpoints['listEnvGroups'] = (ctx, input) =>
 	request(ctx, '/v1/env-groups', 'GET', input);
 export const createEnvGroup: RenderEndpoints['createEnvGroup'] = (ctx, input) =>
@@ -63,3 +76,16 @@ export const updateEnvGroup: RenderEndpoints['updateEnvGroup'] = (ctx, input) =>
 	request(ctx, '/v1/env-groups/{id}', 'PATCH', input);
 export const deleteEnvGroup: RenderEndpoints['deleteEnvGroup'] = (ctx, input) =>
 	request(ctx, '/v1/env-groups/{id}', 'DELETE', input);
+export const unlinkServiceFromEnvGroup: RenderEndpoints['unlinkServiceFromEnvGroup'] =
+	(ctx, input) => {
+		const path = renderPathParameter(
+			renderPathParameter(
+				'/v1/env-groups/{envGroupId}/services/{serviceId}',
+				'envGroupId',
+				input.envGroupId,
+			),
+			'serviceId',
+			input.serviceId,
+		);
+		return makeRenderRequest(path, ctx.key, { method: 'DELETE' });
+	};

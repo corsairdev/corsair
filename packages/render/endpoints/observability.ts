@@ -1,5 +1,5 @@
-import type { RenderEndpoints } from '..';
 import { makeRenderRequest } from '../client';
+import type { RenderEndpoints } from '../index';
 import { renderPathParameter } from './path';
 
 type Context = { key: string };
@@ -41,6 +41,70 @@ export const listOwnerMembers: RenderEndpoints['listOwnerMembers'] = (
 	ctx,
 	input,
 ) => call(ctx, '/v1/owners/{id}/members', 'GET', input);
+export const updateWorkspaceMember: RenderEndpoints['updateWorkspaceMember'] = (
+	ctx,
+	input,
+) => {
+	const { ownerId, userId, ...body } = input;
+	const path = renderPathParameter(
+		renderPathParameter(
+			'/v1/owners/{ownerId}/members/{userId}',
+			'ownerId',
+			ownerId,
+		),
+		'userId',
+		userId,
+	);
+	return makeRenderRequest(path, ctx.key, { method: 'PATCH', body });
+};
+export const removeWorkspaceMember: RenderEndpoints['removeWorkspaceMember'] = (
+	ctx,
+	input,
+) => {
+	const path = renderPathParameter(
+		renderPathParameter(
+			'/v1/owners/{ownerId}/members/{userId}',
+			'ownerId',
+			input.ownerId,
+		),
+		'userId',
+		input.userId,
+	);
+	return makeRenderRequest(path, ctx.key, { method: 'DELETE' });
+};
+export const retrieveOwnerLogStream: RenderEndpoints['retrieveOwnerLogStream'] =
+	(ctx, input) =>
+		makeRenderRequest(
+			renderPathParameter(
+				'/v1/logs/streams/owner/{ownerId}',
+				'ownerId',
+				input.ownerId,
+			),
+			ctx.key,
+			{ method: 'GET' },
+		);
+export const retrieveResourceLogStream: RenderEndpoints['retrieveResourceLogStream'] =
+	(ctx, input) =>
+		makeRenderRequest(
+			renderPathParameter(
+				'/v1/logs/streams/resource/{resourceId}',
+				'resourceId',
+				input.resourceId,
+			),
+			ctx.key,
+			{ method: 'GET' },
+		);
+export const deleteResourceLogStream: RenderEndpoints['deleteResourceLogStream'] =
+	(ctx, input) =>
+		makeRenderRequest(
+			renderPathParameter(
+				'/v1/logs/streams/resource/{resourceId}',
+				'resourceId',
+				input.resourceId,
+			),
+			ctx.key,
+			{ method: 'DELETE' },
+		);
 export const listOwnerAuditLogs: RenderEndpoints['listOwnerAuditLogs'] = (
 	ctx,
 	input,

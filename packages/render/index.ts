@@ -19,6 +19,7 @@ import {
 	addOrUpdateSecretFile,
 	addResourcesToEnvironment,
 	addRoute,
+	cancelCronJobRun,
 	cancelDeploy,
 	cancelServiceJob,
 	cancelTaskRun,
@@ -28,16 +29,20 @@ import {
 	createDisk,
 	createEnvGroup,
 	createEnvironment,
+	createKeyValue,
 	createPostgres,
 	createPostgresExport,
 	createPostgresUser,
 	createProject,
 	createRegistryCredential,
+	createService,
 	createServiceJob,
+	createServicePreview,
 	createTaskRun,
 	createWebhook,
 	createWorkflow,
 	createWorkflowVersion,
+	deleteAutoscaling,
 	deleteBuildSource,
 	deleteBuildSourceEnvVar,
 	deleteBuildSourceSecretFile,
@@ -52,23 +57,36 @@ import {
 	deleteOwnerMetricsStream,
 	deletePostgres,
 	deletePostgresUser,
+	deleteProject,
 	deleteRegistryCredential,
+	deleteResourceLogStream,
 	deleteSecretFile,
 	deleteService,
+	deleteServiceCustomDomain,
+	deleteServiceEnvVar,
+	deleteServiceHeader,
+	deleteServiceRoute,
 	deleteWebhook,
 	deleteWorkflow,
 	disconnectBlueprint,
 	failoverPostgres,
 	getActiveConnections,
+	getBandwidth,
 	getBandwidthSources,
 	getCpu,
 	getCpuLimit,
+	getCpuTarget,
 	getDiskCapacity,
 	getDiskUsage,
+	getHttpLatency,
+	getHttpRequests,
 	getInstanceCount,
 	getMemory,
 	getMemoryLimit,
 	getMemoryTarget,
+	getReplicationLag,
+	getTaskRunsCompleted,
+	getTaskRunsQueued,
 	getUser,
 	linkEnvGroupToBuildSource,
 	linkServiceToEnvGroup,
@@ -85,6 +103,7 @@ import {
 	listDisks,
 	listEnvGroups,
 	listEnvironments,
+	listHttpFilterValues,
 	listInstances,
 	listKeyValue,
 	listLogs,
@@ -96,6 +115,7 @@ import {
 	listOwnerAuditLogs,
 	listOwnerMembers,
 	listOwners,
+	listPathFilterValues,
 	listPostgres,
 	listPostgresExport,
 	listPostgresProcesses,
@@ -108,18 +128,25 @@ import {
 	listResourceLogStreams,
 	listRoutes,
 	listSecretFiles,
+	listServiceCustomDomains,
+	listServiceEnvVars,
 	listServiceEvents,
+	listServiceHeaders,
 	listServiceJobs,
 	listServices,
 	listTaskRuns,
 	listTasks,
+	listWebhookEvents,
 	listWebhooks,
 	listWorkflows,
 	listWorkflowVersions,
+	patchServiceRoute,
 	purgeServiceCache,
 	RenderEndpointInputSchemas,
 	RenderEndpointOutputSchemas,
 	recoverPostgres,
+	removeResourcesFromEnvironment,
+	removeWorkspaceMember,
 	restartPostgres,
 	restartService,
 	restoreDiskSnapshot,
@@ -140,24 +167,31 @@ import {
 	retrieveEnvGroupSecretFile,
 	retrieveEnvironment,
 	retrieveEnvVar,
+	retrieveEvent,
+	retrieveKeyValue,
 	retrieveKeyValueConnectionInfo,
 	retrieveMaintenance,
 	retrieveOwner,
+	retrieveOwnerLogStream,
+	retrieveOwnerMetricsStream,
 	retrieveOwnerNotificationSettings,
 	retrievePostgres,
 	retrievePostgresConnectionInfo,
 	retrievePostgresRecoveryInfo,
 	retrieveProject,
 	retrieveRegistryCredential,
+	retrieveResourceLogStream,
 	retrieveSecretFile,
 	retrieveService,
 	retrieveServiceJob,
+	retrieveServiceNotificationOverrides,
 	retrieveTask,
 	retrieveTaskRun,
 	retrieveWebhook,
 	retrieveWorkflow,
 	retrieveWorkflowVersion,
 	rollbackDeploy,
+	scaleService,
 	suspendKeyValue,
 	suspendPostgres,
 	suspendService,
@@ -166,6 +200,8 @@ import {
 	triggerDeploy,
 	triggerMaintenance,
 	unlinkEnvGroupFromBuildSource,
+	unlinkServiceFromEnvGroup,
+	updateAutoscaling,
 	updateBlueprint,
 	updateBuildSource,
 	updateBuildSourceEnvVar,
@@ -181,6 +217,7 @@ import {
 	updateEnvVar,
 	updateEnvVarsForService,
 	updateHeaders,
+	updateKeyValue,
 	updateMaintenance,
 	updateOwnerLogStream,
 	updateOwnerNotificationSettings,
@@ -191,8 +228,11 @@ import {
 	updateRoutes,
 	updateSecretFilesForService,
 	updateService,
+	updateServiceNotificationOverrides,
 	updateWebhook,
 	updateWorkflow,
+	updateWorkspaceMember,
+	upsertOwnerMetricsStream,
 	validateBlueprint,
 	verifyCustomDomain,
 } from './endpoints';
@@ -223,6 +263,7 @@ type RenderEndpoint<K extends keyof RenderEndpointOutputs> = CorsairEndpoint<
 
 export type RenderEndpoints = {
 	listServices: RenderEndpoint<'listServices'>;
+	createService: RenderEndpoint<'createService'>;
 	retrieveService: RenderEndpoint<'retrieveService'>;
 	deleteService: RenderEndpoint<'deleteService'>;
 	updateService: RenderEndpoint<'updateService'>;
@@ -236,24 +277,39 @@ export type RenderEndpoints = {
 	listServiceJobs: RenderEndpoint<'listServiceJobs'>;
 	retrieveServiceJob: RenderEndpoint<'retrieveServiceJob'>;
 	createServiceJob: RenderEndpoint<'createServiceJob'>;
+	createServicePreview: RenderEndpoint<'createServicePreview'>;
 	cancelServiceJob: RenderEndpoint<'cancelServiceJob'>;
 	restartService: RenderEndpoint<'restartService'>;
 	suspendService: RenderEndpoint<'suspendService'>;
 	resumeService: RenderEndpoint<'resumeService'>;
+	scaleService: RenderEndpoint<'scaleService'>;
+	updateAutoscaling: RenderEndpoint<'updateAutoscaling'>;
+	deleteAutoscaling: RenderEndpoint<'deleteAutoscaling'>;
+	deleteServiceHeader: RenderEndpoint<'deleteServiceHeader'>;
+	patchServiceRoute: RenderEndpoint<'patchServiceRoute'>;
+	deleteServiceRoute: RenderEndpoint<'deleteServiceRoute'>;
+	listServiceEnvVars: RenderEndpoint<'listServiceEnvVars'>;
+	deleteServiceEnvVar: RenderEndpoint<'deleteServiceEnvVar'>;
+	listServiceHeaders: RenderEndpoint<'listServiceHeaders'>;
+	listServiceCustomDomains: RenderEndpoint<'listServiceCustomDomains'>;
+	deleteServiceCustomDomain: RenderEndpoint<'deleteServiceCustomDomain'>;
 	listEnvironments: RenderEndpoint<'listEnvironments'>;
 	createEnvironment: RenderEndpoint<'createEnvironment'>;
 	retrieveEnvironment: RenderEndpoint<'retrieveEnvironment'>;
 	updateEnvironment: RenderEndpoint<'updateEnvironment'>;
 	deleteEnvironment: RenderEndpoint<'deleteEnvironment'>;
+	removeResourcesFromEnvironment: RenderEndpoint<'removeResourcesFromEnvironment'>;
 	listEnvGroups: RenderEndpoint<'listEnvGroups'>;
 	createEnvGroup: RenderEndpoint<'createEnvGroup'>;
 	retrieveEnvGroup: RenderEndpoint<'retrieveEnvGroup'>;
 	updateEnvGroup: RenderEndpoint<'updateEnvGroup'>;
 	deleteEnvGroup: RenderEndpoint<'deleteEnvGroup'>;
+	unlinkServiceFromEnvGroup: RenderEndpoint<'unlinkServiceFromEnvGroup'>;
 	listProjects: RenderEndpoint<'listProjects'>;
 	createProject: RenderEndpoint<'createProject'>;
 	retrieveProject: RenderEndpoint<'retrieveProject'>;
 	updateProject: RenderEndpoint<'updateProject'>;
+	deleteProject: RenderEndpoint<'deleteProject'>;
 	listPostgres: RenderEndpoint<'listPostgres'>;
 	createPostgres: RenderEndpoint<'createPostgres'>;
 	retrievePostgres: RenderEndpoint<'retrievePostgres'>;
@@ -274,6 +330,8 @@ export type RenderEndpoints = {
 	listOwners: RenderEndpoint<'listOwners'>;
 	retrieveOwner: RenderEndpoint<'retrieveOwner'>;
 	listOwnerMembers: RenderEndpoint<'listOwnerMembers'>;
+	updateWorkspaceMember: RenderEndpoint<'updateWorkspaceMember'>;
+	removeWorkspaceMember: RenderEndpoint<'removeWorkspaceMember'>;
 	listOwnerAuditLogs: RenderEndpoint<'listOwnerAuditLogs'>;
 	listOrganizationAuditLogs: RenderEndpoint<'listOrganizationAuditLogs'>;
 	getUser: RenderEndpoint<'getUser'>;
@@ -282,10 +340,18 @@ export type RenderEndpoints = {
 	listResourceLogStreams: RenderEndpoint<'listResourceLogStreams'>;
 	deleteOwnerLogStream: RenderEndpoint<'deleteOwnerLogStream'>;
 	updateOwnerLogStream: RenderEndpoint<'updateOwnerLogStream'>;
+	retrieveOwnerLogStream: RenderEndpoint<'retrieveOwnerLogStream'>;
+	retrieveResourceLogStream: RenderEndpoint<'retrieveResourceLogStream'>;
+	deleteResourceLogStream: RenderEndpoint<'deleteResourceLogStream'>;
 	getActiveConnections: RenderEndpoint<'getActiveConnections'>;
 	getBandwidthSources: RenderEndpoint<'getBandwidthSources'>;
 	getCpu: RenderEndpoint<'getCpu'>;
 	getCpuLimit: RenderEndpoint<'getCpuLimit'>;
+	getCpuTarget: RenderEndpoint<'getCpuTarget'>;
+	getHttpRequests: RenderEndpoint<'getHttpRequests'>;
+	getHttpLatency: RenderEndpoint<'getHttpLatency'>;
+	getBandwidth: RenderEndpoint<'getBandwidth'>;
+	getReplicationLag: RenderEndpoint<'getReplicationLag'>;
 	getDiskCapacity: RenderEndpoint<'getDiskCapacity'>;
 	getDiskUsage: RenderEndpoint<'getDiskUsage'>;
 	getInstanceCount: RenderEndpoint<'getInstanceCount'>;
@@ -293,6 +359,10 @@ export type RenderEndpoints = {
 	getMemoryLimit: RenderEndpoint<'getMemoryLimit'>;
 	getMemoryTarget: RenderEndpoint<'getMemoryTarget'>;
 	listApplicationFilterValues: RenderEndpoint<'listApplicationFilterValues'>;
+	listHttpFilterValues: RenderEndpoint<'listHttpFilterValues'>;
+	listPathFilterValues: RenderEndpoint<'listPathFilterValues'>;
+	getTaskRunsQueued: RenderEndpoint<'getTaskRunsQueued'>;
+	getTaskRunsCompleted: RenderEndpoint<'getTaskRunsCompleted'>;
 	listDisks: RenderEndpoint<'listDisks'>;
 	listMaintenance: RenderEndpoint<'listMaintenance'>;
 	listTaskRuns: RenderEndpoint<'listTaskRuns'>;
@@ -300,6 +370,8 @@ export type RenderEndpoints = {
 	listWorkflows: RenderEndpoint<'listWorkflows'>;
 	listWorkflowVersions: RenderEndpoint<'listWorkflowVersions'>;
 	listWebhooks: RenderEndpoint<'listWebhooks'>;
+	listWebhookEvents: RenderEndpoint<'listWebhookEvents'>;
+	retrieveEvent: RenderEndpoint<'retrieveEvent'>;
 	createDisk: RenderEndpoint<'createDisk'>;
 	retrieveDisk: RenderEndpoint<'retrieveDisk'>;
 	updateDisk: RenderEndpoint<'updateDisk'>;
@@ -310,6 +382,7 @@ export type RenderEndpoints = {
 	updateMaintenance: RenderEndpoint<'updateMaintenance'>;
 	triggerMaintenance: RenderEndpoint<'triggerMaintenance'>;
 	triggerCronJobRun: RenderEndpoint<'triggerCronJobRun'>;
+	cancelCronJobRun: RenderEndpoint<'cancelCronJobRun'>;
 	createWebhook: RenderEndpoint<'createWebhook'>;
 	retrieveWebhook: RenderEndpoint<'retrieveWebhook'>;
 	updateWebhook: RenderEndpoint<'updateWebhook'>;
@@ -332,7 +405,12 @@ export type RenderEndpoints = {
 	retrieveKeyValueConnectionInfo: RenderEndpoint<'retrieveKeyValueConnectionInfo'>;
 	listInstances: RenderEndpoint<'listInstances'>;
 	listKeyValue: RenderEndpoint<'listKeyValue'>;
+	createKeyValue: RenderEndpoint<'createKeyValue'>;
+	retrieveKeyValue: RenderEndpoint<'retrieveKeyValue'>;
+	updateKeyValue: RenderEndpoint<'updateKeyValue'>;
 	listNotificationOverrides: RenderEndpoint<'listNotificationOverrides'>;
+	retrieveServiceNotificationOverrides: RenderEndpoint<'retrieveServiceNotificationOverrides'>;
+	updateServiceNotificationOverrides: RenderEndpoint<'updateServiceNotificationOverrides'>;
 	listPostgresExport: RenderEndpoint<'listPostgresExport'>;
 	listPostgresUsers: RenderEndpoint<'listPostgresUsers'>;
 	listRoutes: RenderEndpoint<'listRoutes'>;
@@ -353,6 +431,8 @@ export type RenderEndpoints = {
 	updateSecretFilesForService: RenderEndpoint<'updateSecretFilesForService'>;
 	verifyCustomDomain: RenderEndpoint<'verifyCustomDomain'>;
 	deleteOwnerMetricsStream: RenderEndpoint<'deleteOwnerMetricsStream'>;
+	retrieveOwnerMetricsStream: RenderEndpoint<'retrieveOwnerMetricsStream'>;
+	upsertOwnerMetricsStream: RenderEndpoint<'upsertOwnerMetricsStream'>;
 	updateOwnerNotificationSettings: RenderEndpoint<'updateOwnerNotificationSettings'>;
 	updateRoutes: RenderEndpoint<'updateRoutes'>;
 	createBuildSource: RenderEndpoint<'createBuildSource'>;
@@ -405,6 +485,7 @@ export type RenderEndpoints = {
 const renderEndpointsNested = {
 	services: {
 		list: listServices,
+		create: createService,
 		retrieve: retrieveService,
 		delete: deleteService,
 		update: updateService,
@@ -424,12 +505,26 @@ const renderEndpointsNested = {
 		restart: restartService,
 		suspend: suspendService,
 		resume: resumeService,
+		scale: scaleService,
+		updateAutoscaling,
+		deleteAutoscaling,
+		createPreview: createServicePreview,
+		deleteHeader: deleteServiceHeader,
+		patchRoute: patchServiceRoute,
+		deleteRoute: deleteServiceRoute,
+		envVars: { list: listServiceEnvVars, delete: deleteServiceEnvVar },
+		headers: { list: listServiceHeaders },
+		customDomains: {
+			list: listServiceCustomDomains,
+			delete: deleteServiceCustomDomain,
+		},
 		environments: {
 			list: listEnvironments,
 			create: createEnvironment,
 			retrieve: retrieveEnvironment,
 			update: updateEnvironment,
 			delete: deleteEnvironment,
+			removeResources: removeResourcesFromEnvironment,
 		},
 		envGroups: {
 			list: listEnvGroups,
@@ -437,6 +532,7 @@ const renderEndpointsNested = {
 			retrieve: retrieveEnvGroup,
 			update: updateEnvGroup,
 			delete: deleteEnvGroup,
+			unlinkService: unlinkServiceFromEnvGroup,
 		},
 	},
 	projects: {
@@ -444,6 +540,7 @@ const renderEndpointsNested = {
 		create: createProject,
 		retrieve: retrieveProject,
 		update: updateProject,
+		delete: deleteProject,
 	},
 	postgres: {
 		list: listPostgres,
@@ -477,12 +574,17 @@ const renderEndpointsNested = {
 		list: listOwners,
 		retrieve: retrieveOwner,
 		members: listOwnerMembers,
+		updateMember: updateWorkspaceMember,
+		removeMember: removeWorkspaceMember,
 		auditLogs: listOwnerAuditLogs,
 	},
 	organizations: {
 		auditLogs: listOrganizationAuditLogs,
 	},
 	keyValue: {
+		create: createKeyValue,
+		retrieve: retrieveKeyValue,
+		update: updateKeyValue,
 		suspend: suspendKeyValue,
 		resume: resumeKeyValue,
 		connectionInfo: retrieveKeyValueConnectionInfo,
@@ -537,12 +639,20 @@ const renderEndpointsNested = {
 		resourceStreams: listResourceLogStreams,
 		deleteOwnerStream: deleteOwnerLogStream,
 		updateOwnerStream: updateOwnerLogStream,
+		retrieveOwnerStream: retrieveOwnerLogStream,
+		retrieveResourceStream: retrieveResourceLogStream,
+		deleteResourceStream: deleteResourceLogStream,
 	},
 	metrics: {
 		activeConnections: getActiveConnections,
 		bandwidthSources: getBandwidthSources,
 		cpu: getCpu,
 		cpuLimit: getCpuLimit,
+		cpuTarget: getCpuTarget,
+		httpRequests: getHttpRequests,
+		httpLatency: getHttpLatency,
+		bandwidth: getBandwidth,
+		replicationLag: getReplicationLag,
 		diskCapacity: getDiskCapacity,
 		diskUsage: getDiskUsage,
 		instanceCount: getInstanceCount,
@@ -550,7 +660,12 @@ const renderEndpointsNested = {
 		memoryLimit: getMemoryLimit,
 		memoryTarget: getMemoryTarget,
 		applicationFilterValues: listApplicationFilterValues,
+		httpFilterValues: listHttpFilterValues,
+		pathFilterValues: listPathFilterValues,
+		taskRunsQueued: getTaskRunsQueued,
+		taskRunsCompleted: getTaskRunsCompleted,
 	},
+	events: { retrieve: retrieveEvent },
 	automation: {
 		listDisks,
 		listMaintenance,
@@ -559,6 +674,7 @@ const renderEndpointsNested = {
 		listWorkflows,
 		listWorkflowVersions,
 		listWebhooks,
+		listWebhookEvents,
 		createDisk,
 		retrieveDisk,
 		updateDisk,
@@ -569,6 +685,7 @@ const renderEndpointsNested = {
 		updateMaintenance,
 		triggerMaintenance,
 		triggerCronJobRun,
+		cancelCronJobRun,
 		createWebhook,
 		retrieveWebhook,
 		updateWebhook,
@@ -600,6 +717,7 @@ const renderEndpointsNested = {
 		listInstances,
 		listKeyValue,
 		listNotificationOverrides,
+		retrieveServiceNotificationOverrides,
 		listPostgresExport,
 		listPostgresUsers,
 		listRoutes,
@@ -620,7 +738,10 @@ const renderEndpointsNested = {
 		updateSecretFilesForService,
 		verifyCustomDomain,
 		deleteOwnerMetricsStream,
+		retrieveOwnerMetricsStream,
+		upsertOwnerMetricsStream,
 		updateOwnerNotificationSettings,
+		updateServiceNotificationOverrides,
 		updateRoutes,
 	},
 } as const;
@@ -629,6 +750,10 @@ export const renderEndpointSchemas = {
 	'services.list': {
 		input: RenderEndpointInputSchemas.listServices,
 		output: RenderEndpointOutputSchemas.listServices,
+	},
+	'services.create': {
+		input: RenderEndpointInputSchemas.createService,
+		output: RenderEndpointOutputSchemas.createService,
 	},
 	'services.retrieve': {
 		input: RenderEndpointInputSchemas.retrieveService,
@@ -698,6 +823,54 @@ export const renderEndpointSchemas = {
 		input: RenderEndpointInputSchemas.resumeService,
 		output: RenderEndpointOutputSchemas.resumeService,
 	},
+	'services.scale': {
+		input: RenderEndpointInputSchemas.scaleService,
+		output: RenderEndpointOutputSchemas.scaleService,
+	},
+	'services.updateAutoscaling': {
+		input: RenderEndpointInputSchemas.updateAutoscaling,
+		output: RenderEndpointOutputSchemas.updateAutoscaling,
+	},
+	'services.deleteAutoscaling': {
+		input: RenderEndpointInputSchemas.deleteAutoscaling,
+		output: RenderEndpointOutputSchemas.deleteAutoscaling,
+	},
+	'services.createPreview': {
+		input: RenderEndpointInputSchemas.createServicePreview,
+		output: RenderEndpointOutputSchemas.createServicePreview,
+	},
+	'services.deleteHeader': {
+		input: RenderEndpointInputSchemas.deleteServiceHeader,
+		output: RenderEndpointOutputSchemas.deleteServiceHeader,
+	},
+	'services.patchRoute': {
+		input: RenderEndpointInputSchemas.patchServiceRoute,
+		output: RenderEndpointOutputSchemas.patchServiceRoute,
+	},
+	'services.deleteRoute': {
+		input: RenderEndpointInputSchemas.deleteServiceRoute,
+		output: RenderEndpointOutputSchemas.deleteServiceRoute,
+	},
+	'services.envVars.list': {
+		input: RenderEndpointInputSchemas.listServiceEnvVars,
+		output: RenderEndpointOutputSchemas.listServiceEnvVars,
+	},
+	'services.envVars.delete': {
+		input: RenderEndpointInputSchemas.deleteServiceEnvVar,
+		output: RenderEndpointOutputSchemas.deleteServiceEnvVar,
+	},
+	'services.headers.list': {
+		input: RenderEndpointInputSchemas.listServiceHeaders,
+		output: RenderEndpointOutputSchemas.listServiceHeaders,
+	},
+	'services.customDomains.list': {
+		input: RenderEndpointInputSchemas.listServiceCustomDomains,
+		output: RenderEndpointOutputSchemas.listServiceCustomDomains,
+	},
+	'services.customDomains.delete': {
+		input: RenderEndpointInputSchemas.deleteServiceCustomDomain,
+		output: RenderEndpointOutputSchemas.deleteServiceCustomDomain,
+	},
 	'services.environments.list': {
 		input: RenderEndpointInputSchemas.listEnvironments,
 		output: RenderEndpointOutputSchemas.listEnvironments,
@@ -717,6 +890,10 @@ export const renderEndpointSchemas = {
 	'services.environments.delete': {
 		input: RenderEndpointInputSchemas.deleteEnvironment,
 		output: RenderEndpointOutputSchemas.deleteEnvironment,
+	},
+	'services.environments.removeResources': {
+		input: RenderEndpointInputSchemas.removeResourcesFromEnvironment,
+		output: RenderEndpointOutputSchemas.removeResourcesFromEnvironment,
 	},
 	'services.envGroups.list': {
 		input: RenderEndpointInputSchemas.listEnvGroups,
@@ -738,6 +915,10 @@ export const renderEndpointSchemas = {
 		input: RenderEndpointInputSchemas.deleteEnvGroup,
 		output: RenderEndpointOutputSchemas.deleteEnvGroup,
 	},
+	'services.envGroups.unlinkService': {
+		input: RenderEndpointInputSchemas.unlinkServiceFromEnvGroup,
+		output: RenderEndpointOutputSchemas.unlinkServiceFromEnvGroup,
+	},
 	'projects.list': {
 		input: RenderEndpointInputSchemas.listProjects,
 		output: RenderEndpointOutputSchemas.listProjects,
@@ -753,6 +934,10 @@ export const renderEndpointSchemas = {
 	'projects.update': {
 		input: RenderEndpointInputSchemas.updateProject,
 		output: RenderEndpointOutputSchemas.updateProject,
+	},
+	'projects.delete': {
+		input: RenderEndpointInputSchemas.deleteProject,
+		output: RenderEndpointOutputSchemas.deleteProject,
 	},
 	'postgres.list': {
 		input: RenderEndpointInputSchemas.listPostgres,
@@ -834,6 +1019,14 @@ export const renderEndpointSchemas = {
 		input: RenderEndpointInputSchemas.listOwnerMembers,
 		output: RenderEndpointOutputSchemas.listOwnerMembers,
 	},
+	'owners.updateMember': {
+		input: RenderEndpointInputSchemas.updateWorkspaceMember,
+		output: RenderEndpointOutputSchemas.updateWorkspaceMember,
+	},
+	'owners.removeMember': {
+		input: RenderEndpointInputSchemas.removeWorkspaceMember,
+		output: RenderEndpointOutputSchemas.removeWorkspaceMember,
+	},
 	'owners.auditLogs': {
 		input: RenderEndpointInputSchemas.listOwnerAuditLogs,
 		output: RenderEndpointOutputSchemas.listOwnerAuditLogs,
@@ -866,6 +1059,18 @@ export const renderEndpointSchemas = {
 		input: RenderEndpointInputSchemas.updateOwnerLogStream,
 		output: RenderEndpointOutputSchemas.updateOwnerLogStream,
 	},
+	'logs.retrieveOwnerStream': {
+		input: RenderEndpointInputSchemas.retrieveOwnerLogStream,
+		output: RenderEndpointOutputSchemas.retrieveOwnerLogStream,
+	},
+	'logs.retrieveResourceStream': {
+		input: RenderEndpointInputSchemas.retrieveResourceLogStream,
+		output: RenderEndpointOutputSchemas.retrieveResourceLogStream,
+	},
+	'logs.deleteResourceStream': {
+		input: RenderEndpointInputSchemas.deleteResourceLogStream,
+		output: RenderEndpointOutputSchemas.deleteResourceLogStream,
+	},
 	'metrics.activeConnections': {
 		input: RenderEndpointInputSchemas.getActiveConnections,
 		output: RenderEndpointOutputSchemas.getActiveConnections,
@@ -881,6 +1086,26 @@ export const renderEndpointSchemas = {
 	'metrics.cpuLimit': {
 		input: RenderEndpointInputSchemas.getCpuLimit,
 		output: RenderEndpointOutputSchemas.getCpuLimit,
+	},
+	'metrics.cpuTarget': {
+		input: RenderEndpointInputSchemas.getCpuTarget,
+		output: RenderEndpointOutputSchemas.getCpuTarget,
+	},
+	'metrics.httpRequests': {
+		input: RenderEndpointInputSchemas.getHttpRequests,
+		output: RenderEndpointOutputSchemas.getHttpRequests,
+	},
+	'metrics.httpLatency': {
+		input: RenderEndpointInputSchemas.getHttpLatency,
+		output: RenderEndpointOutputSchemas.getHttpLatency,
+	},
+	'metrics.bandwidth': {
+		input: RenderEndpointInputSchemas.getBandwidth,
+		output: RenderEndpointOutputSchemas.getBandwidth,
+	},
+	'metrics.replicationLag': {
+		input: RenderEndpointInputSchemas.getReplicationLag,
+		output: RenderEndpointOutputSchemas.getReplicationLag,
 	},
 	'metrics.diskCapacity': {
 		input: RenderEndpointInputSchemas.getDiskCapacity,
@@ -910,6 +1135,22 @@ export const renderEndpointSchemas = {
 		input: RenderEndpointInputSchemas.listApplicationFilterValues,
 		output: RenderEndpointOutputSchemas.listApplicationFilterValues,
 	},
+	'metrics.httpFilterValues': {
+		input: RenderEndpointInputSchemas.listHttpFilterValues,
+		output: RenderEndpointOutputSchemas.listHttpFilterValues,
+	},
+	'metrics.pathFilterValues': {
+		input: RenderEndpointInputSchemas.listPathFilterValues,
+		output: RenderEndpointOutputSchemas.listPathFilterValues,
+	},
+	'metrics.taskRunsQueued': {
+		input: RenderEndpointInputSchemas.getTaskRunsQueued,
+		output: RenderEndpointOutputSchemas.getTaskRunsQueued,
+	},
+	'metrics.taskRunsCompleted': {
+		input: RenderEndpointInputSchemas.getTaskRunsCompleted,
+		output: RenderEndpointOutputSchemas.getTaskRunsCompleted,
+	},
 	'automation.listDisks': {
 		input: RenderEndpointInputSchemas.listDisks,
 		output: RenderEndpointOutputSchemas.listDisks,
@@ -937,6 +1178,14 @@ export const renderEndpointSchemas = {
 	'automation.listWebhooks': {
 		input: RenderEndpointInputSchemas.listWebhooks,
 		output: RenderEndpointOutputSchemas.listWebhooks,
+	},
+	'automation.listWebhookEvents': {
+		input: RenderEndpointInputSchemas.listWebhookEvents,
+		output: RenderEndpointOutputSchemas.listWebhookEvents,
+	},
+	'events.retrieve': {
+		input: RenderEndpointInputSchemas.retrieveEvent,
+		output: RenderEndpointOutputSchemas.retrieveEvent,
 	},
 	'automation.createDisk': {
 		input: RenderEndpointInputSchemas.createDisk,
@@ -977,6 +1226,10 @@ export const renderEndpointSchemas = {
 	'automation.triggerCronJobRun': {
 		input: RenderEndpointInputSchemas.triggerCronJobRun,
 		output: RenderEndpointOutputSchemas.triggerCronJobRun,
+	},
+	'automation.cancelCronJobRun': {
+		input: RenderEndpointInputSchemas.cancelCronJobRun,
+		output: RenderEndpointOutputSchemas.cancelCronJobRun,
 	},
 	'automation.createWebhook': {
 		input: RenderEndpointInputSchemas.createWebhook,
@@ -1054,6 +1307,18 @@ export const renderEndpointSchemas = {
 		input: RenderEndpointInputSchemas.suspendKeyValue,
 		output: RenderEndpointOutputSchemas.suspendKeyValue,
 	},
+	'keyValue.create': {
+		input: RenderEndpointInputSchemas.createKeyValue,
+		output: RenderEndpointOutputSchemas.createKeyValue,
+	},
+	'keyValue.retrieve': {
+		input: RenderEndpointInputSchemas.retrieveKeyValue,
+		output: RenderEndpointOutputSchemas.retrieveKeyValue,
+	},
+	'keyValue.update': {
+		input: RenderEndpointInputSchemas.updateKeyValue,
+		output: RenderEndpointOutputSchemas.updateKeyValue,
+	},
 	'keyValue.resume': {
 		input: RenderEndpointInputSchemas.resumeKeyValue,
 		output: RenderEndpointOutputSchemas.resumeKeyValue,
@@ -1069,6 +1334,14 @@ export const renderEndpointSchemas = {
 	'final.listNotificationOverrides': {
 		input: RenderEndpointInputSchemas.listNotificationOverrides,
 		output: RenderEndpointOutputSchemas.listNotificationOverrides,
+	},
+	'final.retrieveServiceNotificationOverrides': {
+		input: RenderEndpointInputSchemas.retrieveServiceNotificationOverrides,
+		output: RenderEndpointOutputSchemas.retrieveServiceNotificationOverrides,
+	},
+	'final.updateServiceNotificationOverrides': {
+		input: RenderEndpointInputSchemas.updateServiceNotificationOverrides,
+		output: RenderEndpointOutputSchemas.updateServiceNotificationOverrides,
 	},
 	'final.listPostgresExport': {
 		input: RenderEndpointInputSchemas.listPostgresExport,
@@ -1149,6 +1422,14 @@ export const renderEndpointSchemas = {
 	'final.deleteOwnerMetricsStream': {
 		input: RenderEndpointInputSchemas.deleteOwnerMetricsStream,
 		output: RenderEndpointOutputSchemas.deleteOwnerMetricsStream,
+	},
+	'final.retrieveOwnerMetricsStream': {
+		input: RenderEndpointInputSchemas.retrieveOwnerMetricsStream,
+		output: RenderEndpointOutputSchemas.retrieveOwnerMetricsStream,
+	},
+	'final.upsertOwnerMetricsStream': {
+		input: RenderEndpointInputSchemas.upsertOwnerMetricsStream,
+		output: RenderEndpointOutputSchemas.upsertOwnerMetricsStream,
 	},
 	'final.updateOwnerNotificationSettings': {
 		input: RenderEndpointInputSchemas.updateOwnerNotificationSettings,
@@ -1384,6 +1665,54 @@ function withRenderSchemas<T extends RenderEndpointTree>(
 const validatedRenderEndpointsNested = withRenderSchemas(renderEndpointsNested);
 
 const renderEndpointMeta = {
+	'services.create': {
+		riskLevel: 'write',
+		description: 'Create a Render service',
+	},
+	'services.envVars.list': {
+		riskLevel: 'read',
+		description: 'List environment variables for a Render service',
+	},
+	'services.envVars.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete an environment variable from a Render service',
+	},
+	'services.headers.list': {
+		riskLevel: 'read',
+		description: 'List headers for a Render service',
+	},
+	'services.customDomains.list': {
+		riskLevel: 'read',
+		description: 'List custom domains for a Render service',
+	},
+	'services.customDomains.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a custom domain from a Render service',
+	},
+	'services.environments.removeResources': {
+		riskLevel: 'destructive',
+		description: 'Remove resources from a Render environment',
+	},
+	'services.envGroups.unlinkService': {
+		riskLevel: 'destructive',
+		description: 'Unlink a Render service from an environment group',
+	},
+	'projects.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a Render project',
+	},
+	'keyValue.create': {
+		riskLevel: 'write',
+		description: 'Create a Render Key Value instance',
+	},
+	'keyValue.retrieve': {
+		riskLevel: 'read',
+		description: 'Retrieve a Render Key Value instance',
+	},
+	'keyValue.update': {
+		riskLevel: 'write',
+		description: 'Update a Render Key Value instance',
+	},
 	'services.list': {
 		riskLevel: 'read',
 		description: 'List Render services accessible to the authenticated owner',
@@ -1455,6 +1784,34 @@ const renderEndpointMeta = {
 	'services.resume': {
 		riskLevel: 'write',
 		description: 'Resume a Render service',
+	},
+	'services.scale': {
+		riskLevel: 'write',
+		description: 'Scale a Render service to a fixed instance count',
+	},
+	'services.updateAutoscaling': {
+		riskLevel: 'write',
+		description: 'Update autoscaling for a Render service',
+	},
+	'services.deleteAutoscaling': {
+		riskLevel: 'destructive',
+		description: 'Delete autoscaling configuration for a Render service',
+	},
+	'services.createPreview': {
+		riskLevel: 'write',
+		description: 'Create an image-backed preview for a Render service',
+	},
+	'services.deleteHeader': {
+		riskLevel: 'destructive',
+		description: 'Delete a header from a Render service',
+	},
+	'services.patchRoute': {
+		riskLevel: 'write',
+		description: 'Update a route on a Render service',
+	},
+	'services.deleteRoute': {
+		riskLevel: 'destructive',
+		description: 'Delete a route from a Render service',
 	},
 	'services.environments.list': {
 		riskLevel: 'read',
@@ -1588,6 +1945,14 @@ const renderEndpointMeta = {
 		riskLevel: 'read',
 		description: 'List Render owner members',
 	},
+	'owners.updateMember': {
+		riskLevel: 'write',
+		description: 'Update a Render workspace member role',
+	},
+	'owners.removeMember': {
+		riskLevel: 'destructive',
+		description: 'Remove a member from a Render workspace',
+	},
 	'owners.auditLogs': {
 		riskLevel: 'read',
 		description: 'List audit logs for a Render owner',
@@ -1614,6 +1979,18 @@ const renderEndpointMeta = {
 		riskLevel: 'write',
 		description: 'Update an owner log stream',
 	},
+	'logs.retrieveOwnerStream': {
+		riskLevel: 'read',
+		description: 'Retrieve a Render owner log stream',
+	},
+	'logs.retrieveResourceStream': {
+		riskLevel: 'read',
+		description: 'Retrieve a Render resource log stream',
+	},
+	'logs.deleteResourceStream': {
+		riskLevel: 'destructive',
+		description: 'Delete a Render resource log stream',
+	},
 	'metrics.activeConnections': {
 		riskLevel: 'read',
 		description: 'Read active Render connections',
@@ -1626,6 +2003,26 @@ const renderEndpointMeta = {
 	'metrics.cpuLimit': {
 		riskLevel: 'read',
 		description: 'Read Render CPU limits',
+	},
+	'metrics.cpuTarget': {
+		riskLevel: 'read',
+		description: 'Read Render CPU target metrics',
+	},
+	'metrics.httpRequests': {
+		riskLevel: 'read',
+		description: 'Read Render HTTP request metrics',
+	},
+	'metrics.httpLatency': {
+		riskLevel: 'read',
+		description: 'Read Render HTTP latency metrics',
+	},
+	'metrics.bandwidth': {
+		riskLevel: 'read',
+		description: 'Read Render bandwidth metrics',
+	},
+	'metrics.replicationLag': {
+		riskLevel: 'read',
+		description: 'Read Render replication lag metrics',
 	},
 	'metrics.diskCapacity': {
 		riskLevel: 'read',
@@ -1655,6 +2052,22 @@ const renderEndpointMeta = {
 		riskLevel: 'read',
 		description: 'List Render application metric filter values',
 	},
+	'metrics.httpFilterValues': {
+		riskLevel: 'read',
+		description: 'List Render HTTP metric filter values',
+	},
+	'metrics.pathFilterValues': {
+		riskLevel: 'read',
+		description: 'List Render path metric filter values',
+	},
+	'metrics.taskRunsQueued': {
+		riskLevel: 'read',
+		description: 'Read queued Render task run metrics',
+	},
+	'metrics.taskRunsCompleted': {
+		riskLevel: 'read',
+		description: 'Read completed Render task run metrics',
+	},
 	'automation.listDisks': {
 		riskLevel: 'read',
 		description: 'List Render disks',
@@ -1682,6 +2095,14 @@ const renderEndpointMeta = {
 	'automation.listWebhooks': {
 		riskLevel: 'read',
 		description: 'List Render webhooks',
+	},
+	'automation.listWebhookEvents': {
+		riskLevel: 'read',
+		description: 'List delivery events for a Render webhook',
+	},
+	'events.retrieve': {
+		riskLevel: 'read',
+		description: 'Retrieve a Render event',
 	},
 	'automation.createDisk': {
 		riskLevel: 'write',
@@ -1722,6 +2143,10 @@ const renderEndpointMeta = {
 	'automation.triggerCronJobRun': {
 		riskLevel: 'write',
 		description: 'Trigger a run of a Render cron job',
+	},
+	'automation.cancelCronJobRun': {
+		riskLevel: 'destructive',
+		description: 'Cancel a run of a Render cron job',
 	},
 	'automation.createWebhook': {
 		riskLevel: 'write',
@@ -1809,6 +2234,14 @@ const renderEndpointMeta = {
 		riskLevel: 'read',
 		description: 'Render listNotificationOverrides',
 	},
+	'final.retrieveServiceNotificationOverrides': {
+		riskLevel: 'read',
+		description: 'Retrieve notification overrides for a Render service',
+	},
+	'final.updateServiceNotificationOverrides': {
+		riskLevel: 'write',
+		description: 'Update notification overrides for a Render service',
+	},
 	'final.listPostgresExport': {
 		riskLevel: 'read',
 		description: 'Render listPostgresExport',
@@ -1885,6 +2318,14 @@ const renderEndpointMeta = {
 	'final.deleteOwnerMetricsStream': {
 		riskLevel: 'destructive',
 		description: 'Render deleteOwnerMetricsStream',
+	},
+	'final.retrieveOwnerMetricsStream': {
+		riskLevel: 'read',
+		description: 'Retrieve metrics stream settings for a Render owner',
+	},
+	'final.upsertOwnerMetricsStream': {
+		riskLevel: 'write',
+		description: 'Create or update metrics stream settings for a Render owner',
 	},
 	'final.updateOwnerNotificationSettings': {
 		riskLevel: 'write',
