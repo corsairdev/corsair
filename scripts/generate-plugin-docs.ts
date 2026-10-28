@@ -1318,6 +1318,27 @@ ${cards.join('\n')}
 `;
 }
 
+/**
+ * Provider descriptions can contain `<name>`, `<>` or `{ type: "world" }`. In MDX
+ * prose those parse as JSX or JS expressions, the page fails to compile, and
+ * Mintlify drops it (404). Escape them outside inline code spans.
+ */
+function escapeMdxText(s: string | undefined): string {
+	if (!s) return '';
+	return s
+		.split(/(`[^`]*`)/)
+		.map((part) =>
+			part.startsWith('`')
+				? part
+				: part
+						.replace(/</g, '&lt;')
+						.replace(/>/g, '&gt;')
+						.replace(/\{/g, '&#123;')
+						.replace(/\}/g, '&#125;'),
+		)
+		.join('');
+}
+
 function escapeCell(s: string | undefined): string {
 	if (!s) return '';
 	return s
@@ -1466,7 +1487,7 @@ ${renderTypeAccordionItem(kind, shape.type)}
 				detailBlocks.push(renderTypeAccordionItem(f.key, f.type));
 			}
 			const cellType = tableTypeDisplay(f.type);
-			return `| \`${escapeCell(f.key)}\` | \`${escapeCell(cellType)}\` | ${f.optional ? 'No' : 'Yes'} | ${escapeCell(f.description) || '—'} |`;
+			return `| \`${escapeCell(f.key)}\` | \`${escapeCell(cellType)}\` | ${f.optional ? 'No' : 'Yes'} | ${escapeCell(escapeMdxText(f.description)) || '—'} |`;
 		})
 		.join('\n');
 	const detailsSection =
@@ -1523,7 +1544,7 @@ function buildApiMdx(
 				ep.riskLevel !== undefined
 					? `\n\n**Risk:** \`${ep.riskLevel}\`${ep.irreversible ? ' · **Irreversible**' : ''}`
 					: '';
-			const desc = ep.description ? `\n\n${ep.description}` : '';
+			const desc = ep.description ? `\n\n${escapeMdxText(ep.description)}` : '';
 			sections.push(`### ${method}`);
 			sections.push('');
 			sections.push(`\`${ep.shortPath}\`${desc}${risk}`);
