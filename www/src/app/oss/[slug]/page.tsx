@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
 
+import { socialMetadata } from '@/lib/social-metadata';
 import {
 	getIntegrationCapabilitiesForPage,
 	getIntegrationSummaryForPage,
@@ -24,10 +25,17 @@ export async function generateMetadata({
 
 	try {
 		const integration = await getIntegrationSummaryForPage(slug);
+		const description = `${integration.name} in Corsair's open-source integration catalog: what it does, its status, and how to contribute.`;
+		const path = `/oss/${slug}`;
 		return {
 			title: integration.name,
-			description: `${integration.name} in Corsair's open-source integration catalog: what it does, its status, and how to contribute.`,
-			alternates: { canonical: `/oss/${slug}` },
+			description,
+			alternates: { canonical: path },
+			...socialMetadata({
+				title: `${integration.name} | Corsair OSS`,
+				description,
+				path,
+			}),
 		};
 	} catch {
 		return { title: 'Integration not found' };

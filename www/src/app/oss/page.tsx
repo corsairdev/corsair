@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
 
+import { socialMetadata } from '@/lib/social-metadata';
+
 import { IntegrationListSkeleton } from './integration-list-skeleton';
 import { OssIntegrationsShell } from './oss-integrations-shell';
 import {
@@ -18,11 +20,18 @@ import {
 } from './oss-skeletons';
 import { parseTagSlugs } from './oss-url';
 
+const OSS_DESCRIPTION =
+	"Build integrations in the open and earn AI credits — 1 point = $1. Your code ships to thousands of developers via Corsair's open catalog.";
+
 export const metadata: Metadata = {
 	title: 'OSS Integrations',
-	description:
-		"Build integrations in the open and earn AI credits — 1 point = $1. Your code ships to thousands of developers via Corsair's open catalog.",
+	description: OSS_DESCRIPTION,
 	alternates: { canonical: '/oss' },
+	...socialMetadata({
+		title: 'OSS Integrations | Corsair',
+		description: OSS_DESCRIPTION,
+		path: '/oss',
+	}),
 };
 
 type PageProps = {
