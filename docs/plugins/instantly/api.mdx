@@ -1,0 +1,2395 @@
+---
+title: API
+description: "API reference for Instantly: every `instantly.api.*` operation with input and output types."
+---
+
+Every `instantly.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Accounts
+
+### disableWarmup
+
+`accounts.disableWarmup`
+
+Turn warmup off for up to 100 sending accounts (runs as a background job; returns the job)
+
+**Risk:** `write`
+
+```ts
+await corsair.instantly.api.accounts.disableWarmup({ emails: ['sam@fieldkit-mail.com'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emails` | `string[]` | Yes | Sending account emails, up to 100 |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `type` | `string` | No | — |
+| `status` | `string` | No | pending, in-progress, success, failed, draining, paused or cancelled |
+| `progress` | `number` | No | 0 to 100 |
+| `workspace_id` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+
+
+---
+
+### enableWarmup
+
+`accounts.enableWarmup`
+
+Turn warmup on for up to 100 sending accounts (runs as a background job; returns the job)
+
+**Risk:** `write`
+
+```ts
+await corsair.instantly.api.accounts.enableWarmup({ emails: ['sam@fieldkit-mail.com'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emails` | `string[]` | Yes | Sending account emails, up to 100 |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `type` | `string` | No | — |
+| `status` | `string` | No | pending, in-progress, success, failed, draining, paused or cancelled |
+| `progress` | `number` | No | 0 to 100 |
+| `workspace_id` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+
+
+---
+
+### get
+
+`accounts.get`
+
+Get one sending account by email address
+
+**Risk:** `read`
+
+```ts
+await corsair.instantly.api.accounts.get({ email: 'sam@fieldkit-mail.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | Sending account email address |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `organization` | `string` | No | — |
+| `status` | `number` | No | 1 Active, 2 Paused, 3 Paused for maintenance, -1 Connection error, -2 Soft bounce error, -3 Sending error |
+| `warmup_status` | `number` | No | 0 Paused, 1 Active, -1 Banned, -2 Spam folder unknown, -3 Permanent suspension |
+| `provider_code` | `number` | No | 1 IMAP/SMTP, 2 Google, 3 Microsoft, 4 AWS, 8 AirMail, 11 AirMail Instant |
+| `daily_limit` | `number` | No | Campaign emails this account sends per day |
+| `sending_gap` | `number` | No | Minutes between emails from this account |
+| `stat_warmup_score` | `number` | No | — |
+| `warmup` | `object` | No | Warmup settings: limit, increment, reply_rate |
+| `status_message` | `object` | No | Last connection or sending error |
+| `setup_pending` | `boolean` | No | — |
+| `is_managed_account` | `boolean` | No | — |
+| `enable_slow_ramp` | `boolean` | No | — |
+| `tracking_domain_name` | `string` | No | — |
+| `tracking_domain_status` | `string` | No | — |
+| `signature` | `string` | No | — |
+| `reply_to` | `string` | No | — |
+| `timestamp_created` | `string` | No | — |
+| `timestamp_updated` | `string` | No | — |
+| `timestamp_warmup_start` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="warmup full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="status_message full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getWarmupAnalytics
+
+`accounts.getWarmupAnalytics`
+
+Get warmup results for up to 100 sending accounts: daily sent, received and landed-in-inbox counts and a 0-100 health score
+
+**Risk:** `read`
+
+```ts
+await corsair.instantly.api.accounts.getWarmupAnalytics({ emails: ['sam@fieldkit-mail.com'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emails` | `string[]` | Yes | Sending account emails, up to 100 |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email_date_data` | `object` | No | Per account, per day (YYYY-MM-DD) warmup counts |
+| `aggregate_data` | `object` | No | Per account totals and health score |
+
+<AccordionGroup>
+<Accordion title="email_date_data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="aggregate_data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`accounts.list`
+
+List sending accounts (mailboxes) with status, warmup status, daily limit and warmup score; filter by status, provider, tag or search
+
+**Risk:** `read`
+
+```ts
+await corsair.instantly.api.accounts.list({ filter: 'ACC_FILTER_W_ACTIVE', limit: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Items per page, 1 to 100 |
+| `starting_after` | `string` | No | Cursor: `next_starting_after` from the previous page |
+| `search` | `string` | No | Match account emails |
+| `status` | `1 \| 2 \| 3 \| -1 \| -2 \| -3` | No | 1 Active, 2 Paused, 3 Maintenance, -1 Connection error, -2 Soft bounce error, -3 Sending error |
+| `provider_code` | `1 \| 2 \| 3 \| 4 \| 8 \| 11` | No | — |
+| `filter` | `ACC_FILTER_PAUSED \| ACC_FILTER_ERROR \| ACC_FILTER_NO_CTD \| ACC_FILTER_PW_ACCOUNTS \| ACC_FILTER_DFY \| ACC_FILTER_DFY_SETUP_PENDING \| ACC_FILTER_W_ACTIVE \| ACC_FILTER_W_PAUSED \| ACC_FILTER_W_ERROR` | No | Paused, has errors, no custom tracking domain, pre-warmed, DFY, DFY setup pending, or warmup active / paused / erroring |
+| `tag_ids` | `string[]` | No | Accounts with any of these tag IDs |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_starting_after` | `string` | No | Pass as starting_after to get the next page; absent on the last page |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  email: string,
+  first_name?: string | null,
+  last_name?: string | null,
+  organization?: string | null,
+  status?: number | null,
+  warmup_status?: number | null,
+  provider_code?: number | null,
+  daily_limit?: number | null,
+  sending_gap?: number | null,
+  stat_warmup_score?: number | null,
+  warmup?: {
+  } | null,
+  status_message?: {
+  } | null,
+  setup_pending?: boolean | null,
+  is_managed_account?: boolean | null,
+  enable_slow_ramp?: boolean | null,
+  tracking_domain_name?: string | null,
+  tracking_domain_status?: string | null,
+  signature?: string | null,
+  reply_to?: string | null,
+  timestamp_created?: string | null,
+  timestamp_updated?: string | null,
+  timestamp_warmup_start?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### pause
+
+`accounts.pause`
+
+Pause a sending account: it stops sending campaign emails until resumed
+
+**Risk:** `write`
+
+```ts
+await corsair.instantly.api.accounts.pause({ email: 'sam@fieldkit-mail.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | Sending account email address |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `organization` | `string` | No | — |
+| `status` | `number` | No | 1 Active, 2 Paused, 3 Paused for maintenance, -1 Connection error, -2 Soft bounce error, -3 Sending error |
+| `warmup_status` | `number` | No | 0 Paused, 1 Active, -1 Banned, -2 Spam folder unknown, -3 Permanent suspension |
+| `provider_code` | `number` | No | 1 IMAP/SMTP, 2 Google, 3 Microsoft, 4 AWS, 8 AirMail, 11 AirMail Instant |
+| `daily_limit` | `number` | No | Campaign emails this account sends per day |
+| `sending_gap` | `number` | No | Minutes between emails from this account |
+| `stat_warmup_score` | `number` | No | — |
+| `warmup` | `object` | No | Warmup settings: limit, increment, reply_rate |
+| `status_message` | `object` | No | Last connection or sending error |
+| `setup_pending` | `boolean` | No | — |
+| `is_managed_account` | `boolean` | No | — |
+| `enable_slow_ramp` | `boolean` | No | — |
+| `tracking_domain_name` | `string` | No | — |
+| `tracking_domain_status` | `string` | No | — |
+| `signature` | `string` | No | — |
+| `reply_to` | `string` | No | — |
+| `timestamp_created` | `string` | No | — |
+| `timestamp_updated` | `string` | No | — |
+| `timestamp_warmup_start` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="warmup full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="status_message full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### resume
+
+`accounts.resume`
+
+Resume a paused sending account so it sends campaign emails again
+
+**Risk:** `write`
+
+```ts
+await corsair.instantly.api.accounts.resume({ email: 'sam@fieldkit-mail.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | Sending account email address |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `organization` | `string` | No | — |
+| `status` | `number` | No | 1 Active, 2 Paused, 3 Paused for maintenance, -1 Connection error, -2 Soft bounce error, -3 Sending error |
+| `warmup_status` | `number` | No | 0 Paused, 1 Active, -1 Banned, -2 Spam folder unknown, -3 Permanent suspension |
+| `provider_code` | `number` | No | 1 IMAP/SMTP, 2 Google, 3 Microsoft, 4 AWS, 8 AirMail, 11 AirMail Instant |
+| `daily_limit` | `number` | No | Campaign emails this account sends per day |
+| `sending_gap` | `number` | No | Minutes between emails from this account |
+| `stat_warmup_score` | `number` | No | — |
+| `warmup` | `object` | No | Warmup settings: limit, increment, reply_rate |
+| `status_message` | `object` | No | Last connection or sending error |
+| `setup_pending` | `boolean` | No | — |
+| `is_managed_account` | `boolean` | No | — |
+| `enable_slow_ramp` | `boolean` | No | — |
+| `tracking_domain_name` | `string` | No | — |
+| `tracking_domain_status` | `string` | No | — |
+| `signature` | `string` | No | — |
+| `reply_to` | `string` | No | — |
+| `timestamp_created` | `string` | No | — |
+| `timestamp_updated` | `string` | No | — |
+| `timestamp_warmup_start` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="warmup full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="status_message full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Blocklist
+
+### add
+
+`blocklist.add`
+
+Block an email (jane@acme.com) or a whole domain (acme.com) from every campaign
+
+**Risk:** `write`
+
+```ts
+await corsair.instantly.api.blocklist.add({ bl_value: 'competitor.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bl_value` | `string` | Yes | Email (jane@acme.com) or domain (acme.com) to block |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `bl_value` | `string` | No | Blocked email or domain |
+| `is_domain` | `boolean` | No | — |
+| `organization_id` | `string` | No | — |
+| `timestamp_created` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`blocklist.list`
+
+List blocked emails and domains
+
+**Risk:** `read`
+
+```ts
+await corsair.instantly.api.blocklist.list({ domains_only: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Items per page, 1 to 100 |
+| `starting_after` | `string` | No | Cursor: `next_starting_after` from the previous page |
+| `search` | `string` | No | — |
+| `domains_only` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_starting_after` | `string` | No | Pass as starting_after to get the next page; absent on the last page |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: string,
+  bl_value?: string | null,
+  is_domain?: boolean | null,
+  organization_id?: string | null,
+  timestamp_created?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`blocklist.remove`
+
+Remove a blocklist entry, so campaigns can email that address or domain again
+
+**Risk:** `destructive`
+
+```ts
+await corsair.instantly.api.blocklist.remove({ id: '01a181d1-c62c-745b-b842-8710aa4f2e01' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Blocklist entry ID (UUID) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `bl_value` | `string` | No | Blocked email or domain |
+| `is_domain` | `boolean` | No | — |
+| `organization_id` | `string` | No | — |
+| `timestamp_created` | `string` | No | — |
+
+
+
+---
+
+## Campaigns
+
+### activate
+
+`campaigns.activate`
+
+Start or resume a campaign. This SENDS REAL EMAIL to the campaign's leads from the connected accounts, on its schedule
+
+**Risk:** `write`
+
+```ts
+await corsair.instantly.api.campaigns.activate({ id: '01a181d1-c62c-745b-b842-870ce5b29862' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Campaign ID (UUID) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `status` | `number` | No | 0 Draft, 1 Active, 2 Paused, 3 Completed, 4 Running subsequences, -1 Accounts unhealthy, -2 Bounce protect, -99 Account suspended |
+| `not_sending_status` | `number` | No | Why an active campaign is not sending: 1 outside its schedule, 2 waiting for a lead, 3 campaign daily limit hit, 4 every account at its daily limit, 99 error |
+| `campaign_schedule` | `object` | No | — |
+| `sequences` | `any[]` | No | — |
+| `email_list` | `string[]` | No | — |
+| `email_tag_list` | `string[]` | No | — |
+| `daily_limit` | `number` | No | — |
+| `daily_max_leads` | `number` | No | — |
+| `email_gap` | `number` | No | — |
+| `random_wait_max` | `number` | No | — |
+| `stop_on_reply` | `boolean` | No | — |
+| `stop_on_auto_reply` | `boolean` | No | — |
+| `stop_for_company` | `boolean` | No | — |
+| `text_only` | `boolean` | No | — |
+| `first_email_text_only` | `boolean` | No | — |
+| `link_tracking` | `boolean` | No | — |
+| `open_tracking` | `boolean` | No | — |
+| `is_evergreen` | `boolean` | No | — |
+| `pl_value` | `number` | No | — |
+| `organization` | `string` | No | — |
+| `timestamp_created` | `string` | No | — |
+| `timestamp_updated` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="campaign_schedule full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`campaigns.create`
+
+Create a campaign as a draft: schedule, one sequence of email steps with A/B variants, sending accounts, daily limit and stop rules (stop_on_reply, stop_for_company). Sends nothing until campaigns.activate
+
+**Risk:** `write`
+
+```ts
+await corsair.instantly.api.campaigns.create({
+  name: 'Northeast IT leads',
+  campaign_schedule: {
+    schedules: [{
+      name: 'Weekdays',
+      timing: { from: '09:00', to: '17:00' },
+      days: { '1': true, '2': true, '3': true, '4': true, '5': true },
+      timezone: 'America/Detroit',
+    }],
+  },
+  sequences: [{
+    steps: [
+      { delay: 3, variants: [{ subject: 'Quick question, {{firstName}}', body: 'Hi {{firstName}},<br/><br/>{{personalization}}' }] },
+      { delay: 0, variants: [{ subject: '', body: 'Following up, {{firstName}}.' }] },
+    ],
+  }],
+  email_list: ['sam@fieldkit-mail.com'],
+  daily_limit: 30,
+  stop_on_reply: true,
+  stop_for_company: true,
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `campaign_schedule` | `object` | Yes | — |
+| `sequences` | `object[]` | No | Exactly one sequence holding every step: Instantly reads only the first element |
+| `email_list` | `string[]` | No | Sending account emails to rotate through |
+| `email_tag_list` | `string[]` | No | Account tag IDs whose accounts send for this campaign |
+| `daily_limit` | `number` | No | Most emails the campaign sends per day |
+| `daily_max_leads` | `number` | No | Most new leads contacted per day |
+| `email_gap` | `number` | No | Minutes between emails |
+| `random_wait_max` | `number` | No | Extra random wait, in minutes, up to this |
+| `stop_on_reply` | `boolean` | No | Stop the sequence for a lead once they reply |
+| `stop_on_auto_reply` | `boolean` | No | Also stop on auto-replies such as out-of-office |
+| `stop_for_company` | `boolean` | No | Stop the sequence for every lead at the same company (domain) when one replies |
+| `text_only` | `boolean` | No | Send every email as plain text |
+| `first_email_text_only` | `boolean` | No | Send only the first email as plain text |
+| `link_tracking` | `boolean` | No | — |
+| `open_tracking` | `boolean` | No | — |
+| `insert_unsubscribe_header` | `boolean` | No | — |
+| `prioritize_new_leads` | `boolean` | No | — |
+| `match_lead_esp` | `boolean` | No | Send from accounts on the lead's email provider |
+| `allow_risky_contacts` | `boolean` | No | — |
+| `disable_bounce_protect` | `boolean` | No | — |
+| `is_evergreen` | `boolean` | No | — |
+| `pl_value` | `number` | No | Value of each positive lead |
+| `cc_list` | `string[]` | No | — |
+| `bcc_list` | `string[]` | No | — |
+| `auto_variant_select` | `object` | No | Pick the winning A/B variant automatically by this metric |
+
+<AccordionGroup>
+<Accordion title="campaign_schedule full type">
+
+```ts
+{
+  schedules: {
+    name: string,
+    timing: {
+      from: string,
+      to: string
+    },
+    days: {
+      0?: boolean,
+      1?: boolean,
+      2?: boolean,
+      3?: boolean,
+      4?: boolean,
+      5?: boolean,
+      6?: boolean
+    },
+    timezone: Etc/GMT+12 | Etc/GMT+11 | Etc/GMT+10 | America/Anchorage | America/Dawson | America/Creston | America/Chihuahua | America/Boise | America/Belize | America/Chicago | America/Bahia_Banderas | America/Regina | America/Bogota | America/Detroit | America/Indiana/Marengo | America/Caracas | America/Asuncion | America/Glace_Bay | America/Campo_Grande | America/Anguilla | America/Santiago | America/St_Johns | America/Sao_Paulo | America/Argentina/La_Rioja | America/Araguaina | America/Godthab | America/Montevideo | America/Bahia | America/Noronha | America/Scoresbysund | Atlantic/Cape_Verde | Africa/Casablanca | America/Danmarkshavn | Europe/Isle_of_Man | Atlantic/Canary | Africa/Abidjan | Arctic/Longyearbyen | Europe/Belgrade | Africa/Ceuta | Europe/Sarajevo | Africa/Algiers | Africa/Windhoek | Asia/Nicosia | Asia/Beirut | Africa/Cairo | Asia/Damascus | Europe/Bucharest | Africa/Blantyre | Europe/Helsinki | Europe/Istanbul | Asia/Jerusalem | Africa/Tripoli | Asia/Amman | Asia/Baghdad | Europe/Kaliningrad | Asia/Aden | Africa/Addis_Ababa | Europe/Kirov | Europe/Astrakhan | Asia/Tehran | Asia/Dubai | Asia/Baku | Indian/Mahe | Asia/Tbilisi | Asia/Yerevan | Asia/Kabul | Antarctica/Mawson | Asia/Yekaterinburg | Asia/Karachi | Asia/Kolkata | Asia/Colombo | Asia/Kathmandu | Antarctica/Vostok | Asia/Dhaka | Asia/Rangoon | Antarctica/Davis | Asia/Novokuznetsk | Asia/Hong_Kong | Asia/Krasnoyarsk | Asia/Brunei | Australia/Perth | Asia/Taipei | Asia/Choibalsan | Asia/Irkutsk | Asia/Dili | Asia/Pyongyang | Australia/Adelaide | Australia/Darwin | Australia/Brisbane | Australia/Melbourne | Antarctica/DumontDUrville | Australia/Currie | Asia/Chita | Antarctica/Macquarie | Asia/Sakhalin | Pacific/Auckland | Etc/GMT-12 | Pacific/Fiji | Asia/Anadyr | Asia/Kamchatka | Etc/GMT-13 | Pacific/Apia
+  }[],
+  start_date?: string | null,
+  end_date?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="sequences full type">
+
+```ts
+{
+  steps: {
+    type: email,
+    delay: number,
+    delay_unit?: minutes | hours | days,
+    variants: {
+      subject: string,
+      body: string,
+      v_disabled?: boolean
+    }[]
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="auto_variant_select full type">
+
+```ts
+{
+  trigger: reply_rate | click_rate | open_rate
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `status` | `number` | No | 0 Draft, 1 Active, 2 Paused, 3 Completed, 4 Running subsequences, -1 Accounts unhealthy, -2 Bounce protect, -99 Account suspended |
+| `not_sending_status` | `number` | No | Why an active campaign is not sending: 1 outside its schedule, 2 waiting for a lead, 3 campaign daily limit hit, 4 every account at its daily limit, 99 error |
+| `campaign_schedule` | `object` | No | — |
+| `sequences` | `any[]` | No | — |
+| `email_list` | `string[]` | No | — |
+| `email_tag_list` | `string[]` | No | — |
+| `daily_limit` | `number` | No | — |
+| `daily_max_leads` | `number` | No | — |
+| `email_gap` | `number` | No | — |
+| `random_wait_max` | `number` | No | — |
+| `stop_on_reply` | `boolean` | No | — |
+| `stop_on_auto_reply` | `boolean` | No | — |
+| `stop_for_company` | `boolean` | No | — |
+| `text_only` | `boolean` | No | — |
+| `first_email_text_only` | `boolean` | No | — |
+| `link_tracking` | `boolean` | No | — |
+| `open_tracking` | `boolean` | No | — |
+| `is_evergreen` | `boolean` | No | — |
+| `pl_value` | `number` | No | — |
+| `organization` | `string` | No | — |
+| `timestamp_created` | `string` | No | — |
+| `timestamp_updated` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="campaign_schedule full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`campaigns.get`
+
+Get one campaign with its schedule, sequence steps and settings
+
+**Risk:** `read`
+
+```ts
+await corsair.instantly.api.campaigns.get({ id: '01a181d1-c62c-745b-b842-870ce5b29862' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Campaign ID (UUID) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `status` | `number` | No | 0 Draft, 1 Active, 2 Paused, 3 Completed, 4 Running subsequences, -1 Accounts unhealthy, -2 Bounce protect, -99 Account suspended |
+| `not_sending_status` | `number` | No | Why an active campaign is not sending: 1 outside its schedule, 2 waiting for a lead, 3 campaign daily limit hit, 4 every account at its daily limit, 99 error |
+| `campaign_schedule` | `object` | No | — |
+| `sequences` | `any[]` | No | — |
+| `email_list` | `string[]` | No | — |
+| `email_tag_list` | `string[]` | No | — |
+| `daily_limit` | `number` | No | — |
+| `daily_max_leads` | `number` | No | — |
+| `email_gap` | `number` | No | — |
+| `random_wait_max` | `number` | No | — |
+| `stop_on_reply` | `boolean` | No | — |
+| `stop_on_auto_reply` | `boolean` | No | — |
+| `stop_for_company` | `boolean` | No | — |
+| `text_only` | `boolean` | No | — |
+| `first_email_text_only` | `boolean` | No | — |
+| `link_tracking` | `boolean` | No | — |
+| `open_tracking` | `boolean` | No | — |
+| `is_evergreen` | `boolean` | No | — |
+| `pl_value` | `number` | No | — |
+| `organization` | `string` | No | — |
+| `timestamp_created` | `string` | No | — |
+| `timestamp_updated` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="campaign_schedule full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getAnalytics
+
+`campaigns.getAnalytics`
+
+Per-campaign totals: leads, contacted, sent, opens, replies, clicks, bounces, unsubscribes, completed and opportunities, for all campaigns or chosen ones, optionally in a date range
+
+**Risk:** `read`
+
+```ts
+await corsair.instantly.api.campaigns.getAnalytics({ id: '01a181d1-c62c-745b-b842-870ce5b29862', exclude_total_leads_count: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | One campaign; omit for all |
+| `ids` | `string[]` | No | Several campaigns |
+| `start_date` | `string` | No | YYYY-MM-DD (UTC midnight) or an ISO 8601 timestamp |
+| `end_date` | `string` | No | YYYY-MM-DD (UTC midnight) or an ISO 8601 timestamp |
+| `exclude_total_leads_count` | `boolean` | No | Skip leads_count, which makes the call much faster |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  campaign_id: string,
+  campaign_name?: string | null,
+  campaign_status?: number | null,
+  campaign_is_evergreen?: boolean | null,
+  leads_count?: number | null,
+  contacted_count?: number | null,
+  new_leads_contacted_count?: number | null,
+  emails_sent_count?: number | null,
+  open_count?: number | null,
+  open_count_unique?: number | null,
+  reply_count?: number | null,
+  reply_count_unique?: number | null,
+  reply_count_automatic?: number | null,
+  link_click_count?: number | null,
+  link_click_count_unique?: number | null,
+  bounced_count?: number | null,
+  unsubscribed_count?: number | null,
+  completed_count?: number | null,
+  total_opportunities?: number | null,
+  total_opportunity_value?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getAnalyticsOverview
+
+`campaigns.getAnalyticsOverview`
+
+Combined totals across one, several or all campaigns: sent, opens, replies, clicks, bounces, interested, meetings booked and closed
+
+**Risk:** `read`
+
+```ts
+await corsair.instantly.api.campaigns.getAnalyticsOverview({ start_date: '2026-10-01', end_date: '2026-10-28' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | One campaign; omit for all |
+| `ids` | `string[]` | No | — |
+| `start_date` | `string` | No | YYYY-MM-DD (UTC midnight) or an ISO 8601 timestamp |
+| `end_date` | `string` | No | YYYY-MM-DD (UTC midnight) or an ISO 8601 timestamp |
+| `campaign_status` | `-99 \| -2 \| -1 \| 0 \| 1 \| 2 \| 3 \| 4` | No | 0 Draft, 1 Active, 2 Paused, 3 Completed, 4 Running subsequences, -1 Accounts unhealthy, -2 Bounce protect, -99 Account suspended |
+| `expand_crm_events` | `boolean` | No | Count every interest status change, not only the first per lead |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emails_sent_count` | `number` | No | — |
+| `contacted_count` | `number` | No | — |
+| `new_leads_contacted_count` | `number` | No | — |
+| `open_count` | `number` | No | — |
+| `open_count_unique` | `number` | No | — |
+| `reply_count` | `number` | No | — |
+| `reply_count_unique` | `number` | No | — |
+| `reply_count_automatic` | `number` | No | — |
+| `link_click_count` | `number` | No | — |
+| `link_click_count_unique` | `number` | No | — |
+| `bounced_count` | `number` | No | — |
+| `unsubscribed_count` | `number` | No | — |
+| `completed_count` | `number` | No | — |
+| `total_opportunities` | `number` | No | — |
+| `total_opportunity_value` | `number` | No | — |
+| `total_interested` | `number` | No | — |
+| `total_meeting_booked` | `number` | No | — |
+| `total_meeting_completed` | `number` | No | — |
+| `total_closed` | `number` | No | — |
+
+
+
+---
+
+### getStepAnalytics
+
+`campaigns.getStepAnalytics`
+
+Sent, opens, replies and clicks per sequence step and A/B variant, for one campaign or all
+
+**Risk:** `read`
+
+```ts
+await corsair.instantly.api.campaigns.getStepAnalytics({ campaign_id: '01a181d1-c62c-745b-b842-870ce5b29862', include_opportunities_count: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign_id` | `string` | No | One campaign; omit for all |
+| `start_date` | `string` | No | YYYY-MM-DD (UTC midnight) or an ISO 8601 timestamp |
+| `end_date` | `string` | No | YYYY-MM-DD (UTC midnight) or an ISO 8601 timestamp |
+| `include_opportunities_count` | `boolean` | No | Add opportunities, meetings_booked and won per step |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  step?: string | number | null,
+  variant?: string | number | null,
+  sent?: number | null,
+  opened?: number | null,
+  unique_opened?: number | null,
+  replies?: number | null,
+  unique_replies?: number | null,
+  replies_automatic?: number | null,
+  clicks?: number | null,
+  unique_clicks?: number | null,
+  opportunities?: number | null,
+  unique_opportunities?: number | null,
+  meetings_booked?: number | null,
+  won?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`campaigns.list`
+
+List campaigns with status, schedule, sending accounts and daily limit; filter by name, status or tag
+
+**Risk:** `read`
+
+```ts
+await corsair.instantly.api.campaigns.list({ status: 1, limit: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Items per page, 1 to 100 |
+| `starting_after` | `string` | No | Cursor: `next_starting_after` from the previous page |
+| `search` | `string` | No | Match campaign names |
+| `status` | `-99 \| -2 \| -1 \| 0 \| 1 \| 2 \| 3 \| 4` | No | 0 Draft, 1 Active, 2 Paused, 3 Completed, 4 Running subsequences, -1 Accounts unhealthy, -2 Bounce protect, -99 Account suspended |
+| `tag_ids` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_starting_after` | `string` | No | Pass as starting_after to get the next page; absent on the last page |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  status?: number | null,
+  not_sending_status?: number | null,
+  campaign_schedule?: {
+  } | null,
+  sequences?: any[] | null,
+  email_list?: string[] | null,
+  email_tag_list?: string[] | null,
+  daily_limit?: number | null,
+  daily_max_leads?: number | null,
+  email_gap?: number | null,
+  random_wait_max?: number | null,
+  stop_on_reply?: boolean | null,
+  stop_on_auto_reply?: boolean | null,
+  stop_for_company?: boolean | null,
+  text_only?: boolean | null,
+  first_email_text_only?: boolean | null,
+  link_tracking?: boolean | null,
+  open_tracking?: boolean | null,
+  is_evergreen?: boolean | null,
+  pl_value?: number | null,
+  organization?: string | null,
+  timestamp_created?: string | null,
+  timestamp_updated?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### pause
+
+`campaigns.pause`
+
+Pause a campaign: it stops sending until activated again
+
+**Risk:** `write`
+
+```ts
+await corsair.instantly.api.campaigns.pause({ id: '01a181d1-c62c-745b-b842-870ce5b29862' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Campaign ID (UUID) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `status` | `number` | No | 0 Draft, 1 Active, 2 Paused, 3 Completed, 4 Running subsequences, -1 Accounts unhealthy, -2 Bounce protect, -99 Account suspended |
+| `not_sending_status` | `number` | No | Why an active campaign is not sending: 1 outside its schedule, 2 waiting for a lead, 3 campaign daily limit hit, 4 every account at its daily limit, 99 error |
+| `campaign_schedule` | `object` | No | — |
+| `sequences` | `any[]` | No | — |
+| `email_list` | `string[]` | No | — |
+| `email_tag_list` | `string[]` | No | — |
+| `daily_limit` | `number` | No | — |
+| `daily_max_leads` | `number` | No | — |
+| `email_gap` | `number` | No | — |
+| `random_wait_max` | `number` | No | — |
+| `stop_on_reply` | `boolean` | No | — |
+| `stop_on_auto_reply` | `boolean` | No | — |
+| `stop_for_company` | `boolean` | No | — |
+| `text_only` | `boolean` | No | — |
+| `first_email_text_only` | `boolean` | No | — |
+| `link_tracking` | `boolean` | No | — |
+| `open_tracking` | `boolean` | No | — |
+| `is_evergreen` | `boolean` | No | — |
+| `pl_value` | `number` | No | — |
+| `organization` | `string` | No | — |
+| `timestamp_created` | `string` | No | — |
+| `timestamp_updated` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="campaign_schedule full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`campaigns.update`
+
+Change a campaign's name, schedule, sequence steps, sending accounts, daily limit or stop rules; only the fields passed change
+
+**Risk:** `write`
+
+```ts
+await corsair.instantly.api.campaigns.update({ id: '01a181d1-c62c-745b-b842-870ce5b29862', daily_limit: 50, stop_on_auto_reply: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Campaign ID (UUID) |
+| `name` | `string` | No | — |
+| `campaign_schedule` | `object` | No | — |
+| `sequences` | `object[]` | No | Exactly one sequence holding every step: Instantly reads only the first element |
+| `email_list` | `string[]` | No | Sending account emails to rotate through |
+| `email_tag_list` | `string[]` | No | Account tag IDs whose accounts send for this campaign |
+| `daily_limit` | `number` | No | Most emails the campaign sends per day |
+| `daily_max_leads` | `number` | No | Most new leads contacted per day |
+| `email_gap` | `number` | No | Minutes between emails |
+| `random_wait_max` | `number` | No | Extra random wait, in minutes, up to this |
+| `stop_on_reply` | `boolean` | No | Stop the sequence for a lead once they reply |
+| `stop_on_auto_reply` | `boolean` | No | Also stop on auto-replies such as out-of-office |
+| `stop_for_company` | `boolean` | No | Stop the sequence for every lead at the same company (domain) when one replies |
+| `text_only` | `boolean` | No | Send every email as plain text |
+| `first_email_text_only` | `boolean` | No | Send only the first email as plain text |
+| `link_tracking` | `boolean` | No | — |
+| `open_tracking` | `boolean` | No | — |
+| `insert_unsubscribe_header` | `boolean` | No | — |
+| `prioritize_new_leads` | `boolean` | No | — |
+| `match_lead_esp` | `boolean` | No | Send from accounts on the lead's email provider |
+| `allow_risky_contacts` | `boolean` | No | — |
+| `disable_bounce_protect` | `boolean` | No | — |
+| `is_evergreen` | `boolean` | No | — |
+| `pl_value` | `number` | No | Value of each positive lead |
+| `cc_list` | `string[]` | No | — |
+| `bcc_list` | `string[]` | No | — |
+| `auto_variant_select` | `object` | No | Pick the winning A/B variant automatically by this metric |
+
+<AccordionGroup>
+<Accordion title="campaign_schedule full type">
+
+```ts
+{
+  schedules: {
+    name: string,
+    timing: {
+      from: string,
+      to: string
+    },
+    days: {
+      0?: boolean,
+      1?: boolean,
+      2?: boolean,
+      3?: boolean,
+      4?: boolean,
+      5?: boolean,
+      6?: boolean
+    },
+    timezone: Etc/GMT+12 | Etc/GMT+11 | Etc/GMT+10 | America/Anchorage | America/Dawson | America/Creston | America/Chihuahua | America/Boise | America/Belize | America/Chicago | America/Bahia_Banderas | America/Regina | America/Bogota | America/Detroit | America/Indiana/Marengo | America/Caracas | America/Asuncion | America/Glace_Bay | America/Campo_Grande | America/Anguilla | America/Santiago | America/St_Johns | America/Sao_Paulo | America/Argentina/La_Rioja | America/Araguaina | America/Godthab | America/Montevideo | America/Bahia | America/Noronha | America/Scoresbysund | Atlantic/Cape_Verde | Africa/Casablanca | America/Danmarkshavn | Europe/Isle_of_Man | Atlantic/Canary | Africa/Abidjan | Arctic/Longyearbyen | Europe/Belgrade | Africa/Ceuta | Europe/Sarajevo | Africa/Algiers | Africa/Windhoek | Asia/Nicosia | Asia/Beirut | Africa/Cairo | Asia/Damascus | Europe/Bucharest | Africa/Blantyre | Europe/Helsinki | Europe/Istanbul | Asia/Jerusalem | Africa/Tripoli | Asia/Amman | Asia/Baghdad | Europe/Kaliningrad | Asia/Aden | Africa/Addis_Ababa | Europe/Kirov | Europe/Astrakhan | Asia/Tehran | Asia/Dubai | Asia/Baku | Indian/Mahe | Asia/Tbilisi | Asia/Yerevan | Asia/Kabul | Antarctica/Mawson | Asia/Yekaterinburg | Asia/Karachi | Asia/Kolkata | Asia/Colombo | Asia/Kathmandu | Antarctica/Vostok | Asia/Dhaka | Asia/Rangoon | Antarctica/Davis | Asia/Novokuznetsk | Asia/Hong_Kong | Asia/Krasnoyarsk | Asia/Brunei | Australia/Perth | Asia/Taipei | Asia/Choibalsan | Asia/Irkutsk | Asia/Dili | Asia/Pyongyang | Australia/Adelaide | Australia/Darwin | Australia/Brisbane | Australia/Melbourne | Antarctica/DumontDUrville | Australia/Currie | Asia/Chita | Antarctica/Macquarie | Asia/Sakhalin | Pacific/Auckland | Etc/GMT-12 | Pacific/Fiji | Asia/Anadyr | Asia/Kamchatka | Etc/GMT-13 | Pacific/Apia
+  }[],
+  start_date?: string | null,
+  end_date?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="sequences full type">
+
+```ts
+{
+  steps: {
+    type: email,
+    delay: number,
+    delay_unit?: minutes | hours | days,
+    variants: {
+      subject: string,
+      body: string,
+      v_disabled?: boolean
+    }[]
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="auto_variant_select full type">
+
+```ts
+{
+  trigger: reply_rate | click_rate | open_rate
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `status` | `number` | No | 0 Draft, 1 Active, 2 Paused, 3 Completed, 4 Running subsequences, -1 Accounts unhealthy, -2 Bounce protect, -99 Account suspended |
+| `not_sending_status` | `number` | No | Why an active campaign is not sending: 1 outside its schedule, 2 waiting for a lead, 3 campaign daily limit hit, 4 every account at its daily limit, 99 error |
+| `campaign_schedule` | `object` | No | — |
+| `sequences` | `any[]` | No | — |
+| `email_list` | `string[]` | No | — |
+| `email_tag_list` | `string[]` | No | — |
+| `daily_limit` | `number` | No | — |
+| `daily_max_leads` | `number` | No | — |
+| `email_gap` | `number` | No | — |
+| `random_wait_max` | `number` | No | — |
+| `stop_on_reply` | `boolean` | No | — |
+| `stop_on_auto_reply` | `boolean` | No | — |
+| `stop_for_company` | `boolean` | No | — |
+| `text_only` | `boolean` | No | — |
+| `first_email_text_only` | `boolean` | No | — |
+| `link_tracking` | `boolean` | No | — |
+| `open_tracking` | `boolean` | No | — |
+| `is_evergreen` | `boolean` | No | — |
+| `pl_value` | `number` | No | — |
+| `organization` | `string` | No | — |
+| `timestamp_created` | `string` | No | — |
+| `timestamp_updated` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="campaign_schedule full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Emails
+
+### countUnread
+
+`emails.countUnread`
+
+Count unread emails in the Unibox
+
+**Risk:** `read`
+
+```ts
+await corsair.instantly.api.emails.countUnread({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | — |
+
+
+
+---
+
+### get
+
+`emails.get`
+
+Get one email with its full body and thread_id
+
+**Risk:** `read`
+
+```ts
+await corsair.instantly.api.emails.get({ id: '01a181d1-c62c-745b-b842-870e55aa2c19' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Email ID (UUID) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Email ID; pass as reply_to_uuid to emails.reply |
+| `thread_id` | `string` | No | — |
+| `message_id` | `string` | No | — |
+| `subject` | `string` | No | — |
+| `from_address_email` | `string` | No | — |
+| `to_address_email_list` | `string` | No | Comma-separated |
+| `cc_address_email_list` | `string` | No | — |
+| `reply_to` | `string` | No | — |
+| `eaccount` | `string` | No | Sending account that sent or received it |
+| `lead` | `string` | No | Lead email |
+| `lead_id` | `string` | No | — |
+| `campaign_id` | `string` | No | — |
+| `list_id` | `string` | No | — |
+| `ue_type` | `number` | No | 1 Sent from a campaign, 2 Received, 3 Sent manually, 4 Scheduled |
+| `step` | `string \| number` | No | — |
+| `is_unread` | `number` | No | 1 unread |
+| `is_auto_reply` | `number` | No | 1 auto-reply |
+| `i_status` | `number` | No | Interest status of the lead |
+| `ai_interest_value` | `number` | No | — |
+| `content_preview` | `string` | No | — |
+| `body` | `object` | No | Full body; an excerpt when body_fallback_reason is set |
+| `body_fallback_reason` | `string` | No | — |
+| `timestamp_email` | `string` | No | When the email was sent or received |
+| `timestamp_created` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  text?: string | null,
+  html?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`emails.list`
+
+List Unibox emails; email_type received lists replies from leads, the way to read replies on plans without webhooks. Filter by lead, campaign, sending account, unread or date. Limited to 20 requests a minute
+
+**Risk:** `read`
+
+```ts
+await corsair.instantly.api.emails.list({ email_type: 'received', is_unread: true, limit: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Items per page, 1 to 100 |
+| `starting_after` | `string` | No | Cursor: `next_starting_after` from the previous page |
+| `email_type` | `received \| sent \| manual` | No | received = replies from leads |
+| `lead` | `string` | No | Lead email |
+| `campaign_id` | `string` | No | — |
+| `list_id` | `string` | No | — |
+| `eaccount` | `string` | No | Sending account email(s), comma-separated |
+| `search` | `string` | No | A lead email, or thread:<thread_id> for one thread |
+| `is_unread` | `boolean` | No | — |
+| `i_status` | `number` | No | Interest status |
+| `mode` | `emode_focused \| emode_others \| emode_all` | No | Unibox tab: Primary, Others or all |
+| `min_timestamp_created` | `string` | No | ISO timestamp: only emails stored after this |
+| `max_timestamp_created` | `string` | No | — |
+| `latest_of_thread` | `boolean` | No | Only the newest email of each thread |
+| `preview_only` | `boolean` | No | Return content_preview instead of full bodies |
+| `sort_order` | `asc \| desc` | No | — |
+| `company_domain` | `string` | No | — |
+| `marked_as_done` | `boolean` | No | — |
+| `assigned_to` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_starting_after` | `string` | No | Pass as starting_after to get the next page; absent on the last page |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: string,
+  thread_id?: string | null,
+  message_id?: string | null,
+  subject?: string | null,
+  from_address_email?: string | null,
+  to_address_email_list?: string | null,
+  cc_address_email_list?: string | null,
+  reply_to?: string | null,
+  eaccount?: string | null,
+  lead?: string | null,
+  lead_id?: string | null,
+  campaign_id?: string | null,
+  list_id?: string | null,
+  ue_type?: number | null,
+  step?: string | number | null,
+  is_unread?: number | null,
+  is_auto_reply?: number | null,
+  i_status?: number | null,
+  ai_interest_value?: number | null,
+  content_preview?: string | null,
+  body?: {
+    text?: string | null,
+    html?: string | null
+  } | null,
+  body_fallback_reason?: string | null,
+  timestamp_email?: string | null,
+  timestamp_created?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### markThreadRead
+
+`emails.markThreadRead`
+
+Mark every email in a thread as read
+
+**Risk:** `write`
+
+```ts
+await corsair.instantly.api.emails.markThreadRead({ thread_id: '01a181d1-c62c-745b-b842-870f8d0b9e33' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `thread_id` | `string` | Yes | thread_id from an email |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+
+
+
+---
+
+### reply
+
+`emails.reply`
+
+Reply to an email in its thread. This SENDS A REAL EMAIL from the chosen sending account to the lead, and is never retried automatically
+
+**Risk:** `write` · **Irreversible**
+
+```ts
+await corsair.instantly.api.emails.reply({ reply_to_uuid: '01a181d1-c62c-745b-b842-870e55aa2c19', eaccount: 'sam@fieldkit-mail.com', subject: 'Re: Quick question, Jordan', body: { text: 'Tuesday 10am works.' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `reply_to_uuid` | `string` | Yes | ID of the email to reply to (from emails.list or a webhook email_id) |
+| `eaccount` | `string` | Yes | Sending account in this workspace to reply from |
+| `subject` | `string` | Yes | Subject, usually "Re: " plus the original |
+| `body` | `object` | Yes | — |
+| `cc_address_email_list` | `string` | No | Comma-separated |
+| `bcc_address_email_list` | `string` | No | Comma-separated |
+| `additional_recipients` | `string[]` | No | — |
+| `reminder_ts` | `string` | No | ISO timestamp for a Unibox reminder |
+| `assigned_to` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  html?: string,
+  text?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | Email ID; pass as reply_to_uuid to emails.reply |
+| `thread_id` | `string` | No | — |
+| `message_id` | `string` | No | — |
+| `subject` | `string` | No | — |
+| `from_address_email` | `string` | No | — |
+| `to_address_email_list` | `string` | No | Comma-separated |
+| `cc_address_email_list` | `string` | No | — |
+| `reply_to` | `string` | No | — |
+| `eaccount` | `string` | No | Sending account that sent or received it |
+| `lead` | `string` | No | Lead email |
+| `lead_id` | `string` | No | — |
+| `campaign_id` | `string` | No | — |
+| `list_id` | `string` | No | — |
+| `ue_type` | `number` | No | 1 Sent from a campaign, 2 Received, 3 Sent manually, 4 Scheduled |
+| `step` | `string \| number` | No | — |
+| `is_unread` | `number` | No | 1 unread |
+| `is_auto_reply` | `number` | No | 1 auto-reply |
+| `i_status` | `number` | No | Interest status of the lead |
+| `ai_interest_value` | `number` | No | — |
+| `content_preview` | `string` | No | — |
+| `body` | `object` | No | Full body; an excerpt when body_fallback_reason is set |
+| `body_fallback_reason` | `string` | No | — |
+| `timestamp_email` | `string` | No | When the email was sent or received |
+| `timestamp_created` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  text?: string | null,
+  html?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Lead Lists
+
+### create
+
+`leadLists.create`
+
+Create a lead list to hold leads outside any campaign (add to it with leads.addBulk list_id)
+
+**Risk:** `write`
+
+```ts
+await corsair.instantly.api.leadLists.create({ name: 'Boston IT directors' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `has_enrichment_task` | `boolean` | No | Enrich every lead added to the list |
+| `owned_by` | `string` | No | Workspace user ID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `organization_id` | `string` | No | — |
+| `has_enrichment_task` | `boolean` | No | — |
+| `owned_by` | `string` | No | — |
+| `timestamp_created` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`leadLists.list`
+
+List lead lists (leads stored outside any campaign)
+
+**Risk:** `read`
+
+```ts
+await corsair.instantly.api.leadLists.list({ search: 'Boston' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Items per page, 1 to 100 |
+| `starting_after` | `string` | No | Cursor: `next_starting_after` from the previous page |
+| `search` | `string` | No | — |
+| `has_enrichment_task` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_starting_after` | `string` | No | Pass as starting_after to get the next page; absent on the last page |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  organization_id?: string | null,
+  has_enrichment_task?: boolean | null,
+  owned_by?: string | null,
+  timestamp_created?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Leads
+
+### addBulk
+
+`leads.addBulk`
+
+Add up to 1,000 leads to one campaign or list, with custom variables. Skips leads already in the workspace unless skip_if_in_workspace is false, and is never retried automatically. Every lead uploaded counts toward the plan's lifetime contact limit, including re-uploads and the same person in a second campaign; re-adding or moving a lead who already replied restarts their sequence at step 1
+
+**Risk:** `write` · **Irreversible**
+
+```ts
+await corsair.instantly.api.leads.addBulk({ campaign_id: '01a181d1-c62c-745b-b842-870ce5b29862', leads: [{ email: 'jordan@acme-logistics.com', first_name: 'Jordan' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign_id` | `string` | No | Campaign to add the leads to (or list_id, not both) |
+| `list_id` | `string` | No | Lead list instead |
+| `leads` | `object[]` | Yes | Up to 1,000 leads per call |
+| `skip_if_in_workspace` | `boolean` | Yes | Skip leads already anywhere in the workspace (default true). Every upload counts toward the lifetime contact limit, and re-adding a lead who already replied restarts them at step 1 |
+| `skip_if_in_campaign` | `boolean` | No | Skip leads already in any campaign |
+| `skip_if_in_list` | `boolean` | No | Skip leads already in any list |
+| `blocklist_id` | `string` | No | — |
+| `assigned_to` | `string` | No | Workspace user ID to assign every lead to |
+| `verify_leads_on_import` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="leads full type">
+
+```ts
+{
+  email?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  company_name?: string | null,
+  job_title?: string | null,
+  phone?: string | null,
+  website?: string | null,
+  personalization?: string | null,
+  pl_value_lead?: string | null,
+  assigned_to?: string | null,
+  custom_variables?: {
+  },
+  lt_interest_status?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `total_sent` | `number` | No | Leads in the request |
+| `leads_uploaded` | `number` | No | Leads created |
+| `duplicated_leads` | `number` | No | Already in this campaign or list |
+| `skipped_count` | `number` | No | Skipped by the skip_if_* flags |
+| `in_blocklist` | `number` | No | — |
+| `blocklist_used` | `string` | No | — |
+| `invalid_email_count` | `number` | No | — |
+| `incomplete_count` | `number` | No | — |
+| `duplicate_email_count` | `number` | No | Repeated within the request |
+| `remaining_in_plan` | `number` | No | Uploads left on the plan (only when adding to a campaign) |
+| `created_leads` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="created_leads full type">
+
+```ts
+{
+  index?: number | null,
+  id: string,
+  email?: string | null,
+  first_name?: string | null,
+  last_name?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`leads.create`
+
+Add one lead to a campaign or list. Skips leads already in the workspace unless skip_if_in_workspace is false. Every lead uploaded counts toward the plan's lifetime contact limit, including re-uploads and the same person in a second campaign; re-adding or moving a lead who already replied restarts their sequence at step 1
+
+**Risk:** `write` · **Irreversible**
+
+```ts
+await corsair.instantly.api.leads.create({ campaign: '01a181d1-c62c-745b-b842-870ce5b29862', email: 'jordan@acme-logistics.com', first_name: 'Jordan' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign` | `string` | No | Campaign ID to add the lead to |
+| `list_id` | `string` | No | Lead list ID instead |
+| `email` | `string` | No | Lead email address |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `company_name` | `string` | No | — |
+| `job_title` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `website` | `string` | No | — |
+| `personalization` | `string` | No | Personalized opening line, used as {{personalization}} |
+| `pl_value_lead` | `string` | No | Potential value of the lead |
+| `assigned_to` | `string` | No | Workspace user ID |
+| `custom_variables` | `object` | No | Custom variables for personalization, e.g. { "pain_point": "slow onboarding" }. Values must be strings, numbers, booleans or null; use them in copy as {{pain_point}} |
+| `lt_interest_status` | `number` | No | Interest status: 1 Interested, 2 Meeting booked, 3 Meeting completed, 4 Won, 0 Out of office, -1 Not interested, -2 Wrong person, -3 Lost, -4 No show, or a custom label value |
+| `skip_if_in_workspace` | `boolean` | Yes | Skip leads already anywhere in the workspace (default true). Every upload counts toward the lifetime contact limit, and re-adding a lead who already replied restarts them at step 1 |
+| `skip_if_in_campaign` | `boolean` | No | — |
+| `skip_if_in_list` | `boolean` | No | — |
+| `blocklist_id` | `string` | No | Check against this blocklist instead of the default |
+| `verify_leads_on_import` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="custom_variables full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `email` | `string` | No | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `company_name` | `string` | No | — |
+| `company_domain` | `string` | No | — |
+| `job_title` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `website` | `string` | No | — |
+| `personalization` | `string` | No | — |
+| `campaign` | `string` | No | Campaign ID |
+| `list_id` | `string` | No | Lead list ID |
+| `status` | `number` | No | Read-only: 1 Active, 2 Paused, 3 Completed, -1 Bounced, -2 Unsubscribed, -3 Skipped |
+| `lt_interest_status` | `number` | No | 1 Interested, 2 Meeting booked, 3 Meeting completed, 4 Won, 0 Out of office, -1 Not interested, -2 Wrong person, -3 Lost, -4 No show; absent = plain Lead |
+| `email_open_count` | `number` | No | — |
+| `email_reply_count` | `number` | No | — |
+| `email_click_count` | `number` | No | — |
+| `verification_status` | `number` | No | 0 Not verified, 1 Verified, 11 Pending, -1 Invalid, -2 Risky, -3 Catch-all |
+| `payload` | `object` | No | Custom variables |
+| `timestamp_created` | `string` | No | — |
+| `timestamp_updated` | `string` | No | — |
+| `timestamp_last_contact` | `string` | No | — |
+| `timestamp_last_reply` | `string` | No | — |
+| `timestamp_last_interest_change` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`leads.delete`
+
+Delete a lead from the workspace. Its upload still counts toward the lifetime contact limit
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.instantly.api.leads.delete({ id: '01a181d1-c62c-745b-b842-870d0c3a11f4' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Lead ID (UUID) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `email` | `string` | No | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `company_name` | `string` | No | — |
+| `company_domain` | `string` | No | — |
+| `job_title` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `website` | `string` | No | — |
+| `personalization` | `string` | No | — |
+| `campaign` | `string` | No | Campaign ID |
+| `list_id` | `string` | No | Lead list ID |
+| `status` | `number` | No | Read-only: 1 Active, 2 Paused, 3 Completed, -1 Bounced, -2 Unsubscribed, -3 Skipped |
+| `lt_interest_status` | `number` | No | 1 Interested, 2 Meeting booked, 3 Meeting completed, 4 Won, 0 Out of office, -1 Not interested, -2 Wrong person, -3 Lost, -4 No show; absent = plain Lead |
+| `email_open_count` | `number` | No | — |
+| `email_reply_count` | `number` | No | — |
+| `email_click_count` | `number` | No | — |
+| `verification_status` | `number` | No | 0 Not verified, 1 Verified, 11 Pending, -1 Invalid, -2 Risky, -3 Catch-all |
+| `payload` | `object` | No | Custom variables |
+| `timestamp_created` | `string` | No | — |
+| `timestamp_updated` | `string` | No | — |
+| `timestamp_last_contact` | `string` | No | — |
+| `timestamp_last_reply` | `string` | No | — |
+| `timestamp_last_interest_change` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`leads.get`
+
+Get one lead with status, interest status, open/reply/click counts and custom variables
+
+**Risk:** `read`
+
+```ts
+await corsair.instantly.api.leads.get({ id: '01a181d1-c62c-745b-b842-870d0c3a11f4' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Lead ID (UUID) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `email` | `string` | No | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `company_name` | `string` | No | — |
+| `company_domain` | `string` | No | — |
+| `job_title` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `website` | `string` | No | — |
+| `personalization` | `string` | No | — |
+| `campaign` | `string` | No | Campaign ID |
+| `list_id` | `string` | No | Lead list ID |
+| `status` | `number` | No | Read-only: 1 Active, 2 Paused, 3 Completed, -1 Bounced, -2 Unsubscribed, -3 Skipped |
+| `lt_interest_status` | `number` | No | 1 Interested, 2 Meeting booked, 3 Meeting completed, 4 Won, 0 Out of office, -1 Not interested, -2 Wrong person, -3 Lost, -4 No show; absent = plain Lead |
+| `email_open_count` | `number` | No | — |
+| `email_reply_count` | `number` | No | — |
+| `email_click_count` | `number` | No | — |
+| `verification_status` | `number` | No | 0 Not verified, 1 Verified, 11 Pending, -1 Invalid, -2 Risky, -3 Catch-all |
+| `payload` | `object` | No | Custom variables |
+| `timestamp_created` | `string` | No | — |
+| `timestamp_updated` | `string` | No | — |
+| `timestamp_last_contact` | `string` | No | — |
+| `timestamp_last_reply` | `string` | No | — |
+| `timestamp_last_interest_change` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`leads.list`
+
+List leads in a campaign or list, or across the workspace; filter by email, status (replied, interested, bounced and more) or search
+
+**Risk:** `read`
+
+```ts
+await corsair.instantly.api.leads.list({ campaign: '01a181d1-c62c-745b-b842-870ce5b29862', filter: 'FILTER_VAL_REPLIED', limit: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Items per page, 1 to 100 |
+| `starting_after` | `string` | No | Cursor: `next_starting_after` from the previous page |
+| `campaign` | `string` | No | Campaign ID |
+| `list_id` | `string` | No | Lead list ID |
+| `search` | `string` | No | Match email, name, company or job title |
+| `filter` | `FILTER_VAL_CONTACTED \| FILTER_VAL_NOT_CONTACTED \| FILTER_VAL_COMPLETED \| FILTER_VAL_UNSUBSCRIBED \| FILTER_VAL_ACTIVE \| FILTER_VAL_REPLIED \| FILTER_VAL_OPENED_NO_REPLY \| FILTER_VAL_COMPLETED_NO_REPLY \| FILTER_VAL_NO_OPENS \| FILTER_VAL_LINK_CLICKED \| FILTER_VAL_BOUNCED \| FILTER_VAL_SKIPPED \| FILTER_VAL_RISKY \| FILTER_VAL_INVALID \| FILTER_VAL_VALID \| FILTER_VAL_CATCH_ALL \| FILTER_VAL_NOT_VERIFIED \| FILTER_VAL_IN_SUBSEQUENCE \| FILTER_LEAD_INTERESTED \| FILTER_LEAD_NOT_INTERESTED \| FILTER_LEAD_MEETING_BOOKED \| FILTER_LEAD_MEETING_COMPLETED \| FILTER_LEAD_CLOSED \| FILTER_LEAD_OUT_OF_OFFICE \| FILTER_LEAD_WRONG_PERSON \| FILTER_LEAD_LOST \| FILTER_LEAD_NO_SHOW \| FILTER_LEAD_CUSTOM_LABEL_POSITIVE \| FILTER_LEAD_CUSTOM_LABEL_NEGATIVE` | No | — |
+| `contacts` | `string[]` | No | Only leads with these email addresses |
+| `ids` | `string[]` | No | Only these lead IDs |
+| `excluded_ids` | `string[]` | No | — |
+| `in_campaign` | `boolean` | No | — |
+| `in_list` | `boolean` | No | — |
+| `distinct_contacts` | `boolean` | No | One row per email address; the cursor is then the last email instead of the last ID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_starting_after` | `string` | No | Pass as starting_after to get the next page; absent on the last page |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: string,
+  email?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  company_name?: string | null,
+  company_domain?: string | null,
+  job_title?: string | null,
+  phone?: string | null,
+  website?: string | null,
+  personalization?: string | null,
+  campaign?: string | null,
+  list_id?: string | null,
+  status?: number | null,
+  lt_interest_status?: number | null,
+  email_open_count?: number | null,
+  email_reply_count?: number | null,
+  email_click_count?: number | null,
+  verification_status?: number | null,
+  payload?: {
+  } | null,
+  timestamp_created?: string | null,
+  timestamp_updated?: string | null,
+  timestamp_last_contact?: string | null,
+  timestamp_last_reply?: string | null,
+  timestamp_last_interest_change?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`leads.update`
+
+Update a lead's name, company, job title, phone, website, personalization or custom variables. Its status is read-only: to stop follow-ups use leads.updateInterestStatus
+
+**Risk:** `write`
+
+```ts
+await corsair.instantly.api.leads.update({ id: '01a181d1-c62c-745b-b842-870d0c3a11f4', job_title: 'CIO', custom_variables: { tier: 1 } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Lead ID (UUID) |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `company_name` | `string` | No | — |
+| `job_title` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `website` | `string` | No | — |
+| `personalization` | `string` | No | — |
+| `pl_value_lead` | `string` | No | — |
+| `assigned_to` | `string` | No | — |
+| `custom_variables` | `object` | No | Custom variables to add to the lead's payload |
+
+<AccordionGroup>
+<Accordion title="custom_variables full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `email` | `string` | No | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `company_name` | `string` | No | — |
+| `company_domain` | `string` | No | — |
+| `job_title` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `website` | `string` | No | — |
+| `personalization` | `string` | No | — |
+| `campaign` | `string` | No | Campaign ID |
+| `list_id` | `string` | No | Lead list ID |
+| `status` | `number` | No | Read-only: 1 Active, 2 Paused, 3 Completed, -1 Bounced, -2 Unsubscribed, -3 Skipped |
+| `lt_interest_status` | `number` | No | 1 Interested, 2 Meeting booked, 3 Meeting completed, 4 Won, 0 Out of office, -1 Not interested, -2 Wrong person, -3 Lost, -4 No show; absent = plain Lead |
+| `email_open_count` | `number` | No | — |
+| `email_reply_count` | `number` | No | — |
+| `email_click_count` | `number` | No | — |
+| `verification_status` | `number` | No | 0 Not verified, 1 Verified, 11 Pending, -1 Invalid, -2 Risky, -3 Catch-all |
+| `payload` | `object` | No | Custom variables |
+| `timestamp_created` | `string` | No | — |
+| `timestamp_updated` | `string` | No | — |
+| `timestamp_last_contact` | `string` | No | — |
+| `timestamp_last_reply` | `string` | No | — |
+| `timestamp_last_interest_change` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateInterestStatus
+
+`leads.updateInterestStatus`
+
+Set a lead's interest status by email (Interested, Meeting booked, Not interested, Wrong person and so on, or null to reset). In a campaign this completes the lead, which stops its follow-ups: use it when a lead answered on another channel. Applied in the background
+
+**Risk:** `write`
+
+```ts
+await corsair.instantly.api.leads.updateInterestStatus({ lead_email: 'jordan@acme-logistics.com', interest_value: 2, campaign_id: '01a181d1-c62c-745b-b842-870ce5b29862' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lead_email` | `string` | Yes | Email of the lead |
+| `interest_value` | `number` | No | 1 Interested, 2 Meeting booked, 3 Meeting completed, 4 Won, 0 Out of office, -1 Not interested, -2 Wrong person, -3 Lost, -4 No show, a custom label value, or null to reset to plain Lead |
+| `campaign_id` | `string` | No | Only in this campaign |
+| `list_id` | `string` | No | Only in this list |
+| `ai_interest_value` | `number` | No | — |
+| `disable_auto_interest` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | No | — |
+
+
+
+---
+
+## Webhooks
+
+### create
+
+`webhooks.create`
+
+Subscribe a URL to an event (reply_received, email_bounced, lead_interested...) or all_events, for one campaign or all. Attaches the plugin's webhook secret so Corsair can verify deliveries. Webhooks need the Hypergrowth plan or higher; on Growth, poll emails.list with email_type received instead
+
+**Risk:** `write`
+
+```ts
+await corsair.instantly.api.webhooks.create({ target_hook_url: 'https://app.example.com/api/webhook', event_type: 'reply_received' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `target_hook_url` | `string` | Yes | Where Instantly POSTs events, e.g. your Corsair webhook URL |
+| `event_type` | `all_events \| email_sent \| email_opened \| email_link_clicked \| reply_received \| email_bounced \| lead_unsubscribed \| campaign_completed \| account_error \| lead_neutral \| lead_interested \| lead_not_interested \| lead_meeting_booked \| lead_meeting_completed \| lead_closed \| lead_out_of_office \| lead_wrong_person \| lead_no_show` | No | One event, all_events (includes custom labels), or null with custom_interest_value for one custom label |
+| `campaign` | `string` | No | Only this campaign; omit for every campaign |
+| `name` | `string` | No | — |
+| `custom_interest_value` | `number` | No | Custom label value, when event_type is null |
+| `headers` | `object` | No | Extra headers sent with each delivery |
+| `attach_secret` | `boolean` | Yes | Send the plugin's webhook secret as the x-corsair-webhook-secret header so Corsair can verify deliveries (default true; skipped when no secret is set) |
+
+<AccordionGroup>
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `target_hook_url` | `string` | No | — |
+| `event_type` | `string` | No | null for a custom label webhook |
+| `campaign` | `string` | No | Campaign ID; null = every campaign |
+| `custom_interest_value` | `number` | No | — |
+| `headers` | `object` | No | Header names sent with each delivery; values are redacted |
+| `status` | `number` | No | 1 active, -1 disabled after failed deliveries |
+| `timestamp_error` | `string` | No | — |
+| `timestamp_created` | `string` | No | — |
+| `organization` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`webhooks.delete`
+
+Delete a webhook subscription; Instantly stops sending its events
+
+**Risk:** `destructive`
+
+```ts
+await corsair.instantly.api.webhooks.delete({ id: '01a181d1-c62c-745b-b842-870a582f48f0' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Webhook ID (UUID) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `target_hook_url` | `string` | No | — |
+| `event_type` | `string` | No | null for a custom label webhook |
+| `campaign` | `string` | No | Campaign ID; null = every campaign |
+| `custom_interest_value` | `number` | No | — |
+| `headers` | `object` | No | Header names sent with each delivery; values are redacted |
+| `status` | `number` | No | 1 active, -1 disabled after failed deliveries |
+| `timestamp_error` | `string` | No | — |
+| `timestamp_created` | `string` | No | — |
+| `organization` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`webhooks.list`
+
+List webhook subscriptions with their URL, event type, campaign and status (header values redacted)
+
+**Risk:** `read`
+
+```ts
+await corsair.instantly.api.webhooks.list({ event_type: 'reply_received' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Items per page, 1 to 100 |
+| `starting_after` | `string` | No | Cursor: `next_starting_after` from the previous page |
+| `campaign` | `string` | No | — |
+| `event_type` | `all_events \| email_sent \| email_opened \| email_link_clicked \| reply_received \| email_bounced \| lead_unsubscribed \| campaign_completed \| account_error \| lead_neutral \| lead_interested \| lead_not_interested \| lead_meeting_booked \| lead_meeting_completed \| lead_closed \| lead_out_of_office \| lead_wrong_person \| lead_no_show` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_starting_after` | `string` | No | Pass as starting_after to get the next page; absent on the last page |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  target_hook_url?: string | null,
+  event_type?: string | null,
+  campaign?: string | null,
+  custom_interest_value?: number | null,
+  headers?: {
+  } | null,
+  status?: number | null,
+  timestamp_error?: string | null,
+  timestamp_created?: string | null,
+  organization?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listEventTypes
+
+`webhooks.listEventTypes`
+
+List the event types a webhook can subscribe to, including the workspace's custom labels
+
+**Risk:** `read`
+
+```ts
+await corsair.instantly.api.webhooks.listEventTypes({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_types` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="event_types full type">
+
+```ts
+{
+  id: string,
+  label?: string | null,
+  type?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Workspace
+
+### get
+
+`workspace.get`
+
+Get the workspace this API key belongs to: ID, name and plan
+
+**Risk:** `read`
+
+```ts
+await corsair.instantly.api.workspace.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `owner` | `string` | No | — |
+| `plan_id` | `string` | No | e.g. pid_g_v2 (Growth) |
+| `plan_id_leadfinder` | `string` | No | — |
+| `add_unsub_to_block` | `boolean` | No | — |
+| `default_opportunity_value` | `number` | No | — |
+| `timestamp_created` | `string` | No | — |
+| `timestamp_updated` | `string` | No | — |
+
+
+
+---
+

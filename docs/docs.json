@@ -2200,6 +2200,15 @@
                 ]
               },
               {
+                "group": "Instantly",
+                "pages": [
+                  "plugins/instantly/overview",
+                  "plugins/instantly/api",
+                  "plugins/instantly/database",
+                  "plugins/instantly/webhooks"
+                ]
+              },
+              {
                 "group": "Intercom",
                 "pages": [
                   "plugins/intercom/overview",
