@@ -14,21 +14,42 @@ export const CURSOR_INSTALL_URL = `https://cursor.com/install-mcp?${new URLSearc
 	{ name: 'corsair', config: btoa(JSON.stringify({ url: MCP_URL })) },
 ).toString()}`;
 
-/** Hub login from www integration pages (plugin-aware copy on the login card). */
-export function hubWwwPluginsLoginUrl(pluginIds: readonly string[]): string {
-	const plugins = [
+function normalizePluginIds(pluginIds: readonly string[]): string {
+	return [
 		...new Set(pluginIds.map((id) => id.trim().toLowerCase()).filter(Boolean)),
 	].join(',');
+}
+
+/**
+ * Hub login for developers on the SDK (plugin-aware copy on the login card).
+ * It lands on /dashboard: no `title`, since that is the agent handoff, which
+ * mints a new project on every visit.
+ */
+export function hubWwwPluginsLoginUrl(pluginIds: readonly string[]): string {
 	const params = new URLSearchParams({
-		title: 'app',
 		mode: 'www',
-		plugins,
+		plugins: normalizePluginIds(pluginIds),
 	});
 	return `${APP_URL}/login?${params.toString()}`;
 }
 
 export function hubWwwPluginLoginUrl(pluginId: string): string {
 	return hubWwwPluginsLoginUrl([pluginId]);
+}
+
+/**
+ * Hub login for MCP users: it lands on /me/onboarding with the app already
+ * picked. Goes through /login because a signed-out visit to /me loses its
+ * query; Hub sends a signed-in visitor straight on.
+ */
+export function hubMcpConnectUrl(pluginId: string): string {
+	const plugins = normalizePluginIds([pluginId]);
+	const params = new URLSearchParams({
+		mode: 'www',
+		plugins,
+		redirect: `/me/onboarding?${new URLSearchParams({ plugins })}`,
+	});
+	return `${APP_URL}/login?${params.toString()}`;
 }
 export const TWITTER_URL = 'https://x.com/corsairdotdev';
 export const DISCORD_URL = 'https://discord.com/invite/uNgCP3mSzU';
