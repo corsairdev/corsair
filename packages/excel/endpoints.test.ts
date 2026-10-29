@@ -145,6 +145,18 @@ describe('excel endpoint schemas', () => {
 		expect(FilesFindInputSchema.parse({ query: 'Budget' }).query).toBe(
 			'Budget',
 		);
+		expect(() => FilesFindInputSchema.parse({})).toThrow(
+			'Provide query or nextLink',
+		);
+		expect(
+			FilesFindInputSchema.parse({
+				nextLink:
+					"https://graph.microsoft.com/v1.0/me/drive/root/search(q='Budget')?$skiptoken=2",
+			}).nextLink,
+		).toContain('skiptoken=2');
+		expect(() =>
+			FilesFindInputSchema.parse({ nextLink: 'https://example.com/search' }),
+		).toThrow();
 	});
 	it('parses a range and a function result', () => {
 		expect(

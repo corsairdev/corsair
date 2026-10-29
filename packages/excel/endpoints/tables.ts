@@ -91,12 +91,19 @@ export const add: ExcelEndpoints['tablesAdd'] = async (ctx, input) => {
 		TablesAddInputSchema,
 		tableSchema,
 		input,
-		(body) => ({
-			method: 'POST',
-			url: `${workbookBase(body)}/tables/add`,
-			headers: sessionHeaders(body.sessionId),
-			body: { address: body.address, hasHeaders: body.hasHeaders },
-		}),
+		(body) => {
+			const root = workbookBase(body);
+			const url =
+				body.worksheet === undefined
+					? `${root}/tables/add`
+					: `${root}/worksheets/${encodeURIComponent(body.worksheet)}/tables/add`;
+			return {
+				method: 'POST' as const,
+				url,
+				headers: sessionHeaders(body.sessionId),
+				body: { address: body.address, hasHeaders: body.hasHeaders },
+			};
+		},
 		(_body, response) => ({ name: response.name }),
 	);
 };

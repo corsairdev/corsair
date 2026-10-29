@@ -1,12 +1,13 @@
 import { z } from 'zod';
 
-// Sheet names in addresses stay unquoted. A name with a space is passed as
-// the worksheet id/name path segment, and the address stays A1 or A1:B2.
-const CELL_OR_RANGE =
-	/^(?:[A-Za-z0-9_]{1,31}!)?\$?[A-Za-z]{1,3}\$?[1-9][0-9]{0,6}(?::\$?[A-Za-z]{1,3}\$?[1-9][0-9]{0,6})?$/;
-
-const RANGE_ADDRESS =
-	/^(?:[A-Za-z0-9_]{1,31}!)?\$?[A-Za-z]{1,3}\$?[1-9][0-9]{0,6}:\$?[A-Za-z]{1,3}\$?[1-9][0-9]{0,6}$/;
+const SHEET_PREFIX = /(?:'(?:[^':\\/?*[\]\\]|''){1,31}'!|[A-Za-z0-9_]{1,31}!)/;
+const CELL = String.raw`\$?[A-Za-z]{1,3}\$?[1-9][0-9]{0,6}`;
+const CELL_OR_RANGE = new RegExp(
+	`^(?:${SHEET_PREFIX.source})?${CELL}(?::${CELL})?$`,
+);
+const RANGE_ADDRESS = new RegExp(
+	`^(?:${SHEET_PREFIX.source})?${CELL}:${CELL}$`,
+);
 
 const WORKSHEET_NAME = /^[^:\\/?*[\]]{1,31}$/;
 
@@ -267,6 +268,7 @@ export const TablesListInputSchema = target({
 export const TablesGetInputSchema = target({ table: worksheetIdSchema });
 
 export const TablesAddInputSchema = target({
+	worksheet: worksheetIdSchema.optional(),
 	address: z.string().regex(RANGE_ADDRESS),
 	hasHeaders: z.boolean(),
 });
@@ -493,13 +495,47 @@ export const CommentsReplyInputSchema = target({
 	contentType: z.string().min(1).max(32).optional(),
 });
 
+function isGraphSearchLink(value: string): boolean {
+	try {
+		const url = new URL(value);
+		return (
+			url.protocol === 'https:' &&
+			url.hostname === 'graph.microsoft.com' &&
+			url.username === '' &&
+			url.password === '' &&
+			url.pathname.startsWith('/v1.0/') &&
+			url.pathname.includes('/search(')
+		);
+	} catch {
+		return false;
+	}
+}
+
 export const FilesFindInputSchema = z
 	.object({
 		driveId: z.string().min(1).optional(),
-		query: z.string().regex(/^[^'()]{1,200}$/),
+		query: z
+			.string()
+			.regex(/^[^'()]{1,200}$/)
+			.optional(),
 		top: z.number().int().positive().optional(),
+		nextLink: z
+			.string()
+			.refine(isGraphSearchLink, {
+				message: 'nextLink must be a Microsoft Graph search URL',
+			})
+			.optional(),
 	})
-	.strict();
+	.strict()
+	.superRefine((value, ctx) => {
+		if (value.query === undefined && value.nextLink === undefined) {
+			ctx.addIssue({
+				code: z.ZodIssueCode.custom,
+				message: 'Provide query or nextLink',
+				path: ['query'],
+			});
+		}
+	});
 
 export type SessionsCreateInput = z.infer<typeof SessionsCreateInputSchema>;
 export type SessionsCloseInput = z.infer<typeof SessionsCloseInputSchema>;

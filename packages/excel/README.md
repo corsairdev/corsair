@@ -49,7 +49,7 @@ Excel allows 5,000 requests per 10 seconds per app, and 1,500 per 10 seconds per
 
 `504` is retried up to 3 attempts only for `sessions.create`, `tables.add`, and `tables.addRows`, which Graph says to repeat. Other `5xx` responses fail fast. `401`, `403`, `404`, and `409` fail fast. A `404` is a missing file, sheet, or session, not an empty result.
 
-Only `.xlsx` files work. `.xls` does not.
+`files.create` fails if that path already has a file, instead of replacing it. `files.find` returns `@odata.nextLink` when Graph has another page. Pass that link back as `nextLink`. Only `.xlsx` files work. `.xls` does not.
 
 There is no per-call charge. The signed-in account needs a work or school Microsoft 365 license that includes Excel.
 

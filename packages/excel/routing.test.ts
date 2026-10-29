@@ -317,6 +317,24 @@ describe('excel routing', () => {
 		);
 	});
 
+	it('creates a table on a sheet whose name has a space', async () => {
+		mockRequest.mockResolvedValue({ id: '2', name: 'Table2' });
+		await invoke(Tables.add, {
+			itemId: 'item-1',
+			worksheet: 'Sales Data',
+			address: "'Sales Data'!A1:C4",
+			hasHeaders: true,
+		});
+		expect(mockRequest).toHaveBeenCalledWith(
+			'/me/drive/items/item-1/workbook/worksheets/Sales%20Data/tables/add',
+			'x_key_test',
+			expect.objectContaining({
+				method: 'POST',
+				body: { address: "'Sales Data'!A1:C4", hasHeaders: true },
+			}),
+		);
+	});
+
 	it('lists and adds table rows', async () => {
 		mockRequest.mockResolvedValue({ value: [] });
 		await invoke(Tables.listRows, { itemId: 'item-1', table: 'Table1' });
@@ -415,6 +433,7 @@ describe('excel routing', () => {
 			'x_key_test',
 			expect.objectContaining({
 				method: 'PUT',
+				query: { '@microsoft.graph.conflictBehavior': 'fail' },
 				mediaType:
 					'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
 			}),
@@ -437,6 +456,18 @@ describe('excel routing', () => {
 			expect.objectContaining({ method: 'GET' }),
 		);
 		expect(found).toEqual({ value: [{ id: 'a', name: 'Budget.xlsx' }] });
+	});
+
+	it('continues a file search from the Graph next link', async () => {
+		mockRequest.mockResolvedValue({ value: [{ id: 'c', name: 'Q2.xlsx' }] });
+		const nextLink =
+			"https://graph.microsoft.com/v1.0/me/drive/root/search(q='Budget')?$skiptoken=page-2";
+		await invoke(Files.find, { nextLink });
+		expect(mockRequest).toHaveBeenCalledWith(
+			"/me/drive/root/search(q='Budget')?$skiptoken=page-2",
+			'x_key_test',
+			expect.objectContaining({ method: 'GET' }),
+		);
 	});
 
 	it('encodes # and ? in a file search so they stay in the path', async () => {
