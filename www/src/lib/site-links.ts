@@ -38,16 +38,17 @@ export function hubWwwPluginLoginUrl(pluginId: string): string {
 }
 
 /**
- * Hub login for MCP users: it lands on /me/onboarding with the app already
- * picked. Goes through /login because a signed-out visit to /me loses its
- * query; Hub sends a signed-in visitor straight on.
+ * Hub login for MCP users: /me?add=<app> opens the app's connect panel on their
+ * link, or onboarding with the app picked if they have none. Goes through
+ * /login because a signed-out visit to /me loses its query; Hub sends a
+ * signed-in visitor straight on.
  */
 export function hubMcpConnectUrl(pluginId: string): string {
 	const plugins = normalizePluginIds([pluginId]);
 	const params = new URLSearchParams({
 		mode: 'www',
 		plugins,
-		redirect: `/me/onboarding?${new URLSearchParams({ plugins })}`,
+		redirect: `/me?${new URLSearchParams({ add: plugins })}`,
 	});
 	return `${APP_URL}/login?${params.toString()}`;
 }
