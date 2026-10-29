@@ -7,28 +7,25 @@ const get = <T>(
 	path: string,
 	// N8N polling filters vary by event endpoint and are schema-validated.
 	query?: Record<string, unknown>,
-) =>
-	{
-		const transportQuery: Record<
-			string,
-			string | number | boolean | undefined
-		> = {};
-		for (const [key, value] of Object.entries(query ?? {})) {
-			if (value === 'All') continue;
-			if (
-				typeof value === 'string' ||
-				typeof value === 'number' ||
-				typeof value === 'boolean' ||
-				value === undefined
-			) {
-				transportQuery[key] = value;
-			}
+	) => {
+	const transportQuery: Record<string, string | number | boolean | undefined> =
+		{};
+	for (const [key, value] of Object.entries(query ?? {})) {
+		if (value === 'All') continue;
+		if (
+			typeof value === 'string' ||
+			typeof value === 'number' ||
+			typeof value === 'boolean' ||
+			value === undefined
+		) {
+			transportQuery[key] = value;
 		}
-		return makeEnginemailerN8nRequest<T>(path, ctx.key, {
-			method: 'GET',
-			query: transportQuery,
-		});
-	};
+	}
+	return makeEnginemailerN8nRequest<T>(path, ctx.key, {
+		method: 'GET',
+		query: transportQuery,
+	});
+};
 
 const post = <T>(
 	ctx: { key: string },
