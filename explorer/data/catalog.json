@@ -5529,6 +5529,21 @@
       }
     },
     {
+      "id": "unipile",
+      "displayName": "Unipile",
+      "description": "Unipile API v2 in one plugin. Messaging on LinkedIn, WhatsApp, Instagram and Telegram, email on Gmail, Outlook and IMAP, Google and Outlook calendars, LinkedIn and Instagram posts, LinkedIn prospecting with Sales Navigator, and signed webhooks for every Unipile event.",
+      "npmPackageName": "@corsair-dev/unipile",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 148,
+        "webhooks": 40,
+        "db": 0
+      }
+    },
+    {
       "id": "uniswapapi",
       "displayName": "Uniswap",
       "description": "Decentralized exchange protocol API for token swaps, pools, and on-chain liquidity data.",
@@ -87044,6 +87059,1134 @@
       "kind": "webhook",
       "shortPath": "spamBlock",
       "haystack": "spamblock unione.webhooks.spamblock smtp spam-block events from unione"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "accounts.createAuthLink",
+      "haystack": "accounts.createauthlink unipile.api.accounts.createauthlink create a hosted auth link for a user to connect a linkedin (or other) account, or to reconnect one with account_id; linkedin sign-in can offer credentials, cookies or the unilogin extension write"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "accounts.get",
+      "haystack": "accounts.get unipile.api.accounts.get get one connected account: provider, status (running, disconnected, errored…), lock state and connection method read"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "accounts.list",
+      "haystack": "accounts.list unipile.api.accounts.list list connected unipile accounts (linkedin and others) with their acc_ ids, provider and status; filter by provider or status read"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "accounts.remove",
+      "haystack": "accounts.remove unipile.api.accounts.remove disconnect an account from unipile and delete all its unipile data. the user must link it again to use it destructive"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "accounts.update",
+      "haystack": "accounts.update unipile.api.accounts.update update a connected account: its name, custom data, proxy settings or linkedin products write"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "apiKeys.create",
+      "haystack": "apikeys.create unipile.api.apikeys.create create a global or scoped account api key. returns the key once, and only here: store it right away. needs a service api key write"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "apiKeys.delete",
+      "haystack": "apikeys.delete unipile.api.apikeys.delete delete an api key; requests using it fail from then on. needs a service api key destructive"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "apiKeys.list",
+      "haystack": "apikeys.list unipile.api.apikeys.list list the application's api keys (names, prefixes, roles and expiry; never the keys themselves). needs a service api key read"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "auth.requestCheckpoint",
+      "haystack": "auth.requestcheckpoint unipile.api.auth.requestcheckpoint ask the provider for a different checkpoint method (for example sms instead of email) during auth.startintent write"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "auth.resendCheckpoint",
+      "haystack": "auth.resendcheckpoint unipile.api.auth.resendcheckpoint ask the provider to send the checkpoint code or notification again during auth.startintent write"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "auth.solveCheckpoint",
+      "haystack": "auth.solvecheckpoint unipile.api.auth.solvecheckpoint answer the checkpoint (2fa code, otp, captcha, in-app approval) that auth.startintent returned write"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "auth.startIntent",
+      "haystack": "auth.startintent unipile.api.auth.startintent advanced: connect an account without hosted auth by sending the user's provider credentials (or unilogin) yourself. returns a checkpoint to solve or the new account. prefer accounts.createauthlink write"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "calendarEvents.cancel",
+      "haystack": "calendarevents.cancel unipile.api.calendarevents.cancel cancel an event the account organizes and notify the attendees. google keeps it as cancelled; outlook moves it to deleted items destructive"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "calendarEvents.create",
+      "haystack": "calendarevents.create unipile.api.calendarevents.create create an event (timed: date_time plus iana timezone; all-day: date). attendees are invited by the provider; leave conference.url out to ask for a native meet or teams link write"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "calendarEvents.delete",
+      "haystack": "calendarevents.delete unipile.api.calendarevents.delete delete an event from the account's calendar permanently. to call off a meeting you organize and notify attendees, use calendarevents.cancel destructive"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "calendarEvents.get",
+      "haystack": "calendarevents.get unipile.api.calendarevents.get get one event with its attendees and their responses (outlook invitations show only the account's own response) read"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "calendarEvents.list",
+      "haystack": "calendarevents.list unipile.api.calendarevents.list list the events in a calendar between two dates, with paging; cancelled events are included unless is_cancelled is false. outlook does not refresh other attendees' responses on invitations read"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "calendarEvents.respond",
+      "haystack": "calendarevents.respond unipile.api.calendarevents.respond answer an invitation: yes, maybe or no, with an optional comment. the organizer sees it; on outlook, declining removes the event write"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "calendarEvents.restore",
+      "haystack": "calendarevents.restore unipile.api.calendarevents.restore restore an event the account cancelled. google calendar only, organizer only, while google still has it write"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "calendarEvents.update",
+      "haystack": "calendarevents.update unipile.api.calendarevents.update change an event; send only the fields that change. a series id edits the whole series, an occurrence id just that one. attendees may be notified write"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "calendars.create",
+      "haystack": "calendars.create unipile.api.calendars.create create a calendar on the account write"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "calendars.delete",
+      "haystack": "calendars.delete unipile.api.calendars.delete delete a calendar and permanently delete all its events. the default calendar cannot be deleted destructive"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "calendars.get",
+      "haystack": "calendars.get unipile.api.calendars.get get one calendar: name, timezone, colour, and whether it is the default or read-only read"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "calendars.list",
+      "haystack": "calendars.list unipile.api.calendars.list list the account's calendars, owned and shared (google calendar or outlook) read"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "calendars.update",
+      "haystack": "calendars.update unipile.api.calendars.update rename or change a calendar write"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "chats.addParticipant",
+      "haystack": "chats.addparticipant unipile.api.chats.addparticipant add someone to a group chat; they are notified. on whatsapp, telegram and instagram the account needs permission to add members, or the call can succeed without adding anyone write"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "chats.delete",
+      "haystack": "chats.delete unipile.api.chats.delete delete a whole chat. linkedin classic and whatsapp only; other providers answer 501 destructive"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "chats.get",
+      "haystack": "chats.get unipile.api.chats.get get one chat on any provider: participants, unread count, last message and whether sending is restricted read"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "chats.getPicture",
+      "haystack": "chats.getpicture unipile.api.chats.getpicture download a chat's picture (telegram only). returns the type and size only, unless include_content is set (then base64, up to max_bytes) read"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "chats.list",
+      "haystack": "chats.list unipile.api.chats.list list the account's chats, newest first, filtered by type, date, unread or archived. whatsapp, telegram and instagram; on linkedin use inboxes.listchats. whatsapp and telegram channels, communities and broadcasts are not returned read"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "chats.listParticipants",
+      "haystack": "chats.listparticipants unipile.api.chats.listparticipants list the participants of a group chat (fails on 1-to-1 chats). linkedin classic, whatsapp, telegram and instagram read"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "chats.removeParticipant",
+      "haystack": "chats.removeparticipant unipile.api.chats.removeparticipant remove someone from a group chat, or pass the account's own user id to leave it (the chat becomes read-only). non-admins on whatsapp, telegram and instagram can get success without a removal destructive"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "chats.setComposing",
+      "haystack": "chats.setcomposing unipile.api.chats.setcomposing show the 'typing…' or 'recording' indicator in a chat. linkedin classic, whatsapp and telegram (telegram clears it after about 5 seconds) write"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "chats.start",
+      "haystack": "chats.start unipile.api.chats.start start a chat on whatsapp, telegram or instagram by sending the first message (an array of users_ids makes a group; an existing 1-to-1 chat just gets the message). on linkedin use inboxes.startchat. never retried after a timeout or 5xx write"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "chats.update",
+      "haystack": "chats.update unipile.api.chats.update change a chat: mark it read or unread, archive, mute, rename (groups) or label (whatsapp business). marking read does not mark its messages; telegram cannot archive write"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "contacts.list",
+      "haystack": "contacts.list unipile.api.contacts.list list the account's contacts on whatsapp, gmail or outlook (not telegram or imap), with paging. a contact does not mean a chat exists read"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "drafts.create",
+      "haystack": "drafts.create unipile.api.drafts.create save an email draft without sending it; reply drafts use reply_to_message_id. outlook attachments must be under 3 mb each write"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "drafts.delete",
+      "haystack": "drafts.delete unipile.api.drafts.delete delete an email draft permanently destructive"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "drafts.get",
+      "haystack": "drafts.get unipile.api.drafts.get get one email draft with its recipients, subject, body and attachment metadata read"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "drafts.list",
+      "haystack": "drafts.list unipile.api.drafts.list list email drafts, newest first (gmail and outlook; imap answers 501) read"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "drafts.send",
+      "haystack": "drafts.send unipile.api.drafts.send send an existing draft; the draft is deleted afterwards. never retried after a timeout or 5xx write"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "drafts.update",
+      "haystack": "drafts.update unipile.api.drafts.update change an email draft; fields left out stay, but attachments replaces the whole list. outlook attachments must be under 3 mb each write"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "emails.get",
+      "haystack": "emails.get unipile.api.emails.get get one email: headers, sender and recipients, body, folders or labels, and attachment metadata (download with emails.getattachment) read"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "emails.getAttachment",
+      "haystack": "emails.getattachment unipile.api.emails.getattachment download an email attachment. returns the type and size only, unless include_content is set (then base64, up to max_bytes) read"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "emails.getThread",
+      "haystack": "emails.getthread unipile.api.emails.getthread get a whole email conversation by the email's thread_id (not its id). imap threads are inferred from headers and can be incomplete read"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "emails.list",
+      "haystack": "emails.list unipile.api.emails.list list emails across folders, newest first, with filters (folder, from, to, date, text) and cursor paging; meta_only skips bodies. gmail and outlook; imap only with initial sync, otherwise use emails.listinfolder read"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "emails.listInFolder",
+      "haystack": "emails.listinfolder unipile.api.emails.listinfolder list the emails in one folder or gmail label (folder_id from folders.list), newest first. works on imap without initial sync read"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "emails.listSenders",
+      "haystack": "emails.listsenders unipile.api.emails.listsenders list the addresses the account can send from: the main address plus aliases (gmail; outlook on microsoft 365 or exchange) read"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "emails.markRead",
+      "haystack": "emails.markread unipile.api.emails.markread mark an email as read for the account (does not trigger the sender's tracking pixel) write"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "emails.markUnread",
+      "haystack": "emails.markunread unipile.api.emails.markunread mark an email as unread write"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "emails.modify",
+      "haystack": "emails.modify unipile.api.emails.modify move an email or set its labels: folders_ids replaces them all (on gmail list every label to keep; outlook allows one folder). archive, junk or flag by moving to the folder with that role write"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "emails.send",
+      "haystack": "emails.send unipile.api.emails.send send an email (from must be one of emails.listsenders; reply in-thread with reply_to_message_id), with base64 attachments and optional open/click tracking. gmail advises 50-100 a day. never retried after a timeout or 5xx write"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "emails.trash",
+      "haystack": "emails.trash unipile.api.emails.trash move an email to the provider's trash. permanent deletion is not available destructive"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "folders.create",
+      "haystack": "folders.create unipile.api.folders.create create an email folder or gmail label. parent_id (sub-folders) is outlook only; colors are gmail only write"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "folders.delete",
+      "haystack": "folders.delete unipile.api.folders.delete delete an email folder or label. gmail keeps the emails (only the label goes); outlook and imap permanently delete every email in the folder destructive"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "folders.get",
+      "haystack": "folders.get unipile.api.folders.get get one email folder or label by its provider id from folders.list read"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "folders.list",
+      "haystack": "folders.list unipile.api.folders.list list email folders (outlook, imap) or labels (gmail) with their role (inbox, sent, trash, archive, junk…) and counts, with paging read"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "folders.update",
+      "haystack": "folders.update unipile.api.folders.update rename or change an email folder or label; colors are gmail only, parent_id outlook only write"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "inboxes.list",
+      "haystack": "inboxes.list unipile.api.inboxes.list list a linkedin account's inboxes (classic, sales navigator, recruiter, company pages). only a product's primary inbox (e.g. classic_primary) can start chats read"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "inboxes.listChats",
+      "haystack": "inboxes.listchats unipile.api.inboxes.listchats list the chats in one linkedin inbox, newest first. this is how linkedin chats are listed (chats.list covers the other providers); classic and sales navigator page by offset, recruiter by cursor read"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "inboxes.startChat",
+      "haystack": "inboxes.startchat unipile.api.inboxes.startchat start a linkedin chat from a primary inbox (e.g. classic_primary) by sending the first message; an existing 1-to-1 chat just gets it. inmail spends credits; sales navigator needs a subject. never retried after a timeout or 5xx write"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "linkedin.endorseSkill",
+      "haystack": "linkedin.endorseskill unipile.api.linkedin.endorseskill endorse a skill of a 1st-degree connection (skill_id from users.getprofile with linkedin_skills). the member is notified and it shows on their profile write"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "linkedin.getCompany",
+      "haystack": "linkedin.getcompany unipile.api.linkedin.getcompany get a linkedin company page by numeric id or url slug: description, industry, size, locations, website. linkedin advises at most 80 a day (150 with premium), so this is not retried after a timeout or 5xx read"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "linkedin.getCompanyFollowCredits",
+      "haystack": "linkedin.getcompanyfollowcredits unipile.api.linkedin.getcompanyfollowcredits get a company page's remaining follow-invitation credits and when they reset read"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "linkedin.getInmailCredits",
+      "haystack": "linkedin.getinmailcredits unipile.api.linkedin.getinmailcredits get how many inmail credits the linkedin account has left (classic, sales_navigator or recruiter; all when omitted). check before an inmail with inboxes.startchat read"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "linkedin.getSearchParameters",
+      "haystack": "linkedin.getsearchparameters unipile.api.linkedin.getsearchparameters look up the ids linkedin searches need (type location, company, industry, school, job_title, skill… plus keywords; up to 100). searches, profile views and profile updates take these ids, not text read"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "linkedin.inviteToFollowCompany",
+      "haystack": "linkedin.invitetofollowcompany unipile.api.linkedin.invitetofollowcompany invite 1st-degree connections (aco… ids) to follow a company page the account administers. spends the page's monthly credits; success can be partial (invitations_count), so never resend the whole batch write"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "linkedin.listContracts",
+      "haystack": "linkedin.listcontracts unipile.api.linkedin.listcontracts list the sales navigator or recruiter contracts (seats) the account can use (403 unless that product was activated when the account was linked) read"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "linkedin.listManagedCompanyPages",
+      "haystack": "linkedin.listmanagedcompanypages unipile.api.linkedin.listmanagedcompanypages list the linkedin company pages the account administers; their ids work as post_as, comment_as, react_as and for follow invitations read"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "linkedin.listProfileViews",
+      "haystack": "linkedin.listprofileviews unipile.api.linkedin.listprofileviews list who viewed the account's linkedin profile, with offset paging and filters (date range, industry, company, location). without premium the data is limited and filters are ignored read"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "linkedin.request",
+      "haystack": "linkedin.request unipile.api.linkedin.request advanced: send a raw request to any linkedin endpoint through the account's session and get linkedin's response as is. can read or change anything the account can; prefer the typed operations. never retried after a timeout or 5xx write"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "linkedin.searchCompanies",
+      "haystack": "linkedin.searchcompanies unipile.api.linkedin.searchcompanies search linkedin companies by keywords, location, industry and headcount (ids from linkedin.getsearchparameters); cursor paging. counts toward linkedin's daily search limit read"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "linkedin.searchFromUrl",
+      "haystack": "linkedin.searchfromurl unipile.api.linkedin.searchfromurl run a linkedin search from a linkedin.com/search/results/people, /companies or /content url; page with next_cursor and the same url. counts toward linkedin's daily search limit (about 1,000 profiles) read"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "linkedin.searchJobs",
+      "haystack": "linkedin.searchjobs unipile.api.linkedin.searchjobs search linkedin job postings by keywords, company, location, function and title (ids from linkedin.getsearchparameters); offset paging, up to 100 per page read"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "linkedin.searchPeople",
+      "haystack": "linkedin.searchpeople unipile.api.linkedin.searchpeople search linkedin people by keywords, location, company, school, industry and network distance (ids from linkedin.getsearchparameters); 10 per page, cursor paging. linkedin advises at most 1,000 profiles a day read"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "linkedin.searchPosts",
+      "haystack": "linkedin.searchposts unipile.api.linkedin.searchposts search linkedin posts by keywords, author or mention (ids from linkedin.getsearchparameters), to find people engaging with a topic; cursor paging, up to 49 per page. counts toward the daily search limit read"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "linkedin.selectContract",
+      "haystack": "linkedin.selectcontract unipile.api.linkedin.selectcontract switch to another sales navigator or recruiter contract; later calls and webhooks for that product use it write"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "messages.addReaction",
+      "haystack": "messages.addreaction unipile.api.messages.addreaction react to a message with an emoji; the other participants see it. whatsapp, telegram and instagram keep one reaction per person (a new one replaces it); some providers allow only a fixed set write"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "messages.delete",
+      "haystack": "messages.delete unipile.api.messages.delete delete a message the account sent. whatsapp and telegram delete it for everyone; some providers leave a 'deleted' placeholder, and whatsapp can report success outside its time limit without deleting destructive"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "messages.edit",
+      "haystack": "messages.edit unipile.api.messages.edit edit the text of a message the account sent. instagram allows it for 15 minutes; whatsapp can report success outside its limits without editing write"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "messages.forward",
+      "haystack": "messages.forward unipile.api.messages.forward forward a message to another chat (to_chat_id). whatsapp and telegram ignore the extra text; not on linkedin sales navigator or recruiter. sends immediately and is never retried after a timeout or 5xx write"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "messages.get",
+      "haystack": "messages.get unipile.api.messages.get get one message: text, sender, attachments, reactions, and read and delivery state. not on linkedin sales navigator or recruiter read"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "messages.getAttachment",
+      "haystack": "messages.getattachment unipile.api.messages.getattachment download a message attachment. returns the type and size only, unless include_content is set (then base64, up to max_bytes). attachments marked is_unavailable cannot be downloaded read"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "messages.list",
+      "haystack": "messages.list unipile.api.messages.list list the messages in a chat on any provider, newest first, with sender, read and delivery state read"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "messages.listReactions",
+      "haystack": "messages.listreactions unipile.api.messages.listreactions list who reacted to a message with what. linkedin classic, whatsapp, telegram and instagram (counts are already on the message) read"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "messages.markRead",
+      "haystack": "messages.markread unipile.api.messages.markread mark someone else's message as read (the sender may see a read receipt). does not change the chat's read state; not on linkedin sales navigator or recruiter write"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "messages.pin",
+      "haystack": "messages.pin unipile.api.messages.pin pin or unpin a message (pin_status false unpins). whatsapp, telegram and instagram; whatsapp pins expire after 24 hours, 7 or 30 days write"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "messages.removeReaction",
+      "haystack": "messages.removereaction unipile.api.messages.removereaction remove the account's own reaction from a message (pass the same emoji) destructive"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "messages.send",
+      "haystack": "messages.send unipile.api.messages.send send a message in an existing chat on any provider, optionally with attachments or as a reply (quote_id). whatsapp sends one attachment per message; linkedin caps attachments at 20 mb. never retried after a timeout or 5xx write"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "posts.addComment",
+      "haystack": "posts.addcomment unipile.api.posts.addcomment comment on a post, optionally as a managed linkedin company page. the comment is public; linkedin advises 80-100 a day. never retried after a timeout or 5xx write"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "posts.addCommentReaction",
+      "haystack": "posts.addcommentreaction unipile.api.posts.addcommentreaction react to a comment, optionally as a managed company page. the reaction is public write"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "posts.addReaction",
+      "haystack": "posts.addreaction unipile.api.posts.addreaction react to a post (linkedin: like, celebrate, support, love, insightful, funny; instagram: like). the reaction is public; linkedin advises 80-100 reactions and comments a day write"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "posts.create",
+      "haystack": "posts.create unipile.api.posts.create publish a post on linkedin or instagram. it goes live publicly right away (instagram needs media). linkedin supports mentions, audience and posting as a managed company page. never retried after a timeout or 5xx write"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "posts.createStory",
+      "haystack": "posts.createstory unipile.api.posts.createstory publish an instagram story with exactly one image or video. it goes live publicly right away write"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "posts.delete",
+      "haystack": "posts.delete unipile.api.posts.delete delete a post the account published (unipile post id) destructive"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "posts.deleteComment",
+      "haystack": "posts.deletecomment unipile.api.posts.deletecomment delete a comment the account wrote destructive"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "posts.get",
+      "haystack": "posts.get unipile.api.posts.get get one post by its unipile id or a native linkedin id (activity:…, ugcpost:…). linkedin post reads count toward a daily limit (about 80-100), so this is not retried after a timeout or 5xx read"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "posts.list",
+      "haystack": "posts.list unipile.api.posts.list list a user's posts (linkedin or instagram) with reaction, comment and repost counts. linkedin post reads count toward a daily limit (about 80-100), so this is not retried after a timeout or 5xx read"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "posts.listCommentReactions",
+      "haystack": "posts.listcommentreactions unipile.api.posts.listcommentreactions list who reacted to a comment with what (linkedin pages by offset) read"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "posts.listCommentReplies",
+      "haystack": "posts.listcommentreplies unipile.api.posts.listcommentreplies list the replies to a comment, newest first (linkedin pages by offset) read"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "posts.listComments",
+      "haystack": "posts.listcomments unipile.api.posts.listcomments list the comments on a post with each author, newest or most relevant first read"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "posts.listReactions",
+      "haystack": "posts.listreactions unipile.api.posts.listreactions list the people who reacted to a post, with their profile summary, to find engaged leads read"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "posts.removeCommentReaction",
+      "haystack": "posts.removecommentreaction unipile.api.posts.removecommentreaction remove the account's reaction from a comment (pass the same reaction) destructive"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "posts.removeReaction",
+      "haystack": "posts.removereaction unipile.api.posts.removereaction remove the account's reaction from a post (pass the same reaction) destructive"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "posts.replyToComment",
+      "haystack": "posts.replytocomment unipile.api.posts.replytocomment reply to a comment, optionally as a managed linkedin company page. the reply is public. never retried after a timeout or 5xx write"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "posts.update",
+      "haystack": "posts.update unipile.api.posts.update edit a post the account published (unipile post id). the change is public write"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "posts.updateComment",
+      "haystack": "posts.updatecomment unipile.api.posts.updatecomment edit a comment the account wrote (linkedin only). the change is public write"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "relationRequests.accept",
+      "haystack": "relationrequests.accept unipile.api.relationrequests.accept accept a linkedin invitation the account received write"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "relationRequests.cancel",
+      "haystack": "relationrequests.cancel unipile.api.relationrequests.cancel withdraw a sent linkedin invitation or decline a received one. linkedin may block re-inviting the same person for weeks destructive"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "relationRequests.create",
+      "haystack": "relationrequests.create unipile.api.relationrequests.create send a linkedin connection invitation to a member id (aco…), with an optional note. linkedin allows roughly 100-200 a week; pace sends and never retry a failed one blindly write"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "relationRequests.list",
+      "haystack": "relationrequests.list unipile.api.relationrequests.list list pending linkedin invitations the account sent or received, with the other person and any note read"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "salesNavigator.browseAccountList",
+      "haystack": "salesnavigator.browseaccountlist unipile.api.salesnavigator.browseaccountlist list the companies in a sales navigator account list, with filters; offset paging read"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "salesNavigator.browseLeadList",
+      "haystack": "salesnavigator.browseleadlist unipile.api.salesnavigator.browseleadlist list the leads in a sales navigator lead list, with filters; offset paging read"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "salesNavigator.getSearchParameters",
+      "haystack": "salesnavigator.getsearchparameters unipile.api.salesnavigator.getsearchparameters look up the ids sales navigator filters need (type company, location, industry, job_title, persona, lead_list, saved and recent searches…; up to 100). needs sales navigator read"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "salesNavigator.listAccountLists",
+      "haystack": "salesnavigator.listaccountlists unipile.api.salesnavigator.listaccountlists list the account's sales navigator account (company) lists; offset paging read"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "salesNavigator.listLeadLists",
+      "haystack": "salesnavigator.listleadlists unipile.api.salesnavigator.listleadlists list the account's sales navigator lead lists (with several contracts, run linkedin.selectcontract first); offset paging read"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "salesNavigator.saveAccount",
+      "haystack": "salesnavigator.saveaccount unipile.api.salesnavigator.saveaccount add a company (company_id from a companies search) to an existing sales navigator account list. lists cannot be created here write"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "salesNavigator.saveLead",
+      "haystack": "salesnavigator.savelead unipile.api.salesnavigator.savelead add a lead (user_id from a people search) to an existing sales navigator lead list. lists cannot be created here write"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "salesNavigator.searchCompanies",
+      "haystack": "salesnavigator.searchcompanies unipile.api.salesnavigator.searchcompanies search accounts (companies) in sales navigator with include/exclude filters, spotlights and headcount ranges; offset paging, up to 100 per page read"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "salesNavigator.searchFromUrl",
+      "haystack": "salesnavigator.searchfromurl unipile.api.salesnavigator.searchfromurl run a sales navigator search from a linkedin.com/sales/search/people or /company url; offset paging, up to 50 per page. needs sales navigator; linkedin advises at most 2,500 profiles a day read"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "salesNavigator.searchPeople",
+      "haystack": "salesnavigator.searchpeople unipile.api.salesnavigator.searchpeople search leads in sales navigator with include/exclude filters (ids from salesnavigator.getsearchparameters) or a saved search; offset paging, up to 100 per page. linkedin advises at most 2,500 profiles a day read"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "scopes.create",
+      "haystack": "scopes.create unipile.api.scopes.create create a scope to group one customer's accounts. needs a service api key write"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "scopes.delete",
+      "haystack": "scopes.delete unipile.api.scopes.delete delete a scope. needs a service api key destructive"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "scopes.get",
+      "haystack": "scopes.get unipile.api.scopes.get get one scope. needs a service api key read"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "scopes.list",
+      "haystack": "scopes.list unipile.api.scopes.list list the scopes (customer or workspace boundaries) in the application. needs a service api key read"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "scopes.update",
+      "haystack": "scopes.update unipile.api.scopes.update rename, enable or disable a scope. needs a service api key write"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "users.follow",
+      "haystack": "users.follow unipile.api.users.follow follow a user on linkedin or instagram (a private profile gets a follow request). does not create a linkedin connection; fails if already followed write"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "users.getChat",
+      "haystack": "users.getchat unipile.api.users.getchat find the existing chats with a user by their provider id, on any provider, to send into instead of starting a new one. can return several chats across inboxes read"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "users.getPicture",
+      "haystack": "users.getpicture unipile.api.users.getpicture download a user's profile picture (telegram only; me for the owner). returns the type and size only, unless include_content is set read"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "users.getPresence",
+      "haystack": "users.getpresence unipile.api.users.getpresence get whether a user is online and when they were last seen (instagram, linkedin, telegram, whatsapp). unknown means not shared, not offline read"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "users.getProfile",
+      "haystack": "users.getprofile unipile.api.users.getprofile get a linkedin profile by member id or public identifier: headline, location, network distance, invitation status, and optional experience, education and skills. each call counts toward linkedin's profile-view limit (about 80-100 a day), so it is not retried after a timeout or 5xx, only after unipile's own rate limit read"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "users.listComments",
+      "haystack": "users.listcomments unipile.api.users.listcomments list a user's comments on posts (the account owner's by default), with each post read"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "users.listFollowers",
+      "haystack": "users.listfollowers unipile.api.users.listfollowers list a user's followers on linkedin or instagram (me for the owner); linkedin pages by offset read"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "users.listFollowing",
+      "haystack": "users.listfollowing unipile.api.users.listfollowing list the accounts a user follows on linkedin or instagram. linkedin accepts only user_id me; pages by offset read"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "users.listReactions",
+      "haystack": "users.listreactions unipile.api.users.listreactions list the posts a user reacted to (the account owner's by default), with each post read"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "users.listRelations",
+      "haystack": "users.listrelations unipile.api.users.listrelations list a user's 1st-degree connections (the account owner's by default), with optional name search and paging read"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "users.removeRelation",
+      "haystack": "users.removerelation unipile.api.users.removerelation remove a linkedin connection (1st-degree relation). use users.unfollow for one-way follows; reconnecting needs a new invitation destructive"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "users.setPresence",
+      "haystack": "users.setpresence unipile.api.users.setpresence set the account's own presence: online, offline, away or restricted_online. linkedin classic, whatsapp, telegram and instagram write"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "users.unfollow",
+      "haystack": "users.unfollow unipile.api.users.unfollow stop following a user on linkedin or instagram; fails if not followed destructive"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "users.updateProfile",
+      "haystack": "users.updateprofile unipile.api.users.updateprofile update the account owner's own linkedin or instagram profile (user_id me): headline, about, location, skills and similar. changes are public, and notify_network announces them write"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "users.visitProfile",
+      "haystack": "users.visitprofile unipile.api.users.visitprofile report a profile visit to linkedin so the member sees you in 'who viewed your profile', using the notify_visit_token from users.getprofile. counts toward linkedin's profile-view limit and is not retried after a timeout or 5xx write"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "webhookEndpoints.create",
+      "haystack": "webhookendpoints.create unipile.api.webhookendpoints.create register a url to receive unipile events such as relation.new and message.new. returns the signing secret once, and only here: store it as the plugin webhooksecret right away. needs a service api key write"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "webhookEndpoints.delete",
+      "haystack": "webhookendpoints.delete unipile.api.webhookendpoints.delete delete a unipile webhook endpoint; its events stop. needs a service api key destructive"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "webhookEndpoints.get",
+      "haystack": "webhookendpoints.get unipile.api.webhookendpoints.get get one unipile webhook endpoint: url, events, accounts and whether it has a signing secret (the secret is never returned). needs a service api key read"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "webhookEndpoints.list",
+      "haystack": "webhookendpoints.list unipile.api.webhookendpoints.list list the unipile webhook endpoints, their urls, events and accounts (signing secrets are never returned). needs a service api key read"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "webhookEndpoints.update",
+      "haystack": "webhookendpoints.update unipile.api.webhookendpoints.update change a webhook endpoint's url, events, accounts or description, or enable or disable it. keeps the signing secret, which is not returned. needs a service api key write"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "webhookEvents.listDeliveries",
+      "haystack": "webhookevents.listdeliveries unipile.api.webhookevents.listdeliveries list webhook delivery attempts (event, endpoint, status, response) from the last seven days, to debug missing events. needs a service api key read"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "api",
+      "shortPath": "webhookEvents.replay",
+      "haystack": "webhookevents.replay unipile.api.webhookevents.replay queue another delivery of a stored event (evt_…) to every enabled endpoint that matches it, even if it was delivered before. receivers must handle the duplicate. needs a service api key write"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "webhook",
+      "shortPath": "accounts.add",
+      "haystack": "accounts.add unipile.webhooks.accounts.add a new account was connected and is ready; payload.state is the createauthlink state"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "webhook",
+      "shortPath": "accounts.initialSyncCompleted",
+      "haystack": "accounts.initialsynccompleted unipile.webhooks.accounts.initialsynccompleted the first sync finished and all history is available"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "webhook",
+      "shortPath": "accounts.initialSyncFailed",
+      "haystack": "accounts.initialsyncfailed unipile.webhooks.accounts.initialsyncfailed the first sync stopped with an error"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "webhook",
+      "shortPath": "accounts.initialSyncRunning",
+      "haystack": "accounts.initialsyncrunning unipile.webhooks.accounts.initialsyncrunning the first sync of a newly connected account started"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "webhook",
+      "shortPath": "accounts.locked",
+      "haystack": "accounts.locked unipile.webhooks.accounts.locked api access to an account was locked"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "webhook",
+      "shortPath": "accounts.reconnect",
+      "haystack": "accounts.reconnect unipile.webhooks.accounts.reconnect an existing account was signed in again or reconfigured"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "webhook",
+      "shortPath": "accounts.remove",
+      "haystack": "accounts.remove unipile.webhooks.accounts.remove an account was removed from unipile"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "webhook",
+      "shortPath": "accounts.statusDegraded",
+      "haystack": "accounts.statusdegraded unipile.webhooks.accounts.statusdegraded a multi-product account has one product running and another interrupted"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "webhook",
+      "shortPath": "accounts.statusDisconnected",
+      "haystack": "accounts.statusdisconnected unipile.webhooks.accounts.statusdisconnected an account needs signing in again; send a reconnect link from accounts.createauthlink"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "webhook",
+      "shortPath": "accounts.statusErrored",
+      "haystack": "accounts.statuserrored unipile.webhooks.accounts.statuserrored an account is interrupted by a unipile, proxy or provider problem"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "webhook",
+      "shortPath": "accounts.statusPartial",
+      "haystack": "accounts.statuspartial unipile.webhooks.accounts.statuspartial a multi-product account has one product running and another needing sign-in"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "webhook",
+      "shortPath": "accounts.statusRunning",
+      "haystack": "accounts.statusrunning unipile.webhooks.accounts.statusrunning an account (or one of its products) is working again"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "webhook",
+      "shortPath": "accounts.unlocked",
+      "haystack": "accounts.unlocked unipile.webhooks.accounts.unlocked api access to an account was restored"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "webhook",
+      "shortPath": "calendarEvents.delete",
+      "haystack": "calendarevents.delete unipile.webhooks.calendarevents.delete a calendar event was deleted"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "webhook",
+      "shortPath": "calendarEvents.new",
+      "haystack": "calendarevents.new unipile.webhooks.calendarevents.new a calendar event was created or the account was invited (google and outlook can report it up to 60 seconds late)"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "webhook",
+      "shortPath": "calendarEvents.update",
+      "haystack": "calendarevents.update unipile.webhooks.calendarevents.update a calendar event was changed"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "webhook",
+      "shortPath": "calendars.create",
+      "haystack": "calendars.create unipile.webhooks.calendars.create a calendar was created"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "webhook",
+      "shortPath": "calendars.delete",
+      "haystack": "calendars.delete unipile.webhooks.calendars.delete a calendar was deleted"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "webhook",
+      "shortPath": "calendars.update",
+      "haystack": "calendars.update unipile.webhooks.calendars.update a calendar was changed"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "webhook",
+      "shortPath": "chats.delete",
+      "haystack": "chats.delete unipile.webhooks.chats.delete a chat was deleted"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "webhook",
+      "shortPath": "chats.update",
+      "haystack": "chats.update unipile.webhooks.chats.update a chat changed: folders, unread count, archive state, participants or name"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "webhook",
+      "shortPath": "emailDrafts.delete",
+      "haystack": "emaildrafts.delete unipile.webhooks.emaildrafts.delete an email draft was deleted"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "webhook",
+      "shortPath": "emailDrafts.new",
+      "haystack": "emaildrafts.new unipile.webhooks.emaildrafts.new an email draft was created"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "webhook",
+      "shortPath": "emailFolders.create",
+      "haystack": "emailfolders.create unipile.webhooks.emailfolders.create an email folder or label was created"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "webhook",
+      "shortPath": "emailFolders.delete",
+      "haystack": "emailfolders.delete unipile.webhooks.emailfolders.delete an email folder or label was deleted"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "webhook",
+      "shortPath": "emailFolders.update",
+      "haystack": "emailfolders.update unipile.webhooks.emailfolders.update an email folder or label was changed"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "webhook",
+      "shortPath": "emails.bounce",
+      "haystack": "emails.bounce unipile.webhooks.emails.bounce a bounce notice arrived for an email the account sent (sent instead of email.new)"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "webhook",
+      "shortPath": "emails.delete",
+      "haystack": "emails.delete unipile.webhooks.emails.delete an email left a folder: deleted, trashed or moved elsewhere"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "webhook",
+      "shortPath": "emails.new",
+      "haystack": "emails.new unipile.webhooks.emails.new an email was added to a folder: received, sent, or moved in (check folder_id). gmail, outlook and imap can report it up to 10 seconds late"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "webhook",
+      "shortPath": "followers.new",
+      "haystack": "followers.new unipile.webhooks.followers.new someone started following the account owner (linkedin can report it up to 6 hours late)"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "webhook",
+      "shortPath": "messages.delete",
+      "haystack": "messages.delete unipile.webhooks.messages.delete a message was deleted"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "webhook",
+      "shortPath": "messages.new",
+      "haystack": "messages.new unipile.webhooks.messages.new a message was received or sent in a chat (check payload.is_sender)"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "webhook",
+      "shortPath": "messages.reactionDelete",
+      "haystack": "messages.reactiondelete unipile.webhooks.messages.reactiondelete a reaction was removed from a message"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "webhook",
+      "shortPath": "messages.reactionNew",
+      "haystack": "messages.reactionnew unipile.webhooks.messages.reactionnew someone reacted to a message"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "webhook",
+      "shortPath": "messages.receiptDelivery",
+      "haystack": "messages.receiptdelivery unipile.webhooks.messages.receiptdelivery a sent message was delivered to someone (can fire once per member in group chats)"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "webhook",
+      "shortPath": "messages.receiptRead",
+      "haystack": "messages.receiptread unipile.webhooks.messages.receiptread someone read a message the account sent"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "webhook",
+      "shortPath": "messages.update",
+      "haystack": "messages.update unipile.webhooks.messages.update a message was edited"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "webhook",
+      "shortPath": "relations.new",
+      "haystack": "relations.new unipile.webhooks.relations.new a new 1st-degree relation, usually an accepted invitation (linkedin can report it up to 6 hours late)"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "webhook",
+      "shortPath": "tracking.click",
+      "haystack": "tracking.click unipile.webhooks.tracking.click someone clicked a tracked link in an email"
+    },
+    {
+      "pluginId": "unipile",
+      "kind": "webhook",
+      "shortPath": "tracking.open",
+      "haystack": "tracking.open unipile.webhooks.tracking.open someone opened an email sent with open tracking"
     },
     {
       "pluginId": "uniswapapi",
