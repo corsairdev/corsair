@@ -1,3 +1,4 @@
+import { EnginemailerAPIError } from './client';
 import { errorHandlers } from './error-handlers';
 import {
 	enginemailer,
@@ -45,5 +46,10 @@ describe('Enginemailer plugin contract', () => {
 		expect(await errorHandlers.AUTH_ERROR.handler()).toEqual({
 			maxRetries: 0,
 		});
+		expect(
+			await errorHandlers.RATE_LIMIT_ERROR.handler(
+				new EnginemailerAPIError('429', 429, undefined, 12_000),
+			),
+		).toEqual({ maxRetries: 5, headersRetryAfterMs: 12_000 });
 	});
 });

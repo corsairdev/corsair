@@ -82,6 +82,30 @@ describe('Enginemailer transport', () => {
 			status: 401,
 		});
 	});
+
+	it('preserves Retry-After when wrapping rate-limit errors', async () => {
+		mockRequest.mockRejectedValue(
+			new ApiError(
+				{ method: 'GET', url: 'campaigns' },
+				{
+					url: `${ENGINEMAILER_API_BASE}/campaigns`,
+					ok: false,
+					status: 429,
+					statusText: 'Too Many Requests',
+					body: {},
+				},
+				'Rate limited',
+				{ retryAfter: 12_000 },
+			),
+		);
+
+		await expect(
+			makeEnginemailerRequest('/campaigns', 'secret'),
+		).rejects.toMatchObject({
+			status: 429,
+			retryAfter: 12_000,
+		});
+	});
 });
 
 describe('Enginemailer N8N transport', () => {
