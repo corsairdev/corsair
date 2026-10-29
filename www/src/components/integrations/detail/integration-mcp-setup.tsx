@@ -132,8 +132,9 @@ export function IntegrationMcpSetup({
 							</a>
 						</p>
 						<p className="mt-2 text-sm">
-							Or skip this step: the first time your agent needs {displayName},
-							it gives you a sign-in link.
+							If your link lets the agent add apps, you can skip this: it gives
+							you a sign-in link the first time it needs {displayName}. On a
+							ChatGPT personal plan, connect {displayName} here first.
 						</p>
 					</Step>
 
@@ -156,8 +157,10 @@ export function IntegrationMcpSetup({
 							))}
 						</div>
 						<p className="mt-3 text-sm">
-							Codex, Gemini CLI, VS Code, Zed and any other MCP client work the
-							same way.{' '}
+							Codex, Gemini CLI, VS Code, Zed and other clients with OAuth
+							sign-in work the same way. Clients without it, such as GitHub
+							Copilot&apos;s coding agent, use a link&apos;s own address and an
+							API key.{' '}
 							<a
 								href={MCP_DOCS_URL}
 								className="font-medium text-[#4a38f5] no-underline hover:underline"
