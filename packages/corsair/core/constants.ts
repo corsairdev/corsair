@@ -28,6 +28,7 @@ export const BaseProviders = [
 	'discord',
 	'dodopayments',
 	'dropbox',
+	'enginemailer',
 	'exa',
 	'figma',
 	'firecrawl',
@@ -102,6 +103,7 @@ export const ProviderDisplayNames = {
 	discord: 'Discord',
 	dodopayments: 'Dodo Payments',
 	dropbox: 'Dropbox',
+	enginemailer: 'Enginemailer',
 	exa: 'Exa',
 	figma: 'Figma',
 	firecrawl: 'Firecrawl',
@@ -183,6 +185,7 @@ export type AllProviders =
 	| 'discord'
 	| 'dodopayments'
 	| 'dropbox'
+	| 'enginemailer'
 	| 'exa'
 	| 'figma'
 	| 'firecrawl'
