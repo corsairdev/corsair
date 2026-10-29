@@ -9,7 +9,7 @@ import {
 } from '@/lib/integration-seo';
 import {
 	CURSOR_INSTALL_URL,
-	hubWwwPluginLoginUrl,
+	hubMcpConnectUrl,
 	MCP_DOCS_URL,
 	MCP_URL,
 } from '@/lib/site-links';
@@ -123,13 +123,18 @@ export function IntegrationMcpSetup({
 						<p>
 							{integrationAuthSummary(displayName, integration.authTypes)}{' '}
 							<a
-								href={hubWwwPluginLoginUrl(id)}
+								href={hubMcpConnectUrl(id)}
 								target="_blank"
 								rel="noopener noreferrer"
 								className="font-medium text-[#4a38f5] no-underline hover:underline"
 							>
-								Open Corsair Hub
+								Connect {displayName}
 							</a>
+						</p>
+						<p className="mt-2 text-sm">
+							If your link lets the agent add apps, you can skip this: it gives
+							you a sign-in link the first time it needs {displayName}. On a
+							ChatGPT personal plan, connect {displayName} here first.
 						</p>
 					</Step>
 
@@ -152,7 +157,10 @@ export function IntegrationMcpSetup({
 							))}
 						</div>
 						<p className="mt-3 text-sm">
-							VS Code, Codex, Gemini CLI and Zed work the same way.{' '}
+							Codex, Gemini CLI, VS Code, Zed and other clients with OAuth
+							sign-in work the same way. Clients without it, such as GitHub
+							Copilot&apos;s coding agent, use a link&apos;s own address and an
+							API key.{' '}
 							<a
 								href={MCP_DOCS_URL}
 								className="font-medium text-[#4a38f5] no-underline hover:underline"
