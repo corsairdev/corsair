@@ -545,6 +545,21 @@
       }
     },
     {
+      "id": "anyapi",
+      "displayName": "AnyAPI",
+      "description": "One key for 470+ scraping and data APIs (LinkedIn, X, Reddit, Instagram, TikTok, Google search and Maps, Amazon, any web page), paid per request in USD with automatic failover between sources.",
+      "npmPackageName": "@corsair-dev/anyapi",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 16,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
       "id": "apaleo",
       "displayName": "Apaleo",
       "description": "Open hospitality platform for property management, reservations, and hotel operations.",
@@ -14486,6 +14501,102 @@
       "kind": "api",
       "shortPath": "workspaces.updateWorkspace",
       "haystack": "workspaces.updateworkspace anthropicadministrator.api.workspaces.updateworkspace update a workspace name, tags or data residency write"
+    },
+    {
+      "pluginId": "anyapi",
+      "kind": "api",
+      "shortPath": "account.getBalance",
+      "haystack": "account.getbalance anyapi.api.account.getbalance get the anyapi wallet balance in usd read"
+    },
+    {
+      "pluginId": "anyapi",
+      "kind": "api",
+      "shortPath": "apis.get",
+      "haystack": "apis.get anyapi.api.apis.get get one anyapi endpoint by sku: its input and output json schema, price and recent latency read"
+    },
+    {
+      "pluginId": "anyapi",
+      "kind": "api",
+      "shortPath": "apis.list",
+      "haystack": "apis.list anyapi.api.apis.list list anyapi endpoints, optionally in one category, with their skus and prices read"
+    },
+    {
+      "pluginId": "anyapi",
+      "kind": "api",
+      "shortPath": "apis.quote",
+      "haystack": "apis.quote anyapi.api.apis.quote price an anyapi run for an exact input and validate the input, without running or charging anything read"
+    },
+    {
+      "pluginId": "anyapi",
+      "kind": "api",
+      "shortPath": "apis.run",
+      "haystack": "apis.run anyapi.api.apis.run run any anyapi endpoint by sku with its input (read the schema with apis.get first); returns the result, its usd cost and a resultid read"
+    },
+    {
+      "pluginId": "anyapi",
+      "kind": "api",
+      "shortPath": "apis.search",
+      "haystack": "apis.search anyapi.api.apis.search search the anyapi catalog of 470+ data endpoints by what you need, such as linkedin company employees; returns skus with prices read"
+    },
+    {
+      "pluginId": "anyapi",
+      "kind": "api",
+      "shortPath": "google.search",
+      "haystack": "google.search anyapi.api.google.search search google and get organic results (title, link, snippet), with country, language, location and time filters read"
+    },
+    {
+      "pluginId": "anyapi",
+      "kind": "api",
+      "shortPath": "instagram.getProfile",
+      "haystack": "instagram.getprofile anyapi.api.instagram.getprofile get an instagram profile by handle: bio, follower, following and post counts, verified and business flags read"
+    },
+    {
+      "pluginId": "anyapi",
+      "kind": "api",
+      "shortPath": "linkedin.getCompany",
+      "haystack": "linkedin.getcompany anyapi.api.linkedin.getcompany get a linkedin company page by url: description, industry, website, employee and follower counts, locations read"
+    },
+    {
+      "pluginId": "anyapi",
+      "kind": "api",
+      "shortPath": "linkedin.getProfile",
+      "haystack": "linkedin.getprofile anyapi.api.linkedin.getprofile get a linkedin profile by url: headline, about, location, followers, experience, education and skills read"
+    },
+    {
+      "pluginId": "anyapi",
+      "kind": "api",
+      "shortPath": "maps.search",
+      "haystack": "maps.search anyapi.api.maps.search search google maps places in a location: name, address, phone, website, rating and review count read"
+    },
+    {
+      "pluginId": "anyapi",
+      "kind": "api",
+      "shortPath": "reddit.search",
+      "haystack": "reddit.search anyapi.api.reddit.search search reddit posts across all subreddits, with sort and time filters read"
+    },
+    {
+      "pluginId": "anyapi",
+      "kind": "api",
+      "shortPath": "requests.get",
+      "haystack": "requests.get anyapi.api.requests.get get the status and, once finished, the result of a durable anyapi run that answered queued or running read"
+    },
+    {
+      "pluginId": "anyapi",
+      "kind": "api",
+      "shortPath": "results.get",
+      "haystack": "results.get anyapi.api.results.get re-read and re-shape a run result for free (fields, maxitems, summary, jq) within about 15 minutes of the run read"
+    },
+    {
+      "pluginId": "anyapi",
+      "kind": "api",
+      "shortPath": "twitter.search",
+      "haystack": "twitter.search anyapi.api.twitter.search search x (twitter) posts with advanced-search syntax, latest or top, with paging read"
+    },
+    {
+      "pluginId": "anyapi",
+      "kind": "api",
+      "shortPath": "web.scrape",
+      "haystack": "web.scrape anyapi.api.web.scrape scrape any web page, including ones that block bots, as clean markdown and/or html read"
     },
     {
       "pluginId": "apaleo",
