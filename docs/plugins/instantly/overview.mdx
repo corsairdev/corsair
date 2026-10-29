@@ -10,7 +10,7 @@ Create an API v2 key in Instantly under Settings, Integrations, API keys, with t
 - **Real email.** `campaigns.activate` starts sending to the campaign's leads and `emails.reply` sends a reply straight away. Neither is ever retried automatically; only read operations are.
 - **Lifetime contact limit.** Every lead uploaded counts toward the plan's lifetime contact limit (1,000 on Growth), including re-uploads and the same person in a second campaign. `leads.create` and `leads.addBulk` default `skip_if_in_workspace` to `true` for that reason. Re-adding or moving a lead who already replied restarts their sequence at step 1.
 - **Stopping a lead.** A lead's `status` is read-only. To stop follow-ups (for example after they answered on LinkedIn), call `leads.updateInterestStatus`, which completes the lead in its campaign.
-- **Replies without webhooks.** Webhooks need the Hypergrowth plan or higher. On Growth, poll `emails.list` with `email_type: 'received'`; it allows 20 requests a minute.
+- **Replies without webhooks.** Webhooks need the Hypergrowth plan or higher. On a plan without them, poll `emails.list` with `email_type: 'received'` for replies; it allows 20 requests a minute.
 - **Credits.** `emailVerification.verify` spends Instantly email-verification credits and is never retried. `leadLabels.testAiReplyLabel` is limited to 500 calls per 30 days per workspace.
 - **Secrets.** `apiKeys.create` returns the new key once; `apiKeys.list` and `apiKeys.delete` redact it, as webhook results redact header values.
 - **Not covered yet:** Instantly's AI agents (sales, inbox manager, lead finder, deliverability), SuperSearch enrichment, company lists, done-for-you account orders and the Google/Microsoft OAuth account connection.

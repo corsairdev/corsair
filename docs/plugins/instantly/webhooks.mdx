@@ -58,7 +58,7 @@ export async function POST(request: Request) {
 
 `accounts.error`
 
-A sending account hit a connection or sending error. Webhooks need the Hypergrowth plan or higher; on Growth, poll emails.list with email_type received instead
+A sending account hit a connection or sending error
 
 **Payload**
 
@@ -141,7 +141,7 @@ instantly({
 
 `campaigns.completed`
 
-A campaign finished every lead. Webhooks need the Hypergrowth plan or higher; on Growth, poll emails.list with email_type received instead
+A campaign finished every lead
 
 **Payload**
 
@@ -224,7 +224,7 @@ instantly({
 
 `emails.autoReplyReceived`
 
-An auto-reply (such as out of office) arrived. Only all_events webhooks get it: Instantly has no auto_reply_received subscription. Webhooks need the Hypergrowth plan or higher; on Growth, poll emails.list with email_type received instead
+An auto-reply (such as out of office) arrived. Only all_events webhooks get it: Instantly has no auto_reply_received subscription
 
 **Payload**
 
@@ -305,7 +305,7 @@ instantly({
 
 `emails.bounced`
 
-An email bounced. Webhooks need the Hypergrowth plan or higher; on Growth, poll emails.list with email_type received instead
+An email bounced
 
 **Payload**
 
@@ -386,7 +386,7 @@ instantly({
 
 `emails.linkClicked`
 
-A lead clicked a tracked link. Webhooks need the Hypergrowth plan or higher; on Growth, poll emails.list with email_type received instead
+A lead clicked a tracked link
 
 **Payload**
 
@@ -467,7 +467,7 @@ instantly({
 
 `emails.opened`
 
-A lead opened an email. Webhooks need the Hypergrowth plan or higher; on Growth, poll emails.list with email_type received instead
+A lead opened an email
 
 **Payload**
 
@@ -548,7 +548,7 @@ instantly({
 
 `emails.replyReceived`
 
-A lead replied; carries reply_text, reply_html and email_id (pass it to emails.reply as reply_to_uuid). Webhooks need the Hypergrowth plan or higher; on Growth, poll emails.list with email_type received instead
+A lead replied; carries reply_text, reply_html and email_id (pass it to emails.reply as reply_to_uuid)
 
 **Payload**
 
@@ -629,7 +629,7 @@ instantly({
 
 `emails.sent`
 
-A campaign email was sent. Webhooks need the Hypergrowth plan or higher; on Growth, poll emails.list with email_type received instead
+A campaign email was sent
 
 **Payload**
 
@@ -712,7 +712,7 @@ instantly({
 
 `events.other`
 
-An event with no dedicated handler: a custom lead label (event_type is the label's name) or an event type Instantly added later. Instantly's payload does not say which, so check event_type before acting. Webhooks need the Hypergrowth plan or higher; on Growth, poll emails.list with email_type received instead
+An event with no dedicated handler: a custom lead label (event_type is the label's name) or an event type Instantly added later. Instantly's payload does not say which, so check event_type before acting
 
 **Payload**
 
@@ -795,7 +795,7 @@ instantly({
 
 `leads.closed`
 
-A lead moved to Closed. Webhooks need the Hypergrowth plan or higher; on Growth, poll emails.list with email_type received instead
+A lead moved to Closed
 
 **Payload**
 
@@ -876,7 +876,7 @@ instantly({
 
 `leads.interested`
 
-A lead was marked Interested. Webhooks need the Hypergrowth plan or higher; on Growth, poll emails.list with email_type received instead
+A lead was marked Interested
 
 **Payload**
 
@@ -957,7 +957,7 @@ instantly({
 
 `leads.meetingBooked`
 
-A lead moved to Meeting booked. Webhooks need the Hypergrowth plan or higher; on Growth, poll emails.list with email_type received instead
+A lead moved to Meeting booked
 
 **Payload**
 
@@ -1038,7 +1038,7 @@ instantly({
 
 `leads.meetingCompleted`
 
-A lead moved to Meeting completed. Webhooks need the Hypergrowth plan or higher; on Growth, poll emails.list with email_type received instead
+A lead moved to Meeting completed
 
 **Payload**
 
@@ -1119,7 +1119,7 @@ instantly({
 
 `leads.neutral`
 
-A lead was marked Neutral. Webhooks need the Hypergrowth plan or higher; on Growth, poll emails.list with email_type received instead
+A lead was marked Neutral
 
 **Payload**
 
@@ -1200,7 +1200,7 @@ instantly({
 
 `leads.noShow`
 
-A lead moved to No show. Webhooks need the Hypergrowth plan or higher; on Growth, poll emails.list with email_type received instead
+A lead moved to No show
 
 **Payload**
 
@@ -1281,7 +1281,7 @@ instantly({
 
 `leads.notInterested`
 
-A lead was marked Not interested. Webhooks need the Hypergrowth plan or higher; on Growth, poll emails.list with email_type received instead
+A lead was marked Not interested
 
 **Payload**
 
@@ -1362,7 +1362,7 @@ instantly({
 
 `leads.outOfOffice`
 
-A lead moved to Out of office. Webhooks need the Hypergrowth plan or higher; on Growth, poll emails.list with email_type received instead
+A lead moved to Out of office
 
 **Payload**
 
@@ -1443,7 +1443,7 @@ instantly({
 
 `leads.unsubscribed`
 
-A lead unsubscribed. Webhooks need the Hypergrowth plan or higher; on Growth, poll emails.list with email_type received instead
+A lead unsubscribed
 
 **Payload**
 
@@ -1524,7 +1524,7 @@ instantly({
 
 `leads.wrongPerson`
 
-A lead moved to Wrong person. Webhooks need the Hypergrowth plan or higher; on Growth, poll emails.list with email_type received instead
+A lead moved to Wrong person
 
 **Payload**
 

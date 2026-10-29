@@ -231,8 +231,13 @@ describe('instantly plugin definition', () => {
 		expect(Object.keys(plugin.webhookSchemas ?? {}).sort()).toEqual(
 			WEBHOOK_PATHS,
 		);
-		for (const schema of Object.values(plugin.webhookSchemas ?? {})) {
-			expect(schema?.description).toMatch(/Hypergrowth/);
+		// The plan limit is stated once, on webhooks.create; an event says only
+		// what happened.
+		for (const [path, schema] of Object.entries(plugin.webhookSchemas ?? {})) {
+			expect({
+				path,
+				planNote: /Hypergrowth|Growth|poll /.test(schema?.description ?? ''),
+			}).toEqual({ path, planNote: false });
 		}
 	});
 

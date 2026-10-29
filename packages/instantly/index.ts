@@ -540,15 +540,12 @@ export const instantlyEndpointSchemas = {
 	typeof instantlyEndpointsNested
 >;
 
-const WEBHOOK_PLAN_NOTE =
-	'Webhooks need the Hypergrowth plan or higher; on Growth, poll emails.list with email_type received instead';
-
 function webhookSchema<K extends InstantlyWebhookEvent>(
 	event: K,
 	description: string,
 ) {
 	return {
-		description: `${description}. ${WEBHOOK_PLAN_NOTE}`,
+		description,
 		payload: InstantlyWebhookEventSchemas[event],
 		response: InstantlyWebhookEventSchemas[event],
 	};
@@ -790,7 +787,7 @@ const instantlyEndpointMeta = {
 	},
 	'webhooks.create': {
 		riskLevel: 'write',
-		description: `Subscribe a URL to an event (reply_received, email_bounced, lead_interested...) or all_events, for one campaign or all. Attaches the plugin's webhook secret so Corsair can verify deliveries. ${WEBHOOK_PLAN_NOTE}`,
+		description: `Subscribe a URL to an event (reply_received, email_bounced, lead_interested...) or all_events, for one campaign or all. Attaches the plugin's webhook secret so Corsair can verify deliveries. Webhooks need Instantly's Hypergrowth plan or higher`,
 	},
 	'webhooks.delete': {
 		riskLevel: 'destructive',
