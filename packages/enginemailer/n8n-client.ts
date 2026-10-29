@@ -39,7 +39,12 @@ export async function makeEnginemailerN8nRequest<T>(
 		return await request<T>(config, requestOptions);
 	} catch (error) {
 		if (error instanceof ApiError) {
-			throw new EnginemailerAPIError(error.message, error.status);
+			throw new EnginemailerAPIError(
+				error.message,
+				error.status,
+				undefined,
+				error.retryAfter,
+			);
 		}
 		throw error;
 	}

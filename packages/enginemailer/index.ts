@@ -111,6 +111,46 @@ const enginemailerEndpointsNested = {
 	n8n: n8nEndpoints,
 } as const;
 
+type EnginemailerEndpointTree = Record<string, unknown>;
+type EnginemailerEndpointHandler = (
+	context: unknown,
+	input: unknown,
+) => Promise<unknown>;
+
+function withEnginemailerSchemas<T extends EnginemailerEndpointTree>(
+	tree: T,
+	prefix = '',
+): T {
+	const entries = Object.entries(tree).map(([key, value]) => {
+		const operation = prefix ? `${prefix}.${key}` : key;
+		if (typeof value === 'function') {
+			const schema =
+				enginemailerEndpointSchemas[
+					operation as keyof typeof enginemailerEndpointSchemas
+				];
+			if (!schema)
+				throw new Error(`Missing Enginemailer schema for ${operation}`);
+			const endpoint = value as EnginemailerEndpointHandler;
+			return [
+				key,
+				async (context: unknown, input: unknown) => {
+					const parsedInput = schema.input.parse(input ?? {});
+					const result = await endpoint(context, parsedInput);
+					return schema.output.parse(result);
+				},
+			];
+		}
+		if (value && typeof value === 'object') {
+			return [
+				key,
+				withEnginemailerSchemas(value as EnginemailerEndpointTree, operation),
+			];
+		}
+		return [key, value];
+	});
+	return Object.fromEntries(entries) as T;
+}
+
 export const enginemailerEndpointSchemas = {
 	'subscribers.get': {
 		input: EnginemailerEndpointInputSchemas.getSubscriber,
@@ -267,6 +307,10 @@ export const enginemailerEndpointSchemas = {
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof enginemailerEndpointsNested
 >;
+
+const validatedEnginemailerEndpoints = withEnginemailerSchemas(
+	enginemailerEndpointsNested,
+);
 
 const enginemailerEndpointMeta = {
 	'subscribers.get': {
@@ -464,7 +508,7 @@ export function enginemailer<const T extends EnginemailerPluginOptions>(
 		schema: EnginemailerSchema,
 		options,
 		hooks: options.hooks,
-		endpoints: enginemailerEndpointsNested,
+		endpoints: validatedEnginemailerEndpoints,
 		endpointMeta: enginemailerEndpointMeta,
 		endpointSchemas: enginemailerEndpointSchemas,
 		errorHandlers: { ...errorHandlers, ...options.errorHandlers },

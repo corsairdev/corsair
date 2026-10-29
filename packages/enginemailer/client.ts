@@ -10,6 +10,7 @@ export class EnginemailerAPIError extends Error {
 		message: string,
 		public readonly status?: number,
 		public readonly code?: string,
+		public readonly retryAfter?: number,
 	) {
 		super(message);
 		this.name = 'EnginemailerAPIError';
@@ -66,7 +67,12 @@ export async function makeEnginemailerRequest<T>(
 		});
 	} catch (error) {
 		if (error instanceof ApiError) {
-			throw new EnginemailerAPIError(error.message, error.status);
+			throw new EnginemailerAPIError(
+				error.message,
+				error.status,
+				undefined,
+				error.retryAfter,
+			);
 		}
 		throw error;
 	}
