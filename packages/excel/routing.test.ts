@@ -210,6 +210,20 @@ describe('excel routing', () => {
 		);
 	});
 
+	it('encodes # in a quoted sheet address so it stays in the path', async () => {
+		mockRequest.mockResolvedValue(range);
+		await invoke(Ranges.get, {
+			itemId: 'item-1',
+			worksheet: 'Sheet1',
+			address: "'Sales#1'!A1",
+		});
+		expect(mockRequest).toHaveBeenCalledWith(
+			"/me/drive/items/item-1/workbook/worksheets/Sheet1/range(address='''Sales%231''!A1')",
+			'x_key_test',
+			expect.objectContaining({ method: 'GET' }),
+		);
+	});
+
 	it('gets a used range with valuesOnly', async () => {
 		mockRequest.mockResolvedValue(range);
 		await invoke(Ranges.usedRange, {

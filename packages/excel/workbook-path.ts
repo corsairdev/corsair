@@ -52,6 +52,7 @@ export function sessionHeaders(
 }
 
 // OData function arguments keep ':' and '!' so A1:B2 stays a range address.
+// encodeURI leaves '#' intact, and a '#' in the path starts a URL fragment.
 export function odataQuoted(value: string): string {
-	return encodeURI(value.replaceAll("'", "''"));
+	return encodeURI(value.replaceAll("'", "''")).replaceAll('#', '%23');
 }
