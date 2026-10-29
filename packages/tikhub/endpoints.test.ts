@@ -77,7 +77,11 @@ afterEach(() => {
 type Case<K extends TikHubOperation> = {
 	key: K;
 	operation: string;
-	endpoint: AnyEndpoint;
+	// never ctx: the fake context below carries only the key.
+	endpoint: (
+		ctx: never,
+		input: TikHubEndpointInputs[K],
+	) => Promise<TikHubEndpointOutputs[K]>;
 	input: TikHubEndpointInputs[K];
 	path: string;
 	query: Record<string, string>;
@@ -86,10 +90,33 @@ type Case<K extends TikHubOperation> = {
 	check: (result: TikHubEndpointOutputs[K]) => void;
 };
 
-// Keeps each case's input and check typed against its own operation, then
-// widens it for the shared table (check's parameter is contravariant).
-function defineCase<K extends TikHubOperation>(c: Case<K>) {
-	return c as unknown as Case<TikHubOperation>;
+type Row = {
+	operation: string;
+	path: string;
+	query: Record<string, string>;
+	// unknown: each operation has its own payload shape.
+	data: unknown;
+	call: () => Promise<TikHubEndpointOutputs[TikHubOperation]>;
+	callAndCheck: () => Promise<TikHubEndpointOutputs[TikHubOperation]>;
+};
+
+// The calls are built here, where the endpoint, its input and its check all
+// share one operation's types, so the table never widens a check.
+function defineCase<K extends TikHubOperation>(c: Case<K>): Row {
+	// The fake context only carries what the endpoints read (ctx.key).
+	const call = () => c.endpoint({ key: API_KEY } as never, c.input);
+	return {
+		operation: c.operation,
+		path: c.path,
+		query: c.query,
+		data: c.data,
+		call,
+		callAndCheck: async () => {
+			const result = await call();
+			c.check(result);
+			return result;
+		},
+	};
 }
 
 const cases = [
@@ -648,11 +675,11 @@ describe('TikHub endpoints', () => {
 
 	describe.each(cases)(
 		'$operation',
-		({ operation, endpoint, input, path, query, data, check }) => {
+		({ operation, path, query, data, call, callAndCheck }) => {
 			it(`sends GET ${path} with the bearer key and query`, async () => {
 				respond(envelope(path, query, data));
 
-				await invoke(endpoint, input);
+				await call();
 
 				expect(fetchMock).toHaveBeenCalledTimes(1);
 				const { url, init, headers } = lastRequest();
@@ -668,10 +695,7 @@ describe('TikHub endpoints', () => {
 			it('parses the envelope and payload', async () => {
 				respond(envelope(path, query, data));
 
-				const result = (await invoke(
-					endpoint,
-					input,
-				)) as TikHubEndpointOutputs[TikHubOperation];
+				const result = await callAndCheck();
 
 				expect(result).toMatchObject({
 					code: 200,
@@ -680,13 +704,12 @@ describe('TikHub endpoints', () => {
 					params: query,
 				});
 				expect(result.cache_url).toContain('cache.tikhub.io');
-				check(result);
 			});
 
 			it('logs the call under its operation name', async () => {
 				respond(envelope(path, query, data));
 
-				await invoke(endpoint, input);
+				await call();
 
 				expect(mockLog).toHaveBeenCalledWith(
 					expect.anything(),
@@ -701,7 +724,7 @@ describe('TikHub endpoints', () => {
 			it('accepts a null data payload', async () => {
 				respond(envelope(path, query, null));
 
-				const result = (await invoke(endpoint, input)) as { data: unknown };
+				const result = await call();
 
 				expect(result.data).toBeNull();
 			});
