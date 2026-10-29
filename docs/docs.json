@@ -453,6 +453,14 @@
                 ]
               },
               {
+                "group": "AnyAPI",
+                "pages": [
+                  "plugins/anyapi/overview",
+                  "plugins/anyapi/api",
+                  "plugins/anyapi/database"
+                ]
+              },
+              {
                 "group": "Apaleo",
                 "pages": [
                   "plugins/apaleo/overview",
