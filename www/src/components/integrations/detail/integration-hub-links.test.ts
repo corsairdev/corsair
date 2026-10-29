@@ -4,7 +4,11 @@ import * as React from 'react';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 
-import { hubMcpConnectUrl, hubWwwPluginLoginUrl } from '@/lib/site-links';
+import {
+	APP_URL,
+	hubMcpConnectUrl,
+	hubWwwPluginLoginUrl,
+} from '@/lib/site-links';
 
 // tsx compiles the components with the classic JSX runtime (the Next tsconfig
 // has jsx: preserve), so React must be global before they load.
@@ -15,7 +19,7 @@ const { IntegrationMcpSetup } = await import('./integration-mcp-setup');
 function hubLinks(html: string): string[] {
 	return [...html.matchAll(/href="([^"]+)"/g)]
 		.map((match) => match[1].replaceAll('&amp;', '&'))
-		.filter((href) => href.startsWith('https://hub.corsair.dev'));
+		.filter((href) => URL.canParse(href) && new URL(href).origin === APP_URL);
 }
 
 describe('integration page Hub links', () => {
