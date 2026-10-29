@@ -284,15 +284,15 @@ describe('systemOne.ask', () => {
 			400,
 		);
 
-		const error = await invoke(SystemOne.ask, {
+		const call = invoke(SystemOne.ask, {
 			model: 'jev-nope',
 			state: 'x',
 			questions: { a: { type: 'noul' } },
-		}).catch((e: unknown) => e);
+		});
 
-		expect(error).toBeInstanceOf(TypeSafeAPIError);
-		expect((error as TypeSafeAPIError).message).toBe(
-			'TypeSafe 400: Unknown model: jev-nope',
+		await expect(call).rejects.toBeInstanceOf(TypeSafeAPIError);
+		await expect(call).rejects.toThrow(
+			/^TypeSafe 400: Unknown model: jev-nope$/,
 		);
 		expect(mockLog).not.toHaveBeenCalled();
 	});

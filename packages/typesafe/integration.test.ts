@@ -115,12 +115,13 @@ describe('TypeSafe plugin through createCorsair', () => {
 				422,
 			);
 
-			const error = await corsair.typesafe.api.systemOne
-				.ask({ state: 'x', questions: question })
-				.catch((e: unknown) => e);
+			const call = corsair.typesafe.api.systemOne.ask({
+				state: 'x',
+				questions: question,
+			});
 
-			expect(error).toBeInstanceOf(TypeSafeAPIError);
-			expect(error).toMatchObject({ status: 422 });
+			await expect(call).rejects.toBeInstanceOf(TypeSafeAPIError);
+			await expect(call).rejects.toMatchObject({ status: 422 });
 			expect(fetchMock).toHaveBeenCalledTimes(1);
 		} finally {
 			testDb.cleanup();
