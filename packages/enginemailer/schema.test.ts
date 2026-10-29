@@ -133,4 +133,27 @@ describe('Enginemailer endpoint schemas', () => {
 			].safeParse({}).success,
 		).toBe(false);
 	});
+
+	it('preserves new-subscriber source filters', () => {
+		const input = {
+			filter_form: 1,
+			filter_page: 2,
+			filter_popups: 3,
+		};
+
+		expect(
+			EnginemailerEndpointInputSchemas.newSubscribers.parse(input),
+		).toEqual(input);
+	});
+
+	it.each([
+		'2026-10-29T12:34:56.000Z',
+		'2026-10-29 12:34:56',
+	])('accepts polling timestamp %s unchanged', (lastpollingdate) => {
+		expect(
+			EnginemailerEndpointInputSchemas.newSubscribers.parse({
+				lastpollingdate,
+			}),
+		).toEqual({ lastpollingdate });
+	});
 });

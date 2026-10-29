@@ -71,7 +71,15 @@ const N8nSendEmailSchema = N8nEmailSchema.extend({
 });
 const N8nPollingSchema = z.object({
 	limit: z.number().int().positive().optional(),
-	lastpollingdate: z.string().datetime().optional(),
+	lastpollingdate: z
+		.string()
+		.refine(
+			(value) =>
+				z.string().datetime().safeParse(value).success ||
+				/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(value),
+			'Expected an ISO 8601 or Enginemailer polling timestamp',
+		)
+		.optional(),
 });
 
 export type EnginemailerEndpointInputs = {
@@ -103,7 +111,12 @@ export type EnginemailerEndpointInputs = {
 	sendEmail: z.infer<typeof N8nSendEmailSchema>;
 	tagSubscriber: z.infer<typeof N8nSubscriberCategorySchema>;
 	untagSubscriber: z.infer<typeof N8nSubscriberCategorySchema>;
-	newSubscribers: z.infer<typeof N8nPollingSchema> & { source?: string };
+	newSubscribers: z.infer<typeof N8nPollingSchema> & {
+		source?: string;
+		filter_form?: number;
+		filter_page?: number;
+		filter_popups?: number;
+	};
 	unsubscribedSubscribers: z.infer<typeof N8nPollingSchema> & {
 		filter?: string;
 	};
@@ -197,7 +210,12 @@ export const EnginemailerEndpointInputSchemas = {
 	sendEmail: N8nSendEmailSchema,
 	tagSubscriber: N8nSubscriberCategorySchema,
 	untagSubscriber: N8nSubscriberCategorySchema,
-	newSubscribers: N8nPollingSchema.extend({ source: z.string().optional() }),
+	newSubscribers: N8nPollingSchema.extend({
+		source: z.string().optional(),
+		filter_form: z.number().int().optional(),
+		filter_page: z.number().int().optional(),
+		filter_popups: z.number().int().optional(),
+	}),
 	unsubscribedSubscribers: N8nPollingSchema.extend({
 		filter: z.string().optional(),
 	}),
