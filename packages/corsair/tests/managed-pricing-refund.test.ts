@@ -3,8 +3,10 @@ import { bindEndpointsRecursively } from '../core/endpoints/bind';
 import type { CorsairPlugin, EndpointMetaEntry } from '../core/plugins';
 import { parseManagedPricingCredentialsResponse } from '../hub/contracts/managed-pricing-api';
 import {
+	managedPricingOutcomeHeaders,
 	readUsageUnits,
 	reportManagedPricingCallFailed,
+	reportManagedPricingCallUsage,
 } from '../hub/managed-pricing-auth';
 import { RUNTIME_PROOF_HEADER } from '../hub/runtime-proof';
 import type { HubConfig } from '../hub/types';
@@ -233,6 +235,34 @@ describe('a managed call that fails', () => {
 		// A self-hosted SDK has no key and sends no proof.
 		await reportManagedPricingCallFailed(hub, call, new Error('boom'));
 		expect(sent[1]?.has(RUNTIME_PROOF_HEADER)).toBe(false);
+	});
+
+	it('signs the usage report the same way', async () => {
+		const sent: Headers[] = [];
+		jest.spyOn(globalThis, 'fetch').mockImplementation(async (_input, init) => {
+			sent.push(new Headers(init?.headers));
+			return new Response('{}', {
+				status: 200,
+				headers: { 'content-type': 'application/json' },
+			});
+		});
+		const call = {
+			plugin: 'reducto',
+			tenantId: 'me',
+			operation: 'parse.parse',
+			idempotencyKey: 'k1',
+		};
+		await reportManagedPricingCallUsage(
+			{ ...hub, runtimeProofKey: 'proof-key' },
+			call,
+			12,
+		);
+		expect(sent[0]?.get(RUNTIME_PROOF_HEADER)).toEqual(
+			managedPricingOutcomeHeaders(
+				{ ...hub, runtimeProofKey: 'proof-key' },
+				call,
+			)[RUNTIME_PROOF_HEADER],
+		);
 	});
 
 	it('is not reported when the call succeeds', async () => {

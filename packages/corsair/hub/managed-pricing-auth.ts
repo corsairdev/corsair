@@ -396,6 +396,7 @@ export async function reportManagedPricingCallUsage(
 			hub,
 			path: '/managed-pricing/usage/outcome',
 			body: { ...call, outcome: 'succeeded', usage: { units } },
+			extraHeaders: managedPricingOutcomeHeaders(hub, call),
 			parseResponse: (payload) => payload,
 			signal: AbortSignal.timeout(OUTCOME_REPORT_TIMEOUT_MS),
 		});
