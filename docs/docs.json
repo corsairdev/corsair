@@ -3184,6 +3184,15 @@
                 ]
               },
               {
+                "group": "Unipile",
+                "pages": [
+                  "plugins/unipile/overview",
+                  "plugins/unipile/api",
+                  "plugins/unipile/database",
+                  "plugins/unipile/webhooks"
+                ]
+              },
+              {
                 "group": "Uniswap",
                 "pages": [
                   "plugins/uniswapapi/overview",

@@ -381,6 +381,7 @@ export const BaseProviders = [
 	'twochat',
 	'typeform',
 	'unione',
+	'unipile',
 	'uniswapapi',
 	'updownio',
 	'uploadcare',
@@ -786,6 +787,7 @@ export const ProviderDisplayNames = {
 	twochat: 'TwoChat',
 	typeform: 'Typeform',
 	unione: 'Unione',
+	unipile: 'Unipile',
 	uniswapapi: 'Uniswap',
 	updownio: 'Updown.io',
 	uploadcare: 'Uploadcare',
@@ -1198,6 +1200,7 @@ export type AllProviders =
 	| 'twochat'
 	| 'typeform'
 	| 'unione'
+	| 'unipile'
 	| 'uniswapapi'
 	| 'updownio'
 	| 'uploadcare'

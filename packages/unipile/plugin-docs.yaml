@@ -1,0 +1,101 @@
+displayName: Unipile
+description: Unipile API v2 in one plugin. Messaging on LinkedIn, WhatsApp, Instagram and Telegram, email on Gmail, Outlook and IMAP, Google and Outlook calendars, LinkedIn and Instagram posts, LinkedIn prospecting with Sales Navigator, and signed webhooks for every Unipile event.
+domain: unipile.com
+recommendedAuth: api_key
+overviewNote: |
+  Every account-level call takes the `account_id` (acc_…) of a connected account; connect one with `accounts.createAuthLink` (LinkedIn can sign in with credentials, cookies or the UniLogin extension). One plugin covers 148 operations: chats and messages on any messaging provider, emails, drafts and folders, calendars and events, posts and comments, LinkedIn searches, Sales Navigator lists, and admin (scopes, API keys, webhooks). On LinkedIn, chats are listed with `inboxes.listChats` and started with `inboxes.startChat` (inbox `CLASSIC_PRIMARY`); `chats.list` and `chats.start` cover WhatsApp, Telegram and Instagram.
+
+  Writes are never retried after a timeout or 5xx, so a lost answer cannot cause a duplicate message, email, invitation or post. LinkedIn calls that spend a daily budget (profile and company views, post reads, searches) are only retried after Unipile's own 429. Unipile does not pace sends for you: LinkedIn allows roughly 100-200 invitations a week and about 80-100 profile views a day. If Unipile accepts a write but answers with an unexpected body, the call returns `{ parse_warning, raw }` instead of throwing; check `result.parse_warning !== undefined` before reading fields, and do not resend. Pictures and attachments return their type and size unless `include_content` is set.
+
+  Scopes, API keys and webhook endpoints need a Unipile **Service API Key**; Account API Keys get `403 api/insufficient_permissions`. Deliveries are verified with the endpoint's signing secret (`unipile-signature` header, HMAC-SHA256 of the raw body), so pass the raw request body to Corsair and set `webhookSecret` (or store the webhook signature) to that secret. Secrets are returned once: `webhookEndpoints.create` and `apiKeys.create`; other calls never show them.
+examples:
+  read:
+    path: users.getProfile
+    title: Look up a LinkedIn profile
+    args:
+      account_id: acc_9f2c1d7e
+      user_id: williamhgates
+  write:
+    path: relationRequests.create
+    title: Send a LinkedIn invitation
+    args:
+      account_id: acc_9f2c1d7e
+      user_id: ACoAAB1cDeFgHiJkLmNoPqRsTuVwXyZ0123456
+      message: Hi Maya, I enjoyed your post on field data.
+exampleWebhook:
+  path: relations.new
+  note: Runs when an invitation is accepted. LinkedIn can report it up to 6 hours late.
+  after: |
+    console.log('New connection', result.data?.payload.user.display_name);
+apiExamples:
+  accounts.list:
+    call: "{ provider: 'linkedin', status: 'running' }"
+  accounts.get:
+    call: "{ account_id: 'acc_9f2c1d7e' }"
+  accounts.remove:
+    call: "{ account_id: 'acc_9f2c1d7e' }"
+  accounts.createAuthLink:
+    call: "{ providers: 'linkedin', redirect_uri: 'https://app.example.com/linkedin/connected', state: 'user_123', config: { linkedin: { allow_methods: ['unilogin', 'credentials'] } } }"
+  users.getProfile:
+    call: "{ account_id: 'acc_9f2c1d7e', user_id: 'williamhgates', with_sections: ['linkedin_experience'] }"
+  users.visitProfile:
+    call: "{ account_id: 'acc_9f2c1d7e', token: 'notify-visit-token-from-getProfile' }"
+  users.listRelations:
+    call: "{ account_id: 'acc_9f2c1d7e', search: 'Maya' }"
+  users.getChat:
+    call: "{ account_id: 'acc_9f2c1d7e', user_id: 'ACoAAB1cDeFgHiJkLmNoPqRsTuVwXyZ0123456' }"
+  users.listReactions:
+    call: "{ account_id: 'acc_9f2c1d7e', user_id: 'ACoAAB1cDeFgHiJkLmNoPqRsTuVwXyZ0123456' }"
+  users.listComments:
+    call: "{ account_id: 'acc_9f2c1d7e', user_id: 'ACoAAB1cDeFgHiJkLmNoPqRsTuVwXyZ0123456' }"
+  relationRequests.list:
+    call: "{ account_id: 'acc_9f2c1d7e', type: 'received' }"
+  relationRequests.create:
+    call: "{ account_id: 'acc_9f2c1d7e', user_id: 'ACoAAB1cDeFgHiJkLmNoPqRsTuVwXyZ0123456', message: 'Hi Maya, I enjoyed your post on field data.' }"
+  relationRequests.cancel:
+    call: "{ account_id: 'acc_9f2c1d7e', request_id: 'inv_7d8e9f' }"
+  relationRequests.accept:
+    call: "{ account_id: 'acc_9f2c1d7e', request_id: 'inv_7d8e9f' }"
+  chats.list:
+    call: "{ account_id: 'acc_9f2c1d7e', is_unread: true }"
+  chats.get:
+    call: "{ account_id: 'acc_9f2c1d7e', chat_id: 'chat_5a6b7c' }"
+  chats.start:
+    call: "{ account_id: 'acc_9f2c1d7e', users_ids: 'ACoAAB1cDeFgHiJkLmNoPqRsTuVwXyZ0123456', text: 'Thanks for connecting, Maya!' }"
+  messages.list:
+    call: "{ account_id: 'acc_9f2c1d7e', chat_id: 'chat_5a6b7c' }"
+  messages.send:
+    call: "{ account_id: 'acc_9f2c1d7e', chat_id: 'chat_5a6b7c', text: 'Does Tuesday at 10 work?' }"
+  posts.list:
+    call: "{ account_id: 'acc_9f2c1d7e', user_id: 'williamhgates' }"
+  posts.listReactions:
+    call: "{ account_id: 'acc_9f2c1d7e', post_id: 'urn:li:activity:7250000000000000000' }"
+  posts.listComments:
+    call: "{ account_id: 'acc_9f2c1d7e', post_id: 'urn:li:activity:7250000000000000000', sort_by: 'MOST_RECENT' }"
+  webhookEndpoints.list: {}
+  webhookEndpoints.get:
+    call: "{ id: 'whe_42' }"
+  webhookEndpoints.create:
+    call: "{ url: 'https://your-app.example.com/api/webhook', trigger_events: ['relation.new', 'message.new', 'account.status.disconnected'] }"
+  webhookEndpoints.update:
+    call: "{ id: 'whe_42', enabled: false }"
+  webhookEndpoints.delete:
+    call: "{ id: 'whe_42' }"
+  inboxes.list:
+    call: "{ account_id: 'acc_9f2c1d7e' }"
+  inboxes.listChats:
+    call: "{ account_id: 'acc_9f2c1d7e', inbox_id: 'CLASSIC_PRIMARY' }"
+  inboxes.startChat:
+    call: "{ account_id: 'acc_9f2c1d7e', inbox_id: 'CLASSIC_PRIMARY', users_ids: ['ACoAAB1cDeFgHiJkLmNoPqRsTuVwXyZ0123456'], text: 'Thanks for connecting, Maya!' }"
+  emails.list:
+    call: "{ account_id: 'acc_9f2c1d7e', limit: 20 }"
+  emails.send:
+    call: "{ account_id: 'acc_9f2c1d7e', to: [{ email: 'maya@example.com', display_name: 'Maya Ruiz' }], subject: 'Following up', plain_text: 'Does Tuesday at 10 work?' }"
+  calendarEvents.list:
+    call: "{ account_id: 'acc_9f2c1d7e', calendar_id: 'primary', start: '2026-11-02T00:00:00Z', end: '2026-11-09T00:00:00Z' }"
+  linkedin.searchPeople:
+    call: "{ account_id: 'acc_9f2c1d7e', keywords: 'head of engineering', network_distance: [2] }"
+  salesNavigator.searchPeople:
+    call: "{ account_id: 'acc_9f2c1d7e', keywords: 'platform engineering', limit: 25 }"
+  posts.create:
+    call: "{ account_id: 'acc_9f2c1d7e', text: 'We just shipped our field data toolkit.' }"
