@@ -160,6 +160,8 @@ export type EnginemailerEndpointOutputs = {
 	deleteRecipientList: z.infer<typeof ResultSchema>;
 	pauseCampaign: z.infer<typeof ResultSchema>;
 	sendCampaign: z.infer<typeof ResultSchema>;
+	// The official N8N API publishes no response schemas. Keep these values
+	// provider-opaque until its response contracts are documented.
 	addOrUpdateSubscriber: unknown;
 	findSubscriber: unknown;
 	deactivateSubscriber: unknown;
@@ -259,6 +261,8 @@ export const EnginemailerEndpointOutputSchemas = {
 	deleteRecipientList: ResultSchema,
 	pauseCampaign: ResultSchema,
 	sendCampaign: ResultSchema,
+	// N8N response shapes are provider-defined and absent from its published
+	// Swagger contract, so these schemas intentionally validate any JSON value.
 	addOrUpdateSubscriber: z.unknown(),
 	findSubscriber: z.unknown(),
 	deactivateSubscriber: z.unknown(),

@@ -16,7 +16,7 @@ const mockRequest = jest.mocked(request);
 function lastCall(): [OpenAPIConfig, ApiRequestOptions] {
 	const call = mockRequest.mock.calls.at(-1);
 	if (!call) throw new Error('request() was never called');
-	return call as unknown as [OpenAPIConfig, ApiRequestOptions];
+	return [call[0], call[1]];
 }
 
 beforeEach(() => mockRequest.mockReset());
