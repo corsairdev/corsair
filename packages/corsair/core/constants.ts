@@ -211,6 +211,7 @@ export const BaseProviders = [
 	'epicgames',
 	'everhour',
 	'exa',
+	'excel',
 	'exist',
 	'extractaai',
 	'facebook',
@@ -617,6 +618,7 @@ export const ProviderDisplayNames = {
 	epicgames: 'Epic Games',
 	everhour: 'Everhour',
 	exa: 'Exa',
+	excel: 'Excel',
 	exist: 'Exist',
 	extractaai: 'Extracta.ai',
 	facebook: 'Facebook',
@@ -1028,6 +1030,7 @@ export type AllProviders =
 	| 'epicgames'
 	| 'everhour'
 	| 'exa'
+	| 'excel'
 	| 'exist'
 	| 'extractaai'
 	| 'facebook'
