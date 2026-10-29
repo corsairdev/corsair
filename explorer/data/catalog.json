@@ -5259,6 +5259,21 @@
       }
     },
     {
+      "id": "tikhub",
+      "displayName": "TikHub",
+      "description": "Social media data API for public TikTok, Instagram, YouTube, X (Twitter) and Reddit profiles, posts, comments and search results.",
+      "npmPackageName": "@corsair-dev/tikhub",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 21,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
       "id": "timecamp",
       "displayName": "TimeCamp",
       "description": "Automatic time tracking software for projects, attendance, invoicing, and team productivity.",
@@ -86195,6 +86210,132 @@
       "kind": "api",
       "shortPath": "tasks.update",
       "haystack": "tasks.update ticktick.api.tasks.update update an existing task write"
+    },
+    {
+      "pluginId": "tikhub",
+      "kind": "api",
+      "shortPath": "account.getInfo",
+      "haystack": "account.getinfo tikhub.api.account.getinfo get the tikhub account balance, free credit and api key status read"
+    },
+    {
+      "pluginId": "tikhub",
+      "kind": "api",
+      "shortPath": "instagram.getPostByUrl",
+      "haystack": "instagram.getpostbyurl tikhub.api.instagram.getpostbyurl get an instagram post or reel with its media, likes and comments count from its url read"
+    },
+    {
+      "pluginId": "tikhub",
+      "kind": "api",
+      "shortPath": "instagram.getPostComments",
+      "haystack": "instagram.getpostcomments tikhub.api.instagram.getpostcomments list comments on an instagram post, recent or popular first read"
+    },
+    {
+      "pluginId": "tikhub",
+      "kind": "api",
+      "shortPath": "instagram.getUserByUsername",
+      "haystack": "instagram.getuserbyusername tikhub.api.instagram.getuserbyusername get an instagram profile (bio, follower and following counts, recent posts) by username read"
+    },
+    {
+      "pluginId": "tikhub",
+      "kind": "api",
+      "shortPath": "instagram.getUserPosts",
+      "haystack": "instagram.getuserposts tikhub.api.instagram.getuserposts list an instagram user's posts by user id read"
+    },
+    {
+      "pluginId": "tikhub",
+      "kind": "api",
+      "shortPath": "instagram.getUserReels",
+      "haystack": "instagram.getuserreels tikhub.api.instagram.getuserreels list an instagram user's reels by user id read"
+    },
+    {
+      "pluginId": "tikhub",
+      "kind": "api",
+      "shortPath": "reddit.search",
+      "haystack": "reddit.search tikhub.api.reddit.search search reddit posts, communities, comments, media or users, with sort and time filters read"
+    },
+    {
+      "pluginId": "tikhub",
+      "kind": "api",
+      "shortPath": "tiktok.getHashtag",
+      "haystack": "tiktok.gethashtag tikhub.api.tiktok.gethashtag get a tiktok hashtag by name, including its id and video and view counts read"
+    },
+    {
+      "pluginId": "tikhub",
+      "kind": "api",
+      "shortPath": "tiktok.getHashtagVideos",
+      "haystack": "tiktok.gethashtagvideos tikhub.api.tiktok.gethashtagvideos list videos under a tiktok hashtag id read"
+    },
+    {
+      "pluginId": "tikhub",
+      "kind": "api",
+      "shortPath": "tiktok.getUserProfile",
+      "haystack": "tiktok.getuserprofile tikhub.api.tiktok.getuserprofile get a tiktok profile and follower, like and video counts by username or secuid read"
+    },
+    {
+      "pluginId": "tikhub",
+      "kind": "api",
+      "shortPath": "tiktok.getUserVideos",
+      "haystack": "tiktok.getuservideos tikhub.api.tiktok.getuservideos list a tiktok user's posted videos, newest or most popular first read"
+    },
+    {
+      "pluginId": "tikhub",
+      "kind": "api",
+      "shortPath": "tiktok.getVideo",
+      "haystack": "tiktok.getvideo tikhub.api.tiktok.getvideo get one tiktok video with its author, stats, music and media urls read"
+    },
+    {
+      "pluginId": "tikhub",
+      "kind": "api",
+      "shortPath": "tiktok.getVideoComments",
+      "haystack": "tiktok.getvideocomments tikhub.api.tiktok.getvideocomments list comments on a tiktok video read"
+    },
+    {
+      "pluginId": "tikhub",
+      "kind": "api",
+      "shortPath": "tiktok.searchVideos",
+      "haystack": "tiktok.searchvideos tikhub.api.tiktok.searchvideos search tiktok videos by keyword, with sort, publish-date and region filters read"
+    },
+    {
+      "pluginId": "tikhub",
+      "kind": "api",
+      "shortPath": "twitter.getTweet",
+      "haystack": "twitter.gettweet tikhub.api.twitter.gettweet get one x (twitter) post by id read"
+    },
+    {
+      "pluginId": "tikhub",
+      "kind": "api",
+      "shortPath": "twitter.getUserProfile",
+      "haystack": "twitter.getuserprofile tikhub.api.twitter.getuserprofile get an x (twitter) profile by handle or numeric user id read"
+    },
+    {
+      "pluginId": "tikhub",
+      "kind": "api",
+      "shortPath": "twitter.getUserTweets",
+      "haystack": "twitter.getusertweets tikhub.api.twitter.getusertweets list an x (twitter) user's posts read"
+    },
+    {
+      "pluginId": "tikhub",
+      "kind": "api",
+      "shortPath": "twitter.searchTweets",
+      "haystack": "twitter.searchtweets tikhub.api.twitter.searchtweets search x (twitter) posts, people or lists (top, latest, media, people, lists) read"
+    },
+    {
+      "pluginId": "tikhub",
+      "kind": "api",
+      "shortPath": "youtube.getChannelVideos",
+      "haystack": "youtube.getchannelvideos tikhub.api.youtube.getchannelvideos list a youtube channel's videos, with channel details on the first page read"
+    },
+    {
+      "pluginId": "tikhub",
+      "kind": "api",
+      "shortPath": "youtube.getVideo",
+      "haystack": "youtube.getvideo tikhub.api.youtube.getvideo get a youtube video with its channel, duration, view, like and comment counts read"
+    },
+    {
+      "pluginId": "tikhub",
+      "kind": "api",
+      "shortPath": "youtube.search",
+      "haystack": "youtube.search tikhub.api.youtube.search search youtube videos, shorts, channels and playlists with date, type, duration and sort filters read"
     },
     {
       "pluginId": "timecamp",
