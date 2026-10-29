@@ -5,6 +5,7 @@ import type { EnginemailerEndpointOutputs } from './types';
 const get = <T>(
 	ctx: { key: string },
 	path: string,
+	// N8N polling filters vary by event endpoint and are schema-validated.
 	query?: Record<string, unknown>,
 ) =>
 	makeEnginemailerN8nRequest<T>(path, ctx.key, {
@@ -15,6 +16,7 @@ const get = <T>(
 const post = <T>(
 	ctx: { key: string },
 	path: string,
+	// N8N actions accept provider-defined JSON; operation schemas validate inputs.
 	body: Record<string, unknown>,
 ) => makeEnginemailerN8nRequest<T>(path, ctx.key, { method: 'POST', body });
 

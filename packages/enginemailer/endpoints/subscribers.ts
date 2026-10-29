@@ -5,6 +5,8 @@ import type { EnginemailerEndpointOutputs } from './types';
 const get = <T>(
 	ctx: { key: string },
 	path: string,
+	// Provider query fields differ between legacy subscriber endpoints; schemas
+	// validate each operation before this shared serializer is called.
 	query?: Record<string, unknown>,
 ) =>
 	makeEnginemailerRequest<T>(path, ctx.key, {
@@ -18,6 +20,7 @@ const get = <T>(
 const post = <T>(
 	ctx: { key: string },
 	path: string,
+	// Custom fields are provider-defined JSON and cannot share a narrower type.
 	body: Record<string, unknown>,
 ) => makeEnginemailerRequest<T>(path, ctx.key, { method: 'POST', body });
 

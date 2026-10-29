@@ -32,6 +32,8 @@ export async function makeEnginemailerRequest<T>(
 	apiKey: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+		// Enginemailer exposes provider-defined JSON objects and arrays across
+		// separate legacy and N8N APIs; endpoint schemas validate each body.
 		body?: Record<string, unknown> | unknown[];
 		query?: Record<string, string | number | boolean | string[] | undefined>;
 	} = {},

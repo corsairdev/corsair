@@ -47,6 +47,8 @@ const RecipientListBodySchema = z.object({
 	FilterBy: z.number().int().optional(),
 });
 const BatchStatusBodySchema = z.object({ ID: z.number().int().positive() });
+// N8N response payloads are intentionally opaque because the official Swagger
+// documents paths but publishes no response schemas for these operations.
 const N8nEmailSchema = z.object({ email: z.string().email() });
 const N8nSubscriberUpdateSchema = N8nEmailSchema.extend({
 	sourcetype: z.string().optional(),

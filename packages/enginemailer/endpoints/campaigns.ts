@@ -5,6 +5,7 @@ import type { EnginemailerEndpointOutputs } from './types';
 const get = <T>(
 	ctx: { key: string },
 	path: string,
+	// Campaign query parameters vary by operation and are validated by schemas.
 	query?: Record<string, unknown>,
 ) =>
 	makeEnginemailerRequest<T>(path, ctx.key, {
@@ -18,6 +19,7 @@ const get = <T>(
 const post = <T>(
 	ctx: { key: string },
 	path: string,
+	// Campaign content and recipient-list payloads are provider-defined JSON.
 	body: Record<string, unknown>,
 ) => makeEnginemailerRequest<T>(path, ctx.key, { method: 'POST', body });
 

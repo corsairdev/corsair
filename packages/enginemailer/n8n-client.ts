@@ -10,6 +10,8 @@ export async function makeEnginemailerN8nRequest<T>(
 	apiKey: string,
 	options: {
 		method?: 'GET' | 'POST';
+		// Official N8N Swagger publishes no shared response/body schema; endpoint
+		// input schemas preserve documented fields before this transport boundary.
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | undefined>;
 	} = {},
