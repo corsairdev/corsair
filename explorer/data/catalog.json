@@ -3729,6 +3729,21 @@
       }
     },
     {
+      "id": "instantly",
+      "displayName": "Instantly",
+      "description": "Instantly API v2 for cold email - campaigns, subsequences and leads, the Unibox, sending accounts and warmup, inbox placement tests, email verification, the blocklist, webhooks and workspace admin.",
+      "npmPackageName": "@corsair-dev/instantly",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 165,
+        "webhooks": 19,
+        "db": 4
+      }
+    },
+    {
       "id": "intercom",
       "displayName": "Intercom",
       "description": "Customer messaging platform for support chat, product tours, and user engagement.",
@@ -64244,6 +64259,1110 @@
       "kind": "webhook",
       "shortPath": "url_verification",
       "haystack": "url_verification instagram.webhooks.url_verification represents a webhook url verification challenge from meta. used to verify that the webhook endpoint is owned and controlled by the application."
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "accounts.create",
+      "haystack": "accounts.create instantly.api.accounts.create connect a sending account with its imap and smtp login (google and microsoft oauth connections are not covered by this plugin). the passwords are sent to instantly and never logged write"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "accounts.delete",
+      "haystack": "accounts.delete instantly.api.accounts.delete remove a sending account from the workspace; it stops sending and warming up destructive"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "accounts.disableWarmup",
+      "haystack": "accounts.disablewarmup instantly.api.accounts.disablewarmup turn warmup off for up to 100 sending accounts (runs as a background job; returns the job) write"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "accounts.enableWarmup",
+      "haystack": "accounts.enablewarmup instantly.api.accounts.enablewarmup turn warmup on for up to 100 sending accounts (runs as a background job; returns the job) write"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "accounts.get",
+      "haystack": "accounts.get instantly.api.accounts.get get one sending account by email address read"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "accounts.getDailyAnalytics",
+      "haystack": "accounts.getdailyanalytics instantly.api.accounts.getdailyanalytics emails sent per day by each sending account. pass emails or a short date range: on a large workspace instantly answers 413 otherwise read"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "accounts.getTrackingDomainStatus",
+      "haystack": "accounts.gettrackingdomainstatus instantly.api.accounts.gettrackingdomainstatus check a custom tracking domain's dns setup read"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "accounts.getWarmupAnalytics",
+      "haystack": "accounts.getwarmupanalytics instantly.api.accounts.getwarmupanalytics get warmup results for up to 100 sending accounts: daily sent, received and landed-in-inbox counts and a 0-100 health score read"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "accounts.list",
+      "haystack": "accounts.list instantly.api.accounts.list list sending accounts (mailboxes) with status, warmup status, daily limit and warmup score; filter by status, provider, tag or search read"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "accounts.listCampaigns",
+      "haystack": "accounts.listcampaigns instantly.api.accounts.listcampaigns list the campaigns a sending account sends for read"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "accounts.markFixed",
+      "haystack": "accounts.markfixed instantly.api.accounts.markfixed set a sending account back to active and clear its error message, after fixing its connection write"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "accounts.moveToWorkspace",
+      "haystack": "accounts.movetoworkspace instantly.api.accounts.movetoworkspace move sending accounts to another workspace in the same workspace group. needs the admin workspace's api key write"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "accounts.pause",
+      "haystack": "accounts.pause instantly.api.accounts.pause pause a sending account: it stops sending campaign emails until resumed write"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "accounts.pauseMany",
+      "haystack": "accounts.pausemany instantly.api.accounts.pausemany pause up to 100 sending accounts at once; returns which were paused and which failed write"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "accounts.resume",
+      "haystack": "accounts.resume instantly.api.accounts.resume resume a paused sending account so it sends campaign emails again write"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "accounts.testVitals",
+      "haystack": "accounts.testvitals instantly.api.accounts.testvitals check the health (\"vitals\") of sending accounts' domains; changes nothing read"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "accounts.update",
+      "haystack": "accounts.update instantly.api.accounts.update change a sending account's name, daily limit, sending gap, signature, reply-to, tracking domain or warmup settings write"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "apiKeys.create",
+      "haystack": "apikeys.create instantly.api.apikeys.create create an api key with the given scopes. the response holds the key itself, the only time it is returned in full write"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "apiKeys.delete",
+      "haystack": "apikeys.delete instantly.api.apikeys.delete revoke an api key; anything using it stops working destructive"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "apiKeys.list",
+      "haystack": "apikeys.list instantly.api.apikeys.list list the workspace's api keys with their scopes (key values redacted) read"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "auditLogs.list",
+      "haystack": "auditlogs.list instantly.api.auditlogs.list list audit log records (who did what, when); filter by activity type, search or date read"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "backgroundJobs.get",
+      "haystack": "backgroundjobs.get instantly.api.backgroundjobs.get get one background job, e.g. the one leads.move or accounts.enablewarmup returned read"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "backgroundJobs.list",
+      "haystack": "backgroundjobs.list instantly.api.backgroundjobs.list list background jobs (lead moves, imports, warmup changes) with status and progress read"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "billing.getPlanDetails",
+      "haystack": "billing.getplandetails instantly.api.billing.getplandetails get the workspace's plans and their limits read"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "billing.getSubscriptionDetails",
+      "haystack": "billing.getsubscriptiondetails instantly.api.billing.getsubscriptiondetails get the workspace's subscriptions and billing state read"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "blocklist.add",
+      "haystack": "blocklist.add instantly.api.blocklist.add block an email (jane@acme.com) or a whole domain (acme.com) from every campaign write"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "blocklist.addMany",
+      "haystack": "blocklist.addmany instantly.api.blocklist.addmany block many emails and domains at once write"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "blocklist.deleteAll",
+      "haystack": "blocklist.deleteall instantly.api.blocklist.deleteall delete every blocklist entry (or every domain entry, or every entry matching search). campaigns can then email those addresses again destructive"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "blocklist.downloadCsv",
+      "haystack": "blocklist.downloadcsv instantly.api.blocklist.downloadcsv download the blocklist as csv text read"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "blocklist.get",
+      "haystack": "blocklist.get instantly.api.blocklist.get get one blocklist entry by id read"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "blocklist.list",
+      "haystack": "blocklist.list instantly.api.blocklist.list list blocked emails and domains read"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "blocklist.remove",
+      "haystack": "blocklist.remove instantly.api.blocklist.remove remove a blocklist entry, so campaigns can email that address or domain again destructive"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "blocklist.removeMany",
+      "haystack": "blocklist.removemany instantly.api.blocklist.removemany remove blocklist entries by id, so campaigns can email those addresses again destructive"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "blocklist.update",
+      "haystack": "blocklist.update instantly.api.blocklist.update change the email or domain a blocklist entry blocks write"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "campaigns.activate",
+      "haystack": "campaigns.activate instantly.api.campaigns.activate start or resume a campaign. this sends real email to the campaign's leads from the connected accounts, on its schedule write"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "campaigns.addVariables",
+      "haystack": "campaigns.addvariables instantly.api.campaigns.addvariables add custom variable names to a campaign, for use as `{{variable}}` in its copy write"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "campaigns.countLaunched",
+      "haystack": "campaigns.countlaunched instantly.api.campaigns.countlaunched count the campaigns ever launched in the workspace read"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "campaigns.create",
+      "haystack": "campaigns.create instantly.api.campaigns.create create a campaign as a draft: schedule, one sequence of email steps with a/b variants, sending accounts, daily limit and stop rules (stop_on_reply, stop_for_company). sends nothing until campaigns.activate write"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "campaigns.createFromShared",
+      "haystack": "campaigns.createfromshared instantly.api.campaigns.createfromshared create a campaign in this workspace from one shared with campaigns.share write"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "campaigns.delete",
+      "haystack": "campaigns.delete instantly.api.campaigns.delete delete a campaign permanently destructive"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "campaigns.duplicate",
+      "haystack": "campaigns.duplicate instantly.api.campaigns.duplicate copy a campaign into a new one, optionally with a new name write"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "campaigns.export",
+      "haystack": "campaigns.export instantly.api.campaigns.export export a campaign's settings and sequence as json; changes nothing read"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "campaigns.get",
+      "haystack": "campaigns.get instantly.api.campaigns.get get one campaign with its schedule, sequence steps and settings read"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "campaigns.getAnalytics",
+      "haystack": "campaigns.getanalytics instantly.api.campaigns.getanalytics per-campaign totals: leads, contacted, sent, opens, replies, clicks, bounces, unsubscribes, completed and opportunities, for all campaigns or chosen ones, optionally in a date range read"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "campaigns.getAnalyticsOverview",
+      "haystack": "campaigns.getanalyticsoverview instantly.api.campaigns.getanalyticsoverview combined totals across one, several or all campaigns: sent, opens, replies, clicks, bounces, interested, meetings booked and closed read"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "campaigns.getDailyAnalytics",
+      "haystack": "campaigns.getdailyanalytics instantly.api.campaigns.getdailyanalytics per-day sent, opens, replies and clicks for one campaign or all, optionally in a date range read"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "campaigns.getSendingStatus",
+      "haystack": "campaigns.getsendingstatus instantly.api.campaigns.getsendingstatus explain why a campaign is not sending, or sending slower than expected read"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "campaigns.getStepAnalytics",
+      "haystack": "campaigns.getstepanalytics instantly.api.campaigns.getstepanalytics sent, opens, replies and clicks per sequence step and a/b variant, for one campaign or all read"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "campaigns.list",
+      "haystack": "campaigns.list instantly.api.campaigns.list list campaigns with status, schedule, sending accounts and daily limit; filter by name, status or tag read"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "campaigns.pause",
+      "haystack": "campaigns.pause instantly.api.campaigns.pause pause a campaign: it stops sending until activated again write"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "campaigns.searchByLead",
+      "haystack": "campaigns.searchbylead instantly.api.campaigns.searchbylead find the campaigns a lead is in, by their email address read"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "campaigns.share",
+      "haystack": "campaigns.share instantly.api.campaigns.share share a campaign for 7 days so other instantly users can copy it with campaigns.createfromshared write"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "campaigns.update",
+      "haystack": "campaigns.update instantly.api.campaigns.update change a campaign's name, schedule, sequence steps, sending accounts, daily limit or stop rules; only the fields passed change write"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "crmActions.deletePhoneNumber",
+      "haystack": "crmactions.deletephonenumber instantly.api.crmactions.deletephonenumber release a phone number from the workspace and its provider destructive"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "crmActions.listPhoneNumbers",
+      "haystack": "crmactions.listphonenumbers instantly.api.crmactions.listphonenumbers list the workspace's phone numbers read"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "customPromptTemplates.create",
+      "haystack": "customprompttemplates.create instantly.api.customprompttemplates.create create a custom ai prompt template; `{{property}}` placeholders take lead fields write"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "customPromptTemplates.delete",
+      "haystack": "customprompttemplates.delete instantly.api.customprompttemplates.delete delete a custom ai prompt template destructive"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "customPromptTemplates.get",
+      "haystack": "customprompttemplates.get instantly.api.customprompttemplates.get get one custom ai prompt template read"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "customPromptTemplates.list",
+      "haystack": "customprompttemplates.list instantly.api.customprompttemplates.list list custom ai prompt templates, including public ones read"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "customPromptTemplates.update",
+      "haystack": "customprompttemplates.update instantly.api.customprompttemplates.update change a custom ai prompt template write"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "customTagMappings.list",
+      "haystack": "customtagmappings.list instantly.api.customtagmappings.list list which tags are assigned to which accounts and campaigns read"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "customTags.create",
+      "haystack": "customtags.create instantly.api.customtags.create create a tag for organizing sending accounts and campaigns write"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "customTags.delete",
+      "haystack": "customtags.delete instantly.api.customtags.delete delete a tag; the accounts and campaigns that had it lose it destructive"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "customTags.get",
+      "haystack": "customtags.get instantly.api.customtags.get get one tag by id read"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "customTags.list",
+      "haystack": "customtags.list instantly.api.customtags.list list the workspace's tags read"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "customTags.toggleResource",
+      "haystack": "customtags.toggleresource instantly.api.customtags.toggleresource assign tags to, or remove them from, sending accounts or campaigns (by ids or all matching a filter) write"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "customTags.update",
+      "haystack": "customtags.update instantly.api.customtags.update rename a tag or change its description write"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "domainForwarding.get",
+      "haystack": "domainforwarding.get instantly.api.domainforwarding.get get the web forwarding set on a domain ordered through instantly read"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "domainForwarding.remove",
+      "haystack": "domainforwarding.remove instantly.api.domainforwarding.remove remove a domain's web forwarding. limited to 10 requests a minute destructive"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "domainForwarding.set",
+      "haystack": "domainforwarding.set instantly.api.domainforwarding.set forward web visits to a domain ordered through instantly to another domain write"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "emails.countUnread",
+      "haystack": "emails.countunread instantly.api.emails.countunread count unread emails in the unibox read"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "emails.delete",
+      "haystack": "emails.delete instantly.api.emails.delete delete an email from the unibox destructive"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "emails.forward",
+      "haystack": "emails.forward instantly.api.emails.forward forward an email from the unibox to other recipients. this sends real email from the chosen sending account, and is never retried automatically write"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "emails.get",
+      "haystack": "emails.get instantly.api.emails.get get one email with its full body and thread_id read"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "emails.list",
+      "haystack": "emails.list instantly.api.emails.list list unibox emails; email_type received lists replies from leads, the way to read replies on plans without webhooks. filter by lead, campaign, sending account, unread or date. limited to 20 requests a minute read"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "emails.markThreadRead",
+      "haystack": "emails.markthreadread instantly.api.emails.markthreadread mark every email in a thread as read write"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "emails.reply",
+      "haystack": "emails.reply instantly.api.emails.reply reply to an email in its thread. this sends a real email from the chosen sending account to the lead, and is never retried automatically write"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "emails.sendTest",
+      "haystack": "emails.sendtest instantly.api.emails.sendtest send a test email from a sending account. this sends real email to the given addresses (it does not appear in the unibox). limited to 10 a minute write"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "emails.update",
+      "haystack": "emails.update instantly.api.emails.update mark an email read or unread, or set a unibox reminder on it write"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "emailTemplates.create",
+      "haystack": "emailtemplates.create instantly.api.emailtemplates.create save an email template (name and body) write"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "emailTemplates.delete",
+      "haystack": "emailtemplates.delete instantly.api.emailtemplates.delete delete a saved email template destructive"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "emailTemplates.list",
+      "haystack": "emailtemplates.list instantly.api.emailtemplates.list list saved email templates read"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "emailVerification.getStatus",
+      "haystack": "emailverification.getstatus instantly.api.emailverification.getstatus get the result of an email verification started with emailverification.verify read"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "emailVerification.verify",
+      "haystack": "emailverification.verify instantly.api.emailverification.verify verify one email address. spends instantly email-verification credits (the response reports credits and credits_used) and is never retried automatically. a slow check answers pending; read the result with emailverification.getstatus write"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "engageItems.deleteMany",
+      "haystack": "engageitems.deletemany instantly.api.engageitems.deletemany delete up to 100 ai agents or automations from engage at once destructive"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "engageItems.list",
+      "haystack": "engageitems.list instantly.api.engageitems.list list engage items: campaigns, ai agents, automations, broadcasts and journeys in one list read"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "inboxPlacementAnalytics.get",
+      "haystack": "inboxplacementanalytics.get instantly.api.inboxplacementanalytics.get get one inbox placement result read"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "inboxPlacementAnalytics.getDeliverabilityInsights",
+      "haystack": "inboxplacementanalytics.getdeliverabilityinsights instantly.api.inboxplacementanalytics.getdeliverabilityinsights deliverability insights for one inbox placement test, optionally against an earlier period; changes nothing read"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "inboxPlacementAnalytics.getStatsByDate",
+      "haystack": "inboxplacementanalytics.getstatsbydate instantly.api.inboxplacementanalytics.getstatsbydate inbox, spam and category counts per day for a scheduled inbox placement test; changes nothing read"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "inboxPlacementAnalytics.getStatsByTest",
+      "haystack": "inboxplacementanalytics.getstatsbytest instantly.api.inboxplacementanalytics.getstatsbytest inbox, spam and category counts for inbox placement tests; changes nothing read"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "inboxPlacementAnalytics.list",
+      "haystack": "inboxplacementanalytics.list instantly.api.inboxplacementanalytics.list where each inbox placement test email landed, per recipient; filter by test, date, provider or sender read"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "inboxPlacementReports.get",
+      "haystack": "inboxplacementreports.get instantly.api.inboxplacementreports.get get one blacklist and spamassassin report read"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "inboxPlacementReports.list",
+      "haystack": "inboxplacementreports.list instantly.api.inboxplacementreports.list list blacklist and spamassassin reports for inbox placement tests read"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "inboxPlacementTests.create",
+      "haystack": "inboxplacementtests.create instantly.api.inboxplacementtests.create create an inbox placement test: a test email sent to seed inboxes to see where it lands (inbox, spam or a category tab). with sending_method 1, instantly sends real email from the given accounts; with 2, you send it from outside instantly write"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "inboxPlacementTests.delete",
+      "haystack": "inboxplacementtests.delete instantly.api.inboxplacementtests.delete delete an inbox placement test destructive"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "inboxPlacementTests.get",
+      "haystack": "inboxplacementtests.get instantly.api.inboxplacementtests.get get one inbox placement test read"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "inboxPlacementTests.list",
+      "haystack": "inboxplacementtests.list instantly.api.inboxplacementtests.list list inbox placement tests read"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "inboxPlacementTests.listEspOptions",
+      "haystack": "inboxplacementtests.listespoptions instantly.api.inboxplacementtests.listespoptions list the email providers an inbox placement test can send to (for recipients_labels) read"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "inboxPlacementTests.update",
+      "haystack": "inboxplacementtests.update instantly.api.inboxplacementtests.update rename an inbox placement test, change its schedule or automations, or pause or resume it write"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "leadLabels.create",
+      "haystack": "leadlabels.create instantly.api.leadlabels.create create a custom lead label (a status such as \"demo requested\") marked positive, negative or neutral write"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "leadLabels.delete",
+      "haystack": "leadlabels.delete instantly.api.leadlabels.delete delete a custom lead label; its leads move to reassigned_status destructive"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "leadLabels.get",
+      "haystack": "leadlabels.get instantly.api.leadlabels.get get one custom lead label by id read"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "leadLabels.list",
+      "haystack": "leadlabels.list instantly.api.leadlabels.list list the workspace's custom lead labels read"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "leadLabels.testAiReplyLabel",
+      "haystack": "leadlabels.testaireplylabel instantly.api.leadlabels.testaireplylabel ask which label instantly's ai would give a reply text, to test custom labels. changes nothing, but the workspace gets 500 of these tests per 30 days read"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "leadLabels.update",
+      "haystack": "leadlabels.update instantly.api.leadlabels.update rename a custom lead label or change its description, sentiment or ai use write"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "leadLists.create",
+      "haystack": "leadlists.create instantly.api.leadlists.create create a lead list to hold leads outside any campaign (add to it with leads.addbulk list_id) write"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "leadLists.delete",
+      "haystack": "leadlists.delete instantly.api.leadlists.delete delete a lead list permanently destructive"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "leadLists.get",
+      "haystack": "leadlists.get instantly.api.leadlists.get get one lead list by id: name, owner and enrichment setting read"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "leadLists.getVerificationStats",
+      "haystack": "leadlists.getverificationstats instantly.api.leadlists.getverificationstats counts of a lead list's leads by email verification result read"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "leadLists.list",
+      "haystack": "leadlists.list instantly.api.leadlists.list list lead lists (leads stored outside any campaign) read"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "leadLists.update",
+      "haystack": "leadlists.update instantly.api.leadlists.update rename a lead list, change its owner or turn enrichment of new leads on or off write"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "leads.addBulk",
+      "haystack": "leads.addbulk instantly.api.leads.addbulk add up to 1,000 leads to one campaign or list, with custom variables. skips leads already in the workspace unless skip_if_in_workspace is false, and is never retried automatically. every lead uploaded counts toward the plan's lifetime contact limit, including re-uploads and the same person in a second campaign; re-adding or moving a lead who already replied restarts their sequence at step 1 write"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "leads.assign",
+      "haystack": "leads.assign instantly.api.leads.assign assign leads (by ids or filters) to workspace users. runs in the background write"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "leads.create",
+      "haystack": "leads.create instantly.api.leads.create add one lead to a campaign or list. skips leads already in the workspace unless skip_if_in_workspace is false. every lead uploaded counts toward the plan's lifetime contact limit, including re-uploads and the same person in a second campaign; re-adding or moving a lead who already replied restarts their sequence at step 1 write"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "leads.delete",
+      "haystack": "leads.delete instantly.api.leads.delete delete a lead from the workspace. its upload still counts toward the lifetime contact limit destructive"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "leads.deleteMany",
+      "haystack": "leads.deletemany instantly.api.leads.deletemany delete leads from one campaign or list, optionally only some ids or a status. their uploads still count toward the lifetime contact limit destructive"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "leads.get",
+      "haystack": "leads.get instantly.api.leads.get get one lead with status, interest status, open/reply/click counts and custom variables read"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "leads.list",
+      "haystack": "leads.list instantly.api.leads.list list leads in a campaign or list, or across the workspace; filter by email, status (replied, interested, bounced and more) or search read"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "leads.merge",
+      "haystack": "leads.merge instantly.api.leads.merge merge one lead into another (destination_lead_id); the first lead is removed destructive"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "leads.move",
+      "haystack": "leads.move instantly.api.leads.move move or copy leads (by ids or filters) to another campaign or list, as a background job; returns the job. moving a lead who already replied restarts their sequence at step 1 write"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "leads.moveToSubsequence",
+      "haystack": "leads.movetosubsequence instantly.api.leads.movetosubsequence put a lead into a subsequence. this sends real email: the subsequence starts emailing the lead write"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "leads.removeFromSubsequence",
+      "haystack": "leads.removefromsubsequence instantly.api.leads.removefromsubsequence take a lead out of the subsequence it is in; it stops getting that subsequence's emails destructive"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "leads.update",
+      "haystack": "leads.update instantly.api.leads.update update a lead's name, company, job title, phone, website, personalization or custom variables. its status is read-only: to stop follow-ups use leads.updateintereststatus write"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "leads.updateInterestStatus",
+      "haystack": "leads.updateintereststatus instantly.api.leads.updateintereststatus set a lead's interest status by email (interested, meeting booked, not interested, wrong person and so on, or null to reset). in a campaign this completes the lead, which stops its follow-ups: use it when a lead answered on another channel. applied in the background write"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "subsequences.create",
+      "haystack": "subsequences.create instantly.api.subsequences.create create a subsequence: follow-up emails for a campaign's leads who meet its conditions (a reply, a lead status, an email opened...). while the campaign runs, matching leads get its emails write"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "subsequences.delete",
+      "haystack": "subsequences.delete instantly.api.subsequences.delete delete a subsequence; its leads stop getting its emails destructive"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "subsequences.duplicate",
+      "haystack": "subsequences.duplicate instantly.api.subsequences.duplicate copy a subsequence, with the same trigger conditions, into a campaign write"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "subsequences.get",
+      "haystack": "subsequences.get instantly.api.subsequences.get get one subsequence with its conditions, schedule and steps read"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "subsequences.getAnalytics",
+      "haystack": "subsequences.getanalytics instantly.api.subsequences.getanalytics emails sent, unique opens and unique replies for each of a campaign's subsequences read"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "subsequences.getSendingStatus",
+      "haystack": "subsequences.getsendingstatus instantly.api.subsequences.getsendingstatus explain why a subsequence is not sending, or sending slower than expected read"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "subsequences.getStepAnalytics",
+      "haystack": "subsequences.getstepanalytics instantly.api.subsequences.getstepanalytics sent, opens, replies and clicks per step and a/b variant of one subsequence read"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "subsequences.list",
+      "haystack": "subsequences.list instantly.api.subsequences.list list subsequences, by parent campaign or name read"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "subsequences.pause",
+      "haystack": "subsequences.pause instantly.api.subsequences.pause pause a subsequence: it stops sending until resumed write"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "subsequences.resume",
+      "haystack": "subsequences.resume instantly.api.subsequences.resume resume a paused subsequence. this sends real email to the leads that meet its conditions write"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "subsequences.update",
+      "haystack": "subsequences.update instantly.api.subsequences.update change a subsequence's name, conditions, schedule, steps or daily limit write"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "webhookEvents.get",
+      "haystack": "webhookevents.get instantly.api.webhookevents.get get one webhook delivery with its payload and response read"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "webhookEvents.getSummary",
+      "haystack": "webhookevents.getsummary instantly.api.webhookevents.getsummary totals and success rate of webhook deliveries, optionally in a date range read"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "webhookEvents.getSummaryByDate",
+      "haystack": "webhookevents.getsummarybydate instantly.api.webhookevents.getsummarybydate webhook delivery totals and success rate per day read"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "webhookEvents.list",
+      "haystack": "webhookevents.list instantly.api.webhookevents.list list webhook deliveries with their payload, status code and retries; filter by success, date or search read"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "webhooks.create",
+      "haystack": "webhooks.create instantly.api.webhooks.create subscribe a url to an event (reply_received, email_bounced, lead_interested...) or all_events, for one campaign or all. attaches the plugin's webhook secret so corsair can verify deliveries. webhooks need the hypergrowth plan or higher; on growth, poll emails.list with email_type received instead write"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "webhooks.delete",
+      "haystack": "webhooks.delete instantly.api.webhooks.delete delete a webhook subscription; instantly stops sending its events destructive"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "webhooks.get",
+      "haystack": "webhooks.get instantly.api.webhooks.get get one webhook subscription (header values redacted) read"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "webhooks.list",
+      "haystack": "webhooks.list instantly.api.webhooks.list list webhook subscriptions with their url, event type, campaign and status (header values redacted) read"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "webhooks.listEventTypes",
+      "haystack": "webhooks.listeventtypes instantly.api.webhooks.listeventtypes list the event types a webhook can subscribe to, including the workspace's custom labels read"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "webhooks.resume",
+      "haystack": "webhooks.resume instantly.api.webhooks.resume turn a webhook back on after instantly disabled it for failed deliveries write"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "webhooks.test",
+      "haystack": "webhooks.test instantly.api.webhooks.test send a test payload to the webhook's url write"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "webhooks.update",
+      "haystack": "webhooks.update instantly.api.webhooks.update change a webhook's url, event type, campaign or headers. passing headers replaces them all, including the x-corsair-webhook-secret corsair verifies deliveries with write"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "workspace.cancelRemoval",
+      "haystack": "workspace.cancelremoval instantly.api.workspace.cancelremoval cancel a scheduled workspace deletion write"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "workspace.changeOwner",
+      "haystack": "workspace.changeowner instantly.api.workspace.changeowner make another user the owner of the workspace. the current owner loses ownership, so this cannot be undone from this api key destructive"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "workspace.deleteWhitelabelDomain",
+      "haystack": "workspace.deletewhitelabeldomain instantly.api.workspace.deletewhitelabeldomain remove the agency (white-label) domain destructive"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "workspace.get",
+      "haystack": "workspace.get instantly.api.workspace.get get the workspace this api key belongs to: id, name and plan read"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "workspace.getWhitelabelDomain",
+      "haystack": "workspace.getwhitelabeldomain instantly.api.workspace.getwhitelabeldomain get the agency (white-label) domain and its verification state read"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "workspace.scheduleRemoval",
+      "haystack": "workspace.scheduleremoval instantly.api.workspace.scheduleremoval schedule the whole workspace for deletion in 24 hours. workspace.cancelremoval stops it before then destructive"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "workspace.setWhitelabelDomain",
+      "haystack": "workspace.setwhitelabeldomain instantly.api.workspace.setwhitelabeldomain set the agency (white-label) domain clients see write"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "workspace.update",
+      "haystack": "workspace.update instantly.api.workspace.update rename the workspace or change its logo write"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "workspaceGroupMembers.create",
+      "haystack": "workspacegroupmembers.create instantly.api.workspacegroupmembers.create invite another workspace into this admin workspace's group; it joins once its owner accepts write"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "workspaceGroupMembers.delete",
+      "haystack": "workspacegroupmembers.delete instantly.api.workspacegroupmembers.delete remove a workspace from this admin workspace's group destructive"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "workspaceGroupMembers.get",
+      "haystack": "workspacegroupmembers.get instantly.api.workspacegroupmembers.get get one workspace group member read"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "workspaceGroupMembers.getAdmin",
+      "haystack": "workspacegroupmembers.getadmin instantly.api.workspacegroupmembers.getadmin get the admin workspace this workspace belongs to read"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "workspaceGroupMembers.list",
+      "haystack": "workspacegroupmembers.list instantly.api.workspacegroupmembers.list list the workspaces in this admin workspace's group read"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "workspaceMembers.create",
+      "haystack": "workspacemembers.create instantly.api.workspacemembers.create add a user to the workspace by email, with a role write"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "workspaceMembers.delete",
+      "haystack": "workspacemembers.delete instantly.api.workspacemembers.delete remove a member from the workspace destructive"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "workspaceMembers.get",
+      "haystack": "workspacemembers.get instantly.api.workspacemembers.get get one workspace member by id read"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "workspaceMembers.list",
+      "haystack": "workspacemembers.list instantly.api.workspacemembers.list list the workspace's members read"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "api",
+      "shortPath": "workspaceMembers.update",
+      "haystack": "workspacemembers.update instantly.api.workspacemembers.update change a member's nickname or role write"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "webhook",
+      "shortPath": "accounts.error",
+      "haystack": "accounts.error instantly.webhooks.accounts.error a sending account hit a connection or sending error. webhooks need the hypergrowth plan or higher; on growth, poll emails.list with email_type received instead"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "webhook",
+      "shortPath": "campaigns.completed",
+      "haystack": "campaigns.completed instantly.webhooks.campaigns.completed a campaign finished every lead. webhooks need the hypergrowth plan or higher; on growth, poll emails.list with email_type received instead"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "webhook",
+      "shortPath": "emails.autoReplyReceived",
+      "haystack": "emails.autoreplyreceived instantly.webhooks.emails.autoreplyreceived an auto-reply (such as out of office) arrived. only all_events webhooks get it: instantly has no auto_reply_received subscription. webhooks need the hypergrowth plan or higher; on growth, poll emails.list with email_type received instead"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "webhook",
+      "shortPath": "emails.bounced",
+      "haystack": "emails.bounced instantly.webhooks.emails.bounced an email bounced. webhooks need the hypergrowth plan or higher; on growth, poll emails.list with email_type received instead"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "webhook",
+      "shortPath": "emails.linkClicked",
+      "haystack": "emails.linkclicked instantly.webhooks.emails.linkclicked a lead clicked a tracked link. webhooks need the hypergrowth plan or higher; on growth, poll emails.list with email_type received instead"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "webhook",
+      "shortPath": "emails.opened",
+      "haystack": "emails.opened instantly.webhooks.emails.opened a lead opened an email. webhooks need the hypergrowth plan or higher; on growth, poll emails.list with email_type received instead"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "webhook",
+      "shortPath": "emails.replyReceived",
+      "haystack": "emails.replyreceived instantly.webhooks.emails.replyreceived a lead replied; carries reply_text, reply_html and email_id (pass it to emails.reply as reply_to_uuid). webhooks need the hypergrowth plan or higher; on growth, poll emails.list with email_type received instead"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "webhook",
+      "shortPath": "emails.sent",
+      "haystack": "emails.sent instantly.webhooks.emails.sent a campaign email was sent. webhooks need the hypergrowth plan or higher; on growth, poll emails.list with email_type received instead"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "webhook",
+      "shortPath": "events.other",
+      "haystack": "events.other instantly.webhooks.events.other an event with no dedicated handler: a custom lead label (event_type is the label's name) or an event type instantly added later. instantly's payload does not say which, so check event_type before acting. webhooks need the hypergrowth plan or higher; on growth, poll emails.list with email_type received instead"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "webhook",
+      "shortPath": "leads.closed",
+      "haystack": "leads.closed instantly.webhooks.leads.closed a lead moved to closed. webhooks need the hypergrowth plan or higher; on growth, poll emails.list with email_type received instead"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "webhook",
+      "shortPath": "leads.interested",
+      "haystack": "leads.interested instantly.webhooks.leads.interested a lead was marked interested. webhooks need the hypergrowth plan or higher; on growth, poll emails.list with email_type received instead"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "webhook",
+      "shortPath": "leads.meetingBooked",
+      "haystack": "leads.meetingbooked instantly.webhooks.leads.meetingbooked a lead moved to meeting booked. webhooks need the hypergrowth plan or higher; on growth, poll emails.list with email_type received instead"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "webhook",
+      "shortPath": "leads.meetingCompleted",
+      "haystack": "leads.meetingcompleted instantly.webhooks.leads.meetingcompleted a lead moved to meeting completed. webhooks need the hypergrowth plan or higher; on growth, poll emails.list with email_type received instead"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "webhook",
+      "shortPath": "leads.neutral",
+      "haystack": "leads.neutral instantly.webhooks.leads.neutral a lead was marked neutral. webhooks need the hypergrowth plan or higher; on growth, poll emails.list with email_type received instead"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "webhook",
+      "shortPath": "leads.noShow",
+      "haystack": "leads.noshow instantly.webhooks.leads.noshow a lead moved to no show. webhooks need the hypergrowth plan or higher; on growth, poll emails.list with email_type received instead"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "webhook",
+      "shortPath": "leads.notInterested",
+      "haystack": "leads.notinterested instantly.webhooks.leads.notinterested a lead was marked not interested. webhooks need the hypergrowth plan or higher; on growth, poll emails.list with email_type received instead"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "webhook",
+      "shortPath": "leads.outOfOffice",
+      "haystack": "leads.outofoffice instantly.webhooks.leads.outofoffice a lead moved to out of office. webhooks need the hypergrowth plan or higher; on growth, poll emails.list with email_type received instead"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "webhook",
+      "shortPath": "leads.unsubscribed",
+      "haystack": "leads.unsubscribed instantly.webhooks.leads.unsubscribed a lead unsubscribed. webhooks need the hypergrowth plan or higher; on growth, poll emails.list with email_type received instead"
+    },
+    {
+      "pluginId": "instantly",
+      "kind": "webhook",
+      "shortPath": "leads.wrongPerson",
+      "haystack": "leads.wrongperson instantly.webhooks.leads.wrongperson a lead moved to wrong person. webhooks need the hypergrowth plan or higher; on growth, poll emails.list with email_type received instead"
     },
     {
       "pluginId": "intercom",
