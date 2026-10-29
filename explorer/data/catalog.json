@@ -65098,7 +65098,7 @@
       "pluginId": "instantly",
       "kind": "api",
       "shortPath": "webhooks.create",
-      "haystack": "webhooks.create instantly.api.webhooks.create subscribe a url to an event (reply_received, email_bounced, lead_interested...) or all_events, for one campaign or all. attaches the plugin's webhook secret so corsair can verify deliveries. webhooks need the hypergrowth plan or higher; on growth, poll emails.list with email_type received instead write"
+      "haystack": "webhooks.create instantly.api.webhooks.create subscribe a url to an event (reply_received, email_bounced, lead_interested...) or all_events, for one campaign or all. attaches the plugin's webhook secret so corsair can verify deliveries. webhooks need instantly's hypergrowth plan or higher write"
     },
     {
       "pluginId": "instantly",
@@ -65254,115 +65254,115 @@
       "pluginId": "instantly",
       "kind": "webhook",
       "shortPath": "accounts.error",
-      "haystack": "accounts.error instantly.webhooks.accounts.error a sending account hit a connection or sending error. webhooks need the hypergrowth plan or higher; on growth, poll emails.list with email_type received instead"
+      "haystack": "accounts.error instantly.webhooks.accounts.error a sending account hit a connection or sending error"
     },
     {
       "pluginId": "instantly",
       "kind": "webhook",
       "shortPath": "campaigns.completed",
-      "haystack": "campaigns.completed instantly.webhooks.campaigns.completed a campaign finished every lead. webhooks need the hypergrowth plan or higher; on growth, poll emails.list with email_type received instead"
+      "haystack": "campaigns.completed instantly.webhooks.campaigns.completed a campaign finished every lead"
     },
     {
       "pluginId": "instantly",
       "kind": "webhook",
       "shortPath": "emails.autoReplyReceived",
-      "haystack": "emails.autoreplyreceived instantly.webhooks.emails.autoreplyreceived an auto-reply (such as out of office) arrived. only all_events webhooks get it: instantly has no auto_reply_received subscription. webhooks need the hypergrowth plan or higher; on growth, poll emails.list with email_type received instead"
+      "haystack": "emails.autoreplyreceived instantly.webhooks.emails.autoreplyreceived an auto-reply (such as out of office) arrived. only all_events webhooks get it: instantly has no auto_reply_received subscription"
     },
     {
       "pluginId": "instantly",
       "kind": "webhook",
       "shortPath": "emails.bounced",
-      "haystack": "emails.bounced instantly.webhooks.emails.bounced an email bounced. webhooks need the hypergrowth plan or higher; on growth, poll emails.list with email_type received instead"
+      "haystack": "emails.bounced instantly.webhooks.emails.bounced an email bounced"
     },
     {
       "pluginId": "instantly",
       "kind": "webhook",
       "shortPath": "emails.linkClicked",
-      "haystack": "emails.linkclicked instantly.webhooks.emails.linkclicked a lead clicked a tracked link. webhooks need the hypergrowth plan or higher; on growth, poll emails.list with email_type received instead"
+      "haystack": "emails.linkclicked instantly.webhooks.emails.linkclicked a lead clicked a tracked link"
     },
     {
       "pluginId": "instantly",
       "kind": "webhook",
       "shortPath": "emails.opened",
-      "haystack": "emails.opened instantly.webhooks.emails.opened a lead opened an email. webhooks need the hypergrowth plan or higher; on growth, poll emails.list with email_type received instead"
+      "haystack": "emails.opened instantly.webhooks.emails.opened a lead opened an email"
     },
     {
       "pluginId": "instantly",
       "kind": "webhook",
       "shortPath": "emails.replyReceived",
-      "haystack": "emails.replyreceived instantly.webhooks.emails.replyreceived a lead replied; carries reply_text, reply_html and email_id (pass it to emails.reply as reply_to_uuid). webhooks need the hypergrowth plan or higher; on growth, poll emails.list with email_type received instead"
+      "haystack": "emails.replyreceived instantly.webhooks.emails.replyreceived a lead replied; carries reply_text, reply_html and email_id (pass it to emails.reply as reply_to_uuid)"
     },
     {
       "pluginId": "instantly",
       "kind": "webhook",
       "shortPath": "emails.sent",
-      "haystack": "emails.sent instantly.webhooks.emails.sent a campaign email was sent. webhooks need the hypergrowth plan or higher; on growth, poll emails.list with email_type received instead"
+      "haystack": "emails.sent instantly.webhooks.emails.sent a campaign email was sent"
     },
     {
       "pluginId": "instantly",
       "kind": "webhook",
       "shortPath": "events.other",
-      "haystack": "events.other instantly.webhooks.events.other an event with no dedicated handler: a custom lead label (event_type is the label's name) or an event type instantly added later. instantly's payload does not say which, so check event_type before acting. webhooks need the hypergrowth plan or higher; on growth, poll emails.list with email_type received instead"
+      "haystack": "events.other instantly.webhooks.events.other an event with no dedicated handler: a custom lead label (event_type is the label's name) or an event type instantly added later. instantly's payload does not say which, so check event_type before acting"
     },
     {
       "pluginId": "instantly",
       "kind": "webhook",
       "shortPath": "leads.closed",
-      "haystack": "leads.closed instantly.webhooks.leads.closed a lead moved to closed. webhooks need the hypergrowth plan or higher; on growth, poll emails.list with email_type received instead"
+      "haystack": "leads.closed instantly.webhooks.leads.closed a lead moved to closed"
     },
     {
       "pluginId": "instantly",
       "kind": "webhook",
       "shortPath": "leads.interested",
-      "haystack": "leads.interested instantly.webhooks.leads.interested a lead was marked interested. webhooks need the hypergrowth plan or higher; on growth, poll emails.list with email_type received instead"
+      "haystack": "leads.interested instantly.webhooks.leads.interested a lead was marked interested"
     },
     {
       "pluginId": "instantly",
       "kind": "webhook",
       "shortPath": "leads.meetingBooked",
-      "haystack": "leads.meetingbooked instantly.webhooks.leads.meetingbooked a lead moved to meeting booked. webhooks need the hypergrowth plan or higher; on growth, poll emails.list with email_type received instead"
+      "haystack": "leads.meetingbooked instantly.webhooks.leads.meetingbooked a lead moved to meeting booked"
     },
     {
       "pluginId": "instantly",
       "kind": "webhook",
       "shortPath": "leads.meetingCompleted",
-      "haystack": "leads.meetingcompleted instantly.webhooks.leads.meetingcompleted a lead moved to meeting completed. webhooks need the hypergrowth plan or higher; on growth, poll emails.list with email_type received instead"
+      "haystack": "leads.meetingcompleted instantly.webhooks.leads.meetingcompleted a lead moved to meeting completed"
     },
     {
       "pluginId": "instantly",
       "kind": "webhook",
       "shortPath": "leads.neutral",
-      "haystack": "leads.neutral instantly.webhooks.leads.neutral a lead was marked neutral. webhooks need the hypergrowth plan or higher; on growth, poll emails.list with email_type received instead"
+      "haystack": "leads.neutral instantly.webhooks.leads.neutral a lead was marked neutral"
     },
     {
       "pluginId": "instantly",
       "kind": "webhook",
       "shortPath": "leads.noShow",
-      "haystack": "leads.noshow instantly.webhooks.leads.noshow a lead moved to no show. webhooks need the hypergrowth plan or higher; on growth, poll emails.list with email_type received instead"
+      "haystack": "leads.noshow instantly.webhooks.leads.noshow a lead moved to no show"
     },
     {
       "pluginId": "instantly",
       "kind": "webhook",
       "shortPath": "leads.notInterested",
-      "haystack": "leads.notinterested instantly.webhooks.leads.notinterested a lead was marked not interested. webhooks need the hypergrowth plan or higher; on growth, poll emails.list with email_type received instead"
+      "haystack": "leads.notinterested instantly.webhooks.leads.notinterested a lead was marked not interested"
     },
     {
       "pluginId": "instantly",
       "kind": "webhook",
       "shortPath": "leads.outOfOffice",
-      "haystack": "leads.outofoffice instantly.webhooks.leads.outofoffice a lead moved to out of office. webhooks need the hypergrowth plan or higher; on growth, poll emails.list with email_type received instead"
+      "haystack": "leads.outofoffice instantly.webhooks.leads.outofoffice a lead moved to out of office"
     },
     {
       "pluginId": "instantly",
       "kind": "webhook",
       "shortPath": "leads.unsubscribed",
-      "haystack": "leads.unsubscribed instantly.webhooks.leads.unsubscribed a lead unsubscribed. webhooks need the hypergrowth plan or higher; on growth, poll emails.list with email_type received instead"
+      "haystack": "leads.unsubscribed instantly.webhooks.leads.unsubscribed a lead unsubscribed"
     },
     {
       "pluginId": "instantly",
       "kind": "webhook",
       "shortPath": "leads.wrongPerson",
-      "haystack": "leads.wrongperson instantly.webhooks.leads.wrongperson a lead moved to wrong person. webhooks need the hypergrowth plan or higher; on growth, poll emails.list with email_type received instead"
+      "haystack": "leads.wrongperson instantly.webhooks.leads.wrongperson a lead moved to wrong person"
     },
     {
       "pluginId": "intercom",

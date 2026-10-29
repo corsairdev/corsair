@@ -7524,7 +7524,7 @@
     {
       "path": "instantly.api.webhooks.create",
       "shortPath": "webhooks.create",
-      "description": "Subscribe a URL to an event (reply_received, email_bounced, lead_interested...) or all_events, for one campaign or all. Attaches the plugin's webhook secret so Corsair can verify deliveries. Webhooks need the Hypergrowth plan or higher; on Growth, poll emails.list with email_type received instead",
+      "description": "Subscribe a URL to an event (reply_received, email_bounced, lead_interested...) or all_events, for one campaign or all. Attaches the plugin's webhook secret so Corsair can verify deliveries. Webhooks need Instantly's Hypergrowth plan or higher",
       "riskLevel": "write",
       "input": {
         "kind": "object",
@@ -8498,7 +8498,7 @@
     {
       "path": "instantly.webhooks.accounts.error",
       "shortPath": "accounts.error",
-      "description": "A sending account hit a connection or sending error. Webhooks need the Hypergrowth plan or higher; on Growth, poll emails.list with email_type received instead",
+      "description": "A sending account hit a connection or sending error",
       "payload": {
         "kind": "object",
         "fields": [
@@ -8612,7 +8612,7 @@
     {
       "path": "instantly.webhooks.campaigns.completed",
       "shortPath": "campaigns.completed",
-      "description": "A campaign finished every lead. Webhooks need the Hypergrowth plan or higher; on Growth, poll emails.list with email_type received instead",
+      "description": "A campaign finished every lead",
       "payload": {
         "kind": "object",
         "fields": [
@@ -8726,7 +8726,7 @@
     {
       "path": "instantly.webhooks.emails.autoReplyReceived",
       "shortPath": "emails.autoReplyReceived",
-      "description": "An auto-reply (such as out of office) arrived. Only all_events webhooks get it: Instantly has no auto_reply_received subscription. Webhooks need the Hypergrowth plan or higher; on Growth, poll emails.list with email_type received instead",
+      "description": "An auto-reply (such as out of office) arrived. Only all_events webhooks get it: Instantly has no auto_reply_received subscription",
       "payload": {
         "kind": "object",
         "fields": [
@@ -8840,7 +8840,7 @@
     {
       "path": "instantly.webhooks.emails.bounced",
       "shortPath": "emails.bounced",
-      "description": "An email bounced. Webhooks need the Hypergrowth plan or higher; on Growth, poll emails.list with email_type received instead",
+      "description": "An email bounced",
       "payload": {
         "kind": "object",
         "fields": [
@@ -8954,7 +8954,7 @@
     {
       "path": "instantly.webhooks.emails.linkClicked",
       "shortPath": "emails.linkClicked",
-      "description": "A lead clicked a tracked link. Webhooks need the Hypergrowth plan or higher; on Growth, poll emails.list with email_type received instead",
+      "description": "A lead clicked a tracked link",
       "payload": {
         "kind": "object",
         "fields": [
@@ -9068,7 +9068,7 @@
     {
       "path": "instantly.webhooks.emails.opened",
       "shortPath": "emails.opened",
-      "description": "A lead opened an email. Webhooks need the Hypergrowth plan or higher; on Growth, poll emails.list with email_type received instead",
+      "description": "A lead opened an email",
       "payload": {
         "kind": "object",
         "fields": [
@@ -9182,7 +9182,7 @@
     {
       "path": "instantly.webhooks.emails.replyReceived",
       "shortPath": "emails.replyReceived",
-      "description": "A lead replied; carries reply_text, reply_html and email_id (pass it to emails.reply as reply_to_uuid). Webhooks need the Hypergrowth plan or higher; on Growth, poll emails.list with email_type received instead",
+      "description": "A lead replied; carries reply_text, reply_html and email_id (pass it to emails.reply as reply_to_uuid)",
       "payload": {
         "kind": "object",
         "fields": [
@@ -9296,7 +9296,7 @@
     {
       "path": "instantly.webhooks.emails.sent",
       "shortPath": "emails.sent",
-      "description": "A campaign email was sent. Webhooks need the Hypergrowth plan or higher; on Growth, poll emails.list with email_type received instead",
+      "description": "A campaign email was sent",
       "payload": {
         "kind": "object",
         "fields": [
@@ -9410,7 +9410,7 @@
     {
       "path": "instantly.webhooks.events.other",
       "shortPath": "events.other",
-      "description": "An event with no dedicated handler: a custom lead label (event_type is the label's name) or an event type Instantly added later. Instantly's payload does not say which, so check event_type before acting. Webhooks need the Hypergrowth plan or higher; on Growth, poll emails.list with email_type received instead",
+      "description": "An event with no dedicated handler: a custom lead label (event_type is the label's name) or an event type Instantly added later. Instantly's payload does not say which, so check event_type before acting",
       "payload": {
         "kind": "object",
         "fields": [
@@ -9524,7 +9524,7 @@
     {
       "path": "instantly.webhooks.leads.closed",
       "shortPath": "leads.closed",
-      "description": "A lead moved to Closed. Webhooks need the Hypergrowth plan or higher; on Growth, poll emails.list with email_type received instead",
+      "description": "A lead moved to Closed",
       "payload": {
         "kind": "object",
         "fields": [
@@ -9638,7 +9638,7 @@
     {
       "path": "instantly.webhooks.leads.interested",
       "shortPath": "leads.interested",
-      "description": "A lead was marked Interested. Webhooks need the Hypergrowth plan or higher; on Growth, poll emails.list with email_type received instead",
+      "description": "A lead was marked Interested",
       "payload": {
         "kind": "object",
         "fields": [
@@ -9752,7 +9752,7 @@
     {
       "path": "instantly.webhooks.leads.meetingBooked",
       "shortPath": "leads.meetingBooked",
-      "description": "A lead moved to Meeting booked. Webhooks need the Hypergrowth plan or higher; on Growth, poll emails.list with email_type received instead",
+      "description": "A lead moved to Meeting booked",
       "payload": {
         "kind": "object",
         "fields": [
@@ -9866,7 +9866,7 @@
     {
       "path": "instantly.webhooks.leads.meetingCompleted",
       "shortPath": "leads.meetingCompleted",
-      "description": "A lead moved to Meeting completed. Webhooks need the Hypergrowth plan or higher; on Growth, poll emails.list with email_type received instead",
+      "description": "A lead moved to Meeting completed",
       "payload": {
         "kind": "object",
         "fields": [
@@ -9980,7 +9980,7 @@
     {
       "path": "instantly.webhooks.leads.neutral",
       "shortPath": "leads.neutral",
-      "description": "A lead was marked Neutral. Webhooks need the Hypergrowth plan or higher; on Growth, poll emails.list with email_type received instead",
+      "description": "A lead was marked Neutral",
       "payload": {
         "kind": "object",
         "fields": [
@@ -10094,7 +10094,7 @@
     {
       "path": "instantly.webhooks.leads.noShow",
       "shortPath": "leads.noShow",
-      "description": "A lead moved to No show. Webhooks need the Hypergrowth plan or higher; on Growth, poll emails.list with email_type received instead",
+      "description": "A lead moved to No show",
       "payload": {
         "kind": "object",
         "fields": [
@@ -10208,7 +10208,7 @@
     {
       "path": "instantly.webhooks.leads.notInterested",
       "shortPath": "leads.notInterested",
-      "description": "A lead was marked Not interested. Webhooks need the Hypergrowth plan or higher; on Growth, poll emails.list with email_type received instead",
+      "description": "A lead was marked Not interested",
       "payload": {
         "kind": "object",
         "fields": [
@@ -10322,7 +10322,7 @@
     {
       "path": "instantly.webhooks.leads.outOfOffice",
       "shortPath": "leads.outOfOffice",
-      "description": "A lead moved to Out of office. Webhooks need the Hypergrowth plan or higher; on Growth, poll emails.list with email_type received instead",
+      "description": "A lead moved to Out of office",
       "payload": {
         "kind": "object",
         "fields": [
@@ -10436,7 +10436,7 @@
     {
       "path": "instantly.webhooks.leads.unsubscribed",
       "shortPath": "leads.unsubscribed",
-      "description": "A lead unsubscribed. Webhooks need the Hypergrowth plan or higher; on Growth, poll emails.list with email_type received instead",
+      "description": "A lead unsubscribed",
       "payload": {
         "kind": "object",
         "fields": [
@@ -10550,7 +10550,7 @@
     {
       "path": "instantly.webhooks.leads.wrongPerson",
       "shortPath": "leads.wrongPerson",
-      "description": "A lead moved to Wrong person. Webhooks need the Hypergrowth plan or higher; on Growth, poll emails.list with email_type received instead",
+      "description": "A lead moved to Wrong person",
       "payload": {
         "kind": "object",
         "fields": [
