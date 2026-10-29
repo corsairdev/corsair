@@ -1,0 +1,165 @@
+---
+title: API
+description: "API reference for Cutt.ly: every `cuttly.api.*` operation with input and output types."
+---
+
+Every `cuttly.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Links
+
+### analytics
+
+`links.analytics`
+
+Retrieve click analytics for a Cutt.ly short link.
+
+**Risk:** `read`
+
+```ts
+await corsair.cuttly.api.links.analytics({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shortUrl` | `string` | Yes | Short link to retrieve analytics for |
+| `dateFrom` | `string` | No | Start date filter YYYY-MM-DD (Team plan) |
+| `dateTo` | `string` | No | End date filter YYYY-MM-DD (Team plan) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `stats` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="stats full type">
+
+```ts
+{
+  status: number,
+  date?: string,
+  clicks?: number,
+  title?: string,
+  fullLink?: string,
+  shortLink?: string,
+  qrCode?: string,
+  facebook?: number,
+  twitter?: number,
+  linkedin?: number,
+  rest?: number,
+  bots?: number | string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### shorten
+
+`links.shorten`
+
+Create a Cutt.ly short URL with an optional custom alias and QR code.
+
+**Risk:** `write`
+
+```ts
+await corsair.cuttly.api.links.shorten({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | Destination URL to shorten |
+| `alias` | `string` | No | Preferred custom alias when not already taken |
+| `useCustomDomain` | `boolean` | No | Use the active branded domain from the account (paid plan) |
+| `publicStats` | `boolean` | No | Make click stats public for this link (Single plan and above) |
+| `noTitle` | `boolean` | No | Skip destination title lookup for a faster response (Team Enterprise) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="url full type">
+
+```ts
+{
+  status: number,
+  date?: string,
+  shortLink?: string,
+  fullLink?: string,
+  title?: string,
+  qrCode?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`links.update`
+
+Update the destination URL and/or custom alias for an existing Cutt.ly short link.
+
+**Risk:** `write`
+
+```ts
+await corsair.cuttly.api.links.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shortUrl` | `string` | Yes | Existing Cutt.ly short link to edit |
+| `url` | `string` | No | New destination URL for the short link |
+| `alias` | `string` | No | New custom alias when not already taken |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="url full type">
+
+```ts
+{
+  status: number,
+  date?: string,
+  shortLink?: string,
+  fullLink?: string,
+  title?: string,
+  qrCode?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

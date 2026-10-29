@@ -1,0 +1,191 @@
+{
+  "id": "removebg",
+  "displayName": "remove.bg",
+  "description": "Background removal API for automatically cutting out subjects from photos and images.",
+  "npmPackageName": "@corsair-dev/removebg",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 3,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "removebg.api.account.get",
+      "shortPath": "account.get",
+      "description": "Get account credit balance and API usage limits",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ attributes: { credits: { total: number, subscription: number, payg: number, enterprise: number }, api: { free_calls: number, sizes: string } } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "removebg.api.improvement.submit",
+      "shortPath": "improvement.submit",
+      "description": "Submit an image to the remove.bg Improvement program for AI training",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "imageUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "imageFileB64",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "errorType",
+            "optional": false,
+            "type": "other | kind | result-type | foreground-edges | foreground-parts-missing | background-not-fully-removed | foreground-inside-cutout | foreground-cut-off"
+          },
+          {
+            "key": "errorDescription",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "removebg.api.removeBackground.remove",
+      "shortPath": "removeBackground.remove",
+      "description": "Remove the background from an image, returning a base64-encoded cutout",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "imageUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "imageFileB64",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "preview | small | regular | medium | hd | full | 4k | 50MP | auto"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "auto | person | product | car | animal | graphic | transportation"
+          },
+          {
+            "key": "typeLevel",
+            "optional": true,
+            "type": "1 | 2 | none | latest"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "auto | png | jpg | webp | zip"
+          },
+          {
+            "key": "roi",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "crop",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "cropMargin",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "scale",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "position",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "channels",
+            "optional": true,
+            "type": "rgba | alpha"
+          },
+          {
+            "key": "shadowType",
+            "optional": true,
+            "type": "auto | car | 3D | drop | none"
+          },
+          {
+            "key": "shadowOpacity",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "semitransparency",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "bgColor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "bgImageUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ result_b64: string, foreground_top?: number, foreground_left?: number, foreground_width?: number, foreground_height?: number }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

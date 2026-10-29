@@ -2,7 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import { makeAuthenticatedInstagramRequest } from '../client';
 import type { InstagramEndpoints } from '../index';
 import type { FacebookPageSchema } from '../schema/database';
-import { GetFacebookPages } from './metaDataEndpoints';
+import { GetFacebookPages } from './meta-data-endpoints';
 import type { InstagramEndpointOutputs } from './types';
 
 export const get: InstagramEndpoints['GetMessage'] = async (ctx, input) => {
@@ -40,7 +40,7 @@ export const get: InstagramEndpoints['GetMessage'] = async (ctx, input) => {
 				message: result.message,
 			});
 		} catch (err) {
-			console.warn('faild to save messages into database', err);
+			console.warn('failed to save messages into database', err);
 		}
 	}
 
@@ -96,6 +96,94 @@ export const send: InstagramEndpoints['SendMessage'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'instagram.messages.send',
+		{ ...input },
+		'completed',
+	);
+
+	return result;
+};
+
+export const markSeen: InstagramEndpoints['MarkSeen'] = async (ctx, input) => {
+	const result = await makeAuthenticatedInstagramRequest<
+		InstagramEndpointOutputs['MarkSeen']
+	>(
+		`/me/messages`,
+		ctx,
+		{
+			method: 'POST',
+			body: {
+				recipient: {
+					id: input.recipient_id,
+				},
+				sender_action: 'mark_seen',
+			},
+		},
+		async (userToken) => {
+			const key = userToken ?? ctx.key;
+			const res: FacebookPageSchema = await GetFacebookPages(
+				key,
+				'access_token',
+				input.page_id,
+			);
+			if (!res.access_token) {
+				throw new Error(`No page access token found for page`);
+			}
+			return res.access_token;
+		},
+	);
+
+	await logEventFromContext(
+		ctx,
+		'instagram.messages.markSeen',
+		{ ...input },
+		'completed',
+	);
+
+	return result;
+};
+
+export const sendImage: InstagramEndpoints['SendImage'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeAuthenticatedInstagramRequest<
+		InstagramEndpointOutputs['SendImage']
+	>(
+		`/me/messages`,
+		ctx,
+		{
+			method: 'POST',
+			body: {
+				recipient: {
+					id: input.recipient_id,
+				},
+				message: {
+					attachment: {
+						type: 'image',
+						payload: {
+							url: input.image_url,
+						},
+					},
+				},
+			},
+		},
+		async (userToken) => {
+			const key = userToken ?? ctx.key;
+			const res: FacebookPageSchema = await GetFacebookPages(
+				key,
+				'access_token',
+				input.page_id,
+			);
+			if (!res.access_token) {
+				throw new Error(`No page access token found for page`);
+			}
+			return res.access_token;
+		},
+	);
+
+	await logEventFromContext(
+		ctx,
+		'instagram.messages.sendImage',
 		{ ...input },
 		'completed',
 	);

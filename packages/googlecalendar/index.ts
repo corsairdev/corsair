@@ -12,8 +12,7 @@ import type {
 	RawWebhookRequest,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
-import { AuthMissingError } from 'corsair/core';
-import { getValidAccessToken } from './client';
+import { AuthMissingError, getOAuthAccessToken } from 'corsair/core';
 import type {
 	GoogleCalendarEndpointInputs,
 	GoogleCalendarEndpointOutputs,
@@ -24,6 +23,7 @@ import {
 	GoogleCalendarEndpointOutputSchemas,
 } from './endpoints/types';
 import { GoogleCalendarSchema } from './schema';
+import { googlecalendarSubscribe } from './subscribe';
 import type {
 	EventCreatedEvent,
 	EventDeletedEvent,
@@ -175,7 +175,7 @@ const googleCalendarEndpointMeta = {
 	},
 	'events.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a calendar event [DESTRUCTIVE]',
+		description: 'Delete a calendar event',
 	},
 	'calendar.getAvailability': {
 		riskLevel: 'read',
@@ -223,7 +223,12 @@ export function googlecalendar<const T extends GoogleCalendarPluginOptions>(
 			providerName: 'Google',
 			authUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
 			tokenUrl: 'https://oauth2.googleapis.com/token',
-			scopes: ['https://www.googleapis.com/auth/calendar'],
+			scopes: [
+				'https://www.googleapis.com/auth/calendar.events',
+				// calendar.getAvailability hits freeBusy.query, which events
+				// scope does not cover. Narrowest scope that does.
+				'https://www.googleapis.com/auth/calendar.freebusy',
+			],
 			authParams: { access_type: 'offline', prompt: 'consent' },
 		},
 		hooks: options.hooks,
@@ -241,62 +246,10 @@ export function googlecalendar<const T extends GoogleCalendarPluginOptions>(
 			}
 
 			if (ctx.authType === 'oauth_2') {
-				const [accessToken, expiresAt, refreshToken] = await Promise.all([
-					ctx.keys.get_access_token(),
-					ctx.keys.get_expires_at(),
-					ctx.keys.get_refresh_token(),
-				]);
-
-				if (!refreshToken) {
-					throw new AuthMissingError('googlecalendar', 'oauth_2');
-				}
-
-				const res = await ctx.keys.get_integration_credentials();
-
-				if (!res.client_id || !res.client_secret) {
-					throw new Error(
-						'[corsair:googlecalendar] No client id or client secret',
-					);
-				}
-
-				try {
-					const result = await getValidAccessToken({
-						accessToken,
-						expiresAt,
-						refreshToken,
-						clientId: res.client_id,
-						clientSecret: res.client_secret,
-					});
-
-					if (result.refreshed) {
-						await Promise.all([
-							ctx.keys.set_access_token(result.accessToken),
-							ctx.keys.set_expires_at(String(result.expiresAt)),
-						]);
-					}
-
-					(ctx as Record<string, unknown>)._refreshAuth = async () => {
-						const freshResult = await getValidAccessToken({
-							accessToken: null,
-							expiresAt: null,
-							refreshToken,
-							clientId: res.client_id!,
-							clientSecret: res.client_secret!,
-							forceRefresh: true,
-						});
-						await ctx.keys.set_access_token(freshResult.accessToken);
-						await ctx.keys.set_expires_at(String(freshResult.expiresAt));
-						return freshResult.accessToken;
-					};
-
-					return result.accessToken;
-				} catch (error) {
-					console.error(
-						'[corsair:googlecalendar] Failed to get valid access token:',
-						error,
-					);
-					throw error;
-				}
+				return getOAuthAccessToken(ctx, {
+					plugin: 'googlecalendar',
+					tokenUrl: 'https://oauth2.googleapis.com/token',
+				});
 			}
 
 			throw new AuthMissingError('googlecalendar', 'oauth_2');
@@ -324,6 +277,7 @@ export function googlecalendar<const T extends GoogleCalendarPluginOptions>(
 			}
 		},
 		pluginTenantWebhookMatcher: matchGoogleCalendarTenantWebhook,
+		subscribe: googlecalendarSubscribe,
 	} satisfies InternalGoogleCalendarPlugin;
 }
 
@@ -357,5 +311,5 @@ export type {
 	GoogleCalendarEndpointOutputSchemas,
 	GoogleCalendarEndpointOutputs,
 } from './endpoints/types';
-
+export { GoogleCalendarSchema } from './schema';
 export type * from './types';

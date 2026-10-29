@@ -1,0 +1,1351 @@
+{
+  "id": "clickmeeting",
+  "displayName": "ClickMeeting",
+  "description": "Video conferencing and webinar platform integration for hosting, attendee management, and session recording.",
+  "npmPackageName": "@corsair-dev/clickmeeting",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 35,
+    "webhooks": 0,
+    "db": 2
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "clickmeeting.api.chats.getChatDetails",
+      "shortPath": "chats.getChatDetails",
+      "description": "Retrieve details of a specific chat session",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "chatId",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "messages",
+            "optional": true,
+            "type": "{ id?: string | number, author?: string, text?: string, created_at?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickmeeting.api.chats.getChats",
+      "shortPath": "chats.getChats",
+      "description": "Retrieve a list of all chat sessions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: string | number, conference_id?: string | number, created_at?: string }[]"
+      }
+    },
+    {
+      "path": "clickmeeting.api.conferences.createConference",
+      "shortPath": "conferences.createConference",
+      "description": "Create a new ClickMeeting conference or webinar",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Conference room name"
+          },
+          {
+            "key": "room_type",
+            "optional": true,
+            "type": "meeting | webinar"
+          },
+          {
+            "key": "permanent_room",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "access_type",
+            "optional": true,
+            "type": "number",
+            "description": "1: open, 2: password, 3: token"
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "string",
+            "description": "Required when access_type is 2 (password-protected)"
+          },
+          {
+            "key": "starts_at",
+            "optional": true,
+            "type": "string",
+            "description": "Scheduled start date/time (YYYY-MM-DD HH:MM:SS)"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "string",
+            "description": "Duration in H:MM format, e.g. 1:20"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lobby_description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "room",
+            "optional": true,
+            "type": "{ id?: string | number, name?: string, room_type?: string, status?: string, room_url?: string, permanent_room?: number | boolean, access_type?: number, starts_at?: string, duration?: number | string, timezone?: string, lobby_description?: string, description?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickmeeting.api.conferences.deleteConference",
+      "shortPath": "conferences.deleteConference",
+      "description": "Delete a specific conference room",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "roomId",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickmeeting.api.conferences.generateAutologinUrl",
+      "shortPath": "conferences.generateAutologinUrl",
+      "description": "Generate an autologin hash for a conference participant",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "roomId",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "nickname",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "listener | presenter | moderator | guest_speaker | host"
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "string",
+            "description": "Required when room is password-protected"
+          },
+          {
+            "key": "token",
+            "optional": true,
+            "type": "string",
+            "description": "Required when room is token-protected"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "autologin_hash",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickmeeting.api.conferences.getConferenceDetails",
+      "shortPath": "conferences.getConferenceDetails",
+      "description": "Retrieve detailed information about a specific conference room",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "roomId",
+            "optional": false,
+            "type": "string | number",
+            "description": "Conference / Room ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "conference",
+            "optional": true,
+            "type": "{ id?: string | number, name?: string, room_type?: string, status?: string, room_url?: string, permanent_room?: number | boolean, access_type?: number, starts_at?: string, duration?: number | string, timezone?: string, lobby_description?: string, description?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickmeeting.api.conferences.getConferenceFiles",
+      "shortPath": "conferences.getConferenceFiles",
+      "description": "Retrieve list of files uploaded to a specific conference room",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "roomId",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: string | number, name?: string, size?: string | number }[]"
+      }
+    },
+    {
+      "path": "clickmeeting.api.conferences.getConferences",
+      "shortPath": "conferences.getConferences",
+      "description": "Retrieve a list of conference rooms filtered by status",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "active | inactive"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: string | number, name?: string, room_type?: string, status?: string, room_url?: string, permanent_room?: number | boolean, access_type?: number, starts_at?: string, duration?: number | string, timezone?: string, lobby_description?: string, description?: string }[]"
+      }
+    },
+    {
+      "path": "clickmeeting.api.conferences.getConferenceSkins",
+      "shortPath": "conferences.getConferenceSkins",
+      "description": "Retrieve list of available conference room skins",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: string | number, name?: string }[]"
+      }
+    },
+    {
+      "path": "clickmeeting.api.conferences.sendInvitation",
+      "shortPath": "conferences.sendInvitation",
+      "description": "Send invitation emails to participants for a conference",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "roomId",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "lang",
+            "optional": false,
+            "type": "string",
+            "description": "Language code for the invitation email (e.g. en, pl)"
+          },
+          {
+            "key": "attendees",
+            "optional": false,
+            "type": "string[]",
+            "description": "List of attendee email addresses"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "listener | presenter"
+          },
+          {
+            "key": "template",
+            "optional": true,
+            "type": "advanced | basic"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "queued",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "failed",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickmeeting.api.conferences.updateConference",
+      "shortPath": "conferences.updateConference",
+      "description": "Update an existing conference room parameters",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "roomId",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "room_type",
+            "optional": true,
+            "type": "meeting | webinar"
+          },
+          {
+            "key": "permanent_room",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "access_type",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "string",
+            "description": "Required when access_type is 2"
+          },
+          {
+            "key": "starts_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "string",
+            "description": "Duration in H:MM format, e.g. 1:20"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lobby_description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "room_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "room_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "permanent_room",
+            "optional": true,
+            "type": "number | boolean"
+          },
+          {
+            "key": "access_type",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "starts_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lobby_description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickmeeting.api.files.deleteFile",
+      "shortPath": "files.deleteFile",
+      "description": "Delete a file from the ClickMeeting file library",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileId",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickmeeting.api.files.downloadFile",
+      "shortPath": "files.downloadFile",
+      "description": "Download file content from the ClickMeeting file library",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileId",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "download_url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickmeeting.api.files.getFileDetails",
+      "shortPath": "files.getFileDetails",
+      "description": "Retrieve detailed information about a specific file",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileId",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "download_url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickmeeting.api.files.getFileLibrary",
+      "shortPath": "files.getFileLibrary",
+      "description": "Retrieve a list of files from ClickMeeting file library",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: string | number, name?: string, size?: string | number, created_at?: string, download_url?: string }[]"
+      }
+    },
+    {
+      "path": "clickmeeting.api.files.uploadFile",
+      "shortPath": "files.uploadFile",
+      "description": "Upload a file to the ClickMeeting file library",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "File name"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string",
+            "description": "File content (base64-encoded string, or raw string when encoding is \"raw\")"
+          },
+          {
+            "key": "encoding",
+            "optional": true,
+            "type": "base64 | raw",
+            "description": "Content encoding discriminator (\"base64\" or \"raw\", defaults to \"base64\")"
+          },
+          {
+            "key": "conference_id",
+            "optional": true,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickmeeting.api.recordings.deleteRecording",
+      "shortPath": "recordings.deleteRecording",
+      "description": "Delete a specific recording from a conference room",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "roomId",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "recordingId",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickmeeting.api.recordings.deleteRecordings",
+      "shortPath": "recordings.deleteRecordings",
+      "description": "Delete all recordings for a conference room",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "roomId",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "deleted_count",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickmeeting.api.recordings.getSessionRecordings",
+      "shortPath": "recordings.getSessionRecordings",
+      "description": "Retrieve all recordings for a conference room",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "roomId",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: string | number, name?: string, duration?: number, recording_url?: string, created_at?: string }[]"
+      }
+    },
+    {
+      "path": "clickmeeting.api.registrations.createContact",
+      "shortPath": "registrations.createContact",
+      "description": "Create a new contact in your ClickMeeting account",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickmeeting.api.registrations.getRegistrations",
+      "shortPath": "registrations.getRegistrations",
+      "description": "Retrieve registrations for a conference room by status",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "roomId",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "all | waiting | confirmed | rejected"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: string | number, first_name?: string, last_name?: string, email?: string, status?: string, registered_at?: string }[]"
+      }
+    },
+    {
+      "path": "clickmeeting.api.registrations.listRegistrationsByStatus",
+      "shortPath": "registrations.listRegistrationsByStatus",
+      "description": "Retrieve registered participants filtered by status",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "roomId",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "all | waiting | confirmed | rejected"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: string | number, first_name?: string, last_name?: string, email?: string, status?: string, registered_at?: string }[]"
+      }
+    },
+    {
+      "path": "clickmeeting.api.registrations.registerParticipant",
+      "shortPath": "registrations.registerParticipant",
+      "description": "Register a participant for a conference room",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "roomId",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "registration",
+            "optional": false,
+            "type": "{}",
+            "description": "Participant registration fields (e.g. first_name, last_name, email)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "registration_hash",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickmeeting.api.sessions.generateSessionPdfReport",
+      "shortPath": "sessions.generateSessionPdfReport",
+      "description": "Generate a PDF report containing analytics for a session",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "roomId",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "sessionId",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "lang",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "report_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickmeeting.api.sessions.getConferenceSessions",
+      "shortPath": "sessions.getConferenceSessions",
+      "description": "Retrieve past sessions for a conference room",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "roomId",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: string | number, starts_at?: string, duration?: number | string, attendees_count?: number }[]"
+      }
+    },
+    {
+      "path": "clickmeeting.api.sessions.getSessionAttendees",
+      "shortPath": "sessions.getSessionAttendees",
+      "description": "Retrieve list of attendees who participated in a session",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "roomId",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "sessionId",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: string | number, nickname?: string, email?: string, role?: string, duration?: number }[]"
+      }
+    },
+    {
+      "path": "clickmeeting.api.sessions.getSessionDetails",
+      "shortPath": "sessions.getSessionDetails",
+      "description": "Retrieve detailed statistics for a specific past conference session",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "roomId",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "sessionId",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "starts_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "attendees_count",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickmeeting.api.sessions.getSessionRegistrations",
+      "shortPath": "sessions.getSessionRegistrations",
+      "description": "Retrieve registrations for a specific session",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "roomId",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "sessionId",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: string | number, first_name?: string, last_name?: string, email?: string, status?: string, registered_at?: string }[]"
+      }
+    },
+    {
+      "path": "clickmeeting.api.tokens.createAccessTokens",
+      "shortPath": "tokens.createAccessTokens",
+      "description": "Generate access tokens for conference participants",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "roomId",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "how_many",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "access_tokens",
+            "optional": true,
+            "type": "{ token?: string, email?: string, sent_to_email?: string | null, first_use_date?: string | null, status?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickmeeting.api.tokens.getTokenByEmail",
+      "shortPath": "tokens.getTokenByEmail",
+      "description": "Retrieve access tokens assigned to a specific email address",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "roomId",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "access_tokens",
+            "optional": true,
+            "type": "{ token?: string, email?: string, sent_to_email?: string | null, first_use_date?: string | null, status?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickmeeting.api.tokens.listAccessTokens",
+      "shortPath": "tokens.listAccessTokens",
+      "description": "Retrieve all generated access tokens for a conference",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "roomId",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "access_tokens",
+            "optional": true,
+            "type": "{ token?: string, email?: string, sent_to_email?: string | null, first_use_date?: string | null, status?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickmeeting.api.utility.getPhoneGateways",
+      "shortPath": "utility.getPhoneGateways",
+      "description": "Retrieve available phone dial-in numbers for ClickMeeting webinars",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ country?: string, country_name?: string, phone?: string }[]"
+      }
+    },
+    {
+      "path": "clickmeeting.api.utility.getPing",
+      "shortPath": "utility.getPing",
+      "description": "Check ClickMeeting API service status",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ping",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickmeeting.api.utility.getTimeZoneList",
+      "shortPath": "utility.getTimeZoneList",
+      "description": "Retrieve all available time zones supported by ClickMeeting",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string[] | {}"
+      }
+    },
+    {
+      "path": "clickmeeting.api.utility.getTimeZoneListByCountry",
+      "shortPath": "utility.getTimeZoneListByCountry",
+      "description": "Retrieve available time zones for a specific country",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "country",
+            "optional": false,
+            "type": "string",
+            "description": "ISO 3166-1 alpha-2 country code (e.g. US)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string[] | {}"
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "clickmeeting.db.conferences.search",
+      "entityName": "conferences",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "room_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "clickmeeting.db.contacts.search",
+      "entityName": "contacts",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "first_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "last_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "phone",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

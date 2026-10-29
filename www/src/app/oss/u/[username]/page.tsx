@@ -2,6 +2,7 @@ import { TRPCError } from '@trpc/server';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { socialMetadata } from '@/lib/social-metadata';
 import { getCachedContributorProfile } from '@/server/oss-public-cache';
 import { ContributorProfile } from '../../contributor-profile';
 
@@ -16,9 +17,14 @@ export async function generateMetadata({
 
 	try {
 		const profile = await getCachedContributorProfile(username.toLowerCase());
+		const title = `${profile.name} (@${profile.githubUsername})`;
+		const description = `OSS contributor profile for ${profile.name}. ${profile.integrations.length} integration${profile.integrations.length === 1 ? '' : 's'} claimed.`;
+		const path = `/oss/u/${username.toLowerCase()}`;
 		return {
-			title: `${profile.name} (@${profile.githubUsername})`,
-			description: `OSS contributor profile for ${profile.name}. ${profile.integrations.length} integration${profile.integrations.length === 1 ? '' : 's'} claimed.`,
+			title,
+			description,
+			alternates: { canonical: path },
+			...socialMetadata({ title: `${title} | Corsair OSS`, description, path }),
 		};
 	} catch {
 		return { title: 'Contributor not found' };

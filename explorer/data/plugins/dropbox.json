@@ -1,0 +1,695 @@
+{
+  "id": "dropbox",
+  "displayName": "Dropbox",
+  "description": "Cloud file storage and sync service for sharing documents and collaborating on files.",
+  "npmPackageName": "@corsair-dev/dropbox",
+  "authTypes": ["oauth_2"],
+  "defaultAuthType": "oauth_2",
+  "counts": {
+    "api": 12,
+    "webhooks": 1,
+    "db": 2
+  },
+  "auth": [
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature",
+        "account_id",
+        "user_id"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "dropbox.api.files.copy",
+      "shortPath": "files.copy",
+      "description": "Copy a file to a new location",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "from_path",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to_path",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "allow_shared_folder",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "autorename",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "allow_ownership_transfer",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "metadata",
+            "optional": false,
+            "type": "{ .tag: file, id: string, name: string, path_lower?: string, path_display?: string, size?: number, is_downloadable?: boolean, server_modified?: string, client_modified?: string, rev?: string, content_hash?: string } | { .tag: folder, id: string, name: string, path_lower?: string, path_display?: string } | { .tag: deleted, name: string, path_lower?: string, path_display?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dropbox.api.files.delete",
+      "shortPath": "files.delete",
+      "description": "Delete a file",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "metadata",
+            "optional": false,
+            "type": "{ .tag: file, id: string, name: string, path_lower?: string, path_display?: string, size?: number, is_downloadable?: boolean, server_modified?: string, client_modified?: string, rev?: string, content_hash?: string } | { .tag: folder, id: string, name: string, path_lower?: string, path_display?: string } | { .tag: deleted, name: string, path_lower?: string, path_display?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dropbox.api.files.download",
+      "shortPath": "files.download",
+      "description": "Download a file",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "path_lower",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dropbox.api.files.move",
+      "shortPath": "files.move",
+      "description": "Move a file to a new location",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "from_path",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to_path",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "allow_shared_folder",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "autorename",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "allow_ownership_transfer",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "metadata",
+            "optional": false,
+            "type": "{ .tag: file, id: string, name: string, path_lower?: string, path_display?: string, size?: number, is_downloadable?: boolean, server_modified?: string, client_modified?: string, rev?: string, content_hash?: string } | { .tag: folder, id: string, name: string, path_lower?: string, path_display?: string } | { .tag: deleted, name: string, path_lower?: string, path_display?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dropbox.api.files.upload",
+      "shortPath": "files.upload",
+      "description": "Upload a file",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "mode",
+            "optional": true,
+            "type": "add | overwrite | update"
+          },
+          {
+            "key": "autorename",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "mute",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "strict_conflict",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "path_lower",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "path_display",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "is_downloadable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "server_modified",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "client_modified",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "rev",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content_hash",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dropbox.api.folders.copy",
+      "shortPath": "folders.copy",
+      "description": "Copy a folder to a new location",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "from_path",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to_path",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "allow_shared_folder",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "autorename",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "allow_ownership_transfer",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "metadata",
+            "optional": false,
+            "type": "{ .tag: file, id: string, name: string, path_lower?: string, path_display?: string, size?: number, is_downloadable?: boolean, server_modified?: string, client_modified?: string, rev?: string, content_hash?: string } | { .tag: folder, id: string, name: string, path_lower?: string, path_display?: string } | { .tag: deleted, name: string, path_lower?: string, path_display?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dropbox.api.folders.create",
+      "shortPath": "folders.create",
+      "description": "Create a new folder",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "autorename",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "metadata",
+            "optional": false,
+            "type": "{ .tag: folder, id: string, name: string, path_lower?: string, path_display?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dropbox.api.folders.delete",
+      "shortPath": "folders.delete",
+      "description": "Delete a folder and all its contents",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "metadata",
+            "optional": false,
+            "type": "{ .tag: file, id: string, name: string, path_lower?: string, path_display?: string, size?: number, is_downloadable?: boolean, server_modified?: string, client_modified?: string, rev?: string, content_hash?: string } | { .tag: folder, id: string, name: string, path_lower?: string, path_display?: string } | { .tag: deleted, name: string, path_lower?: string, path_display?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dropbox.api.folders.list",
+      "shortPath": "folders.list",
+      "description": "List files and folders within a folder",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recursive",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_deleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_mounted_folders",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entries",
+            "optional": false,
+            "type": "({ .tag: file, id: string, name: string, path_lower?: string, path_display?: string, size?: number, is_downloadable?: boolean, server_modified?: string, client_modified?: string, rev?: string, content_hash?: string } | { .tag: folder, id: string, name: string, path_lower?: string, path_display?: string } | { .tag: deleted, name: string, path_lower?: string, path_display?: string })[]"
+          },
+          {
+            "key": "cursor",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "has_more",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dropbox.api.folders.listContinue",
+      "shortPath": "folders.listContinue",
+      "description": "Continue listing from a cursor returned by folders.list",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entries",
+            "optional": false,
+            "type": "({ .tag: file, id: string, name: string, path_lower?: string, path_display?: string, size?: number, is_downloadable?: boolean, server_modified?: string, client_modified?: string, rev?: string, content_hash?: string } | { .tag: folder, id: string, name: string, path_lower?: string, path_display?: string } | { .tag: deleted, name: string, path_lower?: string, path_display?: string })[]"
+          },
+          {
+            "key": "cursor",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "has_more",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dropbox.api.folders.move",
+      "shortPath": "folders.move",
+      "description": "Move a folder to a new location",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "from_path",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to_path",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "allow_shared_folder",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "autorename",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "allow_ownership_transfer",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "metadata",
+            "optional": false,
+            "type": "{ .tag: file, id: string, name: string, path_lower?: string, path_display?: string, size?: number, is_downloadable?: boolean, server_modified?: string, client_modified?: string, rev?: string, content_hash?: string } | { .tag: folder, id: string, name: string, path_lower?: string, path_display?: string } | { .tag: deleted, name: string, path_lower?: string, path_display?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dropbox.api.search.query",
+      "shortPath": "search.query",
+      "description": "Search for files and folders by name or content",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "path",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "max_results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filename_only",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "matches",
+            "optional": false,
+            "type": "{ metadata?: { metadata: { .tag: file, id: string, name: string, path_lower?: string, path_display?: string, size?: number, is_downloadable?: boolean, server_modified?: string, client_modified?: string, rev?: string, content_hash?: string } | { .tag: folder, id: string, name: string, path_lower?: string, path_display?: string } | { .tag: deleted, name: string, path_lower?: string, path_display?: string } }, match_type?: {} }[]"
+          },
+          {
+            "key": "has_more",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "dropbox.webhooks.filesystem.changed",
+      "shortPath": "filesystem.changed",
+      "description": "A file or folder was added, modified, deleted, or a share link was created",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "delta",
+            "optional": true,
+            "type": "{ users: number[] }"
+          },
+          {
+            "key": "list_folder",
+            "optional": true,
+            "type": "{ accounts: string[] }"
+          }
+        ]
+      },
+      "responseType": "{ delta?: { users: number[] }, list_folder?: { accounts: string[] } }",
+      "usageExample": "dropbox({\n    webhookHooks: {\n        filesystem: {\n            changed: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": [
+    {
+      "path": "dropbox.db.files.search",
+      "entityName": "files",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "path_lower",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "path_display",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "size",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "is_downloadable",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "server_modified",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "client_modified",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "content_hash",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "rev",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "dropbox.db.folders.search",
+      "entityName": "folders",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "path_lower",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "path_display",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

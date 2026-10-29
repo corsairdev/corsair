@@ -1,4 +1,4 @@
-import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core';
+import { index, integer, sqliteTable, text } from 'drizzle-orm/sqlite-core';
 
 export const corsair_integrations = sqliteTable('corsair_integrations', {
 	id: text('id')
@@ -50,7 +50,33 @@ export const corsair_entities = sqliteTable('corsair_entities', {
 	data: text('data', { mode: 'json' }).notNull(),
 });
 
-export const corsair_events = sqliteTable('corsair_events', {
+export const corsair_events = sqliteTable(
+	'corsair_events',
+	{
+		id: text('id')
+			.primaryKey()
+			.$defaultFn(() => crypto.randomUUID()),
+		created_at: integer('created_at', { mode: 'timestamp' })
+			.notNull()
+			.$defaultFn(() => new Date()),
+		updated_at: integer('updated_at', { mode: 'timestamp' })
+			.notNull()
+			.$defaultFn(() => new Date()),
+		account_id: text('account_id').notNull(),
+		event_type: text('event_type').notNull(),
+		payload: text('payload', { mode: 'json' }).notNull(),
+		status: text('status'),
+	},
+	(table) => [
+		index('corsair_events_account_type_created_idx').on(
+			table.account_id,
+			table.event_type,
+			table.created_at,
+		),
+	],
+);
+
+export const corsair_permissions = sqliteTable('corsair_permissions', {
 	id: text('id')
 		.primaryKey()
 		.$defaultFn(() => crypto.randomUUID()),
@@ -60,8 +86,12 @@ export const corsair_events = sqliteTable('corsair_events', {
 	updated_at: integer('updated_at', { mode: 'timestamp' })
 		.notNull()
 		.$defaultFn(() => new Date()),
-	account_id: text('account_id').notNull(),
-	event_type: text('event_type').notNull(),
-	payload: text('payload', { mode: 'json' }).notNull(),
-	status: text('status'),
+	token: text('token').notNull(),
+	args: text('args').notNull(),
+	plugin: text('plugin').notNull(),
+	endpoint: text('endpoint').notNull(),
+	tenant_id: text('tenant_id').notNull().default('default'),
+	status: text('status').notNull().default('pending'),
+	expires_at: text('expires_at').notNull(),
+	error: text('error'),
 });

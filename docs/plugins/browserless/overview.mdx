@@ -1,0 +1,131 @@
+---
+title: Overview
+description: "Headless browser API for running Puppeteer and Playwright automation in the cloud."
+---
+
+Use **Browserless** through Corsair: one client, typed API calls, local DB sync.
+
+**What you get:**
+
+- 7 typed API operations
+- 7 synced entities (`cookies`, `files`, `html`, `scrapeGroups`, `scrapeMatches`, `scrapeResults`, and 1 more) for fast `.search()` / `.list()`
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/browserless
+```
+```bash yarn
+yarn add corsair @corsair-dev/browserless
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/browserless
+```
+```bash bun
+bun add corsair @corsair-dev/browserless
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { browserless } from '@corsair-dev/browserless';
+
+export const corsair = createCorsair({
+	plugins: [
+		browserless(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+browserless()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'browserless',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`content.get`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.browserless.api.content.get({});
+```
+
+
+**`download.create`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.browserless.api.download.create({});
+```
+
+
+See the full list on the [API](/plugins/browserless/api) page.
+
+## Query synced data
+
+Synced entities support `tenant.browserless.db.<entity>.search()` and `.list()`: `cookies`, `files`, `html`, `scrapeGroups`, `scrapeMatches`, `scrapeResults`, `unblockResults`.
+
+See [Database](/plugins/browserless/database) for filters and operators.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/browserless/api">
+    Every `browserless.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/browserless/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

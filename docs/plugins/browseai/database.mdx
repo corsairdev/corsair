@@ -1,0 +1,190 @@
+---
+title: Database
+description: "Browse AI local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Browse AI plugin syncs data locally. Use `corsair.browseai.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Bulk Run
+
+Path: `browseai.db.bulkRun.search`
+
+```ts
+const rows = await corsair.browseai.db.bulkRun.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `tasksCount` | `number` | equals, gt, gte, lt, lte, in |
+| `successfulTasks` | `number` | equals, gt, gte, lt, lte, in |
+| `failedTasks` | `number` | equals, gt, gte, lt, lte, in |
+| `robotId` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Monitor
+
+Path: `browseai.db.monitor.search`
+
+```ts
+const rows = await corsair.browseai.db.monitor.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `pausedReason` | `string` | equals, contains, startsWith, endsWith, in |
+| `schedule` | `string` | equals, contains, startsWith, endsWith, in |
+| `notifyOnCapturedScreenshotChange` | `boolean` | equals |
+| `notifyOnCapturedTextChange` | `boolean` | equals |
+| `capturedScreenshotNotificationThreshold` | `number` | equals, gt, gte, lt, lte, in |
+| `createdAt` | `number` | equals, gt, gte, lt, lte, in |
+| `pausedAt` | `number` | equals, gt, gte, lt, lte, in |
+| `updatedAt` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Robot
+
+Path: `browseai.db.robot.search`
+
+```ts
+const rows = await corsair.browseai.db.robot.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Robot Task
+
+Path: `browseai.db.robotTask.search`
+
+```ts
+const rows = await corsair.browseai.db.robotTask.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `robotId` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `runByUserId` | `string` | equals, contains, startsWith, endsWith, in |
+| `robotBulkRunId` | `string` | equals, contains, startsWith, endsWith, in |
+| `runByTaskMonitorId` | `string` | equals, contains, startsWith, endsWith, in |
+| `runByAPI` | `boolean` | equals |
+| `createdAt` | `number` | equals, gt, gte, lt, lte, in |
+| `startedAt` | `number` | equals, gt, gte, lt, lte, in |
+| `finishedAt` | `number` | equals, gt, gte, lt, lte, in |
+| `userFriendlyError` | `string` | equals, contains, startsWith, endsWith, in |
+| `triedRecordingVideo` | `boolean` | equals |
+| `videoUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `videoRemovedAt` | `number` | equals, gt, gte, lt, lte, in |
+| `retriedOriginalTaskId` | `string` | equals, contains, startsWith, endsWith, in |
+| `retriedTaskId` | `string` | equals, contains, startsWith, endsWith, in |
+| `retriedByTaskId` | `string` | equals, contains, startsWith, endsWith, in |
+| `capturedDataTemporaryUrl` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## System Status
+
+Path: `browseai.db.systemStatus.search`
+
+```ts
+const rows = await corsair.browseai.db.systemStatus.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `statusCode` | `number` | equals, gt, gte, lt, lte, in |
+| `messageCode` | `string` | equals, contains, startsWith, endsWith, in |
+| `tasksQueueStatus` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Webhook
+
+Path: `browseai.db.webhook.search`
+
+```ts
+const rows = await corsair.browseai.db.webhook.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `url` | `string` | equals, contains, startsWith, endsWith, in |
+| `webhookEvent` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

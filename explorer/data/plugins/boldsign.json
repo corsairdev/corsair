@@ -1,0 +1,986 @@
+{
+  "id": "boldsign",
+  "displayName": "Boldsign",
+  "description": "Boldsign plugin for Corsair",
+  "npmPackageName": "@corsair-dev/boldsign",
+  "authTypes": ["oauth_2"],
+  "defaultAuthType": "oauth_2",
+  "counts": {
+    "api": 14,
+    "webhooks": 0,
+    "db": 3
+  },
+  "auth": [
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "boldsign.api.brands.get",
+      "shortPath": "brands.get",
+      "description": "Get details of one brand by brandId.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "brandId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "brandId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "brandName",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "boldsign.api.brands.list",
+      "shortPath": "brands.list",
+      "description": "List all brands available to the account.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ brandId: string, brandName?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "boldsign.api.customFields.create",
+      "shortPath": "customFields.create",
+      "description": "Create a reusable custom field under a BoldSign brand.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fieldName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "formField",
+            "optional": false,
+            "type": "{ id?: string, name?: string, fieldType?: string }"
+          },
+          {
+            "key": "fieldDescription",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fieldOrder",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "brandId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sharedField",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customFieldId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "boldsign.api.customFields.edit",
+      "shortPath": "customFields.edit",
+      "description": "Update a brand custom field by customFieldId.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fieldName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "formField",
+            "optional": false,
+            "type": "{ id?: string, name?: string, fieldType?: string }"
+          },
+          {
+            "key": "fieldDescription",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fieldOrder",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "brandId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sharedField",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "customFieldId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customFieldId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "boldsign.api.documents.createEmbeddedRequestLink",
+      "shortPath": "documents.createEmbeddedRequestLink",
+      "description": "Create an embedded document request URL for draft/send flows.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "signers",
+            "optional": true,
+            "type": "{ name?: string, emailAddress?: string, signerType?: string, formFields?: { id?: string, name?: string, fieldType?: string }[] }[]"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "(string | { base64: string, fileName: string })[]"
+          },
+          {
+            "key": "fileUrls",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "redirectUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "showToolbar",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "showSendButton",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "showSaveButton",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "showPreviewButton",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "showNavigationButtons",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "sendViewOption",
+            "optional": true,
+            "type": "PreparePage | FillingPage"
+          },
+          {
+            "key": "locale",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sendLinkValidTill",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "embeddedSendLinkValidTill",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "enableSigningOrder",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "onBehalfOf",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sendUrl",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "boldsign.api.documents.editBeta",
+      "shortPath": "documents.editBeta",
+      "description": "Edit an existing document request (beta endpoint).",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "signers",
+            "optional": true,
+            "type": "{ name?: string, emailAddress?: string, signerType?: string, formFields?: { id?: string, name?: string, fieldType?: string }[] }[]"
+          },
+          {
+            "key": "cc",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "enableSigningOrder",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "disableEmails",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "disableSMS",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "onBehalfOf",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "boldsign.api.documents.extendExpiry",
+      "shortPath": "documents.extendExpiry",
+      "description": "Extend document expiry window for pending signers.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "newExpiryValue",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "warnPrior",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "onBehalfOf",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "boldsign.api.documents.list",
+      "shortPath": "documents.list",
+      "description": "List documents with filters and pagination.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "sentBy",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "recipients",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "transmitType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dateFilterType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "searchKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "nextCursor",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "brandIds",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageDetails",
+            "optional": false,
+            "type": "{ page?: number, pageSize?: number, totalRecordsCount?: number, totalPages?: number }"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ documentId?: string, status?: string, title?: string, nextCursor?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "boldsign.api.documents.listBehalf",
+      "shortPath": "documents.listBehalf",
+      "description": "List documents sent on behalf of users.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "pageType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "emailAddress",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "signers",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "searchKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "nextCursor",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "brandIds",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageDetails",
+            "optional": false,
+            "type": "{ page?: number, pageSize?: number, totalRecordsCount?: number, totalPages?: number }"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ documentId?: string, status?: string, title?: string, nextCursor?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "boldsign.api.documents.listTeam",
+      "shortPath": "documents.listTeam",
+      "description": "List documents across teams/users with filters.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "searchKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "transmitType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dateFilterType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "nextCursor",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "brandIds",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageDetails",
+            "optional": false,
+            "type": "{ page?: number, pageSize?: number, totalRecordsCount?: number, totalPages?: number }"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ documentId?: string, status?: string, title?: string, nextCursor?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "boldsign.api.documents.removeAuthentication",
+      "shortPath": "documents.removeAuthentication",
+      "description": "Remove signer authentication from a document recipient.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "emailId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "zOrder",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "onBehalfOf",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "boldsign.api.documents.send",
+      "shortPath": "documents.send",
+      "description": "Send a document for signature.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "signers",
+            "optional": true,
+            "type": "{ name?: string, emailAddress?: string, signerType?: string, formFields?: { id?: string, name?: string, fieldType?: string }[] }[]"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "(string | { base64: string, fileName: string })[]"
+          },
+          {
+            "key": "fileUrls",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "enableSigningOrder",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "expiryValue",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "expiryDateType",
+            "optional": true,
+            "type": "Days | DateTime"
+          },
+          {
+            "key": "reminderSettings",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "disableEmails",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "disableSMS",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "brandId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "sendLinkValidTill",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "useTextTags",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "onBehalfOf",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "boldsign.api.helpers.uploadFile",
+      "shortPath": "helpers.uploadFile",
+      "description": "Prepare a file payload for BoldSign multipart/json send APIs using base64 data URI.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "mimeType",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "base64Content",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file",
+            "optional": false,
+            "type": "{ base64: string, fileName: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "boldsign.api.plan.getApiCreditsCount",
+      "shortPath": "plan.getApiCreditsCount",
+      "description": "Get remaining API credits count.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "BalanceCredits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "balanceCredits",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "boldsign.db.brands.search",
+      "entityName": "brands",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "boldsign.db.custom_fields.search",
+      "entityName": "custom_fields",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "brand_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "boldsign.db.documents.search",
+      "entityName": "documents",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "next_cursor",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

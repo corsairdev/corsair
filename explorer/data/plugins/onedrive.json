@@ -1,0 +1,4000 @@
+{
+  "id": "onedrive",
+  "displayName": "OneDrive",
+  "description": "Microsoft cloud storage for files, folders, sharing, and Office document synchronization.",
+  "npmPackageName": "@corsair-dev/onedrive",
+  "authTypes": ["oauth_2"],
+  "defaultAuthType": "oauth_2",
+  "counts": {
+    "api": 61,
+    "webhooks": 2,
+    "db": 2
+  },
+  "auth": [
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature",
+        "subscription_id",
+        "client_state"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "onedrive.api.drive.get",
+      "shortPath": "drive.get",
+      "description": "Get a drive by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "drive_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "select_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "expand_fields",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "driveType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModifiedDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "owner",
+            "optional": true,
+            "type": "{ user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }"
+          },
+          {
+            "key": "quota",
+            "optional": true,
+            "type": "{ deleted?: number, remaining?: number, total?: number, used?: number, state?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedrive.api.drive.getGroup",
+      "shortPath": "drive.getGroup",
+      "description": "Get a group's drive",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "select_fields",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "driveType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModifiedDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "owner",
+            "optional": true,
+            "type": "{ user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }"
+          },
+          {
+            "key": "quota",
+            "optional": true,
+            "type": "{ deleted?: number, remaining?: number, total?: number, used?: number, state?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedrive.api.drive.getQuota",
+      "shortPath": "drive.getQuota",
+      "description": "Get the user's drive and quota information",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "select_fields",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "driveType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModifiedDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "owner",
+            "optional": true,
+            "type": "{ user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }"
+          },
+          {
+            "key": "quota",
+            "optional": true,
+            "type": "{ deleted?: number, remaining?: number, total?: number, used?: number, state?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedrive.api.drive.getRecentItems",
+      "shortPath": "drive.getRecentItems",
+      "description": "Get recently accessed drive items",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": false,
+            "type": "{ id: string, name?: string, size?: number, webUrl?: string, eTag?: string, cTag?: string, createdDateTime?: string, lastModifiedDateTime?: string, createdBy?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }, lastModifiedBy?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }, parentReference?: { driveId?: string, id?: string, path?: string, name?: string, siteId?: string }, file?: { mimeType?: string, hashes?: { quickXorHash?: string, sha1Hash?: string, sha256Hash?: string } }, folder?: { childCount?: number }, deleted?: { state?: string }, @microsoft.graph.downloadUrl?: string, children?: { id: string, name?: string, size?: number, webUrl?: string, eTag?: string, cTag?: string, createdDateTime?: string, lastModifiedDateTime?: string, createdBy?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }, lastModifiedBy?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }, parentReference?: { driveId?: string, id?: string, path?: string, name?: string, siteId?: string }, file?: { mimeType?: string, hashes?: { quickXorHash?: string, sha1Hash?: string, sha256Hash?: string } }, folder?: { childCount?: number }, deleted?: { state?: string }, @microsoft.graph.downloadUrl?: string }[] }[]"
+          },
+          {
+            "key": "@odata.nextLink",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedrive.api.drive.getRoot",
+      "shortPath": "drive.getRoot",
+      "description": "Get the root folder of the user's drive",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "select_fields",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "webUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "eTag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cTag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModifiedDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdBy",
+            "optional": true,
+            "type": "{ user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }"
+          },
+          {
+            "key": "lastModifiedBy",
+            "optional": true,
+            "type": "{ user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }"
+          },
+          {
+            "key": "parentReference",
+            "optional": true,
+            "type": "{ driveId?: string, id?: string, path?: string, name?: string, siteId?: string }"
+          },
+          {
+            "key": "file",
+            "optional": true,
+            "type": "{ mimeType?: string, hashes?: { quickXorHash?: string, sha1Hash?: string, sha256Hash?: string } }"
+          },
+          {
+            "key": "folder",
+            "optional": true,
+            "type": "{ childCount?: number }"
+          },
+          {
+            "key": "deleted",
+            "optional": true,
+            "type": "{ state?: string }"
+          },
+          {
+            "key": "@microsoft.graph.downloadUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "root",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedrive.api.drive.getSharedItems",
+      "shortPath": "drive.getSharedItems",
+      "description": "Get items shared with the user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "allow_external",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": false,
+            "type": "{ id: string, name?: string, size?: number, webUrl?: string, eTag?: string, cTag?: string, createdDateTime?: string, lastModifiedDateTime?: string, createdBy?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }, lastModifiedBy?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }, parentReference?: { driveId?: string, id?: string, path?: string, name?: string, siteId?: string }, file?: { mimeType?: string, hashes?: { quickXorHash?: string, sha1Hash?: string, sha256Hash?: string } }, folder?: { childCount?: number }, deleted?: { state?: string }, @microsoft.graph.downloadUrl?: string, children?: { id: string, name?: string, size?: number, webUrl?: string, eTag?: string, cTag?: string, createdDateTime?: string, lastModifiedDateTime?: string, createdBy?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }, lastModifiedBy?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }, parentReference?: { driveId?: string, id?: string, path?: string, name?: string, siteId?: string }, file?: { mimeType?: string, hashes?: { quickXorHash?: string, sha1Hash?: string, sha256Hash?: string } }, folder?: { childCount?: number }, deleted?: { state?: string }, @microsoft.graph.downloadUrl?: string }[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedrive.api.drive.getSpecialFolder",
+      "shortPath": "drive.getSpecialFolder",
+      "description": "Get a special folder (documents, photos, cameraroll)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "special_folder_name",
+            "optional": false,
+            "type": "documents | photos | cameraroll"
+          },
+          {
+            "key": "select_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "expand_relations",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "webUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "eTag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cTag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModifiedDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdBy",
+            "optional": true,
+            "type": "{ user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }"
+          },
+          {
+            "key": "lastModifiedBy",
+            "optional": true,
+            "type": "{ user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }"
+          },
+          {
+            "key": "parentReference",
+            "optional": true,
+            "type": "{ driveId?: string, id?: string, path?: string, name?: string, siteId?: string }"
+          },
+          {
+            "key": "file",
+            "optional": true,
+            "type": "{ mimeType?: string, hashes?: { quickXorHash?: string, sha1Hash?: string, sha256Hash?: string } }"
+          },
+          {
+            "key": "folder",
+            "optional": true,
+            "type": "{ childCount?: number }"
+          },
+          {
+            "key": "deleted",
+            "optional": true,
+            "type": "{ state?: string }"
+          },
+          {
+            "key": "@microsoft.graph.downloadUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "children",
+            "optional": true,
+            "type": "{ id: string, name?: string, size?: number, webUrl?: string, eTag?: string, cTag?: string, createdDateTime?: string, lastModifiedDateTime?: string, createdBy?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }, lastModifiedBy?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }, parentReference?: { driveId?: string, id?: string, path?: string, name?: string, siteId?: string }, file?: { mimeType?: string, hashes?: { quickXorHash?: string, sha1Hash?: string, sha256Hash?: string } }, folder?: { childCount?: number }, deleted?: { state?: string }, @microsoft.graph.downloadUrl?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedrive.api.drive.list",
+      "shortPath": "drive.list",
+      "description": "List available drives",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "orderby",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "site_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "group_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "skip_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": false,
+            "type": "{ id?: string, name?: string, driveType?: string, webUrl?: string, description?: string, createdDateTime?: string, lastModifiedDateTime?: string, owner?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }, quota?: { deleted?: number, remaining?: number, total?: number, used?: number, state?: string } }[]"
+          },
+          {
+            "key": "@odata.nextLink",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedrive.api.drive.listActivities",
+      "shortPath": "drive.listActivities",
+      "description": "List activities across the drive",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": false,
+            "type": "{ id?: string, action?: { comment?: {}, create?: {}, delete?: {}, edit?: {}, mention?: {}, move?: {}, rename?: {}, restore?: {}, share?: {}, version?: {} }, actor?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }, times?: { recordedTime?: string } }[]"
+          },
+          {
+            "key": "@odata.nextLink",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedrive.api.drive.listBundles",
+      "shortPath": "drive.listBundles",
+      "description": "List bundles in a drive",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "drive_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "orderby",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "skip_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": false,
+            "type": "{ id: string, name?: string, size?: number, webUrl?: string, eTag?: string, cTag?: string, createdDateTime?: string, lastModifiedDateTime?: string, createdBy?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }, lastModifiedBy?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }, parentReference?: { driveId?: string, id?: string, path?: string, name?: string, siteId?: string }, file?: { mimeType?: string, hashes?: { quickXorHash?: string, sha1Hash?: string, sha256Hash?: string } }, folder?: { childCount?: number }, deleted?: { state?: string }, @microsoft.graph.downloadUrl?: string, children?: { id: string, name?: string, size?: number, webUrl?: string, eTag?: string, cTag?: string, createdDateTime?: string, lastModifiedDateTime?: string, createdBy?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }, lastModifiedBy?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }, parentReference?: { driveId?: string, id?: string, path?: string, name?: string, siteId?: string }, file?: { mimeType?: string, hashes?: { quickXorHash?: string, sha1Hash?: string, sha256Hash?: string } }, folder?: { childCount?: number }, deleted?: { state?: string }, @microsoft.graph.downloadUrl?: string }[] }[]"
+          },
+          {
+            "key": "@odata.nextLink",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedrive.api.drive.listChanges",
+      "shortPath": "drive.listChanges",
+      "description": "List changes to drive items using delta",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": false,
+            "type": "{ id: string, name?: string, size?: number, webUrl?: string, eTag?: string, cTag?: string, createdDateTime?: string, lastModifiedDateTime?: string, createdBy?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }, lastModifiedBy?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }, parentReference?: { driveId?: string, id?: string, path?: string, name?: string, siteId?: string }, file?: { mimeType?: string, hashes?: { quickXorHash?: string, sha1Hash?: string, sha256Hash?: string } }, folder?: { childCount?: number }, deleted?: { state?: string }, @microsoft.graph.downloadUrl?: string, children?: { id: string, name?: string, size?: number, webUrl?: string, eTag?: string, cTag?: string, createdDateTime?: string, lastModifiedDateTime?: string, createdBy?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }, lastModifiedBy?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }, parentReference?: { driveId?: string, id?: string, path?: string, name?: string, siteId?: string }, file?: { mimeType?: string, hashes?: { quickXorHash?: string, sha1Hash?: string, sha256Hash?: string } }, folder?: { childCount?: number }, deleted?: { state?: string }, @microsoft.graph.downloadUrl?: string }[] }[]"
+          },
+          {
+            "key": "@odata.nextLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "@odata.deltaLink",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedrive.api.files.createFolder",
+      "shortPath": "files.createFolder",
+      "description": "Create a new folder",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parent_folder",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "webUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedrive.api.files.createTextFile",
+      "shortPath": "files.createTextFile",
+      "description": "Create a new text file with content",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "folder",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "conflict_behavior",
+            "optional": true,
+            "type": "fail | replace | rename"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "file",
+            "optional": true,
+            "type": "{ mimeType?: string }"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedrive.api.files.findFile",
+      "shortPath": "files.findFile",
+      "description": "Find a file by name",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "folder",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "include_metadata",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": false,
+            "type": "{ id: string, name?: string, size?: number, webUrl?: string, eTag?: string, cTag?: string, createdDateTime?: string, lastModifiedDateTime?: string, createdBy?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }, lastModifiedBy?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }, parentReference?: { driveId?: string, id?: string, path?: string, name?: string, siteId?: string }, file?: { mimeType?: string, hashes?: { quickXorHash?: string, sha1Hash?: string, sha256Hash?: string } }, folder?: { childCount?: number }, deleted?: { state?: string }, @microsoft.graph.downloadUrl?: string, children?: { id: string, name?: string, size?: number, webUrl?: string, eTag?: string, cTag?: string, createdDateTime?: string, lastModifiedDateTime?: string, createdBy?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }, lastModifiedBy?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }, parentReference?: { driveId?: string, id?: string, path?: string, name?: string, siteId?: string }, file?: { mimeType?: string, hashes?: { quickXorHash?: string, sha1Hash?: string, sha256Hash?: string } }, folder?: { childCount?: number }, deleted?: { state?: string }, @microsoft.graph.downloadUrl?: string }[] }[]"
+          },
+          {
+            "key": "odata_context",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedrive.api.files.findFolder",
+      "shortPath": "files.findFolder",
+      "description": "Find a folder by name",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "folder",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "orderby",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "skip_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": false,
+            "type": "{ id: string, name?: string, size?: number, webUrl?: string, eTag?: string, cTag?: string, createdDateTime?: string, lastModifiedDateTime?: string, createdBy?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }, lastModifiedBy?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }, parentReference?: { driveId?: string, id?: string, path?: string, name?: string, siteId?: string }, file?: { mimeType?: string, hashes?: { quickXorHash?: string, sha1Hash?: string, sha256Hash?: string } }, folder?: { childCount?: number }, deleted?: { state?: string }, @microsoft.graph.downloadUrl?: string, children?: { id: string, name?: string, size?: number, webUrl?: string, eTag?: string, cTag?: string, createdDateTime?: string, lastModifiedDateTime?: string, createdBy?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }, lastModifiedBy?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }, parentReference?: { driveId?: string, id?: string, path?: string, name?: string, siteId?: string }, file?: { mimeType?: string, hashes?: { quickXorHash?: string, sha1Hash?: string, sha256Hash?: string } }, folder?: { childCount?: number }, deleted?: { state?: string }, @microsoft.graph.downloadUrl?: string }[] }[]"
+          },
+          {
+            "key": "@odata.nextLink",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedrive.api.files.list",
+      "shortPath": "files.list",
+      "description": "List files in the root drive",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": false,
+            "type": "{ id: string, name?: string, size?: number, webUrl?: string, eTag?: string, cTag?: string, createdDateTime?: string, lastModifiedDateTime?: string, createdBy?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }, lastModifiedBy?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }, parentReference?: { driveId?: string, id?: string, path?: string, name?: string, siteId?: string }, file?: { mimeType?: string, hashes?: { quickXorHash?: string, sha1Hash?: string, sha256Hash?: string } }, folder?: { childCount?: number }, deleted?: { state?: string }, @microsoft.graph.downloadUrl?: string, children?: { id: string, name?: string, size?: number, webUrl?: string, eTag?: string, cTag?: string, createdDateTime?: string, lastModifiedDateTime?: string, createdBy?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }, lastModifiedBy?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }, parentReference?: { driveId?: string, id?: string, path?: string, name?: string, siteId?: string }, file?: { mimeType?: string, hashes?: { quickXorHash?: string, sha1Hash?: string, sha256Hash?: string } }, folder?: { childCount?: number }, deleted?: { state?: string }, @microsoft.graph.downloadUrl?: string }[] }[]"
+          },
+          {
+            "key": "@odata.nextLink",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedrive.api.files.upload",
+      "shortPath": "files.upload",
+      "description": "Upload a file to OneDrive",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file",
+            "optional": false,
+            "type": "{ name: string, s3key: string, mimetype: string }"
+          },
+          {
+            "key": "folder",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "site_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "drive_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "defer_commit",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "if_match_etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "file_system_info",
+            "optional": true,
+            "type": "{ createdDateTime?: string, lastAccessedDateTime?: string, lastModifiedDateTime?: string }"
+          },
+          {
+            "key": "conflict_behavior",
+            "optional": true,
+            "type": "rename | fail | replace"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "file",
+            "optional": true,
+            "type": "{ mimeType?: string }"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedrive.api.items.checkin",
+      "shortPath": "items.checkin",
+      "description": "Check in a checked-out drive item",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "drive_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "driveItem_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "comment",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "checkInAs",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedrive.api.items.checkout",
+      "shortPath": "items.checkout",
+      "description": "Check out a drive item for editing",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "drive_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "driveItem_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedrive.api.items.copy",
+      "shortPath": "items.copy",
+      "description": "Copy a drive item",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "site_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "drive_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "group_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "children_only",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "parent_reference",
+            "optional": true,
+            "type": "{ id?: string, driveId?: string }"
+          },
+          {
+            "key": "conflict_behavior",
+            "optional": true,
+            "type": "fail | replace | rename"
+          },
+          {
+            "key": "include_all_version_history",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "item_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "web_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "monitor_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_code",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedrive.api.items.delete",
+      "shortPath": "items.delete",
+      "description": "Delete a drive item",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "if_match",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedrive.api.items.deletePermanently",
+      "shortPath": "items.deletePermanently",
+      "description": "Permanently delete a drive item",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "drive_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedrive.api.items.discardCheckout",
+      "shortPath": "items.discardCheckout",
+      "description": "Discard the checkout of a drive item",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "drive_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "driveItem_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedrive.api.items.download",
+      "shortPath": "items.download",
+      "description": "Download a file",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "file_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "drive_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "pdf | html"
+          },
+          {
+            "key": "if_none_match",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedrive.api.items.downloadAsFormat",
+      "shortPath": "items.downloadAsFormat",
+      "description": "Download a file converted to a different format",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path_and_filename",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "file_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "format",
+            "optional": false,
+            "type": "pdf | html"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedrive.api.items.downloadByPath",
+      "shortPath": "items.downloadByPath",
+      "description": "Download a file by path",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item_path",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "file_name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedrive.api.items.downloadVersion",
+      "shortPath": "items.downloadVersion",
+      "description": "Download a specific version of a file",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "file_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "drive_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedrive.api.items.follow",
+      "shortPath": "items.follow",
+      "description": "Follow a drive item",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "drive_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "driveItem_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "webUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModifiedDateTime",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedrive.api.items.get",
+      "shortPath": "items.get",
+      "description": "Get a drive item by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "drive_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "expand_relations",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "webUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "eTag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cTag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModifiedDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdBy",
+            "optional": true,
+            "type": "{ user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }"
+          },
+          {
+            "key": "lastModifiedBy",
+            "optional": true,
+            "type": "{ user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }"
+          },
+          {
+            "key": "parentReference",
+            "optional": true,
+            "type": "{ driveId?: string, id?: string, path?: string, name?: string, siteId?: string }"
+          },
+          {
+            "key": "file",
+            "optional": true,
+            "type": "{ mimeType?: string, hashes?: { quickXorHash?: string, sha1Hash?: string, sha256Hash?: string } }"
+          },
+          {
+            "key": "folder",
+            "optional": true,
+            "type": "{ childCount?: number }"
+          },
+          {
+            "key": "deleted",
+            "optional": true,
+            "type": "{ state?: string }"
+          },
+          {
+            "key": "@microsoft.graph.downloadUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "children",
+            "optional": true,
+            "type": "{ id: string, name?: string, size?: number, webUrl?: string, eTag?: string, cTag?: string, createdDateTime?: string, lastModifiedDateTime?: string, createdBy?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }, lastModifiedBy?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }, parentReference?: { driveId?: string, id?: string, path?: string, name?: string, siteId?: string }, file?: { mimeType?: string, hashes?: { quickXorHash?: string, sha1Hash?: string, sha256Hash?: string } }, folder?: { childCount?: number }, deleted?: { state?: string }, @microsoft.graph.downloadUrl?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedrive.api.items.getDriveItemBySharingUrl",
+      "shortPath": "items.getDriveItemBySharingUrl",
+      "description": "Get a drive item by sharing URL",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sharing_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "prefer_redeem",
+            "optional": true,
+            "type": "redeemSharingLinkIfNecessary | redeemSharingLink"
+          },
+          {
+            "key": "select_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "expand_children",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "share_id_or_encoded_url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "webUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "eTag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cTag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModifiedDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "file",
+            "optional": true,
+            "type": "{ mimeType?: string }"
+          },
+          {
+            "key": "folder",
+            "optional": true,
+            "type": "{ childCount?: number }"
+          },
+          {
+            "key": "@microsoft.graph.downloadUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parentReference",
+            "optional": true,
+            "type": "{ driveId?: string, id?: string, path?: string }"
+          },
+          {
+            "key": "item_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "drive_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedrive.api.items.getFollowed",
+      "shortPath": "items.getFollowed",
+      "description": "Get a followed drive item",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "drive_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "driveItem_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "file",
+            "optional": true,
+            "type": "{ mimeType?: string }"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "folder",
+            "optional": true,
+            "type": "{ childCount?: number }"
+          },
+          {
+            "key": "webUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "followed",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedrive.api.items.getThumbnails",
+      "shortPath": "items.getThumbnails",
+      "description": "Get thumbnails for a drive item",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "drive_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "site_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "group_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "original_orientation",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": false,
+            "type": "{ id?: string, large?: { height?: number, width?: number, url?: string, content?: string }, medium?: { height?: number, width?: number, url?: string, content?: string }, small?: { height?: number, width?: number, url?: string, content?: string }, source?: { height?: number, width?: number, url?: string, content?: string } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedrive.api.items.getVersions",
+      "shortPath": "items.getVersions",
+      "description": "Get versions of a drive item",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "drive_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "site_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "group_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": false,
+            "type": "{ id: string, lastModifiedDateTime?: string, size?: number, lastModifiedBy?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }, published?: { level?: string, versionId?: string } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedrive.api.items.listActivities",
+      "shortPath": "items.listActivities",
+      "description": "List activities on a drive item",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "drive_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "orderby",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": false,
+            "type": "{ id?: string, action?: { comment?: {}, create?: {}, delete?: {}, edit?: {}, mention?: {}, move?: {}, rename?: {}, restore?: {}, share?: {}, version?: {} }, actor?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }, times?: { recordedTime?: string } }[]"
+          },
+          {
+            "key": "@odata.nextLink",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedrive.api.items.listFolderChildren",
+      "shortPath": "items.listFolderChildren",
+      "description": "List children of a folder",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "orderby",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "site_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "drive_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "next_link",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "skip_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "folder_path",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "use_me_drive",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "folder_item_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": false,
+            "type": "{ id: string, name?: string, size?: number, webUrl?: string, eTag?: string, cTag?: string, createdDateTime?: string, lastModifiedDateTime?: string, createdBy?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }, lastModifiedBy?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }, parentReference?: { driveId?: string, id?: string, path?: string, name?: string, siteId?: string }, file?: { mimeType?: string, hashes?: { quickXorHash?: string, sha1Hash?: string, sha256Hash?: string } }, folder?: { childCount?: number }, deleted?: { state?: string }, @microsoft.graph.downloadUrl?: string, children?: { id: string, name?: string, size?: number, webUrl?: string, eTag?: string, cTag?: string, createdDateTime?: string, lastModifiedDateTime?: string, createdBy?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }, lastModifiedBy?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }, parentReference?: { driveId?: string, id?: string, path?: string, name?: string, siteId?: string }, file?: { mimeType?: string, hashes?: { quickXorHash?: string, sha1Hash?: string, sha256Hash?: string } }, folder?: { childCount?: number }, deleted?: { state?: string }, @microsoft.graph.downloadUrl?: string }[] }[]"
+          },
+          {
+            "key": "@odata.nextLink",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedrive.api.items.move",
+      "shortPath": "items.move",
+      "description": "Move a drive item to a new location",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "itemId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "parentReference",
+            "optional": false,
+            "type": "{ id: string, driveId: string }"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "siteId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "driveId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "groupId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "webUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parentReference",
+            "optional": true,
+            "type": "{ driveId?: string, id?: string, path?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedrive.api.items.preview",
+      "shortPath": "items.preview",
+      "description": "Get a preview URL for a drive item",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "site_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "drive_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "group_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "share_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "zoom",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "getUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "postUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "postParameters",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedrive.api.items.restore",
+      "shortPath": "items.restore",
+      "description": "Restore a deleted drive item",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parent_reference_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "file",
+            "optional": true,
+            "type": "{ mimeType?: string }"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "folder",
+            "optional": true,
+            "type": "{ childCount?: number }"
+          },
+          {
+            "key": "webUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "deleted",
+            "optional": true,
+            "type": "{ state?: string }"
+          },
+          {
+            "key": "createdDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parentReference",
+            "optional": true,
+            "type": "{ driveId?: string, id?: string, path?: string }"
+          },
+          {
+            "key": "lastModifiedDateTime",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedrive.api.items.search",
+      "shortPath": "items.search",
+      "description": "Search for drive items",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "orderby",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "drive_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "skip_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "search_scope",
+            "optional": true,
+            "type": "drive | root"
+          },
+          {
+            "key": "stripped_annotations",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "transformed_path_query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "transformed_kql_operator",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "transformed_parent_query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "transformed_wildcard_query",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": false,
+            "type": "{ id: string, name?: string, size?: number, webUrl?: string, eTag?: string, cTag?: string, createdDateTime?: string, lastModifiedDateTime?: string, createdBy?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }, lastModifiedBy?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }, parentReference?: { driveId?: string, id?: string, path?: string, name?: string, siteId?: string }, file?: { mimeType?: string, hashes?: { quickXorHash?: string, sha1Hash?: string, sha256Hash?: string } }, folder?: { childCount?: number }, deleted?: { state?: string }, @microsoft.graph.downloadUrl?: string, children?: { id: string, name?: string, size?: number, webUrl?: string, eTag?: string, cTag?: string, createdDateTime?: string, lastModifiedDateTime?: string, createdBy?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }, lastModifiedBy?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }, parentReference?: { driveId?: string, id?: string, path?: string, name?: string, siteId?: string }, file?: { mimeType?: string, hashes?: { quickXorHash?: string, sha1Hash?: string, sha256Hash?: string } }, folder?: { childCount?: number }, deleted?: { state?: string }, @microsoft.graph.downloadUrl?: string }[] }[]"
+          },
+          {
+            "key": "@odata.nextLink",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedrive.api.items.unfollow",
+      "shortPath": "items.unfollow",
+      "description": "Unfollow a drive item",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedrive.api.items.updateContent",
+      "shortPath": "items.updateContent",
+      "description": "Update the content of a file",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "site_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "drive_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "group_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "file_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "defer_commit",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "media_source",
+            "optional": true,
+            "type": "{ contentCategory?: string }"
+          },
+          {
+            "key": "if_match_etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "file_system_info",
+            "optional": true,
+            "type": "{ createdDateTime?: string, lastAccessedDateTime?: string, lastModifiedDateTime?: string }"
+          },
+          {
+            "key": "conflict_behavior",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "drive_item_source",
+            "optional": true,
+            "type": "{ externalId?: string, application?: string }"
+          },
+          {
+            "key": "if_none_match_etag",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uploadUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expirationDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "nextExpectedRanges",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedrive.api.items.updateMetadata",
+      "shortPath": "items.updateMetadata",
+      "description": "Update metadata for a drive item",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "drive_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "site_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "group_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ifMatch",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fileSystemInfo",
+            "optional": true,
+            "type": "{ createdDateTime?: string, lastAccessedDateTime?: string, lastModifiedDateTime?: string }"
+          },
+          {
+            "key": "parent_reference_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parent_reference_drive_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "additional_properties",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cTag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "eTag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "file",
+            "optional": true,
+            "type": "{ mimeType?: string }"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "folder",
+            "optional": true,
+            "type": "{ childCount?: number }"
+          },
+          {
+            "key": "webUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModifiedDateTime",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedrive.api.permissions.createForItem",
+      "shortPath": "permissions.createForItem",
+      "description": "Create a permission for a drive item",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "drive_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "driveItem_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "roles",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "grantedToV2",
+            "optional": false,
+            "type": "{ siteGroup?: {}, application?: {} }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "link",
+            "optional": true,
+            "type": "{ type?: string, scope?: string, webUrl?: string, webHtml?: string, preventsDownload?: boolean, application?: { id?: string, displayName?: string } }"
+          },
+          {
+            "key": "roles",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "grantedTo",
+            "optional": true,
+            "type": "{ user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string }, siteUser?: { id?: string, displayName?: string, loginName?: string, email?: string }, siteGroup?: { id?: string, displayName?: string, loginName?: string }, group?: { id?: string, displayName?: string } }"
+          },
+          {
+            "key": "grantedToV2",
+            "optional": true,
+            "type": "{ user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string }, siteUser?: { id?: string, displayName?: string, loginName?: string, email?: string }, siteGroup?: { id?: string, displayName?: string, loginName?: string }, group?: { id?: string, displayName?: string } }"
+          },
+          {
+            "key": "hasPassword",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "expirationDateTime",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedrive.api.permissions.createLink",
+      "shortPath": "permissions.createLink",
+      "description": "Create a sharing link for a drive item",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "view | edit | embed"
+          },
+          {
+            "key": "scope",
+            "optional": true,
+            "type": "anonymous | organization | users"
+          },
+          {
+            "key": "site_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "drive_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "group_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expiration_date_time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "retain_inherited_permissions",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "link",
+            "optional": true,
+            "type": "{ type?: string, scope?: string, webUrl?: string, webHtml?: string, preventsDownload?: boolean, application?: { id?: string, displayName?: string } }"
+          },
+          {
+            "key": "roles",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "shareId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hasPassword",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedrive.api.permissions.deleteFromItem",
+      "shortPath": "permissions.deleteFromItem",
+      "description": "Delete a permission from a drive item",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "perm_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "drive_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "site_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "group_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedrive.api.permissions.deleteSharePermission",
+      "shortPath": "permissions.deleteSharePermission",
+      "description": "Delete a share permission",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "shared_drive_item_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedrive.api.permissions.getForItem",
+      "shortPath": "permissions.getForItem",
+      "description": "Get permissions for a drive item",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "drive_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "site_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "group_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "item_path",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "if_none_match",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": false,
+            "type": "{ id?: string, link?: { type?: string, scope?: string, webUrl?: string, webHtml?: string, preventsDownload?: boolean, application?: { id?: string, displayName?: string } }, roles?: string[], grantedTo?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string }, siteUser?: { id?: string, displayName?: string, loginName?: string, email?: string }, siteGroup?: { id?: string, displayName?: string, loginName?: string }, group?: { id?: string, displayName?: string } }, grantedToV2?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string }, siteUser?: { id?: string, displayName?: string, loginName?: string, email?: string }, siteGroup?: { id?: string, displayName?: string, loginName?: string }, group?: { id?: string, displayName?: string } }, hasPassword?: boolean, expirationDateTime?: string }[]"
+          },
+          {
+            "key": "@odata.nextLink",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedrive.api.permissions.getShare",
+      "shortPath": "permissions.getShare",
+      "description": "Get a shared item by share ID or encoded URL",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "share_id_or_encoded_sharing_url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "prefer_redeem",
+            "optional": true,
+            "type": "redeemSharingLinkIfNecessary | redeemSharingLink"
+          },
+          {
+            "key": "expand_children",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "root",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ id: string, name?: string, size?: number, webUrl?: string, eTag?: string, cTag?: string, createdDateTime?: string, lastModifiedDateTime?: string, createdBy?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }, lastModifiedBy?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }, parentReference?: { driveId?: string, id?: string, path?: string, name?: string, siteId?: string }, file?: { mimeType?: string, hashes?: { quickXorHash?: string, sha1Hash?: string, sha256Hash?: string } }, folder?: { childCount?: number }, deleted?: { state?: string }, @microsoft.graph.downloadUrl?: string, children?: { id: string, name?: string, size?: number, webUrl?: string, eTag?: string, cTag?: string, createdDateTime?: string, lastModifiedDateTime?: string, createdBy?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }, lastModifiedBy?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }, parentReference?: { driveId?: string, id?: string, path?: string, name?: string, siteId?: string }, file?: { mimeType?: string, hashes?: { quickXorHash?: string, sha1Hash?: string, sha256Hash?: string } }, folder?: { childCount?: number }, deleted?: { state?: string }, @microsoft.graph.downloadUrl?: string }[] }[]"
+          },
+          {
+            "key": "owner",
+            "optional": true,
+            "type": "{ user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }"
+          },
+          {
+            "key": "children",
+            "optional": true,
+            "type": "{ id: string, name?: string, size?: number, webUrl?: string, eTag?: string, cTag?: string, createdDateTime?: string, lastModifiedDateTime?: string, createdBy?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }, lastModifiedBy?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }, parentReference?: { driveId?: string, id?: string, path?: string, name?: string, siteId?: string }, file?: { mimeType?: string, hashes?: { quickXorHash?: string, sha1Hash?: string, sha256Hash?: string } }, folder?: { childCount?: number }, deleted?: { state?: string }, @microsoft.graph.downloadUrl?: string, children?: { id: string, name?: string, size?: number, webUrl?: string, eTag?: string, cTag?: string, createdDateTime?: string, lastModifiedDateTime?: string, createdBy?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }, lastModifiedBy?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }, parentReference?: { driveId?: string, id?: string, path?: string, name?: string, siteId?: string }, file?: { mimeType?: string, hashes?: { quickXorHash?: string, sha1Hash?: string, sha256Hash?: string } }, folder?: { childCount?: number }, deleted?: { state?: string }, @microsoft.graph.downloadUrl?: string }[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedrive.api.permissions.grantSharePermission",
+      "shortPath": "permissions.grantSharePermission",
+      "description": "Grant a permission on a shared item",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "encoded_sharing_url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "roles",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "recipients",
+            "optional": false,
+            "type": "{}[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": false,
+            "type": "{ id?: string, link?: { type?: string, scope?: string, webUrl?: string, webHtml?: string, preventsDownload?: boolean, application?: { id?: string, displayName?: string } }, roles?: string[], grantedTo?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string }, siteUser?: { id?: string, displayName?: string, loginName?: string, email?: string }, siteGroup?: { id?: string, displayName?: string, loginName?: string }, group?: { id?: string, displayName?: string } }, grantedToV2?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string }, siteUser?: { id?: string, displayName?: string, loginName?: string, email?: string }, siteGroup?: { id?: string, displayName?: string, loginName?: string }, group?: { id?: string, displayName?: string } }, hasPassword?: boolean, expirationDateTime?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedrive.api.permissions.inviteUser",
+      "shortPath": "permissions.inviteUser",
+      "description": "Invite a user to access a drive item",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "roles",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "recipients",
+            "optional": false,
+            "type": "{}[]"
+          },
+          {
+            "key": "drive_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "site_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "group_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "require_sign_in",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "send_invitation",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "expiration_date_time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "retain_inherited_permissions",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": false,
+            "type": "{ id?: string, link?: { type?: string, scope?: string, webUrl?: string, webHtml?: string, preventsDownload?: boolean, application?: { id?: string, displayName?: string } }, roles?: string[], grantedTo?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string }, siteUser?: { id?: string, displayName?: string, loginName?: string, email?: string }, siteGroup?: { id?: string, displayName?: string, loginName?: string }, group?: { id?: string, displayName?: string } }, grantedToV2?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string }, siteUser?: { id?: string, displayName?: string, loginName?: string, email?: string }, siteGroup?: { id?: string, displayName?: string, loginName?: string }, group?: { id?: string, displayName?: string } }, hasPassword?: boolean, expirationDateTime?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedrive.api.permissions.listSharePermissions",
+      "shortPath": "permissions.listSharePermissions",
+      "description": "List permissions on a shared drive item",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "shared_drive_item_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "link",
+            "optional": true,
+            "type": "{ type?: string, scope?: string, webUrl?: string, webHtml?: string, preventsDownload?: boolean, application?: { id?: string, displayName?: string } }"
+          },
+          {
+            "key": "roles",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "hasPassword",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedrive.api.permissions.updateForItem",
+      "shortPath": "permissions.updateForItem",
+      "description": "Update a permission on a drive item",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "permission_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "roles",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "drive_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "site_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "group_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "link",
+            "optional": true,
+            "type": "{ type?: string, scope?: string, webUrl?: string, webHtml?: string, preventsDownload?: boolean, application?: { id?: string, displayName?: string } }"
+          },
+          {
+            "key": "roles",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "grantedTo",
+            "optional": true,
+            "type": "{ user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string }, siteUser?: { id?: string, displayName?: string, loginName?: string, email?: string }, siteGroup?: { id?: string, displayName?: string, loginName?: string }, group?: { id?: string, displayName?: string } }"
+          },
+          {
+            "key": "grantedToV2",
+            "optional": true,
+            "type": "{ user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string }, siteUser?: { id?: string, displayName?: string, loginName?: string, email?: string }, siteGroup?: { id?: string, displayName?: string, loginName?: string }, group?: { id?: string, displayName?: string } }"
+          },
+          {
+            "key": "hasPassword",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "expirationDateTime",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedrive.api.sharepoint.getListItems",
+      "shortPath": "sharepoint.getListItems",
+      "description": "Get items from a SharePoint list",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "orderby",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": false,
+            "type": "{ id?: string, eTag?: string, webUrl?: string, createdDateTime?: string, lastModifiedDateTime?: string, contentType?: { id?: string, name?: string }, fields?: {}, createdBy?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }, lastModifiedBy?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } } }[]"
+          },
+          {
+            "key": "@odata.count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "@odata.nextLink",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedrive.api.sharepoint.getSite",
+      "shortPath": "sharepoint.getSite",
+      "description": "Get a SharePoint site by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "eTag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "displayName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sharepointIds",
+            "optional": true,
+            "type": "{ siteId?: string, siteUrl?: string, webId?: string, webUrl?: string, listId?: string, tenantId?: string }"
+          },
+          {
+            "key": "isPersonalSite",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "siteCollection",
+            "optional": true,
+            "type": "{ hostname?: string, dataLocationCode?: string, root?: {} }"
+          },
+          {
+            "key": "createdDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModifiedDateTime",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedrive.api.sharepoint.getSitePage",
+      "shortPath": "sharepoint.getSitePage",
+      "description": "Get a page from a SharePoint site",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedrive.api.sharepoint.listListItemsDelta",
+      "shortPath": "sharepoint.listListItemsDelta",
+      "description": "List changes to SharePoint list items using delta",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": false,
+            "type": "{ id?: string, eTag?: string, webUrl?: string, createdDateTime?: string, lastModifiedDateTime?: string, contentType?: { id?: string, name?: string }, fields?: {}, createdBy?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }, lastModifiedBy?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } } }[]"
+          },
+          {
+            "key": "@odata.nextLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "@odata.deltaLink",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedrive.api.sharepoint.listSiteColumns",
+      "shortPath": "sharepoint.listSiteColumns",
+      "description": "List site columns in a SharePoint site",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "orderby",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": false,
+            "type": "{ id?: string, name?: string, displayName?: string, description?: string, columnGroup?: string, indexed?: boolean, readOnly?: boolean, required?: boolean, hidden?: boolean, enforceUniqueValues?: boolean, boolean?: {}, text?: { allowMultipleLines?: boolean, maxLength?: number, textType?: string }, number?: { decimalPlaces?: string, displayAs?: string, maximum?: number, minimum?: number }, dateTime?: { displayAs?: string, format?: string }, choice?: { allowTextEntry?: boolean, choices?: string[], displayAs?: string }, lookup?: { allowMultipleValues?: boolean, columnName?: string, listId?: string } }[]"
+          },
+          {
+            "key": "@odata.count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "@odata.nextLink",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedrive.api.sharepoint.listSiteItemsDelta",
+      "shortPath": "sharepoint.listSiteItemsDelta",
+      "description": "List changes to all drive items in a site using delta",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": false,
+            "type": "{ id: string, name?: string, size?: number, webUrl?: string, eTag?: string, cTag?: string, createdDateTime?: string, lastModifiedDateTime?: string, createdBy?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }, lastModifiedBy?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }, parentReference?: { driveId?: string, id?: string, path?: string, name?: string, siteId?: string }, file?: { mimeType?: string, hashes?: { quickXorHash?: string, sha1Hash?: string, sha256Hash?: string } }, folder?: { childCount?: number }, deleted?: { state?: string }, @microsoft.graph.downloadUrl?: string, children?: { id: string, name?: string, size?: number, webUrl?: string, eTag?: string, cTag?: string, createdDateTime?: string, lastModifiedDateTime?: string, createdBy?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }, lastModifiedBy?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }, parentReference?: { driveId?: string, id?: string, path?: string, name?: string, siteId?: string }, file?: { mimeType?: string, hashes?: { quickXorHash?: string, sha1Hash?: string, sha256Hash?: string } }, folder?: { childCount?: number }, deleted?: { state?: string }, @microsoft.graph.downloadUrl?: string }[] }[]"
+          },
+          {
+            "key": "@odata.nextLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "@odata.deltaLink",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedrive.api.sharepoint.listSiteLists",
+      "shortPath": "sharepoint.listSiteLists",
+      "description": "List all lists in a SharePoint site",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "orderby",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": false,
+            "type": "{ id?: string, name?: string, displayName?: string, description?: string, webUrl?: string, eTag?: string, createdDateTime?: string, lastModifiedDateTime?: string, createdBy?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }, lastModifiedBy?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }, list?: { hidden?: boolean, template?: string } }[]"
+          },
+          {
+            "key": "@odata.count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "@odata.nextLink",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedrive.api.sharepoint.listSiteSubsites",
+      "shortPath": "sharepoint.listSiteSubsites",
+      "description": "List subsites of a SharePoint site",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "orderby",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": false,
+            "type": "{ id: string, eTag?: string, name?: string, webUrl?: string, description?: string, displayName?: string, sharepointIds?: { siteId?: string, siteUrl?: string, webId?: string, webUrl?: string, listId?: string, tenantId?: string }, isPersonalSite?: boolean, siteCollection?: { hostname?: string, dataLocationCode?: string, root?: {} }, createdDateTime?: string, lastModifiedDateTime?: string }[]"
+          },
+          {
+            "key": "@odata.count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "@odata.nextLink",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedrive.api.subscriptions.list",
+      "shortPath": "subscriptions.list",
+      "description": "List all active subscriptions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": false,
+            "type": "{ id?: string, resource?: string | null, changeType?: string | null, clientState?: string | null, notificationUrl?: string | null, expirationDateTime?: string | null, applicationId?: string | null, creatorId?: string | null, notificationQueryOptions?: string | null, lifecycleNotificationUrl?: string | null }[]"
+          },
+          {
+            "key": "@odata.nextLink",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "onedrive.webhooks.drive.driveNotification",
+      "shortPath": "drive.driveNotification",
+      "description": "Microsoft Graph drive change notification — item created, updated, or deleted",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": false,
+            "type": "{ subscriptionId: string, changeType: string, clientState?: string, resource?: string, resourceData?: {}, tenantId?: string, subscriptionExpirationDateTime?: string }[]"
+          }
+        ]
+      },
+      "responseType": "{ subscriptionId: string, changeType: string, clientState?: string, resource?: string, resourceData?: {}, tenantId?: string, subscriptionExpirationDateTime?: string }",
+      "usageExample": "onedrive({\n    webhookHooks: {\n        drive: {\n            driveNotification: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "onedrive.webhooks.drive.validation",
+      "shortPath": "drive.validation",
+      "description": "Microsoft Graph OneDrive webhook validation handshake",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "validationToken",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "responseType": "{ validationToken: string }",
+      "usageExample": "onedrive({\n    webhookHooks: {\n        drive: {\n            validation: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": [
+    {
+      "path": "onedrive.db.driveItems.search",
+      "entityName": "driveItems",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "size",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "webUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "eTag",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "cTag",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdDateTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lastModifiedDateTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "onedrive.db.drives.search",
+      "entityName": "drives",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "driveType",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "webUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdDateTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lastModifiedDateTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

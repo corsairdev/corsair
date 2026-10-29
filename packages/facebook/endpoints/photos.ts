@@ -1,0 +1,154 @@
+import { makePageFacebookRequest } from '../client';
+import type { FacebookEndpoints } from '../index';
+import {
+	buildPaginationQuery,
+	cacheUpsert,
+	logFacebookEvent,
+	omitUndefined,
+} from './shared';
+import type { FacebookEndpointOutputs } from './types';
+
+export const upload: FacebookEndpoints['uploadPhoto'] = async (ctx, input) => {
+	const { page_id, published, ...rest } = input;
+	const result = await makePageFacebookRequest<
+		FacebookEndpointOutputs['uploadPhoto']
+	>(`/${page_id}/photos`, ctx, page_id, {
+		method: 'POST',
+		// Default unpublished so callers can attach to a multi-photo feed post.
+		body: omitUndefined({ ...rest, published: published ?? false }),
+	});
+
+	await logFacebookEvent(ctx, 'facebook.photos.upload', { ...input });
+	return result;
+};
+
+export const uploadBatch: FacebookEndpoints['uploadPhotosBatch'] = async (
+	ctx,
+	input,
+) => {
+	const batch = input.photos.map((photo, index) => ({
+		method: 'POST',
+		relative_url: `${input.page_id}/photos`,
+		body: new URLSearchParams(
+			omitUndefined({
+				url: photo.url,
+				caption: photo.caption,
+				// Batch uploads must stay unpublished until attached to a feed post.
+				published: String(photo.published ?? false),
+			}) as Record<string, string>,
+		).toString(),
+		name: `photo_${index}`,
+	}));
+
+	// Batch Page photo uploads must authenticate with a Page access token.
+	const result = await makePageFacebookRequest<
+		FacebookEndpointOutputs['uploadPhotosBatch']
+	>('/', ctx, input.page_id, {
+		method: 'POST',
+		formData: {
+			batch: JSON.stringify(batch),
+		},
+	});
+
+	await logFacebookEvent(ctx, 'facebook.photos.uploadBatch', { ...input });
+	return result;
+};
+
+export const createPost: FacebookEndpoints['createPhotoPost'] = async (
+	ctx,
+	input,
+) => {
+	const { page_id, url, caption, message, published, scheduled_publish_time } =
+		input;
+	const shouldSchedule = scheduled_publish_time !== undefined;
+	const result = await makePageFacebookRequest<
+		FacebookEndpointOutputs['createPhotoPost']
+	>(`/${page_id}/photos`, ctx, page_id, {
+		method: 'POST',
+		body: omitUndefined({
+			url,
+			// Graph prefers caption; accept deprecated message as an alias.
+			caption: caption ?? message,
+			published: published ?? (shouldSchedule ? false : true),
+			scheduled_publish_time,
+		}),
+	});
+
+	await logFacebookEvent(ctx, 'facebook.photos.createPost', { ...input });
+	return result;
+};
+
+export const addToAlbum: FacebookEndpoints['addPhotosToAlbum'] = async (
+	ctx,
+	input,
+) => {
+	const { album_id, page_id, url, caption, message } = input;
+	const result = await makePageFacebookRequest<
+		FacebookEndpointOutputs['addPhotosToAlbum']
+	>(`/${album_id}/photos`, ctx, page_id, {
+		method: 'POST',
+		body: omitUndefined({ url, caption: caption ?? message }),
+	});
+
+	await logFacebookEvent(ctx, 'facebook.photos.addToAlbum', { ...input });
+	return result;
+};
+
+export const createAlbum: FacebookEndpoints['createPhotoAlbum'] = async (
+	ctx,
+	input,
+) => {
+	const { page_id, name, message, location } = input;
+	const result = await makePageFacebookRequest<
+		FacebookEndpointOutputs['createPhotoAlbum']
+	>(`/${page_id}/albums`, ctx, page_id, {
+		method: 'POST',
+		body: omitUndefined({ name, message, location }),
+	});
+
+	if (result.id) {
+		await cacheUpsert(ctx.db.albums, result.id, {
+			albumId: result.id,
+			pageId: page_id,
+			name,
+			description: message,
+		});
+	}
+
+	await logFacebookEvent(ctx, 'facebook.photos.createAlbum', { ...input });
+	return result;
+};
+
+export const list: FacebookEndpoints['getPagePhotos'] = async (ctx, input) => {
+	const result = await makePageFacebookRequest<
+		FacebookEndpointOutputs['getPagePhotos']
+	>(`/${input.page_id}/photos`, ctx, input.page_id, {
+		query: {
+			...buildPaginationQuery({
+				fields: input.fields ?? 'id,name,created_time,source,link,images',
+				limit: input.limit,
+				after: input.after,
+				before: input.before,
+			}),
+			// Graph defaults to type=profile; uploaded is what Page APIs usually want.
+			type: input.type ?? 'uploaded',
+		},
+	});
+
+	if (result.data) {
+		for (const photo of result.data) {
+			if (!photo.id) continue;
+			await cacheUpsert(ctx.db.photos, photo.id, {
+				photoId: photo.id,
+				pageId: input.page_id,
+				name: photo.name,
+				source: photo.source,
+				link: photo.link,
+				createdTime: photo.created_time,
+			});
+		}
+	}
+
+	await logFacebookEvent(ctx, 'facebook.photos.list', { ...input });
+	return result;
+};

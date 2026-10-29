@@ -1,0 +1,121 @@
+---
+title: Database
+description: "Abyssale local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Abyssale plugin syncs data locally. Use `corsair.abyssale.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Banners
+
+Path: `abyssale.db.banners.search`
+
+```ts
+const rows = await corsair.abyssale.db.banners.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `version` | `number` | equals, gt, gte, lt, lte, in |
+| `sharing_id` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Designs
+
+Path: `abyssale.db.designs.search`
+
+```ts
+const rows = await corsair.abyssale.db.designs.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `template_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `project_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `project_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `category_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `category_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `version` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `number` | equals, gt, gte, lt, lte, in |
+| `updated_at` | `number` | equals, gt, gte, lt, lte, in |
+| `preview_url` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Fonts
+
+Path: `abyssale.db.fonts.search`
+
+```ts
+const rows = await corsair.abyssale.db.fonts.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Projects
+
+Path: `abyssale.db.projects.search`
+
+```ts
+const rows = await corsair.abyssale.db.projects.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at_ts` | `number` | equals, gt, gte, lt, lte, in |
+| `category_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `version` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

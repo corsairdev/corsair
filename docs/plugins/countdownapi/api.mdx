@@ -1,0 +1,449 @@
+---
+title: API
+description: "API reference for CountdownApi: every `countdownapi.api.*` operation with input and output types."
+---
+
+Every `countdownapi.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Autocomplete
+
+### get
+
+`autocomplete.get`
+
+Get eBay search autocomplete suggestions
+
+**Risk:** `read`
+
+```ts
+await corsair.countdownapi.api.autocomplete.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `ebay_domain` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_metadata` | `object` | Yes | — |
+| `request_info` | `object` | No | — |
+| `request_parameters` | `object` | No | — |
+| `autocomplete_results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="request_metadata full type">
+
+```ts
+{
+  id: string,
+  created_at?: string,
+  processed_at?: string,
+  total_time_taken?: number,
+  ebay_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="request_info full type">
+
+```ts
+{
+  success?: boolean,
+  credits_used?: number,
+  credits_remaining?: number
+}
+```
+</Accordion>
+
+<Accordion title="request_parameters full type">
+
+```ts
+{
+  type: string,
+  ebay_domain?: string,
+  search_term?: string,
+  epid?: string,
+  gtin?: string,
+  url?: string
+}
+```
+</Accordion>
+
+<Accordion title="autocomplete_results full type">
+
+```ts
+{
+  suggestion: string,
+  type?: string,
+  category_id?: string | number,
+  category_name?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Product
+
+### get
+
+`product.get`
+
+Get eBay product data using Countdown API
+
+**Risk:** `read`
+
+```ts
+await corsair.countdownapi.api.product.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | No | — |
+| `epid` | `string` | No | — |
+| `gtin` | `string` | No | — |
+| `ebay_domain` | `string` | Yes | — |
+| `include_html` | `boolean` | No | — |
+| `skip_gtin_cache` | `boolean` | No | — |
+| `include_parts_compatibility` | `boolean` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  request_metadata: {
+    id: string,
+    created_at?: string,
+    processed_at?: string,
+    total_time_taken?: number,
+    ebay_url?: string
+  },
+  request_info?: {
+    success?: boolean,
+    credits_used?: number,
+    credits_remaining?: number
+  },
+  request_parameters?: {
+    type: string,
+    ebay_domain?: string,
+    search_term?: string,
+    epid?: string,
+    gtin?: string,
+    url?: string
+  },
+  is_master?: false,
+  product: {
+    title: string,
+    link?: string,
+    epid?: string,
+    gtin?: string,
+    images?: {
+      link: string
+    }[],
+    attributes?: {
+      name: string,
+      value?: string
+    }[]
+  }
+} | {
+  request_metadata: {
+    id: string,
+    created_at?: string,
+    processed_at?: string,
+    total_time_taken?: number,
+    ebay_url?: string
+  },
+  request_info?: {
+    success?: boolean,
+    credits_used?: number,
+    credits_remaining?: number
+  },
+  request_parameters?: {
+    type: string,
+    ebay_domain?: string,
+    search_term?: string,
+    epid?: string,
+    gtin?: string,
+    url?: string
+  },
+  is_master: true,
+  sold_out?: boolean,
+  top_picks: {
+    product: {
+      title: string,
+      link?: string,
+      epid?: string,
+      gtin?: string,
+      images?: {
+        link: string
+      }[],
+      attributes?: {
+        name: string,
+        value?: string
+      }[]
+    },
+    all_listings?: {
+      link?: string,
+      count?: number
+    },
+    seller?: {
+      name?: string,
+      link?: string,
+      feedback_score?: number,
+      positive_feedback_percent?: number | string
+    },
+    shipping?: {
+      raw?: string,
+      price?: number,
+      currency?: string,
+      location?: string,
+      delivery_estimate?: string
+    },
+    condition?: {
+      raw?: string,
+      name?: string,
+      is_new?: boolean,
+      is_used?: boolean
+    },
+    is_auction?: boolean,
+    offer?: {
+      price?: number,
+      raw?: string,
+      currency?: string
+    }
+  }[]
+} | {
+  request_metadata: {
+    id: string,
+    created_at?: string,
+    processed_at?: string,
+    total_time_taken?: number,
+    ebay_url?: string
+  },
+  request_info?: {
+    success?: boolean,
+    credits_used?: number,
+    credits_remaining?: number
+  },
+  request_parameters?: {
+    type: string,
+    ebay_domain?: string,
+    search_term?: string,
+    epid?: string,
+    gtin?: string,
+    url?: string
+  },
+  redirected?: boolean,
+  redirected_link: string,
+  redirected_epid: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Search
+
+### get
+
+`search.get`
+
+Search eBay products using Countdown API
+
+**Risk:** `read`
+
+```ts
+await corsair.countdownapi.api.search.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | No | — |
+| `ebay_domain` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `category_id` | `string` | No | — |
+| `listing_type` | `all \| buy_it_now \| auction \| accepts_offers` | No | — |
+| `sort_by` | `best_match \| price_high_to_low \| price_low_to_high \| price_high_to_low_plus_postage \| price_low_to_high_plus_postage \| newly_listed \| ending_soonest` | No | — |
+| `condition` | `all \| new \| used \| open_box \| manufacturer_refurbished \| seller_refurbished \| parts_or_not_working \| not_specified` | No | — |
+| `max_page` | `number` | No | — |
+| `num` | `60 \| 120 \| 240` | No | — |
+| `url` | `string` | No | — |
+| `authorized_sellers` | `boolean` | No | — |
+| `returns_accepted` | `boolean` | No | — |
+| `free_returns` | `boolean` | No | — |
+| `authenticity_verified` | `boolean` | No | — |
+| `deals_and_savings` | `boolean` | No | — |
+| `sale_items` | `boolean` | No | — |
+| `facets` | `string` | No | — |
+| `allow_rewritten_results` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_metadata` | `object` | Yes | — |
+| `request_info` | `object` | No | — |
+| `request_parameters` | `object` | No | — |
+| `search_information` | `object` | No | — |
+| `search_results` | `object[]` | Yes | — |
+| `facets` | `object[]` | No | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="request_metadata full type">
+
+```ts
+{
+  id: string,
+  created_at?: string,
+  processed_at?: string,
+  total_time_taken?: number,
+  ebay_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="request_info full type">
+
+```ts
+{
+  success?: boolean,
+  credits_used?: number,
+  credits_remaining?: number
+}
+```
+</Accordion>
+
+<Accordion title="request_parameters full type">
+
+```ts
+{
+  type: string,
+  ebay_domain?: string,
+  search_term?: string,
+  epid?: string,
+  gtin?: string,
+  url?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_information full type">
+
+```ts
+{
+  original_search_term?: string,
+  did_you_mean?: string,
+  did_you_mean_results_count?: number,
+  spelling_correction?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_results full type">
+
+```ts
+{
+  position?: number,
+  title: string,
+  epid?: string,
+  link: string,
+  image?: string,
+  hotness?: string,
+  condition?: string,
+  is_auction?: boolean,
+  buy_it_now?: boolean,
+  free_returns?: boolean,
+  sponsored?: boolean,
+  item_location?: string,
+  rating?: number,
+  ratings_total?: number,
+  shipping_cost?: number,
+  prices?: {
+    symbol?: string,
+    value?: number,
+    currency?: string,
+    raw?: string,
+    name?: string
+  }[],
+  price?: {
+    symbol?: string,
+    value?: number,
+    currency?: string,
+    raw?: string,
+    name?: string
+  },
+  ended?: {
+    type?: string,
+    date?: {
+      raw?: string
+    }
+  },
+  seller_info?: {
+    name?: string,
+    review_count?: number,
+    positive_feedback_percent?: number
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="facets full type">
+
+```ts
+{
+  name: string,
+  display_name?: string,
+  values?: {
+    name: string,
+    count?: number,
+    param_value?: string
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  current_page?: number,
+  total_results?: number | string,
+  has_next_page?: boolean,
+  next_page?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

@@ -1,0 +1,1651 @@
+{
+  "id": "starton",
+  "displayName": "Starton",
+  "description": "Web3 backend for deploying and calling smart contracts, managing wallets, watching blockchain events, and pinning files to IPFS.",
+  "npmPackageName": "@corsair-dev/starton",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 12,
+    "webhooks": 0,
+    "db": 7
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "starton.api.ipfs.uploadFile",
+      "shortPath": "ipfs.uploadFile",
+      "description": "Upload a file to the project's IPFS storage and pin it",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string",
+            "description": "File contents, base64-encoded (standard alphabet, padded)."
+          },
+          {
+            "key": "filename",
+            "optional": false,
+            "type": "string",
+            "description": "File name stored on the pin, e.g. `metadata.json`."
+          },
+          {
+            "key": "contentType",
+            "optional": true,
+            "type": "string",
+            "description": "MIME type of the file. Defaults to application/octet-stream."
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}",
+            "description": "Arbitrary JSON stored alongside the pin."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "origins",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "queued | pinning | pinned | failed | deleted"
+          },
+          {
+            "key": "delegates",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "directory | file"
+          },
+          {
+            "key": "directoryContent",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "starton.api.smartContract.call",
+      "shortPath": "smartContract.call",
+      "description": "Execute a state-changing function on a deployed smart contract",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "network",
+            "optional": false,
+            "type": "string",
+            "description": "Network of the smart contract, e.g. `polygon-mumbai`. List via GET /v3/network."
+          },
+          {
+            "key": "address",
+            "optional": false,
+            "type": "string",
+            "description": "Address of the deployed smart contract."
+          },
+          {
+            "key": "functionName",
+            "optional": false,
+            "type": "string",
+            "description": "Name of the contract function to execute. Must be state-changing; use smartContract.read for view functions."
+          },
+          {
+            "key": "params",
+            "optional": false,
+            "type": "(string | number | boolean | {})[]",
+            "description": "Function arguments, in the order the ABI declares them."
+          },
+          {
+            "key": "signerWallet",
+            "optional": false,
+            "type": "string",
+            "description": "Address of the KMS wallet that signs and pays for the transaction."
+          },
+          {
+            "key": "speed",
+            "optional": true,
+            "type": "low | average | fast | fastest | custom",
+            "description": "Gas speed. Defaults to `average`; use `custom` to supply customGas."
+          },
+          {
+            "key": "customGas",
+            "optional": true,
+            "type": "{ gasPrice?: string, maxFeePerGas?: string, maxPriorityFeePerGas?: string }",
+            "description": "Custom gas settings. Only used when speed is set to `custom`."
+          },
+          {
+            "key": "gasLimit",
+            "optional": true,
+            "type": "string",
+            "description": "Optional gas limit."
+          },
+          {
+            "key": "nonce",
+            "optional": true,
+            "type": "number",
+            "description": "Manual nonce. If set, the Starton relayer will not assign one automatically."
+          },
+          {
+            "key": "value",
+            "optional": true,
+            "type": "string",
+            "description": "Native-currency value sent with the call, in wei."
+          },
+          {
+            "key": "simulate",
+            "optional": true,
+            "type": "boolean",
+            "description": "Simulate only: estimates gas and does NOT broadcast a transaction."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "blockHash",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "blockNumber",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "chainId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "network",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "gasLimit",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gasPrice",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "maxFeePerGas",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "maxPriorityFeePerGas",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "nonce",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "signerWallet",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "publishedDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "minedDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "signedTransaction",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "UNSIGNED | ERROR_TX | ERROR_PUBLISH | PUBLISHED | RECEIVED_BY_STARTON | CREATED_BY_STARTON | COULD_NOT_ESTIMATE_GAS_PRICE | COULD_NOT_INCREASE_GAS_PRICE | GAS_PRICE_ESTIMATED | INVALID_GAS_PRICE | REPLACEMENT_GAS_PRICE_UNDERPRICED | COULD_NOT_ESTIMATE_GAS_LIMIT | GAS_LIMIT_ESTIMATED | EXECUTION_WILL_FAIL | INVALID_ARGUMENT | INSUFFICIENT_FUNDS | INSUFFICIENT_FUNDS_AFTER_BROADCAST | COULD_NOT_ASSIGN_NONCE | COULD_NOT_UNSTUCK_NONCE | NONCE_ASSIGNED | NONCE_EXPIRED | COULD_NOT_SIGN | SIGNED | SENT_TO_MEMPOOL | COULD_NOT_BROADCAST | ALREADY_KNOWN | MINED | CONFIRMED | REPLACED | FAILED | MONITORING_IN_PROGRESS | STUCK_BY_PREVIOUS_TRANSACTION | MAX_GAS_PRICE_REACH | GAS_PRICE_INCREASED | NEW_TRANSACTION_HASH | UNKNOWN | MONITORING_INTERRUPTED"
+          },
+          {
+            "key": "state",
+            "optional": false,
+            "type": "SUCCESS | PENDING | MANUAL_ACTION_REQUIRED | ERROR"
+          },
+          {
+            "key": "speed",
+            "optional": true,
+            "type": "low | average | fast | fastest | custom"
+          },
+          {
+            "key": "logs",
+            "optional": false,
+            "type": "{ message: string, type: UNSIGNED | ERROR_TX | ERROR_PUBLISH | PUBLISHED | RECEIVED_BY_STARTON | CREATED_BY_STARTON | COULD_NOT_ESTIMATE_GAS_PRICE | COULD_NOT_INCREASE_GAS_PRICE | GAS_PRICE_ESTIMATED | INVALID_GAS_PRICE | REPLACEMENT_GAS_PRICE_UNDERPRICED | COULD_NOT_ESTIMATE_GAS_LIMIT | GAS_LIMIT_ESTIMATED | EXECUTION_WILL_FAIL | INVALID_ARGUMENT | INSUFFICIENT_FUNDS | INSUFFICIENT_FUNDS_AFTER_BROADCAST | COULD_NOT_ASSIGN_NONCE | COULD_NOT_UNSTUCK_NONCE | NONCE_ASSIGNED | NONCE_EXPIRED | COULD_NOT_SIGN | SIGNED | SENT_TO_MEMPOOL | COULD_NOT_BROADCAST | ALREADY_KNOWN | MINED | CONFIRMED | REPLACED | FAILED | MONITORING_IN_PROGRESS | STUCK_BY_PREVIOUS_TRANSACTION | MAX_GAS_PRICE_REACH | GAS_PRICE_INCREASED | NEW_TRANSACTION_HASH | UNKNOWN | MONITORING_INTERRUPTED, context?: {}, createdAt: string }[]"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "transactionHash",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "automaticNonce",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "isDeployTransaction",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "parentTransaction",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "starton.api.smartContract.deployFromTemplate",
+      "shortPath": "smartContract.deployFromTemplate",
+      "description": "Deploy a smart contract from a Starton-audited template (e.g. ERC20, ERC721)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "network",
+            "optional": false,
+            "type": "string",
+            "description": "Network of the smart contract, e.g. `polygon-mumbai`. List via GET /v3/network."
+          },
+          {
+            "key": "signerWallet",
+            "optional": false,
+            "type": "string",
+            "description": "Address of the KMS wallet that signs and pays for the transaction."
+          },
+          {
+            "key": "templateId",
+            "optional": false,
+            "type": "string",
+            "description": "Starton Library template to deploy, e.g. `ERC20_META_TRANSACTION`. List via GET /v3/smart-contract-template."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Contract name on Starton (off-chain). Max 255 characters."
+          },
+          {
+            "key": "params",
+            "optional": false,
+            "type": "(string | number | boolean | {})[]",
+            "description": "Smart contract constructor parameters, in the order the template declares them."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "Contract description on Starton (off-chain)."
+          },
+          {
+            "key": "gasLimit",
+            "optional": true,
+            "type": "string",
+            "description": "Optional gas limit."
+          },
+          {
+            "key": "speed",
+            "optional": true,
+            "type": "low | average | fast | fastest | custom",
+            "description": "Gas speed. Defaults to `average`; use `custom` to supply customGas."
+          },
+          {
+            "key": "customGas",
+            "optional": true,
+            "type": "{ gasPrice?: string, maxFeePerGas?: string, maxPriorityFeePerGas?: string }",
+            "description": "Custom gas settings. Only used when speed is set to `custom`."
+          },
+          {
+            "key": "nonce",
+            "optional": true,
+            "type": "number",
+            "description": "Manual nonce. If set, the Starton relayer will not assign one automatically."
+          },
+          {
+            "key": "value",
+            "optional": true,
+            "type": "string",
+            "description": "Native-currency value sent with the deployment, in wei. For payable constructors."
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}",
+            "description": "Arbitrary JSON stored alongside the contract."
+          },
+          {
+            "key": "uiData",
+            "optional": true,
+            "type": "{ version: 1, deployMethod: web3 | kms, imported: boolean, deployType?: string, chainId?: number }",
+            "description": "Dashboard display metadata Starton stores with the contract."
+          },
+          {
+            "key": "simulate",
+            "optional": true,
+            "type": "boolean",
+            "description": "Simulate only: estimates gas and does NOT broadcast a transaction."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "smartContract",
+            "optional": false,
+            "type": "{ id: string, name: string, description?: string | null, network: string, abi?: {}[], address: string, params?: string[] | null, compilationDetails?: {} | null, creationHash?: string | null, status: UNSIGNED | ERROR_TX | ERROR_PUBLISH | PUBLISHED | RECEIVED_BY_STARTON | CREATED_BY_STARTON | COULD_NOT_ESTIMATE_GAS_PRICE | COULD_NOT_INCREASE_GAS_PRICE | GAS_PRICE_ESTIMATED | INVALID_GAS_PRICE | REPLACEMENT_GAS_PRICE_UNDERPRICED | COULD_NOT_ESTIMATE_GAS_LIMIT | GAS_LIMIT_ESTIMATED | EXECUTION_WILL_FAIL | INVALID_ARGUMENT | INSUFFICIENT_FUNDS | INSUFFICIENT_FUNDS_AFTER_BROADCAST | COULD_NOT_ASSIGN_NONCE | COULD_NOT_UNSTUCK_NONCE | NONCE_ASSIGNED | NONCE_EXPIRED | COULD_NOT_SIGN | SIGNED | SENT_TO_MEMPOOL | COULD_NOT_BROADCAST | ALREADY_KNOWN | MINED | CONFIRMED | REPLACED | FAILED | MONITORING_IN_PROGRESS | STUCK_BY_PREVIOUS_TRANSACTION | MAX_GAS_PRICE_REACH | GAS_PRICE_INCREASED | NEW_TRANSACTION_HASH | UNKNOWN | MONITORING_INTERRUPTED, state: SUCCESS | PENDING | MANUAL_ACTION_REQUIRED | ERROR, minedDate?: string | null, blockNumber?: number | null, templateId?: string | null, projectId: string, metadata?: {} | null, uiData?: { version: 1, deployMethod: web3 | kms, imported: boolean, deployType?: string, chainId?: number } | null, createdAt: string, updatedAt: string }"
+          },
+          {
+            "key": "transaction",
+            "optional": false,
+            "type": "{ id: string, blockHash?: string | null, blockNumber?: number | null, chainId: number, network: string, data?: string | null, from: string, gasLimit?: string | null, gasPrice?: string | null, maxFeePerGas?: string | null, maxPriorityFeePerGas?: string | null, metadata?: {} | null, nonce?: number | null, type?: number | null, signerWallet: string, publishedDate?: string | null, minedDate?: string | null, signedTransaction?: string | null, status: UNSIGNED | ERROR_TX | ERROR_PUBLISH | PUBLISHED | RECEIVED_BY_STARTON | CREATED_BY_STARTON | COULD_NOT_ESTIMATE_GAS_PRICE | COULD_NOT_INCREASE_GAS_PRICE | GAS_PRICE_ESTIMATED | INVALID_GAS_PRICE | REPLACEMENT_GAS_PRICE_UNDERPRICED | COULD_NOT_ESTIMATE_GAS_LIMIT | GAS_LIMIT_ESTIMATED | EXECUTION_WILL_FAIL | INVALID_ARGUMENT | INSUFFICIENT_FUNDS | INSUFFICIENT_FUNDS_AFTER_BROADCAST | COULD_NOT_ASSIGN_NONCE | COULD_NOT_UNSTUCK_NONCE | NONCE_ASSIGNED | NONCE_EXPIRED | COULD_NOT_SIGN | SIGNED | SENT_TO_MEMPOOL | COULD_NOT_BROADCAST | ALREADY_KNOWN | MINED | CONFIRMED | REPLACED | FAILED | MONITORING_IN_PROGRESS | STUCK_BY_PREVIOUS_TRANSACTION | MAX_GAS_PRICE_REACH | GAS_PRICE_INCREASED | NEW_TRANSACTION_HASH | UNKNOWN | MONITORING_INTERRUPTED, state: SUCCESS | PENDING | MANUAL_ACTION_REQUIRED | ERROR, speed?: low | average | fast | fastest | custom | null, logs: { message: string, type: UNSIGNED | ERROR_TX | ERROR_PUBLISH | PUBLISHED | RECEIVED_BY_STARTON | CREATED_BY_STARTON | COULD_NOT_ESTIMATE_GAS_PRICE | COULD_NOT_INCREASE_GAS_PRICE | GAS_PRICE_ESTIMATED | INVALID_GAS_PRICE | REPLACEMENT_GAS_PRICE_UNDERPRICED | COULD_NOT_ESTIMATE_GAS_LIMIT | GAS_LIMIT_ESTIMATED | EXECUTION_WILL_FAIL | INVALID_ARGUMENT | INSUFFICIENT_FUNDS | INSUFFICIENT_FUNDS_AFTER_BROADCAST | COULD_NOT_ASSIGN_NONCE | COULD_NOT_UNSTUCK_NONCE | NONCE_ASSIGNED | NONCE_EXPIRED | COULD_NOT_SIGN | SIGNED | SENT_TO_MEMPOOL | COULD_NOT_BROADCAST | ALREADY_KNOWN | MINED | CONFIRMED | REPLACED | FAILED | MONITORING_IN_PROGRESS | STUCK_BY_PREVIOUS_TRANSACTION | MAX_GAS_PRICE_REACH | GAS_PRICE_INCREASED | NEW_TRANSACTION_HASH | UNKNOWN | MONITORING_INTERRUPTED, context?: {}, createdAt: string }[], to?: string | null, transactionHash?: string | null, value: string, automaticNonce: boolean, isDeployTransaction: boolean, projectId: string, parentTransaction?: string | null, createdAt: string, updatedAt: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "starton.api.smartContract.list",
+      "shortPath": "smartContract.list",
+      "description": "List the smart contracts in the project (paginated)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Number of returned page. By default the returned page is the first."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Number of entities returned on each page. Defaults to 100, maximum 2500."
+          },
+          {
+            "key": "network",
+            "optional": true,
+            "type": "string",
+            "description": "Filter by network, e.g. `polygon-amoy`."
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string",
+            "description": "Filter by contract address."
+          },
+          {
+            "key": "includeAbi",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include each contract ABI in the response."
+          },
+          {
+            "key": "includeCompilationDetails",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include each contract compilation details in the response."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: string, name: string, description?: string | null, network: string, abi?: {}[], address: string, params?: string[] | null, compilationDetails?: {} | null, creationHash?: string | null, status: UNSIGNED | ERROR_TX | ERROR_PUBLISH | PUBLISHED | RECEIVED_BY_STARTON | CREATED_BY_STARTON | COULD_NOT_ESTIMATE_GAS_PRICE | COULD_NOT_INCREASE_GAS_PRICE | GAS_PRICE_ESTIMATED | INVALID_GAS_PRICE | REPLACEMENT_GAS_PRICE_UNDERPRICED | COULD_NOT_ESTIMATE_GAS_LIMIT | GAS_LIMIT_ESTIMATED | EXECUTION_WILL_FAIL | INVALID_ARGUMENT | INSUFFICIENT_FUNDS | INSUFFICIENT_FUNDS_AFTER_BROADCAST | COULD_NOT_ASSIGN_NONCE | COULD_NOT_UNSTUCK_NONCE | NONCE_ASSIGNED | NONCE_EXPIRED | COULD_NOT_SIGN | SIGNED | SENT_TO_MEMPOOL | COULD_NOT_BROADCAST | ALREADY_KNOWN | MINED | CONFIRMED | REPLACED | FAILED | MONITORING_IN_PROGRESS | STUCK_BY_PREVIOUS_TRANSACTION | MAX_GAS_PRICE_REACH | GAS_PRICE_INCREASED | NEW_TRANSACTION_HASH | UNKNOWN | MONITORING_INTERRUPTED, state: SUCCESS | PENDING | MANUAL_ACTION_REQUIRED | ERROR, minedDate?: string | null, blockNumber?: number | null, templateId?: string | null, projectId: string, metadata?: {} | null, uiData?: { version: 1, deployMethod: web3 | kms, imported: boolean, deployType?: string, chainId?: number } | null, createdAt: string, updatedAt: string }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ itemCount: number, totalItems?: number, itemsPerPage: number, totalPages?: number, currentPage: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "starton.api.smartContract.read",
+      "shortPath": "smartContract.read",
+      "description": "Call a read-only function on a deployed smart contract without broadcasting a transaction",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "network",
+            "optional": false,
+            "type": "string",
+            "description": "Network of the smart contract, e.g. `polygon-mumbai`. List via GET /v3/network."
+          },
+          {
+            "key": "address",
+            "optional": false,
+            "type": "string",
+            "description": "Address of the deployed smart contract."
+          },
+          {
+            "key": "functionName",
+            "optional": false,
+            "type": "string",
+            "description": "Name of the read-only (view) contract function to call."
+          },
+          {
+            "key": "params",
+            "optional": false,
+            "type": "(string | number | boolean | {})[]",
+            "description": "Function arguments, in the order the ABI declares them."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "response",
+            "optional": false,
+            "type": "string | number | boolean | {} | any[]"
+          },
+          {
+            "key": "params",
+            "optional": false,
+            "type": "(string | number | boolean | {})[]"
+          },
+          {
+            "key": "functionName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "address",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "network",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "starton.api.template.list",
+      "shortPath": "template.list",
+      "description": "List the Starton Library smart contract templates",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Number of returned page. By default the returned page is the first."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Number of entities returned on each page. Defaults to 100, maximum 2500."
+          },
+          {
+            "key": "isAudited",
+            "optional": true,
+            "type": "boolean",
+            "description": "Only return templates audited by Starton."
+          },
+          {
+            "key": "isActivated",
+            "optional": true,
+            "type": "boolean",
+            "description": "Only return activated (deployable) templates."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Filter by template name. Letters, digits, -, _ and spaces only."
+          },
+          {
+            "key": "blockchain",
+            "optional": true,
+            "type": "string",
+            "description": "Filter by supported blockchain, e.g. `ethereum`."
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "NFT | FUNGIBLE | OTHER | DEPRECATED | SALE | TOOL",
+            "description": "Filter by template category."
+          },
+          {
+            "key": "includeCompilationDetails",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include each template compilation details."
+          },
+          {
+            "key": "includeForm",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include each template deployment form definition."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: string, name: string, description: string, shortDescription: string, githubUrl: string, blockchains: string[], tags: string[], category: NFT | FUNGIBLE | OTHER | DEPRECATED | SALE | TOOL, humanReadableAbi: string[], abi: {}[], form?: {} | null, compilationDetails?: {} | null, isAudited: boolean, isActivated: boolean, order: number, createdAt: string, updatedAt: string }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ itemCount: number, totalItems?: number, itemsPerPage: number, totalPages?: number, currentPage: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "starton.api.transaction.get",
+      "shortPath": "transaction.get",
+      "description": "Retrieve a blockchain transaction by its Starton id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Starton transaction id, as returned by smartContract.call or smartContract.deployFromTemplate."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "blockHash",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "blockNumber",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "chainId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "network",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "gasLimit",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gasPrice",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "maxFeePerGas",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "maxPriorityFeePerGas",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "nonce",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "signerWallet",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "publishedDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "minedDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "signedTransaction",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "UNSIGNED | ERROR_TX | ERROR_PUBLISH | PUBLISHED | RECEIVED_BY_STARTON | CREATED_BY_STARTON | COULD_NOT_ESTIMATE_GAS_PRICE | COULD_NOT_INCREASE_GAS_PRICE | GAS_PRICE_ESTIMATED | INVALID_GAS_PRICE | REPLACEMENT_GAS_PRICE_UNDERPRICED | COULD_NOT_ESTIMATE_GAS_LIMIT | GAS_LIMIT_ESTIMATED | EXECUTION_WILL_FAIL | INVALID_ARGUMENT | INSUFFICIENT_FUNDS | INSUFFICIENT_FUNDS_AFTER_BROADCAST | COULD_NOT_ASSIGN_NONCE | COULD_NOT_UNSTUCK_NONCE | NONCE_ASSIGNED | NONCE_EXPIRED | COULD_NOT_SIGN | SIGNED | SENT_TO_MEMPOOL | COULD_NOT_BROADCAST | ALREADY_KNOWN | MINED | CONFIRMED | REPLACED | FAILED | MONITORING_IN_PROGRESS | STUCK_BY_PREVIOUS_TRANSACTION | MAX_GAS_PRICE_REACH | GAS_PRICE_INCREASED | NEW_TRANSACTION_HASH | UNKNOWN | MONITORING_INTERRUPTED"
+          },
+          {
+            "key": "state",
+            "optional": false,
+            "type": "SUCCESS | PENDING | MANUAL_ACTION_REQUIRED | ERROR"
+          },
+          {
+            "key": "speed",
+            "optional": true,
+            "type": "low | average | fast | fastest | custom"
+          },
+          {
+            "key": "logs",
+            "optional": false,
+            "type": "{ message: string, type: UNSIGNED | ERROR_TX | ERROR_PUBLISH | PUBLISHED | RECEIVED_BY_STARTON | CREATED_BY_STARTON | COULD_NOT_ESTIMATE_GAS_PRICE | COULD_NOT_INCREASE_GAS_PRICE | GAS_PRICE_ESTIMATED | INVALID_GAS_PRICE | REPLACEMENT_GAS_PRICE_UNDERPRICED | COULD_NOT_ESTIMATE_GAS_LIMIT | GAS_LIMIT_ESTIMATED | EXECUTION_WILL_FAIL | INVALID_ARGUMENT | INSUFFICIENT_FUNDS | INSUFFICIENT_FUNDS_AFTER_BROADCAST | COULD_NOT_ASSIGN_NONCE | COULD_NOT_UNSTUCK_NONCE | NONCE_ASSIGNED | NONCE_EXPIRED | COULD_NOT_SIGN | SIGNED | SENT_TO_MEMPOOL | COULD_NOT_BROADCAST | ALREADY_KNOWN | MINED | CONFIRMED | REPLACED | FAILED | MONITORING_IN_PROGRESS | STUCK_BY_PREVIOUS_TRANSACTION | MAX_GAS_PRICE_REACH | GAS_PRICE_INCREASED | NEW_TRANSACTION_HASH | UNKNOWN | MONITORING_INTERRUPTED, context?: {}, createdAt: string }[]"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "transactionHash",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "automaticNonce",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "isDeployTransaction",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "parentTransaction",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "starton.api.wallet.create",
+      "shortPath": "wallet.create",
+      "description": "Create a new KMS-managed blockchain wallet for the project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kmsId",
+            "optional": false,
+            "type": "string",
+            "description": "Id of the Key Management System the wallet key is stored under. Required. List available KMS via GET /v3/kms."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Wallet name on Starton (off-chain)."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "Wallet description on Starton (off-chain)."
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}",
+            "description": "Arbitrary JSON stored alongside the wallet."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "address",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "providerKeyId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "kmsId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "starton.api.wallet.list",
+      "shortPath": "wallet.list",
+      "description": "List the KMS-managed wallets for the project (paginated)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Number of returned page. By default the returned page is the first."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Number of entities returned on each page. Defaults to 100, maximum 2500."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Filter by wallet name. Letters, digits, -, _ and spaces only."
+          },
+          {
+            "key": "kmsId",
+            "optional": true,
+            "type": "string",
+            "description": "Filter by Key Management System id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ address: string, providerKeyId: string, kmsId: string, name?: string | null, description?: string | null, metadata?: {} | null, projectId: string, createdAt: string, updatedAt: string }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ itemCount: number, totalItems?: number, itemsPerPage: number, totalPages?: number, currentPage: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "starton.api.watcher.delete",
+      "shortPath": "watcher.delete",
+      "description": "Delete a blockchain event watcher by its id",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Starton watcher id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "number"
+      }
+    },
+    {
+      "path": "starton.api.watcher.get",
+      "shortPath": "watcher.get",
+      "description": "Retrieve a blockchain event watcher by its id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Starton watcher id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "network",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "MINED_TRANSACTION | ADDRESS_ACTIVITY | ADDRESS_RECEIVED_NATIVE_CURRENCY | ADDRESS_SENT_NATIVE_CURRENCY | EVENT_TRANSFER | ERC721_EVENT_TRANSFER | ERC1155_EVENT_TRANSFER_SINGLE | ERC1155_EVENT_TRANSFER_BATCH | EVENT_MINT | EVENT_APPROVAL | EVENT_CUSTOM"
+          },
+          {
+            "key": "customEventAbi",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "triggerType",
+            "optional": false,
+            "type": "BLOCK | TRANSACTION | EVENT | GAS_PRICE"
+          },
+          {
+            "key": "webhookUrl",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "confirmationsBlocks",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "paused",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "pausedReason",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "customFilters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "starton.api.webhook.list",
+      "shortPath": "webhook.list",
+      "description": "List the webhook deliveries sent by watchers (paginated)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Number of returned page. By default the returned page is the first."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Number of entities returned on each page. Defaults to 100, maximum 2500."
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "RETRYING | SUCCESSFUL | FAILED | CANCELED",
+            "description": "Filter by delivery status."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: string, refId: string, status: RETRYING | SUCCESSFUL | FAILED | CANCELED, payload?: {} | null, url: string, headers?: {} | null, attempts: {}[], projectId: string, createdAt: string, updatedAt: string }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ itemCount: number, totalItems?: number, itemsPerPage: number, totalPages?: number, currentPage: number }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "starton.db.pins.search",
+      "entityName": "pins",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "cid",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "size",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "projectId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "starton.db.smartContracts.search",
+      "entityName": "smartContracts",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "network",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "address",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "creationHash",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "minedDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "blockNumber",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "templateId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "projectId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "starton.db.templates.search",
+      "entityName": "templates",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "shortDescription",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "githubUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "isAudited",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "isActivated",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "order",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "starton.db.transactions.search",
+      "entityName": "transactions",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "blockHash",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "blockNumber",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "chainId",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "network",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "data",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "from",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "gasLimit",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "gasPrice",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "maxFeePerGas",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "maxPriorityFeePerGas",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "nonce",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "type",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "signerWallet",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "publishedDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "minedDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "signedTransaction",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "to",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "transactionHash",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "value",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "automaticNonce",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "isDeployTransaction",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "projectId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "parentTransaction",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "starton.db.wallets.search",
+      "entityName": "wallets",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "address",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "providerKeyId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "kmsId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "projectId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "starton.db.watchers.search",
+      "entityName": "watchers",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "address",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "network",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "projectId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "webhookUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "confirmationsBlocks",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "paused",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "pausedReason",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "starton.db.webhooks.search",
+      "entityName": "webhooks",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "refId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "projectId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

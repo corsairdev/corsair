@@ -1,0 +1,1052 @@
+---
+title: API
+description: "API reference for Whoisfreaks: every `whoisfreaks.api.*` operation with input and output types."
+---
+
+Every `whoisfreaks.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Asn Whois
+
+### lookup
+
+`asnWhois.lookup`
+
+Fetch WHOIS data for an autonomous system number
+
+**Risk:** `read`
+
+```ts
+await corsair.whoisfreaks.api.asnWhois.lookup({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `asn` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `asn` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="asn full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Availability
+
+### bulkCheck
+
+`availability.bulkCheck`
+
+Check availability for up to 100 domains or TLDs at once
+
+**Risk:** `read`
+
+```ts
+await corsair.whoisfreaks.api.availability.bulkCheck({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | No | — |
+| `domainNames` | `string[]` | No | — |
+| `tld` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bulk_domain_availability_response` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="bulk_domain_availability_response full type">
+
+```ts
+{
+  domain?: string,
+  availability?: string,
+  message?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### check
+
+`availability.check`
+
+Check whether a domain is available for registration
+
+**Risk:** `read`
+
+```ts
+await corsair.whoisfreaks.api.availability.check({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | Yes | — |
+| `sug` | `boolean` | Yes | — |
+| `count` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | No | — |
+| `availability` | `string` | No | — |
+| `message` | `string` | No | — |
+| `domain_available_response` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="domain_available_response full type">
+
+```ts
+{
+  domain?: string,
+  availability?: string,
+  message?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Bulk Whois
+
+### lookup
+
+`bulkWhois.lookup`
+
+Fetch WHOIS records for up to 100 domains at once
+
+**Risk:** `read`
+
+```ts
+await corsair.whoisfreaks.api.bulkWhois.lookup({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domainNames` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bulk_whois_response` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="bulk_whois_response full type">
+
+```ts
+{
+  status?: boolean,
+  domain_name?: string,
+  query_time?: string,
+  whois_server?: string,
+  domain_registered?: string,
+  secure_dns?: boolean,
+  domain_handle?: string,
+  create_date?: string,
+  update_date?: string,
+  expiry_date?: string,
+  name_servers?: string[],
+  domain_status?: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Dns
+
+### bulk
+
+`dns.bulk`
+
+Fetch DNS records for up to 100 domains and IPs at once
+
+**Risk:** `read`
+
+```ts
+await corsair.whoisfreaks.api.dns.bulk({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domainNames` | `string[]` | No | — |
+| `ipAddresses` | `string[]` | No | — |
+| `type` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bulk_dns_info` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="bulk_dns_info full type">
+
+```ts
+{
+  domainName?: string,
+  ipAddress?: string,
+  queryTime?: string,
+  status?: boolean,
+  dnsTypes?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### historical
+
+`dns.historical`
+
+Fetch historical DNS records for a domain
+
+**Risk:** `read`
+
+```ts
+await corsair.whoisfreaks.api.dns.historical({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domainName` | `string` | Yes | — |
+| `type` | `string` | Yes | — |
+| `page` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `totalPages` | `number` | No | — |
+| `currenPage` | `number` | No | — |
+| `totalRecords` | `number` | No | — |
+| `historicalDns` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="historicalDns full type">
+
+```ts
+{
+  domainName?: string,
+  ipAddress?: string,
+  queryTime?: string,
+  status?: boolean,
+  dnsTypes?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### live
+
+`dns.live`
+
+Fetch live DNS records for a domain or IP
+
+**Risk:** `read`
+
+```ts
+await corsair.whoisfreaks.api.dns.live({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domainName` | `string` | No | — |
+| `ipAddress` | `string` | No | — |
+| `type` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domainName` | `string` | No | — |
+| `ipAddress` | `string` | No | — |
+| `queryTime` | `string` | No | — |
+| `status` | `boolean` | No | — |
+| `dnsTypes` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="dnsTypes full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### reverse
+
+`dns.reverse`
+
+Find domains pointing at an IP or record value
+
+**Risk:** `read`
+
+```ts
+await corsair.whoisfreaks.api.dns.reverse({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `string` | Yes | — |
+| `type` | `a \| mx \| cname \| ns \| aaaa \| txt \| soa` | Yes | — |
+| `exact` | `boolean` | Yes | — |
+| `page` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `totalRecords` | `number` | No | — |
+| `totalPages` | `number` | No | — |
+| `currentPage` | `number` | No | — |
+| `reverseDnsRecords` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="reverseDnsRecords full type">
+
+```ts
+{
+  domainName?: string,
+  ipAddress?: string,
+  queryTime?: string,
+  status?: boolean,
+  dnsTypes?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Domainer
+
+### filesStatus
+
+`domainer.filesStatus`
+
+Check availability and update status of domain data files
+
+**Risk:** `read`
+
+```ts
+await corsair.whoisfreaks.api.domainer.filesStatus({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `newly` | `any` | No | — |
+| `expired` | `any` | No | — |
+| `cleaned_expired` | `any` | No | — |
+| `dropped` | `any` | No | — |
+| `dropped_with_backlinks` | `any` | No | — |
+| `database_updates` | `any` | No | — |
+
+
+
+---
+
+## Domain Reputation
+
+### lookup
+
+`domainReputation.lookup`
+
+Assess threat reputation and trust score of a domain
+
+**Risk:** `read`
+
+```ts
+await corsair.whoisfreaks.api.domainReputation.lookup({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domainName` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `assessed_at` | `string` | No | — |
+| `version` | `string` | No | — |
+| `processing_time_ms` | `number` | No | — |
+| `risk_category` | `object` | No | — |
+| `dga_score` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="risk_category full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="dga_score full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Geolocation
+
+### bulkLookup
+
+`geolocation.bulkLookup`
+
+Look up geolocation data for up to 100 IPs at once
+
+**Risk:** `read`
+
+```ts
+await corsair.whoisfreaks.api.geolocation.bulkLookup({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ips` | `string[]` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  ip?: string,
+  location?: {
+  },
+  country_metadata?: {
+  },
+  network?: {
+  },
+  currency?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### lookup
+
+`geolocation.lookup`
+
+Look up geolocation data for an IP address
+
+**Risk:** `read`
+
+```ts
+await corsair.whoisfreaks.api.geolocation.lookup({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ip` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ip` | `string` | No | — |
+| `location` | `object` | No | — |
+| `country_metadata` | `object` | No | — |
+| `network` | `object` | No | — |
+| `currency` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="location full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="country_metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="network full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="currency full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Ip Reputation
+
+### bulkLookup
+
+`ipReputation.bulkLookup`
+
+Fetch threat reputation for up to 100 IPs at once
+
+**Risk:** `read`
+
+```ts
+await corsair.whoisfreaks.api.ipReputation.bulkLookup({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ips` | `string[]` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  ip?: string,
+  location?: {
+  },
+  network?: {
+  },
+  asn?: {
+  },
+  security?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### lookup
+
+`ipReputation.lookup`
+
+Fetch threat reputation for an IP address
+
+**Risk:** `read`
+
+```ts
+await corsair.whoisfreaks.api.ipReputation.lookup({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ip` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ip` | `string` | No | — |
+| `location` | `object` | No | — |
+| `network` | `object` | No | — |
+| `asn` | `object` | No | — |
+| `security` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="location full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="network full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="asn full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="security full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Ip Whois
+
+### lookup
+
+`ipWhois.lookup`
+
+Fetch WHOIS data for an IP address
+
+**Risk:** `read`
+
+```ts
+await corsair.whoisfreaks.api.ipWhois.lookup({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ip` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `boolean` | No | — |
+| `ip_address` | `string` | No | — |
+| `as_number` | `string` | No | — |
+| `query_time` | `string` | No | — |
+| `whois_server` | `string` | No | — |
+| `whois_raw_response` | `string` | No | — |
+
+
+
+---
+
+## Ssl
+
+### lookup
+
+`ssl.lookup`
+
+Fetch the live SSL certificate for a domain
+
+**Risk:** `read`
+
+```ts
+await corsair.whoisfreaks.api.ssl.lookup({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domainName` | `string` | Yes | — |
+| `chain` | `boolean` | Yes | — |
+| `sslRaw` | `boolean` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domainName` | `string` | No | — |
+| `queryTime` | `string` | No | — |
+| `sslCertificates` | `object[]` | No | — |
+| `sslRaw` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="sslCertificates full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Subdomains
+
+### lookup
+
+`subdomains.lookup`
+
+Enumerate subdomains of a domain
+
+**Risk:** `read`
+
+```ts
+await corsair.whoisfreaks.api.subdomains.lookup({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | Yes | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+| `status` | `active \| inactive` | No | — |
+| `page` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | No | — |
+| `status` | `boolean` | No | — |
+| `current_page` | `number` | No | — |
+| `total_pages` | `number` | No | — |
+| `query_time` | `string` | No | — |
+| `total_records` | `number` | No | — |
+| `subdomains` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="subdomains full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Typosquatting
+
+### lookup
+
+`typosquatting.lookup`
+
+Find typo-squat domain variants of a brand keyword
+
+**Risk:** `read`
+
+```ts
+await corsair.whoisfreaks.api.typosquatting.lookup({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `keyword` | `string` | No | — |
+| `pattern` | `string` | No | — |
+| `pageToken` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `boolean` | No | — |
+| `totalRecords` | `number` | No | — |
+| `currentPage` | `number` | No | — |
+| `totalPages` | `number` | No | — |
+| `hasNextPage` | `boolean` | No | — |
+| `nextPageToken` | `string` | No | — |
+
+
+
+---
+
+## Whois History
+
+### lookup
+
+`whoisHistory.lookup`
+
+Fetch historical WHOIS records for a domain
+
+**Risk:** `read`
+
+```ts
+await corsair.whoisfreaks.api.whoisHistory.lookup({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domainName` | `string` | Yes | — |
+| `page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `boolean` | No | — |
+| `whois` | `string` | No | — |
+| `total_records` | `string \| number` | No | — |
+| `total_Result` | `number` | No | — |
+| `total_Pages` | `number` | No | — |
+| `current_Page` | `number` | No | — |
+| `whois_domains_historical` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="whois_domains_historical full type">
+
+```ts
+{
+  status?: boolean,
+  domain_name?: string,
+  query_time?: string,
+  whois_server?: string,
+  domain_registered?: string,
+  secure_dns?: boolean,
+  domain_handle?: string,
+  create_date?: string,
+  update_date?: string,
+  expiry_date?: string,
+  name_servers?: string[],
+  domain_status?: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Whois Live
+
+### lookupV2
+
+`whoisLive.lookupV2`
+
+Fetch real-time WHOIS information for a domain
+
+**Risk:** `read`
+
+```ts
+await corsair.whoisfreaks.api.whoisLive.lookupV2({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domainName` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `boolean` | No | — |
+| `domain_name` | `string` | No | — |
+| `query_time` | `string` | No | — |
+| `whois_server` | `string` | No | — |
+| `domain_registered` | `string` | No | — |
+| `secure_dns` | `boolean` | No | — |
+| `domain_handle` | `string` | No | — |
+| `create_date` | `string` | No | — |
+| `update_date` | `string` | No | — |
+| `expiry_date` | `string` | No | — |
+| `name_servers` | `string[]` | No | — |
+| `domain_status` | `string[]` | No | — |
+
+
+
+---
+
+## Whois Reverse
+
+### lookup
+
+`whoisReverse.lookup`
+
+Search WHOIS records by keyword across domains
+
+**Risk:** `read`
+
+```ts
+await corsair.whoisfreaks.api.whoisReverse.lookup({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `keyword` | `string` | Yes | — |
+| `page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Total_Result` | `number` | No | — |
+| `Total_Pages` | `number` | No | — |
+| `Current_Page` | `number` | No | — |
+| `whois_domains_historical` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="whois_domains_historical full type">
+
+```ts
+{
+  status?: boolean,
+  domain_name?: string,
+  query_time?: string,
+  whois_server?: string,
+  domain_registered?: string,
+  secure_dns?: boolean,
+  domain_handle?: string,
+  create_date?: string,
+  update_date?: string,
+  expiry_date?: string,
+  name_servers?: string[],
+  domain_status?: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

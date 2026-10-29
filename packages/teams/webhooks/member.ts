@@ -26,6 +26,14 @@ export const membershipChanged: TeamsWebhooks['membershipChanged'] = {
 		}
 
 		const notifications = request.payload.value;
+		if (!notifications[0]) {
+			return {
+				success: false,
+				statusCode: 401,
+				error: 'Invalid payload: missing notification',
+			};
+		}
+
 		let corsairEntityId = '';
 
 		const accessToken = await ctx.keys.get_access_token();
@@ -38,7 +46,7 @@ export const membershipChanged: TeamsWebhooks['membershipChanged'] = {
 
 					// resource format: teams('teamId')/members('membershipId')
 					const teamId = extractODataId(
-						notification.resource.split('/')[0] ?? '',
+						notification.resource?.split('/')[0] ?? '',
 					);
 
 					if (notification.changeType === 'deleted') {

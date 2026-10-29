@@ -15,15 +15,19 @@ import {
 	signState,
 	verifyAndDecodeState,
 } from '../core/auth/state';
+import { generateUUID } from '../core/utils';
 import {
 	getCorsairInternal,
 	requireCorsairPlugin,
 } from '../core/utils/corsair-instance';
-import { createCorsairOrm } from '../db/orm';
-import { registerHubWebhookTenantLink } from '../hub/report-connection-status';
+import {
+	registerHubWebhookTenantLink,
+	reportPluginConnectionStatus,
+} from '../hub/report-connection-status';
 import { resolveOAuthWebhookTenantLink } from '../webhooks/resolve-oauth-tenant-link';
 import { setWebhookTenantLink } from '../webhooks/tenant-links';
 import { buildOAuthAuthorizeUrl } from './authorize-url';
+import { subscribeAndReport } from './subscribe-report';
 
 // Re-export state utilities for backward compatibility (barrel oauth.ts re-exports these)
 export { decodeOAuthState, encodeOAuthState } from '../core/auth/state';
@@ -80,28 +84,45 @@ async function ensureAccount(
 	tenantId: string,
 	kek: string,
 ): Promise<void> {
-	const orm = createCorsairOrm(database);
+	await database.db.transaction().execute(async (trx) => {
+		// Lock the integration row before the check-then-insert so this
+		// cannot interleave with a concurrent disconnect (or another connect).
+		let integrationQuery = trx
+			.selectFrom('corsair_integrations')
+			.select(['id'])
+			.where('name', '=', pluginId);
+		if (database.isPg === true) integrationQuery = integrationQuery.forUpdate();
+		const integrationRow = await integrationQuery.executeTakeFirst();
 
-	const integration = await orm.integrations.findByName(pluginId);
-	if (!integration) {
-		throw new Error(
-			`Integration '${pluginId}' not found. Run setupCorsair first.`,
-		);
-	}
+		if (!integrationRow) {
+			throw new Error(
+				`Integration '${pluginId}' not found. Run setupCorsair first.`,
+			);
+		}
 
-	const existing = await orm.accounts.findOne({
-		tenant_id: tenantId,
-		integration_id: integration.id,
-	});
-	if (existing) return;
+		const existing = await trx
+			.selectFrom('corsair_accounts')
+			.select('id')
+			.where('tenant_id', '=', tenantId)
+			.where('integration_id', '=', integrationRow.id)
+			.executeTakeFirst();
+		if (existing) return;
 
-	const dek = generateDEK();
-	const encryptedDek = await encryptDEK(dek, kek);
-	await orm.accounts.create({
-		tenant_id: tenantId,
-		integration_id: integration.id,
-		config: {},
-		dek: encryptedDek,
+		const dek = generateDEK();
+		const encryptedDek = await encryptDEK(dek, kek);
+		const now = new Date();
+		await trx
+			.insertInto('corsair_accounts')
+			.values({
+				id: generateUUID(),
+				created_at: now,
+				updated_at: now,
+				tenant_id: tenantId,
+				integration_id: integrationRow.id,
+				config: {},
+				dek: encryptedDek,
+			})
+			.execute();
 	});
 }
 
@@ -202,12 +223,33 @@ export type ProcessOAuthCallbackOptions = {
 	state: string;
 	/** Must exactly match the redirectUri passed to generateOAuthUrl. */
 	redirectUri: string;
+	/**
+	 * Set ONLY by a caller that has already verified the request signature (a
+	 * Hub-signed delivery envelope). When true, `state` is not HMAC-verified and
+	 * `plugin`/`tenantId` are read from here instead — Hub cannot sign a Corsair
+	 * state because it never holds the project KEK. Never set this from a wire
+	 * field; the whole security of the bypass rests on it being caller-asserted.
+	 */
+	trusted?: boolean;
+	/** Required when `trusted` is true. Ignored otherwise (state is decoded). */
+	plugin?: string;
+	tenantId?: string;
+	// Provider callback params (e.g. GitHub's installation_id) absent from the token body.
+	callbackParams?: Record<string, string>;
 };
 
 export type ProcessOAuthCallbackResult = {
 	plugin: string;
 	tenantId: string;
 };
+
+// Token body wins on collision; callback params only fill gaps.
+export function mergeOAuthProviderData(
+	tokens: Record<string, unknown>,
+	callbackParams?: Record<string, string>,
+): Record<string, unknown> {
+	return { ...(callbackParams ?? {}), ...tokens };
+}
 
 /**
  * Completes the OAuth flow by exchanging the authorization code for tokens
@@ -233,15 +275,32 @@ export async function processOAuthCallback(
 			),
 	);
 
-	const decoded = verifyAndDecodeState(state, internal.kek);
-	if (!decoded) {
-		throw new OAuthCallbackError(
-			'invalid_state',
-			'Invalid or tampered state parameter',
-		);
+	// Trusted path: caller verified the request signature and asserts plugin/
+	// tenant. Hub's `state` is an opaque session id it cannot sign, so verifying
+	// it here would always fail. Gated on the explicit `trusted` flag, not just
+	// the presence of plugin/tenant, so no future caller bypasses by accident.
+	let pluginId: string;
+	let tenantId: string;
+	if (options.trusted) {
+		if (!options.plugin || !options.tenantId) {
+			throw new OAuthCallbackError(
+				'invalid_state',
+				'trusted callback requires plugin and tenantId',
+			);
+		}
+		pluginId = options.plugin;
+		tenantId = options.tenantId;
+	} else {
+		const decoded = verifyAndDecodeState(state, internal.kek);
+		if (!decoded) {
+			throw new OAuthCallbackError(
+				'invalid_state',
+				'Invalid or tampered state parameter',
+			);
+		}
+		pluginId = decoded.plugin;
+		tenantId = decoded.tenantId;
 	}
-
-	const { plugin: pluginId, tenantId } = decoded;
 
 	if (!internal.database) {
 		throw new OAuthCallbackError(
@@ -297,6 +356,10 @@ export async function processOAuthCallback(
 		tenantId,
 		kek: internal.kek,
 		database: internal.database,
+		// Include the plugin's extension fields so subscribe/resolvers can
+		// persist them (e.g. Outlook subscription_id) — without this only the
+		// base oauth_2 setters exist and extension setters throw.
+		extraAccountFields: [...(plugin.authConfig?.oauth_2?.account ?? [])],
 	});
 
 	await accountKm.set_access_token(tokens.access_token);
@@ -309,11 +372,20 @@ export async function processOAuthCallback(
 		);
 	}
 
+	// Ack the stored token to Hub so the grid and list_connections flip to
+	// connected. The webhook-link and subscribe blocks below only add inbound
+	// routing — connection status must not depend on either.
+	await reportPluginConnectionStatus(corsair, {
+		plugin,
+		tenantId,
+	}).catch(() => {});
+
 	try {
+		const providerData = mergeOAuthProviderData(tokens, options.callbackParams);
 		const tenantLink = await resolveOAuthWebhookTenantLink(
 			internal.plugins,
 			pluginId,
-			tokens,
+			providerData,
 		);
 		if (tenantLink) {
 			try {
@@ -350,6 +422,24 @@ export async function processOAuthCallback(
 			`[corsair:oauth] Failed to resolve webhook tenant link for '${pluginId}' tenant '${tenantId}':`,
 			error,
 		);
+	}
+
+	// BYO subscribe-on-connect: class-1 providers (Outlook, Gmail) only send
+	// events after a token-authenticated subscribe. The app holds the token, so
+	// the app arms the subscription here and reports the routing link +
+	// verification secret to Hub. Hub never sees the token — only an opaque
+	// routing id and a random clientState. Best-effort: a failure never breaks
+	// the connect (mirrors the tenant-link block above). Plugins without a
+	// subscribe capability (class-2 webhooks) skip this entirely.
+	if (plugin.subscribe) {
+		try {
+			await subscribeAndReport(corsair, plugin, tenantId, accountKm);
+		} catch (error) {
+			console.warn(
+				`[corsair:oauth] BYO subscribe failed for '${pluginId}' tenant '${tenantId}':`,
+				error,
+			);
+		}
 	}
 
 	return { plugin: pluginId, tenantId };

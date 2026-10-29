@@ -1,0 +1,2367 @@
+---
+title: API
+description: "API reference for Xero: every `xero.api.*` operation with input and output types."
+---
+
+Every `xero.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Accounts
+
+### get
+
+`accounts.get`
+
+Retrieve a specific account from Xero chart of accounts
+
+**Risk:** `read`
+
+```ts
+await corsair.xero.api.accounts.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tenantId` | `string` | No | — |
+| `accountId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Accounts` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="Accounts full type">
+
+```ts
+{
+  AccountID: string,
+  Code?: string,
+  Name: string,
+  Type: string,
+  Status?: string,
+  Description?: string,
+  TaxType?: string,
+  Class?: string,
+  BankAccountNumber?: string,
+  CurrencyCode?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`accounts.list`
+
+Retrieve chart of accounts from Xero
+
+**Risk:** `read`
+
+```ts
+await corsair.xero.api.accounts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `pageSize` | `number` | No | — |
+| `where` | `string` | No | — |
+| `order` | `string` | No | — |
+| `tenantId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Accounts` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="Accounts full type">
+
+```ts
+{
+  AccountID: string,
+  Code?: string,
+  Name: string,
+  Type: string,
+  Status?: string,
+  Description?: string,
+  TaxType?: string,
+  Class?: string,
+  BankAccountNumber?: string,
+  CurrencyCode?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Assets
+
+### get
+
+`assets.get`
+
+Retrieve a specific asset by ID from Xero
+
+**Risk:** `read`
+
+```ts
+await corsair.xero.api.assets.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tenantId` | `string` | No | — |
+| `assetId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `assetId` | `string` | No | — |
+| `assetName` | `string` | No | — |
+| `assetNumber` | `string` | No | — |
+| `purchaseDate` | `string` | No | — |
+| `purchasePrice` | `number` | No | — |
+| `assetStatus` | `string` | No | — |
+| `bookValue` | `number` | No | — |
+
+
+
+---
+
+### list
+
+`assets.list`
+
+Retrieve fixed assets from Xero
+
+**Risk:** `read`
+
+```ts
+await corsair.xero.api.assets.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `pageSize` | `number` | No | — |
+| `where` | `string` | No | — |
+| `order` | `string` | No | — |
+| `tenantId` | `string` | No | — |
+| `status` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Attachments
+
+### list
+
+`attachments.list`
+
+List all attachments for a specific entity in Xero
+
+**Risk:** `read`
+
+```ts
+await corsair.xero.api.attachments.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tenantId` | `string` | No | — |
+| `endpoint` | `Invoices \| Contacts \| ManualJournals \| PurchaseOrders \| BankTransactions` | Yes | — |
+| `entityId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Attachments` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="Attachments full type">
+
+```ts
+{
+  AttachmentID: string,
+  FileName: string,
+  Url?: string,
+  MimeType?: string,
+  ContentLength?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### upload
+
+`attachments.upload`
+
+Upload a file attachment to a Xero entity
+
+**Risk:** `write`
+
+```ts
+await corsair.xero.api.attachments.upload({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tenantId` | `string` | No | — |
+| `endpoint` | `Invoices \| Contacts \| ManualJournals \| PurchaseOrders \| BankTransactions` | Yes | — |
+| `entityId` | `string` | Yes | — |
+| `fileName` | `string` | Yes | — |
+| `mimeType` | `string` | No | — |
+| `fileContent` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Attachments` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="Attachments full type">
+
+```ts
+{
+  AttachmentID: string,
+  FileName: string,
+  Url?: string,
+  MimeType?: string,
+  ContentLength?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Bank Transactions
+
+### create
+
+`bankTransactions.create`
+
+Create a bank transaction in Xero (SPEND or RECEIVE)
+
+**Risk:** `write`
+
+```ts
+await corsair.xero.api.bankTransactions.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tenantId` | `string` | No | — |
+| `Type` | `SPEND \| RECEIVE \| RECEIVE-TRANSFER \| SPEND-TRANSFER \| RECEIVE-OVERPAYMENT \| RECEIVE-PREPAYMENT \| SPEND-OVERPAYMENT \| SPEND-PREPAYMENT` | Yes | — |
+| `Contact` | `object` | Yes | — |
+| `BankAccount` | `object` | Yes | — |
+| `LineItems` | `object[]` | Yes | — |
+| `Date` | `string` | No | — |
+| `Reference` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="Contact full type">
+
+```ts
+{
+  ContactID?: string,
+  Name?: string
+}
+```
+</Accordion>
+
+<Accordion title="BankAccount full type">
+
+```ts
+{
+  AccountID?: string,
+  Code?: string
+}
+```
+</Accordion>
+
+<Accordion title="LineItems full type">
+
+```ts
+{
+  Description: string,
+  Quantity?: number,
+  UnitAmount: number,
+  AccountCode?: string,
+  TaxType?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `BankTransactions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="BankTransactions full type">
+
+```ts
+{
+  BankTransactionID: string,
+  Type: SPEND | RECEIVE | RECEIVE-TRANSFER | SPEND-TRANSFER | RECEIVE-OVERPAYMENT | RECEIVE-PREPAYMENT | SPEND-OVERPAYMENT | SPEND-PREPAYMENT,
+  Contact?: {
+    ContactID?: string,
+    Name?: string
+  },
+  BankAccount: {
+    AccountID: string,
+    Code?: string,
+    Name?: string
+  },
+  Date?: string,
+  Status?: string,
+  LineAmountTypes?: string,
+  SubTotal?: number,
+  TotalTax?: number,
+  Total?: number,
+  UpdatedDateUTC?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`bankTransactions.list`
+
+Retrieve bank transactions from Xero
+
+**Risk:** `read`
+
+```ts
+await corsair.xero.api.bankTransactions.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `pageSize` | `number` | No | — |
+| `where` | `string` | No | — |
+| `order` | `string` | No | — |
+| `tenantId` | `string` | No | — |
+| `bankAccountID` | `string` | No | — |
+| `since` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `BankTransactions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="BankTransactions full type">
+
+```ts
+{
+  BankTransactionID: string,
+  Type: SPEND | RECEIVE | RECEIVE-TRANSFER | SPEND-TRANSFER | RECEIVE-OVERPAYMENT | RECEIVE-PREPAYMENT | SPEND-OVERPAYMENT | SPEND-PREPAYMENT,
+  Contact?: {
+    ContactID?: string,
+    Name?: string
+  },
+  BankAccount: {
+    AccountID: string,
+    Code?: string,
+    Name?: string
+  },
+  Date?: string,
+  Status?: string,
+  LineAmountTypes?: string,
+  SubTotal?: number,
+  TotalTax?: number,
+  Total?: number,
+  UpdatedDateUTC?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Budgets
+
+### get
+
+`budgets.get`
+
+Retrieve a budget from Xero
+
+**Risk:** `read`
+
+```ts
+await corsair.xero.api.budgets.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tenantId` | `string` | No | — |
+| `budgetId` | `string` | No | — |
+| `dateFrom` | `string` | No | — |
+| `dateTo` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Budgets` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="Budgets full type">
+
+```ts
+{
+  BudgetID?: string,
+  Type?: string,
+  Description?: string,
+  UpdatedDateUTC?: string,
+  BudgetLines?: {
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Connections
+
+### get
+
+`connections.get`
+
+List active Xero tenant connections
+
+**Risk:** `read`
+
+```ts
+await corsair.xero.api.connections.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  tenantId: string,
+  tenantType: string,
+  tenantName?: string,
+  createdDateUtc?: string,
+  updatedDateUtc?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Contacts
+
+### create
+
+`contacts.create`
+
+Create a new contact in Xero
+
+**Risk:** `write`
+
+```ts
+await corsair.xero.api.contacts.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tenantId` | `string` | No | — |
+| `Name` | `string` | Yes | — |
+| `FirstName` | `string` | No | — |
+| `LastName` | `string` | No | — |
+| `EmailAddress` | `string` | No | — |
+| `AccountNumber` | `string` | No | — |
+| `ContactNumber` | `string` | No | — |
+| `TaxNumber` | `string` | No | — |
+| `BankAccountDetails` | `string` | No | — |
+| `IsSupplier` | `boolean` | No | — |
+| `IsCustomer` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Contacts` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="Contacts full type">
+
+```ts
+{
+  ContactID: string,
+  ContactNumber?: string,
+  AccountNumber?: string,
+  ContactStatus?: string,
+  Name: string,
+  FirstName?: string,
+  LastName?: string,
+  EmailAddress?: string,
+  BankAccountDetails?: string,
+  TaxNumber?: string,
+  IsSupplier?: boolean,
+  IsCustomer?: boolean,
+  UpdatedDateUTC?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`contacts.list`
+
+Retrieve a list of contacts from Xero
+
+**Risk:** `read`
+
+```ts
+await corsair.xero.api.contacts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `pageSize` | `number` | No | — |
+| `where` | `string` | No | — |
+| `order` | `string` | No | — |
+| `tenantId` | `string` | No | — |
+| `searchTerm` | `string` | No | — |
+| `includeArchived` | `boolean` | No | — |
+| `summaryOnly` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Contacts` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="Contacts full type">
+
+```ts
+{
+  ContactID: string,
+  ContactNumber?: string,
+  AccountNumber?: string,
+  ContactStatus?: string,
+  Name: string,
+  FirstName?: string,
+  LastName?: string,
+  EmailAddress?: string,
+  BankAccountDetails?: string,
+  TaxNumber?: string,
+  IsSupplier?: boolean,
+  IsCustomer?: boolean,
+  UpdatedDateUTC?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`contacts.update`
+
+Update an existing contact in Xero
+
+**Risk:** `write`
+
+```ts
+await corsair.xero.api.contacts.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tenantId` | `string` | No | — |
+| `contactId` | `string` | Yes | — |
+| `Name` | `string` | No | — |
+| `FirstName` | `string` | No | — |
+| `LastName` | `string` | No | — |
+| `EmailAddress` | `string` | No | — |
+| `AccountNumber` | `string` | No | — |
+| `ContactNumber` | `string` | No | — |
+| `TaxNumber` | `string` | No | — |
+| `BankAccountDetails` | `string` | No | — |
+| `IsSupplier` | `boolean` | No | — |
+| `IsCustomer` | `boolean` | No | — |
+| `ContactStatus` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Contacts` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="Contacts full type">
+
+```ts
+{
+  ContactID: string,
+  ContactNumber?: string,
+  AccountNumber?: string,
+  ContactStatus?: string,
+  Name: string,
+  FirstName?: string,
+  LastName?: string,
+  EmailAddress?: string,
+  BankAccountDetails?: string,
+  TaxNumber?: string,
+  IsSupplier?: boolean,
+  IsCustomer?: boolean,
+  UpdatedDateUTC?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Credit Notes
+
+### list
+
+`creditNotes.list`
+
+Retrieve list of credit notes from Xero
+
+**Risk:** `read`
+
+```ts
+await corsair.xero.api.creditNotes.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `pageSize` | `number` | No | — |
+| `where` | `string` | No | — |
+| `order` | `string` | No | — |
+| `tenantId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `CreditNotes` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="CreditNotes full type">
+
+```ts
+{
+  CreditNoteID: string,
+  CreditNoteNumber?: string,
+  Type?: string,
+  Status?: string,
+  Total?: number,
+  RemainingCredit?: number,
+  Contact?: {
+    ContactID: string,
+    Name?: string
+  },
+  UpdatedDateUTC?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Files
+
+### list
+
+`files.list`
+
+Retrieve files from Xero Files
+
+**Risk:** `read`
+
+```ts
+await corsair.xero.api.files.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `pageSize` | `number` | No | — |
+| `where` | `string` | No | — |
+| `order` | `string` | No | — |
+| `tenantId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Items` | `object[]` | Yes | — |
+| `TotalCount` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="Items full type">
+
+```ts
+{
+  Id: string,
+  Name: string,
+  Size?: number,
+  MimeType?: string,
+  CreatedDateUtc?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listFolders
+
+`files.listFolders`
+
+Retrieve folders from Xero Files
+
+**Risk:** `read`
+
+```ts
+await corsair.xero.api.files.listFolders({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tenantId` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  Id: string,
+  Name: string,
+  FileCount?: number,
+  IsInbox?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Invoices
+
+### create
+
+`invoices.create`
+
+Create a new invoice in Xero (sales invoice or bill)
+
+**Risk:** `write`
+
+```ts
+await corsair.xero.api.invoices.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tenantId` | `string` | No | — |
+| `Type` | `ACCREC \| ACCPAY` | Yes | — |
+| `Contact` | `object` | Yes | — |
+| `LineItems` | `object[]` | Yes | — |
+| `Date` | `string` | No | — |
+| `DueDate` | `string` | No | — |
+| `InvoiceNumber` | `string` | No | — |
+| `Reference` | `string` | No | — |
+| `Status` | `DRAFT \| SUBMITTED \| AUTHORISED` | No | — |
+| `CurrencyCode` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="Contact full type">
+
+```ts
+{
+  ContactID?: string,
+  Name?: string,
+  ContactNumber?: string
+}
+```
+</Accordion>
+
+<Accordion title="LineItems full type">
+
+```ts
+{
+  Description?: string,
+  Quantity?: number,
+  UnitAmount?: number,
+  ItemCode?: string,
+  AccountCode?: string,
+  TaxType?: string,
+  DiscountRate?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Invoices` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="Invoices full type">
+
+```ts
+{
+  InvoiceID: string,
+  Type: string,
+  InvoiceNumber?: string,
+  Reference?: string,
+  Status?: string,
+  Date?: string,
+  DueDate?: string,
+  CurrencyCode?: string,
+  CurrencyRate?: number,
+  SubTotal?: number,
+  TotalTax?: number,
+  Total?: number,
+  AmountDue?: number,
+  AmountPaid?: number,
+  Contact?: {
+    ContactID: string,
+    Name?: string
+  },
+  LineItems?: {
+  }[],
+  UpdatedDateUTC?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`invoices.get`
+
+Retrieve a specific invoice by ID from Xero
+
+**Risk:** `read`
+
+```ts
+await corsair.xero.api.invoices.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tenantId` | `string` | No | — |
+| `invoiceId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Invoices` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="Invoices full type">
+
+```ts
+{
+  InvoiceID: string,
+  Type: string,
+  InvoiceNumber?: string,
+  Reference?: string,
+  Status?: string,
+  Date?: string,
+  DueDate?: string,
+  CurrencyCode?: string,
+  CurrencyRate?: number,
+  SubTotal?: number,
+  TotalTax?: number,
+  Total?: number,
+  AmountDue?: number,
+  AmountPaid?: number,
+  Contact?: {
+    ContactID: string,
+    Name?: string
+  },
+  LineItems?: {
+  }[],
+  UpdatedDateUTC?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`invoices.list`
+
+Retrieve a list of invoices from Xero
+
+**Risk:** `read`
+
+```ts
+await corsair.xero.api.invoices.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `pageSize` | `number` | No | — |
+| `where` | `string` | No | — |
+| `order` | `string` | No | — |
+| `tenantId` | `string` | No | — |
+| `Ids` | `string[]` | No | — |
+| `InvoiceNumbers` | `string[]` | No | — |
+| `ContactIDs` | `string[]` | No | — |
+| `Statuses` | `string[]` | No | — |
+| `summaryOnly` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Invoices` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="Invoices full type">
+
+```ts
+{
+  InvoiceID: string,
+  Type: string,
+  InvoiceNumber?: string,
+  Reference?: string,
+  Status?: string,
+  Date?: string,
+  DueDate?: string,
+  CurrencyCode?: string,
+  CurrencyRate?: number,
+  SubTotal?: number,
+  TotalTax?: number,
+  Total?: number,
+  AmountDue?: number,
+  AmountPaid?: number,
+  Contact?: {
+    ContactID: string,
+    Name?: string
+  },
+  LineItems?: {
+  }[],
+  UpdatedDateUTC?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`invoices.update`
+
+Update an existing invoice in Xero
+
+**Risk:** `write`
+
+```ts
+await corsair.xero.api.invoices.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tenantId` | `string` | No | — |
+| `invoiceId` | `string` | Yes | — |
+| `Contact` | `object` | No | — |
+| `LineItems` | `object[]` | No | — |
+| `Status` | `DRAFT \| SUBMITTED \| AUTHORISED \| VOIDED` | No | — |
+| `DueDate` | `string` | No | — |
+| `Reference` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="Contact full type">
+
+```ts
+{
+  ContactID?: string,
+  Name?: string
+}
+```
+</Accordion>
+
+<Accordion title="LineItems full type">
+
+```ts
+{
+  Description?: string,
+  Quantity?: number,
+  UnitAmount?: number,
+  ItemCode?: string,
+  AccountCode?: string,
+  TaxType?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Invoices` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="Invoices full type">
+
+```ts
+{
+  InvoiceID: string,
+  Type: string,
+  InvoiceNumber?: string,
+  Reference?: string,
+  Status?: string,
+  Date?: string,
+  DueDate?: string,
+  CurrencyCode?: string,
+  CurrencyRate?: number,
+  SubTotal?: number,
+  TotalTax?: number,
+  Total?: number,
+  AmountDue?: number,
+  AmountPaid?: number,
+  Contact?: {
+    ContactID: string,
+    Name?: string
+  },
+  LineItems?: {
+  }[],
+  UpdatedDateUTC?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Items
+
+### create
+
+`items.create`
+
+Create an inventory item in Xero
+
+**Risk:** `write`
+
+```ts
+await corsair.xero.api.items.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tenantId` | `string` | No | — |
+| `Code` | `string` | Yes | — |
+| `Name` | `string` | No | — |
+| `Description` | `string` | No | — |
+| `PurchaseDescription` | `string` | No | — |
+| `PurchaseDetails` | `object` | No | — |
+| `SalesDetails` | `object` | No | — |
+| `IsTrackedAsInventory` | `boolean` | No | — |
+| `InventoryAssetAccountCode` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="PurchaseDetails full type">
+
+```ts
+{
+  UnitPrice?: number,
+  AccountCode?: string,
+  TaxType?: string
+}
+```
+</Accordion>
+
+<Accordion title="SalesDetails full type">
+
+```ts
+{
+  UnitPrice?: number,
+  AccountCode?: string,
+  TaxType?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Items` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="Items full type">
+
+```ts
+{
+  ItemID: string,
+  Code: string,
+  Name?: string,
+  Description?: string,
+  PurchaseDescription?: string,
+  PurchaseDetails?: {
+  },
+  SalesDetails?: {
+  },
+  IsSold?: boolean,
+  IsPurchased?: boolean,
+  IsTrackedAsInventory?: boolean,
+  TotalCostPool?: number,
+  QuantityOnHand?: number,
+  UpdatedDateUTC?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`items.get`
+
+Retrieve a specific item by ID from Xero
+
+**Risk:** `read`
+
+```ts
+await corsair.xero.api.items.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tenantId` | `string` | No | — |
+| `itemId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Items` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="Items full type">
+
+```ts
+{
+  ItemID: string,
+  Code: string,
+  Name?: string,
+  Description?: string,
+  PurchaseDescription?: string,
+  PurchaseDetails?: {
+  },
+  SalesDetails?: {
+  },
+  IsSold?: boolean,
+  IsPurchased?: boolean,
+  IsTrackedAsInventory?: boolean,
+  TotalCostPool?: number,
+  QuantityOnHand?: number,
+  UpdatedDateUTC?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`items.list`
+
+Retrieve items (inventory/products) from Xero
+
+**Risk:** `read`
+
+```ts
+await corsair.xero.api.items.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `pageSize` | `number` | No | — |
+| `where` | `string` | No | — |
+| `order` | `string` | No | — |
+| `tenantId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Items` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="Items full type">
+
+```ts
+{
+  ItemID: string,
+  Code: string,
+  Name?: string,
+  Description?: string,
+  PurchaseDescription?: string,
+  PurchaseDetails?: {
+  },
+  SalesDetails?: {
+  },
+  IsSold?: boolean,
+  IsPurchased?: boolean,
+  IsTrackedAsInventory?: boolean,
+  TotalCostPool?: number,
+  QuantityOnHand?: number,
+  UpdatedDateUTC?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Journals
+
+### list
+
+`journals.list`
+
+Retrieve journals from Xero
+
+**Risk:** `read`
+
+```ts
+await corsair.xero.api.journals.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `pageSize` | `number` | No | — |
+| `where` | `string` | No | — |
+| `order` | `string` | No | — |
+| `tenantId` | `string` | No | — |
+| `offset` | `number` | No | — |
+| `paymentsOnly` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Journals` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="Journals full type">
+
+```ts
+{
+  JournalID: string,
+  JournalDate: string,
+  JournalNumber: number,
+  CreatedDateUTC: string,
+  JournalLines?: {
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Manual Journals
+
+### get
+
+`manualJournals.get`
+
+Retrieve a specific manual journal by ID from Xero
+
+**Risk:** `read`
+
+```ts
+await corsair.xero.api.manualJournals.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tenantId` | `string` | No | — |
+| `manualJournalId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ManualJournals` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="ManualJournals full type">
+
+```ts
+{
+  ManualJournalID: string,
+  Narration: string,
+  Date?: string,
+  Status?: string,
+  Lines?: {
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`manualJournals.list`
+
+Retrieve manual journals from Xero
+
+**Risk:** `read`
+
+```ts
+await corsair.xero.api.manualJournals.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `pageSize` | `number` | No | — |
+| `where` | `string` | No | — |
+| `order` | `string` | No | — |
+| `tenantId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ManualJournals` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="ManualJournals full type">
+
+```ts
+{
+  ManualJournalID: string,
+  Narration: string,
+  Date?: string,
+  Status?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Organisations
+
+### get
+
+`organisations.get`
+
+Retrieve organisation details from Xero
+
+**Risk:** `read`
+
+```ts
+await corsair.xero.api.organisations.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tenantId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Organisations` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="Organisations full type">
+
+```ts
+{
+  OrganisationID?: string,
+  Name: string,
+  LegalName?: string,
+  PaysTax?: boolean,
+  Version?: string,
+  OrganisationType?: string,
+  BaseCurrency?: string,
+  CountryCode?: string,
+  Timezone?: string,
+  SalesTaxBasis?: string,
+  SalesTaxPeriod?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Payments
+
+### create
+
+`payments.create`
+
+Create a payment linking invoice and bank account in Xero
+
+**Risk:** `write`
+
+```ts
+await corsair.xero.api.payments.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tenantId` | `string` | No | — |
+| `Invoice` | `object` | Yes | — |
+| `Account` | `object` | Yes | — |
+| `Amount` | `number` | Yes | — |
+| `Date` | `string` | No | — |
+| `Reference` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="Invoice full type">
+
+```ts
+{
+  InvoiceID?: string,
+  InvoiceNumber?: string
+}
+```
+</Accordion>
+
+<Accordion title="Account full type">
+
+```ts
+{
+  AccountID?: string,
+  Code?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Payments` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="Payments full type">
+
+```ts
+{
+  PaymentID: string,
+  Date?: string,
+  Amount?: number,
+  Reference?: string,
+  CurrencyRate?: number,
+  PaymentType?: string,
+  Status?: string,
+  UpdatedDateUTC?: string,
+  Invoice?: {
+    InvoiceID: string,
+    InvoiceNumber?: string
+  },
+  Account?: {
+    AccountID: string,
+    Code?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`payments.list`
+
+Retrieve list of payments from Xero
+
+**Risk:** `read`
+
+```ts
+await corsair.xero.api.payments.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `pageSize` | `number` | No | — |
+| `where` | `string` | No | — |
+| `order` | `string` | No | — |
+| `tenantId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Payments` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="Payments full type">
+
+```ts
+{
+  PaymentID: string,
+  Date?: string,
+  Amount?: number,
+  Reference?: string,
+  CurrencyRate?: number,
+  PaymentType?: string,
+  Status?: string,
+  UpdatedDateUTC?: string,
+  Invoice?: {
+    InvoiceID: string,
+    InvoiceNumber?: string
+  },
+  Account?: {
+    AccountID: string,
+    Code?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Projects
+
+### get
+
+`projects.get`
+
+Retrieve a specific project by ID from Xero
+
+**Risk:** `read`
+
+```ts
+await corsair.xero.api.projects.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tenantId` | `string` | No | — |
+| `projectId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `contactId` | `string` | No | — |
+| `name` | `string` | Yes | — |
+| `currencyCode` | `string` | No | — |
+| `deadlineUtc` | `string` | No | — |
+| `totalTaskAmount` | `number` | No | — |
+| `totalExpenseAmount` | `number` | No | — |
+| `estimateAmount` | `number` | No | — |
+| `status` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`projects.list`
+
+Retrieve projects from Xero
+
+**Risk:** `read`
+
+```ts
+await corsair.xero.api.projects.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `pageSize` | `number` | No | — |
+| `where` | `string` | No | — |
+| `order` | `string` | No | — |
+| `tenantId` | `string` | No | — |
+| `contactId` | `string` | No | — |
+| `states` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  projectId: string,
+  name: string,
+  contactId?: string,
+  status?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Purchase Orders
+
+### create
+
+`purchaseOrders.create`
+
+Create a purchase order in Xero
+
+**Risk:** `write`
+
+```ts
+await corsair.xero.api.purchaseOrders.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tenantId` | `string` | No | — |
+| `Contact` | `object` | Yes | — |
+| `LineItems` | `object[]` | Yes | — |
+| `Date` | `string` | No | — |
+| `DeliveryDate` | `string` | No | — |
+| `Reference` | `string` | No | — |
+| `Status` | `DRAFT \| SUBMITTED \| AUTHORISED \| BILLED` | No | — |
+
+<AccordionGroup>
+<Accordion title="Contact full type">
+
+```ts
+{
+  ContactID?: string,
+  Name?: string
+}
+```
+</Accordion>
+
+<Accordion title="LineItems full type">
+
+```ts
+{
+  Description?: string,
+  Quantity?: number,
+  UnitAmount?: number,
+  ItemCode?: string,
+  AccountCode?: string,
+  TaxType?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `PurchaseOrders` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="PurchaseOrders full type">
+
+```ts
+{
+  PurchaseOrderID: string,
+  PurchaseOrderNumber?: string,
+  Date?: string,
+  DeliveryDate?: string,
+  Reference?: string,
+  Status?: string,
+  Total?: number,
+  SubTotal?: number,
+  TotalTax?: number,
+  Contact?: {
+    ContactID: string,
+    Name?: string
+  },
+  UpdatedDateUTC?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`purchaseOrders.get`
+
+Retrieve a specific purchase order by ID from Xero
+
+**Risk:** `read`
+
+```ts
+await corsair.xero.api.purchaseOrders.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tenantId` | `string` | No | — |
+| `purchaseOrderId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `PurchaseOrders` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="PurchaseOrders full type">
+
+```ts
+{
+  PurchaseOrderID: string,
+  PurchaseOrderNumber?: string,
+  Date?: string,
+  DeliveryDate?: string,
+  Reference?: string,
+  Status?: string,
+  Total?: number,
+  SubTotal?: number,
+  TotalTax?: number,
+  Contact?: {
+    ContactID: string,
+    Name?: string
+  },
+  UpdatedDateUTC?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`purchaseOrders.list`
+
+Retrieve list of purchase orders from Xero
+
+**Risk:** `read`
+
+```ts
+await corsair.xero.api.purchaseOrders.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `pageSize` | `number` | No | — |
+| `where` | `string` | No | — |
+| `order` | `string` | No | — |
+| `tenantId` | `string` | No | — |
+| `status` | `string` | No | — |
+| `dateFrom` | `string` | No | — |
+| `dateTo` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `PurchaseOrders` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="PurchaseOrders full type">
+
+```ts
+{
+  PurchaseOrderID: string,
+  PurchaseOrderNumber?: string,
+  Date?: string,
+  DeliveryDate?: string,
+  Reference?: string,
+  Status?: string,
+  Total?: number,
+  SubTotal?: number,
+  TotalTax?: number,
+  Contact?: {
+    ContactID: string,
+    Name?: string
+  },
+  UpdatedDateUTC?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Quotes
+
+### list
+
+`quotes.list`
+
+Retrieve a list of quotes from Xero
+
+**Risk:** `read`
+
+```ts
+await corsair.xero.api.quotes.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `pageSize` | `number` | No | — |
+| `where` | `string` | No | — |
+| `order` | `string` | No | — |
+| `tenantId` | `string` | No | — |
+| `dateFrom` | `string` | No | — |
+| `dateTo` | `string` | No | — |
+| `expiryDateFrom` | `string` | No | — |
+| `expiryDateTo` | `string` | No | — |
+| `status` | `string` | No | — |
+| `contactID` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Quotes` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="Quotes full type">
+
+```ts
+{
+  QuoteID: string,
+  QuoteNumber?: string,
+  Reference?: string,
+  Status?: string,
+  Total?: number,
+  SubTotal?: number,
+  TotalTax?: number,
+  Date?: string,
+  ExpiryDate?: string,
+  Contact?: {
+    ContactID: string,
+    Name?: string
+  },
+  UpdatedDateUTC?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Reports
+
+### getBalanceSheet
+
+`reports.getBalanceSheet`
+
+Retrieve Balance Sheet report from Xero
+
+**Risk:** `read`
+
+```ts
+await corsair.xero.api.reports.getBalanceSheet({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tenantId` | `string` | No | — |
+| `date` | `string` | No | — |
+| `periods` | `number` | No | — |
+| `timeframe` | `MONTH \| QUARTER \| YEAR` | No | — |
+| `trackingCategoryID` | `string` | No | — |
+| `trackingOptionID` | `string` | No | — |
+| `paymentsOnly` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Reports` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="Reports full type">
+
+```ts
+{
+  ReportID?: string,
+  ReportName?: string,
+  ReportType?: string,
+  ReportDate?: string,
+  Rows?: {
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getProfitLoss
+
+`reports.getProfitLoss`
+
+Retrieve Profit & Loss report from Xero
+
+**Risk:** `read`
+
+```ts
+await corsair.xero.api.reports.getProfitLoss({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tenantId` | `string` | No | — |
+| `fromDate` | `string` | No | — |
+| `toDate` | `string` | No | — |
+| `periods` | `number` | No | — |
+| `timeframe` | `MONTH \| QUARTER \| YEAR` | No | — |
+| `trackingCategoryID` | `string` | No | — |
+| `trackingOptionID` | `string` | No | — |
+| `paymentsOnly` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Reports` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="Reports full type">
+
+```ts
+{
+  ReportID?: string,
+  ReportName?: string,
+  ReportType?: string,
+  ReportDate?: string,
+  Rows?: {
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tax Rates
+
+### list
+
+`taxRates.list`
+
+Retrieve tax rates from Xero
+
+**Risk:** `read`
+
+```ts
+await corsair.xero.api.taxRates.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `pageSize` | `number` | No | — |
+| `where` | `string` | No | — |
+| `order` | `string` | No | — |
+| `tenantId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `TaxRates` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="TaxRates full type">
+
+```ts
+{
+  Name: string,
+  TaxType: string,
+  Status?: string,
+  EffectiveRate?: number,
+  CanApplyToAssets?: boolean,
+  CanApplyToEquity?: boolean,
+  CanApplyToExpenses?: boolean,
+  CanApplyToLiabilities?: boolean,
+  CanApplyToRevenue?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tracking Categories
+
+### list
+
+`trackingCategories.list`
+
+Retrieve tracking categories from Xero
+
+**Risk:** `read`
+
+```ts
+await corsair.xero.api.trackingCategories.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `pageSize` | `number` | No | — |
+| `where` | `string` | No | — |
+| `order` | `string` | No | — |
+| `tenantId` | `string` | No | — |
+| `includeArchived` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `TrackingCategories` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="TrackingCategories full type">
+
+```ts
+{
+  TrackingCategoryID: string,
+  Name: string,
+  Status?: string,
+  Options?: {
+    TrackingOptionID?: string,
+    Name: string,
+    Status?: string
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

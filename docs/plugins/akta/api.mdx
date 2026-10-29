@@ -1,0 +1,1079 @@
+---
+title: API
+description: "API reference for Akta: every `akta.api.*` operation with input and output types."
+---
+
+Every `akta.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Company
+
+### employeeReviews
+
+`company.employeeReviews`
+
+Get employee review ratings and individual reviews for a company
+
+**Risk:** `read`
+
+```ts
+await corsair.akta.api.company.employeeReviews({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `company` | `string` | Yes | Company website (https://canva.com) or Akta uuid from company.search |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `limit` | `number` | Yes | — |
+| `offset` | `number` | Yes | — |
+| `credits_consumed` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid: string,
+  employee_reviews: {
+    overall_rating?: {
+    },
+    other_ratings?: {
+      type?: string,
+      provider?: string,
+      value: number
+    }[],
+    reviews?: {
+      data: {
+        id: number,
+        summary?: string,
+        pros?: string,
+        cons?: string,
+        rating?: number,
+        review_link?: string,
+        job_title?: string,
+        review_date?: string,
+        employment_status?: string,
+        is_current_employee?: boolean,
+        years_of_employment?: number,
+        location?: string,
+        country_code?: string,
+        helpful_count?: number,
+        not_helpful_count?: number,
+        career_opportunities_rating?: number,
+        ceo_rating?: string | null,
+        compensation_and_benefits_rating?: number,
+        culture_and_values_rating?: number,
+        diversity_and_inclusion_rating?: number,
+        senior_management_rating?: number,
+        work_life_balance_rating?: number,
+        language?: string,
+        provider?: string
+      }[],
+      total?: number,
+      total_by_provider?: {
+      }
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### enrich
+
+`company.enrich`
+
+Get structured company data by section: firmographics, business model, funding, and more
+
+**Risk:** `read`
+
+```ts
+await corsair.akta.api.company.enrich({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `company` | `string` | Yes | Company website (https://canva.com) or Akta uuid from company.search |
+| `sections` | `firmographic \| business_model \| company_assessment \| trust_signal \| company_hierarchy \| digital_presence \| financial_estimate \| location \| management_profile \| product_offering \| strategic_signal \| customer_profile \| industry \| technology \| funding_detail \| mna_and_investment[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `credits_consumed` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid: string,
+  firmographic?: {
+    name?: string,
+    legal_name?: string,
+    website?: string,
+    company_type?: {
+      code: string,
+      label: string
+    },
+    founded_year?: number,
+    company_description?: string,
+    company_description_short?: string,
+    operating_status?: {
+      code: string,
+      label: string
+    },
+    ownership_category?: {
+      code: string,
+      label: string
+    },
+    headcount_range?: string,
+    logo_url?: string,
+    akta_rank?: number
+  },
+  business_model?: {
+    gtm_motion?: {
+      title?: string,
+      description?: string,
+      source?: string[],
+      type?: {
+        code: string,
+        label: string
+      }
+    }[],
+    revenue_model?: {
+      title?: string,
+      description?: string,
+      source?: string[],
+      type?: {
+        code: string,
+        label: string
+      }
+    }[],
+    marketing_channels?: {
+      title?: string,
+      description?: string,
+      source?: string[],
+      type?: {
+        code: string,
+        label: string
+      },
+      stage?: {
+        code: string,
+        label: string
+      }
+    }[],
+    distribution_channels?: {
+      title?: string,
+      description?: string,
+      source?: string[],
+      type?: {
+        code: string,
+        label: string
+      },
+      scope?: string,
+      target_buyer?: {
+        code: string,
+        label: string
+      }
+    }[],
+    cost_components?: string[],
+    pricing_details?: {
+      description?: string,
+      notes?: string,
+      model?: {
+        code: string,
+        label: string
+      },
+      billing_cadence?: {
+        code: string,
+        label: string
+      },
+      source?: string[]
+    }[],
+    gtm_type?: {
+      code: string,
+      label: string
+    },
+    offering_type?: {
+      code: string,
+      label: string
+    }
+  },
+  company_assessment?: {
+    market_position?: string,
+    strengths?: {
+      headline?: string,
+      details?: string,
+      source?: string[]
+    }[],
+    weakness?: {
+      headline?: string,
+      details?: string,
+      source?: string[]
+    }[],
+    competitive_moat?: {
+      details?: string,
+      type?: {
+        code: string,
+        label: string
+      }
+    }[],
+    key_risks?: {
+      headline?: string,
+      details?: string,
+      source?: string[]
+    }[],
+    key_highlights?: {
+      headline?: string,
+      details?: string,
+      source?: string[]
+    }[],
+    customer_concentration?: {
+      details?: string,
+      classification?: {
+        code: string,
+        label: string
+      }
+    },
+    peers?: {
+      uuid?: string,
+      name: string,
+      description?: string,
+      type?: {
+        code: string,
+        label: string
+      }
+    }[]
+  },
+  trust_signal?: {
+    compliance?: {
+      class?: {
+        code: string,
+        label: string
+      },
+      name?: {
+        code: string,
+        label: string
+      },
+      description?: string,
+      source?: string[]
+    }[],
+    regulatory_updates?: {
+      title?: string,
+      type?: string,
+      description?: string,
+      source?: string[]
+    }[],
+    awards?: {
+      title?: string,
+      description?: string,
+      source?: string[],
+      type?: {
+        code: string,
+        label: string
+      },
+      body?: string
+    }[],
+    ip?: {
+      title?: string,
+      description?: string,
+      source?: string[],
+      type?: {
+        code: string,
+        label: string
+      },
+      status?: {
+        code: string,
+        label: string
+      }
+    }[]
+  },
+  company_hierarchy?: {
+    subsidiaries?: {
+      uuid?: string,
+      name: string,
+      business_focus?: string,
+      acquired_on?: {
+        year: number,
+        month?: number,
+        day?: number
+      },
+      relationship_type?: {
+        code: string,
+        label: string
+      },
+      type?: {
+        code: string,
+        label: string
+      }
+    }[]
+  },
+  digital_presence?: {
+    social_media_profiles?: {
+      platform: string,
+      url: string
+    }[]
+  },
+  financial_estimate?: {
+    revenue_estimate?: {
+      code: string,
+      label: string
+    },
+    valuation_estimate?: {
+      code: string,
+      label: string
+    }
+  },
+  location?: {
+    hq?: {
+      city?: string,
+      country?: string,
+      region?: string
+    },
+    market_served?: {
+      is_global?: boolean
+    },
+    offices?: {
+      city?: string,
+      country?: string,
+      description?: string,
+      source?: string[],
+      type?: {
+        code: string,
+        label: string
+      }
+    }[]
+  },
+  management_profile?: {
+    number_of_profiles?: number,
+    profiles?: {
+      name: string,
+      designation?: string,
+      designation_category?: {
+        code: string,
+        label: string
+      },
+      overview?: string,
+      profile_commentary?: string,
+      start_date?: string,
+      previous_companies?: string[],
+      source?: string[]
+    }[]
+  },
+  product_offering?: {
+    brand?: {
+      name: string,
+      description?: string,
+      source?: string[]
+    }[],
+    core_offering?: string,
+    differentiator?: string,
+    functional_benefit?: string,
+    problem_solved?: string,
+    quantifiable_outcome?: string[],
+    product_overview?: string,
+    product_and_service?: {
+      name: string,
+      category?: string,
+      description?: string,
+      url?: string,
+      source?: string[]
+    }[]
+  },
+  strategic_signal?: {
+    scale_indicator?: {
+      title?: string,
+      description?: string,
+      source?: string[],
+      type?: {
+        code: string,
+        label: string
+      },
+      value?: string
+    }[],
+    partnership?: {
+      title?: string,
+      description?: string,
+      source?: string[],
+      type?: {
+        code: string,
+        label: string
+      },
+      uuid?: string,
+      name?: string,
+      strategic_tier?: string,
+      announced_on?: {
+        year: number,
+        month?: number,
+        day?: number
+      }
+    }[],
+    recent_move?: {
+      title?: string,
+      description?: string,
+      source?: string[],
+      type?: {
+        code: string,
+        label: string
+      },
+      date?: {
+        year: number,
+        month?: number,
+        day?: number
+      }
+    }[],
+    leadership_change?: {
+      title?: string,
+      description?: string,
+      source?: string[],
+      type?: {
+        code: string,
+        label: string
+      }
+    }[],
+    expansion_highlight?: {
+      title?: string,
+      description?: string,
+      source?: string[],
+      type?: {
+        code: string,
+        label: string
+      }
+    }[]
+  },
+  customer_profile?: {
+    segment?: {
+      title?: string,
+      description?: string,
+      source?: string[],
+      type?: {
+        code: string,
+        label: string
+      },
+      is_primary?: boolean,
+      pain_point_addressed?: string,
+      use_case?: string
+    }[],
+    icp?: {
+      profile?: string,
+      description?: string,
+      buyer_persona?: string,
+      target_buyer?: string,
+      geography?: string,
+      industry_vertical?: string,
+      primary_use_case?: string,
+      pain_points?: string[],
+      evidence_proof_points?: string[],
+      buying_structure?: {
+        code: string,
+        label: string
+      },
+      firmographic_size?: {
+        code: string,
+        label: string
+      },
+      purchase_trigger?: {
+        code: string,
+        label: string
+      },
+      sales_cycle_length?: {
+        code: string,
+        label: string
+      },
+      sales_motion?: {
+        code: string,
+        label: string
+      }
+    }[],
+    select_customer?: {
+      uuid?: string,
+      name: string,
+      industry?: string,
+      use_case?: string,
+      source?: string[],
+      type?: {
+        code: string,
+        label: string
+      }
+    }[]
+  },
+  industry?: {
+    keyword?: string[],
+    industry?: {
+      code: string,
+      label: string,
+      is_primary?: boolean
+    }[],
+    naics?: {
+      code: string,
+      label: string
+    }[],
+    sic?: {
+      code: string,
+      label: string
+    }[],
+    product_category?: string
+  },
+  technology?: {
+    is_technology_focussed?: boolean,
+    api_detail?: {
+      has_api?: boolean,
+      has_mcp?: boolean,
+      description?: string,
+      docs_url?: string
+    },
+    integration?: {
+      title?: string,
+      description?: string,
+      source?: string[],
+      type?: {
+        code: string,
+        label: string
+      }
+    }[],
+    ai_capability?: {
+      title?: string,
+      description?: string,
+      source?: string[],
+      type?: {
+        code: string,
+        label: string
+      }
+    }[],
+    ai_maturity?: {
+      label: string,
+      scale?: number,
+      description?: string
+    },
+    app_detail?: {
+      has_app?: boolean,
+      app_url?: {
+        platform: string,
+        url: string
+      }[]
+    },
+    feature?: {
+      title?: string,
+      description?: string,
+      differentiator?: {
+        code: string,
+        label: string
+      },
+      source?: string[]
+    }[],
+    core_technology?: string
+  },
+  funding_detail?: {
+    funding_overview?: {
+      funding_stage?: {
+        code: string,
+        label: string
+      },
+      last_funding_date?: {
+        year: number,
+        month?: number,
+        day?: number
+      },
+      total_funding_usd?: number
+    },
+    funding_rounds?: {
+      id: number,
+      round?: {
+        code: string,
+        label: string
+      },
+      date?: {
+        year: number,
+        month?: number,
+        day?: number
+      },
+      amount_usd?: number,
+      pre_money_valuation?: number,
+      total_investors?: number,
+      investors?: {
+        uuid?: string,
+        name: string,
+        lead_investor?: boolean,
+        type?: {
+          code: string,
+          label: string
+        }
+      }[],
+      news?: {
+        publisher?: string,
+        title?: string,
+        url: string
+      }[]
+    }[],
+    investors?: {
+      uuid?: string,
+      name: string,
+      website?: string,
+      date_of_entry?: {
+        year: number,
+        month?: number,
+        day?: number
+      },
+      rounds_participated?: {
+        code: string,
+        label: string
+      }[],
+      type?: {
+        code: string,
+        label: string
+      }
+    }[]
+  },
+  mna_and_investment?: {
+    mna?: {
+      id: number,
+      acquiree: {
+        uuid?: string,
+        name: string,
+        website?: string
+      },
+      acquisition_type?: {
+        code: string,
+        label: string
+      },
+      announced_date?: {
+        year: number,
+        month?: number,
+        day?: number
+      },
+      status?: string,
+      amount_usd?: number,
+      news?: {
+        publisher?: string,
+        title?: string,
+        url: string
+      }[]
+    }[],
+    investment?: {
+      id: number,
+      funding_round_id?: number,
+      investee: {
+        uuid?: string,
+        name: string,
+        website?: string
+      },
+      lead_investor?: boolean,
+      announced_date?: {
+        year: number,
+        month?: number,
+        day?: number
+      },
+      round?: {
+        code: string,
+        label: string
+      },
+      news?: {
+        publisher?: string,
+        title?: string,
+        url: string
+      }[]
+    }[]
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### productReviews
+
+`company.productReviews`
+
+Get a company's product catalog with ratings, pricing, and reviews
+
+**Risk:** `read`
+
+```ts
+await corsair.akta.api.company.productReviews({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `company` | `string` | Yes | Company website (https://canva.com) or Akta uuid from company.search |
+| `products` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `limit` | `number` | Yes | — |
+| `offset` | `number` | Yes | — |
+| `credits_consumed` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid: string,
+  product_reviews?: {
+    id: string,
+    product_name: string,
+    main_category?: string,
+    categories?: string[],
+    description?: string,
+    rating?: {
+    },
+    star_distribution?: {
+    },
+    pros_list?: (
+      string | {
+        text: string,
+        count?: string | number
+      }
+    )[],
+    cons_list?: (
+      string | {
+        text: string,
+        count?: string | number
+      }
+    )[],
+    pricing?: {
+      package?: string,
+      price?: string,
+      price_info?: string
+    }[],
+    reviews?: {
+      data: {
+        review_id: number,
+        review_title?: string,
+        review_content?: string,
+        review_question_answers?: {
+          question: string,
+          answer: string
+        }[],
+        review_rating?: number,
+        publish_date?: string,
+        reviewer_company_size?: string,
+        review_link?: string,
+        provider?: string
+      }[],
+      total?: number,
+      total_by_provider?: {
+      }
+    }
+  }[],
+  product?: {
+    id: string,
+    product_name: string,
+    main_category?: string,
+    categories?: string[],
+    description?: string,
+    rating?: {
+    },
+    star_distribution?: {
+    },
+    pros_list?: (
+      string | {
+        text: string,
+        count?: string | number
+      }
+    )[],
+    cons_list?: (
+      string | {
+        text: string,
+        count?: string | number
+      }
+    )[],
+    pricing?: {
+      package?: string,
+      price?: string,
+      price_info?: string
+    }[],
+    reviews?: {
+      data: {
+        review_id: number,
+        review_title?: string,
+        review_content?: string,
+        review_question_answers?: {
+          question: string,
+          answer: string
+        }[],
+        review_rating?: number,
+        publish_date?: string,
+        reviewer_company_size?: string,
+        review_link?: string,
+        provider?: string
+      }[],
+      total?: number,
+      total_by_provider?: {
+      }
+    }
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`company.search`
+
+Resolve a company name or website to its Akta uuid (free, no credits)
+
+**Risk:** `read`
+
+```ts
+await corsair.akta.api.company.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | Company name or website |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `count` | `number` | No | — |
+| `credits_consumed` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid: string,
+  name: string,
+  website?: string,
+  product_category?: string,
+  company_status?: public | private | acquired | delisted | unknown,
+  parent_company?: {
+    uuid: string,
+    name: string
+  },
+  akta_rank?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Industry
+
+### search
+
+`industry.search`
+
+Resolve a free-text industry to Akta industry codes (free, no credits)
+
+**Risk:** `read`
+
+```ts
+await corsair.akta.api.industry.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `level` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `count` | `number` | No | — |
+| `credits_consumed` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  code: string,
+  industry_name: string,
+  similarity: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## News
+
+### list
+
+`news.list`
+
+List enriched news articles filtered by company, industry, topic, or date
+
+**Risk:** `read`
+
+```ts
+await corsair.akta.api.news.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `company` | `string` | No | — |
+| `primary_company` | `string` | No | — |
+| `industry` | `string[]` | No | — |
+| `query` | `string` | No | — |
+| `title` | `string` | No | — |
+| `start_date` | `string` | No | — |
+| `end_date` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `group_articles` | `boolean` | No | — |
+| `news_score_list` | `High \| Medium \| Low \| all` | No | — |
+| `countries` | `string[]` | No | — |
+| `blacklisted` | `string[]` | No | — |
+| `type_list` | `string[]` | No | — |
+| `sentiment_list` | `positive \| negative \| neutral \| all[]` | No | — |
+| `entity_person_list` | `string[]` | No | — |
+| `entity_location_list` | `string[]` | No | — |
+| `entity_product_list` | `string[]` | No | — |
+| `entity_event_list` | `string[]` | No | — |
+| `naics_code_list` | `string[]` | No | — |
+| `sic_code_list` | `string[]` | No | — |
+| `iptc_code_list` | `string[]` | No | — |
+| `iab_code_list` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `total` | `number` | Yes | — |
+| `count` | `number` | Yes | — |
+| `limit` | `number` | Yes | — |
+| `offset` | `number` | Yes | — |
+| `credits_consumed` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  title: string,
+  url: string,
+  publisher?: string,
+  published_date?: string,
+  sentiment?: string,
+  sentiment_score?: number,
+  ai_summary?: string,
+  word_count?: number,
+  original_language?: string,
+  author?: string,
+  countries?: string[],
+  industries?: {
+    code: string,
+    name: string,
+    is_primary?: boolean
+  }[],
+  tags?: {
+    code: string,
+    name: string,
+    is_primary?: boolean
+  }[],
+  company_mentions?: {
+    uuid?: string,
+    name: string,
+    website?: string,
+    is_primary?: boolean
+  }[],
+  article_type?: {
+    code: string,
+    label: string
+  },
+  is_press_release?: boolean,
+  is_opinion?: boolean,
+  is_breaking?: boolean,
+  iptc_codes?: {
+    code: string,
+    name: string
+  }[],
+  iab_categories?: {
+    code: string,
+    name: string
+  }[],
+  naics_codes?: {
+    code: string,
+    name: string
+  }[],
+  sic_codes?: {
+    code: string,
+    name: string
+  }[],
+  entities?: {
+    person?: string[],
+    location?: string[],
+    product?: string[],
+    event?: string[]
+  },
+  newsworthiness_score?: number,
+  group_id?: number,
+  full_text?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

@@ -9,6 +9,34 @@ The Resend plugin syncs data locally. Use `corsair.resend.db.<entity>.search({ d
 **New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
 </Info>
 
+## Contacts
+
+Path: `resend.db.contacts.search`
+
+```ts
+const rows = await corsair.resend.db.contacts.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `email` | `string` | equals, contains, startsWith, endsWith, in |
+| `first_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `last_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `date` | equals, before, after, between |
+| `unsubscribed` | `boolean` | equals |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
 ## Domains
 
 Path: `resend.db.domains.search`

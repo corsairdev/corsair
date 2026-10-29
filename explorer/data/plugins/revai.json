@@ -1,0 +1,495 @@
+{
+  "id": "revai",
+  "displayName": "RevAI",
+  "description": "RevAI plugin for Corsair",
+  "npmPackageName": "@corsair-dev/revai",
+  "authTypes": ["api_key", "oauth_2"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 3,
+    "webhooks": 0,
+    "db": 1
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    },
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature",
+        "tenant_external_id"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "revai.api.jobs.getJob",
+      "shortPath": "jobs.getJob",
+      "description": "Get an async job",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "in_progress | transcribed | failed"
+          },
+          {
+            "key": "created_on",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "completed_on",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "async | human_tc | stream"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "media_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "callback_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "transcriber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "failure",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "failure_detail",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "duration_seconds",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "stream_duration_seconds",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "delete_after_seconds",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip_diarization",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "skip_postprocessing",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "skip_punctuation",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "remove_disfluencies",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "remove_atmospherics",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "filter_profanity",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "custom_vocabulary_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "speaker_channels_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "enable_multilingual",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "revai.api.jobs.getTranscript",
+      "shortPath": "jobs.getTranscript",
+      "description": "Get transcript of a job",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "accept",
+            "optional": false,
+            "type": "application/vnd.rev.transcript.v1.0+json | text/plain"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ monologues: { speaker?: number, elements: { type: string, value: string, ts?: number | null, end_ts?: number | null, confidence?: number | null }[] }[] } | string"
+      }
+    },
+    {
+      "path": "revai.api.jobs.submitJob",
+      "shortPath": "jobs.submitJob",
+      "description": "Submit an async job",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "media_url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notification_config",
+            "optional": true,
+            "type": "{ url: string, auth_headers?: { Authorization: string } }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "in_progress | transcribed | failed"
+          },
+          {
+            "key": "created_on",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "completed_on",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "async | human_tc | stream"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "media_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "callback_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "transcriber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "failure",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "failure_detail",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "duration_seconds",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "stream_duration_seconds",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "delete_after_seconds",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip_diarization",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "skip_postprocessing",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "skip_punctuation",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "remove_disfluencies",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "remove_atmospherics",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "filter_profanity",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "custom_vocabulary_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "speaker_channels_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "enable_multilingual",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "revai.db.job.search",
+      "entityName": "job",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_on",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "completed_on",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "metadata",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "media_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "callback_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "language",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "transcriber",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "failure",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "failure_detail",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "duration_seconds",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "stream_duration_seconds",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "delete_after_seconds",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "skip_diarization",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "skip_postprocessing",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "skip_punctuation",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "remove_disfluencies",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "remove_atmospherics",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "filter_profanity",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "custom_vocabulary_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "speaker_channels_count",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "enable_multilingual",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    }
+  ]
+}

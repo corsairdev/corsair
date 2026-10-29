@@ -111,4 +111,27 @@ describe('postHubConnectSession', () => {
 		});
 		expect(getRequestBody()).not.toHaveProperty('deliveryUrl');
 	});
+
+	it('includes redirectUri when hub config sets redirectURL', async () => {
+		const { fetchMock, getRequestBody } = mockHubConnectFetch();
+		global.fetch = fetchMock;
+
+		await postHubConnectSession(
+			{ ...prodHub, redirectURL: 'https://app.example/done' },
+			{ tenantId: 'default', plugins },
+		);
+
+		expect(getRequestBody()).toMatchObject({
+			redirectUri: 'https://app.example/done',
+		});
+	});
+
+	it('omits redirectUri when redirectURL is unset', async () => {
+		const { fetchMock, getRequestBody } = mockHubConnectFetch();
+		global.fetch = fetchMock;
+
+		await postHubConnectSession(prodHub, { tenantId: 'default', plugins });
+
+		expect(getRequestBody()).not.toHaveProperty('redirectUri');
+	});
 });

@@ -1,0 +1,223 @@
+{
+  "id": "chaser",
+  "displayName": "Chaser",
+  "description": "Chaser plugin for Corsair",
+  "npmPackageName": "@corsair-dev/chaser",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 5,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": [
+        "api_key",
+        "webhook_signature",
+        "tenant_external_id",
+        "api_secret"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "chaser.api.creditNotes.list",
+      "shortPath": "creditNotes.list",
+      "description": "List all credit notes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, customer_id: string, amount: number, currency: string, status: string }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chaser.api.customers.list",
+      "shortPath": "customers.list",
+      "description": "List all customers",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name: string, email?: string, status?: string }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chaser.api.invoices.get",
+      "shortPath": "invoices.get",
+      "description": "Get an invoice by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "customer_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "amount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "currency",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "due_date",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chaser.api.invoices.list",
+      "shortPath": "invoices.list",
+      "description": "List all invoices",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "customer_external_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, customer_id: string, amount: number, currency: string, status: string, due_date?: string }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chaser.api.organization.get",
+      "shortPath": "organization.get",
+      "description": "Get organization details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

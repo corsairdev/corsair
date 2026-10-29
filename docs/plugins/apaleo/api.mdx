@@ -1,0 +1,1594 @@
+---
+title: API
+description: "API reference for Apaleo: every `apaleo.api.*` operation with input and output types."
+---
+
+Every `apaleo.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Properties
+
+### archive
+
+`properties.archive`
+
+Archive a live property (sets isArchived to true)
+
+**Risk:** `write`
+
+```ts
+await corsair.apaleo.api.properties.archive({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `true` | Yes | — |
+
+
+
+---
+
+### clone
+
+`properties.clone`
+
+Clone a property, creating a new property with inventory and rate plans
+
+**Risk:** `write`
+
+```ts
+await corsair.apaleo.api.properties.clone({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `code` | `string` | Yes | — |
+| `name` | `object` | Yes | — |
+| `companyName` | `string` | Yes | — |
+| `managingDirectors` | `string` | No | — |
+| `commercialRegisterEntry` | `string` | Yes | — |
+| `taxId` | `string` | Yes | — |
+| `description` | `object` | No | — |
+| `location` | `object` | Yes | — |
+| `bankAccount` | `object` | No | — |
+| `paymentTerms` | `object` | Yes | — |
+| `timeZone` | `string` | Yes | — |
+| `defaultCheckInTime` | `string` | Yes | — |
+| `defaultCheckOutTime` | `string` | Yes | — |
+| `currencyCode` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="name full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="description full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="location full type">
+
+```ts
+{
+  addressLine1: string,
+  addressLine2?: string | null,
+  postalCode: string,
+  city: string,
+  regionCode?: string | null,
+  countryCode: string
+}
+```
+</Accordion>
+
+<Accordion title="bankAccount full type">
+
+```ts
+{
+  iban?: string,
+  bic?: string,
+  bank?: string
+}
+```
+</Accordion>
+
+<Accordion title="paymentTerms full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### count
+
+`properties.count`
+
+Return total count of properties
+
+**Risk:** `read`
+
+```ts
+await corsair.apaleo.api.properties.count({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `Test \| Live[]` | No | — |
+| `includeArchived` | `boolean` | No | — |
+| `countryCode` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | Yes | — |
+
+
+
+---
+
+### countries
+
+`properties.countries`
+
+List ISO country codes that can be used to create properties
+
+**Risk:** `read`
+
+```ts
+await corsair.apaleo.api.properties.countries({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `countryCodes` | `string[]` | Yes | — |
+
+
+
+---
+
+### create
+
+`properties.create`
+
+Create a new property
+
+**Risk:** `write`
+
+```ts
+await corsair.apaleo.api.properties.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string` | Yes | — |
+| `name` | `object` | Yes | — |
+| `companyName` | `string` | Yes | — |
+| `managingDirectors` | `string` | No | — |
+| `commercialRegisterEntry` | `string` | Yes | — |
+| `taxId` | `string` | Yes | — |
+| `description` | `object` | No | — |
+| `location` | `object` | Yes | — |
+| `bankAccount` | `object` | No | — |
+| `paymentTerms` | `object` | Yes | — |
+| `timeZone` | `string` | Yes | — |
+| `defaultCheckInTime` | `string` | Yes | — |
+| `defaultCheckOutTime` | `string` | Yes | — |
+| `currencyCode` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="name full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="description full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="location full type">
+
+```ts
+{
+  addressLine1: string,
+  addressLine2?: string | null,
+  postalCode: string,
+  city: string,
+  regionCode?: string | null,
+  countryCode: string
+}
+```
+</Accordion>
+
+<Accordion title="bankAccount full type">
+
+```ts
+{
+  iban?: string,
+  bic?: string,
+  bank?: string
+}
+```
+</Accordion>
+
+<Accordion title="paymentTerms full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### exists
+
+`properties.exists`
+
+Check if a property exists by id
+
+**Risk:** `read`
+
+```ts
+await corsair.apaleo.api.properties.exists({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `exists` | `boolean` | Yes | — |
+
+
+
+---
+
+### get
+
+`properties.get`
+
+Get a property by id
+
+**Risk:** `read`
+
+```ts
+await corsair.apaleo.api.properties.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `code` | `string` | Yes | — |
+| `propertyTemplateId` | `string` | No | — |
+| `isTemplate` | `boolean` | Yes | — |
+| `name` | `object` | Yes | — |
+| `description` | `object` | No | — |
+| `companyName` | `string` | Yes | — |
+| `managingDirectors` | `string` | No | — |
+| `commercialRegisterEntry` | `string` | Yes | — |
+| `taxId` | `string` | Yes | — |
+| `location` | `object` | Yes | — |
+| `bankAccount` | `object` | No | — |
+| `paymentTerms` | `object` | Yes | — |
+| `timeZone` | `string` | Yes | — |
+| `currencyCode` | `string` | Yes | — |
+| `created` | `string` | Yes | — |
+| `status` | `string` | Yes | — |
+| `isArchived` | `boolean` | Yes | — |
+| `actions` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="name full type">
+
+```ts
+string | {
+}
+```
+</Accordion>
+
+<Accordion title="description full type">
+
+```ts
+string | {
+}
+```
+</Accordion>
+
+<Accordion title="location full type">
+
+```ts
+{
+  addressLine1?: string | null,
+  addressLine2?: string | null,
+  postalCode?: string | null,
+  city?: string | null,
+  regionCode?: string | null,
+  countryCode?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="bankAccount full type">
+
+```ts
+{
+  iban?: string | null,
+  bic?: string | null,
+  bank?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="paymentTerms full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="actions full type">
+
+```ts
+{
+  action?: string | null,
+  isAllowed?: boolean | null,
+  reasons?: {
+    code?: string | null,
+    message?: string | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`properties.list`
+
+Get the list of properties
+
+**Risk:** `read`
+
+```ts
+await corsair.apaleo.api.properties.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `Test \| Live[]` | No | — |
+| `includeArchived` | `boolean` | No | — |
+| `countryCode` | `string[]` | No | — |
+| `expand` | `string[]` | No | — |
+| `pageNumber` | `number` | No | — |
+| `pageSize` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `properties` | `object[]` | Yes | — |
+| `count` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+{
+  id: string,
+  code: string,
+  propertyTemplateId?: string | null,
+  isTemplate: boolean,
+  name: string | {
+  },
+  description?: string | {
+  } | null,
+  companyName: string,
+  managingDirectors?: string | null,
+  commercialRegisterEntry: string,
+  taxId: string,
+  location: {
+    addressLine1?: string | null,
+    addressLine2?: string | null,
+    postalCode?: string | null,
+    city?: string | null,
+    regionCode?: string | null,
+    countryCode?: string | null
+  },
+  bankAccount?: {
+    iban?: string | null,
+    bic?: string | null,
+    bank?: string | null
+  } | null,
+  paymentTerms: {
+  },
+  timeZone: string,
+  currencyCode: string,
+  created: string,
+  status: string,
+  isArchived: boolean,
+  actions?: {
+    action?: string | null,
+    isAllowed?: boolean | null,
+    reasons?: {
+      code?: string | null,
+      message?: string | null
+    }[] | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### reset
+
+`properties.reset`
+
+Delete transactional data for a property in Test status
+
+**Risk:** `write`
+
+```ts
+await corsair.apaleo.api.properties.reset({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `true` | Yes | — |
+
+
+
+---
+
+### setLive
+
+`properties.setLive`
+
+Move a test property to Live status
+
+**Risk:** `write`
+
+```ts
+await corsair.apaleo.api.properties.setLive({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `true` | Yes | — |
+
+
+
+---
+
+## Unit Attributes
+
+### create
+
+`unitAttributes.create`
+
+Create a new unit attribute
+
+**Risk:** `write`
+
+```ts
+await corsair.apaleo.api.unitAttributes.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### delete
+
+`unitAttributes.delete`
+
+Delete a unit attribute
+
+**Risk:** `write`
+
+```ts
+await corsair.apaleo.api.unitAttributes.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `true` | Yes | — |
+
+
+
+---
+
+### exists
+
+`unitAttributes.exists`
+
+Check if a unit attribute exists
+
+**Risk:** `read`
+
+```ts
+await corsair.apaleo.api.unitAttributes.exists({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `exists` | `boolean` | Yes | — |
+
+
+
+---
+
+### get
+
+`unitAttributes.get`
+
+Get a unit attribute by id
+
+**Risk:** `read`
+
+```ts
+await corsair.apaleo.api.unitAttributes.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`unitAttributes.list`
+
+Get the unit attribute list
+
+**Risk:** `read`
+
+```ts
+await corsair.apaleo.api.unitAttributes.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageNumber` | `number` | No | — |
+| `pageSize` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `unitAttributes` | `object[]` | Yes | — |
+| `count` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="unitAttributes full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  description?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Unit Groups
+
+### count
+
+`unitGroups.count`
+
+Return number of unit groups matching the filter
+
+**Risk:** `read`
+
+```ts
+await corsair.apaleo.api.unitGroups.count({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `propertyId` | `string` | No | — |
+| `unitGroupTypes` | `BedRoom \| MeetingRoom \| EventSpace \| ParkingLot \| Other[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | Yes | — |
+
+
+
+---
+
+### create
+
+`unitGroups.create`
+
+Create a new unit group
+
+**Risk:** `write`
+
+```ts
+await corsair.apaleo.api.unitGroups.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string` | Yes | — |
+| `propertyId` | `string` | Yes | — |
+| `name` | `object` | Yes | — |
+| `description` | `object` | Yes | — |
+| `maxPersons` | `number` | Yes | — |
+| `rank` | `number` | No | — |
+| `type` | `BedRoom \| MeetingRoom \| EventSpace \| ParkingLot` | No | — |
+| `connectedUnitGroups` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="name full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="description full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="connectedUnitGroups full type">
+
+```ts
+{
+  unitGroupId: string,
+  memberCount: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### delete
+
+`unitGroups.delete`
+
+Delete a unit group
+
+**Risk:** `write`
+
+```ts
+await corsair.apaleo.api.unitGroups.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `true` | Yes | — |
+
+
+
+---
+
+### exists
+
+`unitGroups.exists`
+
+Check if a unit group exists by id
+
+**Risk:** `read`
+
+```ts
+await corsair.apaleo.api.unitGroups.exists({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `exists` | `boolean` | Yes | — |
+
+
+
+---
+
+### get
+
+`unitGroups.get`
+
+Get a unit group by id
+
+**Risk:** `read`
+
+```ts
+await corsair.apaleo.api.unitGroups.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `code` | `string` | Yes | — |
+| `property` | `object` | Yes | — |
+| `name` | `object` | Yes | — |
+| `memberCount` | `number` | Yes | — |
+| `description` | `object` | Yes | — |
+| `maxPersons` | `number` | Yes | — |
+| `rank` | `number` | No | — |
+| `type` | `string` | Yes | — |
+| `connectedUnitGroups` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="property full type">
+
+```ts
+{
+  id?: string | null,
+  code?: string | null,
+  name?: string | null,
+  description?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="name full type">
+
+```ts
+string | {
+}
+```
+</Accordion>
+
+<Accordion title="description full type">
+
+```ts
+string | {
+}
+```
+</Accordion>
+
+<Accordion title="connectedUnitGroups full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  description: string,
+  memberCount: number,
+  maxPersons?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`unitGroups.list`
+
+Get the list of unit groups
+
+**Risk:** `read`
+
+```ts
+await corsair.apaleo.api.unitGroups.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `propertyId` | `string` | No | — |
+| `unitGroupTypes` | `BedRoom \| MeetingRoom \| EventSpace \| ParkingLot \| Other[]` | No | — |
+| `expand` | `string[]` | No | — |
+| `pageNumber` | `number` | No | — |
+| `pageSize` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `unitGroups` | `object[]` | Yes | — |
+| `count` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="unitGroups full type">
+
+```ts
+{
+  id: string,
+  code: string,
+  property: {
+    id?: string | null,
+    code?: string | null,
+    name?: string | null,
+    description?: string | null
+  },
+  name: string | {
+  },
+  memberCount: number,
+  description: string | {
+  },
+  maxPersons: number,
+  rank?: number | null,
+  type: string,
+  connectedUnitGroups?: {
+    id: string,
+    name: string,
+    description: string,
+    memberCount: number,
+    maxPersons?: number | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### replace
+
+`unitGroups.replace`
+
+Replace a unit group
+
+**Risk:** `write`
+
+```ts
+await corsair.apaleo.api.unitGroups.replace({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `object` | Yes | — |
+| `description` | `object` | Yes | — |
+| `maxPersons` | `number` | No | — |
+| `rank` | `number` | No | — |
+| `connectedUnitGroups` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="name full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="description full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="connectedUnitGroups full type">
+
+```ts
+{
+  unitGroupId: string,
+  memberCount: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `true` | Yes | — |
+
+
+
+---
+
+## Units
+
+### count
+
+`units.count`
+
+Return number of units matching the filter
+
+**Risk:** `read`
+
+```ts
+await corsair.apaleo.api.units.count({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `propertyId` | `string` | No | — |
+| `unitGroupId` | `string` | No | — |
+| `unitGroupIds` | `string[]` | No | — |
+| `unitAttributeIds` | `string[]` | No | — |
+| `isOccupied` | `boolean` | No | — |
+| `maintenanceType` | `OutOfService \| OutOfOrder \| OutOfInventory` | No | — |
+| `condition` | `Clean \| CleanToBeInspected \| Dirty` | No | — |
+| `textSearch` | `string` | No | — |
+| `status` | `Active \| Archived \| All` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | Yes | — |
+
+
+
+---
+
+### create
+
+`units.create`
+
+Create a new unit
+
+**Risk:** `write`
+
+```ts
+await corsair.apaleo.api.units.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `propertyId` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `object` | Yes | — |
+| `unitGroupId` | `string` | No | — |
+| `maxPersons` | `number` | Yes | — |
+| `condition` | `Clean \| CleanToBeInspected \| Dirty` | No | — |
+| `attributes` | `object[]` | No | — |
+| `connectedUnits` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="description full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="attributes full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+
+<Accordion title="connectedUnits full type">
+
+```ts
+{
+  unitId: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### createBulk
+
+`units.createBulk`
+
+Create multiple units
+
+**Risk:** `write`
+
+```ts
+await corsair.apaleo.api.units.createBulk({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `units` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="units full type">
+
+```ts
+{
+  propertyId: string,
+  name: string,
+  description: {
+  },
+  unitGroupId?: string | null,
+  maxPersons: number,
+  condition?: Clean | CleanToBeInspected | Dirty | null,
+  attributes?: {
+    id: string
+  }[] | null,
+  connectedUnits?: {
+    unitId: string
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `string[]` | Yes | — |
+
+
+
+---
+
+### delete
+
+`units.delete`
+
+Delete a unit
+
+**Risk:** `write`
+
+```ts
+await corsair.apaleo.api.units.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `true` | Yes | — |
+
+
+
+---
+
+### exists
+
+`units.exists`
+
+Check if a unit exists by id
+
+**Risk:** `read`
+
+```ts
+await corsair.apaleo.api.units.exists({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `exists` | `boolean` | Yes | — |
+
+
+
+---
+
+### get
+
+`units.get`
+
+Get a unit by id
+
+**Risk:** `read`
+
+```ts
+await corsair.apaleo.api.units.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `object` | Yes | — |
+| `property` | `object` | Yes | — |
+| `unitGroup` | `object` | No | — |
+| `connectingUnit` | `object` | No | — |
+| `status` | `object` | Yes | — |
+| `maxPersons` | `number` | Yes | — |
+| `created` | `string` | Yes | — |
+| `archived` | `string` | No | — |
+| `isArchived` | `boolean` | No | — |
+| `attributes` | `object[]` | No | — |
+| `connectedUnits` | `object[]` | No | — |
+| `actions` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="description full type">
+
+```ts
+string | {
+}
+```
+</Accordion>
+
+<Accordion title="property full type">
+
+```ts
+{
+  id?: string | null,
+  code?: string | null,
+  name?: string | null,
+  description?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="unitGroup full type">
+
+```ts
+{
+  id?: string | null,
+  code?: string | null,
+  name?: string | null,
+  description?: string | null,
+  type?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="connectingUnit full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  description?: string | null,
+  unitGroupId?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="status full type">
+
+```ts
+{
+  isOccupied?: boolean | null,
+  condition?: string | null,
+  maintenance?: {
+    id?: string | null,
+    from?: string | null,
+    to?: string | null,
+    type?: string | null,
+    description?: string | null
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="attributes full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  description?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="connectedUnits full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  description?: string | null,
+  unitGroupId?: string | null,
+  condition?: string | null,
+  maxPersons?: number | null
+}[]
+```
+</Accordion>
+
+<Accordion title="actions full type">
+
+```ts
+{
+  action?: string | null,
+  isAllowed?: boolean | null,
+  reasons?: {
+    code?: string | null,
+    message?: string | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`units.list`
+
+Get the list of units
+
+**Risk:** `read`
+
+```ts
+await corsair.apaleo.api.units.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `propertyId` | `string` | No | — |
+| `unitGroupId` | `string` | No | — |
+| `unitGroupIds` | `string[]` | No | — |
+| `unitAttributeIds` | `string[]` | No | — |
+| `isOccupied` | `boolean` | No | — |
+| `maintenanceType` | `OutOfService \| OutOfOrder \| OutOfInventory` | No | — |
+| `condition` | `Clean \| CleanToBeInspected \| Dirty` | No | — |
+| `textSearch` | `string` | No | — |
+| `status` | `Active \| Archived \| All` | No | — |
+| `expand` | `string[]` | No | — |
+| `pageNumber` | `number` | No | — |
+| `pageSize` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `units` | `object[]` | Yes | — |
+| `count` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="units full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  description: string | {
+  },
+  property: {
+    id?: string | null,
+    code?: string | null,
+    name?: string | null,
+    description?: string | null
+  },
+  unitGroup?: {
+    id?: string | null,
+    code?: string | null,
+    name?: string | null,
+    description?: string | null,
+    type?: string | null
+  } | null,
+  connectingUnit?: {
+    id?: string | null,
+    name?: string | null,
+    description?: string | null,
+    unitGroupId?: string | null
+  } | null,
+  status: {
+    isOccupied?: boolean | null,
+    condition?: string | null,
+    maintenance?: {
+      id?: string | null,
+      from?: string | null,
+      to?: string | null,
+      type?: string | null,
+      description?: string | null
+    } | null
+  },
+  maxPersons: number,
+  created: string,
+  archived?: string | null,
+  isArchived?: boolean | null,
+  attributes?: {
+    id?: string | null,
+    name?: string | null,
+    description?: string | null
+  }[] | null,
+  connectedUnits?: {
+    id?: string | null,
+    name?: string | null,
+    description?: string | null,
+    unitGroupId?: string | null,
+    condition?: string | null,
+    maxPersons?: number | null
+  }[] | null,
+  actions?: {
+    action?: string | null,
+    isAllowed?: boolean | null,
+    reasons?: {
+      code?: string | null,
+      message?: string | null
+    }[] | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

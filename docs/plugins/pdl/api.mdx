@@ -1,0 +1,667 @@
+---
+title: API
+description: "API reference for People Data Labs: every `pdl.api.*` operation with input and output types."
+---
+
+Every `pdl.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Autocomplete
+
+### suggest
+
+`autocomplete.suggest`
+
+Get value suggestions for a PDL field prefix
+
+**Risk:** `read`
+
+```ts
+await corsair.pdl.api.autocomplete.suggest({ field: 'job_title', text: 'soft', size: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `field` | `string` | Yes | — |
+| `text` | `string` | Yes | — |
+| `size` | `number` | No | — |
+| `titlecase` | `boolean` | No | — |
+| `pretty` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fields` | `string[]` | Yes | — |
+| `data` | `object[]` | Yes | — |
+| `status` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  count: number,
+  name: string,
+  meta?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Company
+
+### clean
+
+`company.clean`
+
+Normalize a company name or website (free)
+
+**Risk:** `read`
+
+```ts
+await corsair.pdl.api.company.clean({ website: 'www.peopledatalabs.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `website` | `string` | No | — |
+| `profile` | `string` | No | — |
+| `pretty` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `number` | No | — |
+
+
+
+---
+
+### enrich
+
+`company.enrich`
+
+Enrich one company record (billed per match)
+
+**Risk:** `read`
+
+```ts
+await corsair.pdl.api.company.enrich({ website: 'peopledatalabs.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pdl_id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `profile` | `string` | No | — |
+| `ticker` | `string` | No | — |
+| `website` | `string` | No | — |
+| `location` | `string` | No | — |
+| `locality` | `string` | No | — |
+| `region` | `string` | No | — |
+| `country` | `string` | No | — |
+| `street_address` | `string` | No | — |
+| `postal_code` | `string` | No | — |
+| `min_likelihood` | `number` | No | — |
+| `include_if_matched` | `boolean` | No | — |
+| `required` | `string[]` | No | — |
+| `data_include` | `string[]` | No | — |
+| `titlecase` | `boolean` | No | — |
+| `pretty` | `boolean` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  found: true,
+  status: number,
+  likelihood: number,
+  company: {
+  }
+} | {
+  found: false
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### search
+
+`company.search`
+
+Search the company dataset with an Elasticsearch query or SQL
+
+**Risk:** `read`
+
+```ts
+await corsair.pdl.api.company.search({ sql: "SELECT * FROM company WHERE tags='mobile'", size: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `sql` | `string` | No | — |
+| `size` | `number` | No | — |
+| `scroll_token` | `string` | No | — |
+| `titlecase` | `boolean` | No | — |
+| `pretty` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `number` | Yes | — |
+| `data` | `object[]` | Yes | — |
+| `total` | `number` | Yes | — |
+| `scroll_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Ip
+
+### enrich
+
+`ip.enrich`
+
+Look up company and person data behind an IP address
+
+**Risk:** `read`
+
+```ts
+await corsair.pdl.api.ip.enrich({ ip: '174.110.144.98', return_person: true, min_confidence: 'high' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ip` | `string \| string` | Yes | — |
+| `return_ip_location` | `boolean` | No | — |
+| `return_ip_metadata` | `boolean` | No | — |
+| `return_if_unmatched` | `boolean` | No | — |
+| `return_person` | `boolean` | No | — |
+| `min_confidence` | `very high \| high \| moderate \| low \| very low` | No | — |
+| `pretty` | `boolean` | No | — |
+| `titlecase` | `boolean` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  found: true,
+  status: number,
+  data: {
+    ip: {
+      address: string,
+      metadata?: {
+      },
+      location?: {
+      }
+    },
+    company?: {
+    },
+    person?: {
+    }
+  },
+  dataset_version?: string | number
+} | {
+  found: false
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Job
+
+### search
+
+`job.search`
+
+Search job postings with structured filters or an Elasticsearch query (Beta)
+
+**Risk:** `read`
+
+```ts
+await corsair.pdl.api.job.search({ title: 'software engineer', company_website: 'peopledatalabs.com', is_active: true, size: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `title` | `string` | No | — |
+| `company_website` | `string` | No | — |
+| `location` | `string` | No | — |
+| `salary_range_min` | `number` | No | — |
+| `salary_range_max` | `number` | No | — |
+| `remote_work_policy` | `string` | No | — |
+| `inferred_skills` | `string` | No | — |
+| `is_active` | `boolean` | No | — |
+| `query` | `object` | No | — |
+| `size` | `number` | No | — |
+| `scroll_token` | `string` | No | — |
+| `pretty` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `number` | Yes | — |
+| `data` | `object[]` | Yes | — |
+| `total` | `number` | Yes | — |
+| `scroll_token` | `string` | No | — |
+| `dataset_version` | `string \| number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Location
+
+### clean
+
+`location.clean`
+
+Normalize and geocode a location string (free)
+
+**Risk:** `read`
+
+```ts
+await corsair.pdl.api.location.clean({ location: 'san fransisco' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `location` | `string` | Yes | — |
+| `pretty` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `number` | No | — |
+
+
+
+---
+
+## Person
+
+### bulk
+
+`person.bulk`
+
+Enrich up to 100 people in one request, billed per match
+
+**Risk:** `read`
+
+```ts
+await corsair.pdl.api.person.bulk({ requests: [{ params: { profile: 'linkedin.com/in/a' } }, { params: { email: 'b@example.com' }, metadata: { row: 2 } }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requests` | `object[]` | Yes | — |
+| `required` | `string[]` | No | — |
+| `include_if_matched` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="requests full type">
+
+```ts
+{
+  params: {
+  },
+  metadata?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  status: number,
+  likelihood?: number,
+  data?: {
+  } | null,
+  metadata?: {
+  },
+  error?: {
+    type?: string,
+    message?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### enrich
+
+`person.enrich`
+
+Enrich one person record (billed per match)
+
+**Risk:** `read`
+
+```ts
+await corsair.pdl.api.person.enrich({ profile: 'linkedin.com/in/gracehopper', min_likelihood: 8 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pdl_id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `middle_name` | `string` | No | — |
+| `location` | `string` | No | — |
+| `street_address` | `string` | No | — |
+| `locality` | `string` | No | — |
+| `region` | `string` | No | — |
+| `country` | `string` | No | — |
+| `postal_code` | `string` | No | — |
+| `company` | `string` | No | — |
+| `school` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `email` | `string` | No | — |
+| `email_hash` | `string` | No | — |
+| `profile` | `string` | No | — |
+| `lid` | `string` | No | — |
+| `birth_date` | `string` | No | — |
+| `min_likelihood` | `number` | No | — |
+| `include_if_matched` | `boolean` | No | — |
+| `required` | `string[]` | No | — |
+| `data_include` | `string[]` | No | — |
+| `titlecase` | `boolean` | No | — |
+| `pretty` | `boolean` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  found: true,
+  status: number,
+  likelihood: number,
+  data?: {
+  } | null,
+  matched?: string[]
+} | {
+  found: false
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### identify
+
+`person.identify`
+
+Find candidate person profiles matching the given identity inputs (billed per call)
+
+**Risk:** `read`
+
+```ts
+await corsair.pdl.api.person.identify({ name: 'grace hopper', company: 'us navy', include_if_matched: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pdl_id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `middle_name` | `string` | No | — |
+| `location` | `string` | No | — |
+| `street_address` | `string` | No | — |
+| `locality` | `string` | No | — |
+| `region` | `string` | No | — |
+| `country` | `string` | No | — |
+| `postal_code` | `string` | No | — |
+| `company` | `string` | No | — |
+| `school` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `email` | `string` | No | — |
+| `email_hash` | `string` | No | — |
+| `profile` | `string` | No | — |
+| `lid` | `string` | No | — |
+| `birth_date` | `string` | No | — |
+| `include_if_matched` | `boolean` | No | — |
+| `titlecase` | `boolean` | No | — |
+| `pretty` | `boolean` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  found: true,
+  status: number,
+  matches: {
+    match_score: number,
+    data: {
+    }[],
+    matched_on?: string[]
+  }[]
+} | {
+  found: false
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### search
+
+`person.search`
+
+Search the person dataset with an Elasticsearch query or SQL
+
+**Risk:** `read`
+
+```ts
+await corsair.pdl.api.person.search({ query: { term: { location_country: 'mexico' } }, dataset: 'phone,-resume', size: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `sql` | `string` | No | — |
+| `size` | `number` | No | — |
+| `scroll_token` | `string` | No | — |
+| `dataset` | `string` | No | — |
+| `titlecase` | `boolean` | No | — |
+| `pretty` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `number` | Yes | — |
+| `data` | `object[]` | Yes | — |
+| `total` | `number` | Yes | — |
+| `scroll_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## School
+
+### clean
+
+`school.clean`
+
+Normalize a school name or website (free)
+
+**Risk:** `read`
+
+```ts
+await corsair.pdl.api.school.clean({ name: 'harverd' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `website` | `string` | No | — |
+| `profile` | `string` | No | — |
+| `pretty` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `number` | No | — |
+
+
+
+---
+

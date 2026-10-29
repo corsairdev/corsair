@@ -1,0 +1,2384 @@
+---
+title: API
+description: "API reference for Kibana: every `kibana.api.*` operation with input and output types."
+---
+
+Every `kibana.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Alerting
+
+### createRule
+
+`alerting.createRule`
+
+Create a new alerting rule in Kibana
+
+**Risk:** `write`
+
+```ts
+await corsair.kibana.api.alerting.createRule({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `consumer` | `string` | No | — |
+
+
+
+---
+
+### deleteRule
+
+`alerting.deleteRule`
+
+Delete an alerting rule by ID
+
+**Risk:** `destructive`
+
+```ts
+await corsair.kibana.api.alerting.deleteRule({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listRules
+
+`alerting.listRules`
+
+List alerting rules with pagination and filters
+
+**Risk:** `read`
+
+```ts
+await corsair.kibana.api.alerting.listRules({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `search` | `string` | No | — |
+| `filter` | `string` | No | — |
+| `sort_field` | `string` | No | — |
+| `sort_order` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `total` | `number` | No | — |
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listRuleTypes
+
+`alerting.listRuleTypes`
+
+List available alerting rule types
+
+**Risk:** `read`
+
+```ts
+await corsair.kibana.api.alerting.listRuleTypes({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `rule_types` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="rule_types full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Cases
+
+### create
+
+`cases.create`
+
+Create a new case in Kibana
+
+**Risk:** `write`
+
+```ts
+await corsair.kibana.api.cases.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | Yes | — |
+| `description` | `string` | Yes | — |
+| `owner` | `cases \| observability \| securitySolution` | Yes | — |
+| `connector` | `object` | Yes | — |
+| `settings` | `object` | Yes | — |
+| `tags` | `string[]` | Yes | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="connector full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="settings full type">
+
+```ts
+{
+  syncAlerts: boolean,
+  extractObservables?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `title` | `string` | No | — |
+| `status` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`cases.list`
+
+Find and list cases with filters
+
+**Risk:** `read`
+
+```ts
+await corsair.kibana.api.cases.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `perPage` | `number` | No | — |
+| `search` | `string` | No | — |
+| `status` | `string` | No | — |
+| `severity` | `string` | No | — |
+| `assignees` | `string \| string[]` | No | — |
+| `tags` | `string \| string[]` | No | — |
+| `sortField` | `string` | No | — |
+| `sortOrder` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `total` | `number` | No | — |
+| `cases` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="cases full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Connectors
+
+### create
+
+`connectors.create`
+
+Create a new connector in Kibana
+
+**Risk:** `write`
+
+```ts
+await corsair.kibana.api.connectors.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `connector_type_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `config` | `object` | No | — |
+| `secrets` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="config full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="secrets full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `connector_type_id` | `string` | No | — |
+| `name` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`connectors.delete`
+
+Delete a connector by ID
+
+**Risk:** `destructive`
+
+```ts
+await corsair.kibana.api.connectors.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`connectors.get`
+
+Retrieve a connector by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.kibana.api.connectors.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `connector_type_id` | `string` | No | — |
+| `name` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`connectors.list`
+
+List all connectors in Kibana
+
+**Risk:** `read`
+
+```ts
+await corsair.kibana.api.connectors.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listTypes
+
+`connectors.listTypes`
+
+List available connector (action) types
+
+**Risk:** `read`
+
+```ts
+await corsair.kibana.api.connectors.listTypes({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `feature_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `connector_types` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="connector_types full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Dashboards
+
+### create
+
+`dashboards.create`
+
+Create a new dashboard in Kibana
+
+**Risk:** `write`
+
+```ts
+await corsair.kibana.api.dashboards.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `panels` | `object[]` | No | — |
+| `dashboard_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="panels full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `title` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`dashboards.delete`
+
+Delete a dashboard by ID
+
+**Risk:** `destructive`
+
+```ts
+await corsair.kibana.api.dashboards.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`dashboards.get`
+
+Retrieve a dashboard by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.kibana.api.dashboards.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `title` | `string` | No | — |
+
+
+
+---
+
+### search
+
+`dashboards.search`
+
+Search dashboards in Kibana
+
+**Risk:** `read`
+
+```ts
+await corsair.kibana.api.dashboards.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  page?: number,
+  per_page?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### upsert
+
+`dashboards.upsert`
+
+Create or update a dashboard by ID
+
+**Risk:** `write`
+
+```ts
+await corsair.kibana.api.dashboards.upsert({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `title` | `string` | No | — |
+| `description` | `string` | No | — |
+| `panels` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="panels full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `title` | `string` | No | — |
+
+
+
+---
+
+## Data Views
+
+### create
+
+`dataViews.create`
+
+Create a new data view in Kibana
+
+**Risk:** `write`
+
+```ts
+await corsair.kibana.api.dataViews.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `id` | `string` | No | — |
+| `timeFieldName` | `string` | No | — |
+| `override` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data_view` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data_view full type">
+
+```ts
+{
+  id?: string,
+  title?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`dataViews.get`
+
+Retrieve data view details by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.kibana.api.dataViews.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data_view` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data_view full type">
+
+```ts
+{
+  id: string,
+  title: string,
+  name?: string,
+  timeFieldName?: string,
+  sourceFilters?: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`dataViews.list`
+
+List all data views in Kibana
+
+**Risk:** `read`
+
+```ts
+await corsair.kibana.api.dataViews.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data_view` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data_view full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Detection
+
+### findAlerts
+
+`detection.findAlerts`
+
+Find and aggregate detection alerts
+
+**Risk:** `read`
+
+```ts
+await corsair.kibana.api.detection.findAlerts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `aggs` | `object` | No | — |
+| `size` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="aggs full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `hits` | `object` | No | — |
+| `aggregations` | `object` | No | — |
+| `took` | `number` | No | — |
+| `timed_out` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="hits full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="aggregations full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### findRules
+
+`detection.findRules`
+
+Find detection engine rules with filters
+
+**Risk:** `read`
+
+```ts
+await corsair.kibana.api.detection.findRules({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `filter` | `string` | No | — |
+| `sort_field` | `string` | No | — |
+| `sort_order` | `string` | No | — |
+| `fields` | `string \| string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `total` | `number` | No | — |
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Fleet
+
+### agentPoliciesList
+
+`fleet.agentPoliciesList`
+
+List Fleet agent policies with pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.kibana.api.fleet.agentPoliciesList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `perPage` | `number` | No | — |
+| `kuery` | `string` | No | — |
+| `full` | `boolean` | No | — |
+| `withAgentCount` | `boolean` | No | — |
+| `showUpgradeable` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### agentsSetup
+
+`fleet.agentsSetup`
+
+Check Fleet agents setup status
+
+**Risk:** `read`
+
+```ts
+await corsair.kibana.api.fleet.agentsSetup({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `isReady` | `boolean` | No | — |
+
+
+
+---
+
+### agentsVersions
+
+`fleet.agentsVersions`
+
+List available Fleet agent versions
+
+**Risk:** `read`
+
+```ts
+await corsair.kibana.api.fleet.agentsVersions({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `string[]` | No | — |
+
+
+
+---
+
+### checkPermissions
+
+`fleet.checkPermissions`
+
+Check permissions for the Fleet API
+
+**Risk:** `read`
+
+```ts
+await corsair.kibana.api.fleet.checkPermissions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fleetServerSetup` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `error` | `string` | No | — |
+
+
+
+---
+
+### enrollmentKeyGet
+
+`fleet.enrollmentKeyGet`
+
+Retrieve a Fleet enrollment API key by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.kibana.api.fleet.enrollmentKeyGet({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `keyId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="item full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### enrollmentKeysList
+
+`fleet.enrollmentKeysList`
+
+List Fleet enrollment API keys
+
+**Risk:** `read`
+
+```ts
+await corsair.kibana.api.fleet.enrollmentKeysList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `perPage` | `number` | No | — |
+| `kuery` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### epmCategories
+
+`fleet.epmCategories`
+
+List Fleet EPM package categories
+
+**Risk:** `read`
+
+```ts
+await corsair.kibana.api.fleet.epmCategories({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `prerelease` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `response` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="response full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### epmDataStreams
+
+`fleet.epmDataStreams`
+
+List Fleet EPM data streams
+
+**Risk:** `read`
+
+```ts
+await corsair.kibana.api.fleet.epmDataStreams({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `datasetQuery` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data_streams` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data_streams full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### epmPackageDetails
+
+`fleet.epmPackageDetails`
+
+Retrieve details of a Fleet EPM package version
+
+**Risk:** `read`
+
+```ts
+await corsair.kibana.api.fleet.epmPackageDetails({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pkgName` | `string` | Yes | — |
+| `pkgVersion` | `string` | Yes | — |
+| `full` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `response` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="response full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### epmPackageFile
+
+`fleet.epmPackageFile`
+
+Retrieve a file from a Fleet EPM package
+
+**Risk:** `read`
+
+```ts
+await corsair.kibana.api.fleet.epmPackageFile({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pkgName` | `string` | Yes | — |
+| `pkgVersion` | `string` | Yes | — |
+| `filePath` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### epmPackagesInstalled
+
+`fleet.epmPackagesInstalled`
+
+List installed Fleet EPM packages
+
+**Risk:** `read`
+
+```ts
+await corsair.kibana.api.fleet.epmPackagesInstalled({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `nameQuery` | `string` | No | — |
+| `perPage` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `response` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="response full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### epmPackagesLimited
+
+`fleet.epmPackagesLimited`
+
+List Fleet EPM package names only
+
+**Risk:** `read`
+
+```ts
+await corsair.kibana.api.fleet.epmPackagesLimited({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `response` | `string[]` | No | — |
+
+
+
+---
+
+### epmPackagesList
+
+`fleet.epmPackagesList`
+
+List available Fleet EPM packages
+
+**Risk:** `read`
+
+```ts
+await corsair.kibana.api.fleet.epmPackagesList({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `response` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="response full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### epmPackageStats
+
+`fleet.epmPackageStats`
+
+Retrieve usage statistics for a Fleet package
+
+**Risk:** `read`
+
+```ts
+await corsair.kibana.api.fleet.epmPackageStats({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pkgName` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `response` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="response full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### outputDelete
+
+`fleet.outputDelete`
+
+Delete a Fleet output by ID
+
+**Risk:** `destructive`
+
+```ts
+await corsair.kibana.api.fleet.outputDelete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `outputId` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### packagePoliciesList
+
+`fleet.packagePoliciesList`
+
+List Fleet package policies with pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.kibana.api.fleet.packagePoliciesList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `perPage` | `number` | No | — |
+| `kuery` | `string` | No | — |
+| `withAgentCount` | `boolean` | No | — |
+| `showUpgradeable` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### proxyDelete
+
+`fleet.proxyDelete`
+
+Delete a Fleet proxy by ID
+
+**Risk:** `destructive`
+
+```ts
+await corsair.kibana.api.fleet.proxyDelete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `itemId` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### serverHostGet
+
+`fleet.serverHostGet`
+
+Retrieve a Fleet Server host by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.kibana.api.fleet.serverHostGet({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `itemId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="item full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### serverHostsList
+
+`fleet.serverHostsList`
+
+List Fleet Server hosts
+
+**Risk:** `read`
+
+```ts
+await corsair.kibana.api.fleet.serverHostsList({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Index
+
+### listIndices
+
+`index.listIndices`
+
+List indices via Index Management (not in the official OpenAPI spec; disabled on serverless, works where Index Management UI is enabled)
+
+**Risk:** `read`
+
+```ts
+await corsair.kibana.api.index.listIndices({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `index` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `indices` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="indices full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Lists
+
+### delete
+
+`lists.delete`
+
+Delete a value list by ID
+
+**Risk:** `destructive`
+
+```ts
+await corsair.kibana.api.lists.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `deleteReferences` | `boolean` | No | — |
+| `ignoreReferences` | `boolean` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Metrics
+
+### get
+
+`metrics.get`
+
+Retrieve Elasticsearch node metrics
+
+**Risk:** `read`
+
+```ts
+await corsair.kibana.api.metrics.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `node_id` | `string` | No | — |
+| `metric` | `string \| string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `nodes` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="nodes full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Osquery
+
+### deleteSavedQuery
+
+`osquery.deleteSavedQuery`
+
+Delete an Osquery saved query by ID
+
+**Risk:** `destructive`
+
+```ts
+await corsair.kibana.api.osquery.deleteSavedQuery({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Reporting
+
+### listJobs
+
+`reporting.listJobs`
+
+List Kibana reporting jobs (legacy stateful-only API; not in the official OpenAPI spec, 404 on serverless)
+
+**Risk:** `read`
+
+```ts
+await corsair.kibana.api.reporting.listJobs({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobs` | `object[]` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="jobs full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Saved Objects
+
+### create
+
+`savedObjects.create`
+
+Create a new saved object in Kibana
+
+**Risk:** `write`
+
+```ts
+await corsair.kibana.api.savedObjects.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `attributes` | `object` | Yes | — |
+| `references` | `object[]` | No | — |
+| `overwrite` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="attributes full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="references full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `type` | `string` | Yes | — |
+| `attributes` | `object` | Yes | — |
+| `references` | `object[]` | No | — |
+| `updated_at` | `string` | No | — |
+| `version` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="attributes full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="references full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`savedObjects.delete`
+
+Delete a saved object by type and ID
+
+**Risk:** `destructive`
+
+```ts
+await corsair.kibana.api.savedObjects.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### find
+
+`savedObjects.find`
+
+Find saved objects matching search query or type filters
+
+**Risk:** `read`
+
+```ts
+await corsair.kibana.api.savedObjects.find({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string \| string[]` | Yes | — |
+| `search` | `string` | No | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `sort_field` | `string` | No | — |
+| `has_reference` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="has_reference full type">
+
+```ts
+{
+  type: string,
+  id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `total` | `number` | Yes | — |
+| `saved_objects` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="saved_objects full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  attributes: {
+  },
+  references?: {
+  }[],
+  updated_at?: string,
+  version?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`savedObjects.get`
+
+Retrieve a specific saved object by type and ID
+
+**Risk:** `read`
+
+```ts
+await corsair.kibana.api.savedObjects.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `type` | `string` | Yes | — |
+| `attributes` | `object` | Yes | — |
+| `references` | `object[]` | No | — |
+| `updated_at` | `string` | No | — |
+| `version` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="attributes full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="references full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`savedObjects.update`
+
+Update attributes of an existing saved object by type and ID
+
+**Risk:** `write`
+
+```ts
+await corsair.kibana.api.savedObjects.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | Yes | — |
+| `id` | `string` | Yes | — |
+| `attributes` | `object` | Yes | — |
+| `references` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="attributes full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="references full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `type` | `string` | Yes | — |
+| `attributes` | `object` | Yes | — |
+| `references` | `object[]` | No | — |
+| `updated_at` | `string` | No | — |
+| `version` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="attributes full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="references full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Security
+
+### entitiesList
+
+`security.entitiesList`
+
+List Entity Store entities
+
+**Risk:** `read`
+
+```ts
+await corsair.kibana.api.security.entitiesList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter` | `string` | No | — |
+| `filterQuery` | `string` | No | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `size` | `number` | No | — |
+| `searchAfter` | `string` | No | — |
+| `source` | `string \| string[]` | No | — |
+| `fields` | `string \| string[]` | No | — |
+| `sort_field` | `string` | No | — |
+| `sort_order` | `string` | No | — |
+| `entity_types` | `string \| string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `records` | `object[]` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="records full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### entityStoreEngines
+
+`security.entityStoreEngines`
+
+Retrieve Entity Store engines (derived from the entity-store status response; no separate engines endpoint exists in the spec)
+
+**Risk:** `read`
+
+```ts
+await corsair.kibana.api.security.entityStoreEngines({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `engines` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="engines full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### entityStoreStatus
+
+`security.entityStoreStatus`
+
+Retrieve Entity Store status
+
+**Risk:** `read`
+
+```ts
+await corsair.kibana.api.security.entityStoreStatus({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `include_components` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `engines` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="engines full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listEndpointItems
+
+`security.listEndpointItems`
+
+List Endpoint exception list items
+
+**Risk:** `read`
+
+```ts
+await corsair.kibana.api.security.listEndpointItems({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `filter` | `string` | No | — |
+| `sort_field` | `string` | No | — |
+| `sort_order` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `total` | `number` | No | — |
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Status
+
+### get
+
+`status.get`
+
+Retrieve health and version status of the Kibana instance
+
+**Risk:** `read`
+
+```ts
+await corsair.kibana.api.status.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `version` | `object` | No | — |
+| `status` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="version full type">
+
+```ts
+{
+  number?: string,
+  build_hash?: string,
+  build_number?: number,
+  build_snapshot?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="status full type">
+
+```ts
+{
+  overall?: {
+    state?: string,
+    title?: string,
+    nickname?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

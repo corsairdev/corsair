@@ -1,0 +1,1454 @@
+---
+title: API
+description: "API reference for Plain: every `plain.api.*` operation with input and output types."
+---
+
+Every `plain.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Companies
+
+### fetch
+
+`companies.fetch`
+
+Fetch a company by ID.
+
+**Risk:** `read`
+
+```ts
+await corsair.plain.api.companies.fetch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `companyId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `company` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="company full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  domainName: string,
+  contractValue?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`companies.update`
+
+Create or update a company by ID or domain.
+
+**Risk:** `write`
+
+```ts
+await corsair.plain.api.companies.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `object` | Yes | — |
+| `name` | `string` | Yes | — |
+| `domainName` | `string` | Yes | — |
+| `contractValue` | `number` | No | — |
+| `accountOwnerUserId` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="identifier full type">
+
+```ts
+{
+  companyId?: string,
+  companyDomainName?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `CREATED \| UPDATED \| NOOP` | No | — |
+| `company` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="company full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  domainName: string,
+  contractValue?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Customer Groups
+
+### addCustomer
+
+`customerGroups.addCustomer`
+
+Add a customer to one or more customer groups.
+
+**Risk:** `write`
+
+```ts
+await corsair.plain.api.customerGroups.addCustomer({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customerId` | `string` | Yes | — |
+| `customerGroupIdentifiers` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="customerGroupIdentifiers full type">
+
+```ts
+{
+  customerGroupId?: string,
+  customerGroupKey?: string,
+  externalId?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customerGroupMemberships` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="customerGroupMemberships full type">
+
+```ts
+{
+  customerId: string,
+  customerGroup: {
+    id: string,
+    name: string,
+    key: string,
+    color: string,
+    externalId?: string | null
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`customerGroups.create`
+
+Create a customer group.
+
+**Risk:** `write`
+
+```ts
+await corsair.plain.api.customerGroups.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `key` | `string` | Yes | — |
+| `color` | `string` | Yes | — |
+| `externalId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customerGroup` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="customerGroup full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  key: string,
+  color: string,
+  externalId?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`customerGroups.list`
+
+List customer groups with cursor pagination.
+
+**Risk:** `read`
+
+```ts
+await corsair.plain.api.customerGroups.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filters` | `object` | No | — |
+| `first` | `number` | No | — |
+| `after` | `string` | No | — |
+| `last` | `number` | No | — |
+| `before` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+  externalIds?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customerGroups` | `object[]` | Yes | — |
+| `pageInfo` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="customerGroups full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  key: string,
+  color: string,
+  externalId?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pageInfo full type">
+
+```ts
+{
+  hasNextPage: boolean,
+  hasPreviousPage: boolean,
+  startCursor?: string | null,
+  endCursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### removeCustomer
+
+`customerGroups.removeCustomer`
+
+Remove a customer from one or more customer groups.
+
+**Risk:** `write`
+
+```ts
+await corsair.plain.api.customerGroups.removeCustomer({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customerId` | `string` | Yes | — |
+| `customerGroupIdentifiers` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="customerGroupIdentifiers full type">
+
+```ts
+{
+  customerGroupId?: string,
+  customerGroupKey?: string,
+  externalId?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+## Customers
+
+### delete
+
+`customers.delete`
+
+Delete a customer asynchronously.
+
+**Risk:** `write`
+
+```ts
+await corsair.plain.api.customers.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customerId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### getByEmail
+
+`customers.getByEmail`
+
+Fetch a customer by email address.
+
+**Risk:** `read`
+
+```ts
+await corsair.plain.api.customers.getByEmail({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customer` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="customer full type">
+
+```ts
+{
+  id: string,
+  externalId?: string | null,
+  fullName: string,
+  shortName?: string | null,
+  email: {
+    email: string,
+    isVerified: boolean
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getById
+
+`customers.getById`
+
+Fetch a customer by Plain customer ID.
+
+**Risk:** `read`
+
+```ts
+await corsair.plain.api.customers.getById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customerId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customer` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="customer full type">
+
+```ts
+{
+  id: string,
+  externalId?: string | null,
+  fullName: string,
+  shortName?: string | null,
+  email: {
+    email: string,
+    isVerified: boolean
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`customers.list`
+
+List customers with optional filters and cursor pagination (first/after or last/before).
+
+**Risk:** `read`
+
+```ts
+await corsair.plain.api.customers.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filters` | `object` | No | — |
+| `sortBy` | `object` | No | — |
+| `first` | `number` | No | — |
+| `after` | `string` | No | — |
+| `last` | `number` | No | — |
+| `before` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+  isMarkedAsSpam?: boolean,
+  customerGroupIds?: string[],
+  customerGroupKeys?: string[],
+  companyIdentifiers?: {
+    companyId?: string,
+    companyDomainName?: string
+  }[],
+  tenantIdentifiers?: {
+    tenantId?: string,
+    externalId?: string
+  }[],
+  slackChannelId?: string
+}
+```
+</Accordion>
+
+<Accordion title="sortBy full type">
+
+```ts
+{
+  field: FULL_NAME,
+  direction: ASC | DESC
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customers` | `object[]` | Yes | — |
+| `pageInfo` | `object` | Yes | — |
+| `totalCount` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="customers full type">
+
+```ts
+{
+  id: string,
+  externalId?: string | null,
+  fullName: string,
+  shortName?: string | null,
+  email: {
+    email: string,
+    isVerified: boolean
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="pageInfo full type">
+
+```ts
+{
+  hasNextPage: boolean,
+  hasPreviousPage: boolean,
+  startCursor?: string | null,
+  endCursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### upsert
+
+`customers.upsert`
+
+Create or update a customer by identifier.
+
+**Risk:** `write`
+
+```ts
+await corsair.plain.api.customers.upsert({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `object` | Yes | — |
+| `onCreate` | `object` | Yes | — |
+| `onUpdate` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="identifier full type">
+
+```ts
+{
+  externalId?: string,
+  emailAddress?: string,
+  customerId?: string
+}
+```
+</Accordion>
+
+<Accordion title="onCreate full type">
+
+```ts
+{
+  externalId?: string,
+  fullName: string,
+  shortName?: string,
+  email: {
+    email: string,
+    isVerified: boolean
+  },
+  customerGroupIdentifiers?: {
+    customerGroupId?: string,
+    customerGroupKey?: string,
+    externalId?: string
+  }[],
+  tenantIdentifiers?: {
+    tenantId?: string,
+    externalId?: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="onUpdate full type">
+
+```ts
+{
+  externalId?: {
+    value?: string | null
+  },
+  fullName?: {
+    value: string
+  },
+  shortName?: {
+    value?: string | null
+  },
+  email?: {
+    email: string,
+    isVerified: boolean
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `CREATED \| UPDATED \| NOOP` | No | — |
+| `customer` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="customer full type">
+
+```ts
+{
+  id: string,
+  externalId?: string | null,
+  fullName: string,
+  shortName?: string | null,
+  email: {
+    email: string,
+    isVerified: boolean
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Graphql
+
+### run
+
+`graphql.run`
+
+Run an arbitrary GraphQL query or mutation.
+
+**Risk:** `write`
+
+```ts
+await corsair.plain.api.graphql.run({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `variables` | `object` | No | — |
+| `operationName` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="variables full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `lazy`
+
+
+---
+
+## Threads
+
+### create
+
+`threads.create`
+
+Create a thread for a customer.
+
+**Risk:** `write`
+
+```ts
+await corsair.plain.api.threads.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customerIdentifier` | `object` | Yes | — |
+| `title` | `string` | No | — |
+| `description` | `string` | No | — |
+| `priority` | `number` | No | — |
+| `labelTypeIds` | `string[]` | No | — |
+| `threadFields` | `object[]` | No | — |
+| `assignedTo` | `object` | No | — |
+| `externalId` | `string` | No | — |
+| `tenantIdentifier` | `object` | No | — |
+| `channel` | `API \| EMAIL \| SLACK \| MS_TEAMS \| CHAT \| INTERNAL \| DISCORD \| IMPORT` | No | — |
+
+<AccordionGroup>
+<Accordion title="customerIdentifier full type">
+
+```ts
+{
+  externalId?: string,
+  emailAddress?: string,
+  customerId?: string
+}
+```
+</Accordion>
+
+<Accordion title="threadFields full type">
+
+```ts
+{
+  key: string,
+  type: STRING | BOOL | ENUM | NUMBER | CURRENCY | DATE,
+  stringValue?: string,
+  booleanValue?: boolean,
+  numberValue?: number,
+  dateValue?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="assignedTo full type">
+
+```ts
+{
+  userId?: string,
+  machineUserId?: string
+}
+```
+</Accordion>
+
+<Accordion title="tenantIdentifier full type">
+
+```ts
+{
+  tenantId?: string,
+  externalId?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `thread` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="thread full type">
+
+```ts
+{
+  id: string,
+  ref: string,
+  title: string,
+  status: string,
+  priority: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### fetchIssues
+
+`threads.fetchIssues`
+
+Fetch external thread links for a customer and flatten as issue records.
+
+**Risk:** `read`
+
+```ts
+await corsair.plain.api.threads.fetchIssues({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customerId` | `string` | Yes | — |
+| `threadFirst` | `number` | No | — |
+| `threadAfter` | `string` | No | — |
+| `threadLast` | `number` | No | — |
+| `threadBefore` | `string` | No | — |
+| `linkFirst` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `issues` | `object[]` | Yes | — |
+| `pageInfo` | `object` | Yes | — |
+| `totalThreads` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="issues full type">
+
+```ts
+{
+  threadId: string,
+  threadRef: string,
+  threadTitle: string,
+  link: {
+    id: string,
+    sourceId: string,
+    sourceType: string,
+    title: string,
+    description?: string | null,
+    url: string,
+    status: string,
+    linkType: string
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="pageInfo full type">
+
+```ts
+{
+  hasNextPage: boolean,
+  hasPreviousPage: boolean,
+  startCursor?: string | null,
+  endCursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getById
+
+`threads.getById`
+
+Fetch a thread by Plain thread ID.
+
+**Risk:** `read`
+
+```ts
+await corsair.plain.api.threads.getById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `threadId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `thread` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="thread full type">
+
+```ts
+{
+  id: string,
+  ref: string,
+  title: string,
+  status: string,
+  priority: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listDeprecated
+
+`threads.listDeprecated`
+
+Deprecated threads listing operation; use threads.query.
+
+**Risk:** `read`
+
+```ts
+await corsair.plain.api.threads.listDeprecated({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filters` | `object` | No | — |
+| `sortBy` | `object` | No | — |
+| `first` | `number` | No | — |
+| `after` | `string` | No | — |
+| `last` | `number` | No | — |
+| `before` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+  threadIds?: string[],
+  refs?: string[],
+  labelTypeIds?: string[],
+  priorities?: number[],
+  customerIds?: string[],
+  isAssigned?: boolean,
+  assignedToUser?: string[],
+  isMarkedAsSpam?: boolean,
+  supportEmailAddresses?: string[],
+  customerGroupIdentifiers?: {
+    customerGroupId?: string,
+    customerGroupKey?: string,
+    externalId?: string
+  }[],
+  tierIdentifiers?: {
+    tierId?: string,
+    externalId?: string
+  }[],
+  companyIdentifiers?: {
+    companyId?: string,
+    companyDomainName?: string
+  }[],
+  tenantIdentifiers?: {
+    tenantId?: string,
+    externalId?: string
+  }[],
+  messageSource?: CHAT | EMAIL | API | SLACK | MS_TEAMS | DISCORD | INTERNAL[],
+  participantIds?: string[],
+  broadcastIds?: string[],
+  statuses?: TODO | SNOOZED | DONE[]
+}
+```
+</Accordion>
+
+<Accordion title="sortBy full type">
+
+```ts
+{
+  field: STATUS_CHANGED_AT | CREATED_AT | CLOSEST_TO_BREACH_SLA | LAST_INBOUND_MESSAGE_AT | PRIORITY | THREAD_FIELD,
+  direction: ASC | DESC,
+  threadFieldKey?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `threads` | `object[]` | Yes | — |
+| `pageInfo` | `object` | Yes | — |
+| `totalCount` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="threads full type">
+
+```ts
+{
+  id: string,
+  ref: string,
+  title: string,
+  status: string,
+  priority: number
+}[]
+```
+</Accordion>
+
+<Accordion title="pageInfo full type">
+
+```ts
+{
+  hasNextPage: boolean,
+  hasPreviousPage: boolean,
+  startCursor?: string | null,
+  endCursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### query
+
+`threads.query`
+
+List threads with filters, sort, and cursor pagination.
+
+**Risk:** `read`
+
+```ts
+await corsair.plain.api.threads.query({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filters` | `object` | No | — |
+| `sortBy` | `object` | No | — |
+| `first` | `number` | No | — |
+| `after` | `string` | No | — |
+| `last` | `number` | No | — |
+| `before` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+  threadIds?: string[],
+  refs?: string[],
+  labelTypeIds?: string[],
+  priorities?: number[],
+  customerIds?: string[],
+  isAssigned?: boolean,
+  assignedToUser?: string[],
+  isMarkedAsSpam?: boolean,
+  supportEmailAddresses?: string[],
+  customerGroupIdentifiers?: {
+    customerGroupId?: string,
+    customerGroupKey?: string,
+    externalId?: string
+  }[],
+  tierIdentifiers?: {
+    tierId?: string,
+    externalId?: string
+  }[],
+  companyIdentifiers?: {
+    companyId?: string,
+    companyDomainName?: string
+  }[],
+  tenantIdentifiers?: {
+    tenantId?: string,
+    externalId?: string
+  }[],
+  messageSource?: CHAT | EMAIL | API | SLACK | MS_TEAMS | DISCORD | INTERNAL[],
+  participantIds?: string[],
+  broadcastIds?: string[],
+  statuses?: TODO | SNOOZED | DONE[]
+}
+```
+</Accordion>
+
+<Accordion title="sortBy full type">
+
+```ts
+{
+  field: STATUS_CHANGED_AT | CREATED_AT | CLOSEST_TO_BREACH_SLA | LAST_INBOUND_MESSAGE_AT | PRIORITY | THREAD_FIELD,
+  direction: ASC | DESC,
+  threadFieldKey?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `threads` | `object[]` | Yes | — |
+| `pageInfo` | `object` | Yes | — |
+| `totalCount` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="threads full type">
+
+```ts
+{
+  id: string,
+  ref: string,
+  title: string,
+  status: string,
+  priority: number
+}[]
+```
+</Accordion>
+
+<Accordion title="pageInfo full type">
+
+```ts
+{
+  hasNextPage: boolean,
+  hasPreviousPage: boolean,
+  startCursor?: string | null,
+  endCursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### sendMessage
+
+`threads.sendMessage`
+
+Reply to a thread via Plain routing.
+
+**Risk:** `write`
+
+```ts
+await corsair.plain.api.threads.sendMessage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `threadId` | `string` | Yes | — |
+| `textContent` | `string` | Yes | — |
+| `markdownContent` | `string` | No | — |
+| `attachmentIds` | `string[]` | No | — |
+| `impersonation` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="impersonation full type">
+
+```ts
+{
+  asCustomer: {
+    customerIdentifier: {
+      externalId?: string,
+      emailAddress?: string,
+      customerId?: string
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### update
+
+`threads.update`
+
+Update a thread title.
+
+**Risk:** `write`
+
+```ts
+await corsair.plain.api.threads.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `threadId` | `string` | Yes | — |
+| `title` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `thread` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="thread full type">
+
+```ts
+{
+  id: string,
+  ref: string,
+  title: string,
+  status: string,
+  priority: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tiers
+
+### fetch
+
+`tiers.fetch`
+
+Fetch a tier by ID.
+
+**Risk:** `read`
+
+```ts
+await corsair.plain.api.tiers.fetch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tierId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tier` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="tier full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  externalId?: string | null,
+  color?: string,
+  isDefault?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`tiers.list`
+
+List tiers with cursor pagination.
+
+**Risk:** `read`
+
+```ts
+await corsair.plain.api.tiers.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `first` | `number` | No | — |
+| `after` | `string` | No | — |
+| `last` | `number` | No | — |
+| `before` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tiers` | `object[]` | Yes | — |
+| `pageInfo` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="tiers full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  externalId?: string | null,
+  color?: string,
+  isDefault?: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="pageInfo full type">
+
+```ts
+{
+  hasNextPage: boolean,
+  hasPreviousPage: boolean,
+  startCursor?: string | null,
+  endCursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Users
+
+### delete
+
+`users.delete`
+
+Delete a workspace user.
+
+**Risk:** `write`
+
+```ts
+await corsair.plain.api.users.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### getById
+
+`users.getById`
+
+Fetch a workspace user by ID.
+
+**Risk:** `read`
+
+```ts
+await corsair.plain.api.users.getById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id: string,
+  fullName: string,
+  publicName: string,
+  email: string,
+  isDeleted?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

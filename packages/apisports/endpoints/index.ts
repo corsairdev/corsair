@@ -1,0 +1,12 @@
+export * as Afl from './afl';
+export * as Baseball from './baseball';
+export * as Basketball from './basketball';
+export * as Core from './core';
+export * as Fixtures from './fixtures';
+export * as Formula1 from './formula1';
+export * as Mma from './mma';
+export * as Odds from './odds';
+export * as Players from './players';
+export * from './routes';
+export * as Standings from './standings';
+export * from './types';

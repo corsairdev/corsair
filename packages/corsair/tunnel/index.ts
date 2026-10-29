@@ -5,11 +5,13 @@ import {
 	isConnectionsSyncRetryableError,
 	processConnectionsSyncDelivery,
 } from '../hub/connections-sync-delivery';
-import type { TunnelEnvelope } from '../hub/contracts/tunnel';
-import {
-	INBOUND_TUNNEL_TYPES,
-	SIGNED_TUNNEL_REPLAY_WINDOW_MS,
+import type {
+	ProbeTunnelPayload,
+	RunResultPayload,
+	RunTunnelPayload,
+	TunnelEnvelope,
 } from '../hub/contracts/tunnel';
+import { SIGNED_TUNNEL_REPLAY_WINDOW_MS } from '../hub/contracts/tunnel';
 import { processAuthCredentialsDelivery } from '../hub/credentials-delivery';
 import { processIntegrationCredentialsDelivery } from '../hub/integration-credentials-delivery';
 import { consumeDeliveryReplayKey } from '../hub/internal/delivery-replay-guard';
@@ -24,6 +26,8 @@ import {
 	resolveTenantIdFromWebhookLink,
 	setWebhookTenantLink,
 } from '../webhooks/tenant-links';
+import { executeWorkflowRun } from '../workflows/execute';
+import { runReadonlyProbe } from '../workflows/probe';
 
 export {
 	resolveAccountFromWebhookLink,
@@ -48,16 +52,43 @@ export type TunnelAck = {
 	status: 'ok' | 'failed';
 	retryable?: boolean;
 	error?: string;
-	connectLink?: {
-		connectUrl: string;
-		expiresAt?: string;
-	};
 	webhookResponse?: {
 		status?: number;
 		body?: unknown;
 		headers?: Record<string, string>;
 	};
+	/**
+	 * @deprecated Shipped in v0.1.102. The connect URL now also lives in
+	 * `webhookResponse.body`; this alias is kept populated so direct
+	 * `processCorsair` consumers that read `ack.connectLink` don't break.
+	 */
+	connectLink?: {
+		connectUrl: string;
+		expiresAt?: string;
+	};
 };
+
+/**
+ * Builds the ack for a `connect.create_link` tunnel. Carries the connect URL in
+ * both `webhookResponse.body` (current) and the deprecated `connectLink` alias.
+ */
+export function connectLinkAck(result: {
+	connectUrl: string;
+	expiresAt?: string;
+}): TunnelAck {
+	return {
+		status: 'ok',
+		connectLink: { connectUrl: result.connectUrl, expiresAt: result.expiresAt },
+		webhookResponse: {
+			status: 200,
+			body: {
+				status: 'ok',
+				connectUrl: result.connectUrl,
+				expiresAt: result.expiresAt,
+			} satisfies ServerDeliveryAckBody,
+		},
+	};
+}
 
 export type WebhookTunnelPayload = {
 	headers: Record<string, string>;
@@ -69,12 +100,23 @@ export type WebhookTunnelPayload = {
 	linkType?: string;
 	externalId?: string;
 	tenantId?: string;
+	/** Hub already verified the provider signature before signing this delivery. */
+	hubVerified?: boolean;
 };
 
 export type OAuthCallbackTunnelPayload = {
 	code: string;
 	state: string;
 	redirectUri: string;
+	/**
+	 * Set by Hub, which authenticates the delivery envelope with the signing
+	 * secret and cannot sign a Corsair `state`. When present, the callback is
+	 * processed against these instead of decoding `state`.
+	 */
+	plugin?: string;
+	tenantId?: string;
+	// Provider callback params (e.g. GitHub's installation_id) Hub forwards; absent from the token body.
+	callbackParams?: Record<string, string>;
 };
 
 export type OAuthTokensTunnelPayload = {
@@ -84,6 +126,10 @@ export type OAuthTokensTunnelPayload = {
 	refreshToken?: string;
 	expiresIn?: number;
 	scope?: string;
+	authType?: 'managed' | 'oauth_2';
+	// Provider token-body identity (team, workspace_id, …) forwarded so the SDK
+	// resolver can read it — secrets stripped Hub-side.
+	providerData?: Record<string, unknown>;
 };
 
 export type PermissionDecisionTunnelPayload = {
@@ -143,10 +189,7 @@ async function handleConnectCreateLinkTunnel(
 ): Promise<TunnelAck> {
 	try {
 		const result = await processConnectLinkDelivery(corsair, payload);
-		return {
-			status: 'ok',
-			connectLink: result,
-		};
+		return connectLinkAck(result);
 	} catch (error) {
 		return {
 			status: 'failed',
@@ -212,6 +255,7 @@ async function handleWebhookTunnel(
 	corsair: unknown,
 	internal: CorsairInternalConfig,
 	payload: WebhookTunnelPayload,
+	envelopeVerified: boolean,
 ): Promise<TunnelAck> {
 	const tenantId = await resolveWebhookTenantId(corsair, internal, payload);
 	const query = {
@@ -224,6 +268,15 @@ async function handleWebhookTunnel(
 		payload.headers,
 		payload.body,
 		query,
+		// Hub routed this by the plugin's own endpoint — dispatch exactly there,
+		// never by body shape (MS Graph siblings are indistinguishable). Only
+		// honor hubVerified when the envelope itself was authenticated — an
+		// unsigned tunnel delivery must never let a caller-supplied flag skip
+		// provider signature verification.
+		{
+			plugin: payload.plugin,
+			hubVerified: envelopeVerified && payload.hubVerified === true,
+		},
 	);
 
 	if (!result.plugin) {
@@ -270,7 +323,18 @@ async function handleOAuthCallbackTunnel(
 	corsair: unknown,
 	payload: OAuthCallbackTunnelPayload,
 ): Promise<TunnelAck> {
-	await processOAuthCallback(corsair, payload);
+	// Envelope signature already verified by processCorsair before dispatch. Take
+	// the trusted path only when Hub supplied plugin/tenant; otherwise fall back
+	// to HMAC state verification (a Hub deployed before the companion change).
+	await processOAuthCallback(corsair, {
+		code: payload.code,
+		state: payload.state,
+		redirectUri: payload.redirectUri,
+		callbackParams: payload.callbackParams,
+		...(payload.plugin && payload.tenantId
+			? { trusted: true, plugin: payload.plugin, tenantId: payload.tenantId }
+			: {}),
+	});
 	return { status: 'ok' };
 }
 
@@ -285,6 +349,8 @@ async function handleOAuthTokensTunnel(
 		refreshToken: payload.refreshToken,
 		expiresIn: payload.expiresIn,
 		scope: payload.scope,
+		authType: payload.authType,
+		providerData: payload.providerData,
 	});
 	return { status: 'ok' };
 }
@@ -404,11 +470,104 @@ async function handleIntegrationCredentialsTunnel(
 	}
 }
 
+/**
+ * Scopes the root Corsair instance to the run's tenant. Multi-tenant apps expose
+ * plugin namespaces only via `withTenant(...)`; the root wrapper does not, so a
+ * workflow calling `corsair.github.api.*` needs the tenant-scoped client. For
+ * single-tenant apps there is no `withTenant`, so the instance is used as-is.
+ */
+function scopeCorsairToTenant(corsair: unknown, tenantId: string): unknown {
+	const candidate = corsair as {
+		withTenant?: (tenantId: string) => unknown;
+	} | null;
+	if (tenantId && typeof candidate?.withTenant === 'function') {
+		return candidate.withTenant(tenantId);
+	}
+	return corsair;
+}
+
+async function handleRunTunnel(
+	corsair: unknown,
+	payload: RunTunnelPayload,
+): Promise<TunnelAck> {
+	try {
+		// Scope to the tenant BEFORE handing the client to workflow `main`, so the
+		// generated code's `corsair.<plugin>.api.*` calls resolve the right tenant's
+		// credentials. Dropping this silently breaks every multi-tenant run.
+		const tenantScopedCorsair = scopeCorsairToTenant(corsair, payload.tenantId);
+		const result: RunResultPayload = await executeWorkflowRun({
+			corsair: tenantScopedCorsair,
+			code: payload.code,
+			payload: payload.trigger?.payload ?? null,
+			memoizedSteps: payload.memoizedSteps,
+		});
+		// The envelope was processed successfully regardless of whether the workflow
+		// itself succeeded — Hub reads the run status/steps from `run` in the ack
+		// body. Nested under `run` so the ack's own `status: 'ok'` (envelope
+		// success) doesn't collide with the run's `status: 'completed'|'failed'`.
+		return {
+			status: 'ok',
+			webhookResponse: {
+				status: 200,
+				body: { status: 'ok', run: result } satisfies ServerDeliveryAckBody,
+			},
+		};
+	} catch (error) {
+		// Only reached for infrastructure-level failures (e.g. code failed to load).
+		return {
+			status: 'failed',
+			retryable: true,
+			error: error instanceof Error ? error.message : 'Workflow run failed',
+		};
+	}
+}
+
+async function handleProbeTunnel(
+	corsair: unknown,
+	payload: ProbeTunnelPayload,
+): Promise<TunnelAck> {
+	try {
+		// Same tenant scoping as a run: the read-only script resolves the right
+		// tenant's credentials. `runReadonlyProbe` runs it under runReadonly, so a
+		// write/destructive call throws and comes back as `{ status: 'error' }`.
+		const tenantScopedCorsair = scopeCorsairToTenant(corsair, payload.tenantId);
+		const probe = await runReadonlyProbe({
+			corsair: tenantScopedCorsair,
+			code: payload.code,
+			timeoutMs: payload.timeoutMs,
+		});
+		// Envelope succeeded regardless of the script outcome — Hub reads `probe` from
+		// the ack. Nested so the ack's own `status: 'ok'` doesn't collide with the
+		// probe's `status: 'ok' | 'error'`.
+		return {
+			status: 'ok',
+			webhookResponse: {
+				status: 200,
+				body: { status: 'ok', probe } satisfies ServerDeliveryAckBody,
+			},
+		};
+	} catch (error) {
+		// runReadonlyProbe never throws; this only fires if tenant scoping fails,
+		// which is deterministic — not worth retrying.
+		return {
+			status: 'failed',
+			retryable: false,
+			error: error instanceof Error ? error.message : 'Probe failed',
+		};
+	}
+}
+
 export type ProcessCorsairOptions = {
 	/** HMAC signing secret shared with the tunnel relay. Required unless allowUnsignedTunnel is true. */
 	signingSecret?: string;
 	/** Local development only. Skips signature verification when signingSecret is omitted. */
 	allowUnsignedTunnel?: boolean;
+	/**
+	 * Opt-in to executing Hub-delivered workflow code (`type: 'run'`). Off by
+	 * default because it dynamically evaluates code in-process. See the warning in
+	 * workflows/execute.ts — sandbox before enabling in production.
+	 */
+	allowWorkflowExecution?: boolean;
 };
 
 export async function processCorsair(
@@ -426,6 +585,11 @@ export async function processCorsair(
 		'x-corsair-timestamp',
 	);
 	const nonceHeader = normalizeHeader(request.headers, 'x-corsair-nonce');
+
+	// hubVerified may only be trusted once we have authenticated the envelope.
+	// Unsigned tunnel deliveries leave this false, so a caller-supplied
+	// hubVerified can never skip provider verification downstream.
+	let envelopeVerified = false;
 
 	if (!options.signingSecret?.trim()) {
 		if (!options.allowUnsignedTunnel) {
@@ -469,6 +633,8 @@ export async function processCorsair(
 				error: replayCheck.error,
 			};
 		}
+
+		envelopeVerified = true;
 	}
 
 	let envelope: TunnelEnvelope;
@@ -497,6 +663,7 @@ export async function processCorsair(
 				corsair,
 				internal,
 				envelope.payload as WebhookTunnelPayload,
+				envelopeVerified,
 			);
 		case 'oauth.callback':
 			return handleOAuthCallbackTunnel(
@@ -546,22 +713,34 @@ export async function processCorsair(
 			}
 			return handleConnectionsSyncTunnel(corsair, signingSecret);
 		}
+		case 'run':
+			if (!options.allowWorkflowExecution) {
+				return {
+					status: 'failed',
+					retryable: false,
+					error:
+						'Workflow execution is not enabled (set allowWorkflowExecution: true)',
+				};
+			}
+			return handleRunTunnel(corsair, envelope.payload as RunTunnelPayload);
+		case 'probe':
+			// Same gate as `run`: a probe still executes Hub-authored code (read-only).
+			// Could be split into its own flag if a tenant ever needs authoring probes
+			// without enabling full execution.
+			if (!options.allowWorkflowExecution) {
+				return {
+					status: 'failed',
+					retryable: false,
+					error:
+						'Workflow execution is not enabled (set allowWorkflowExecution: true)',
+				};
+			}
+			return handleProbeTunnel(corsair, envelope.payload as ProbeTunnelPayload);
 		default:
-			return unsupportedTunnelType(String(envelope.type));
+			return {
+				status: 'failed',
+				retryable: false,
+				error: `Unsupported tunnel type: ${String(envelope.type)}`,
+			};
 	}
-}
-
-function unsupportedTunnelType(type: string): TunnelAck {
-	if (!INBOUND_TUNNEL_TYPES.has(type as TunnelEnvelope['type'])) {
-		return {
-			status: 'failed',
-			retryable: false,
-			error: `Unsupported tunnel type: ${type}`,
-		};
-	}
-	return {
-		status: 'failed',
-		retryable: false,
-		error: `Unsupported tunnel type: ${type}`,
-	};
 }

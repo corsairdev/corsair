@@ -17,110 +17,30 @@ export function normalizeGitlabBaseUrl(baseUrl?: string): string {
 	return withoutSlash || 'https://gitlab.com';
 }
 
+// Managed auth uses Corsair's gitlab.com OAuth app, so its token is valid only
+// against canonical gitlab.com. Match the hostname (case-insensitive,
+// trailing-dot tolerant) but also require https on the default port — a custom
+// port or scheme is a different service and must not receive the managed token.
+export function isManagedGitlabHost(baseUrl: string): boolean {
+	try {
+		const url = new URL(baseUrl);
+		const hostname = url.hostname.replace(/\.$/, '').toLowerCase();
+		return (
+			hostname === 'gitlab.com' &&
+			url.protocol === 'https:' &&
+			(url.port === '' || url.port === '443')
+		);
+	} catch {
+		return false;
+	}
+}
+
 export function gitlabApiBase(baseUrl?: string): string {
 	return `${normalizeGitlabBaseUrl(baseUrl)}/api/v4`;
 }
 
 export function gitlabOAuthTokenUrl(baseUrl?: string): string {
 	return `${normalizeGitlabBaseUrl(baseUrl)}/oauth/token`;
-}
-
-async function refreshGitlabAccessToken(
-	tokenUrl: string,
-	clientId: string,
-	clientSecret: string,
-	refreshToken: string,
-	redirectUri?: string | null,
-) {
-	const body = new URLSearchParams({
-		grant_type: 'refresh_token',
-		refresh_token: refreshToken,
-		client_id: clientId,
-		client_secret: clientSecret,
-	});
-	if (redirectUri) {
-		body.set('redirect_uri', redirectUri);
-	}
-
-	const response = await fetch(tokenUrl, {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/x-www-form-urlencoded',
-		},
-		body,
-	});
-
-	if (!response.ok) {
-		const errorText = await response.text();
-		throw new GitlabAPIError(
-			`Failed to refresh access token: ${errorText}`,
-			response.status,
-		);
-	}
-
-	const json = (await response.json()) as {
-		access_token: string;
-		expires_in: number;
-		/**
-		 * GitLab documents that each refresh returns new access + refresh tokens (the prior pair is invalidated).
-		 * @see https://docs.gitlab.com/api/oauth2/ (authorization code / PKCE sections — example refresh response)
-		 */
-		refresh_token?: string;
-	};
-
-	return json;
-}
-
-export async function getValidGitlabAccessToken({
-	tokenUrl,
-	accessToken,
-	expiresAt,
-	clientId,
-	clientSecret,
-	refreshToken,
-	redirectUri,
-	forceRefresh = false,
-}: {
-	tokenUrl: string;
-	clientId: string;
-	clientSecret: string;
-	refreshToken: string;
-	accessToken?: string | null;
-	expiresAt?: string | null;
-	redirectUri?: string | null;
-	forceRefresh?: boolean;
-}): Promise<{
-	accessToken: string;
-	expiresAt: number;
-	refreshed: boolean;
-	/** Present when the IdP returned a new refresh_token (rotation). */
-	newRefreshToken?: string;
-}> {
-	const now = Math.floor(Date.now() / 1000);
-	const bufferSeconds = 5 * 60;
-
-	if (
-		!forceRefresh &&
-		accessToken &&
-		expiresAt &&
-		Number(expiresAt) > now + bufferSeconds
-	) {
-		return { accessToken, expiresAt: Number(expiresAt), refreshed: false };
-	}
-
-	const tokenData = await refreshGitlabAccessToken(
-		tokenUrl,
-		clientId,
-		clientSecret,
-		refreshToken,
-		redirectUri,
-	);
-	return {
-		accessToken: tokenData.access_token,
-		expiresAt: now + tokenData.expires_in,
-		refreshed: true,
-		newRefreshToken: tokenData.refresh_token,
-	};
 }
 
 export type GitlabRequestOptions = {

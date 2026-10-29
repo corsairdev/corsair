@@ -64,7 +64,7 @@ export function verifyHmacSha256Signature(
 	maxAgeSeconds: number = 60 * 5,
 ): boolean {
 	if (!secret) {
-		return true;
+		return false;
 	}
 
 	if (!signature || !timestamp) {

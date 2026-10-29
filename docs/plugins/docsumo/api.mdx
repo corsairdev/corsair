@@ -1,0 +1,548 @@
+---
+title: API
+description: "API reference for Docsumo: every `docsumo.api.*` operation with input and output types."
+---
+
+Every `docsumo.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Agents
+
+### listCases
+
+`agents.listCases`
+
+List cases for an external agent case type with pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.docsumo.api.agents.listCases({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `casetype_id` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `sort_by` | `created_date.asc \| created_date.desc \| modified_date.asc \| modified_date.desc` | No | — |
+| `stage_id` | `string[]` | No | — |
+| `assigned_to` | `string[]` | No | — |
+| `workflow_state` | `string[]` | No | — |
+| `created_date_from` | `string` | No | — |
+| `created_date_to` | `string` | No | — |
+| `modified_date_from` | `string` | No | — |
+| `modified_date_to` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `status_code` | `number` | No | — |
+| `message` | `string` | No | — |
+| `error` | `string` | No | — |
+| `error_code` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  cases?: {
+  }[],
+  pagination?: {
+    limit?: number,
+    offset?: number,
+    total?: number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listExternal
+
+`agents.listExternal`
+
+List external agents configured in the Docsumo account
+
+**Risk:** `read`
+
+```ts
+await corsair.docsumo.api.agents.listExternal({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `all \| doctype \| casetype` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `status_code` | `number` | No | — |
+| `message` | `string` | No | — |
+| `error` | `string` | No | — |
+| `error_code` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  agents?: {
+  }[],
+  disabled_agents?: any[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Analytics
+
+### mcaAnalysis
+
+`analytics.mcaAnalysis`
+
+Run MCA analysis on uploaded bank statement documents
+
+**Risk:** `read`
+
+```ts
+await corsair.docsumo.api.analytics.mcaAnalysis({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `doc_ids` | `string[]` | Yes | — |
+| `mca_list_db_table` | `string` | No | — |
+| `non_mca_list_db_table` | `string` | No | — |
+| `allow_partial` | `boolean` | No | — |
+| `webhook` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_summaries` | `object[]` | No | — |
+| `status` | `string` | No | — |
+| `status_code` | `number` | No | — |
+| `message` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="account_summaries full type">
+
+```ts
+{
+}[][]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Documents
+
+### listAll
+
+`documents.listAll`
+
+List documents with optional filters and pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.docsumo.api.documents.listAll({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `view` | `files \| folder \| all_files` | No | — |
+| `folder_id` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `doc_type` | `string` | No | — |
+| `status` | `reviewing \| processed \| erred` | No | — |
+| `q` | `string` | No | — |
+| `sort_by` | `created_date.asc \| created_date.desc` | No | — |
+| `created_date` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `status_code` | `number` | No | — |
+| `message` | `string` | No | — |
+| `error` | `string` | No | — |
+| `error_code` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  documents?: {
+  }[],
+  limit?: number,
+  offset?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Document Types
+
+### getEnabled
+
+`documentTypes.getEnabled`
+
+Get a summary of enabled and disabled document types for the account
+
+**Risk:** `read`
+
+```ts
+await corsair.docsumo.api.documentTypes.getEnabled({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `status_code` | `number` | No | — |
+| `message` | `string` | No | — |
+| `error` | `string` | No | — |
+| `error_code` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listEnabled
+
+`documentTypes.listEnabled`
+
+List document types currently enabled for the account
+
+**Risk:** `read`
+
+```ts
+await corsair.docsumo.api.documentTypes.listEnabled({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `status_code` | `number` | No | — |
+| `message` | `string` | No | — |
+| `error` | `string` | No | — |
+| `error_code` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  document?: {
+    title?: string,
+    doc_type?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Folders
+
+### create
+
+`folders.create`
+
+Create a folder for organizing Docsumo documents
+
+**Risk:** `write`
+
+```ts
+await corsair.docsumo.api.folders.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `folder_name` | `string` | Yes | — |
+| `type` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `status_code` | `number` | No | — |
+| `message` | `string` | No | — |
+| `error` | `string` | No | — |
+| `error_code` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tables
+
+### addRow
+
+`tables.addRow`
+
+Add a new empty row to a Docsumo database table
+
+**Risk:** `write`
+
+```ts
+await corsair.docsumo.api.tables.addRow({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ddid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `status_code` | `number` | No | — |
+| `message` | `string` | No | — |
+| `error` | `string` | No | — |
+| `error_code` | `string` | No | — |
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`tables.delete`
+
+Delete one or more Docsumo database tables
+
+**Risk:** `write`
+
+```ts
+await corsair.docsumo.api.tables.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dd_ids` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `status_code` | `number` | No | — |
+| `message` | `string` | No | — |
+| `error` | `string` | No | — |
+| `error_code` | `string` | No | — |
+
+
+
+---
+
+### getData
+
+`tables.getData`
+
+Retrieve all rows from a Docsumo database table
+
+**Risk:** `read`
+
+```ts
+await corsair.docsumo.api.tables.getData({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ddid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `status_code` | `number` | No | — |
+| `message` | `string` | No | — |
+| `error` | `string` | No | — |
+| `error_code` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  data?: {
+  }[],
+  limit?: number,
+  offset?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## User
+
+### getDocumentTypes
+
+`user.getDocumentTypes`
+
+Get user account details and available document types
+
+**Risk:** `read`
+
+```ts
+await corsair.docsumo.api.user.getDocumentTypes({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `status_code` | `number` | No | — |
+| `message` | `string` | No | — |
+| `error` | `string` | No | — |
+| `error_code` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  document_types?: {
+    title?: string,
+    value?: string
+  }[],
+  email?: string,
+  full_name?: string,
+  monthly_doc_current?: number,
+  monthly_doc_limit?: number,
+  user_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

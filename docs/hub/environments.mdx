@@ -1,52 +1,52 @@
 ---
-title: Development and Production
+title: Development and production
 sidebarTitle: Environments
-description: Every Hub project includes a Development and a Production environment. They are meant for different stages of your workflow — use each one appropriately.
+description: Every Hub project includes a Development and a Production environment, meant for different stages of your workflow.
 ---
 
-When you create a project in the [Hub dashboard](https://hub.corsair.dev/dashboard), you get two environments: **Development** and **Production**. They are not interchangeable — each is tuned for a different stage of building and shipping.
+When you create a project in the [Hub dashboard](https://hub.corsair.dev/dashboard), you get two environments: **Development** and **Production**. They are not interchangeable. Each is tuned for a different stage of building and shipping.
 
 The SDK knows which one you are using from your API key prefix (`ck_dev_…` or `ck_prod_…`). Point your local app at development keys; point your deployed app at production keys.
 
 <Info>
-Both environments share the same OAuth provider callback URL (`https://auth.corsair.dev/oauth/callback`). You register it once with GitHub, Google, and so on — Hub routes the result back to the environment that started the flow.
+For plugins where you bring your own OAuth app, both environments share the same callback URL (`https://auth.corsair.dev/oauth/callback`). You register it once with GitHub, Google, and so on, and Hub routes the result back to the environment that started the flow. Managed plugins skip this; Corsair hosts the OAuth app.
 </Info>
 
 ## Development environment
 
-A **Development** environment is the default starting point. It is designed to make local work fast: no delivery URL to register, no tunnel, no production activation step.
+Start here. Local work stays fast: no delivery URL to register in the dashboard, no production activation step.
 
 Some characteristics of Development:
 
-- **Optimized for `localhost`.** After OAuth completes, Hub sends the result to your machine via a browser redirect — not a server callback. Your browser can reach `localhost`; Hub's servers often cannot.
-- **Auto-detected delivery URL.** The SDK figures out where your handler lives from `CORSAIR_DELIVERY_URL` or `PORT`. You do not configure this in the dashboard.
+- **Reaches `localhost` for you.** Hub's servers cannot call `http://localhost` directly. When your local app has a Corsair tunnel open, Hub POSTs the signed result to that tunnel; if no tunnel is live, it falls back to a browser redirect. Either way you do not run ngrok or expose a public URL yourself.
+- **Delivery target is resolved for you.** You do not register a delivery URL in the dashboard for development. `CORSAIR_DELIVERY_URL` overrides the local address when set.
 - **Separate credentials.** Development has its own API key and signing secret. They are shown on the **Keys** tab when the environment picker is set to Development.
 - **Relaxed setup.** No "activate" step. As long as your app is running locally and you are using `ck_dev_…` keys, connect flows work.
-- **All configured plugins available.** Useful for trying integrations before you ship. Production may ask you to choose which Corsair-managed integrations to enable — see [Hub dashboard](/hub/dashboard#corsair-managed-integrations).
+- **All configured plugins available.** Useful for trying integrations before you ship. Production may ask you to choose which Corsair-managed integrations to enable. See [Hub dashboard](/hub/dashboard#corsair-managed-integrations).
 
 Development is for building and testing on your machine. It is not a substitute for a deployed production setup.
 
 ### Local setup
 
 ```bash .env.local
-CORSAIR_DEV_API_KEY=ck_dev_...
-CORSAIR_DEV_SIGNING_SECRET=...
+CORSAIR_API_KEY=ck_dev_...
+CORSAIR_SIGNING_SECRET=...
 CORSAIR_KEK=...
 
 # Optional — override auto-detection:
 # CORSAIR_DELIVERY_URL=http://localhost:3001/api/corsair
 ```
 
-Copy development credentials from the dashboard **Keys** tab. Mount your handler at `/api/corsair` and run your app — Hub handles the rest.
+Copy development credentials from the dashboard **Keys** tab. Mount your handler at `/api/corsair` and run your app. Hub handles the rest.
 
 ## Production environment
 
-A **Production** environment is for your live, deployed application — real users, real OAuth flows, real traffic.
+This is your live, deployed application: real users, real OAuth flows, real traffic.
 
 Some characteristics of Production:
 
 - **Requires activation.** Before connect flows work, register a public HTTPS delivery URL in the dashboard (**Delivery URLs** tab). This tells Hub where to send results in production.
-- **Server-to-server delivery.** Hub POSTs a signed envelope directly to your app. No browser redirect — the user's browser is not in the loop after OAuth completes.
+- **Server-to-server delivery.** Hub POSTs a signed envelope directly to your app. There is no browser redirect; the user's browser is not in the loop after OAuth completes.
 - **Stricter URL rules.** Delivery URLs must be public HTTPS endpoints. `localhost` is rejected.
 - **Separate credentials.** Production has its own API key and signing secret (`ck_prod_…`). Never commit them; set them in your host's environment variables.
 - **Corsair-managed integrations.** If your plan limits how many integrations Corsair manages in production, the dashboard asks you to select which ones. Development does not apply this limit.
@@ -57,12 +57,12 @@ When you deploy, switch your env vars from development keys to production keys a
 
 <Steps>
   <Step title="Activate production in the dashboard">
-    Open your project, switch the environment picker to **Production**, and go to **Delivery URLs**. Register your handler — for example `https://your-app.com/api/corsair`.
+    Open your project, switch the environment picker to **Production**, and go to **Delivery URLs**. Register your handler, for example `https://your-app.com/api/corsair`.
   </Step>
   <Step title="Set production credentials on your host">
     ```bash
-    CORSAIR_PROD_API_KEY=ck_prod_...
-    CORSAIR_PROD_SIGNING_SECRET=...
+    CORSAIR_API_KEY=ck_prod_...
+    CORSAIR_SIGNING_SECRET=...
     CORSAIR_KEK=...
     ```
   </Step>
@@ -73,19 +73,22 @@ When you deploy, switch your env vars from development keys to production keys a
 
 ## Why delivery works differently
 
-Hub lives on the public internet (`auth.corsair.dev`). Your app does not — at least not while you are developing locally. That gap drives almost every difference between the two environments.
+Hub lives on the public internet (`auth.corsair.dev`). Your app does not, at least not while you are developing locally. That gap drives almost every difference between the two environments.
 
-**In development**, your app runs on `localhost`. Hub cannot reliably call `http://localhost:3000` from its servers — your machine is not reachable from the internet, and that is fine. Instead, after OAuth completes, Hub **redirects the user's browser** to your local handler with a signed payload (`?d=…`). The browser is already on your machine, so delivery works without ngrok or a tunnel.
+**In development**, your app runs on `localhost`, which Hub's servers cannot call directly. When your local app has a Corsair tunnel open, Hub **POSTs the signed result to that tunnel**, which forwards it to your local handler. When no tunnel is live, Hub falls back to **redirecting the user's browser** to your handler with a signed payload (`?d=…`); the browser is already on your machine, so it can reach `localhost`. Either way you do not run ngrok or expose a public URL yourself. Your handler verifies every payload with your signing secret before accepting it.
 
-**In production**, your app runs on a public HTTPS domain. Hub **POSTs a signed envelope** straight to your server. This is more secure and more reliable for live traffic: the result never passes through the browser URL bar, and your handler verifies every payload with your signing secret before accepting it.
+**In production**, your app runs on a public HTTPS domain. Hub **POSTs a signed envelope** straight to your registered delivery URL. This is more secure and more reliable for live traffic: the result never passes through the browser URL bar, and your handler verifies every payload with your signing secret before accepting it.
 
 ```mermaid
 flowchart TB
     subgraph dev [Development]
         H1[Hub completes OAuth]
+        T1[Corsair tunnel]
         B1[User's browser]
         L[localhost handler]
-        H1 -->|redirect ?d=…| B1
+        H1 -->|signed POST, tunnel live| T1
+        T1 --> L
+        H1 -->|redirect ?d=…, no tunnel| B1
         B1 --> L
     end
 
@@ -96,7 +99,7 @@ flowchart TB
     end
 ```
 
-Same Hub project, same provider callback URL — different delivery path depending on which API key started the flow.
+Same Hub project, same provider callback URL, but a different delivery path depending on which API key started the flow.
 
 ## Preview and staging
 
@@ -105,9 +108,9 @@ Hub provides Development and Production per project. There is no separate "stagi
 <Tabs>
 <Tab title="Preview deploys (Vercel, Netlify, etc.)">
 
-Use **development** API keys (`ck_dev_…`) on preview deployments. Set `CORSAIR_DELIVERY_URL` to the preview URL of your handler — for example `https://my-app-git-feature-team.vercel.app/api/corsair`.
+Use **development** API keys (`ck_dev_…`) on preview deployments. Set `CORSAIR_DELIVERY_URL` to the preview URL of your handler, for example `https://my-app-git-feature-team.vercel.app/api/corsair`.
 
-Hub delivers via browser redirect, same as local development. This works well for PR previews without activating production.
+Hub delivers the same way as local development, so this works for PR previews without activating production.
 
 </Tab>
 
@@ -115,7 +118,7 @@ Hub delivers via browser redirect, same as local development. This works well fo
 
 Create a **separate Hub project** for staging. Treat its production environment as your staging deploy: activate a delivery URL on your staging domain and use that project's `ck_prod_…` keys.
 
-Changes in the staging project do not automatically sync to your main production project — configure each independently.
+Changes in the staging project do not automatically sync to your main production project. Configure each independently.
 
 </Tab>
 
@@ -134,10 +137,10 @@ Prefer a separate Hub project unless you intentionally want shared connection da
 | --- | --- | --- |
 | API key | `ck_dev_…` | `ck_prod_…` |
 | Best for | Local dev, PR previews | Deployed app |
-| Delivery URL | Auto-detected (or `CORSAIR_DELIVERY_URL`) | Registered in dashboard |
-| How Hub delivers | Browser redirect (`GET ?d=…`) | Signed server POST |
-| Dashboard setup | Copy keys — done | Activate delivery URL + copy keys |
-| `localhost` | ✅ | ❌ |
+| Delivery URL | Resolved for you (or `CORSAIR_DELIVERY_URL`) | Registered in dashboard |
+| How Hub delivers | Signed POST over the Corsair tunnel, or browser redirect (`GET ?d=…`) as fallback | Signed server POST |
+| Dashboard setup | Copy keys, done | Activate delivery URL + copy keys |
+| `localhost` | Supported | Rejected |
 
 ## What's next
 

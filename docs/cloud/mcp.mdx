@@ -1,0 +1,183 @@
+---
+title: Corsair MCP
+description: One address, https://mcp.corsair.dev/mcp, that lets Claude, ChatGPT, Cursor and other agents use the apps you've connected to Corsair.
+---
+
+Corsair MCP lets an AI agent use the apps you've connected to Corsair. It can read your inbox, post in Slack, open a GitHub issue, search data Corsair has synced, or set up an automation that runs when something happens in one of your apps.
+
+Every client uses the same address:
+
+```
+https://mcp.corsair.dev/mcp
+```
+
+You add it once, sign in to Corsair, and choose which of your links the client uses.
+
+## Before you start
+
+- A Corsair account. Sign up at [hub.corsair.dev](https://hub.corsair.dev) with Google, GitHub or an emailed sign-in link.
+- Apps to use. You can connect them in Corsair first, or ask the agent to connect one later. It hands you a sign-in link for that app.
+
+## How sign-in works
+
+<Steps>
+  <Step title="Add the address to your client">
+    See [Add it to your client](#add-it-to-your-client) below.
+  </Step>
+  <Step title="Sign in to Corsair">
+    The client opens Corsair in your browser.
+  </Step>
+  <Step title="Pick a link">
+    A link is a set of your connected apps plus a [mode](#modes-and-approvals) that decides what the agent may do without asking. Pick an existing link or make a new one for this client. If you have no link yet, Corsair asks you to make one first.
+  </Step>
+  <Step title="Allow">
+    The client gets the apps on that link and your email address. Nothing else on your account is shared.
+  </Step>
+</Steps>
+
+One connection uses one link. To switch links, remove Corsair from the client, add it again and pick the other link. You can sign a client out of a link at any time from [hub.corsair.dev/me](https://hub.corsair.dev/me).
+
+## Add it to your client
+
+<Tabs>
+  <Tab title="Claude">
+    1. In Claude, open **Customize → Connectors → Add custom connector**.
+    2. Name it Corsair, paste `https://mcp.corsair.dev/mcp` and add it.
+    3. Select **Connect** and sign in to Corsair.
+
+    On a Team or Enterprise plan, an owner adds connectors under Organization settings.
+  </Tab>
+  <Tab title="ChatGPT">
+    1. In ChatGPT, add a custom MCP server and paste `https://mcp.corsair.dev/mcp`.
+    2. Choose OAuth, then sign in to Corsair.
+
+    On personal plans, ChatGPT currently uses only the read tools from a custom server, so Corsair can look things up but not make changes. Write tools such as `run_script` need a Business or Enterprise/Edu workspace, where an admin adds the server or gives you permission to. OpenAI's [guide to custom MCP servers](https://help.openai.com/en/articles/12584461-connecting-custom-mcp-servers-in-chatgpt) has the current rules.
+  </Tab>
+  <Tab title="Cursor">
+    [Add to Cursor](cursor://anysphere.cursor-deeplink/mcp/install?name=corsair&config=eyJ1cmwiOiJodHRwczovL21jcC5jb3JzYWlyLmRldi9tY3AifQ==), or add this to `~/.cursor/mcp.json`:
+
+    ```json
+    {
+      "mcpServers": {
+        "corsair": { "url": "https://mcp.corsair.dev/mcp" }
+      }
+    }
+    ```
+
+    Cursor opens Corsair to sign in the first time it connects.
+  </Tab>
+  <Tab title="VS Code">
+    Add this to `.vscode/mcp.json`, or run **MCP: Add Server → HTTP** and paste the address:
+
+    ```json
+    {
+      "servers": {
+        "corsair": { "type": "http", "url": "https://mcp.corsair.dev/mcp" }
+      }
+    }
+    ```
+
+    VS Code signs you in when it first connects.
+  </Tab>
+  <Tab title="Claude Code">
+    ```bash
+    claude mcp add --transport http corsair https://mcp.corsair.dev/mcp
+    ```
+
+    Then run `/mcp` in Claude Code to sign in. Add `--scope user` to have it in every project.
+  </Tab>
+  <Tab title="Codex">
+    ```bash
+    codex mcp add corsair --url https://mcp.corsair.dev/mcp
+    codex mcp login corsair
+    ```
+  </Tab>
+  <Tab title="Gemini CLI">
+    ```bash
+    gemini mcp add --transport http corsair https://mcp.corsair.dev/mcp
+    ```
+
+    Then run `/mcp auth corsair` to sign in.
+  </Tab>
+  <Tab title="Zed">
+    Add this to your Zed settings. Zed signs you in when it first connects.
+
+    ```json
+    {
+      "context_servers": {
+        "corsair": { "url": "https://mcp.corsair.dev/mcp" }
+      }
+    }
+    ```
+  </Tab>
+</Tabs>
+
+Any other client that supports remote MCP servers with OAuth sign-in works the same way.
+
+<Note>
+Some clients can't sign in to an MCP server, such as GitHub Copilot's coding agent. For those, use a link's own address with an API key. Open the link at [hub.corsair.dev/me](https://hub.corsair.dev/me) and follow the steps for your client there.
+</Note>
+
+## What the agent can do
+
+| Tool | What it does | Type |
+| --- | --- | --- |
+| `list_integrations` | Lists the apps on this link and whether each is ready, or searches the apps Corsair supports | Read |
+| `list_integration_operations` | Shows what a connected app can do and the arguments each action takes | Read |
+| `add_integrations` | Starts connecting an app and returns a sign-in link for you to open. The app is added once you sign in | Write |
+| `search_data` | Searches data Corsair has synced from your apps, such as Slack messages, email and calendar events | Read |
+| `fetch_record` | Opens results from `search_data` in full, from Corsair's synced copy | Read |
+| `read_data` | Reads your apps live with a short script. It stops before any action that would change something | Read |
+| `run_script` | Makes changes in your apps with a short script: send, create, update or delete | Sensitive write |
+| `add_triggers` | Sets up an automation that runs on an app event or a schedule | Sensitive write |
+| `list_triggers` | Lists the automations on this link | Read |
+| `remove_triggers` | Stops an automation. Its steps stay saved so it can be turned back on | Write |
+| `list_runs` | Lists recent automation runs and how each went | Read |
+| `get_run` | Shows one run step by step, with the error if it failed | Read |
+
+Read tools never change anything. Write tools change only your Corsair setup, and you can undo them. Sensitive writes act in your apps, or set up an automation that will act later without asking, so a client should ask you before every call.
+
+Scripts run in a sandbox that can only call your connected apps' actions. They have no network, filesystem or other system access, and the agent never sees your app credentials.
+
+Not every link shows every tool. A link that isn't allowed to add apps has no `add_integrations`, and a Read link has no `add_triggers` or `remove_triggers`.
+
+`read_data`, `search_data`, `fetch_record` and the `list_` and `get_` tools are marked read-only, so most clients run them without asking. Clients usually ask you before running the others.
+
+## Modes and approvals
+
+Each link has a mode. Corsair checks every action against it, whatever the client allows.
+
+| Mode | What it allows |
+| --- | --- |
+| Read | Reads only. Writes are refused. |
+| Cautious (default) | Writes go through. A destructive action, such as a delete, needs your approval. |
+| Strict | Every write needs your approval. Destructive actions are refused. |
+| Open | Everything, without asking. |
+
+When an action needs approval, the agent gives you a link. It shows exactly what will run and with which arguments. Approve or deny it there, then tell the agent to carry on. An approval covers that one action once.
+
+Change a link's mode at [hub.corsair.dev/me](https://hub.corsair.dev/me).
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="The agent says an app isn't connected">
+    Ask it to connect the app. It calls `add_integrations` and gives you a sign-in link. Open it, sign in to the app, then tell the agent you're done.
+  </Accordion>
+  <Accordion title="An app needs setting up before it can be connected">
+    The project behind your link has to finish setting the app up first, for example by adding its OAuth credentials. Whoever manages the project does this in Corsair.
+  </Accordion>
+  <Accordion title="An action is blocked by the permission mode">
+    The link's mode doesn't allow that kind of action. Change the mode at [hub.corsair.dev/me](https://hub.corsair.dev/me), or use a link with a different mode.
+  </Accordion>
+  <Accordion title="I want this client to use a different link">
+    Remove Corsair from the client, add it again and pick the other link when you sign in.
+  </Accordion>
+  <Accordion title="I added https://mcp.corsair.cloud/mcp earlier">
+    That address still works and reaches the same server, so nothing needs to change. New setups use `https://mcp.corsair.dev/mcp`.
+  </Accordion>
+</AccordionGroup>
+
+## Support and privacy
+
+Email [primary@corsair.dev](mailto:primary@corsair.dev). See the [privacy policy](https://corsair.dev/privacy-policy) and [terms](https://corsair.dev/terms-of-service).

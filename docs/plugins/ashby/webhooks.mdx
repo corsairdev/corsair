@@ -1,0 +1,710 @@
+---
+title: Webhooks
+description: "Ashby incoming webhooks: event paths, payloads, and response data."
+---
+
+The Ashby plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/ashby/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `application`
+  - `submit` (`application.submit`)
+  - `update` (`application.update`)
+- `candidate`
+  - `hire` (`candidate.hire`)
+  - `stageChange` (`candidate.stageChange`)
+- `interview`
+  - `planTransition` (`interview.planTransition`)
+  - `scheduleCreate` (`interview.scheduleCreate`)
+  - `scheduleUpdate` (`interview.scheduleUpdate`)
+- `offer`
+  - `create` (`offer.create`)
+  - `delete` (`offer.delete`)
+  - `update` (`offer.update`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+## Events
+
+## Application
+
+### Submit
+
+`application.submit`
+
+Triggered when a candidate application is submitted
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhookActionId` | `string` | Yes | — |
+| `action` | `applicationSubmit` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  applicationId?: string,
+  candidateId?: string,
+  jobId?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  webhookActionId: string,
+  action: applicationSubmit,
+  data: {
+    applicationId?: string,
+    candidateId?: string,
+    jobId?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+ashby({
+    webhookHooks: {
+        application: {
+            submit: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Update
+
+`application.update`
+
+Triggered when an application is updated
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhookActionId` | `string` | Yes | — |
+| `action` | `applicationUpdate` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  applicationId?: string,
+  candidateId?: string,
+  jobId?: string,
+  status?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  webhookActionId: string,
+  action: applicationUpdate,
+  data: {
+    applicationId?: string,
+    candidateId?: string,
+    jobId?: string,
+    status?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+ashby({
+    webhookHooks: {
+        application: {
+            update: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Candidate
+
+### Hire
+
+`candidate.hire`
+
+Triggered when a candidate is hired
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhookActionId` | `string` | Yes | — |
+| `action` | `candidateHire` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  candidateId?: string,
+  applicationId?: string,
+  offerId?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  webhookActionId: string,
+  action: candidateHire,
+  data: {
+    candidateId?: string,
+    applicationId?: string,
+    offerId?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+ashby({
+    webhookHooks: {
+        candidate: {
+            hire: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Stage Change
+
+`candidate.stageChange`
+
+Triggered when a candidate moves to a different interview stage
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhookActionId` | `string` | Yes | — |
+| `action` | `candidateStageChange` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  candidateId?: string,
+  applicationId?: string,
+  jobId?: string,
+  previousInterviewStageId?: string | null,
+  currentInterviewStageId?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  webhookActionId: string,
+  action: candidateStageChange,
+  data: {
+    candidateId?: string,
+    applicationId?: string,
+    jobId?: string,
+    previousInterviewStageId?: string | null,
+    currentInterviewStageId?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+ashby({
+    webhookHooks: {
+        candidate: {
+            stageChange: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Interview
+
+### Plan Transition
+
+`interview.planTransition`
+
+Triggered during interview plan transitions
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhookActionId` | `string` | Yes | — |
+| `action` | `interviewPlanTransition` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  applicationId?: string,
+  interviewPlanId?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  webhookActionId: string,
+  action: interviewPlanTransition,
+  data: {
+    applicationId?: string,
+    interviewPlanId?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+ashby({
+    webhookHooks: {
+        interview: {
+            planTransition: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Schedule Create
+
+`interview.scheduleCreate`
+
+Triggered when an interview schedule is created
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhookActionId` | `string` | Yes | — |
+| `action` | `interviewScheduleCreate` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  interviewScheduleId?: string,
+  applicationId?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  webhookActionId: string,
+  action: interviewScheduleCreate,
+  data: {
+    interviewScheduleId?: string,
+    applicationId?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+ashby({
+    webhookHooks: {
+        interview: {
+            scheduleCreate: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Schedule Update
+
+`interview.scheduleUpdate`
+
+Triggered when an interview schedule is updated
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhookActionId` | `string` | Yes | — |
+| `action` | `interviewScheduleUpdate` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  interviewScheduleId?: string,
+  applicationId?: string,
+  status?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  webhookActionId: string,
+  action: interviewScheduleUpdate,
+  data: {
+    interviewScheduleId?: string,
+    applicationId?: string,
+    status?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+ashby({
+    webhookHooks: {
+        interview: {
+            scheduleUpdate: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Offer
+
+### Create
+
+`offer.create`
+
+Triggered when a job offer is created
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhookActionId` | `string` | Yes | — |
+| `action` | `offerCreate` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  offerId?: string,
+  applicationId?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  webhookActionId: string,
+  action: offerCreate,
+  data: {
+    offerId?: string,
+    applicationId?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+ashby({
+    webhookHooks: {
+        offer: {
+            create: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Delete
+
+`offer.delete`
+
+Triggered when a job offer is deleted
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhookActionId` | `string` | Yes | — |
+| `action` | `offerDelete` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  offerId?: string,
+  applicationId?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  webhookActionId: string,
+  action: offerDelete,
+  data: {
+    offerId?: string,
+    applicationId?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+ashby({
+    webhookHooks: {
+        offer: {
+            delete: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Update
+
+`offer.update`
+
+Triggered when a job offer is updated
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhookActionId` | `string` | Yes | — |
+| `action` | `offerUpdate` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  offerId?: string,
+  applicationId?: string,
+  status?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  webhookActionId: string,
+  action: offerUpdate,
+  data: {
+    offerId?: string,
+    applicationId?: string,
+    status?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+ashby({
+    webhookHooks: {
+        offer: {
+            update: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+

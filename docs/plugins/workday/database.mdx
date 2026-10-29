@@ -1,0 +1,241 @@
+---
+title: Database
+description: "Workday local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Workday plugin syncs data locally. Use `corsair.workday.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Absence Balances
+
+Path: `workday.db.absenceBalances.search`
+
+```ts
+const rows = await corsair.workday.db.absenceBalances.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `descriptor` | `string` | equals, contains, startsWith, endsWith, in |
+| `href` | `string` | equals, contains, startsWith, endsWith, in |
+| `updatedAt` | `date` | equals, before, after, between |
+| `unitOfTime` | `string` | equals, contains, startsWith, endsWith, in |
+| `effectiveDate` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Interviews
+
+Path: `workday.db.interviews.search`
+
+```ts
+const rows = await corsair.workday.db.interviews.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `descriptor` | `string` | equals, contains, startsWith, endsWith, in |
+| `href` | `string` | equals, contains, startsWith, endsWith, in |
+| `updatedAt` | `date` | equals, before, after, between |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `interviewDate` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Job Postings
+
+Path: `workday.db.jobPostings.search`
+
+```ts
+const rows = await corsair.workday.db.jobPostings.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `descriptor` | `string` | equals, contains, startsWith, endsWith, in |
+| `href` | `string` | equals, contains, startsWith, endsWith, in |
+| `updatedAt` | `date` | equals, before, after, between |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `jobDescription` | `string` | equals, contains, startsWith, endsWith, in |
+| `startDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `endDate` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Job Requisitions
+
+Path: `workday.db.jobRequisitions.search`
+
+```ts
+const rows = await corsair.workday.db.jobRequisitions.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `descriptor` | `string` | equals, contains, startsWith, endsWith, in |
+| `href` | `string` | equals, contains, startsWith, endsWith, in |
+| `updatedAt` | `date` | equals, before, after, between |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `numberOfOpenings` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Jobs
+
+Path: `workday.db.jobs.search`
+
+```ts
+const rows = await corsair.workday.db.jobs.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `descriptor` | `string` | equals, contains, startsWith, endsWith, in |
+| `href` | `string` | equals, contains, startsWith, endsWith, in |
+| `updatedAt` | `date` | equals, before, after, between |
+| `businessTitle` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Payroll Inputs
+
+Path: `workday.db.payrollInputs.search`
+
+```ts
+const rows = await corsair.workday.db.payrollInputs.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `descriptor` | `string` | equals, contains, startsWith, endsWith, in |
+| `href` | `string` | equals, contains, startsWith, endsWith, in |
+| `updatedAt` | `date` | equals, before, after, between |
+| `startDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `endDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `comment` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Prospects
+
+Path: `workday.db.prospects.search`
+
+```ts
+const rows = await corsair.workday.db.prospects.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `descriptor` | `string` | equals, contains, startsWith, endsWith, in |
+| `href` | `string` | equals, contains, startsWith, endsWith, in |
+| `updatedAt` | `date` | equals, before, after, between |
+| `email` | `string` | equals, contains, startsWith, endsWith, in |
+| `phone` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Workers
+
+Path: `workday.db.workers.search`
+
+```ts
+const rows = await corsair.workday.db.workers.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `descriptor` | `string` | equals, contains, startsWith, endsWith, in |
+| `href` | `string` | equals, contains, startsWith, endsWith, in |
+| `updatedAt` | `date` | equals, before, after, between |
+| `businessTitle` | `string` | equals, contains, startsWith, endsWith, in |
+| `primaryWorkEmail` | `string` | equals, contains, startsWith, endsWith, in |
+| `primaryWorkPhone` | `string` | equals, contains, startsWith, endsWith, in |
+| `workerID` | `string` | equals, contains, startsWith, endsWith, in |
+| `employeeID` | `string` | equals, contains, startsWith, endsWith, in |
+| `isManager` | `boolean` | equals |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

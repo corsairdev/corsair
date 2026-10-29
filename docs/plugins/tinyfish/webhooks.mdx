@@ -1,0 +1,366 @@
+---
+title: Webhooks
+description: "TinyFish incoming webhooks: event paths, payloads, and response data."
+---
+
+The TinyFish plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/tinyfish/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `run`
+  - `cancelled` (`run.cancelled`)
+  - `completed` (`run.completed`)
+  - `failed` (`run.failed`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+## Events
+
+## Run
+
+### Cancelled
+
+`run.cancelled`
+
+A run reached CANCELLED
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `run.cancelled` | Yes | — |
+| `run_id` | `string` | Yes | — |
+| `status` | `string` | Yes | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  run_id?: string,
+  status?: string,
+  goal?: string,
+  created_at?: string,
+  started_at?: string | null,
+  finished_at?: string | null,
+  num_of_steps?: number | null,
+  result?: {
+  } | null,
+  error?: {
+    code?: string | null,
+    message?: string,
+    category?: string
+  } | null,
+  streaming_url?: string | null,
+  steps?: {
+    id: string,
+    timestamp: string,
+    status: string,
+    action?: string | null,
+    screenshot?: string | null,
+    html?: string | null,
+    duration?: string | null
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event: run.cancelled,
+  run_id: string,
+  status: string,
+  data?: {
+    run_id?: string,
+    status?: string,
+    goal?: string,
+    created_at?: string,
+    started_at?: string | null,
+    finished_at?: string | null,
+    num_of_steps?: number | null,
+    result?: {
+    } | null,
+    error?: {
+      code?: string | null,
+      message?: string,
+      category?: string
+    } | null,
+    streaming_url?: string | null,
+    steps?: {
+      id: string,
+      timestamp: string,
+      status: string,
+      action?: string | null,
+      screenshot?: string | null,
+      html?: string | null,
+      duration?: string | null
+    }[]
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+tinyfish({
+    webhookHooks: {
+        run: {
+            cancelled: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Completed
+
+`run.completed`
+
+A run reached COMPLETED with its results attached
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `run.completed` | Yes | — |
+| `run_id` | `string` | Yes | — |
+| `status` | `string` | Yes | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  run_id?: string,
+  status?: string,
+  goal?: string,
+  created_at?: string,
+  started_at?: string | null,
+  finished_at?: string | null,
+  num_of_steps?: number | null,
+  result?: {
+  } | null,
+  error?: {
+    code?: string | null,
+    message?: string,
+    category?: string
+  } | null,
+  streaming_url?: string | null,
+  steps?: {
+    id: string,
+    timestamp: string,
+    status: string,
+    action?: string | null,
+    screenshot?: string | null,
+    html?: string | null,
+    duration?: string | null
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event: run.completed,
+  run_id: string,
+  status: string,
+  data?: {
+    run_id?: string,
+    status?: string,
+    goal?: string,
+    created_at?: string,
+    started_at?: string | null,
+    finished_at?: string | null,
+    num_of_steps?: number | null,
+    result?: {
+    } | null,
+    error?: {
+      code?: string | null,
+      message?: string,
+      category?: string
+    } | null,
+    streaming_url?: string | null,
+    steps?: {
+      id: string,
+      timestamp: string,
+      status: string,
+      action?: string | null,
+      screenshot?: string | null,
+      html?: string | null,
+      duration?: string | null
+    }[]
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+tinyfish({
+    webhookHooks: {
+        run: {
+            completed: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Failed
+
+`run.failed`
+
+A run reached FAILED with its error attached
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `run.failed` | Yes | — |
+| `run_id` | `string` | Yes | — |
+| `status` | `string` | Yes | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  run_id?: string,
+  status?: string,
+  goal?: string,
+  created_at?: string,
+  started_at?: string | null,
+  finished_at?: string | null,
+  num_of_steps?: number | null,
+  result?: {
+  } | null,
+  error?: {
+    code?: string | null,
+    message?: string,
+    category?: string
+  } | null,
+  streaming_url?: string | null,
+  steps?: {
+    id: string,
+    timestamp: string,
+    status: string,
+    action?: string | null,
+    screenshot?: string | null,
+    html?: string | null,
+    duration?: string | null
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event: run.failed,
+  run_id: string,
+  status: string,
+  data?: {
+    run_id?: string,
+    status?: string,
+    goal?: string,
+    created_at?: string,
+    started_at?: string | null,
+    finished_at?: string | null,
+    num_of_steps?: number | null,
+    result?: {
+    } | null,
+    error?: {
+      code?: string | null,
+      message?: string,
+      category?: string
+    } | null,
+    streaming_url?: string | null,
+    steps?: {
+      id: string,
+      timestamp: string,
+      status: string,
+      action?: string | null,
+      screenshot?: string | null,
+      html?: string | null,
+      duration?: string | null
+    }[]
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+tinyfish({
+    webhookHooks: {
+        run: {
+            failed: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+

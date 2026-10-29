@@ -1,0 +1,8057 @@
+---
+title: API
+description: "API reference for Bookingmood: every `bookingmood.api.*` operation with input and output types."
+---
+
+Every `bookingmood.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Attribute Options
+
+### list
+
+`attributeOptions.list`
+
+Bookingmood attributeOptions list
+
+**Risk:** `read`
+
+```ts
+await corsair.bookingmood.api.attributeOptions.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `select` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `order` | `string` | No | — |
+| `id` | `string` | No | — |
+| `organization_id` | `string` | No | — |
+| `filters` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`attributeOptions.update`
+
+Bookingmood attributeOptions update
+
+**Risk:** `write`
+
+```ts
+await corsair.bookingmood.api.attributeOptions.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Attributes
+
+### delete
+
+`attributes.delete`
+
+Bookingmood attributes delete
+
+**Risk:** `destructive`
+
+```ts
+await corsair.bookingmood.api.attributes.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`attributes.list`
+
+Bookingmood attributes list
+
+**Risk:** `read`
+
+```ts
+await corsair.bookingmood.api.attributes.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `select` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `order` | `string` | No | — |
+| `id` | `string` | No | — |
+| `organization_id` | `string` | No | — |
+| `filters` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`attributes.update`
+
+Bookingmood attributes update
+
+**Risk:** `write`
+
+```ts
+await corsair.bookingmood.api.attributes.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Availability
+
+### query
+
+`availability.query`
+
+Bookingmood availability query
+
+**Risk:** `read`
+
+```ts
+await corsair.bookingmood.api.availability.query({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product_id` | `string` | No | — |
+| `product_ids` | `string[]` | No | — |
+| `perform_sync` | `boolean` | No | — |
+| `show_booked_as` | `booked \| unavailable` | No | — |
+| `show_closed_as` | `closed \| unavailable` | No | — |
+| `show_pending_as` | `CANCELLED \| TENTATIVE \| CONFIRMED` | No | — |
+| `select` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  product_id: string,
+  intervals: {
+    start: string,
+    end: string,
+    status: string
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Booking Details
+
+### delete
+
+`bookingDetails.delete`
+
+Bookingmood bookingDetails delete
+
+**Risk:** `destructive`
+
+```ts
+await corsair.bookingmood.api.bookingDetails.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`bookingDetails.list`
+
+Bookingmood bookingDetails list
+
+**Risk:** `read`
+
+```ts
+await corsair.bookingmood.api.bookingDetails.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `select` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `order` | `string` | No | — |
+| `id` | `string` | No | — |
+| `organization_id` | `string` | No | — |
+| `filters` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`bookingDetails.update`
+
+Bookingmood bookingDetails update
+
+**Risk:** `write`
+
+```ts
+await corsair.bookingmood.api.bookingDetails.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Bookings
+
+### delete
+
+`bookings.delete`
+
+Bookingmood bookings delete
+
+**Risk:** `destructive`
+
+```ts
+await corsair.bookingmood.api.bookings.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`bookings.list`
+
+Bookingmood bookings list
+
+**Risk:** `read`
+
+```ts
+await corsair.bookingmood.api.bookings.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `select` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `order` | `string` | No | — |
+| `id` | `string` | No | — |
+| `organization_id` | `string` | No | — |
+| `filters` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`bookings.update`
+
+Bookingmood bookings update
+
+**Risk:** `write`
+
+```ts
+await corsair.bookingmood.api.bookings.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Booking Updates
+
+### list
+
+`bookingUpdates.list`
+
+Bookingmood bookingUpdates list
+
+**Risk:** `read`
+
+```ts
+await corsair.bookingmood.api.bookingUpdates.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `select` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `order` | `string` | No | — |
+| `id` | `string` | No | — |
+| `organization_id` | `string` | No | — |
+| `filters` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Calendar Event Notes
+
+### delete
+
+`calendarEventNotes.delete`
+
+Bookingmood calendarEventNotes delete
+
+**Risk:** `destructive`
+
+```ts
+await corsair.bookingmood.api.calendarEventNotes.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`calendarEventNotes.list`
+
+Bookingmood calendarEventNotes list
+
+**Risk:** `read`
+
+```ts
+await corsair.bookingmood.api.calendarEventNotes.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `select` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `order` | `string` | No | — |
+| `id` | `string` | No | — |
+| `organization_id` | `string` | No | — |
+| `filters` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`calendarEventNotes.update`
+
+Bookingmood calendarEventNotes update
+
+**Risk:** `write`
+
+```ts
+await corsair.bookingmood.api.calendarEventNotes.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Calendar Events
+
+### delete
+
+`calendarEvents.delete`
+
+Bookingmood calendarEvents delete
+
+**Risk:** `destructive`
+
+```ts
+await corsair.bookingmood.api.calendarEvents.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`calendarEvents.list`
+
+Bookingmood calendarEvents list
+
+**Risk:** `read`
+
+```ts
+await corsair.bookingmood.api.calendarEvents.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `select` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `order` | `string` | No | — |
+| `id` | `string` | No | — |
+| `organization_id` | `string` | No | — |
+| `filters` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`calendarEvents.update`
+
+Bookingmood calendarEvents update
+
+**Risk:** `write`
+
+```ts
+await corsair.bookingmood.api.calendarEvents.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Calendar Event Updates
+
+### list
+
+`calendarEventUpdates.list`
+
+Bookingmood calendarEventUpdates list
+
+**Risk:** `read`
+
+```ts
+await corsair.bookingmood.api.calendarEventUpdates.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `select` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `order` | `string` | No | — |
+| `id` | `string` | No | — |
+| `organization_id` | `string` | No | — |
+| `filters` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Capacities
+
+### delete
+
+`capacities.delete`
+
+Bookingmood capacities delete
+
+**Risk:** `destructive`
+
+```ts
+await corsair.bookingmood.api.capacities.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`capacities.list`
+
+Bookingmood capacities list
+
+**Risk:** `read`
+
+```ts
+await corsair.bookingmood.api.capacities.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `select` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `order` | `string` | No | — |
+| `id` | `string` | No | — |
+| `organization_id` | `string` | No | — |
+| `filters` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`capacities.update`
+
+Bookingmood capacities update
+
+**Risk:** `write`
+
+```ts
+await corsair.bookingmood.api.capacities.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Capacity Group Deps
+
+### delete
+
+`capacityGroupDeps.delete`
+
+Bookingmood capacityGroupDeps delete
+
+**Risk:** `destructive`
+
+```ts
+await corsair.bookingmood.api.capacityGroupDeps.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`capacityGroupDeps.list`
+
+Bookingmood capacityGroupDeps list
+
+**Risk:** `read`
+
+```ts
+await corsair.bookingmood.api.capacityGroupDeps.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `select` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `order` | `string` | No | — |
+| `id` | `string` | No | — |
+| `organization_id` | `string` | No | — |
+| `filters` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`capacityGroupDeps.update`
+
+Bookingmood capacityGroupDeps update
+
+**Risk:** `write`
+
+```ts
+await corsair.bookingmood.api.capacityGroupDeps.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Capacity Groups
+
+### delete
+
+`capacityGroups.delete`
+
+Bookingmood capacityGroups delete
+
+**Risk:** `destructive`
+
+```ts
+await corsair.bookingmood.api.capacityGroups.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`capacityGroups.list`
+
+Bookingmood capacityGroups list
+
+**Risk:** `read`
+
+```ts
+await corsair.bookingmood.api.capacityGroups.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `select` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `order` | `string` | No | — |
+| `id` | `string` | No | — |
+| `organization_id` | `string` | No | — |
+| `filters` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`capacityGroups.update`
+
+Bookingmood capacityGroups update
+
+**Risk:** `write`
+
+```ts
+await corsair.bookingmood.api.capacityGroups.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Contact Bookings
+
+### delete
+
+`contactBookings.delete`
+
+Bookingmood contactBookings delete
+
+**Risk:** `destructive`
+
+```ts
+await corsair.bookingmood.api.contactBookings.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`contactBookings.list`
+
+Bookingmood contactBookings list
+
+**Risk:** `read`
+
+```ts
+await corsair.bookingmood.api.contactBookings.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `select` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `order` | `string` | No | — |
+| `id` | `string` | No | — |
+| `organization_id` | `string` | No | — |
+| `filters` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`contactBookings.update`
+
+Bookingmood contactBookings update
+
+**Risk:** `write`
+
+```ts
+await corsair.bookingmood.api.contactBookings.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Contacts
+
+### create
+
+`contacts.create`
+
+Bookingmood contacts create
+
+**Risk:** `write`
+
+```ts
+await corsair.bookingmood.api.contacts.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### delete
+
+`contacts.delete`
+
+Bookingmood contacts delete
+
+**Risk:** `destructive`
+
+```ts
+await corsair.bookingmood.api.contacts.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`contacts.list`
+
+Bookingmood contacts list
+
+**Risk:** `read`
+
+```ts
+await corsair.bookingmood.api.contacts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `select` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `order` | `string` | No | — |
+| `id` | `string` | No | — |
+| `organization_id` | `string` | No | — |
+| `filters` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`contacts.update`
+
+Bookingmood contacts update
+
+**Risk:** `write`
+
+```ts
+await corsair.bookingmood.api.contacts.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Coupon Products
+
+### delete
+
+`couponProducts.delete`
+
+Bookingmood couponProducts delete
+
+**Risk:** `destructive`
+
+```ts
+await corsair.bookingmood.api.couponProducts.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`couponProducts.list`
+
+Bookingmood couponProducts list
+
+**Risk:** `read`
+
+```ts
+await corsair.bookingmood.api.couponProducts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `select` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `order` | `string` | No | — |
+| `id` | `string` | No | — |
+| `organization_id` | `string` | No | — |
+| `filters` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`couponProducts.update`
+
+Bookingmood couponProducts update
+
+**Risk:** `write`
+
+```ts
+await corsair.bookingmood.api.couponProducts.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Coupons
+
+### delete
+
+`coupons.delete`
+
+Bookingmood coupons delete
+
+**Risk:** `destructive`
+
+```ts
+await corsair.bookingmood.api.coupons.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`coupons.list`
+
+Bookingmood coupons list
+
+**Risk:** `read`
+
+```ts
+await corsair.bookingmood.api.coupons.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `select` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `order` | `string` | No | — |
+| `id` | `string` | No | — |
+| `organization_id` | `string` | No | — |
+| `filters` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`coupons.update`
+
+Bookingmood coupons update
+
+**Risk:** `write`
+
+```ts
+await corsair.bookingmood.api.coupons.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Coupon Services
+
+### delete
+
+`couponServices.delete`
+
+Bookingmood couponServices delete
+
+**Risk:** `destructive`
+
+```ts
+await corsair.bookingmood.api.couponServices.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`couponServices.list`
+
+Bookingmood couponServices list
+
+**Risk:** `read`
+
+```ts
+await corsair.bookingmood.api.couponServices.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `select` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `order` | `string` | No | — |
+| `id` | `string` | No | — |
+| `organization_id` | `string` | No | — |
+| `filters` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`couponServices.update`
+
+Bookingmood couponServices update
+
+**Risk:** `write`
+
+```ts
+await corsair.bookingmood.api.couponServices.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Coupon Uses
+
+### delete
+
+`couponUses.delete`
+
+Bookingmood couponUses delete
+
+**Risk:** `destructive`
+
+```ts
+await corsair.bookingmood.api.couponUses.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`couponUses.list`
+
+Bookingmood couponUses list
+
+**Risk:** `read`
+
+```ts
+await corsair.bookingmood.api.couponUses.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `select` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `order` | `string` | No | — |
+| `id` | `string` | No | — |
+| `organization_id` | `string` | No | — |
+| `filters` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`couponUses.update`
+
+Bookingmood couponUses update
+
+**Risk:** `write`
+
+```ts
+await corsair.bookingmood.api.couponUses.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## External Calendars
+
+### delete
+
+`externalCalendars.delete`
+
+Bookingmood externalCalendars delete
+
+**Risk:** `destructive`
+
+```ts
+await corsair.bookingmood.api.externalCalendars.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`externalCalendars.list`
+
+Bookingmood externalCalendars list
+
+**Risk:** `read`
+
+```ts
+await corsair.bookingmood.api.externalCalendars.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `select` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `order` | `string` | No | — |
+| `id` | `string` | No | — |
+| `organization_id` | `string` | No | — |
+| `filters` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`externalCalendars.update`
+
+Bookingmood externalCalendars update
+
+**Risk:** `write`
+
+```ts
+await corsair.bookingmood.api.externalCalendars.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Invoices
+
+### delete
+
+`invoices.delete`
+
+Bookingmood invoices delete
+
+**Risk:** `destructive`
+
+```ts
+await corsair.bookingmood.api.invoices.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`invoices.list`
+
+Bookingmood invoices list
+
+**Risk:** `read`
+
+```ts
+await corsair.bookingmood.api.invoices.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `select` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `order` | `string` | No | — |
+| `id` | `string` | No | — |
+| `organization_id` | `string` | No | — |
+| `filters` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Line Items
+
+### delete
+
+`lineItems.delete`
+
+Bookingmood lineItems delete
+
+**Risk:** `destructive`
+
+```ts
+await corsair.bookingmood.api.lineItems.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`lineItems.list`
+
+Bookingmood lineItems list
+
+**Risk:** `read`
+
+```ts
+await corsair.bookingmood.api.lineItems.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `select` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `order` | `string` | No | — |
+| `id` | `string` | No | — |
+| `organization_id` | `string` | No | — |
+| `filters` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`lineItems.update`
+
+Bookingmood lineItems update
+
+**Risk:** `write`
+
+```ts
+await corsair.bookingmood.api.lineItems.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Line Item Taxes
+
+### delete
+
+`lineItemTaxes.delete`
+
+Bookingmood lineItemTaxes delete
+
+**Risk:** `destructive`
+
+```ts
+await corsair.bookingmood.api.lineItemTaxes.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`lineItemTaxes.list`
+
+Bookingmood lineItemTaxes list
+
+**Risk:** `read`
+
+```ts
+await corsair.bookingmood.api.lineItemTaxes.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `select` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `order` | `string` | No | — |
+| `id` | `string` | No | — |
+| `organization_id` | `string` | No | — |
+| `filters` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`lineItemTaxes.update`
+
+Bookingmood lineItemTaxes update
+
+**Risk:** `write`
+
+```ts
+await corsair.bookingmood.api.lineItemTaxes.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Members
+
+### delete
+
+`members.delete`
+
+Bookingmood members delete
+
+**Risk:** `destructive`
+
+```ts
+await corsair.bookingmood.api.members.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### invite
+
+`members.invite`
+
+Bookingmood members invite
+
+**Risk:** `write`
+
+```ts
+await corsair.bookingmood.api.members.invite({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `language` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### list
+
+`members.list`
+
+Bookingmood members list
+
+**Risk:** `read`
+
+```ts
+await corsair.bookingmood.api.members.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `select` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `order` | `string` | No | — |
+| `id` | `string` | No | — |
+| `organization_id` | `string` | No | — |
+| `filters` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Organizations
+
+### list
+
+`organizations.list`
+
+Bookingmood organizations list
+
+**Risk:** `read`
+
+```ts
+await corsair.bookingmood.api.organizations.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `select` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `order` | `string` | No | — |
+| `id` | `string` | No | — |
+| `organization_id` | `string` | No | — |
+| `filters` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Paddle Subscriptions
+
+### list
+
+`paddleSubscriptions.list`
+
+Bookingmood paddleSubscriptions list
+
+**Risk:** `read`
+
+```ts
+await corsair.bookingmood.api.paddleSubscriptions.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `select` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `order` | `string` | No | — |
+| `id` | `string` | No | — |
+| `organization_id` | `string` | No | — |
+| `filters` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Payments
+
+### delete
+
+`payments.delete`
+
+Bookingmood payments delete
+
+**Risk:** `destructive`
+
+```ts
+await corsair.bookingmood.api.payments.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`payments.list`
+
+Bookingmood payments list
+
+**Risk:** `read`
+
+```ts
+await corsair.bookingmood.api.payments.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `select` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `order` | `string` | No | — |
+| `id` | `string` | No | — |
+| `organization_id` | `string` | No | — |
+| `filters` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`payments.update`
+
+Bookingmood payments update
+
+**Risk:** `write`
+
+```ts
+await corsair.bookingmood.api.payments.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Permissions
+
+### delete
+
+`permissions.delete`
+
+Bookingmood permissions delete
+
+**Risk:** `destructive`
+
+```ts
+await corsair.bookingmood.api.permissions.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`permissions.list`
+
+Bookingmood permissions list
+
+**Risk:** `read`
+
+```ts
+await corsair.bookingmood.api.permissions.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `select` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `order` | `string` | No | — |
+| `id` | `string` | No | — |
+| `organization_id` | `string` | No | — |
+| `filters` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`permissions.update`
+
+Bookingmood permissions update
+
+**Risk:** `write`
+
+```ts
+await corsair.bookingmood.api.permissions.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Pricing Widgets
+
+### delete
+
+`pricingWidgets.delete`
+
+Bookingmood pricingWidgets delete
+
+**Risk:** `destructive`
+
+```ts
+await corsair.bookingmood.api.pricingWidgets.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`pricingWidgets.list`
+
+Bookingmood pricingWidgets list
+
+**Risk:** `read`
+
+```ts
+await corsair.bookingmood.api.pricingWidgets.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `select` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `order` | `string` | No | — |
+| `id` | `string` | No | — |
+| `organization_id` | `string` | No | — |
+| `filters` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`pricingWidgets.update`
+
+Bookingmood pricingWidgets update
+
+**Risk:** `write`
+
+```ts
+await corsair.bookingmood.api.pricingWidgets.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Product Attr Options
+
+### delete
+
+`productAttrOptions.delete`
+
+Bookingmood productAttrOptions delete
+
+**Risk:** `destructive`
+
+```ts
+await corsair.bookingmood.api.productAttrOptions.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`productAttrOptions.list`
+
+Bookingmood productAttrOptions list
+
+**Risk:** `read`
+
+```ts
+await corsair.bookingmood.api.productAttrOptions.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `select` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `order` | `string` | No | — |
+| `id` | `string` | No | — |
+| `organization_id` | `string` | No | — |
+| `filters` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`productAttrOptions.update`
+
+Bookingmood productAttrOptions update
+
+**Risk:** `write`
+
+```ts
+await corsair.bookingmood.api.productAttrOptions.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Product Calendar Logs
+
+### list
+
+`productCalendarLogs.list`
+
+Bookingmood productCalendarLogs list
+
+**Risk:** `read`
+
+```ts
+await corsair.bookingmood.api.productCalendarLogs.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `select` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `order` | `string` | No | — |
+| `id` | `string` | No | — |
+| `organization_id` | `string` | No | — |
+| `filters` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Product Reply Addrs
+
+### delete
+
+`productReplyAddrs.delete`
+
+Bookingmood productReplyAddrs delete
+
+**Risk:** `destructive`
+
+```ts
+await corsair.bookingmood.api.productReplyAddrs.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`productReplyAddrs.list`
+
+Bookingmood productReplyAddrs list
+
+**Risk:** `read`
+
+```ts
+await corsair.bookingmood.api.productReplyAddrs.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `select` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `order` | `string` | No | — |
+| `id` | `string` | No | — |
+| `organization_id` | `string` | No | — |
+| `filters` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`productReplyAddrs.update`
+
+Bookingmood productReplyAddrs update
+
+**Risk:** `write`
+
+```ts
+await corsair.bookingmood.api.productReplyAddrs.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Products
+
+### create
+
+`products.create`
+
+Bookingmood products create
+
+**Risk:** `write`
+
+```ts
+await corsair.bookingmood.api.products.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `object` | Yes | — |
+| `rent_period` | `daily \| nightly` | Yes | — |
+| `timezone` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="name full type">
+
+```ts
+{
+  default?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### delete
+
+`products.delete`
+
+Bookingmood products delete
+
+**Risk:** `destructive`
+
+```ts
+await corsair.bookingmood.api.products.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`products.list`
+
+Bookingmood products list
+
+**Risk:** `read`
+
+```ts
+await corsair.bookingmood.api.products.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `select` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `order` | `string` | No | — |
+| `id` | `string` | No | — |
+| `organization_id` | `string` | No | — |
+| `filters` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`products.update`
+
+Bookingmood products update
+
+**Risk:** `write`
+
+```ts
+await corsair.bookingmood.api.products.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Product Services
+
+### delete
+
+`productServices.delete`
+
+Bookingmood productServices delete
+
+**Risk:** `destructive`
+
+```ts
+await corsair.bookingmood.api.productServices.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`productServices.list`
+
+Bookingmood productServices list
+
+**Risk:** `read`
+
+```ts
+await corsair.bookingmood.api.productServices.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `select` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `order` | `string` | No | — |
+| `id` | `string` | No | — |
+| `organization_id` | `string` | No | — |
+| `filters` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`productServices.update`
+
+Bookingmood productServices update
+
+**Risk:** `write`
+
+```ts
+await corsair.bookingmood.api.productServices.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Reply To Addresses
+
+### delete
+
+`replyToAddresses.delete`
+
+Bookingmood replyToAddresses delete
+
+**Risk:** `destructive`
+
+```ts
+await corsair.bookingmood.api.replyToAddresses.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`replyToAddresses.list`
+
+Bookingmood replyToAddresses list
+
+**Risk:** `read`
+
+```ts
+await corsair.bookingmood.api.replyToAddresses.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `select` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `order` | `string` | No | — |
+| `id` | `string` | No | — |
+| `organization_id` | `string` | No | — |
+| `filters` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`replyToAddresses.update`
+
+Bookingmood replyToAddresses update
+
+**Risk:** `write`
+
+```ts
+await corsair.bookingmood.api.replyToAddresses.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Review Products
+
+### delete
+
+`reviewProducts.delete`
+
+Bookingmood reviewProducts delete
+
+**Risk:** `destructive`
+
+```ts
+await corsair.bookingmood.api.reviewProducts.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`reviewProducts.list`
+
+Bookingmood reviewProducts list
+
+**Risk:** `read`
+
+```ts
+await corsair.bookingmood.api.reviewProducts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `select` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `order` | `string` | No | — |
+| `id` | `string` | No | — |
+| `organization_id` | `string` | No | — |
+| `filters` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`reviewProducts.update`
+
+Bookingmood reviewProducts update
+
+**Risk:** `write`
+
+```ts
+await corsair.bookingmood.api.reviewProducts.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Reviews
+
+### delete
+
+`reviews.delete`
+
+Bookingmood reviews delete
+
+**Risk:** `destructive`
+
+```ts
+await corsair.bookingmood.api.reviews.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`reviews.list`
+
+Bookingmood reviews list
+
+**Risk:** `read`
+
+```ts
+await corsair.bookingmood.api.reviews.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `select` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `order` | `string` | No | — |
+| `id` | `string` | No | — |
+| `organization_id` | `string` | No | — |
+| `filters` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`reviews.update`
+
+Bookingmood reviews update
+
+**Risk:** `write`
+
+```ts
+await corsair.bookingmood.api.reviews.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Review Widget Listings
+
+### delete
+
+`reviewWidgetListings.delete`
+
+Bookingmood reviewWidgetListings delete
+
+**Risk:** `destructive`
+
+```ts
+await corsair.bookingmood.api.reviewWidgetListings.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`reviewWidgetListings.list`
+
+Bookingmood reviewWidgetListings list
+
+**Risk:** `read`
+
+```ts
+await corsair.bookingmood.api.reviewWidgetListings.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `select` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `order` | `string` | No | — |
+| `id` | `string` | No | — |
+| `organization_id` | `string` | No | — |
+| `filters` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`reviewWidgetListings.update`
+
+Bookingmood reviewWidgetListings update
+
+**Risk:** `write`
+
+```ts
+await corsair.bookingmood.api.reviewWidgetListings.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Review Widgets
+
+### list
+
+`reviewWidgets.list`
+
+Bookingmood reviewWidgets list
+
+**Risk:** `read`
+
+```ts
+await corsair.bookingmood.api.reviewWidgets.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `select` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `order` | `string` | No | — |
+| `id` | `string` | No | — |
+| `organization_id` | `string` | No | — |
+| `filters` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`reviewWidgets.update`
+
+Bookingmood reviewWidgets update
+
+**Risk:** `write`
+
+```ts
+await corsair.bookingmood.api.reviewWidgets.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Search
+
+### availability
+
+`search.availability`
+
+Bookingmood search availability
+
+**Risk:** `read`
+
+```ts
+await corsair.bookingmood.api.search.availability({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `interval` | `object` | No | — |
+| `occupancy` | `object` | No | — |
+| `option_ids` | `string[]` | No | — |
+| `show_booked_as` | `booked \| unavailable` | No | — |
+| `show_closed_as` | `closed \| unavailable` | No | — |
+| `show_pending_as` | `CONFIRMED \| TENTATIVE \| CANCELLED` | No | — |
+
+<AccordionGroup>
+<Accordion title="interval full type">
+
+```ts
+{
+  start: string,
+  end: string
+}
+```
+</Accordion>
+
+<Accordion title="occupancy full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  productId?: string,
+  product_id?: string,
+  match?: boolean,
+  availability?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Seasons
+
+### list
+
+`seasons.list`
+
+Bookingmood seasons list
+
+**Risk:** `read`
+
+```ts
+await corsair.bookingmood.api.seasons.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `select` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `order` | `string` | No | — |
+| `id` | `string` | No | — |
+| `organization_id` | `string` | No | — |
+| `filters` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Services
+
+### delete
+
+`services.delete`
+
+Bookingmood services delete
+
+**Risk:** `destructive`
+
+```ts
+await corsair.bookingmood.api.services.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`services.list`
+
+Bookingmood services list
+
+**Risk:** `read`
+
+```ts
+await corsair.bookingmood.api.services.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `select` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `order` | `string` | No | — |
+| `id` | `string` | No | — |
+| `organization_id` | `string` | No | — |
+| `filters` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`services.update`
+
+Bookingmood services update
+
+**Risk:** `write`
+
+```ts
+await corsair.bookingmood.api.services.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Site Listings
+
+### list
+
+`siteListings.list`
+
+Bookingmood siteListings list
+
+**Risk:** `read`
+
+```ts
+await corsair.bookingmood.api.siteListings.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `select` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `order` | `string` | No | — |
+| `id` | `string` | No | — |
+| `organization_id` | `string` | No | — |
+| `filters` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`siteListings.update`
+
+Bookingmood siteListings update
+
+**Risk:** `write`
+
+```ts
+await corsair.bookingmood.api.siteListings.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Site Pages
+
+### create
+
+`sitePages.create`
+
+Bookingmood sitePages create
+
+**Risk:** `write`
+
+```ts
+await corsair.bookingmood.api.sitePages.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### delete
+
+`sitePages.delete`
+
+Bookingmood sitePages delete
+
+**Risk:** `destructive`
+
+```ts
+await corsair.bookingmood.api.sitePages.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`sitePages.list`
+
+Bookingmood sitePages list
+
+**Risk:** `read`
+
+```ts
+await corsair.bookingmood.api.sitePages.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `select` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `order` | `string` | No | — |
+| `id` | `string` | No | — |
+| `organization_id` | `string` | No | — |
+| `filters` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`sitePages.update`
+
+Bookingmood sitePages update
+
+**Risk:** `write`
+
+```ts
+await corsair.bookingmood.api.sitePages.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Sites
+
+### list
+
+`sites.list`
+
+Bookingmood sites list
+
+**Risk:** `read`
+
+```ts
+await corsair.bookingmood.api.sites.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `select` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `order` | `string` | No | — |
+| `id` | `string` | No | — |
+| `organization_id` | `string` | No | — |
+| `filters` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`sites.update`
+
+Bookingmood sites update
+
+**Risk:** `write`
+
+```ts
+await corsair.bookingmood.api.sites.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Site Views
+
+### list
+
+`siteViews.list`
+
+Bookingmood siteViews list
+
+**Risk:** `read`
+
+```ts
+await corsair.bookingmood.api.siteViews.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `select` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `order` | `string` | No | — |
+| `id` | `string` | No | — |
+| `organization_id` | `string` | No | — |
+| `filters` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Taxes
+
+### delete
+
+`taxes.delete`
+
+Bookingmood taxes delete
+
+**Risk:** `destructive`
+
+```ts
+await corsair.bookingmood.api.taxes.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`taxes.list`
+
+Bookingmood taxes list
+
+**Risk:** `read`
+
+```ts
+await corsair.bookingmood.api.taxes.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `select` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `order` | `string` | No | — |
+| `id` | `string` | No | — |
+| `organization_id` | `string` | No | — |
+| `filters` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`taxes.update`
+
+Bookingmood taxes update
+
+**Risk:** `write`
+
+```ts
+await corsair.bookingmood.api.taxes.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## User Profiles
+
+### list
+
+`userProfiles.list`
+
+Bookingmood userProfiles list
+
+**Risk:** `read`
+
+```ts
+await corsair.bookingmood.api.userProfiles.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `select` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `order` | `string` | No | — |
+| `id` | `string` | No | — |
+| `organization_id` | `string` | No | — |
+| `filters` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`userProfiles.update`
+
+Bookingmood userProfiles update
+
+**Risk:** `write`
+
+```ts
+await corsair.bookingmood.api.userProfiles.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Webhook Notifications
+
+### list
+
+`webhookNotifications.list`
+
+Bookingmood webhookNotifications list
+
+**Risk:** `read`
+
+```ts
+await corsair.bookingmood.api.webhookNotifications.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `select` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `order` | `string` | No | — |
+| `id` | `string` | No | — |
+| `organization_id` | `string` | No | — |
+| `filters` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Webhooks
+
+### delete
+
+`webhooks.delete`
+
+Bookingmood webhooks delete
+
+**Risk:** `destructive`
+
+```ts
+await corsair.bookingmood.api.webhooks.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`webhooks.list`
+
+Bookingmood webhooks list
+
+**Risk:** `read`
+
+```ts
+await corsair.bookingmood.api.webhooks.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `select` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `order` | `string` | No | — |
+| `id` | `string` | No | — |
+| `organization_id` | `string` | No | — |
+| `filters` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`webhooks.update`
+
+Bookingmood webhooks update
+
+**Risk:** `write`
+
+```ts
+await corsair.bookingmood.api.webhooks.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Widget Analytics
+
+### list
+
+`widgetAnalytics.list`
+
+Bookingmood widgetAnalytics list
+
+**Risk:** `read`
+
+```ts
+await corsair.bookingmood.api.widgetAnalytics.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `select` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `order` | `string` | No | — |
+| `id` | `string` | No | — |
+| `organization_id` | `string` | No | — |
+| `filters` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Widget Listings
+
+### delete
+
+`widgetListings.delete`
+
+Bookingmood widgetListings delete
+
+**Risk:** `destructive`
+
+```ts
+await corsair.bookingmood.api.widgetListings.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`widgetListings.list`
+
+Bookingmood widgetListings list
+
+**Risk:** `read`
+
+```ts
+await corsair.bookingmood.api.widgetListings.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `select` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `order` | `string` | No | — |
+| `id` | `string` | No | — |
+| `organization_id` | `string` | No | — |
+| `filters` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`widgetListings.update`
+
+Bookingmood widgetListings update
+
+**Risk:** `write`
+
+```ts
+await corsair.bookingmood.api.widgetListings.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Widgets
+
+### create
+
+`widgets.create`
+
+Bookingmood widgets create
+
+**Risk:** `write`
+
+```ts
+await corsair.bookingmood.api.widgets.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### delete
+
+`widgets.delete`
+
+Bookingmood widgets delete
+
+**Risk:** `destructive`
+
+```ts
+await corsair.bookingmood.api.widgets.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`widgets.list`
+
+Bookingmood widgets list
+
+**Risk:** `read`
+
+```ts
+await corsair.bookingmood.api.widgets.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `select` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `order` | `string` | No | — |
+| `id` | `string` | No | — |
+| `organization_id` | `string` | No | — |
+| `filters` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`widgets.update`
+
+Bookingmood widgets update
+
+**Risk:** `write`
+
+```ts
+await corsair.bookingmood.api.widgets.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `body` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+

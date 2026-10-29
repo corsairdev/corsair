@@ -1,0 +1,1883 @@
+---
+title: API
+description: "API reference for Reducto: every `reducto.api.*` operation with input and output types."
+---
+
+Every `reducto.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### configureWebhook
+
+`account.configureWebhook`
+
+Open the Svix webhook portal URL for this account
+
+**Risk:** `write`
+
+```ts
+await corsair.reducto.api.account.configureWebhook({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `string`
+
+
+---
+
+### version
+
+`account.version`
+
+Read the Reducto API version
+
+**Risk:** `read`
+
+```ts
+await corsair.reducto.api.account.version({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `string`
+
+
+---
+
+## Classify
+
+### classify
+
+`classify.classify`
+
+Classify a document against a list of categories
+
+**Risk:** `write`
+
+```ts
+await corsair.reducto.api.classify.classify({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `input` | `object` | Yes | — |
+| `classification_schema` | `object[]` | No | — |
+| `category_groups` | `object` | No | — |
+| `page_range` | `object[]` | No | — |
+| `document_metadata` | `string` | No | — |
+| `model` | `default \| accurate` | No | — |
+| `priority` | `boolean` | No | — |
+| `force_url_result` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="input full type">
+
+```ts
+string | string[] | {
+  file_id: string,
+  presigned_url?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="classification_schema full type">
+
+```ts
+{
+  category: string,
+  criteria: string[]
+}[]
+```
+</Accordion>
+
+<Accordion title="category_groups full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="page_range full type">
+
+```ts
+{
+  start?: number | null,
+  end?: number | null
+} | {
+  start?: number | null,
+  end?: number | null
+}[] | number[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job_id` | `string` | Yes | — |
+| `result` | `object` | Yes | — |
+| `duration` | `number` | No | — |
+| `usage` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  category: string
+} | {
+  type: url,
+  url: string,
+  result_id: string
+}
+```
+</Accordion>
+
+<Accordion title="usage full type">
+
+```ts
+{
+  num_pages: number,
+  credits?: number | null,
+  num_categories: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### classifyAsync
+
+`classify.classifyAsync`
+
+Start a classify job and return its job id
+
+**Risk:** `write`
+
+```ts
+await corsair.reducto.api.classify.classifyAsync({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `input` | `object` | Yes | — |
+| `classification_schema` | `object[]` | No | — |
+| `category_groups` | `object` | No | — |
+| `page_range` | `object[]` | No | — |
+| `document_metadata` | `string` | No | — |
+| `model` | `default \| accurate` | No | — |
+| `priority` | `boolean` | No | — |
+| `force_url_result` | `boolean` | No | — |
+| `async` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="input full type">
+
+```ts
+string | string[] | {
+  file_id: string,
+  presigned_url?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="classification_schema full type">
+
+```ts
+{
+  category: string,
+  criteria: string[]
+}[]
+```
+</Accordion>
+
+<Accordion title="category_groups full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="page_range full type">
+
+```ts
+{
+  start?: number | null,
+  end?: number | null
+} | {
+  start?: number | null,
+  end?: number | null
+}[] | number[]
+```
+</Accordion>
+
+<Accordion title="async full type">
+
+```ts
+{
+  metadata?: {
+  } | null,
+  priority?: boolean,
+  webhook?: {
+    mode: direct,
+    url: string
+  } | {
+    mode: svix,
+    channels?: string[]
+  } | {
+    mode: disabled,
+    channels?: string[]
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job_id` | `string` | Yes | — |
+
+
+
+---
+
+## Edit
+
+### edit
+
+`edit.edit`
+
+Fill or edit a PDF or DOCX from natural language instructions
+
+**Risk:** `write`
+
+```ts
+await corsair.reducto.api.edit.edit({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `document_url` | `object` | Yes | — |
+| `edit_instructions` | `string` | Yes | — |
+| `edit_options` | `object` | No | — |
+| `form_schema` | `any[]` | No | — |
+| `priority` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="document_url full type">
+
+```ts
+string | {
+  file_id: string,
+  presigned_url?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="edit_options full type">
+
+```ts
+{
+  color?: string,
+  font_size?: number | null,
+  llm_provider_preference?: string | null,
+  enable_overflow_pages?: boolean,
+  flatten?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `document_url` | `string` | Yes | — |
+| `job_id` | `string` | No | — |
+| `form_schema` | `any[]` | No | — |
+| `usage` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="usage full type">
+
+```ts
+{
+  num_pages: number,
+  credits?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### editAsync
+
+`edit.editAsync`
+
+Start an edit job and return its job id
+
+**Risk:** `write`
+
+```ts
+await corsair.reducto.api.edit.editAsync({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `document_url` | `object` | Yes | — |
+| `edit_instructions` | `string` | Yes | — |
+| `edit_options` | `object` | No | — |
+| `form_schema` | `any[]` | No | — |
+| `priority` | `boolean` | No | — |
+| `webhook` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="document_url full type">
+
+```ts
+string | {
+  file_id: string,
+  presigned_url?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="edit_options full type">
+
+```ts
+{
+  color?: string,
+  font_size?: number | null,
+  llm_provider_preference?: string | null,
+  enable_overflow_pages?: boolean,
+  flatten?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="webhook full type">
+
+```ts
+{
+  mode: direct,
+  url: string
+} | {
+  mode: svix,
+  channels?: string[]
+} | {
+  mode: disabled,
+  channels?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job_id` | `string` | Yes | — |
+
+
+
+---
+
+## Extract
+
+### extract
+
+`extract.extract`
+
+Extract fields from a document using a JSON schema
+
+**Risk:** `write`
+
+```ts
+await corsair.reducto.api.extract.extract({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `input` | `object` | Yes | — |
+| `parsing` | `object` | No | — |
+| `instructions` | `object` | No | — |
+| `settings` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="input full type">
+
+```ts
+string | string[] | {
+  file_id: string,
+  presigned_url?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="parsing full type">
+
+```ts
+{
+  enhance?: {
+    agentic?: {
+      scope: text | table | figure,
+      prompt?: string | null,
+      mode?: default | auto | max,
+      advanced_chart_agent?: boolean,
+      return_overlays?: boolean
+    }[],
+    advanced_chart_agent?: boolean,
+    summarize_figures?: boolean,
+    intelligent_ordering?: boolean
+  },
+  retrieval?: {
+    chunking?: {
+      chunk_mode?: variable | section | page | disabled | block | page_sections,
+      chunk_size?: number | null,
+      chunk_overlap?: number
+    },
+    filter_blocks?: Header | Footer | Title | Section Header | Page Number | List Item | Figure | Table | Key Value | Text | Comment | Signature[],
+    embedding_optimized?: boolean
+  },
+  formatting?: {
+    add_page_markers?: boolean,
+    table_output_format?: html | json | md | jsonbbox | dynamic | csv,
+    merge_tables?: boolean,
+    include?: change_tracking | highlight | comments | hyperlinks | signatures | ignore_watermarks[]
+  },
+  spreadsheet?: {
+    split_large_tables?: {
+      enabled?: boolean,
+      size?: number
+    },
+    include?: cell_colors | formula | dropdowns[],
+    clustering?: accurate | fast | disabled,
+    exclude?: string[],
+    max_cell_count?: number | null
+  },
+  settings?: {
+    ocr_system?: standard | legacy,
+    extraction_mode?: ocr | hybrid,
+    force_url_result?: boolean,
+    force_file_extension?: string | null,
+    return_ocr_data?: boolean,
+    return_images?: figure | table | page[],
+    embed_pdf_metadata?: boolean,
+    extract_document_properties?: boolean,
+    embed_pdf_metadata_dpi?: number,
+    persist_results?: boolean,
+    timeout?: number | null,
+    page_range?: {
+      start?: number | null,
+      end?: number | null
+    } | {
+      start?: number | null,
+      end?: number | null
+    }[] | number[] | null,
+    document_password?: string | null,
+    model?: string | null
+  }
+}
+```
+</Accordion>
+
+<Accordion title="instructions full type">
+
+```ts
+{
+  schema?: any,
+  system_prompt?: string
+}
+```
+</Accordion>
+
+<Accordion title="settings full type">
+
+```ts
+{
+  include_images?: boolean,
+  optimize_for_latency?: boolean,
+  force_url_result?: boolean,
+  array_extract?: boolean,
+  deep_extract?: boolean,
+  citations?: {
+    enabled?: boolean,
+    numerical_confidence?: boolean,
+    parent_block?: string
+  },
+  page_range?: {
+    start?: number | null,
+    end?: number | null
+  } | {
+    start?: number | null,
+    end?: number | null
+  }[] | number[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `usage` | `object` | Yes | — |
+| `result` | `object` | Yes | — |
+| `citations` | `object` | No | — |
+| `job_id` | `string` | No | — |
+| `duration` | `number` | No | — |
+| `studio_link` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="usage full type">
+
+```ts
+{
+  num_pages: number,
+  credits?: number | null,
+  num_fields: number
+}
+```
+</Accordion>
+
+<Accordion title="result full type">
+
+```ts
+any[] | {
+} | {
+  type: url,
+  url: string,
+  result_id: string
+}
+```
+</Accordion>
+
+<Accordion title="citations full type">
+
+```ts
+any[] | {
+  type: url,
+  url: string,
+  result_id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### extractAsync
+
+`extract.extractAsync`
+
+Start an extract job and return its job id
+
+**Risk:** `write`
+
+```ts
+await corsair.reducto.api.extract.extractAsync({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `input` | `object` | Yes | — |
+| `parsing` | `object` | No | — |
+| `instructions` | `object` | No | — |
+| `settings` | `object` | No | — |
+| `async` | `object` | No | — |
+| `queue_priority` | `auto \| standard \| batch` | No | — |
+
+<AccordionGroup>
+<Accordion title="input full type">
+
+```ts
+string | string[] | {
+  file_id: string,
+  presigned_url?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="parsing full type">
+
+```ts
+{
+  enhance?: {
+    agentic?: {
+      scope: text | table | figure,
+      prompt?: string | null,
+      mode?: default | auto | max,
+      advanced_chart_agent?: boolean,
+      return_overlays?: boolean
+    }[],
+    advanced_chart_agent?: boolean,
+    summarize_figures?: boolean,
+    intelligent_ordering?: boolean
+  },
+  retrieval?: {
+    chunking?: {
+      chunk_mode?: variable | section | page | disabled | block | page_sections,
+      chunk_size?: number | null,
+      chunk_overlap?: number
+    },
+    filter_blocks?: Header | Footer | Title | Section Header | Page Number | List Item | Figure | Table | Key Value | Text | Comment | Signature[],
+    embedding_optimized?: boolean
+  },
+  formatting?: {
+    add_page_markers?: boolean,
+    table_output_format?: html | json | md | jsonbbox | dynamic | csv,
+    merge_tables?: boolean,
+    include?: change_tracking | highlight | comments | hyperlinks | signatures | ignore_watermarks[]
+  },
+  spreadsheet?: {
+    split_large_tables?: {
+      enabled?: boolean,
+      size?: number
+    },
+    include?: cell_colors | formula | dropdowns[],
+    clustering?: accurate | fast | disabled,
+    exclude?: string[],
+    max_cell_count?: number | null
+  },
+  settings?: {
+    ocr_system?: standard | legacy,
+    extraction_mode?: ocr | hybrid,
+    force_url_result?: boolean,
+    force_file_extension?: string | null,
+    return_ocr_data?: boolean,
+    return_images?: figure | table | page[],
+    embed_pdf_metadata?: boolean,
+    extract_document_properties?: boolean,
+    embed_pdf_metadata_dpi?: number,
+    persist_results?: boolean,
+    timeout?: number | null,
+    page_range?: {
+      start?: number | null,
+      end?: number | null
+    } | {
+      start?: number | null,
+      end?: number | null
+    }[] | number[] | null,
+    document_password?: string | null,
+    model?: string | null
+  }
+}
+```
+</Accordion>
+
+<Accordion title="instructions full type">
+
+```ts
+{
+  schema?: any,
+  system_prompt?: string
+}
+```
+</Accordion>
+
+<Accordion title="settings full type">
+
+```ts
+{
+  include_images?: boolean,
+  optimize_for_latency?: boolean,
+  force_url_result?: boolean,
+  array_extract?: boolean,
+  deep_extract?: boolean,
+  citations?: {
+    enabled?: boolean,
+    numerical_confidence?: boolean,
+    parent_block?: string
+  },
+  page_range?: {
+    start?: number | null,
+    end?: number | null
+  } | {
+    start?: number | null,
+    end?: number | null
+  }[] | number[] | null
+}
+```
+</Accordion>
+
+<Accordion title="async full type">
+
+```ts
+{
+  metadata?: {
+  } | null,
+  priority?: boolean,
+  webhook?: {
+    mode: direct,
+    url: string
+  } | {
+    mode: svix,
+    channels?: string[]
+  } | {
+    mode: disabled,
+    channels?: string[]
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job_id` | `string` | Yes | — |
+
+
+
+---
+
+## Files
+
+### delete
+
+`files.delete`
+
+Delete an uploaded file. Free plans return 422 NOT_APPLICABLE; Growth and Enterprise delete it
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.reducto.api.files.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_id` | `string` | Yes | — |
+
+
+
+---
+
+### upload
+
+`files.upload`
+
+Upload a file and return a reducto:// file id
+
+**Risk:** `write`
+
+```ts
+await corsair.reducto.api.files.upload({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file` | `custom` | Yes | — |
+| `extension` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_id` | `string` | Yes | — |
+| `presigned_url` | `string` | No | — |
+
+
+
+---
+
+## Jobs
+
+### cancel
+
+`jobs.cancel`
+
+Cancel a running job
+
+**Risk:** `destructive`
+
+```ts
+await corsair.reducto.api.jobs.cancel({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job_id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | null | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### delete
+
+`jobs.delete`
+
+Delete a job and its stored artifacts. Returns 202. Free plans return 422 NOT_APPLICABLE
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.reducto.api.jobs.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job_id` | `string` | Yes | — |
+| `include_persisted` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job_id` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`jobs.get`
+
+Retrieve a job status and, when finished, its result
+
+**Risk:** `read`
+
+```ts
+await corsair.reducto.api.jobs.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `result` | `any` | No | — |
+| `progress` | `number` | No | — |
+| `reason` | `string` | No | — |
+| `error` | `any` | No | — |
+| `type` | `string` | No | — |
+| `source` | `any` | No | — |
+| `num_pages` | `number` | No | — |
+| `total_pages` | `number` | No | — |
+| `duration` | `number` | No | — |
+| `created_at` | `string` | No | — |
+| `bucket` | `any` | No | — |
+
+
+
+---
+
+### list
+
+`jobs.list`
+
+List jobs, page by page, using cursor and limit
+
+**Risk:** `read`
+
+```ts
+await corsair.reducto.api.jobs.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `exclude_configs` | `boolean` | No | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobs` | `object[]` | Yes | — |
+| `next_cursor` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="jobs full type">
+
+```ts
+{
+  job_id: string,
+  status: string,
+  type: string,
+  raw_config?: string,
+  created_at: string,
+  source?: any | null,
+  num_pages?: number | null,
+  total_pages?: number | null,
+  duration?: number | null,
+  bucket?: any | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Parse
+
+### parse
+
+`parse.parse`
+
+Parse a document into chunks of text, tables, and figures with bounding boxes
+
+**Risk:** `write`
+
+```ts
+await corsair.reducto.api.parse.parse({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `input` | `object` | Yes | — |
+| `enhance` | `object` | No | — |
+| `retrieval` | `object` | No | — |
+| `formatting` | `object` | No | — |
+| `spreadsheet` | `object` | No | — |
+| `settings` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="input full type">
+
+```ts
+string | string[] | {
+  file_id: string,
+  presigned_url?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="enhance full type">
+
+```ts
+{
+  agentic?: {
+    scope: text | table | figure,
+    prompt?: string | null,
+    mode?: default | auto | max,
+    advanced_chart_agent?: boolean,
+    return_overlays?: boolean
+  }[],
+  advanced_chart_agent?: boolean,
+  summarize_figures?: boolean,
+  intelligent_ordering?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="retrieval full type">
+
+```ts
+{
+  chunking?: {
+    chunk_mode?: variable | section | page | disabled | block | page_sections,
+    chunk_size?: number | null,
+    chunk_overlap?: number
+  },
+  filter_blocks?: Header | Footer | Title | Section Header | Page Number | List Item | Figure | Table | Key Value | Text | Comment | Signature[],
+  embedding_optimized?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="formatting full type">
+
+```ts
+{
+  add_page_markers?: boolean,
+  table_output_format?: html | json | md | jsonbbox | dynamic | csv,
+  merge_tables?: boolean,
+  include?: change_tracking | highlight | comments | hyperlinks | signatures | ignore_watermarks[]
+}
+```
+</Accordion>
+
+<Accordion title="spreadsheet full type">
+
+```ts
+{
+  split_large_tables?: {
+    enabled?: boolean,
+    size?: number
+  },
+  include?: cell_colors | formula | dropdowns[],
+  clustering?: accurate | fast | disabled,
+  exclude?: string[],
+  max_cell_count?: number | null
+}
+```
+</Accordion>
+
+<Accordion title="settings full type">
+
+```ts
+{
+  ocr_system?: standard | legacy,
+  extraction_mode?: ocr | hybrid,
+  force_url_result?: boolean,
+  force_file_extension?: string | null,
+  return_ocr_data?: boolean,
+  return_images?: figure | table | page[],
+  embed_pdf_metadata?: boolean,
+  extract_document_properties?: boolean,
+  embed_pdf_metadata_dpi?: number,
+  persist_results?: boolean,
+  timeout?: number | null,
+  page_range?: {
+    start?: number | null,
+    end?: number | null
+  } | {
+    start?: number | null,
+    end?: number | null
+  }[] | number[] | null,
+  document_password?: string | null,
+  model?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job_id` | `string` | Yes | — |
+| `duration` | `number` | Yes | — |
+| `usage` | `object` | Yes | — |
+| `result` | `object` | Yes | — |
+| `response_type` | `string` | No | — |
+| `pdf_url` | `string` | No | — |
+| `studio_link` | `string` | No | — |
+| `document_properties` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="usage full type">
+
+```ts
+{
+  num_pages: number,
+  credits?: number | null
+}
+```
+</Accordion>
+
+<Accordion title="result full type">
+
+```ts
+{
+  type: full,
+  chunks: {
+    content: string,
+    embed?: string,
+    blocks?: {
+      type: string,
+      content?: string,
+      bbox?: {
+        left: number,
+        top: number,
+        width: number,
+        height: number,
+        page: number,
+        original_page?: number
+      },
+      confidence?: string,
+      granular_confidence?: {
+        parse_confidence?: number | null,
+        extract_confidence?: number | null
+      },
+      image_url?: string | null,
+      chart_data?: string[],
+      merged_tables?: any[],
+      extra?: {
+      }
+    }[],
+    enriched?: string | null,
+    enrichment_success?: boolean
+  }[],
+  ocr?: {
+    words?: {
+      text: string,
+      bbox: {
+        left: number,
+        top: number,
+        width: number,
+        height: number,
+        page: number,
+        original_page?: number
+      },
+      confidence?: number,
+      chunk_index?: number,
+      rotation?: number
+    }[],
+    lines?: {
+      text: string,
+      bbox: {
+        left: number,
+        top: number,
+        width: number,
+        height: number,
+        page: number,
+        original_page?: number
+      },
+      confidence?: number,
+      chunk_index?: number,
+      rotation?: number
+    }[]
+  },
+  custom?: any | null
+} | {
+  type: url,
+  url: string,
+  result_id: string
+}
+```
+</Accordion>
+
+<Accordion title="document_properties full type">
+
+```ts
+{
+  title?: string | null,
+  author?: string | null,
+  subject?: string | null,
+  keywords?: string | null,
+  creator?: string | null,
+  producer?: string | null,
+  last_modified_by?: string | null,
+  created_at?: string | null,
+  modified_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### parseAsync
+
+`parse.parseAsync`
+
+Start a parse job and return its job id
+
+**Risk:** `write`
+
+```ts
+await corsair.reducto.api.parse.parseAsync({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `input` | `object` | Yes | — |
+| `enhance` | `object` | No | — |
+| `retrieval` | `object` | No | — |
+| `formatting` | `object` | No | — |
+| `spreadsheet` | `object` | No | — |
+| `settings` | `object` | No | — |
+| `async` | `object` | No | — |
+| `queue_priority` | `auto \| standard \| batch` | No | — |
+
+<AccordionGroup>
+<Accordion title="input full type">
+
+```ts
+string | string[] | {
+  file_id: string,
+  presigned_url?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="enhance full type">
+
+```ts
+{
+  agentic?: {
+    scope: text | table | figure,
+    prompt?: string | null,
+    mode?: default | auto | max,
+    advanced_chart_agent?: boolean,
+    return_overlays?: boolean
+  }[],
+  advanced_chart_agent?: boolean,
+  summarize_figures?: boolean,
+  intelligent_ordering?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="retrieval full type">
+
+```ts
+{
+  chunking?: {
+    chunk_mode?: variable | section | page | disabled | block | page_sections,
+    chunk_size?: number | null,
+    chunk_overlap?: number
+  },
+  filter_blocks?: Header | Footer | Title | Section Header | Page Number | List Item | Figure | Table | Key Value | Text | Comment | Signature[],
+  embedding_optimized?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="formatting full type">
+
+```ts
+{
+  add_page_markers?: boolean,
+  table_output_format?: html | json | md | jsonbbox | dynamic | csv,
+  merge_tables?: boolean,
+  include?: change_tracking | highlight | comments | hyperlinks | signatures | ignore_watermarks[]
+}
+```
+</Accordion>
+
+<Accordion title="spreadsheet full type">
+
+```ts
+{
+  split_large_tables?: {
+    enabled?: boolean,
+    size?: number
+  },
+  include?: cell_colors | formula | dropdowns[],
+  clustering?: accurate | fast | disabled,
+  exclude?: string[],
+  max_cell_count?: number | null
+}
+```
+</Accordion>
+
+<Accordion title="settings full type">
+
+```ts
+{
+  ocr_system?: standard | legacy,
+  extraction_mode?: ocr | hybrid,
+  force_url_result?: boolean,
+  force_file_extension?: string | null,
+  return_ocr_data?: boolean,
+  return_images?: figure | table | page[],
+  embed_pdf_metadata?: boolean,
+  extract_document_properties?: boolean,
+  embed_pdf_metadata_dpi?: number,
+  persist_results?: boolean,
+  timeout?: number | null,
+  page_range?: {
+    start?: number | null,
+    end?: number | null
+  } | {
+    start?: number | null,
+    end?: number | null
+  }[] | number[] | null,
+  document_password?: string | null,
+  model?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="async full type">
+
+```ts
+{
+  metadata?: {
+  } | null,
+  priority?: boolean,
+  webhook?: {
+    mode: direct,
+    url: string
+  } | {
+    mode: svix,
+    channels?: string[]
+  } | {
+    mode: disabled,
+    channels?: string[]
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job_id` | `string` | Yes | — |
+
+
+
+---
+
+## Pipeline
+
+### run
+
+`pipeline.run`
+
+Run a Studio pipeline against a document
+
+**Risk:** `write`
+
+```ts
+await corsair.reducto.api.pipeline.run({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `input` | `object` | Yes | — |
+| `pipeline_id` | `string` | Yes | — |
+| `settings` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="input full type">
+
+```ts
+string | string[] | {
+  file_id: string,
+  presigned_url?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="settings full type">
+
+```ts
+{
+  document_password?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job_id` | `string` | Yes | — |
+| `usage` | `object` | Yes | — |
+| `result` | `any` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="usage full type">
+
+```ts
+{
+  num_pages: number,
+  credits?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### runAsync
+
+`pipeline.runAsync`
+
+Start a Studio pipeline job and return its job id
+
+**Risk:** `write`
+
+```ts
+await corsair.reducto.api.pipeline.runAsync({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `input` | `object` | Yes | — |
+| `pipeline_id` | `string` | Yes | — |
+| `settings` | `object` | No | — |
+| `async` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="input full type">
+
+```ts
+string | string[] | {
+  file_id: string,
+  presigned_url?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="settings full type">
+
+```ts
+{
+  document_password?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="async full type">
+
+```ts
+{
+  metadata?: {
+  } | null,
+  priority?: boolean,
+  webhook?: {
+    mode: direct,
+    url: string
+  } | {
+    mode: svix,
+    channels?: string[]
+  } | {
+    mode: disabled,
+    channels?: string[]
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job_id` | `string` | Yes | — |
+
+
+
+---
+
+## Split
+
+### split
+
+`split.split`
+
+Split a document into named sections by page
+
+**Risk:** `write`
+
+```ts
+await corsair.reducto.api.split.split({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `input` | `object` | Yes | — |
+| `parsing` | `object` | No | — |
+| `split_description` | `object[]` | Yes | — |
+| `split_rules` | `string` | No | — |
+| `settings` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="input full type">
+
+```ts
+string | string[] | {
+  file_id: string,
+  presigned_url?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="parsing full type">
+
+```ts
+{
+  enhance?: {
+    agentic?: {
+      scope: text | table | figure,
+      prompt?: string | null,
+      mode?: default | auto | max,
+      advanced_chart_agent?: boolean,
+      return_overlays?: boolean
+    }[],
+    advanced_chart_agent?: boolean,
+    summarize_figures?: boolean,
+    intelligent_ordering?: boolean
+  },
+  retrieval?: {
+    chunking?: {
+      chunk_mode?: variable | section | page | disabled | block | page_sections,
+      chunk_size?: number | null,
+      chunk_overlap?: number
+    },
+    filter_blocks?: Header | Footer | Title | Section Header | Page Number | List Item | Figure | Table | Key Value | Text | Comment | Signature[],
+    embedding_optimized?: boolean
+  },
+  formatting?: {
+    add_page_markers?: boolean,
+    table_output_format?: html | json | md | jsonbbox | dynamic | csv,
+    merge_tables?: boolean,
+    include?: change_tracking | highlight | comments | hyperlinks | signatures | ignore_watermarks[]
+  },
+  spreadsheet?: {
+    split_large_tables?: {
+      enabled?: boolean,
+      size?: number
+    },
+    include?: cell_colors | formula | dropdowns[],
+    clustering?: accurate | fast | disabled,
+    exclude?: string[],
+    max_cell_count?: number | null
+  },
+  settings?: {
+    ocr_system?: standard | legacy,
+    extraction_mode?: ocr | hybrid,
+    force_url_result?: boolean,
+    force_file_extension?: string | null,
+    return_ocr_data?: boolean,
+    return_images?: figure | table | page[],
+    embed_pdf_metadata?: boolean,
+    extract_document_properties?: boolean,
+    embed_pdf_metadata_dpi?: number,
+    persist_results?: boolean,
+    timeout?: number | null,
+    page_range?: {
+      start?: number | null,
+      end?: number | null
+    } | {
+      start?: number | null,
+      end?: number | null
+    }[] | number[] | null,
+    document_password?: string | null,
+    model?: string | null
+  }
+}
+```
+</Accordion>
+
+<Accordion title="split_description full type">
+
+```ts
+{
+  name: string,
+  description: string,
+  partition_key?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="settings full type">
+
+```ts
+{
+  table_cutoff?: truncate | preserve,
+  allow_page_overlap?: boolean,
+  auto_partition?: boolean,
+  deep_split?: boolean,
+  force_url_result?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `usage` | `object` | Yes | — |
+| `result` | `object` | Yes | — |
+| `job_id` | `string` | No | — |
+| `duration` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="usage full type">
+
+```ts
+{
+  num_pages: number,
+  credits?: number | null
+}
+```
+</Accordion>
+
+<Accordion title="result full type">
+
+```ts
+{
+  splits: {
+    name: string,
+    pages: number[]
+  }[]
+} | {
+  type: url,
+  url: string,
+  result_id: string
+} | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### splitAsync
+
+`split.splitAsync`
+
+Start a split job and return its job id
+
+**Risk:** `write`
+
+```ts
+await corsair.reducto.api.split.splitAsync({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `input` | `object` | Yes | — |
+| `parsing` | `object` | No | — |
+| `split_description` | `object[]` | Yes | — |
+| `split_rules` | `string` | No | — |
+| `settings` | `object` | No | — |
+| `async` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="input full type">
+
+```ts
+string | string[] | {
+  file_id: string,
+  presigned_url?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="parsing full type">
+
+```ts
+{
+  enhance?: {
+    agentic?: {
+      scope: text | table | figure,
+      prompt?: string | null,
+      mode?: default | auto | max,
+      advanced_chart_agent?: boolean,
+      return_overlays?: boolean
+    }[],
+    advanced_chart_agent?: boolean,
+    summarize_figures?: boolean,
+    intelligent_ordering?: boolean
+  },
+  retrieval?: {
+    chunking?: {
+      chunk_mode?: variable | section | page | disabled | block | page_sections,
+      chunk_size?: number | null,
+      chunk_overlap?: number
+    },
+    filter_blocks?: Header | Footer | Title | Section Header | Page Number | List Item | Figure | Table | Key Value | Text | Comment | Signature[],
+    embedding_optimized?: boolean
+  },
+  formatting?: {
+    add_page_markers?: boolean,
+    table_output_format?: html | json | md | jsonbbox | dynamic | csv,
+    merge_tables?: boolean,
+    include?: change_tracking | highlight | comments | hyperlinks | signatures | ignore_watermarks[]
+  },
+  spreadsheet?: {
+    split_large_tables?: {
+      enabled?: boolean,
+      size?: number
+    },
+    include?: cell_colors | formula | dropdowns[],
+    clustering?: accurate | fast | disabled,
+    exclude?: string[],
+    max_cell_count?: number | null
+  },
+  settings?: {
+    ocr_system?: standard | legacy,
+    extraction_mode?: ocr | hybrid,
+    force_url_result?: boolean,
+    force_file_extension?: string | null,
+    return_ocr_data?: boolean,
+    return_images?: figure | table | page[],
+    embed_pdf_metadata?: boolean,
+    extract_document_properties?: boolean,
+    embed_pdf_metadata_dpi?: number,
+    persist_results?: boolean,
+    timeout?: number | null,
+    page_range?: {
+      start?: number | null,
+      end?: number | null
+    } | {
+      start?: number | null,
+      end?: number | null
+    }[] | number[] | null,
+    document_password?: string | null,
+    model?: string | null
+  }
+}
+```
+</Accordion>
+
+<Accordion title="split_description full type">
+
+```ts
+{
+  name: string,
+  description: string,
+  partition_key?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="settings full type">
+
+```ts
+{
+  table_cutoff?: truncate | preserve,
+  allow_page_overlap?: boolean,
+  auto_partition?: boolean,
+  deep_split?: boolean,
+  force_url_result?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="async full type">
+
+```ts
+{
+  metadata?: {
+  } | null,
+  priority?: boolean,
+  webhook?: {
+    mode: direct,
+    url: string
+  } | {
+    mode: svix,
+    channels?: string[]
+  } | {
+    mode: disabled,
+    channels?: string[]
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job_id` | `string` | Yes | — |
+
+
+
+---
+

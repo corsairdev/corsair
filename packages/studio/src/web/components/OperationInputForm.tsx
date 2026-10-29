@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import type { FormFieldSchema } from '../api';
 import { Button, Input, Textarea } from './Primitives';
 
@@ -74,12 +74,15 @@ function formValueToJson(value: FormValue): unknown {
 function FieldLabel({
 	name,
 	schema,
+	htmlFor,
 }: {
 	name: string;
 	schema: FormFieldSchema;
+	htmlFor?: string;
 }) {
-	return (
-		<label className="block text-xs font-medium text-[var(--color-text)] mb-1">
+	const className = 'block text-xs font-medium text-[var(--color-text)] mb-1';
+	const body = (
+		<>
 			{name}
 			{!schema.optional && (
 				<span className="text-[var(--color-err)] ml-0.5">*</span>
@@ -89,8 +92,16 @@ function FieldLabel({
 					{schema.description}
 				</span>
 			)}
-		</label>
+		</>
 	);
+	if (htmlFor) {
+		return (
+			<label htmlFor={htmlFor} className={className}>
+				{body}
+			</label>
+		);
+	}
+	return <div className={className}>{body}</div>;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -98,10 +109,12 @@ function FieldLabel({
 // ─────────────────────────────────────────────────────────────────────────────
 
 function StringField({
+	id,
 	schema,
 	value,
 	onChange,
 }: {
+	id: string;
 	schema: Extract<FormFieldSchema, { kind: 'string' }>;
 	value: FormValue;
 	onChange: (v: FormValue) => void;
@@ -109,6 +122,7 @@ function StringField({
 	if (schema.enum && schema.enum.length > 0) {
 		return (
 			<select
+				id={id}
 				className="w-full h-8 px-2 rounded-md text-xs bg-[var(--color-bg)] border border-[var(--color-border)] focus:outline-none focus:border-[var(--color-accent-dim)]"
 				value={String(value ?? '')}
 				onChange={(e) => onChange(e.target.value)}
@@ -124,6 +138,7 @@ function StringField({
 	}
 	return (
 		<Input
+			id={id}
 			type="text"
 			value={String(value ?? '')}
 			onChange={(e) => onChange(e.target.value)}
@@ -136,14 +151,17 @@ function StringField({
 // ─────────────────────────────────────────────────────────────────────────────
 
 function NumberField({
+	id,
 	value,
 	onChange,
 }: {
+	id: string;
 	value: FormValue;
 	onChange: (v: FormValue) => void;
 }) {
 	return (
 		<Input
+			id={id}
 			type="number"
 			value={value === null || value === undefined ? '' : String(value)}
 			onChange={(e) => {
@@ -159,15 +177,18 @@ function NumberField({
 // ─────────────────────────────────────────────────────────────────────────────
 
 function BooleanField({
+	id,
 	value,
 	onChange,
 }: {
+	id: string;
 	value: FormValue;
 	onChange: (v: FormValue) => void;
 }) {
 	return (
-		<label className="inline-flex items-center gap-2 text-xs cursor-pointer">
+		<div className="inline-flex items-center gap-2 text-xs">
 			<input
+				id={id}
 				type="checkbox"
 				className="accent-[var(--color-accent)]"
 				checked={!!value}
@@ -176,7 +197,7 @@ function BooleanField({
 			<span className="text-[var(--color-text-muted)]">
 				{value ? 'true' : 'false'}
 			</span>
-		</label>
+		</div>
 	);
 }
 
@@ -302,17 +323,29 @@ function FieldRenderer({
 	onChange,
 	path = '',
 }: FieldRendererProps) {
+	const id = useId();
+	// object/array render nested fields with their own labels — no single control to point at
+	const isLeaf = schema.kind !== 'object' && schema.kind !== 'array';
 	return (
 		<div>
-			<FieldLabel name={name} schema={schema} />
+			<FieldLabel
+				name={name}
+				schema={schema}
+				htmlFor={isLeaf ? id : undefined}
+			/>
 			{schema.kind === 'string' && (
-				<StringField schema={schema} value={value} onChange={onChange} />
+				<StringField
+					id={id}
+					schema={schema}
+					value={value}
+					onChange={onChange}
+				/>
 			)}
 			{schema.kind === 'number' && (
-				<NumberField value={value} onChange={onChange} />
+				<NumberField id={id} value={value} onChange={onChange} />
 			)}
 			{schema.kind === 'boolean' && (
-				<BooleanField value={value} onChange={onChange} />
+				<BooleanField id={id} value={value} onChange={onChange} />
 			)}
 			{schema.kind === 'object' && (
 				<ObjectField
@@ -332,6 +365,7 @@ function FieldRenderer({
 			)}
 			{schema.kind === 'literal' && (
 				<Input
+					id={id}
 					type="text"
 					value={String(value ?? schema.value)}
 					disabled
@@ -340,6 +374,7 @@ function FieldRenderer({
 			)}
 			{schema.kind === 'unknown' && (
 				<Input
+					id={id}
 					type="text"
 					placeholder="(unsupported field type — use JSON editor)"
 					disabled
@@ -431,6 +466,7 @@ export function JsonFallbackEditor({
 				value={value}
 				onChange={(e) => handleChange(e.target.value)}
 				rows={rows}
+				aria-label="JSON input"
 				className="font-mono"
 			/>
 			{localError && (

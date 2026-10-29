@@ -1,0 +1,75 @@
+---
+title: Database
+description: "AsyncInterview local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The AsyncInterview plugin syncs data locally. Use `corsair.asyncinterview.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Interviews
+
+Path: `asyncinterview.db.interviews.search`
+
+```ts
+const rows = await corsair.asyncinterview.db.interviews.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `url` | `string` | equals, contains, startsWith, endsWith, in |
+| `job_id` | `number` | equals, gt, gte, lt, lte, in |
+| `job` | `string` | equals, contains, startsWith, endsWith, in |
+| `date` | `string` | equals, contains, startsWith, endsWith, in |
+| `time` | `string` | equals, contains, startsWith, endsWith, in |
+| `datetime` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Jobs
+
+Path: `asyncinterview.db.jobs.search`
+
+```ts
+const rows = await corsair.asyncinterview.db.jobs.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `date` | `string` | equals, contains, startsWith, endsWith, in |
+| `time` | `string` | equals, contains, startsWith, endsWith, in |
+| `datetime` | `string` | equals, contains, startsWith, endsWith, in |
+| `team_id` | `number` | equals, gt, gte, lt, lte, in |
+| `sub_title` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `slug` | `string` | equals, contains, startsWith, endsWith, in |
+| `public_job_url` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

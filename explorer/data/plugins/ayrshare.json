@@ -1,0 +1,355 @@
+{
+  "id": "ayrshare",
+  "displayName": "Ayrshare",
+  "description": "Social media API for posting, scheduling, and analytics across multiple platforms.",
+  "npmPackageName": "@corsair-dev/ayrshare",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 4,
+    "webhooks": 0,
+    "db": 2
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "profile_key"]
+    }
+  ],
+  "api": [
+    {
+      "path": "ayrshare.api.autoSchedule.list",
+      "shortPath": "autoSchedule.list",
+      "description": "List active auto-post schedules, including titles, UTC times, weekday filters, and exclude dates.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "schedules",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ayrshare.api.autoSchedule.set",
+      "shortPath": "autoSchedule.set",
+      "description": "Create or replace an auto-post schedule. Its case-sensitive title is the join key used by publish autoSchedule.title.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "schedule",
+            "optional": true,
+            "type": "string[]",
+            "description": "UTC times; required unless setStartDate is provided"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string",
+            "description": "Case-sensitive schedule name and join key for publish autoSchedule.title"
+          },
+          {
+            "key": "setStartDate",
+            "optional": true,
+            "type": "string",
+            "description": "ISO-8601 UTC date-time to begin the schedule"
+          },
+          {
+            "key": "daysOfWeek",
+            "optional": true,
+            "type": "number[]",
+            "description": "Weekdays as 0-6, Sunday through Saturday"
+          },
+          {
+            "key": "excludeDates",
+            "optional": true,
+            "type": "string[]",
+            "description": "UTC dates excluded from future auto-scheduling"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "schedule",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "daysOfWeek",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "excludeDates",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ayrshare.api.posts.delete",
+      "shortPath": "posts.delete",
+      "description": "Delete an Ayrshare post by id. Published Instagram and TikTok posts cannot be deleted via API; use markManualDeleted only after deleting them on the network.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Ayrshare top-level Post ID"
+          },
+          {
+            "key": "markManualDeleted",
+            "optional": true,
+            "type": "boolean",
+            "description": "Mark deleted in Ayrshare without deleting on the network. Instagram and TikTok published posts cannot be deleted via API."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ayrshare.api.posts.history",
+      "shortPath": "posts.history",
+      "description": "Fetch Ayrshare post history, filterable by date, status, network, and record count.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Number of recent posts. Default 25, max 1000."
+          },
+          {
+            "key": "lastDays",
+            "optional": true,
+            "type": "number",
+            "description": "Last n days by publish date. Default 30. 0 returns the full history (up to limit). Ignored when startDate and endDate are set."
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string",
+            "description": "ISO-8601 start date (inclusive)"
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string",
+            "description": "ISO-8601 end date (inclusive)"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "success | error | processing | pending | paused | deleted | awaiting approval",
+            "description": "Filter by post status. Deleted posts are only returned with status=deleted."
+          },
+          {
+            "key": "platforms",
+            "optional": true,
+            "type": "string[]",
+            "description": "Filter by network; OR logic. Example: facebook, instagram."
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "immediate | scheduled",
+            "description": "immediate posts vs scheduled posts"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "history",
+            "optional": false,
+            "type": "{ id: string, post?: string | null, platforms?: string[], postIds?: { platform?: string | null, id?: string | number | null, status?: string | null, postUrl?: string | null, isVideo?: boolean | null }[], status?: string | null, created?: string | null, scheduleDate?: string | { _seconds?: number | null, _nanoseconds?: number | null, utc?: string | null }, errors?: any[], mediaUrls?: string[], urls?: any[], type?: string | null, notes?: string | null, profileTitle?: string | null, refId?: string | null, requiresApproval?: boolean | null, approved?: boolean | null, approvedBy?: string | null, approvedDate?: string | null, rejectedBy?: string | null, rejectedDate?: string | null, shortenLinks?: boolean | null }[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "refId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastUpdated",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "nextUpdate",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "ayrshare.db.autoSchedules.search",
+      "entityName": "autoSchedules",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lastScheduleDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "ayrshare.db.posts.search",
+      "entityName": "posts",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "post",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "notes",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "profileTitle",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "refId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "requiresApproval",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "approved",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "approvedBy",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "approvedDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "rejectedBy",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "rejectedDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "shortenLinks",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    }
+  ]
+}

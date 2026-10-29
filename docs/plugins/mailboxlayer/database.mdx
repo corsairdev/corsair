@@ -1,0 +1,46 @@
+---
+title: Database
+description: "MailboxLayer local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The MailboxLayer plugin syncs data locally. Use `corsair.mailboxlayer.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Email Checks
+
+Path: `mailboxlayer.db.emailChecks.search`
+
+```ts
+const rows = await corsair.mailboxlayer.db.emailChecks.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `email` | `string` | equals, contains, startsWith, endsWith, in |
+| `didYouMean` | `string` | equals, contains, startsWith, endsWith, in |
+| `user` | `string` | equals, contains, startsWith, endsWith, in |
+| `domain` | `string` | equals, contains, startsWith, endsWith, in |
+| `formatValid` | `boolean` | equals |
+| `mxFound` | `boolean` | equals |
+| `smtpCheck` | `boolean` | equals |
+| `catchAll` | `boolean` | equals |
+| `role` | `boolean` | equals |
+| `disposable` | `boolean` | equals |
+| `free` | `boolean` | equals |
+| `score` | `number` | equals, gt, gte, lt, lte, in |
+| `checkedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

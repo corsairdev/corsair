@@ -1,0 +1,1514 @@
+{
+  "id": "semanticscholar",
+  "displayName": "SemanticScholar",
+  "description": "SemanticScholar plugin for Corsair",
+  "npmPackageName": "@corsair-dev/semanticscholar",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 21,
+    "webhooks": 0,
+    "db": 10
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "semanticscholar.api.authors.batchGet",
+      "shortPath": "authors.batchGet",
+      "description": "Retrieve details for up to 1000 authors in one request",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ids",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated Semantic Scholar fields parameter"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ authorId?: string | null, externalIds?: {} | null, url?: string | null, name?: string | null, affiliations?: string[] | null, homepage?: string | null, paperCount?: number | null, citationCount?: number | null, hIndex?: number | null, papers?: { paperId?: string | null, corpusId?: string | number | null, externalIds?: {} | null, url?: string | null, title?: string | null, abstract?: string | null, venue?: string | null, publicationVenue?: {} | null, year?: number | null, referenceCount?: number | null, citationCount?: number | null, influentialCitationCount?: number | null, isOpenAccess?: boolean | null, openAccessPdf?: { url?: string | null, status?: string | null, license?: string | null, disclaimer?: string | null } | null, fieldsOfStudy?: string[] | null, s2FieldsOfStudy?: {}[] | null, publicationTypes?: string[] | null, publicationDate?: string | null, journal?: {} | null, authors?: { authorId?: string | null, name?: string | null }[] | null, citations?: {}[] | null, references?: {}[] | null, embedding?: { model?: string | null, vector?: number[] | null } | null, tldr?: { model?: string | null, text?: string | null } | null }[] | null } | null[]"
+      }
+    },
+    {
+      "path": "semanticscholar.api.authors.get",
+      "shortPath": "authors.get",
+      "description": "Retrieve details about an author by Semantic Scholar author ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "authorId",
+            "optional": false,
+            "type": "string",
+            "description": "Semantic Scholar author ID"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated Semantic Scholar fields parameter"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "authorId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "externalIds",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "affiliations",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "homepage",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "paperCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "citationCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hIndex",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "papers",
+            "optional": true,
+            "type": "{ paperId?: string | null, corpusId?: string | number | null, externalIds?: {} | null, url?: string | null, title?: string | null, abstract?: string | null, venue?: string | null, publicationVenue?: {} | null, year?: number | null, referenceCount?: number | null, citationCount?: number | null, influentialCitationCount?: number | null, isOpenAccess?: boolean | null, openAccessPdf?: { url?: string | null, status?: string | null, license?: string | null, disclaimer?: string | null } | null, fieldsOfStudy?: string[] | null, s2FieldsOfStudy?: {}[] | null, publicationTypes?: string[] | null, publicationDate?: string | null, journal?: {} | null, authors?: { authorId?: string | null, name?: string | null }[] | null, citations?: {}[] | null, references?: {}[] | null, embedding?: { model?: string | null, vector?: number[] | null } | null, tldr?: { model?: string | null, text?: string | null } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "semanticscholar.api.authors.listPapers",
+      "shortPath": "authors.listPapers",
+      "description": "List papers written by an author with offset pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "authorId",
+            "optional": false,
+            "type": "string",
+            "description": "Semantic Scholar author ID"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated Semantic Scholar fields parameter"
+          },
+          {
+            "key": "publicationDateOrYear",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ paperId?: string | null, corpusId?: string | number | null, externalIds?: {} | null, url?: string | null, title?: string | null, abstract?: string | null, venue?: string | null, publicationVenue?: {} | null, year?: number | null, referenceCount?: number | null, citationCount?: number | null, influentialCitationCount?: number | null, isOpenAccess?: boolean | null, openAccessPdf?: { url?: string | null, status?: string | null, license?: string | null, disclaimer?: string | null } | null, fieldsOfStudy?: string[] | null, s2FieldsOfStudy?: {}[] | null, publicationTypes?: string[] | null, publicationDate?: string | null, journal?: {} | null, authors?: { authorId?: string | null, name?: string | null }[] | null, citations?: {}[] | null, references?: {}[] | null, embedding?: { model?: string | null, vector?: number[] | null } | null, tldr?: { model?: string | null, text?: string | null } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "semanticscholar.api.authors.search",
+      "shortPath": "authors.search",
+      "description": "Search authors by name",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated Semantic Scholar fields parameter"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ authorId?: string | null, externalIds?: {} | null, url?: string | null, name?: string | null, affiliations?: string[] | null, homepage?: string | null, paperCount?: number | null, citationCount?: number | null, hIndex?: number | null, papers?: { paperId?: string | null, corpusId?: string | number | null, externalIds?: {} | null, url?: string | null, title?: string | null, abstract?: string | null, venue?: string | null, publicationVenue?: {} | null, year?: number | null, referenceCount?: number | null, citationCount?: number | null, influentialCitationCount?: number | null, isOpenAccess?: boolean | null, openAccessPdf?: { url?: string | null, status?: string | null, license?: string | null, disclaimer?: string | null } | null, fieldsOfStudy?: string[] | null, s2FieldsOfStudy?: {}[] | null, publicationTypes?: string[] | null, publicationDate?: string | null, journal?: {} | null, authors?: { authorId?: string | null, name?: string | null }[] | null, citations?: {}[] | null, references?: {}[] | null, embedding?: { model?: string | null, vector?: number[] | null } | null, tldr?: { model?: string | null, text?: string | null } | null }[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "semanticscholar.api.datasets.get",
+      "shortPath": "datasets.get",
+      "description": "Get download links for a dataset in a release",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "releaseId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "datasetName",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "README",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "semanticscholar.api.datasets.getDiffs",
+      "shortPath": "datasets.getDiffs",
+      "description": "Get incremental dataset diffs between two releases",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "startReleaseId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "endReleaseId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "datasetName",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ fromRelease?: string | null, toRelease?: string | null, updateFiles?: string[] | null, deleteFiles?: string[] | null }[] | { diffs: { fromRelease?: string | null, toRelease?: string | null, updateFiles?: string[] | null, deleteFiles?: string[] | null }[] }"
+      }
+    },
+    {
+      "path": "semanticscholar.api.datasets.getRelease",
+      "shortPath": "datasets.getRelease",
+      "description": "Retrieve dataset release metadata",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "releaseId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "release_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "releaseId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "datasets",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "semanticscholar.api.datasets.listReleases",
+      "shortPath": "datasets.listReleases",
+      "description": "List available Semantic Scholar dataset releases",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string[] | { releaseIds: string[] }"
+      }
+    },
+    {
+      "path": "semanticscholar.api.papers.autocomplete",
+      "shortPath": "papers.autocomplete",
+      "description": "Suggest paper query completions for a partial query",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "matches",
+            "optional": false,
+            "type": "{ id: string, title: string, authorsYear?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "semanticscholar.api.papers.batchGet",
+      "shortPath": "papers.batchGet",
+      "description": "Retrieve details for up to 500 papers in one request",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ids",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated Semantic Scholar fields parameter"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ paperId?: string | null, corpusId?: string | number | null, externalIds?: {} | null, url?: string | null, title?: string | null, abstract?: string | null, venue?: string | null, publicationVenue?: {} | null, year?: number | null, referenceCount?: number | null, citationCount?: number | null, influentialCitationCount?: number | null, isOpenAccess?: boolean | null, openAccessPdf?: { url?: string | null, status?: string | null, license?: string | null, disclaimer?: string | null } | null, fieldsOfStudy?: string[] | null, s2FieldsOfStudy?: {}[] | null, publicationTypes?: string[] | null, publicationDate?: string | null, journal?: {} | null, authors?: { authorId?: string | null, name?: string | null }[] | null, citations?: {}[] | null, references?: {}[] | null, embedding?: { model?: string | null, vector?: number[] | null } | null, tldr?: { model?: string | null, text?: string | null } | null } | null[]"
+      }
+    },
+    {
+      "path": "semanticscholar.api.papers.get",
+      "shortPath": "papers.get",
+      "description": "Retrieve details about a paper by Semantic Scholar-supported ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "paperId",
+            "optional": false,
+            "type": "string",
+            "description": "Semantic Scholar paper ID, CorpusId:<id>, DOI:<doi>, ARXIV:<id>, PMID:<id>, PMCID:<id>, ACL:<id>, MAG:<id>, or URL:<url>"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated Semantic Scholar fields parameter"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "paperId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "corpusId",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "externalIds",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "abstract",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "venue",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "publicationVenue",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "year",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "referenceCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "citationCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "influentialCitationCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "isOpenAccess",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "openAccessPdf",
+            "optional": true,
+            "type": "{ url?: string | null, status?: string | null, license?: string | null, disclaimer?: string | null }"
+          },
+          {
+            "key": "fieldsOfStudy",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "s2FieldsOfStudy",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "publicationTypes",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "publicationDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "journal",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "authors",
+            "optional": true,
+            "type": "{ authorId?: string | null, name?: string | null }[]"
+          },
+          {
+            "key": "citations",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "references",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "embedding",
+            "optional": true,
+            "type": "{ model?: string | null, vector?: number[] | null }"
+          },
+          {
+            "key": "tldr",
+            "optional": true,
+            "type": "{ model?: string | null, text?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "semanticscholar.api.papers.listAuthors",
+      "shortPath": "papers.listAuthors",
+      "description": "List authors for a paper with offset pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "paperId",
+            "optional": false,
+            "type": "string",
+            "description": "Semantic Scholar paper ID, CorpusId:<id>, DOI:<doi>, ARXIV:<id>, PMID:<id>, PMCID:<id>, ACL:<id>, MAG:<id>, or URL:<url>"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated Semantic Scholar fields parameter"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ authorId?: string | null, externalIds?: {} | null, url?: string | null, name?: string | null, affiliations?: string[] | null, homepage?: string | null, paperCount?: number | null, citationCount?: number | null, hIndex?: number | null, papers?: { paperId?: string | null, corpusId?: string | number | null, externalIds?: {} | null, url?: string | null, title?: string | null, abstract?: string | null, venue?: string | null, publicationVenue?: {} | null, year?: number | null, referenceCount?: number | null, citationCount?: number | null, influentialCitationCount?: number | null, isOpenAccess?: boolean | null, openAccessPdf?: { url?: string | null, status?: string | null, license?: string | null, disclaimer?: string | null } | null, fieldsOfStudy?: string[] | null, s2FieldsOfStudy?: {}[] | null, publicationTypes?: string[] | null, publicationDate?: string | null, journal?: {} | null, authors?: { authorId?: string | null, name?: string | null }[] | null, citations?: {}[] | null, references?: {}[] | null, embedding?: { model?: string | null, vector?: number[] | null } | null, tldr?: { model?: string | null, text?: string | null } | null }[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "semanticscholar.api.papers.listCitations",
+      "shortPath": "papers.listCitations",
+      "description": "List papers that cite a paper with offset pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "paperId",
+            "optional": false,
+            "type": "string",
+            "description": "Semantic Scholar paper ID, CorpusId:<id>, DOI:<doi>, ARXIV:<id>, PMID:<id>, PMCID:<id>, ACL:<id>, MAG:<id>, or URL:<url>"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated Semantic Scholar fields parameter"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ contexts?: string[] | null, intents?: string[] | null, isInfluential?: boolean | null, citingPaper?: { paperId?: string | null, corpusId?: string | number | null, externalIds?: {} | null, url?: string | null, title?: string | null, abstract?: string | null, venue?: string | null, publicationVenue?: {} | null, year?: number | null, referenceCount?: number | null, citationCount?: number | null, influentialCitationCount?: number | null, isOpenAccess?: boolean | null, openAccessPdf?: { url?: string | null, status?: string | null, license?: string | null, disclaimer?: string | null } | null, fieldsOfStudy?: string[] | null, s2FieldsOfStudy?: {}[] | null, publicationTypes?: string[] | null, publicationDate?: string | null, journal?: {} | null, authors?: { authorId?: string | null, name?: string | null }[] | null, citations?: {}[] | null, references?: {}[] | null, embedding?: { model?: string | null, vector?: number[] | null } | null, tldr?: { model?: string | null, text?: string | null } | null } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "semanticscholar.api.papers.listReferences",
+      "shortPath": "papers.listReferences",
+      "description": "List references cited by a paper with offset pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "paperId",
+            "optional": false,
+            "type": "string",
+            "description": "Semantic Scholar paper ID, CorpusId:<id>, DOI:<doi>, ARXIV:<id>, PMID:<id>, PMCID:<id>, ACL:<id>, MAG:<id>, or URL:<url>"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated Semantic Scholar fields parameter"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ contexts?: string[] | null, intents?: string[] | null, isInfluential?: boolean | null, citedPaper?: { paperId?: string | null, corpusId?: string | number | null, externalIds?: {} | null, url?: string | null, title?: string | null, abstract?: string | null, venue?: string | null, publicationVenue?: {} | null, year?: number | null, referenceCount?: number | null, citationCount?: number | null, influentialCitationCount?: number | null, isOpenAccess?: boolean | null, openAccessPdf?: { url?: string | null, status?: string | null, license?: string | null, disclaimer?: string | null } | null, fieldsOfStudy?: string[] | null, s2FieldsOfStudy?: {}[] | null, publicationTypes?: string[] | null, publicationDate?: string | null, journal?: {} | null, authors?: { authorId?: string | null, name?: string | null }[] | null, citations?: {}[] | null, references?: {}[] | null, embedding?: { model?: string | null, vector?: number[] | null } | null, tldr?: { model?: string | null, text?: string | null } | null } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "semanticscholar.api.papers.matchTitle",
+      "shortPath": "papers.matchTitle",
+      "description": "Find the closest paper title match for a query",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated Semantic Scholar fields parameter"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ paperId?: string | null, corpusId?: string | number | null, externalIds?: {} | null, url?: string | null, title?: string | null, abstract?: string | null, venue?: string | null, publicationVenue?: {} | null, year?: number | null, referenceCount?: number | null, citationCount?: number | null, influentialCitationCount?: number | null, isOpenAccess?: boolean | null, openAccessPdf?: { url?: string | null, status?: string | null, license?: string | null, disclaimer?: string | null } | null, fieldsOfStudy?: string[] | null, s2FieldsOfStudy?: {}[] | null, publicationTypes?: string[] | null, publicationDate?: string | null, journal?: {} | null, authors?: { authorId?: string | null, name?: string | null }[] | null, citations?: {}[] | null, references?: {}[] | null, embedding?: { model?: string | null, vector?: number[] | null } | null, tldr?: { model?: string | null, text?: string | null } | null, matchScore: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "semanticscholar.api.papers.relevanceSearch",
+      "shortPath": "papers.relevanceSearch",
+      "description": "Deprecated alias for paper relevance search; use papers.search for new code",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated Semantic Scholar fields parameter"
+          },
+          {
+            "key": "publicationTypes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "openAccessPdf",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "minCitationCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "publicationDateOrYear",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "year",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "venue",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fieldsOfStudy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ paperId?: string | null, corpusId?: string | number | null, externalIds?: {} | null, url?: string | null, title?: string | null, abstract?: string | null, venue?: string | null, publicationVenue?: {} | null, year?: number | null, referenceCount?: number | null, citationCount?: number | null, influentialCitationCount?: number | null, isOpenAccess?: boolean | null, openAccessPdf?: { url?: string | null, status?: string | null, license?: string | null, disclaimer?: string | null } | null, fieldsOfStudy?: string[] | null, s2FieldsOfStudy?: {}[] | null, publicationTypes?: string[] | null, publicationDate?: string | null, journal?: {} | null, authors?: { authorId?: string | null, name?: string | null }[] | null, citations?: {}[] | null, references?: {}[] | null, embedding?: { model?: string | null, vector?: number[] | null } | null, tldr?: { model?: string | null, text?: string | null } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "semanticscholar.api.papers.search",
+      "shortPath": "papers.search",
+      "description": "Search papers by relevance with optional publication filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated Semantic Scholar fields parameter"
+          },
+          {
+            "key": "publicationTypes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "openAccessPdf",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "minCitationCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "publicationDateOrYear",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "year",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "venue",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fieldsOfStudy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ paperId?: string | null, corpusId?: string | number | null, externalIds?: {} | null, url?: string | null, title?: string | null, abstract?: string | null, venue?: string | null, publicationVenue?: {} | null, year?: number | null, referenceCount?: number | null, citationCount?: number | null, influentialCitationCount?: number | null, isOpenAccess?: boolean | null, openAccessPdf?: { url?: string | null, status?: string | null, license?: string | null, disclaimer?: string | null } | null, fieldsOfStudy?: string[] | null, s2FieldsOfStudy?: {}[] | null, publicationTypes?: string[] | null, publicationDate?: string | null, journal?: {} | null, authors?: { authorId?: string | null, name?: string | null }[] | null, citations?: {}[] | null, references?: {}[] | null, embedding?: { model?: string | null, vector?: number[] | null } | null, tldr?: { model?: string | null, text?: string | null } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "semanticscholar.api.papers.searchBulk",
+      "shortPath": "papers.searchBulk",
+      "description": "Bulk search papers with token pagination and optional sorting",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated Semantic Scholar fields parameter"
+          },
+          {
+            "key": "publicationTypes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "openAccessPdf",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "minCitationCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "publicationDateOrYear",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "year",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "venue",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fieldsOfStudy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "paperId | paperId:asc | paperId:desc | publicationDate | publicationDate:asc | publicationDate:desc | citationCount | citationCount:asc | citationCount:desc"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ paperId?: string | null, corpusId?: string | number | null, externalIds?: {} | null, url?: string | null, title?: string | null, abstract?: string | null, venue?: string | null, publicationVenue?: {} | null, year?: number | null, referenceCount?: number | null, citationCount?: number | null, influentialCitationCount?: number | null, isOpenAccess?: boolean | null, openAccessPdf?: { url?: string | null, status?: string | null, license?: string | null, disclaimer?: string | null } | null, fieldsOfStudy?: string[] | null, s2FieldsOfStudy?: {}[] | null, publicationTypes?: string[] | null, publicationDate?: string | null, journal?: {} | null, authors?: { authorId?: string | null, name?: string | null }[] | null, citations?: {}[] | null, references?: {}[] | null, embedding?: { model?: string | null, vector?: number[] | null } | null, tldr?: { model?: string | null, text?: string | null } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "semanticscholar.api.recommendations.forPaper",
+      "shortPath": "recommendations.forPaper",
+      "description": "Get recommended papers for one source paper",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "paperId",
+            "optional": false,
+            "type": "string",
+            "description": "Semantic Scholar paper ID, CorpusId:<id>, DOI:<doi>, ARXIV:<id>, PMID:<id>, PMCID:<id>, ACL:<id>, MAG:<id>, or URL:<url>"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "recent | all-cs"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated Semantic Scholar fields parameter"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "recommendedPapers",
+            "optional": false,
+            "type": "{ paperId?: string | null, corpusId?: string | number | null, externalIds?: {} | null, url?: string | null, title?: string | null, abstract?: string | null, venue?: string | null, publicationVenue?: {} | null, year?: number | null, referenceCount?: number | null, citationCount?: number | null, influentialCitationCount?: number | null, isOpenAccess?: boolean | null, openAccessPdf?: { url?: string | null, status?: string | null, license?: string | null, disclaimer?: string | null } | null, fieldsOfStudy?: string[] | null, s2FieldsOfStudy?: {}[] | null, publicationTypes?: string[] | null, publicationDate?: string | null, journal?: {} | null, authors?: { authorId?: string | null, name?: string | null }[] | null, citations?: {}[] | null, references?: {}[] | null, embedding?: { model?: string | null, vector?: number[] | null } | null, tldr?: { model?: string | null, text?: string | null } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "semanticscholar.api.recommendations.fromPaperLists",
+      "shortPath": "recommendations.fromPaperLists",
+      "description": "Get paper recommendations from positive and optional negative paper examples",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "positivePaperIds",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "negativePaperIds",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated Semantic Scholar fields parameter"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "recommendedPapers",
+            "optional": false,
+            "type": "{ paperId?: string | null, corpusId?: string | number | null, externalIds?: {} | null, url?: string | null, title?: string | null, abstract?: string | null, venue?: string | null, publicationVenue?: {} | null, year?: number | null, referenceCount?: number | null, citationCount?: number | null, influentialCitationCount?: number | null, isOpenAccess?: boolean | null, openAccessPdf?: { url?: string | null, status?: string | null, license?: string | null, disclaimer?: string | null } | null, fieldsOfStudy?: string[] | null, s2FieldsOfStudy?: {}[] | null, publicationTypes?: string[] | null, publicationDate?: string | null, journal?: {} | null, authors?: { authorId?: string | null, name?: string | null }[] | null, citations?: {}[] | null, references?: {}[] | null, embedding?: { model?: string | null, vector?: number[] | null } | null, tldr?: { model?: string | null, text?: string | null } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "semanticscholar.api.snippets.searchText",
+      "shortPath": "snippets.searchText",
+      "description": "Search text snippets within Semantic Scholar papers",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated Semantic Scholar fields parameter"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "publicationTypes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "openAccessPdf",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "minCitationCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "insertedBefore",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "publicationDateOrYear",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "year",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "venue",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fieldsOfStudy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "authors",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "paperIds",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ score: number, paper: { corpusId?: string | number | null, title?: string | null, authors?: string[] | null, openAccessInfo?: {} | null }, snippet: {} }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "semanticscholar.db.author.search",
+      "entityName": "author",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "authorId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "homepage",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "paperCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "citationCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "hIndex",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "semanticscholar.db.authorSummary.search",
+      "entityName": "authorSummary",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "authorId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "semanticscholar.db.autocompleteMatch.search",
+      "entityName": "autocompleteMatch",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "authorsYear",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "semanticscholar.db.citation.search",
+      "entityName": "citation",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "isInfluential",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    },
+    {
+      "path": "semanticscholar.db.dataset.search",
+      "entityName": "dataset",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "README",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "semanticscholar.db.datasetDiff.search",
+      "entityName": "datasetDiff",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "fromRelease",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "toRelease",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "semanticscholar.db.datasetRelease.search",
+      "entityName": "datasetRelease",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "release_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "releaseId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "semanticscholar.db.paper.search",
+      "entityName": "paper",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "paperId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "abstract",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "venue",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "year",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "referenceCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "citationCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "influentialCitationCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "isOpenAccess",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "publicationDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "semanticscholar.db.reference.search",
+      "entityName": "reference",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "isInfluential",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    },
+    {
+      "path": "semanticscholar.db.snippet.search",
+      "entityName": "snippet",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "score",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    }
+  ]
+}

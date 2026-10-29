@@ -1,0 +1,131 @@
+---
+title: Overview
+description: "Web context API for agents that scrapes, crawls, searches, and extracts web pages, and looks up brands, company news, and people."
+---
+
+Use **Context.dev** through Corsair: one client, typed API calls, local DB sync.
+
+**What you get:**
+
+- 16 typed API operations
+- 2 synced entities (`brands`, `newsArticles`) for fast `.search()` / `.list()`
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/contextdev
+```
+```bash yarn
+yarn add corsair @corsair-dev/contextdev
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/contextdev
+```
+```bash bun
+bun add corsair @corsair-dev/contextdev
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { contextdev } from '@corsair-dev/contextdev';
+
+export const corsair = createCorsair({
+	plugins: [
+		contextdev(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+contextdev()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'contextdev',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`account.usage`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.contextdev.api.account.usage({});
+```
+
+
+**`brand.prefetch`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.contextdev.api.brand.prefetch({});
+```
+
+
+See the full list on the [API](/plugins/contextdev/api) page.
+
+## Query synced data
+
+Synced entities support `tenant.contextdev.db.<entity>.search()` and `.list()`: `brands`, `newsArticles`.
+
+See [Database](/plugins/contextdev/database) for filters and operators.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/contextdev/api">
+    Every `contextdev.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/contextdev/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

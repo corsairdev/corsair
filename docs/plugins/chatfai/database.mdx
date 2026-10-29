@@ -1,0 +1,76 @@
+---
+title: Database
+description: "ChatFAI local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The ChatFAI plugin syncs data locally. Use `corsair.chatfai.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Characters
+
+Path: `chatfai.db.characters.search`
+
+```ts
+const rows = await corsair.chatfai.db.characters.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `uid` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `nickname` | `string` | equals, contains, startsWith, endsWith, in |
+| `publicDescription` | `string` | equals, contains, startsWith, endsWith, in |
+| `image` | `string` | equals, contains, startsWith, endsWith, in |
+| `visibility` | `string` | equals, contains, startsWith, endsWith, in |
+| `featured` | `boolean` | equals |
+| `firstMessage` | `string` | equals, contains, startsWith, endsWith, in |
+| `voiceEnabled` | `boolean` | equals |
+| `likes` | `number` | equals, gt, gte, lt, lte, in |
+| `installs` | `number` | equals, gt, gte, lt, lte, in |
+| `followers` | `number` | equals, gt, gte, lt, lte, in |
+| `createdAt` | `string` | equals, contains, startsWith, endsWith, in |
+| `updatedAt` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Conversations
+
+Path: `chatfai.db.conversations.search`
+
+```ts
+const rows = await corsair.chatfai.db.conversations.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `character_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `characterId` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `string` | equals, contains, startsWith, endsWith, in |
+| `updatedAt` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

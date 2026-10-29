@@ -1,3 +1,4 @@
+import { AsyncLocalStorage } from 'node:async_hooks';
 import { randomBytes } from 'node:crypto';
 import { v4 as uuidv4 } from 'uuid';
 import type { CorsairPermission } from '../../db';
@@ -8,6 +9,115 @@ import type {
 	PermissionMode,
 	PermissionPolicy,
 } from '../plugins';
+import { PermissionRequiredError } from './errors/permission-required';
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Permission Mode Scope
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * The permission mode the caller set for the current call. Applies to every
+ * endpoint call inside the scope, including plugins that carry no mode of
+ * their own, and composes with one that does.
+ */
+const modeScope = new AsyncLocalStorage<PermissionMode>();
+
+// A scalar works only because PERMISSION_MATRIX is monotonic in this order at
+// every risk level.
+const STRICTNESS: Record<PermissionMode, number> = {
+	open: 0,
+	cautious: 1,
+	strict: 2,
+	readonly: 3,
+};
+
+/**
+ * Thrown when a write or destructive operation is attempted inside a
+ * {@link runReadonly} scope. Aborts the whole script so the agent must retry with
+ * read-only operations only — no permission record is created.
+ */
+export class ReadonlyForbiddenError extends Error {
+	readonly endpointPath: string;
+	readonly riskLevel: EndpointRiskLevel;
+
+	constructor(endpointPath: string, riskLevel: EndpointRiskLevel) {
+		super(
+			`Action '${endpointPath}' is a '${riskLevel}' operation and is forbidden in readonly mode. ` +
+				'Only read operations are permitted — rewrite the script to avoid write/destructive actions.',
+		);
+		this.name = 'ReadonlyForbiddenError';
+		this.endpointPath = endpointPath;
+		this.riskLevel = riskLevel;
+	}
+}
+
+/** Whichever of the two forbids more. */
+export function stricterMode(
+	a: PermissionMode | undefined,
+	b: PermissionMode | undefined,
+): PermissionMode | undefined {
+	if (a === undefined) return b;
+	if (b === undefined) return a;
+	return STRICTNESS[a] >= STRICTNESS[b] ? a : b;
+}
+
+/** Runs `fn` under `mode`. Nesting never widens: the stricter of the two wins. */
+export function runWithMode<T>(mode: PermissionMode, fn: () => T): T {
+	return modeScope.run(stricterMode(modeScope.getStore(), mode) ?? mode, fn);
+}
+
+/** The mode in effect for the current async context, if any. */
+export function activeMode(): PermissionMode | undefined {
+	return modeScope.getStore();
+}
+
+/**
+ * Runs `fn` in a scope where every Corsair endpoint call is forced to read-only.
+ * Any write/destructive endpoint invoked within (including in nested async calls)
+ * throws {@link ReadonlyForbiddenError}.
+ */
+export function runReadonly<T>(fn: () => T): T {
+	return runWithMode('readonly', fn);
+}
+
+/** Whether the current async context is inside a {@link runReadonly} scope. */
+export function isReadonlyScopeActive(): boolean {
+	return modeScope.getStore() === 'readonly';
+}
+
+/**
+ * Guard invoked by the endpoint binding layer before any endpoint runs. When a
+ * read-only scope is active and the endpoint is not a `read` operation, throws
+ * {@link ReadonlyForbiddenError}. No-op otherwise.
+ */
+export function assertReadonlyAllowed(
+	endpointPath: string,
+	riskLevel: EndpointRiskLevel,
+): void {
+	if (isReadonlyScopeActive() && riskLevel !== 'read') {
+		throw new ReadonlyForbiddenError(endpointPath, riskLevel);
+	}
+}
+
+/**
+ * Guard for paths that reach data without the endpoint binding layer: the
+ * entity store and the cloud entity proxy. Neither records approval state, so
+ * anything short of `allow` is refused rather than held.
+ */
+export function assertModeAllows(
+	endpointPath: string,
+	riskLevel: EndpointRiskLevel,
+): void {
+	assertReadonlyAllowed(endpointPath, riskLevel);
+	const mode = activeMode();
+	if (mode === undefined || evaluatePermission(riskLevel, mode) === 'allow') {
+		return;
+	}
+	throw new PermissionRequiredError(
+		`Action '${endpointPath}' is a '${riskLevel}' operation and permission mode '${mode}' does not allow it. The entity store cannot wait for approval.`,
+		'policy',
+	);
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Permission Matrix
@@ -22,6 +132,22 @@ const PERMISSION_MATRIX: Record<
 	strict: { read: 'allow', write: 'require_approval', destructive: 'deny' },
 	readonly: { read: 'allow', write: 'deny', destructive: 'deny' },
 };
+
+// allow < require_approval < deny.
+const POLICY_RANK: Record<PermissionPolicy, number> = {
+	allow: 0,
+	require_approval: 1,
+	deny: 2,
+};
+
+/** Whichever of the two forbids more. */
+export function stricterPolicy(
+	a: PermissionPolicy | undefined,
+	b: PermissionPolicy,
+): PermissionPolicy {
+	if (a === undefined) return b;
+	return POLICY_RANK[a] >= POLICY_RANK[b] ? a : b;
+}
 
 /** Resolves the effective permission policy for an endpoint. The override (from permissions.overrides) takes precedence. */
 export function evaluatePermission(
@@ -267,7 +393,7 @@ export async function enforcePermission(
 		console.log(
 			`[corsair/${opts.pluginId}] '${opts.endpointPath}' blocked — denied by permission mode '${opts.mode}'.`,
 			`\n  Action: ${description}`,
-			`\n  To allow this, update the permission mode or add an override in your corsair config.`,
+			`\n  To allow this, widen the permission mode in force for this call.`,
 		);
 		return { result: 'blocked', reason: 'policy' };
 	}
@@ -401,3 +527,4 @@ export {
 	resolveAsyncApprovalMessage,
 	usesManualApprovalConfig,
 } from './approval-message';
+export { PermissionRequiredError } from './errors/permission-required';

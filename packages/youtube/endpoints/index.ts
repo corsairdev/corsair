@@ -2,13 +2,13 @@ import * as Captions from './captions';
 import * as Channels from './channels';
 import * as Comments from './comments';
 import * as I18n from './i18n';
-import * as LiveChat from './liveChat';
-import * as PlaylistImages from './playlistImages';
-import * as PlaylistItems from './playlistItems';
+import * as LiveChat from './live-chat';
+import * as PlaylistImages from './playlist-images';
+import * as PlaylistItems from './playlist-items';
 import * as Playlists from './playlists';
 import * as Search from './search';
 import * as Subscriptions from './subscriptions';
-import * as VideoActions from './videoActions';
+import * as VideoActions from './video-actions';
 import * as Videos from './videos';
 
 export const PlaylistsEndpoints = {

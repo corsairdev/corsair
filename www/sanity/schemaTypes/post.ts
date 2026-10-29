@@ -21,7 +21,7 @@ export const postType = defineType({
 			title: 'Slug',
 			type: 'slug',
 			group: 'content',
-			description: 'URL becomes /resources/blog/<slug>',
+			description: 'URL becomes /blog/<slug>',
 			options: {
 				source: 'title',
 				maxLength: 96,
@@ -203,7 +203,7 @@ export const postType = defineType({
 			rows: 8,
 			group: 'seo',
 			description:
-				'Raw JSON-LD injected into the page <head>. One object or an array of objects (e.g. Article + FAQPage). Must be valid JSON.',
+				'Not injected as-is: the page builds Article, breadcrumb and FAQ JSON-LD from the fields above. If the FAQs field is empty, an FAQPage here supplies the FAQ instead. FAQ questions are only marked up when they also appear in the body.',
 		}),
 	],
 	preview: {

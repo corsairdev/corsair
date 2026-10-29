@@ -1,0 +1,362 @@
+{
+  "id": "clay",
+  "displayName": "Clay",
+  "description": "Clay plugin for Corsair",
+  "npmPackageName": "@corsair-dev/clay",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 7,
+    "webhooks": 0,
+    "db": 3
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "clay.api.account.credits",
+      "shortPath": "account.credits",
+      "description": "Get the workspace data credit and action balances",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "balance",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "action_execution_balance",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clay.api.account.me",
+      "shortPath": "account.me",
+      "description": "Get the Clay user and workspace for the API key",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, email?: string | null, cli_onboarded?: boolean }"
+          },
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "{ id: string, name?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clay.api.routines.getResults",
+      "shortPath": "routines.getResults",
+      "description": "Get progress, or the paginated per-item results, of a routine run",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "routine_run_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ routine_run_id: string, status: in_progress, total: number, finished: number } | { routine_run_id: string, status: string, total: number, finished: number, data: { id: string, status: complete | failed, result?: {}, error?: { message: string } }[], cursor?: string }"
+      }
+    },
+    {
+      "path": "clay.api.routines.run",
+      "shortPath": "routines.run",
+      "description": "Run a Clay-managed or custom function routine on 1-100 items; spends credits and returns a routine_run_id",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "routine_id",
+            "optional": false,
+            "type": "string",
+            "description": "Routine id, for example function:t_abc123"
+          },
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: string, inputs: {} }[]"
+          },
+          {
+            "key": "webhook_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "routine_run_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "in_progress"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clay.api.search.create",
+      "shortPath": "search.create",
+      "description": "Create a people or company search over Clay's GTM database from a Clay search query",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string",
+            "description": "Clay advanced search query; see search.reference"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "source_type",
+            "optional": false,
+            "type": "people | companies"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clay.api.search.reference",
+      "shortPath": "search.reference",
+      "description": "Get the Clay search query language reference used by search.create",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "reference",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clay.api.search.run",
+      "shortPath": "search.run",
+      "description": "Get the next page of a search's results; each row draws from the workspace search quota",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ source_type: people, data: { clay_profile_id: number, name?: string | null, first_name?: string | null, last_name?: string | null, linkedin_url?: string | null, location: { name?: string | null, city?: string | null, state_or_province?: string | null }, matched_experiences: { company?: string | null, title?: string | null, location?: string | null, start_date?: string | null, end_date?: string | null }[] }[], has_more: boolean, exhaustion_reason?: query_limit | no_more_results, period_quota?: { limit: number, used: number, remaining: number, resets_at: string } } | { source_type: companies, data: { clay_company_id: number, name?: string | null, domain?: string | null, size?: string | null, type?: string | null, country?: string | null, industry?: string | null, location?: string | null, description?: string | null, linkedin_url?: string | null, annual_revenue?: string | null, total_funding_amount_range_usd?: number | null }[], has_more: boolean, exhaustion_reason?: query_limit | no_more_results, period_quota?: { limit: number, used: number, remaining: number, resets_at: string } }"
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "clay.db.companies.search",
+      "entityName": "companies",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "clayCompanyId",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "domain",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "size",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "industry",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "country",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "linkedinUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "clay.db.people.search",
+      "entityName": "people",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "clayProfileId",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "firstName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lastName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "linkedinUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "location",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "currentTitle",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "currentCompany",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "clay.db.routineRuns.search",
+      "entityName": "routineRuns",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "routineRunId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "routineId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "total",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "finished",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

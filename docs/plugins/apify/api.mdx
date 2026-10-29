@@ -1,0 +1,6103 @@
+---
+title: API
+description: "API reference for Apify: every `apify.api.*` operation with input and output types."
+---
+
+Every `apify.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Actor Builds
+
+### abortActorBuild
+
+`actorBuilds.abortActorBuild`
+
+Tool to abort an Actor build that is starting or running. Use when you need to cancel a build in progress. Builds in terminal states (FINISHED, FAILED, ABORTING, TIMED-OUT) are not affected.
+
+**Risk:** `write`
+
+```ts
+await corsair.apify.api.actorBuilds.abortActorBuild({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `buildId` | `string \| number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteActorBuild
+
+`actorBuilds.deleteActorBuild`
+
+Tool to delete an Actor build permanently. Use when you need to remove a specific build by its ID. The default build for an Actor cannot be deleted. Only users with build permissions can delete builds.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.apify.api.actorBuilds.deleteActorBuild({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `buildId` | `string \| number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getActorBuild
+
+`actorBuilds.getActorBuild`
+
+Tool to get detailed information about a specific Actor build. Use when you need to retrieve complete build details by build ID. Optionally wait for the build to finish using the waitForFinish parameter to avoid polling.
+
+**Risk:** `read`
+
+```ts
+await corsair.apify.api.actorBuilds.getActorBuild({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `buildId` | `string \| number` | Yes | — |
+| `waitForFinish` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getActorBuildLog
+
+`actorBuilds.getActorBuildLog`
+
+Tool to retrieve the log file for a specific Actor build. Use when you need to inspect logs generated during an Actor build process. Only the trailing 5 million characters of the log are stored.
+
+**Risk:** `read`
+
+```ts
+await corsair.apify.api.actorBuilds.getActorBuildLog({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `buildId` | `string \| number` | Yes | — |
+| `stream` | `any` | No | — |
+| `download` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getUserBuildsList
+
+`actorBuilds.getUserBuildsList`
+
+Tool to get a paginated list of all builds for a user. Use when you need to retrieve build history across all actors. Supports pagination up to 1000 records.
+
+**Risk:** `read`
+
+```ts
+await corsair.apify.api.actorBuilds.getUserBuildsList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `offset` | `any` | No | — |
+| `limit` | `any` | No | — |
+| `desc` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Actor Runs
+
+### abortActorRun
+
+`actorRuns.abortActorRun`
+
+Tool to abort a running or starting Actor run. Use when you need to stop an Actor run that is currently in STARTING or RUNNING status. For runs with status FINISHED, FAILED, ABORTING, and TIMED-OUT this call does nothing.
+
+**Risk:** `write`
+
+```ts
+await corsair.apify.api.actorRuns.abortActorRun({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `runId` | `string \| number` | Yes | — |
+| `gracefully` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteActorRun
+
+`actorRuns.deleteActorRun`
+
+Tool to delete a finished Actor run. Use when you need to permanently remove a completed run. Only finished runs can be deleted by the initiating user or organization.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.apify.api.actorRuns.deleteActorRun({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `runId` | `string \| number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getActorRun
+
+`actorRuns.getActorRun`
+
+Tool to get details about a specific Actor run. Use when you need to retrieve comprehensive information about a run including its execution status, resource usage, storage IDs, and metadata.
+
+**Risk:** `read`
+
+```ts
+await corsair.apify.api.actorRuns.getActorRun({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `runId` | `string \| number` | Yes | — |
+| `waitForFinish` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getRunDatasetItems
+
+`actorRuns.getRunDatasetItems`
+
+Tool to get dataset items from a specific Actor run. Use when you need to retrieve the output data from a completed or running Actor run.
+
+**Risk:** `read`
+
+```ts
+await corsair.apify.api.actorRuns.getRunDatasetItems({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `runId` | `string \| number` | Yes | — |
+| `format` | `any` | No | — |
+| `clean` | `any` | No | — |
+| `offset` | `any` | No | — |
+| `limit` | `any` | No | — |
+| `fields` | `any` | No | — |
+| `outputFields` | `any` | No | — |
+| `omit` | `any` | No | — |
+| `unwind` | `any` | No | — |
+| `flatten` | `any` | No | — |
+| `desc` | `any` | No | — |
+| `attachment` | `any` | No | — |
+| `delimiter` | `any` | No | — |
+| `bom` | `any` | No | — |
+| `xmlRoot` | `any` | No | — |
+| `xmlRow` | `any` | No | — |
+| `skipHeaderRow` | `any` | No | — |
+| `skipHidden` | `any` | No | — |
+| `skipEmpty` | `any` | No | — |
+| `simplified` | `any` | No | — |
+| `view` | `any` | No | — |
+| `skipFailedPages` | `any` | No | — |
+| `feedTitle` | `any` | No | — |
+| `feedDescription` | `any` | No | — |
+| `signature` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### listUserActorRuns
+
+`actorRuns.listUserActorRuns`
+
+Tool to get a paginated list of all Actor runs for the authenticated user. Use when you need to browse all runs across all actors, optionally filtered by status or date range.
+
+**Risk:** `read`
+
+```ts
+await corsair.apify.api.actorRuns.listUserActorRuns({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `offset` | `any` | No | — |
+| `limit` | `any` | No | — |
+| `desc` | `any` | No | — |
+| `status` | `any` | No | — |
+| `startedAfter` | `any` | No | — |
+| `startedBefore` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### resurrectRun
+
+`actorRuns.resurrectRun`
+
+Tool to resurrect a finished Actor run. Use when you need to restart a completed or failed run. Deprecated endpoint; may be removed in future.
+
+**Risk:** `write`
+
+```ts
+await corsair.apify.api.actorRuns.resurrectRun({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `runId` | `string \| number` | Yes | — |
+| `build` | `any` | No | — |
+| `timeout` | `any` | No | — |
+| `memory` | `any` | No | — |
+| `maxItems` | `any` | No | — |
+| `maxTotalChargeUsd` | `any` | No | — |
+| `restartOnError` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateActorRunStatusMessage
+
+`actorRuns.updateActorRunStatusMessage`
+
+Tool to update the status message of an Actor run. Use when you need to set progress information or status updates that will be displayed in the Apify Console UI during Actor execution.
+
+**Risk:** `write`
+
+```ts
+await corsair.apify.api.actorRuns.updateActorRunStatusMessage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `runId` | `string \| number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Actors
+
+### callActor
+
+`actors.callActor`
+
+Run an Apify Actor and return run metadata
+
+**Risk:** `write`
+
+```ts
+await corsair.apify.api.actors.callActor({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `actor` | `string` | Yes | Actor ID or full name (username/name) |
+| `input` | `object` | No | Actor input object matching the Actor input schema |
+| `build` | `string` | No | — |
+| `timeout` | `number` | No | — |
+| `memory` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### fetchActorDetails
+
+`actors.fetchActorDetails`
+
+Get detailed information about an Actor including schemas and pricing
+
+**Risk:** `read`
+
+```ts
+await corsair.apify.api.actors.fetchActorDetails({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `actor` | `string` | Yes | Actor ID or full name (username/name) |
+| `output` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="output full type">
+
+```ts
+{
+  inputSchema?: boolean,
+  outputSchema?: boolean,
+  description?: boolean,
+  readme?: boolean,
+  pricing?: boolean,
+  mcpTools?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### ragWebBrowser
+
+`actors.ragWebBrowser`
+
+Search the web and scrape top results using the RAG Web Browser Actor
+
+**Risk:** `write`
+
+```ts
+await corsair.apify.api.actors.ragWebBrowser({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | Search query for the RAG Web Browser Actor |
+| `maxResults` | `number` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### searchActors
+
+`actors.searchActors`
+
+Search for Actors in the Apify Store
+
+**Risk:** `read`
+
+```ts
+await corsair.apify.api.actors.searchActors({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search` | `string` | Yes | Search query for Apify Store Actors |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+## Actor Tasks
+
+### createActorTask
+
+`actorTasks.createActorTask`
+
+Tool to create a new Actor task with specified settings. Use when you need to configure or schedule recurring Actor runs programmatically.
+
+**Risk:** `write`
+
+```ts
+await corsair.apify.api.actorTasks.createActorTask({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteActorTask
+
+`actorTasks.deleteActorTask`
+
+Tool to delete an Actor task permanently. Use when you need to remove a task by its ID or username~taskName. Confirm before calling.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.apify.api.actorTasks.deleteActorTask({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `actorTaskId` | `string \| number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getActorTask
+
+`actorTasks.getActorTask`
+
+Tool to get complete details about an Actor task. Use when you need to retrieve task configuration, input settings, or metadata by task ID or username~task-name.
+
+**Risk:** `read`
+
+```ts
+await corsair.apify.api.actorTasks.getActorTask({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `actorTaskId` | `string \| number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getLastActorTaskRun
+
+`actorTasks.getLastActorTaskRun`
+
+Tool to get the most recent run of a specific Actor task. Use when you need to retrieve the last execution details. You can filter by status to get only successful runs using status='SUCCEEDED'.
+
+**Risk:** `read`
+
+```ts
+await corsair.apify.api.actorTasks.getLastActorTaskRun({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `actorTaskId` | `string \| number` | Yes | — |
+| `status` | `any` | No | — |
+| `origin` | `any` | No | — |
+| `waitForFinish` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getListOfTaskRuns
+
+`actorTasks.getListOfTaskRuns`
+
+Tool to get a list of runs for a specific Actor task. Use when you need to paginate through task runs and optionally filter by status.
+
+**Risk:** `read`
+
+```ts
+await corsair.apify.api.actorTasks.getListOfTaskRuns({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `actorTaskId` | `string \| number` | Yes | — |
+| `offset` | `any` | No | — |
+| `limit` | `any` | No | — |
+| `desc` | `any` | No | — |
+| `status` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getListOfTasks
+
+`actorTasks.getListOfTasks`
+
+Tool to fetch a paginated list of tasks belonging to the authenticated user. Use when you need to browse or sort tasks created by the user.
+
+**Risk:** `read`
+
+```ts
+await corsair.apify.api.actorTasks.getListOfTasks({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `offset` | `any` | No | — |
+| `limit` | `any` | No | — |
+| `desc` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getListOfTaskWebhooks
+
+`actorTasks.getListOfTaskWebhooks`
+
+Tool to get a list of webhooks for a specific Actor task. Use when you need to review or paginate webhooks after creating or updating a task.
+
+**Risk:** `read`
+
+```ts
+await corsair.apify.api.actorTasks.getListOfTaskWebhooks({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `actorTaskId` | `string \| number` | Yes | — |
+| `offset` | `any` | No | — |
+| `limit` | `any` | No | — |
+| `desc` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getTaskInput
+
+`actorTasks.getTaskInput`
+
+Tool to retrieve the input configuration of a specific task. Use when you need to inspect stored task input before execution or debugging.
+
+**Risk:** `read`
+
+```ts
+await corsair.apify.api.actorTasks.getTaskInput({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `actorTaskId` | `string \| number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getTaskLastRunDatasetItems
+
+`actorTasks.getTaskLastRunDatasetItems`
+
+Tool to get dataset items from the last run of an Actor task. Use when you need to retrieve data from the most recent task execution. Filter by status (e.g., 'SUCCEEDED') to get items from the last successful run only.
+
+**Risk:** `read`
+
+```ts
+await corsair.apify.api.actorTasks.getTaskLastRunDatasetItems({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `actorTaskId` | `string \| number` | Yes | — |
+| `status` | `any` | No | — |
+| `origin` | `any` | No | — |
+| `format` | `any` | No | — |
+| `clean` | `any` | No | — |
+| `offset` | `any` | No | — |
+| `limit` | `any` | No | — |
+| `fields` | `any` | No | — |
+| `outputFields` | `any` | No | — |
+| `omit` | `any` | No | — |
+| `unwind` | `any` | No | — |
+| `flatten` | `any` | No | — |
+| `desc` | `any` | No | — |
+| `attachment` | `any` | No | — |
+| `delimiter` | `any` | No | — |
+| `bom` | `any` | No | — |
+| `xmlRoot` | `any` | No | — |
+| `xmlRow` | `any` | No | — |
+| `skipHeaderRow` | `any` | No | — |
+| `skipHidden` | `any` | No | — |
+| `skipEmpty` | `any` | No | — |
+| `simplified` | `any` | No | — |
+| `view` | `any` | No | — |
+| `skipFailedPages` | `any` | No | — |
+| `feedTitle` | `any` | No | — |
+| `feedDescription` | `any` | No | — |
+| `signature` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### runTaskAsynchronously
+
+`actorTasks.runTaskAsynchronously`
+
+Tool to run a specific Actor task asynchronously. Use when you need to trigger a task run without waiting for completion and immediately retrieve its run details.
+
+**Risk:** `write`
+
+```ts
+await corsair.apify.api.actorTasks.runTaskAsynchronously({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `actorTaskId` | `string \| number` | Yes | — |
+| `timeout` | `any` | No | — |
+| `memory` | `any` | No | — |
+| `maxItems` | `any` | No | — |
+| `maxTotalChargeUsd` | `any` | No | — |
+| `restartOnError` | `any` | No | — |
+| `build` | `any` | No | — |
+| `waitForFinish` | `any` | No | — |
+| `webhooks` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### runTaskSyncGet
+
+`actorTasks.runTaskSyncGet`
+
+Tool to run a specific task synchronously and return its output. Use when immediate task results are needed with pre-configured settings. The run must finish within 300 seconds otherwise the HTTP request fails with a timeout error.
+
+**Risk:** `write`
+
+```ts
+await corsair.apify.api.actorTasks.runTaskSyncGet({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `actorTaskId` | `string \| number` | Yes | — |
+| `timeout` | `any` | No | — |
+| `memory` | `any` | No | — |
+| `maxItems` | `any` | No | — |
+| `build` | `any` | No | — |
+| `outputRecordKey` | `any` | No | — |
+| `webhooks` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### runTaskSyncGetDatasetItems
+
+`actorTasks.runTaskSyncGetDatasetItems`
+
+Tool to run an actor task synchronously and retrieve its dataset items. Use when immediate access to task run results is needed. The run must finish within 300 seconds otherwise the request times out. For large datasets exceeding the timeout, use `limit`/`offset` pagination to retrieve results in smaller batches or switch to an async run pattern with a separate dataset retrieval call.
+
+**Risk:** `write`
+
+```ts
+await corsair.apify.api.actorTasks.runTaskSyncGetDatasetItems({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `actorTaskId` | `string \| number` | Yes | — |
+| `timeout` | `any` | No | — |
+| `memory` | `any` | No | — |
+| `maxItems` | `any` | No | — |
+| `build` | `any` | No | — |
+| `webhooks` | `any` | No | — |
+| `format` | `any` | No | — |
+| `clean` | `any` | No | — |
+| `offset` | `any` | No | — |
+| `limit` | `any` | No | — |
+| `fields` | `any` | No | — |
+| `outputFields` | `any` | No | — |
+| `omit` | `any` | No | — |
+| `unwind` | `any` | No | — |
+| `flatten` | `any` | No | — |
+| `desc` | `any` | No | — |
+| `attachment` | `any` | No | — |
+| `delimiter` | `any` | No | — |
+| `bom` | `any` | No | — |
+| `xmlRoot` | `any` | No | — |
+| `xmlRow` | `any` | No | — |
+| `skipHeaderRow` | `any` | No | — |
+| `skipHidden` | `any` | No | — |
+| `skipEmpty` | `any` | No | — |
+| `simplified` | `any` | No | — |
+| `view` | `any` | No | — |
+| `skipFailedPages` | `any` | No | — |
+| `feedTitle` | `any` | No | — |
+| `feedDescription` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### runTaskSyncPost
+
+`actorTasks.runTaskSyncPost`
+
+Tool to run an Actor task synchronously with input override and return its output. Use when immediate task results are needed with custom input parameters. The run must finish within 300 seconds otherwise the HTTP request fails with a timeout error (though the run continues server-side).
+
+**Risk:** `write`
+
+```ts
+await corsair.apify.api.actorTasks.runTaskSyncPost({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `actorTaskId` | `string \| number` | Yes | — |
+| `timeout` | `any` | No | — |
+| `memory` | `any` | No | — |
+| `maxItems` | `any` | No | — |
+| `maxTotalChargeUsd` | `any` | No | — |
+| `restartOnError` | `any` | No | — |
+| `build` | `any` | No | — |
+| `outputRecordKey` | `any` | No | — |
+| `webhooks` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### runTaskSyncWithInputOverrideGetDatasetItems
+
+`actorTasks.runTaskSyncWithInputOverrideGetDatasetItems`
+
+Tool to run an actor task synchronously with input overrides and retrieve its dataset items. Use when you need to override task input configuration and get immediate results. The run must finish within 300 seconds otherwise the request times out.
+
+**Risk:** `write`
+
+```ts
+await corsair.apify.api.actorTasks.runTaskSyncWithInputOverrideGetDatasetItems({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `actorTaskId` | `string \| number` | Yes | — |
+| `timeout` | `any` | No | — |
+| `memory` | `any` | No | — |
+| `maxItems` | `any` | No | — |
+| `maxTotalChargeUsd` | `any` | No | — |
+| `restartOnError` | `any` | No | — |
+| `build` | `any` | No | — |
+| `webhooks` | `any` | No | — |
+| `format` | `any` | No | — |
+| `clean` | `any` | No | — |
+| `offset` | `any` | No | — |
+| `limit` | `any` | No | — |
+| `fields` | `any` | No | — |
+| `outputFields` | `any` | No | — |
+| `omit` | `any` | No | — |
+| `unwind` | `any` | No | — |
+| `flatten` | `any` | No | — |
+| `desc` | `any` | No | — |
+| `attachment` | `any` | No | — |
+| `delimiter` | `any` | No | — |
+| `bom` | `any` | No | — |
+| `xmlRoot` | `any` | No | — |
+| `xmlRow` | `any` | No | — |
+| `skipHeaderRow` | `any` | No | — |
+| `skipHidden` | `any` | No | — |
+| `skipEmpty` | `any` | No | — |
+| `simplified` | `any` | No | — |
+| `view` | `any` | No | — |
+| `skipFailedPages` | `any` | No | — |
+| `feedTitle` | `any` | No | — |
+| `feedDescription` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateActorTask
+
+`actorTasks.updateActorTask`
+
+Tool to update Actor task settings using JSON payload. Only specified properties are updated; others remain unchanged. Use when you need to modify task configuration, input, or execution options.
+
+**Risk:** `write`
+
+```ts
+await corsair.apify.api.actorTasks.updateActorTask({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `actorTaskId` | `string \| number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateTaskInput
+
+`actorTasks.updateTaskInput`
+
+Tool to update the input configuration of a specific Actor task. Use when you need to modify a scheduled task input before execution.
+
+**Risk:** `write`
+
+```ts
+await corsair.apify.api.actorTasks.updateTaskInput({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `actorTaskId` | `string \| number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Acts
+
+### buildActor
+
+`acts.buildActor`
+
+Tool to build an Actor with specified configuration. Use when you need to create a new build of an Actor with a specific version. The build process compiles the Actor's source code into a Docker image.
+
+**Risk:** `write`
+
+```ts
+await corsair.apify.api.acts.buildActor({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `actorId` | `string \| number` | Yes | — |
+| `version` | `any` | No | — |
+| `useCache` | `any` | No | — |
+| `betaPackages` | `any` | No | — |
+| `tag` | `any` | No | — |
+| `waitForFinish` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### createActor
+
+`acts.createActor`
+
+Tool to create a new Actor with specified configuration. Use when you need to initialize a fresh Actor programmatically before publishing or running it.
+
+**Risk:** `write`
+
+```ts
+await corsair.apify.api.acts.createActor({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### createActorVersion
+
+`acts.createActorVersion`
+
+Tool to create a new version of an Actor. Use when you need to add a new version with specific source code location and configuration. Requires versionNumber and sourceType parameters, plus conditional parameters based on the sourceType.
+
+**Risk:** `write`
+
+```ts
+await corsair.apify.api.acts.createActorVersion({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `actorId` | `string \| number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### createActorVersionEnvironmentVariable
+
+`acts.createActorVersionEnvironmentVariable`
+
+Tool to create an environment variable for a specific Actor version. Use when adding new environment variables to Actor versions. Requires name and value parameters.
+
+**Risk:** `write`
+
+```ts
+await corsair.apify.api.acts.createActorVersionEnvironmentVariable({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `actorId` | `string \| number` | Yes | — |
+| `versionNumber` | `string \| number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteActor
+
+`acts.deleteActor`
+
+Tool to delete an Actor permanently. Use when you need to remove an Actor by its ID or username~actorName. Confirm before calling.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.apify.api.acts.deleteActor({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `actorId` | `string \| number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteActorVersion
+
+`acts.deleteActorVersion`
+
+Tool to delete a specific version of an Actor's source code. Use when you need to remove an Actor version by actor ID and version number. Confirm before calling.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.apify.api.acts.deleteActorVersion({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `actorId` | `string \| number` | Yes | — |
+| `versionNumber` | `string \| number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteActorVersionEnvironmentVariable
+
+`acts.deleteActorVersionEnvironmentVariable`
+
+Tool to delete an environment variable from a specific Actor version. Use when removing environment variables from Actor versions.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.apify.api.acts.deleteActorVersionEnvironmentVariable({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `actorId` | `string \| number` | Yes | — |
+| `versionNumber` | `string \| number` | Yes | — |
+| `envVarName` | `string \| number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getActorDetails
+
+`acts.getActorDetails`
+
+Tool to get details of a specific Actor. Use when you need actor metadata by ID or username/actorName. Response includes `isDeprecated` and `notice` fields indicating deprecation status, and `pricingInfos` for per-unit cost details — review both before scheduling runs.
+
+**Risk:** `read`
+
+```ts
+await corsair.apify.api.acts.getActorDetails({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `actorId` | `string \| number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getActorLastRunDatasetItems
+
+`acts.getActorLastRunDatasetItems`
+
+Tool to get dataset items from the last run of an Actor. Use when you need to retrieve output data from the most recent Actor execution, optionally filtered by run status (e.g., status='SUCCEEDED' to get items only from the last successful run).
+
+**Risk:** `read`
+
+```ts
+await corsair.apify.api.acts.getActorLastRunDatasetItems({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `actorId` | `string \| number` | Yes | — |
+| `status` | `any` | No | — |
+| `origin` | `any` | No | — |
+| `format` | `any` | No | — |
+| `clean` | `any` | No | — |
+| `offset` | `any` | No | — |
+| `limit` | `any` | No | — |
+| `fields` | `any` | No | — |
+| `outputFields` | `any` | No | — |
+| `omit` | `any` | No | — |
+| `unwind` | `any` | No | — |
+| `flatten` | `any` | No | — |
+| `desc` | `any` | No | — |
+| `attachment` | `any` | No | — |
+| `delimiter` | `any` | No | — |
+| `bom` | `any` | No | — |
+| `xmlRoot` | `any` | No | — |
+| `xmlRow` | `any` | No | — |
+| `skipHeaderRow` | `any` | No | — |
+| `skipHidden` | `any` | No | — |
+| `skipEmpty` | `any` | No | — |
+| `simplified` | `any` | No | — |
+| `view` | `any` | No | — |
+| `skipFailedPages` | `any` | No | — |
+| `feedTitle` | `any` | No | — |
+| `feedDescription` | `any` | No | — |
+| `signature` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getActorVersion
+
+`acts.getActorVersion`
+
+Tool to get details about a specific version of an Actor. Use when you need version metadata including source type, build tag, and configuration details.
+
+**Risk:** `read`
+
+```ts
+await corsair.apify.api.acts.getActorVersion({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `actorId` | `string \| number` | Yes | — |
+| `versionNumber` | `string \| number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getActorVersionEnvironmentVariable
+
+`acts.getActorVersionEnvironmentVariable`
+
+Tool to get environment variable details for a specific Actor version. Use when retrieving environment variable information from an Actor version. Returns name, value (if not secret), and secret status.
+
+**Risk:** `read`
+
+```ts
+await corsair.apify.api.acts.getActorVersionEnvironmentVariable({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `actorId` | `string \| number` | Yes | — |
+| `versionNumber` | `string \| number` | Yes | — |
+| `envVarName` | `string \| number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getDefaultBuild
+
+`acts.getDefaultBuild`
+
+Tool to get the default build for an Actor. Use after specifying the Actor ID; optionally wait for the build to finish before returning.
+
+**Risk:** `read`
+
+```ts
+await corsair.apify.api.acts.getDefaultBuild({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `actorId` | `string \| number` | Yes | — |
+| `waitForFinish` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getLastActorRun
+
+`acts.getLastActorRun`
+
+Tool to get the most recent run of a specific Actor. Use when you need to retrieve the last execution details of an Actor and optionally filter by status (e.g., status='SUCCEEDED' to get only the last successful run).
+
+**Risk:** `read`
+
+```ts
+await corsair.apify.api.acts.getLastActorRun({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `actorId` | `string \| number` | Yes | — |
+| `status` | `any` | No | — |
+| `origin` | `any` | No | — |
+| `waitForFinish` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getListOfActors
+
+`acts.getListOfActors`
+
+Tool to get the list of all Actors that the user created or used. Use when you need to enumerate or browse Actors. Add my=1 to get only user-created Actors.
+
+**Risk:** `read`
+
+```ts
+await corsair.apify.api.acts.getListOfActors({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `my` | `any` | No | — |
+| `offset` | `any` | No | — |
+| `limit` | `any` | No | — |
+| `desc` | `any` | No | — |
+| `sortBy` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getListOfActorVersionEnvironmentVariables
+
+`acts.getListOfActorVersionEnvironmentVariables`
+
+Tool to get the list of environment variables for a specific Actor version. Use when you need to retrieve environment variable configurations for an Actor version.
+
+**Risk:** `read`
+
+```ts
+await corsair.apify.api.acts.getListOfActorVersionEnvironmentVariables({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `actorId` | `string \| number` | Yes | — |
+| `versionNumber` | `string \| number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getListOfActorVersions
+
+`acts.getListOfActorVersions`
+
+Tool to get the list of versions of a specific Actor. Use when you need to retrieve version metadata including source type, version number, and configuration details.
+
+**Risk:** `read`
+
+```ts
+await corsair.apify.api.acts.getListOfActorVersions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `actorId` | `string \| number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getListOfActorWebhooks
+
+`acts.getListOfActorWebhooks`
+
+Tool to get a list of webhooks for a specific Actor. Use when you need to review or manage webhooks configured for an Actor.
+
+**Risk:** `read`
+
+```ts
+await corsair.apify.api.acts.getListOfActorWebhooks({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `actorId` | `string \| number` | Yes | — |
+| `offset` | `any` | No | — |
+| `limit` | `any` | No | — |
+| `desc` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getListOfBuilds
+
+`acts.getListOfBuilds`
+
+Tool to get a list of builds for a specific Actor. Use when you need paginated access to an Actor’s build (version) history.
+
+**Risk:** `read`
+
+```ts
+await corsair.apify.api.acts.getListOfBuilds({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `actorId` | `string \| number` | Yes | — |
+| `offset` | `any` | No | — |
+| `limit` | `any` | No | — |
+| `desc` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getListOfRuns
+
+`acts.getListOfRuns`
+
+Tool to get a list of runs for a specific Actor. Use when you need to paginate through runs and optionally filter by status before processing run data.
+
+**Risk:** `read`
+
+```ts
+await corsair.apify.api.acts.getListOfRuns({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `actorId` | `string \| number` | Yes | — |
+| `offset` | `any` | No | — |
+| `limit` | `any` | No | — |
+| `desc` | `any` | No | — |
+| `status` | `any` | No | — |
+| `startedAfter` | `any` | No | — |
+| `startedBefore` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getOpenapiDefinition
+
+`acts.getOpenapiDefinition`
+
+Tool to get the OpenAPI definition for a specific Actor build. Use when you need the API schema for code generation or analysis.
+
+**Risk:** `read`
+
+```ts
+await corsair.apify.api.acts.getOpenapiDefinition({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `actorId` | `string \| number` | Yes | — |
+| `buildId` | `string \| number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### runActorAsynchronously
+
+`acts.runActorAsynchronously`
+
+Tool to run a specific Actor asynchronously. Use when you need to trigger an Actor run without waiting for completion and retrieve its run details immediately.
+
+**Risk:** `write`
+
+```ts
+await corsair.apify.api.acts.runActorAsynchronously({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `actorId` | `string \| number` | Yes | — |
+| `timeout` | `any` | No | — |
+| `memory` | `any` | No | — |
+| `maxItems` | `any` | No | — |
+| `maxTotalChargeUsd` | `any` | No | — |
+| `restartOnError` | `any` | No | — |
+| `build` | `any` | No | — |
+| `waitForFinish` | `any` | No | — |
+| `webhooks` | `any` | No | — |
+| `forcePermissionLevel` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### runActorSync
+
+`acts.runActorSync`
+
+Tool to run a specific Actor synchronously with input and return its output record. Use when immediate Actor results are needed; runs may timeout after 300 seconds. To avoid timeouts, scope inputs to specific URLs rather than broad crawls and request only necessary fields (e.g., text or markdown).
+
+**Risk:** `write`
+
+```ts
+await corsair.apify.api.acts.runActorSync({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `actorId` | `string \| number` | Yes | — |
+| `outputRecordKey` | `any` | No | — |
+| `timeout` | `any` | No | — |
+| `memory` | `any` | No | — |
+| `maxItems` | `any` | No | — |
+| `maxTotalChargeUsd` | `any` | No | — |
+| `restartOnError` | `any` | No | — |
+| `build` | `any` | No | — |
+| `webhooks` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### runActorSyncGetDatasetItems
+
+`acts.runActorSyncGetDatasetItems`
+
+Tool to run Actor synchronously and get dataset items. Supports both actors that require input and those that don't. Use when immediate access to Actor results is needed. The run must finish within 300 seconds otherwise the request times out.
+
+**Risk:** `write`
+
+```ts
+await corsair.apify.api.acts.runActorSyncGetDatasetItems({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `actorId` | `string \| number` | Yes | — |
+| `timeout` | `any` | No | — |
+| `memory` | `any` | No | — |
+| `maxItems` | `any` | No | — |
+| `maxTotalChargeUsd` | `any` | No | — |
+| `restartOnError` | `any` | No | — |
+| `build` | `any` | No | — |
+| `webhooks` | `any` | No | — |
+| `format` | `any` | No | — |
+| `clean` | `any` | No | — |
+| `offset` | `any` | No | — |
+| `limit` | `any` | No | — |
+| `fields` | `any` | No | — |
+| `outputFields` | `any` | No | — |
+| `omit` | `any` | No | — |
+| `unwind` | `any` | No | — |
+| `flatten` | `any` | No | — |
+| `desc` | `any` | No | — |
+| `attachment` | `any` | No | — |
+| `delimiter` | `any` | No | — |
+| `bom` | `any` | No | — |
+| `xmlRoot` | `any` | No | — |
+| `xmlRow` | `any` | No | — |
+| `skipHeaderRow` | `any` | No | — |
+| `skipHidden` | `any` | No | — |
+| `skipEmpty` | `any` | No | — |
+| `simplified` | `any` | No | — |
+| `view` | `any` | No | — |
+| `skipFailedPages` | `any` | No | — |
+| `feedTitle` | `any` | No | — |
+| `feedDescription` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### runActorSyncGetDatasetItemsItems
+
+`acts.runActorSyncGetDatasetItemsItems`
+
+Tool to run an Actor synchronously and retrieve its dataset items. Use when immediate access to run results is needed.
+
+**Risk:** `write`
+
+```ts
+await corsair.apify.api.acts.runActorSyncGetDatasetItemsItems({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `actorId` | `string \| number` | Yes | — |
+| `timeout` | `any` | No | — |
+| `memory` | `any` | No | — |
+| `maxItems` | `any` | No | — |
+| `maxTotalChargeUsd` | `any` | No | — |
+| `restartOnError` | `any` | No | — |
+| `build` | `any` | No | — |
+| `webhooks` | `any` | No | — |
+| `format` | `any` | No | — |
+| `clean` | `any` | No | — |
+| `offset` | `any` | No | — |
+| `limit` | `any` | No | — |
+| `fields` | `any` | No | — |
+| `outputFields` | `any` | No | — |
+| `omit` | `any` | No | — |
+| `unwind` | `any` | No | — |
+| `flatten` | `any` | No | — |
+| `desc` | `any` | No | — |
+| `attachment` | `any` | No | — |
+| `delimiter` | `any` | No | — |
+| `bom` | `any` | No | — |
+| `xmlRoot` | `any` | No | — |
+| `xmlRow` | `any` | No | — |
+| `skipHeaderRow` | `any` | No | — |
+| `skipHidden` | `any` | No | — |
+| `skipEmpty` | `any` | No | — |
+| `simplified` | `any` | No | — |
+| `view` | `any` | No | — |
+| `skipFailedPages` | `any` | No | — |
+| `feedTitle` | `any` | No | — |
+| `feedDescription` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### runActorSyncWithoutInputGet
+
+`acts.runActorSyncWithoutInputGet`
+
+Tool to run a specific Actor synchronously without input and return its output. Use when immediate Actor results are needed without providing input data; the run must finish within 300 seconds otherwise the HTTP request fails with a timeout error.
+
+**Risk:** `write`
+
+```ts
+await corsair.apify.api.acts.runActorSyncWithoutInputGet({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `actorId` | `string \| number` | Yes | — |
+| `outputRecordKey` | `any` | No | — |
+| `timeout` | `any` | No | — |
+| `memory` | `any` | No | — |
+| `maxItems` | `any` | No | — |
+| `maxTotalChargeUsd` | `any` | No | — |
+| `restartOnError` | `any` | No | — |
+| `build` | `any` | No | — |
+| `webhooks` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateActor
+
+`acts.updateActor`
+
+Tool to update Actor settings using JSON payload. Only specified fields will be updated. Use when you need to modify Actor configuration, make an Actor public, or update version settings.
+
+**Risk:** `write`
+
+```ts
+await corsair.apify.api.acts.updateActor({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `actorId` | `string \| number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateActorVersion
+
+`acts.updateActorVersion`
+
+Tool to update an Actor version's configuration and source code. Use when modifying version properties such as buildTag, sourceType, or environment variables. Only specified properties will be updated.
+
+**Risk:** `write`
+
+```ts
+await corsair.apify.api.acts.updateActorVersion({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `actorId` | `string \| number` | Yes | — |
+| `versionNumber` | `string \| number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateActorVersionEnvironmentVariable
+
+`acts.updateActorVersionEnvironmentVariable`
+
+Tool to update environment variable for a specific Actor version using JSON payload. Only specified fields will be updated. Use when modifying existing environment variables in Actor versions.
+
+**Risk:** `write`
+
+```ts
+await corsair.apify.api.acts.updateActorVersionEnvironmentVariable({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `actorId` | `string \| number` | Yes | — |
+| `versionNumber` | `string \| number` | Yes | — |
+| `envVarName` | `string \| number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Datasets
+
+### createDataset
+
+`datasets.createDataset`
+
+Tool to create a new dataset. Use when you need to initialize or retrieve a dataset by name.
+
+**Risk:** `write`
+
+```ts
+await corsair.apify.api.datasets.createDataset({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `name` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteDataset
+
+`datasets.deleteDataset`
+
+Tool to delete a dataset permanently. Use when you need to remove a dataset by its ID or username~dataset-name. Confirm before calling.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.apify.api.datasets.deleteDataset({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `datasetId` | `string \| number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getDataset
+
+`datasets.getDataset`
+
+Tool to retrieve dataset metadata by dataset ID. Use when you need information about a dataset's structure, item counts, or access URLs. This does not return dataset items themselves.
+
+**Risk:** `read`
+
+```ts
+await corsair.apify.api.datasets.getDataset({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `datasetId` | `string \| number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getDatasetItems
+
+`datasets.getDatasetItems`
+
+Tool to retrieve items from a dataset. Use when you need to fetch data from a specified dataset by pagination or filtering. Only JSON format is fully supported. For datasets larger than 1000 items, issue multiple calls incrementing `offset` by `limit` until the response returns fewer items than `limit`.
+
+**Risk:** `read`
+
+```ts
+await corsair.apify.api.datasets.getDatasetItems({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `datasetId` | `string \| number` | Yes | — |
+| `format` | `any` | No | — |
+| `clean` | `any` | No | — |
+| `offset` | `any` | No | — |
+| `limit` | `any` | No | — |
+| `fields` | `any` | No | — |
+| `outputFields` | `any` | No | — |
+| `omit` | `any` | No | — |
+| `unwind` | `any` | No | — |
+| `flatten` | `any` | No | — |
+| `desc` | `any` | No | — |
+| `attachment` | `any` | No | — |
+| `delimiter` | `any` | No | — |
+| `bom` | `any` | No | — |
+| `xmlRoot` | `any` | No | — |
+| `xmlRow` | `any` | No | — |
+| `skipHeaderRow` | `any` | No | — |
+| `skipHidden` | `any` | No | — |
+| `skipEmpty` | `any` | No | — |
+| `simplified` | `any` | No | — |
+| `view` | `any` | No | — |
+| `skipFailedPages` | `any` | No | — |
+| `feedTitle` | `any` | No | — |
+| `feedDescription` | `any` | No | — |
+| `signature` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getDatasetStatistics
+
+`datasets.getDatasetStatistics`
+
+Tool to get dataset field statistics by dataset ID. Use when you need statistical information about dataset fields including min, max, null count, and empty count. Only provides field statistics when dataset schema is configured.
+
+**Risk:** `read`
+
+```ts
+await corsair.apify.api.datasets.getDatasetStatistics({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `datasetId` | `string \| number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getListOfDatasets
+
+`datasets.getListOfDatasets`
+
+Tool to get list of datasets for a user. Use when you need to enumerate or browse user's datasets. Supports pagination with up to 1000 items per page.
+
+**Risk:** `read`
+
+```ts
+await corsair.apify.api.datasets.getListOfDatasets({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `offset` | `any` | No | — |
+| `limit` | `any` | No | — |
+| `desc` | `any` | No | — |
+| `unnamed` | `any` | No | — |
+| `ownership` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### storeDataInDataset
+
+`datasets.storeDataInDataset`
+
+Tool to store data items in a dataset. Use after collecting data when you want to batch-append or update items in an existing dataset.
+
+**Risk:** `write`
+
+```ts
+await corsair.apify.api.datasets.storeDataInDataset({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `datasetId` | `string \| number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateDataset
+
+`datasets.updateDataset`
+
+Tool to update a dataset's name via JSON payload. Use when you need to rename an existing dataset.
+
+**Risk:** `write`
+
+```ts
+await corsair.apify.api.datasets.updateDataset({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `datasetId` | `string \| number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Docs
+
+### fetchApifyDocs
+
+`docs.fetchApifyDocs`
+
+Fetch the full content of an Apify documentation page
+
+**Risk:** `read`
+
+```ts
+await corsair.apify.api.docs.fetchApifyDocs({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | Full Apify or Crawlee documentation page URL |
+
+
+
+**Output:** `any`
+
+
+---
+
+### searchApifyDocs
+
+`docs.searchApifyDocs`
+
+Search Apify and Crawlee documentation
+
+**Risk:** `read`
+
+```ts
+await corsair.apify.api.docs.searchApifyDocs({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | Documentation search query |
+| `docSource` | `apify \| crawlee-js \| crawlee-py` | No | Documentation source to search |
+
+
+
+**Output:** `any`
+
+
+---
+
+## Key Value Stores
+
+### checkKeyValueStoreRecordExists
+
+`keyValueStores.checkKeyValueStoreRecordExists`
+
+Tool to check if a record exists in a key-value store. Use when you need to verify whether a specific key exists in an Apify Key-Value Store without retrieving its content.
+
+**Risk:** `read`
+
+```ts
+await corsair.apify.api.keyValueStores.checkKeyValueStoreRecordExists({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `storeId` | `string \| number` | Yes | — |
+| `recordKey` | `string \| number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### createKeyValueStore
+
+`keyValueStores.createKeyValueStore`
+
+Tool to create a new key-value store or retrieve an existing one by name. Use when you need to initialize a store for saving data records or files. If a store with the given name already exists, returns that store instead of creating a duplicate.
+
+**Risk:** `write`
+
+```ts
+await corsair.apify.api.keyValueStores.createKeyValueStore({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `name` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteKeyValueStore
+
+`keyValueStores.deleteKeyValueStore`
+
+Tool to delete a key-value store permanently. Use when you need to remove a key-value store by its ID. Confirm before calling.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.apify.api.keyValueStores.deleteKeyValueStore({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `storeId` | `string \| number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteKeyValueStoreRecord
+
+`keyValueStores.deleteKeyValueStoreRecord`
+
+Tool to delete a record from a key-value store. Use when you need to remove a specific record by its key from an Apify Key-Value Store.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.apify.api.keyValueStores.deleteKeyValueStoreRecord({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `storeId` | `string \| number` | Yes | — |
+| `recordKey` | `string \| number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getKeyValueRecord
+
+`keyValueStores.getKeyValueRecord`
+
+Tool to retrieve a record from a key-value store. Use when you need to fetch a specific value by key from an Apify Key-Value Store.
+
+**Risk:** `read`
+
+```ts
+await corsair.apify.api.keyValueStores.getKeyValueRecord({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `storeId` | `string \| number` | Yes | — |
+| `recordKey` | `string \| number` | Yes | — |
+| `attachment` | `any` | No | — |
+| `signature` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getKeyValueStore
+
+`keyValueStores.getKeyValueStore`
+
+Tool to retrieve key-value store metadata by store ID. Use when you need detailed information about a specific key-value store including stats and access URLs.
+
+**Risk:** `read`
+
+```ts
+await corsair.apify.api.keyValueStores.getKeyValueStore({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `storeId` | `string \| number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getKeyValueStoreKeys
+
+`keyValueStores.getKeyValueStoreKeys`
+
+Tool to retrieve a list of keys from a key-value store. Use when you need to list keys in a store with optional filtering and pagination support.
+
+**Risk:** `read`
+
+```ts
+await corsair.apify.api.keyValueStores.getKeyValueStoreKeys({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `storeId` | `string \| number` | Yes | — |
+| `exclusiveStartKey` | `any` | No | — |
+| `limit` | `any` | No | — |
+| `collection` | `any` | No | — |
+| `prefix` | `any` | No | — |
+| `signature` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getListOfKeyValueStores
+
+`keyValueStores.getListOfKeyValueStores`
+
+Tool to get the list of key-value stores owned by the user. Use when you need to enumerate or browse available stores. Supports pagination up to 1000 records per request.
+
+**Risk:** `read`
+
+```ts
+await corsair.apify.api.keyValueStores.getListOfKeyValueStores({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `offset` | `any` | No | — |
+| `limit` | `any` | No | — |
+| `desc` | `any` | No | — |
+| `unnamed` | `any` | No | — |
+| `ownership` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### storeDataInKeyValueStore
+
+`keyValueStores.storeDataInKeyValueStore`
+
+Tool to create or update a record in a key-value store. Use after you have the store ID and record key to persist JSON data.
+
+**Risk:** `write`
+
+```ts
+await corsair.apify.api.keyValueStores.storeDataInKeyValueStore({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `storeId` | `string \| number` | Yes | — |
+| `recordKey` | `string \| number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateKeyValueStore
+
+`keyValueStores.updateKeyValueStore`
+
+Tool to update a key-value store's properties. Use when renaming or changing access or schema version of the store after confirming the store ID.
+
+**Risk:** `write`
+
+```ts
+await corsair.apify.api.keyValueStores.updateKeyValueStore({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `storeId` | `string \| number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Logs
+
+### getLog
+
+`logs.getLog`
+
+Tool to retrieve logs for a specific Actor run or build. Use after a run completes or fails — a run may report success status yet contain only informational messages, making log inspection the only way to confirm actual outcomes. For long runs, log responses can be very large; prioritize error-level entries and recent timestamps to diagnose issues efficiently.
+
+**Risk:** `read`
+
+```ts
+await corsair.apify.api.logs.getLog({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `buildOrRunId` | `string \| number` | Yes | — |
+| `stream` | `any` | No | — |
+| `download` | `any` | No | — |
+| `raw` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Request Queues
+
+### addRequestToQueue
+
+`requestQueues.addRequestToQueue`
+
+Tool to add a request to the queue. Use when you need to add a web page URL to a request queue for crawling. If a request with the same uniqueKey was already present in the queue, returns the ID of the existing request.
+
+**Risk:** `write`
+
+```ts
+await corsair.apify.api.requestQueues.addRequestToQueue({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `queueId` | `string \| number` | Yes | — |
+| `clientKey` | `any` | No | — |
+| `forefront` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### batchAddRequestsToQueue
+
+`requestQueues.batchAddRequestsToQueue`
+
+Tool to batch-add up to 25 requests to a request queue. Use when you need to add multiple requests efficiently. Failed requests due to rate limits should be retried with exponential backoff.
+
+**Risk:** `write`
+
+```ts
+await corsair.apify.api.requestQueues.batchAddRequestsToQueue({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `queueId` | `string \| number` | Yes | — |
+| `clientKey` | `any` | No | — |
+| `forefront` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### batchDeleteRequestsFromQueue
+
+`requestQueues.batchDeleteRequestsFromQueue`
+
+Tool to batch-delete up to 25 requests from a queue. Use when you need to remove multiple requests efficiently. Failed requests due to rate limits should be retried with exponential backoff.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.apify.api.requestQueues.batchDeleteRequestsFromQueue({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `queueId` | `string \| number` | Yes | — |
+| `clientKey` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### createRequestQueue
+
+`requestQueues.createRequestQueue`
+
+Tool to create a new request queue or retrieve an existing one by name. Use when you need to initialize a queue for storing and managing web scraping requests. If a queue with the given name already exists, returns that queue instead of creating a duplicate. Unnamed queues follow data retention period policies.
+
+**Risk:** `write`
+
+```ts
+await corsair.apify.api.requestQueues.createRequestQueue({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `name` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteRequestFromQueue
+
+`requestQueues.deleteRequestFromQueue`
+
+Tool to delete a specific request from a request queue. Use when you need to remove a request by its ID from an Apify request queue.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.apify.api.requestQueues.deleteRequestFromQueue({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `queueId` | `string \| number` | Yes | — |
+| `requestId` | `string \| number` | Yes | — |
+| `clientKey` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteRequestLock
+
+`requestQueues.deleteRequestLock`
+
+Tool to delete a request lock from a request queue. Use when you need to unlock a previously locked request. Only the client that locked the request can delete its lock.
+
+**Risk:** `write`
+
+```ts
+await corsair.apify.api.requestQueues.deleteRequestLock({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `queueId` | `string \| number` | Yes | — |
+| `requestId` | `string \| number` | Yes | — |
+| `clientKey` | `any` | No | — |
+| `forefront` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteRequestQueue
+
+`requestQueues.deleteRequestQueue`
+
+Tool to delete a request queue permanently. Use when you need to remove a request queue by its ID.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.apify.api.requestQueues.deleteRequestQueue({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `queueId` | `string \| number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getHeadAndLockQueueRequests
+
+`requestQueues.getHeadAndLockQueueRequests`
+
+Tool to get and lock head requests from the queue. Returns the given number of first requests from the queue and locks them for the given time, preventing other clients from accessing them during the lock period. Use when you need to process requests exclusively without concurrent access by other clients.
+
+**Risk:** `write`
+
+```ts
+await corsair.apify.api.requestQueues.getHeadAndLockQueueRequests({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `queueId` | `string \| number` | Yes | — |
+| `lockSecs` | `any` | No | — |
+| `limit` | `any` | No | — |
+| `clientKey` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getListOfRequestQueues
+
+`requestQueues.getListOfRequestQueues`
+
+Tool to get list of request queues for a user. Use when you need to enumerate or browse user's request queues. Supports pagination with up to 1000 items per page.
+
+**Risk:** `read`
+
+```ts
+await corsair.apify.api.requestQueues.getListOfRequestQueues({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `offset` | `any` | No | — |
+| `limit` | `any` | No | — |
+| `desc` | `any` | No | — |
+| `unnamed` | `any` | No | — |
+| `ownership` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getRequestFromQueue
+
+`requestQueues.getRequestFromQueue`
+
+Tool to retrieve a specific request from a request queue by its ID. Use when you need to get detailed information about a request in an Apify request queue.
+
+**Risk:** `read`
+
+```ts
+await corsair.apify.api.requestQueues.getRequestFromQueue({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `queueId` | `string \| number` | Yes | — |
+| `requestId` | `string \| number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getRequestQueue
+
+`requestQueues.getRequestQueue`
+
+Tool to retrieve request queue metadata by queue ID. Use when you need information about a specific request queue including its statistics and request counts.
+
+**Risk:** `read`
+
+```ts
+await corsair.apify.api.requestQueues.getRequestQueue({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `queueId` | `string \| number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getRequestQueueHead
+
+`requestQueues.getRequestQueueHead`
+
+Tool to retrieve first requests from the queue for inspection. Use when you need to examine pending requests without locking them.
+
+**Risk:** `read`
+
+```ts
+await corsair.apify.api.requestQueues.getRequestQueueHead({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `queueId` | `string \| number` | Yes | — |
+| `limit` | `any` | No | — |
+| `clientKey` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### listRequestQueueRequests
+
+`requestQueues.listRequestQueueRequests`
+
+Tool to list requests in a request queue with pagination support. Use when you need to retrieve multiple requests from an Apify request queue.
+
+**Risk:** `read`
+
+```ts
+await corsair.apify.api.requestQueues.listRequestQueueRequests({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `queueId` | `string \| number` | Yes | — |
+| `clientKey` | `any` | No | — |
+| `exclusiveStartId` | `any` | No | — |
+| `limit` | `any` | No | — |
+| `cursor` | `any` | No | — |
+| `filter` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### prolongRequestLock
+
+`requestQueues.prolongRequestLock`
+
+Tool to prolong request lock in a request queue. Use when you need to extend the lock duration on a previously locked request. Only the client that locked the request can prolong its lock.
+
+**Risk:** `write`
+
+```ts
+await corsair.apify.api.requestQueues.prolongRequestLock({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `queueId` | `string \| number` | Yes | — |
+| `requestId` | `string \| number` | Yes | — |
+| `lockSecs` | `any` | No | — |
+| `clientKey` | `any` | No | — |
+| `forefront` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### unlockQueueRequests
+
+`requestQueues.unlockQueueRequests`
+
+Tool to unlock requests in a request queue that are currently locked by the client. If the client is within an Actor run, unlocks all requests locked by that specific run plus all requests locked by the same clientKey. If the client is outside of an Actor run, unlocks all requests locked using the same clientKey.
+
+**Risk:** `write`
+
+```ts
+await corsair.apify.api.requestQueues.unlockQueueRequests({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `queueId` | `string \| number` | Yes | — |
+| `clientKey` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateRequestInQueue
+
+`requestQueues.updateRequestInQueue`
+
+Tool to update a request in a request queue. Use when you need to modify request properties or mark a request as handled by setting handledAt to the current date/time. If handledAt is set, the request will be removed from the head of the queue and unlocked if applicable.
+
+**Risk:** `write`
+
+```ts
+await corsair.apify.api.requestQueues.updateRequestInQueue({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `queueId` | `string \| number` | Yes | — |
+| `requestId` | `string \| number` | Yes | — |
+| `forefront` | `any` | No | — |
+| `clientKey` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateRequestQueue
+
+`requestQueues.updateRequestQueue`
+
+Tool to update request queue name using JSON payload. Use when you need to rename an existing request queue.
+
+**Risk:** `write`
+
+```ts
+await corsair.apify.api.requestQueues.updateRequestQueue({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `queueId` | `string \| number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Runs
+
+### getActorOutput
+
+`runs.getActorOutput`
+
+Retrieve dataset items from an Actor run (Apify MCP get-dataset-items)
+
+**Risk:** `read`
+
+```ts
+await corsair.apify.api.runs.getActorOutput({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `datasetId` | `string` | Yes | Dataset ID from an Actor run (storages.datasets.default.id) |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `fields` | `string` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### getActorRun
+
+`runs.getActorRun`
+
+Get detailed information about a specific Actor run
+
+**Risk:** `read`
+
+```ts
+await corsair.apify.api.runs.getActorRun({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `runId` | `string` | Yes | Actor run ID |
+
+
+
+**Output:** `any`
+
+
+---
+
+## Schedules
+
+### createSchedule
+
+`schedules.createSchedule`
+
+Tool to create a new schedule with specified settings. Use when you need to automate Actor or Actor task execution at specific times using cron expressions.
+
+**Risk:** `write`
+
+```ts
+await corsair.apify.api.schedules.createSchedule({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteSchedule
+
+`schedules.deleteSchedule`
+
+Tool to delete a schedule by its ID. Use when you need to remove a schedule from the Apify system.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.apify.api.schedules.deleteSchedule({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `scheduleId` | `string \| number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getListOfSchedules
+
+`schedules.getListOfSchedules`
+
+Tool to get list of schedules created by the user. Use when you need to browse or enumerate user's schedules. Supports pagination with up to 1000 items per page.
+
+**Risk:** `read`
+
+```ts
+await corsair.apify.api.schedules.getListOfSchedules({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `offset` | `any` | No | — |
+| `limit` | `any` | No | — |
+| `desc` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getSchedule
+
+`schedules.getSchedule`
+
+Tool to get schedule details by ID. Use when you need to retrieve comprehensive information about a schedule including cron expression, timezone, actions, and execution times.
+
+**Risk:** `read`
+
+```ts
+await corsair.apify.api.schedules.getSchedule({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `scheduleId` | `string \| number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getScheduleLog
+
+`schedules.getScheduleLog`
+
+Tool to get schedule log by ID. Use when you need to retrieve execution history for a schedule, including invocation timestamps and status messages. Returns up to 1000 invocations.
+
+**Risk:** `read`
+
+```ts
+await corsair.apify.api.schedules.getScheduleLog({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `scheduleId` | `string \| number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateSchedule
+
+`schedules.updateSchedule`
+
+Tool to update an existing schedule with new settings. Use when you need to modify schedule properties like cron expression, timezone, enabled status, or actions. Only specified fields are updated; others remain unchanged.
+
+**Risk:** `write`
+
+```ts
+await corsair.apify.api.schedules.updateSchedule({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `scheduleId` | `string \| number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Store
+
+### getListOfActorsInStore
+
+`store.getListOfActorsInStore`
+
+Tool to get list of public Actors from Apify Store. Use when you need to browse or search public Actors available in the store. Supports searching by title, name, description, username, and readme.
+
+**Risk:** `read`
+
+```ts
+await corsair.apify.api.store.getListOfActorsInStore({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `limit` | `any` | No | — |
+| `offset` | `any` | No | — |
+| `search` | `any` | No | — |
+| `sortBy` | `any` | No | — |
+| `category` | `any` | No | — |
+| `username` | `any` | No | — |
+| `pricingModel` | `any` | No | — |
+| `allowsAgenticUsers` | `any` | No | — |
+| `responseFormat` | `any` | No | — |
+| `includeUnrunnableActors` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Users
+
+### getAccountLimits
+
+`users.getAccountLimits`
+
+Tool to get a complete summary of account limits and usage. Use when you need to retrieve information about usage cycles, spending caps, compute resources, data transfer quotas, and other account limits. This shows the same information as the Limits page in Apify console.
+
+**Risk:** `read`
+
+```ts
+await corsair.apify.api.users.getAccountLimits({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getCurrentUserAccountData
+
+`users.getCurrentUserAccountData`
+
+Tool to get private user account information. Use when you need to retrieve comprehensive data about the current user identified by the authentication token, including profile, subscription plan, and proxy settings. Note: 'plan', 'email', and 'profile' fields are omitted when accessed from Actor run.
+
+**Risk:** `read`
+
+```ts
+await corsair.apify.api.users.getCurrentUserAccountData({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getMonthlyUsage
+
+`users.getMonthlyUsage`
+
+Tool to get monthly usage summary with daily breakdown. Use when you need detailed usage information including storage, data transfer, and request queue metrics for the current or a specific billing cycle. This shows the same information as the Billing page in Apify console.
+
+**Risk:** `read`
+
+```ts
+await corsair.apify.api.users.getMonthlyUsage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `date` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getPublicUserData
+
+`users.getPublicUserData`
+
+Tool to get public user data. Use when you need to retrieve publicly accessible information about a specific Apify user account, similar to what can be seen on public profile pages. This operation requires no authentication token.
+
+**Risk:** `read`
+
+```ts
+await corsair.apify.api.users.getPublicUserData({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `userId` | `string \| number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateAccountLimits
+
+`users.updateAccountLimits`
+
+Tool to update account limits manageable on the Limits page. Use when you need to set or modify the monthly spending cap (maxMonthlyUsageUsd) or data retention period (dataRetentionDays). At least one limit parameter must be provided.
+
+**Risk:** `write`
+
+```ts
+await corsair.apify.api.users.updateAccountLimits({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Webhook Dispatches
+
+### getListOfWebhookDispatches
+
+`webhookDispatches.getListOfWebhookDispatches`
+
+Tool to get list of webhook dispatches for the user. Use when you need to retrieve webhook execution history with pagination support.
+
+**Risk:** `read`
+
+```ts
+await corsair.apify.api.webhookDispatches.getListOfWebhookDispatches({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `offset` | `any` | No | — |
+| `limit` | `any` | No | — |
+| `desc` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getWebhookDispatch
+
+`webhookDispatches.getWebhookDispatch`
+
+Tool to get webhook dispatch object with all details. Use when you need to retrieve information about a specific webhook dispatch including its status, event data, and call history.
+
+**Risk:** `read`
+
+```ts
+await corsair.apify.api.webhookDispatches.getWebhookDispatch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `dispatchId` | `string \| number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Webhooks
+
+### createTaskWebhook
+
+`webhooks.createTaskWebhook`
+
+Tool to create a webhook for an Actor task. Use when you need external notifications about task run events (e.g., completion or failure) in downstream systems.
+
+**Risk:** `write`
+
+```ts
+await corsair.apify.api.webhooks.createTaskWebhook({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteWebhook
+
+`webhooks.deleteWebhook`
+
+Tool to delete a webhook by its ID. Use when removing a webhook after confirming the webhook ID.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.apify.api.webhooks.deleteWebhook({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `webhookId` | `string \| number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getAllWebhooks
+
+`webhooks.getAllWebhooks`
+
+Tool to get a list of all webhooks created by the user. Use when you need to enumerate webhooks before filtering or maintenance.
+
+**Risk:** `read`
+
+```ts
+await corsair.apify.api.webhooks.getAllWebhooks({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `offset` | `any` | No | — |
+| `limit` | `any` | No | — |
+| `desc` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getWebhook
+
+`webhooks.getWebhook`
+
+Tool to get webhook object with all details. Use when you need to retrieve complete information about a specific webhook by its ID.
+
+**Risk:** `read`
+
+```ts
+await corsair.apify.api.webhooks.getWebhook({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `webhookId` | `string \| number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getWebhookDispatches
+
+`webhooks.getWebhookDispatches`
+
+Tool to get list of webhook dispatches for a specific webhook. Use when you need to retrieve dispatch history for a particular webhook with pagination support.
+
+**Risk:** `read`
+
+```ts
+await corsair.apify.api.webhooks.getWebhookDispatches({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `webhookId` | `string \| number` | Yes | — |
+| `offset` | `any` | No | — |
+| `limit` | `any` | No | — |
+| `desc` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### testWebhook
+
+`webhooks.testWebhook`
+
+Tool to test a webhook by creating a test dispatch with a dummy payload. Use when you need to verify webhook configuration before production use.
+
+**Risk:** `write`
+
+```ts
+await corsair.apify.api.webhooks.testWebhook({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `webhookId` | `string \| number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateWebhook
+
+`webhooks.updateWebhook`
+
+Tool to update webhook using JSON payload. Only specified properties are updated; others remain unchanged. Use when you need to modify webhook settings like event types, target URL, or other configuration.
+
+**Risk:** `write`
+
+```ts
+await corsair.apify.api.webhooks.updateWebhook({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `contentType` | `string` | No | — |
+| `mediaType` | `string` | No | — |
+| `webhookId` | `string \| number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+

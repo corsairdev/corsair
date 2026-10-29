@@ -1,0 +1,222 @@
+{
+  "id": "imgbb",
+  "displayName": "ImgBB",
+  "description": "Free image hosting service for uploading, storing, and sharing images via direct links.",
+  "npmPackageName": "@corsair-dev/imgbb",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 2,
+    "webhooks": 0,
+    "db": 1
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "imgbb.api.auth.getApiKey",
+      "shortPath": "auth.getApiKey",
+      "description": "Confirm an ImgBB API key is configured for this account and return a masked preview of it",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "configured",
+            "optional": false,
+            "type": "boolean",
+            "description": "Whether an ImgBB API key is configured for this account"
+          },
+          {
+            "key": "keyPreview",
+            "optional": false,
+            "type": "string",
+            "description": "Last 4 characters of the configured key, for identification only"
+          }
+        ]
+      }
+    },
+    {
+      "path": "imgbb.api.images.upload",
+      "shortPath": "images.upload",
+      "description": "Upload an image to ImgBB and return the hosted image URLs and metadata",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "image",
+            "optional": false,
+            "type": "string | custom | custom | custom",
+            "description": "Base64-encoded image data, image URL, or binary data (Blob, File, Buffer, Uint8Array) up to 32 MB per the ImgBB API"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Optional display name for the file"
+          },
+          {
+            "key": "expiration",
+            "optional": true,
+            "type": "number",
+            "description": "Optional auto-delete window in seconds (60-15552000). Omit to keep the image indefinitely."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url_viewer",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "display_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "width",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "height",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "expiration",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "image",
+            "optional": true,
+            "type": "{ filename?: string, name?: string, mime?: string, extension?: string, url: string }"
+          },
+          {
+            "key": "thumb",
+            "optional": true,
+            "type": "{ filename?: string, name?: string, mime?: string, extension?: string, url: string }"
+          },
+          {
+            "key": "medium",
+            "optional": true,
+            "type": "{ filename?: string, name?: string, mime?: string, extension?: string, url: string }"
+          },
+          {
+            "key": "delete_url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "imgbb.db.images.search",
+      "entityName": "images",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url_viewer",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "display_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "width",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "height",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "size",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "time",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "expiration",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "delete_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

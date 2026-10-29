@@ -1,0 +1,518 @@
+{
+  "id": "dynapictures",
+  "displayName": "Dynapictures",
+  "description": "Dynamic image generation API for personalized visuals, banners, and automated creatives.",
+  "npmPackageName": "@corsair-dev/dynapictures",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 7,
+    "webhooks": 0,
+    "db": 4
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "dynapictures.api.media.upload",
+      "shortPath": "media.upload",
+      "description": "Upload an image and create a media asset in a workspace",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of a workspace to upload an image to."
+          },
+          {
+            "key": "fileUrl",
+            "optional": false,
+            "type": "string",
+            "description": "Public URL of the image uploaded as the official file field."
+          },
+          {
+            "key": "filename",
+            "optional": true,
+            "type": "string",
+            "description": "Filename of uploaded image."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of an asset."
+          },
+          {
+            "key": "folder",
+            "optional": false,
+            "type": "boolean",
+            "description": "Whether this asset is a folder instead of an image."
+          },
+          {
+            "key": "mimeType",
+            "optional": false,
+            "type": "string",
+            "description": "MIME type of an image."
+          },
+          {
+            "key": "filename",
+            "optional": false,
+            "type": "string",
+            "description": "Filename of an image."
+          },
+          {
+            "key": "size",
+            "optional": false,
+            "type": "number",
+            "description": "Image size in bytes."
+          },
+          {
+            "key": "animated",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "Link to an image."
+          },
+          {
+            "key": "thumbnailUrl",
+            "optional": false,
+            "type": "string",
+            "description": "Link to an image thumbnail."
+          },
+          {
+            "key": "dateCreated",
+            "optional": false,
+            "type": "string",
+            "description": "Creation date of an asset."
+          },
+          {
+            "key": "dateUpdated",
+            "optional": false,
+            "type": "string",
+            "description": "Last modification date of an asset."
+          }
+        ]
+      }
+    },
+    {
+      "path": "dynapictures.api.templates.list",
+      "shortPath": "templates.list",
+      "description": "Get image templates that are ready and have Sync to Zapier enabled",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name: string, thumbnail: string, dateCreated: string, dateUpdated: string, layers?: { type: string, name: string, width?: string, height?: string, text?: string | null }[] }[]"
+      }
+    },
+    {
+      "path": "dynapictures.api.webhooks.unsubscribe",
+      "shortPath": "webhooks.unsubscribe",
+      "description": "Unsubscribe from webhook notifications using the original subscribe fields",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "targetUrl",
+            "optional": false,
+            "type": "string",
+            "description": "The URL of the REST endpoint receiving notifications."
+          },
+          {
+            "key": "eventType",
+            "optional": false,
+            "type": "NEW_IMAGE",
+            "description": "Event type passed when subscribing this webhook."
+          },
+          {
+            "key": "templateId",
+            "optional": false,
+            "type": "string",
+            "description": "The UID of the image template used when subscribing."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dynapictures.api.workspaces.create",
+      "shortPath": "workspaces.create",
+      "description": "Create a new workspace for templates, images, and media",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Name of a new workspace. Required field."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of a workspace."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The name of a workspace."
+          },
+          {
+            "key": "dateCreated",
+            "optional": false,
+            "type": "string",
+            "description": "Creation date of a workspace."
+          },
+          {
+            "key": "dateUpdated",
+            "optional": false,
+            "type": "string",
+            "description": "Last modification date of a workspace."
+          },
+          {
+            "key": "memberRole",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dynapictures.api.workspaces.delete",
+      "shortPath": "workspaces.delete",
+      "description": "Permanently delete a workspace and all associated templates, media, and images",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of a workspace to be deleted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of a workspace."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The name of a workspace."
+          },
+          {
+            "key": "dateCreated",
+            "optional": false,
+            "type": "string",
+            "description": "Creation date of a workspace."
+          },
+          {
+            "key": "dateUpdated",
+            "optional": false,
+            "type": "string",
+            "description": "Last modification date of a workspace."
+          },
+          {
+            "key": "memberRole",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dynapictures.api.workspaces.list",
+      "shortPath": "workspaces.list",
+      "description": "Get all workspaces the authenticated user is a member of",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name: string, dateCreated: string, dateUpdated: string, memberRole?: string | null }[]"
+      }
+    },
+    {
+      "path": "dynapictures.api.workspaces.update",
+      "shortPath": "workspaces.update",
+      "description": "Update an existing workspace name by workspace ID",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of a workspace to be updated."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "New name of a workspace. Required field."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of a workspace."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The name of a workspace."
+          },
+          {
+            "key": "dateCreated",
+            "optional": false,
+            "type": "string",
+            "description": "Creation date of a workspace."
+          },
+          {
+            "key": "dateUpdated",
+            "optional": false,
+            "type": "string",
+            "description": "Last modification date of a workspace."
+          },
+          {
+            "key": "memberRole",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "dynapictures.db.media.search",
+      "entityName": "media",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "folder",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "mimeType",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "filename",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "size",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "animated",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "thumbnailUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "dateCreated",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "dateUpdated",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "dynapictures.db.templates.search",
+      "entityName": "templates",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "thumbnail",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "dateCreated",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "dateUpdated",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "dynapictures.db.webhooks.search",
+      "entityName": "webhooks",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "uid",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "eventType",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "targetUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "designUid",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "dateCreated",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "dynapictures.db.workspaces.search",
+      "entityName": "workspaces",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "dateCreated",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "dateUpdated",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "memberRole",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

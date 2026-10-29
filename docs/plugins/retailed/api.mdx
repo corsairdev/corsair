@@ -1,0 +1,278 @@
+---
+title: API
+description: "API reference for Retailed: every `retailed.api.*` operation with input and output types."
+---
+
+Every `retailed.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Goat
+
+### prices
+
+`goat.prices`
+
+Get GOAT product prices
+
+**Risk:** `read`
+
+```ts
+await corsair.retailed.api.goat.prices({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `country` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  sizeOption: {
+    value: number,
+    presentation: string
+  },
+  stockStatus: string,
+  boxCondition: string,
+  shoeCondition: string,
+  lowestPriceCents: {
+    currency: string
+  },
+  lastSoldPriceCents: {
+    amount?: number,
+    currency: string,
+    amountUsdCents?: number
+  },
+  instantShipLowestPriceCents: {
+    currency: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Products
+
+### search
+
+`products.search`
+
+Search products
+
+**Risk:** `read`
+
+```ts
+await corsair.retailed.api.products.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `sku` | `string` | No | — |
+| `page` | `number` | No | — |
+| `sort` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `docs` | `object[]` | Yes | — |
+| `totalDocs` | `number` | Yes | — |
+| `limit` | `number` | Yes | — |
+| `totalPages` | `number` | Yes | — |
+| `page` | `number` | Yes | — |
+| `hasPrevPage` | `boolean` | Yes | — |
+| `hasNextPage` | `boolean` | Yes | — |
+| `prevPage` | `number` | No | — |
+| `nextPage` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="docs full type">
+
+```ts
+{
+  id: string,
+  productId: string,
+  name: string,
+  url?: string,
+  domain?: string,
+  price?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Stockx
+
+### product
+
+`stockx.product`
+
+Get StockX product details
+
+**Risk:** `read`
+
+```ts
+await corsair.retailed.api.stockx.product({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `country` | `string` | No | — |
+| `language` | `string` | No | — |
+| `currency` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `productId` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `url` | `string` | No | — |
+| `domain` | `string` | No | — |
+| `price` | `number` | No | — |
+
+
+
+---
+
+### search
+
+`stockx.search`
+
+Search StockX products
+
+**Risk:** `read`
+
+```ts
+await corsair.retailed.api.stockx.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  productId: string,
+  name: string,
+  url?: string,
+  domain?: string,
+  price?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### trends
+
+`stockx.trends`
+
+Get StockX trends
+
+**Risk:** `read`
+
+```ts
+await corsair.retailed.api.stockx.trends({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | No | — |
+| `sort_by` | `featured \| most_active \| release_date` | No | — |
+| `country` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  productId: string,
+  name: string,
+  url?: string,
+  domain?: string,
+  price?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Usage
+
+### get
+
+`usage.get`
+
+Get API usage information
+
+**Risk:** `read`
+
+```ts
+await corsair.retailed.api.usage.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `plan` | `string` | Yes | — |
+| `remaining` | `string` | Yes | — |
+
+
+
+---
+

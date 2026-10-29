@@ -1,0 +1,386 @@
+---
+title: Database
+description: "Dovetail local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Dovetail plugin syncs data locally. Use `corsair.dovetail.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Channels
+
+Path: `dovetail.db.channels.search`
+
+```ts
+const rows = await corsair.dovetail.db.channels.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `content_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `project_category_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Contacts
+
+Path: `dovetail.db.contacts.search`
+
+```ts
+const rows = await corsair.dovetail.db.contacts.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `email` | `string` | equals, contains, startsWith, endsWith, in |
+| `avatar_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Data
+
+Path: `dovetail.db.data.search`
+
+```ts
+const rows = await corsair.dovetail.db.data.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `project_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `folder_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `deleted` | `boolean` | equals |
+| `deleted_at` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Data Points
+
+Path: `dovetail.db.dataPoints.search`
+
+```ts
+const rows = await corsair.dovetail.db.dataPoints.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `channel_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `text` | `string` | equals, contains, startsWith, endsWith, in |
+| `timestamp` | `string` | equals, contains, startsWith, endsWith, in |
+| `source_title` | `string` | equals, contains, startsWith, endsWith, in |
+| `source_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Docs
+
+Path: `dovetail.db.docs.search`
+
+```ts
+const rows = await corsair.dovetail.db.docs.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `project_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `folder_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `cover_image_file_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Files
+
+Path: `dovetail.db.files.search`
+
+```ts
+const rows = await corsair.dovetail.db.files.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `size` | `number` | equals, gt, gte, lt, lte, in |
+| `mime_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Folders
+
+Path: `dovetail.db.folders.search`
+
+```ts
+const rows = await corsair.dovetail.db.folders.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `parent_folder_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Highlights
+
+Path: `dovetail.db.highlights.search`
+
+```ts
+const rows = await corsair.dovetail.db.highlights.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `project_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `note_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `tag_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `text` | `string` | equals, contains, startsWith, endsWith, in |
+| `start_time` | `number` | equals, gt, gte, lt, lte, in |
+| `end_time` | `number` | equals, gt, gte, lt, lte, in |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Insights
+
+Path: `dovetail.db.insights.search`
+
+```ts
+const rows = await corsair.dovetail.db.insights.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `project_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `folder_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `cover_image_file_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Notes
+
+Path: `dovetail.db.notes.search`
+
+```ts
+const rows = await corsair.dovetail.db.notes.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `project_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `folder_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Projects
+
+Path: `dovetail.db.projects.search`
+
+```ts
+const rows = await corsair.dovetail.db.projects.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `folder_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `template_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Tags
+
+Path: `dovetail.db.tags.search`
+
+```ts
+const rows = await corsair.dovetail.db.tags.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `color` | `string` | equals, contains, startsWith, endsWith, in |
+| `project_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `tag_board_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `scope` | `string` | equals, contains, startsWith, endsWith, in |
+| `highlight_count` | `number` | equals, gt, gte, lt, lte, in |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Topics
+
+Path: `dovetail.db.topics.search`
+
+```ts
+const rows = await corsair.dovetail.db.topics.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `channel_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

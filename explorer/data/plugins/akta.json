@@ -1,0 +1,507 @@
+{
+  "id": "akta",
+  "displayName": "Akta",
+  "description": "Akta plugin for Corsair",
+  "npmPackageName": "@corsair-dev/akta",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 6,
+    "webhooks": 0,
+    "db": 2
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "akta.api.company.employeeReviews",
+      "shortPath": "company.employeeReviews",
+      "description": "Get employee review ratings and individual reviews for a company",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "company",
+            "optional": false,
+            "type": "string",
+            "description": "Company website (https://canva.com) or Akta uuid from company.search"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid: string, employee_reviews: { overall_rating?: {}, other_ratings?: { type?: string, provider?: string, value: number }[], reviews?: { data: { id: number, summary?: string, pros?: string, cons?: string, rating?: number, review_link?: string, job_title?: string, review_date?: string, employment_status?: string, is_current_employee?: boolean, years_of_employment?: number, location?: string, country_code?: string, helpful_count?: number, not_helpful_count?: number, career_opportunities_rating?: number, ceo_rating?: string | null, compensation_and_benefits_rating?: number, culture_and_values_rating?: number, diversity_and_inclusion_rating?: number, senior_management_rating?: number, work_life_balance_rating?: number, language?: string, provider?: string }[], total?: number, total_by_provider?: {} } } }"
+          },
+          {
+            "key": "limit",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "credits_consumed",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "akta.api.company.enrich",
+      "shortPath": "company.enrich",
+      "description": "Get structured company data by section: firmographics, business model, funding, and more",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "company",
+            "optional": false,
+            "type": "string",
+            "description": "Company website (https://canva.com) or Akta uuid from company.search"
+          },
+          {
+            "key": "sections",
+            "optional": false,
+            "type": "firmographic | business_model | company_assessment | trust_signal | company_hierarchy | digital_presence | financial_estimate | location | management_profile | product_offering | strategic_signal | customer_profile | industry | technology | funding_detail | mna_and_investment[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid: string, firmographic?: { name?: string, legal_name?: string, website?: string, company_type?: { code: string, label: string }, founded_year?: number, company_description?: string, company_description_short?: string, operating_status?: { code: string, label: string }, ownership_category?: { code: string, label: string }, headcount_range?: string, logo_url?: string, akta_rank?: number }, business_model?: { gtm_motion?: { title?: string, description?: string, source?: string[], type?: { code: string, label: string } }[], revenue_model?: { title?: string, description?: string, source?: string[], type?: { code: string, label: string } }[], marketing_channels?: { title?: string, description?: string, source?: string[], type?: { code: string, label: string }, stage?: { code: string, label: string } }[], distribution_channels?: { title?: string, description?: string, source?: string[], type?: { code: string, label: string }, scope?: string, target_buyer?: { code: string, label: string } }[], cost_components?: string[], pricing_details?: { description?: string, notes?: string, model?: { code: string, label: string }, billing_cadence?: { code: string, label: string }, source?: string[] }[], gtm_type?: { code: string, label: string }, offering_type?: { code: string, label: string } }, company_assessment?: { market_position?: string, strengths?: { headline?: string, details?: string, source?: string[] }[], weakness?: { headline?: string, details?: string, source?: string[] }[], competitive_moat?: { details?: string, type?: { code: string, label: string } }[], key_risks?: { headline?: string, details?: string, source?: string[] }[], key_highlights?: { headline?: string, details?: string, source?: string[] }[], customer_concentration?: { details?: string, classification?: { code: string, label: string } }, peers?: { uuid?: string, name: string, description?: string, type?: { code: string, label: string } }[] }, trust_signal?: { compliance?: { class?: { code: string, label: string }, name?: { code: string, label: string }, description?: string, source?: string[] }[], regulatory_updates?: { title?: string, type?: string, description?: string, source?: string[] }[], awards?: { title?: string, description?: string, source?: string[], type?: { code: string, label: string }, body?: string }[], ip?: { title?: string, description?: string, source?: string[], type?: { code: string, label: string }, status?: { code: string, label: string } }[] }, company_hierarchy?: { subsidiaries?: { uuid?: string, name: string, business_focus?: string, acquired_on?: { year: number, month?: number, day?: number }, relationship_type?: { code: string, label: string }, type?: { code: string, label: string } }[] }, digital_presence?: { social_media_profiles?: { platform: string, url: string }[] }, financial_estimate?: { revenue_estimate?: { code: string, label: string }, valuation_estimate?: { code: string, label: string } }, location?: { hq?: { city?: string, country?: string, region?: string }, market_served?: { is_global?: boolean }, offices?: { city?: string, country?: string, description?: string, source?: string[], type?: { code: string, label: string } }[] }, management_profile?: { number_of_profiles?: number, profiles?: { name: string, designation?: string, designation_category?: { code: string, label: string }, overview?: string, profile_commentary?: string, start_date?: string, previous_companies?: string[], source?: string[] }[] }, product_offering?: { brand?: { name: string, description?: string, source?: string[] }[], core_offering?: string, differentiator?: string, functional_benefit?: string, problem_solved?: string, quantifiable_outcome?: string[], product_overview?: string, product_and_service?: { name: string, category?: string, description?: string, url?: string, source?: string[] }[] }, strategic_signal?: { scale_indicator?: { title?: string, description?: string, source?: string[], type?: { code: string, label: string }, value?: string }[], partnership?: { title?: string, description?: string, source?: string[], type?: { code: string, label: string }, uuid?: string, name?: string, strategic_tier?: string, announced_on?: { year: number, month?: number, day?: number } }[], recent_move?: { title?: string, description?: string, source?: string[], type?: { code: string, label: string }, date?: { year: number, month?: number, day?: number } }[], leadership_change?: { title?: string, description?: string, source?: string[], type?: { code: string, label: string } }[], expansion_highlight?: { title?: string, description?: string, source?: string[], type?: { code: string, label: string } }[] }, customer_profile?: { segment?: { title?: string, description?: string, source?: string[], type?: { code: string, label: string }, is_primary?: boolean, pain_point_addressed?: string, use_case?: string }[], icp?: { profile?: string, description?: string, buyer_persona?: string, target_buyer?: string, geography?: string, industry_vertical?: string, primary_use_case?: string, pain_points?: string[], evidence_proof_points?: string[], buying_structure?: { code: string, label: string }, firmographic_size?: { code: string, label: string }, purchase_trigger?: { code: string, label: string }, sales_cycle_length?: { code: string, label: string }, sales_motion?: { code: string, label: string } }[], select_customer?: { uuid?: string, name: string, industry?: string, use_case?: string, source?: string[], type?: { code: string, label: string } }[] }, industry?: { keyword?: string[], industry?: { code: string, label: string, is_primary?: boolean }[], naics?: { code: string, label: string }[], sic?: { code: string, label: string }[], product_category?: string }, technology?: { is_technology_focussed?: boolean, api_detail?: { has_api?: boolean, has_mcp?: boolean, description?: string, docs_url?: string }, integration?: { title?: string, description?: string, source?: string[], type?: { code: string, label: string } }[], ai_capability?: { title?: string, description?: string, source?: string[], type?: { code: string, label: string } }[], ai_maturity?: { label: string, scale?: number, description?: string }, app_detail?: { has_app?: boolean, app_url?: { platform: string, url: string }[] }, feature?: { title?: string, description?: string, differentiator?: { code: string, label: string }, source?: string[] }[], core_technology?: string }, funding_detail?: { funding_overview?: { funding_stage?: { code: string, label: string }, last_funding_date?: { year: number, month?: number, day?: number }, total_funding_usd?: number }, funding_rounds?: { id: number, round?: { code: string, label: string }, date?: { year: number, month?: number, day?: number }, amount_usd?: number, pre_money_valuation?: number, total_investors?: number, investors?: { uuid?: string, name: string, lead_investor?: boolean, type?: { code: string, label: string } }[], news?: { publisher?: string, title?: string, url: string }[] }[], investors?: { uuid?: string, name: string, website?: string, date_of_entry?: { year: number, month?: number, day?: number }, rounds_participated?: { code: string, label: string }[], type?: { code: string, label: string } }[] }, mna_and_investment?: { mna?: { id: number, acquiree: { uuid?: string, name: string, website?: string }, acquisition_type?: { code: string, label: string }, announced_date?: { year: number, month?: number, day?: number }, status?: string, amount_usd?: number, news?: { publisher?: string, title?: string, url: string }[] }[], investment?: { id: number, funding_round_id?: number, investee: { uuid?: string, name: string, website?: string }, lead_investor?: boolean, announced_date?: { year: number, month?: number, day?: number }, round?: { code: string, label: string }, news?: { publisher?: string, title?: string, url: string }[] }[] } }"
+          },
+          {
+            "key": "credits_consumed",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "akta.api.company.productReviews",
+      "shortPath": "company.productReviews",
+      "description": "Get a company's product catalog with ratings, pricing, and reviews",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "company",
+            "optional": false,
+            "type": "string",
+            "description": "Company website (https://canva.com) or Akta uuid from company.search"
+          },
+          {
+            "key": "products",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid: string, product_reviews?: { id: string, product_name: string, main_category?: string, categories?: string[], description?: string, rating?: {}, star_distribution?: {}, pros_list?: (string | { text: string, count?: string | number })[], cons_list?: (string | { text: string, count?: string | number })[], pricing?: { package?: string, price?: string, price_info?: string }[], reviews?: { data: { review_id: number, review_title?: string, review_content?: string, review_question_answers?: { question: string, answer: string }[], review_rating?: number, publish_date?: string, reviewer_company_size?: string, review_link?: string, provider?: string }[], total?: number, total_by_provider?: {} } }[], product?: { id: string, product_name: string, main_category?: string, categories?: string[], description?: string, rating?: {}, star_distribution?: {}, pros_list?: (string | { text: string, count?: string | number })[], cons_list?: (string | { text: string, count?: string | number })[], pricing?: { package?: string, price?: string, price_info?: string }[], reviews?: { data: { review_id: number, review_title?: string, review_content?: string, review_question_answers?: { question: string, answer: string }[], review_rating?: number, publish_date?: string, reviewer_company_size?: string, review_link?: string, provider?: string }[], total?: number, total_by_provider?: {} } }[] }"
+          },
+          {
+            "key": "limit",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "credits_consumed",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "akta.api.company.search",
+      "shortPath": "company.search",
+      "description": "Resolve a company name or website to its Akta uuid (free, no credits)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string",
+            "description": "Company name or website"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid: string, name: string, website?: string, product_category?: string, company_status?: public | private | acquired | delisted | unknown, parent_company?: { uuid: string, name: string }, akta_rank?: number }[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "credits_consumed",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "akta.api.industry.search",
+      "shortPath": "industry.search",
+      "description": "Resolve a free-text industry to Akta industry codes (free, no credits)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "level",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ code: string, industry_name: string, similarity: number }[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "credits_consumed",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "akta.api.news.list",
+      "shortPath": "news.list",
+      "description": "List enriched news articles filtered by company, industry, topic, or date",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "company",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "primary_company",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "industry",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "group_articles",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "news_score_list",
+            "optional": true,
+            "type": "High | Medium | Low | all"
+          },
+          {
+            "key": "countries",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "blacklisted",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "type_list",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "sentiment_list",
+            "optional": true,
+            "type": "positive | negative | neutral | all[]"
+          },
+          {
+            "key": "entity_person_list",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "entity_location_list",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "entity_product_list",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "entity_event_list",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "naics_code_list",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "sic_code_list",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "iptc_code_list",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "iab_code_list",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, title: string, url: string, publisher?: string, published_date?: string, sentiment?: string, sentiment_score?: number, ai_summary?: string, word_count?: number, original_language?: string, author?: string, countries?: string[], industries?: { code: string, name: string, is_primary?: boolean }[], tags?: { code: string, name: string, is_primary?: boolean }[], company_mentions?: { uuid?: string, name: string, website?: string, is_primary?: boolean }[], article_type?: { code: string, label: string }, is_press_release?: boolean, is_opinion?: boolean, is_breaking?: boolean, iptc_codes?: { code: string, name: string }[], iab_categories?: { code: string, name: string }[], naics_codes?: { code: string, name: string }[], sic_codes?: { code: string, name: string }[], entities?: { person?: string[], location?: string[], product?: string[], event?: string[] }, newsworthiness_score?: number, group_id?: number, full_text?: string }[]"
+          },
+          {
+            "key": "total",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "credits_consumed",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "akta.db.companies.search",
+      "entityName": "companies",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "uuid",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "website",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "productCategory",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "parentCompanyUuid",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "foundedYear",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "headcountRange",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "descriptionShort",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "akta.db.newsArticles.search",
+      "entityName": "newsArticles",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "publisher",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "publishedDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "sentiment",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "aiSummary",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

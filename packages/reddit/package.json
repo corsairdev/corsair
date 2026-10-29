@@ -1,6 +1,6 @@
 {
   "name": "@corsair-dev/reddit",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Reddit plugin for Corsair",
   "type": "module",
   "main": "./dist/index.js",
@@ -36,10 +36,16 @@
     "reddit",
     "plugin"
   ],
-  "author": "",
+  "author": "Corsair (https://corsair.dev)",
   "license": "Apache-2.0",
   "files": [
     "dist"
   ],
-  "dependencies": {}
+  "dependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/corsairdev/corsair.git",
+    "directory": "packages/reddit"
+  },
+  "homepage": "https://docs.corsair.dev/plugins/reddit"
 }

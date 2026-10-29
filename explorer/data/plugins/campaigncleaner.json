@@ -1,0 +1,196 @@
+{
+  "id": "campaigncleaner",
+  "displayName": "CampaignCleaner",
+  "description": "CampaignCleaner plugin for Corsair",
+  "npmPackageName": "@corsair-dev/campaigncleaner",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 5,
+    "webhooks": 0,
+    "db": 2
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "campaigncleaner.api.campaign.delete",
+      "shortPath": "campaign.delete",
+      "description": "Delete a saved Campaign Cleaner campaign by ID",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "success | failure"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "campaigncleaner.api.campaign.list",
+      "shortPath": "campaign.list",
+      "description": "List saved Campaign Cleaner campaigns",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaign_list",
+            "optional": false,
+            "type": "{ id: string, campaign_name: string, status: processing | completed | paused, date_added: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "campaigncleaner.api.campaign.pdfAnalysis",
+      "shortPath": "campaign.pdfAnalysis",
+      "description": "Download PDF analysis for a processed campaign",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content_type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content_base64",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "campaigncleaner.api.campaign.status",
+      "shortPath": "campaign.status",
+      "description": "Get processing status for a Campaign Cleaner campaign",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaign_status",
+            "optional": false,
+            "type": "{ id: string, campaign_name: string, status: processing | completed | paused, date_added: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "campaigncleaner.api.credits.get",
+      "shortPath": "credits.get",
+      "description": "Get remaining Campaign Cleaner credits",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "credits",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "campaigncleaner.db.campaigns.search",
+      "entityName": "campaigns",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "campaign_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "date_added",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "campaigncleaner.db.credits.search",
+      "entityName": "credits",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "credits",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    }
+  ]
+}

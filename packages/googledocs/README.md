@@ -18,17 +18,19 @@ The plugin uses **OAuth 2.0** (`oauth_2`) against Google.
    these scopes:
    - `https://www.googleapis.com/auth/documents`
    - `https://www.googleapis.com/auth/drive`
+   - `https://www.googleapis.com/auth/spreadsheets.readonly` (Sheets reads under `sheets.*` and chart listing)
 
 Access tokens are refreshed automatically before expiry and requests are
 retried once on 401.
 
 ## Endpoints
 
-35 operations across these domains:
+36 operations across these domains:
 
 | Domain      | Operations                                                                                                                                                                                                                                                                                                                     |
 | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `documents` | `createDocument`, `createBlankDocument`, `createDocumentMarkdown`, `copyDocument`, `getDocument`, `getDocumentPlaintext`, `updateDocumentMarkdown`, `updateDocumentSectionMarkdown`, `updateDocumentStyle`, `updateExistingDocument`, `updateDocumentBatch`, `exportDocumentAsPdf`, `searchDocuments`, `listSpreadsheetCharts` |
+| `sheets`    | `readValues` (Sheets API `spreadsheets.values.get` via the googledocs OAuth token)                                                                                                                                                                                                                                               |
 | `text`      | `insertText`, `replaceAllText`, `deleteContentRange`, `insertInlineImage`, `replaceImage`, `insertPageBreak`                                                                                                                                                                                                                   |
 | `structure` | `createHeader`, `createFooter`, `createFootnote`, `createNamedRange`, `createParagraphBullets`, `deleteParagraphBullets`, `deleteHeader`, `deleteFooter`, `deleteNamedRange`                                                                                                                                                   |
 | `tables`    | `insertTable`, `insertTableColumn`, `deleteTableColumn`, `deleteTableRow`, `unmergeTableCells`, `updateTableRowStyle`                                                                                                                                                                                                          |

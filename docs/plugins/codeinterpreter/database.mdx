@@ -1,0 +1,94 @@
+---
+title: Database
+description: "CodeInterpreter local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The CodeInterpreter plugin syncs data locally. Use `corsair.codeinterpreter.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Executions
+
+Path: `codeinterpreter.db.executions.search`
+
+```ts
+const rows = await corsair.codeinterpreter.db.executions.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `exit_code` | `number` | equals, gt, gte, lt, lte, in |
+| `stdout` | `string` | equals, contains, startsWith, endsWith, in |
+| `stderr` | `string` | equals, contains, startsWith, endsWith, in |
+| `logs` | `string` | equals, contains, startsWith, endsWith, in |
+| `session_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Files
+
+Path: `codeinterpreter.db.files.search`
+
+```ts
+const rows = await corsair.codeinterpreter.db.files.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `size` | `number` | equals, gt, gte, lt, lte, in |
+| `mime_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `session_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Sessions
+
+Path: `codeinterpreter.db.sessions.search`
+
+```ts
+const rows = await corsair.codeinterpreter.db.sessions.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `language` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `date` | equals, before, after, between |
+| `updated_at` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

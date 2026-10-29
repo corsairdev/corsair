@@ -254,7 +254,7 @@ export function verifyInstagramWebhookSignature(
 	appSecret: string | null,
 ): { valid: boolean; error?: string } {
 	if (!appSecret) {
-		return { valid: false };
+		return { valid: false, error: 'Missing app secret' };
 	}
 
 	let rawBody = request.rawBody;

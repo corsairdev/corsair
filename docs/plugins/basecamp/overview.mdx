@@ -1,0 +1,131 @@
+---
+title: Overview
+description: "Project management and team communication tool for to-dos, messages, and schedules."
+---
+
+Use **Basecamp** through Corsair: one client, typed API calls, local DB sync.
+
+**What you get:**
+
+- 161 typed API operations
+- 6 synced entities (`campfires`, `chatbots`, `messageTypes`, `people`, `projects`, `templates`) for fast `.search()` / `.list()`
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/basecamp
+```
+```bash yarn
+yarn add corsair @corsair-dev/basecamp
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/basecamp
+```
+```bash bun
+bun add corsair @corsair-dev/basecamp
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { basecamp } from '@corsair-dev/basecamp';
+
+export const corsair = createCorsair({
+	plugins: [
+		basecamp(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="OAuth 2.0 (Recommended)">
+
+Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your Basecamp OAuth app.
+
+```ts
+basecamp()
+```
+
+More: [OAuth 2.0](/concepts/oauth)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'basecamp',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`automaticCheckIns.getBucketsQuestionAnswers`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.automaticCheckIns.getBucketsQuestionAnswers({});
+```
+
+
+**`campfireAndChatbots.createChatbot`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.campfireAndChatbots.createChatbot({});
+```
+
+
+See the full list on the [API](/plugins/basecamp/api) page.
+
+## Query synced data
+
+Synced entities support `tenant.basecamp.db.<entity>.search()` and `.list()`: `campfires`, `chatbots`, `messageTypes`, `people`, `projects`, `templates`.
+
+See [Database](/plugins/basecamp/database) for filters and operators.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/basecamp/api">
+    Every `basecamp.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/basecamp/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

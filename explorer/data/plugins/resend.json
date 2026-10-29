@@ -1,0 +1,1268 @@
+{
+  "id": "resend",
+  "displayName": "Resend",
+  "description": "Developer email API for sending transactional messages, broadcasts, and deliverability tools.",
+  "npmPackageName": "@corsair-dev/resend",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 15,
+    "webhooks": 16,
+    "db": 3
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "resend.api.contacts.create",
+      "shortPath": "contacts.create",
+      "description": "Create a new contact",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "unsubscribed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "segments",
+            "optional": true,
+            "type": "{ id: string }[]"
+          },
+          {
+            "key": "topics",
+            "optional": true,
+            "type": "{ id: string, subscription: opt_in | opt_out }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "resend.api.contacts.delete",
+      "shortPath": "contacts.delete",
+      "description": "Delete a contact [DESTRUCTIVE · IRREVERSIBLE]",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contact",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "resend.api.contacts.get",
+      "shortPath": "contacts.get",
+      "description": "Get info about a contact",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "Date"
+          },
+          {
+            "key": "unsubscribed",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "resend.api.contacts.list",
+      "shortPath": "contacts.list",
+      "description": "List all contacts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ object?: string, id: string, email: string, first_name?: string | null, last_name?: string | null, created_at?: Date | null, unsubscribed?: boolean }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "resend.api.contacts.update",
+      "shortPath": "contacts.update",
+      "description": "Update an existing contact",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "unsubscribed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "resend.api.domains.create",
+      "shortPath": "domains.create",
+      "description": "Add a new sending domain",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "us-east-1 | eu-west-1 | sa-east-1"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "not_started | validation | scheduled | ready | error | verified | pending | failed | partially_verified | partially_failed"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "Date"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "resend.api.domains.delete",
+      "shortPath": "domains.delete",
+      "description": "Remove a sending domain [DESTRUCTIVE · IRREVERSIBLE]",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "resend.api.domains.get",
+      "shortPath": "domains.get",
+      "description": "Get info about a sending domain",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "not_started | validation | scheduled | ready | error | verified | pending | failed | partially_verified | partially_failed"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "Date"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "resend.api.domains.list",
+      "shortPath": "domains.list",
+      "description": "List all sending domains",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name: string, status: not_started | validation | scheduled | ready | error | verified | pending | failed | partially_verified | partially_failed, created_at?: Date | null, region?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "resend.api.domains.verify",
+      "shortPath": "domains.verify",
+      "description": "Trigger DNS verification for a domain",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "records",
+            "optional": true,
+            "type": "{ record: string, name: string, type: string, value: string, status: not_started | validation | scheduled | ready | error | verified | pending, ttl?: string, priority?: number }[]"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "not_started | validation | scheduled | ready | error | verified | pending"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "Date"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "resend.api.emails.batch",
+      "shortPath": "emails.batch",
+      "description": "Send up to 100 emails in a single API call",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "emails",
+            "optional": false,
+            "type": "{ from: string, to: string | string[], subject: string, html?: string, text?: string, cc?: string | string[], bcc?: string | string[], reply_to?: string | string[], scheduled_at?: string, tags?: { name: string, value: string }[], headers?: {} }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "resend.api.emails.cancel",
+      "shortPath": "emails.cancel",
+      "description": "Cancel a scheduled email",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cancelled",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "resend.api.emails.get",
+      "shortPath": "emails.get",
+      "description": "Get info about a sent email",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "Date"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "resend.api.emails.list",
+      "shortPath": "emails.list",
+      "description": "List sent emails",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, from: string, to: string[], created_at?: Date | null, subject?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "resend.api.emails.send",
+      "shortPath": "emails.send",
+      "description": "Send an email to one or more recipients",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "from",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": false,
+            "type": "string | string[]"
+          },
+          {
+            "key": "subject",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "html",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cc",
+            "optional": true,
+            "type": "string | string[]"
+          },
+          {
+            "key": "bcc",
+            "optional": true,
+            "type": "string | string[]"
+          },
+          {
+            "key": "reply_to",
+            "optional": true,
+            "type": "string | string[]"
+          },
+          {
+            "key": "scheduled_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "attachments",
+            "optional": true,
+            "type": "{ filename: string, content: string | custom, path?: string }[]"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "{ name: string, value: string }[]"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "resend.webhooks.contacts.created",
+      "shortPath": "contacts.created",
+      "description": "A new contact was created",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "contact.created"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, email?: string, first_name?: string | null, last_name?: string | null, created_at?: string, unsubscribed?: boolean }"
+          }
+        ]
+      },
+      "responseType": "{ type: contact.created, created_at: string, data: { id: string, email?: string, first_name?: string | null, last_name?: string | null, created_at?: string, unsubscribed?: boolean } }",
+      "usageExample": "resend({\n    webhookHooks: {\n        contacts: {\n            created: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "resend.webhooks.contacts.deleted",
+      "shortPath": "contacts.deleted",
+      "description": "A contact was deleted",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "contact.deleted"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, email?: string }"
+          }
+        ]
+      },
+      "responseType": "{ type: contact.deleted, created_at: string, data: { id: string, email?: string } }",
+      "usageExample": "resend({\n    webhookHooks: {\n        contacts: {\n            deleted: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "resend.webhooks.contacts.updated",
+      "shortPath": "contacts.updated",
+      "description": "A contact was updated",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "contact.updated"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, email?: string, first_name?: string | null, last_name?: string | null, created_at?: string, unsubscribed?: boolean }"
+          }
+        ]
+      },
+      "responseType": "{ type: contact.updated, created_at: string, data: { id: string, email?: string, first_name?: string | null, last_name?: string | null, created_at?: string, unsubscribed?: boolean } }",
+      "usageExample": "resend({\n    webhookHooks: {\n        contacts: {\n            updated: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "resend.webhooks.domains.created",
+      "shortPath": "domains.created",
+      "description": "A new sending domain was created",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "domain.created"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ domain_id: string, name: string, status: not_started | validation | scheduled | ready | error | verified | pending | failed | partially_verified | partially_failed, created_at: string }"
+          }
+        ]
+      },
+      "responseType": "{ type: domain.created, created_at: string, data: { domain_id: string, name: string, status: not_started | validation | scheduled | ready | error | verified | pending | failed | partially_verified | partially_failed, created_at: string } }",
+      "usageExample": "resend({\n    webhookHooks: {\n        domains: {\n            created: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "resend.webhooks.domains.deleted",
+      "shortPath": "domains.deleted",
+      "description": "A sending domain was deleted",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "domain.deleted"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name?: string }"
+          }
+        ]
+      },
+      "responseType": "{ type: domain.deleted, created_at: string, data: { id: string, name?: string } }",
+      "usageExample": "resend({\n    webhookHooks: {\n        domains: {\n            deleted: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "resend.webhooks.domains.updated",
+      "shortPath": "domains.updated",
+      "description": "A sending domain was updated",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "domain.updated"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ domain_id: string, name: string, status: not_started | validation | scheduled | ready | error | verified | pending | failed | partially_verified | partially_failed, created_at: string }"
+          }
+        ]
+      },
+      "responseType": "{ type: domain.updated, created_at: string, data: { domain_id: string, name: string, status: not_started | validation | scheduled | ready | error | verified | pending | failed | partially_verified | partially_failed, created_at: string } }",
+      "usageExample": "resend({\n    webhookHooks: {\n        domains: {\n            updated: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "resend.webhooks.emails.bounced",
+      "shortPath": "emails.bounced",
+      "description": "An email bounced and was not delivered",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "email.bounced"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ email_id: string, from: string, to: string[], subject?: string, created_at: string, bounce_type?: string }"
+          }
+        ]
+      },
+      "responseType": "{ type: email.bounced, created_at: string, data: { email_id: string, from: string, to: string[], subject?: string, created_at: string, bounce_type?: string } }",
+      "usageExample": "resend({\n    webhookHooks: {\n        emails: {\n            bounced: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "resend.webhooks.emails.clicked",
+      "shortPath": "emails.clicked",
+      "description": "A recipient clicked a link in an email",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "email.clicked"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ email_id: string, from: string, to: string[], subject?: string, created_at: string, link?: string }"
+          }
+        ]
+      },
+      "responseType": "{ type: email.clicked, created_at: string, data: { email_id: string, from: string, to: string[], subject?: string, created_at: string, link?: string } }",
+      "usageExample": "resend({\n    webhookHooks: {\n        emails: {\n            clicked: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "resend.webhooks.emails.complained",
+      "shortPath": "emails.complained",
+      "description": "A recipient marked an email as spam",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "email.complained"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ email_id: string, from: string, to: string[], subject?: string, created_at: string }"
+          }
+        ]
+      },
+      "responseType": "{ type: email.complained, created_at: string, data: { email_id: string, from: string, to: string[], subject?: string, created_at: string } }",
+      "usageExample": "resend({\n    webhookHooks: {\n        emails: {\n            complained: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "resend.webhooks.emails.delivered",
+      "shortPath": "emails.delivered",
+      "description": "An email was delivered to the recipient",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "email.delivered"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ email_id: string, from: string, to: string[], subject?: string, created_at: string }"
+          }
+        ]
+      },
+      "responseType": "{ type: email.delivered, created_at: string, data: { email_id: string, from: string, to: string[], subject?: string, created_at: string } }",
+      "usageExample": "resend({\n    webhookHooks: {\n        emails: {\n            delivered: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "resend.webhooks.emails.failed",
+      "shortPath": "emails.failed",
+      "description": "An email failed to send",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "email.failed"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ email_id: string, from: string, to: string[], subject?: string, created_at: string, error?: string }"
+          }
+        ]
+      },
+      "responseType": "{ type: email.failed, created_at: string, data: { email_id: string, from: string, to: string[], subject?: string, created_at: string, error?: string } }",
+      "usageExample": "resend({\n    webhookHooks: {\n        emails: {\n            failed: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "resend.webhooks.emails.opened",
+      "shortPath": "emails.opened",
+      "description": "A recipient opened an email",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "email.opened"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ email_id: string, from: string, to: string[], subject?: string, created_at: string }"
+          }
+        ]
+      },
+      "responseType": "{ type: email.opened, created_at: string, data: { email_id: string, from: string, to: string[], subject?: string, created_at: string } }",
+      "usageExample": "resend({\n    webhookHooks: {\n        emails: {\n            opened: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "resend.webhooks.emails.received",
+      "shortPath": "emails.received",
+      "description": "An inbound email was received",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "email.received"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ email_id: string, from: string, to: string[], subject?: string, created_at: string }"
+          }
+        ]
+      },
+      "responseType": "{ type: email.received, created_at: string, data: { email_id: string, from: string, to: string[], subject?: string, created_at: string } }",
+      "usageExample": "resend({\n    webhookHooks: {\n        emails: {\n            received: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "resend.webhooks.emails.scheduled",
+      "shortPath": "emails.scheduled",
+      "description": "An email was scheduled to be sent",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "email.scheduled"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ email_id: string, from: string, to: string[], subject?: string, created_at: string }"
+          }
+        ]
+      },
+      "responseType": "{ type: email.scheduled, created_at: string, data: { email_id: string, from: string, to: string[], subject?: string, created_at: string } }",
+      "usageExample": "resend({\n    webhookHooks: {\n        emails: {\n            scheduled: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "resend.webhooks.emails.sent",
+      "shortPath": "emails.sent",
+      "description": "An email was accepted and sent",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "email.sent"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ email_id: string, from: string, to: string[], subject?: string, created_at: string }"
+          }
+        ]
+      },
+      "responseType": "{ type: email.sent, created_at: string, data: { email_id: string, from: string, to: string[], subject?: string, created_at: string } }",
+      "usageExample": "resend({\n    webhookHooks: {\n        emails: {\n            sent: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "resend.webhooks.emails.suppressed",
+      "shortPath": "emails.suppressed",
+      "description": "An email was suppressed",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "email.suppressed"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ email_id: string, from: string, to: string[], subject?: string, created_at: string, suppressed?: { message?: string, type?: string } }"
+          }
+        ]
+      },
+      "responseType": "{ type: email.suppressed, created_at: string, data: { email_id: string, from: string, to: string[], subject?: string, created_at: string, suppressed?: { message?: string, type?: string } } }",
+      "usageExample": "resend({\n    webhookHooks: {\n        emails: {\n            suppressed: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": [
+    {
+      "path": "resend.db.contacts.search",
+      "entityName": "contacts",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "first_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "last_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "unsubscribed",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    },
+    {
+      "path": "resend.db.domains.search",
+      "entityName": "domains",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "region",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "resend.db.emails.search",
+      "entityName": "emails",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "from",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "subject",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,163 @@
+---
+title: Database
+description: "AsinData API local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The AsinData API plugin syncs data locally. Use `corsair.asindataapi.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Collections
+
+Path: `asindataapi.db.collections.search`
+
+```ts
+const rows = await corsair.asindataapi.db.collections.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `last_run` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `enabled` | `boolean` | equals |
+| `request_total_count` | `number` | equals, gt, gte, lt, lte, in |
+| `request_page_count` | `number` | equals, gt, gte, lt, lte, in |
+| `requests_total_count` | `number` | equals, gt, gte, lt, lte, in |
+| `requests_page_count` | `number` | equals, gt, gte, lt, lte, in |
+| `credits_required` | `number` | equals, gt, gte, lt, lte, in |
+| `next_result_set_id` | `number` | equals, gt, gte, lt, lte, in |
+| `results_count` | `number` | equals, gt, gte, lt, lte, in |
+| `schedule_minutes` | `string` | equals, contains, startsWith, endsWith, in |
+| `notification_email` | `string` | equals, contains, startsWith, endsWith, in |
+| `notification_webhook` | `string` | equals, contains, startsWith, endsWith, in |
+| `notification_as_json` | `boolean` | equals |
+| `notification_as_jsonlines` | `boolean` | equals |
+| `notification_as_csv` | `boolean` | equals |
+| `notification_csv_fields` | `string` | equals, contains, startsWith, endsWith, in |
+| `request_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `request_type_locked` | `boolean` | equals |
+| `requests_type` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Destinations
+
+Path: `asindataapi.db.destinations.search`
+
+```ts
+const rows = await corsair.asindataapi.db.destinations.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `enabled` | `boolean` | equals |
+| `used_by` | `number` | equals, gt, gte, lt, lte, in |
+| `s3_bucket_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `s3_path_prefix` | `string` | equals, contains, startsWith, endsWith, in |
+| `s3_endpoint` | `string` | equals, contains, startsWith, endsWith, in |
+| `s3_region` | `string` | equals, contains, startsWith, endsWith, in |
+| `gcs_bucket_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `gcs_path_prefix` | `string` | equals, contains, startsWith, endsWith, in |
+| `azure_account_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `azure_container_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `azure_path_prefix` | `string` | equals, contains, startsWith, endsWith, in |
+| `oss_bucket_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `oss_region_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `oss_path_prefix` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Requests
+
+Path: `asindataapi.db.requests.search`
+
+```ts
+const rows = await corsair.asindataapi.db.requests.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `custom_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `amazon_domain` | `string` | equals, contains, startsWith, endsWith, in |
+| `asin` | `string` | equals, contains, startsWith, endsWith, in |
+| `url` | `string` | equals, contains, startsWith, endsWith, in |
+| `gtin` | `string` | equals, contains, startsWith, endsWith, in |
+| `search_term` | `string` | equals, contains, startsWith, endsWith, in |
+| `category_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `refinements` | `string` | equals, contains, startsWith, endsWith, in |
+| `sort_by` | `string` | equals, contains, startsWith, endsWith, in |
+| `exclude_sponsored` | `boolean` | equals |
+| `direct_search` | `boolean` | equals |
+| `page` | `number` | equals, gt, gte, lt, lte, in |
+| `max_page` | `number` | equals, gt, gte, lt, lte, in |
+| `include_html` | `boolean` | equals |
+| `skip_gtin_cache` | `boolean` | equals |
+| `show_different_asins` | `boolean` | equals |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Result Sets
+
+Path: `asindataapi.db.resultSets.search`
+
+```ts
+const rows = await corsair.asindataapi.db.resultSets.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `collection_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `started_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `ended_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `expires_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `results_page_count` | `number` | equals, gt, gte, lt, lte, in |
+| `requests_completed` | `number` | equals, gt, gte, lt, lte, in |
+| `requests_failed` | `number` | equals, gt, gte, lt, lte, in |
+| `requests_total` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

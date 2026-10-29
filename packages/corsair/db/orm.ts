@@ -14,6 +14,7 @@ import {
 	CorsairIntegrationsSchema,
 } from './';
 import type { CorsairDatabase, CorsairKyselyDatabase } from './kysely/database';
+import type { EntityDataAtRest } from './kysely/orm';
 import { createKyselyEntityClient } from './kysely/orm';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -1281,8 +1282,19 @@ export type TenantScopedOrm = {
 	forIntegration: <Entities extends Record<string, ZodTypeAny>>(config: {
 		integrationName: string;
 		schema: CorsairPluginSchema<Entities>;
+		encryptDataAtRest?: boolean;
+		kek?: string;
 	}) => CorsairPluginOrm<Entities>;
 };
+
+function atRestOptions(options: {
+	encryptDataAtRest?: boolean;
+	kek?: string;
+}): EntityDataAtRest | undefined {
+	if (options.encryptDataAtRest !== true) return undefined;
+	// An empty key still enables the flag so the write throws instead of storing plaintext.
+	return { encryptDataAtRest: true, kek: options.kek ?? '' };
+}
 
 /**
  * Creates an entity client for a specific plugin entity type.
@@ -1294,6 +1306,7 @@ function createPluginEntityClient<DataSchema extends ZodTypeAny>(
 	entityTypeName: string,
 	version: string,
 	dataSchema: DataSchema,
+	atRest?: EntityDataAtRest,
 ): PluginEntityClient<DataSchema> {
 	// Cache for account ID lookup
 	let cachedAccountId: string | null = null;
@@ -1339,6 +1352,7 @@ function createPluginEntityClient<DataSchema extends ZodTypeAny>(
 		entityTypeName,
 		version,
 		dataSchema,
+		atRest,
 	);
 }
 
@@ -1383,8 +1397,12 @@ export function createPluginOrm<
 	integrationName: string;
 	schema: CorsairPluginSchema<Entities>;
 	tenantId: string;
+	/** Seal and open entity documents with the account DEK. Requires `kek`. */
+	encryptDataAtRest?: boolean;
+	kek?: string;
 }): CorsairPluginOrm<Entities> {
 	const { database, integrationName, schema, tenantId } = config;
+	const atRest = atRestOptions(config);
 	const baseOrm = createCorsairOrm(database);
 
 	const context: PluginContext = { tenantId, integrationName };
@@ -1434,6 +1452,7 @@ export function createPluginOrm<
 			entityTypeName,
 			schema.version,
 			dataSchema,
+			atRest,
 		);
 	}
 
@@ -1538,12 +1557,16 @@ export function createTenantScopedOrm(
 		forIntegration: <Entities extends Record<string, ZodTypeAny>>(config: {
 			integrationName: string;
 			schema: CorsairPluginSchema<Entities>;
+			encryptDataAtRest?: boolean;
+			kek?: string;
 		}) =>
 			createPluginOrm({
 				database,
 				integrationName: config.integrationName,
 				schema: config.schema,
 				tenantId,
+				encryptDataAtRest: config.encryptDataAtRest,
+				kek: config.kek,
 			}),
 	};
 }
@@ -1570,6 +1593,8 @@ export function createPluginOrmFactory<
 	config: {
 		integrationName: string;
 		schema: CorsairPluginSchema<Entities>;
+		encryptDataAtRest?: boolean;
+		kek?: string;
 	},
 ) {
 	return {
@@ -1579,6 +1604,8 @@ export function createPluginOrmFactory<
 				integrationName: config.integrationName,
 				schema: config.schema,
 				tenantId,
+				encryptDataAtRest: config.encryptDataAtRest,
+				kek: config.kek,
 			}),
 	};
 }

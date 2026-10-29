@@ -1,0 +1,2190 @@
+---
+title: API
+description: "API reference for Facebook: every `facebook.api.*` operation with input and output types."
+---
+
+Every `facebook.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Comments
+
+### create
+
+`comments.create`
+
+Create a comment on a Page post or other object.
+
+**Risk:** `write`
+
+```ts
+await corsair.facebook.api.comments.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object_id` | `string` | Yes | Post ID, photo ID, or other commentable object ID. |
+| `page_id` | `string` | No | Page ID for Page-token auth. Optional when object_id is composite PageID_PostID. |
+| `message` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### delete
+
+`comments.delete`
+
+Delete a comment.
+
+**Risk:** `write` · **Irreversible**
+
+```ts
+await corsair.facebook.api.comments.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `comment_id` | `string` | Yes | — |
+| `page_id` | `string` | Yes | Page ID used to resolve the Page access token. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### get
+
+`comments.get`
+
+Retrieve a single comment by ID.
+
+**Risk:** `read`
+
+```ts
+await corsair.facebook.api.comments.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `comment_id` | `string` | Yes | — |
+| `page_id` | `string` | No | Page ID for Page-token auth. Optional when comment_id embeds the page id. |
+| `fields` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `message` | `string` | No | — |
+| `created_time` | `string` | No | — |
+| `from` | `object` | No | — |
+| `is_hidden` | `boolean` | No | — |
+| `like_count` | `number` | No | — |
+| `comment_count` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="from full type">
+
+```ts
+{
+  id?: string,
+  name?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`comments.list`
+
+List comments on a Page post or other object.
+
+**Risk:** `read`
+
+```ts
+await corsair.facebook.api.comments.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object_id` | `string` | Yes | Object ID whose comments should be listed. |
+| `page_id` | `string` | No | Page ID for Page-token auth. Optional when object_id is composite PageID_PostID. |
+| `fields` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+| `filter` | `stream \| toplevel` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  message?: string,
+  created_time?: string,
+  from?: {
+    id?: string,
+    name?: string
+  },
+  is_hidden?: boolean,
+  like_count?: number,
+  comment_count?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  next?: string,
+  previous?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`comments.update`
+
+Update or hide a comment.
+
+**Risk:** `write`
+
+```ts
+await corsair.facebook.api.comments.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `comment_id` | `string` | Yes | — |
+| `page_id` | `string` | Yes | Page ID used to resolve the Page access token. |
+| `message` | `string` | No | — |
+| `is_hidden` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+## Conversations
+
+### getMessages
+
+`conversations.getMessages`
+
+List messages in a Messenger conversation.
+
+**Risk:** `read`
+
+```ts
+await corsair.facebook.api.conversations.getMessages({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_id` | `string` | Yes | — |
+| `conversation_id` | `string` | Yes | — |
+| `fields` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  message?: string,
+  created_time?: string,
+  from?: {
+    id?: string,
+    name?: string,
+    email?: string
+  },
+  to?: {
+    data?: {
+      id?: string,
+      name?: string,
+      email?: string
+    }[]
+  },
+  attachments?: {
+    data?: {
+    }[]
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  next?: string,
+  previous?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`conversations.list`
+
+List Messenger conversations for a Page (optional platform filter).
+
+**Risk:** `read`
+
+```ts
+await corsair.facebook.api.conversations.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_id` | `string` | Yes | Facebook Page ID |
+| `fields` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+| `platform` | `messenger \| instagram \| whatsapp` | No | Filter conversations by messaging platform. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  link?: string,
+  updated_time?: string,
+  message_count?: number,
+  unread_count?: number,
+  snippet?: string,
+  participants?: {
+    data?: {
+      id?: string,
+      name?: string,
+      email?: string
+    }[]
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  next?: string,
+  previous?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Messages
+
+### getDetails
+
+`messages.getDetails`
+
+Retrieve a single Messenger message by ID.
+
+**Risk:** `read`
+
+```ts
+await corsair.facebook.api.messages.getDetails({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_id` | `string` | Yes | — |
+| `message_id` | `string` | Yes | — |
+| `fields` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `message` | `string` | No | — |
+| `created_time` | `string` | No | — |
+| `from` | `object` | No | — |
+| `to` | `object` | No | — |
+| `attachments` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="from full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  email?: string
+}
+```
+</Accordion>
+
+<Accordion title="to full type">
+
+```ts
+{
+  data?: {
+    id?: string,
+    name?: string,
+    email?: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="attachments full type">
+
+```ts
+{
+  data?: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### markSeen
+
+`messages.markSeen`
+
+Mark the most recent messages in a conversation as seen.
+
+**Risk:** `write`
+
+```ts
+await corsair.facebook.api.messages.markSeen({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_id` | `string` | Yes | — |
+| `recipient_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `recipient_id` | `string` | No | — |
+| `message_id` | `string` | No | — |
+
+
+
+---
+
+### send
+
+`messages.send`
+
+Send a text Messenger message from a Page.
+
+**Risk:** `write`
+
+```ts
+await corsair.facebook.api.messages.send({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_id` | `string` | Yes | — |
+| `recipient_id` | `string` | Yes | — |
+| `message` | `string` | Yes | — |
+| `messaging_type` | `RESPONSE \| UPDATE \| MESSAGE_TAG \| UTILITY` | No | — |
+| `tag` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `recipient_id` | `string` | No | — |
+| `message_id` | `string` | No | — |
+
+
+
+---
+
+### sendMedia
+
+`messages.sendMedia`
+
+Send a media Messenger message from a Page.
+
+**Risk:** `write`
+
+```ts
+await corsair.facebook.api.messages.sendMedia({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_id` | `string` | Yes | — |
+| `recipient_id` | `string` | Yes | — |
+| `attachment_type` | `image \| video \| audio \| file` | Yes | — |
+| `attachment_url` | `string` | Yes | — |
+| `messaging_type` | `RESPONSE \| UPDATE \| MESSAGE_TAG \| UTILITY` | No | — |
+| `tag` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `recipient_id` | `string` | No | — |
+| `message_id` | `string` | No | — |
+
+
+
+---
+
+### toggleTyping
+
+`messages.toggleTyping`
+
+Show or hide the Messenger typing indicator.
+
+**Risk:** `write`
+
+```ts
+await corsair.facebook.api.messages.toggleTyping({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_id` | `string` | Yes | — |
+| `recipient_id` | `string` | Yes | — |
+| `action` | `typing_on \| typing_off` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `recipient_id` | `string` | No | — |
+| `message_id` | `string` | No | — |
+
+
+
+---
+
+## Pages
+
+### assignTask
+
+`pages.assignTask`
+
+Assign Page tasks to a business/system user via /assigned_users.
+
+**Risk:** `write`
+
+```ts
+await corsair.facebook.api.pages.assignTask({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_id` | `string` | Yes | — |
+| `user` | `string` | Yes | Business user or system user ID to assign tasks to. |
+| `tasks` | `string[]` | Yes | Page tasks such as MANAGE, CREATE_CONTENT, MODERATE, ADVERTISE, ANALYZE. |
+| `business` | `string` | No | Business ID. Required for many Business Manager assigned_users flows. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### getDetails
+
+`pages.getDetails`
+
+Retrieve metadata for a Facebook Page.
+
+**Risk:** `read`
+
+```ts
+await corsair.facebook.api.pages.getDetails({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_id` | `string` | Yes | Facebook Page ID |
+| `fields` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `access_token` | `string` | No | — |
+| `category` | `string` | No | — |
+| `category_list` | `object[]` | No | — |
+| `tasks` | `string[]` | No | — |
+| `about` | `string` | No | — |
+| `link` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `website` | `string` | No | — |
+| `emails` | `string[]` | No | — |
+| `picture` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="category_list full type">
+
+```ts
+{
+  id?: string,
+  name?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="picture full type">
+
+```ts
+{
+  data?: {
+    url?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getInsights
+
+`pages.getInsights`
+
+Retrieve Page insights for the given metrics and period.
+
+**Risk:** `read`
+
+```ts
+await corsair.facebook.api.pages.getInsights({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_id` | `string` | Yes | Facebook Page ID |
+| `metric` | `string \| string[]` | Yes | Insight metric name(s), e.g. page_follows, page_views_total. |
+| `period` | `day \| week \| days_28 \| month \| lifetime` | No | — |
+| `since` | `string \| number` | No | — |
+| `until` | `string \| number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  name: string,
+  period?: string,
+  values?: {
+    value: number | string | {
+    },
+    end_time?: string
+  }[],
+  title?: string,
+  description?: string,
+  id?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  next?: string,
+  previous?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getRoles
+
+`pages.getRoles`
+
+List users and their roles on a Facebook Page.
+
+**Risk:** `read`
+
+```ts
+await corsair.facebook.api.pages.getRoles({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_id` | `string` | Yes | Facebook Page ID |
+| `fields` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  tasks?: string[],
+  role?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  next?: string,
+  previous?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listManaged
+
+`pages.listManaged`
+
+List Facebook Pages the authenticated user manages, including page access tokens.
+
+**Risk:** `read`
+
+```ts
+await corsair.facebook.api.pages.listManaged({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fields` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  access_token?: string,
+  category?: string,
+  category_list?: {
+    id?: string,
+    name?: string
+  }[],
+  tasks?: string[],
+  about?: string,
+  link?: string,
+  phone?: string,
+  website?: string,
+  emails?: string[],
+  picture?: {
+    data?: {
+      url?: string
+    }
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  next?: string,
+  previous?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### removeTask
+
+`pages.removeTask`
+
+Remove a business/system user from Page task assignments.
+
+**Risk:** `write`
+
+```ts
+await corsair.facebook.api.pages.removeTask({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_id` | `string` | Yes | — |
+| `user` | `string` | Yes | Business user or system user ID to remove from Page tasks. |
+| `business` | `string` | No | Business ID. Required for many Business Manager assigned_users flows. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### search
+
+`pages.search`
+
+Search Pages via /pages/search (deprecated for most apps; Workplace-only). Prefer pages.listManaged or pages.getDetails.
+
+**Risk:** `read`
+
+```ts
+await corsair.facebook.api.pages.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | Search query for page names. |
+| `fields` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  access_token?: string,
+  category?: string,
+  category_list?: {
+    id?: string,
+    name?: string
+  }[],
+  tasks?: string[],
+  about?: string,
+  link?: string,
+  phone?: string,
+  website?: string,
+  emails?: string[],
+  picture?: {
+    data?: {
+      url?: string
+    }
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  next?: string,
+  previous?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateSettings
+
+`pages.updateSettings`
+
+Update editable settings on a Facebook Page.
+
+**Risk:** `write`
+
+```ts
+await corsair.facebook.api.pages.updateSettings({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_id` | `string` | Yes | — |
+| `about` | `string` | No | — |
+| `description` | `string` | No | — |
+| `emails` | `string[]` | No | — |
+| `phone` | `string` | No | — |
+| `website` | `string` | No | — |
+| `general_info` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+## Photos
+
+### addToAlbum
+
+`photos.addToAlbum`
+
+Add a photo to an existing album.
+
+**Risk:** `write`
+
+```ts
+await corsair.facebook.api.photos.addToAlbum({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `album_id` | `string` | Yes | — |
+| `page_id` | `string` | Yes | Page ID used to resolve the Page access token. |
+| `url` | `string` | Yes | Publicly accessible image URL. |
+| `caption` | `string` | No | — |
+| `message` | `string` | No | Deprecated alias for caption; mapped to caption at runtime. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### createAlbum
+
+`photos.createAlbum`
+
+Create a photo album on a Page.
+
+**Risk:** `write`
+
+```ts
+await corsair.facebook.api.photos.createAlbum({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `message` | `string` | No | — |
+| `location` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### createPost
+
+`photos.createPost`
+
+Create and publish a photo post on a Page (uses caption per Graph docs).
+
+**Risk:** `write`
+
+```ts
+await corsair.facebook.api.photos.createPost({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_id` | `string` | Yes | — |
+| `url` | `string` | Yes | — |
+| `caption` | `string` | No | Preferred photo caption field per Graph docs. |
+| `message` | `string` | No | Deprecated alias for caption; mapped to caption at runtime. |
+| `published` | `boolean` | No | — |
+| `scheduled_publish_time` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### list
+
+`photos.list`
+
+List Page photos via /photos (defaults to type=uploaded).
+
+**Risk:** `read`
+
+```ts
+await corsair.facebook.api.photos.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_id` | `string` | Yes | Facebook Page ID |
+| `fields` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+| `type` | `uploaded \| profile \| tagged` | No | Defaults to uploaded. Graph defaults to profile without this. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  created_time?: string,
+  source?: string,
+  link?: string,
+  images?: {
+    height?: number,
+    width?: number,
+    source?: string
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  next?: string,
+  previous?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### upload
+
+`photos.upload`
+
+Upload a photo to a Page.
+
+**Risk:** `write`
+
+```ts
+await corsair.facebook.api.photos.upload({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_id` | `string` | Yes | — |
+| `url` | `string` | Yes | Publicly accessible image URL. |
+| `caption` | `string` | No | — |
+| `published` | `boolean` | No | Defaults to false so the photo can be attached to a feed post. |
+| `temporary` | `boolean` | No | — |
+| `no_story` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### uploadBatch
+
+`photos.uploadBatch`
+
+Upload multiple photos using the Graph API batch endpoint.
+
+**Risk:** `write`
+
+```ts
+await corsair.facebook.api.photos.uploadBatch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_id` | `string` | Yes | — |
+| `photos` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="photos full type">
+
+```ts
+{
+  url: string,
+  caption?: string,
+  published?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  code: number,
+  headers?: {
+    name: string,
+    value: string
+  }[],
+  body?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Posts
+
+### create
+
+`posts.create`
+
+Publish or schedule a Page feed post (supports attached_media for multi-photo).
+
+**Risk:** `write`
+
+```ts
+await corsair.facebook.api.posts.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_id` | `string` | Yes | — |
+| `message` | `string` | No | — |
+| `link` | `string` | No | — |
+| `published` | `boolean` | No | — |
+| `scheduled_publish_time` | `number` | No | — |
+| `unpublished_content_type` | `SCHEDULED \| DRAFT \| ADS_POST` | No | Required by Graph for some unpublished/scheduled media attach flows. |
+| `attached_media` | `object[]` | No | Multi-photo/video attach. Upload unpublished media first, then pass media_fbid values. |
+| `targeting` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="attached_media full type">
+
+```ts
+{
+  media_fbid: string
+}[]
+```
+</Accordion>
+
+<Accordion title="targeting full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### delete
+
+`posts.delete`
+
+Delete a Page post.
+
+**Risk:** `write` · **Irreversible**
+
+```ts
+await corsair.facebook.api.posts.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `post_id` | `string` | Yes | — |
+| `page_id` | `string` | No | Page ID for Page-token auth. Optional when post_id is composite PageID_PostID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### get
+
+`posts.get`
+
+Retrieve a single Page post by ID.
+
+**Risk:** `read`
+
+```ts
+await corsair.facebook.api.posts.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `post_id` | `string` | Yes | — |
+| `page_id` | `string` | No | Page ID for Page-token auth. Optional when post_id is composite PageID_PostID. |
+| `fields` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `message` | `string` | No | — |
+| `created_time` | `string` | No | — |
+| `updated_time` | `string` | No | — |
+| `is_published` | `boolean` | No | — |
+| `scheduled_publish_time` | `number` | No | — |
+| `status_type` | `string` | No | — |
+| `permalink_url` | `string` | No | — |
+| `full_picture` | `string` | No | — |
+
+
+
+---
+
+### getInsights
+
+`posts.getInsights`
+
+Retrieve insights for a Page post.
+
+**Risk:** `read`
+
+```ts
+await corsair.facebook.api.posts.getInsights({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `post_id` | `string` | Yes | — |
+| `page_id` | `string` | No | Page ID for Page-token auth. Optional when post_id is composite PageID_PostID. |
+| `metric` | `string \| string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  name: string,
+  period?: string,
+  values?: {
+    value: number | string | {
+    },
+    end_time?: string
+  }[],
+  title?: string,
+  description?: string,
+  id?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  next?: string,
+  previous?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getReactions
+
+`posts.getReactions`
+
+List reactions on a Page post.
+
+**Risk:** `read`
+
+```ts
+await corsair.facebook.api.posts.getReactions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `post_id` | `string` | Yes | — |
+| `page_id` | `string` | No | Page ID for Page-token auth. Optional when post_id is composite PageID_PostID. |
+| `type` | `LIKE \| LOVE \| WOW \| HAHA \| SAD \| ANGRY \| CARE` | No | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  type?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  next?: string,
+  previous?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`posts.list`
+
+List Page timeline content via /feed (page posts + visitor posts + tagged posts).
+
+**Risk:** `read`
+
+```ts
+await corsair.facebook.api.posts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_id` | `string` | Yes | Facebook Page ID |
+| `fields` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  message?: string,
+  created_time?: string,
+  updated_time?: string,
+  is_published?: boolean,
+  scheduled_publish_time?: number,
+  status_type?: string,
+  permalink_url?: string,
+  full_picture?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  next?: string,
+  previous?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listScheduled
+
+`posts.listScheduled`
+
+List scheduled but unpublished Page posts.
+
+**Risk:** `read`
+
+```ts
+await corsair.facebook.api.posts.listScheduled({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_id` | `string` | Yes | Facebook Page ID |
+| `fields` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  message?: string,
+  created_time?: string,
+  updated_time?: string,
+  is_published?: boolean,
+  scheduled_publish_time?: number,
+  status_type?: string,
+  permalink_url?: string,
+  full_picture?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  next?: string,
+  previous?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listTagged
+
+`posts.listTagged`
+
+List posts in which the Page is tagged.
+
+**Risk:** `read`
+
+```ts
+await corsair.facebook.api.posts.listTagged({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_id` | `string` | Yes | Facebook Page ID |
+| `fields` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  message?: string,
+  created_time?: string,
+  updated_time?: string,
+  is_published?: boolean,
+  scheduled_publish_time?: number,
+  status_type?: string,
+  permalink_url?: string,
+  full_picture?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  next?: string,
+  previous?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### publishScheduled
+
+`posts.publishScheduled`
+
+Publish a previously scheduled post immediately.
+
+**Risk:** `write`
+
+```ts
+await corsair.facebook.api.posts.publishScheduled({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `post_id` | `string` | Yes | — |
+| `page_id` | `string` | No | Page ID for Page-token auth. Optional when post_id is composite PageID_PostID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### reschedule
+
+`posts.reschedule`
+
+Change the scheduled publish time of a post.
+
+**Risk:** `write`
+
+```ts
+await corsair.facebook.api.posts.reschedule({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `post_id` | `string` | Yes | — |
+| `page_id` | `string` | No | Page ID for Page-token auth. Optional when post_id is composite PageID_PostID. |
+| `scheduled_publish_time` | `number` | Yes | Unix timestamp for the new scheduled publish time. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### update
+
+`posts.update`
+
+Update an existing Page post.
+
+**Risk:** `write`
+
+```ts
+await corsair.facebook.api.posts.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `post_id` | `string` | Yes | — |
+| `page_id` | `string` | No | Page ID for Page-token auth. Optional when post_id is composite PageID_PostID. |
+| `message` | `string` | No | — |
+| `is_hidden` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+## Reactions
+
+### add
+
+`reactions.add`
+
+Add a LIKE to a post or comment via /likes (Graph only allows LIKE programmatically).
+
+**Risk:** `write`
+
+```ts
+await corsair.facebook.api.reactions.add({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object_id` | `string` | Yes | Post ID, comment ID, or other reactable object ID. |
+| `page_id` | `string` | No | Page ID for Page-token auth. Optional when object_id is composite PageID_PostID. |
+| `type` | `LIKE` | No | Only LIKE is supported by the Graph API for programmatic reactions. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### unlike
+
+`reactions.unlike`
+
+Remove a LIKE from a post or comment via DELETE /likes.
+
+**Risk:** `write`
+
+```ts
+await corsair.facebook.api.reactions.unlike({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object_id` | `string` | Yes | Post ID or comment ID to remove a like/reaction from. |
+| `page_id` | `string` | No | Page ID for Page-token auth. Optional when object_id is composite PageID_PostID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+## Users
+
+### getCurrentUser
+
+`users.getCurrentUser`
+
+Get the authenticated Facebook user via /me.
+
+**Risk:** `read`
+
+```ts
+await corsair.facebook.api.users.getCurrentUser({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fields` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `email` | `string` | No | — |
+
+
+
+---
+
+### getUserPages
+
+`users.getUserPages`
+
+Deprecated. List Facebook Pages for the authenticated user via /me/accounts.
+
+**Risk:** `read`
+
+```ts
+await corsair.facebook.api.users.getUserPages({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fields` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  access_token?: string,
+  category?: string,
+  category_list?: {
+    id?: string,
+    name?: string
+  }[],
+  tasks?: string[],
+  about?: string,
+  link?: string,
+  phone?: string,
+  website?: string,
+  emails?: string[],
+  picture?: {
+    data?: {
+      url?: string
+    }
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  next?: string,
+  previous?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Videos
+
+### createPost
+
+`videos.createPost`
+
+Create a video post on a Page using file_url.
+
+**Risk:** `write`
+
+```ts
+await corsair.facebook.api.videos.createPost({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_id` | `string` | Yes | — |
+| `file_url` | `string` | Yes | Publicly accessible video URL. |
+| `title` | `string` | No | — |
+| `description` | `string` | No | — |
+| `published` | `boolean` | No | — |
+| `scheduled_publish_time` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### list
+
+`videos.list`
+
+List Page videos via GET /{page-id}/videos (Video API; needs pages_read_engagement + MANAGE).
+
+**Risk:** `read`
+
+```ts
+await corsair.facebook.api.videos.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_id` | `string` | Yes | Facebook Page ID |
+| `fields` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  title?: string,
+  description?: string,
+  created_time?: string,
+  source?: string,
+  length?: number,
+  permalink_url?: string,
+  status?: {
+    video_status?: string,
+    processing_progress?: number
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  next?: string,
+  previous?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### upload
+
+`videos.upload`
+
+Publish a Page video from file_url (same edge as createPost; not resumable/chunked).
+
+**Risk:** `write`
+
+```ts
+await corsair.facebook.api.videos.upload({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_id` | `string` | Yes | — |
+| `file_url` | `string` | Yes | — |
+| `title` | `string` | No | — |
+| `description` | `string` | No | — |
+| `published` | `boolean` | No | — |
+| `scheduled_publish_time` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+

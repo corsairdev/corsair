@@ -1,0 +1,174 @@
+---
+title: API
+description: "API reference for ApiLabz: every `apilabz.api.*` operation with input and output types."
+---
+
+Every `apilabz.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Airtable
+
+### listTables
+
+`airtable.listTables`
+
+List Airtable tables for a base
+
+**Risk:** `read`
+
+```ts
+await corsair.apilabz.api.airtable.listTables({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `base_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | — |
+| `response` | `any` | Yes | — |
+
+
+
+---
+
+## Deals
+
+### integrate
+
+`deals.integrate`
+
+Integrate a deal into API Labz
+
+**Risk:** `write`
+
+```ts
+await corsair.apilabz.api.deals.integrate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | Yes | — |
+| `amount` | `number` | Yes | — |
+| `dealId` | `string` | Yes | — |
+| `status` | `string` | Yes | — |
+| `currency` | `string` | No | — |
+| `customFields` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="customFields full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | — |
+| `response` | `any` | Yes | — |
+
+
+
+---
+
+## Iban
+
+### validate
+
+`iban.validate`
+
+Validate an IBAN
+
+**Risk:** `read`
+
+```ts
+await corsair.apilabz.api.iban.validate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `iban` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | — |
+| `response` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="response full type">
+
+```ts
+{
+  iban: string,
+  is_valid: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Trello
+
+### aiSearchEngine
+
+`trello.aiSearchEngine`
+
+Run AI search across Trello data
+
+**Risk:** `read`
+
+```ts
+await corsair.apilabz.api.trello.aiSearchEngine({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `listId` | `string` | No | — |
+| `boardId` | `string` | No | — |
+| `includeArchived` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | — |
+| `response` | `any` | Yes | — |
+
+
+
+---
+

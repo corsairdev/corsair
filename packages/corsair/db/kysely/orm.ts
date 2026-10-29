@@ -2,7 +2,9 @@ import type { Kysely, SelectQueryBuilder } from 'kysely';
 import type { ZodTypeAny } from 'zod';
 import { z } from 'zod';
 
+import { decryptDEK } from '../../core/auth/encryption';
 import { generateUUID } from '../../core/utils';
+import { openJson, sealJson } from '../data-at-rest';
 import type { CorsairEntity } from '../index';
 import type { PluginEntityClient, TypedEntity } from '../orm';
 import type { CorsairKyselyDatabase } from './database';
@@ -19,6 +21,7 @@ type EntityQueryBuilder = SelectQueryBuilder<
 	CorsairEntity
 >;
 
+// unknown: postgres returns JSONB as an object; sqlite returns the same cell as text.
 function parseJsonLike(value: unknown): unknown {
 	if (typeof value === 'string') {
 		try {
@@ -236,21 +239,79 @@ function baseQuery(
 		.where('entity_type', '=', entityTypeName);
 }
 
+export type EntityDataAtRest = {
+	encryptDataAtRest: true;
+	kek: string;
+};
+
 export function createKyselyEntityClient<DataSchema extends ZodTypeAny>(
 	db: Kysely<CorsairKyselyDatabase>,
 	getAccountId: () => Promise<string>,
 	entityTypeName: string,
 	version: string,
 	dataSchema: DataSchema,
+	atRest?: EntityDataAtRest,
 ): PluginEntityClient<DataSchema> {
 	const dataFieldTypes = getDataFieldTypes(dataSchema);
+	// Successful unwraps only. A missing or rejected key is not stored, and a
+	// rotated wrapped DEK misses this cache because the ciphertext changed.
+	const dekCache = new Map<string, { wrapped: string; dek: string }>();
 
-	function parseRow(row: CorsairEntity): TypedEntity<DataSchema> {
-		const data = parseJsonLike(row.data);
+	const accountDek = async (accountId: string): Promise<string> => {
+		if (!atRest?.kek) {
+			throw new Error('encryptDataAtRest requires kek');
+		}
+		const row = await db
+			.selectFrom('corsair_accounts')
+			.select('dek')
+			.where('id', '=', accountId)
+			.executeTakeFirst();
+		if (!row?.dek) {
+			throw new Error(
+				`No DEK found for account "${accountId}". Initialize the account first.`,
+			);
+		}
+		const cached = dekCache.get(accountId);
+		if (cached && cached.wrapped === row.dek) return cached.dek;
+		const dek = await decryptDEK(row.dek, atRest.kek);
+		dekCache.set(accountId, { wrapped: row.dek, dek });
+		return dek;
+	};
+
+	async function parseRow(
+		row: CorsairEntity,
+		dek?: string,
+	): Promise<TypedEntity<DataSchema>> {
+		let data = parseJsonLike(row.data);
+		if (atRest)
+			data = openJson(data, dek ?? (await accountDek(row.account_id)));
 		return {
 			...row,
 			data: dataSchema.parse(data),
 		} as TypedEntity<DataSchema>;
+	}
+
+	async function parseRows(
+		rows: CorsairEntity[],
+		accountId: string,
+	): Promise<TypedEntity<DataSchema>[]> {
+		if (rows.length === 0) return [];
+		// One account owns every row in the query. Load its key once.
+		const dek = atRest ? await accountDek(accountId) : undefined;
+		return Promise.all(rows.map((row) => parseRow(row, dek)));
+	}
+
+	async function storedData(
+		accountId: string,
+		// unknown: this is the parsed output of a caller-supplied plugin schema.
+		// The schema is not in scope here, so the JSONB document cannot be named more tightly.
+		data: unknown,
+	): Promise<Record<string, unknown>> {
+		if (!atRest) {
+			// unknown: same document. Zod's output is not a Record even though the column stores an object.
+			return data as Record<string, unknown>;
+		}
+		return sealJson(data, await accountDek(accountId));
 	}
 
 	return {
@@ -294,7 +355,7 @@ export function createKyselyEntityClient<DataSchema extends ZodTypeAny>(
 			const rows = await baseQuery(db, accountId, entityTypeName)
 				.where('entity_id', 'in', entityIds)
 				.execute();
-			return rows.map(parseRow);
+			return parseRows(rows, accountId);
 		},
 
 		list: async (options) => {
@@ -303,10 +364,20 @@ export function createKyselyEntityClient<DataSchema extends ZodTypeAny>(
 			if (typeof options?.limit === 'number') q = q.limit(options.limit);
 			if (typeof options?.offset === 'number') q = q.offset(options.offset);
 			const rows = await q.execute();
-			return rows.map(parseRow);
+			return parseRows(rows, accountId);
 		},
 
 		search: async (options) => {
+			if (
+				atRest &&
+				options.data &&
+				typeof options.data === 'object' &&
+				Object.keys(options.data).length > 0
+			) {
+				throw new Error(
+					'Entity JSON field search cannot run while encryptDataAtRest is enabled. The stored document is ciphertext.',
+				);
+			}
 			const accountId = await getAccountId();
 			let q = baseQuery(db, accountId, entityTypeName);
 
@@ -328,12 +399,13 @@ export function createKyselyEntityClient<DataSchema extends ZodTypeAny>(
 			if (typeof options.offset === 'number') q = q.offset(options.offset);
 
 			const rows = await q.execute();
-			return rows.map(parseRow);
+			return parseRows(rows, accountId);
 		},
 
 		upsertByEntityId: async (entityId, data) => {
 			const accountId = await getAccountId();
 			const parsed = dataSchema.parse(data);
+			const dataToStore = await storedData(accountId, parsed);
 			const now = new Date();
 
 			const existing = await baseQuery(db, accountId, entityTypeName)
@@ -346,7 +418,7 @@ export function createKyselyEntityClient<DataSchema extends ZodTypeAny>(
 					.updateTable('corsair_entities')
 					.set({
 						version,
-						data: parsed as Record<string, unknown>,
+						data: dataToStore,
 						updated_at: now,
 					})
 					.where('id', '=', existing.id)
@@ -370,7 +442,7 @@ export function createKyselyEntityClient<DataSchema extends ZodTypeAny>(
 					entity_id: entityId,
 					entity_type: entityTypeName,
 					version,
-					data: parsed as Record<string, unknown>,
+					data: dataToStore,
 				})
 				.execute();
 

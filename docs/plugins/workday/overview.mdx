@@ -1,0 +1,139 @@
+---
+title: Overview
+description: "Enterprise HR and finance cloud suite for workers, payroll, and organizational data."
+---
+
+Use **Workday** through Corsair: one client, typed API calls, local DB sync.
+
+**What you get:**
+
+- 85 typed API operations
+- 8 synced entities (`absenceBalances`, `interviews`, `jobPostings`, `jobRequisitions`, `jobs`, `payrollInputs`, and 2 more) for fast `.search()` / `.list()`
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/workday
+```
+```bash yarn
+yarn add corsair @corsair-dev/workday
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/workday
+```
+```bash bun
+bun add corsair @corsair-dev/workday
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { workday } from '@corsair-dev/workday';
+
+export const corsair = createCorsair({
+	plugins: [
+		workday({
+			host: 'wd2-impl-services1.workday.com',
+			tenant: 'acme',
+		}),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="OAuth 2.0 (Recommended)">
+
+Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your Workday OAuth app.
+
+Pass Workday’s **API hostname** and **tenant name** too — they go in Workday URLs (`https://{host}/ccx/oauth2/{tenant}/…`). That’s not the same as `corsair.withTenant()` ([Multi-tenancy](/concepts/multi-tenancy)). See Workday’s docs: [token endpoint shape](https://doc.workday.com/adaptive-planning/en-us/workday-adaptive-planning-documentation/integration/managing-data-integration/api-documentation/understanding-the-adaptive-planning-rest-api/bit1623710301264.html).
+
+```ts
+workday({
+	host: 'wd2-impl-services1.workday.com',
+	tenant: 'acme',
+})
+```
+
+More: [OAuth 2.0](/concepts/oauth)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'workday',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`absence.getAbsenceBalance`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.absence.getAbsenceBalance({});
+```
+
+
+**`business.createBusinessTitleChange`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.business.createBusinessTitleChange({});
+```
+
+
+See the full list on the [API](/plugins/workday/api) page.
+
+## Query synced data
+
+Synced entities support `tenant.workday.db.<entity>.search()` and `.list()`: `absenceBalances`, `interviews`, `jobPostings`, `jobRequisitions`, `jobs`, `payrollInputs`, `prospects`, `workers`.
+
+See [Database](/plugins/workday/database) for filters and operators.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/workday/api">
+    Every `workday.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/workday/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

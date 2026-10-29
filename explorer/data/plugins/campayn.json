@@ -1,0 +1,955 @@
+{
+  "id": "campayn",
+  "displayName": "Campayn",
+  "description": "Campayn plugin for Corsair",
+  "npmPackageName": "@corsair-dev/campayn",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 15,
+    "webhooks": 0,
+    "db": 5
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "campayn.api.contacts.createContact",
+      "shortPath": "contacts.createContact",
+      "description": "Create a new contact in a contact list.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "listId",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "zip",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phones",
+            "optional": true,
+            "type": "{ value: string, type: string }[]"
+          },
+          {
+            "key": "sites",
+            "optional": true,
+            "type": "{ value: string, type: string }[]"
+          },
+          {
+            "key": "social",
+            "optional": true,
+            "type": "{ value: string, type: string, protocol: string }[]"
+          },
+          {
+            "key": "custom_fields",
+            "optional": true,
+            "type": "{ field: string, value?: string, variable?: string }[]"
+          },
+          {
+            "key": "failOnDuplicate",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean | 1 | 0"
+          }
+        ]
+      }
+    },
+    {
+      "path": "campayn.api.contacts.deleteContact",
+      "shortPath": "contacts.deleteContact",
+      "description": "Delete a contact by contact ID.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contactId",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean | 1 | 0"
+          }
+        ]
+      }
+    },
+    {
+      "path": "campayn.api.contacts.getContact",
+      "shortPath": "contacts.getContact",
+      "description": "Get full contact details by contact ID.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contactId",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "zip",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "birthday",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phones",
+            "optional": true,
+            "type": "{ value: string, type: string }[]"
+          },
+          {
+            "key": "sites",
+            "optional": true,
+            "type": "{ value: string, type: string }[]"
+          },
+          {
+            "key": "social",
+            "optional": true,
+            "type": "{ value: string, type: string, protocol: string }[]"
+          },
+          {
+            "key": "custom_fields",
+            "optional": true,
+            "type": "{ field: string, value?: string, variable?: string }[]"
+          },
+          {
+            "key": "image_url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "campayn.api.contacts.getContacts",
+      "shortPath": "contacts.getContacts",
+      "description": "List contacts for a contact list, with optional contact keyword filtering.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "listId",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "contactFilter",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, email: string, first_name?: string | null, last_name?: string | null, image_url?: string | null }[]"
+      }
+    },
+    {
+      "path": "campayn.api.contacts.unsubscribeContact",
+      "shortPath": "contacts.unsubscribeContact",
+      "description": "Unsubscribe contacts from a list by contact ID or by email address.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "listId",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ success: boolean | 1 | 0 } | { contactCount: number | string, success: boolean, msg: string, unsubscribeCount: number | string }"
+      }
+    },
+    {
+      "path": "campayn.api.lists.deleteList",
+      "shortPath": "lists.deleteList",
+      "description": "Delete a contact list by list ID.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "listId",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean | 1 | 0"
+          }
+        ]
+      }
+    },
+    {
+      "path": "campayn.api.lists.getLists",
+      "shortPath": "lists.getLists",
+      "description": "List all contact lists visible to the authenticated user.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, list_name: string, tags?: string, contact_count: number | string }[]"
+      }
+    },
+    {
+      "path": "campayn.api.lists.updateList",
+      "shortPath": "lists.updateList",
+      "description": "Update a contact list name or tags by list ID.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "listId",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "list_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "list_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contact_count",
+            "optional": false,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "campayn.api.messages.getMessages",
+      "shortPath": "messages.getMessages",
+      "description": "List messages visible to the authenticated user.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: string, name?: string, scheduled_date?: string | null, send_now?: string | number, send_count?: string | number, campaign_title?: string | null, status?: string, unique_views?: number | string, unique_responses?: number | string, percent_views?: number | string, percent_responses?: number | string, preview_url?: string, preview_thumb?: string, report_url?: string | null }[]"
+      }
+    },
+    {
+      "path": "campayn.api.messages.getMessageStatistics",
+      "shortPath": "messages.getMessageStatistics",
+      "description": "Get message statistics for a specific message ID.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "messageId",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "scheduled_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "send_now",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "send_count",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "campaign_title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "unique_views",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "unique_responses",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "percent_views",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "percent_responses",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "preview_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "preview_thumb",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "report_url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "campayn.api.reports.getReports",
+      "shortPath": "reports.getReports",
+      "description": "Get report calendar entries for sent and scheduled emails, optionally filtered by Unix timestamp range.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "from",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name: string, scheduled_date?: string | null, status: string, preview_url: string, report_url?: string | null }[]"
+      }
+    },
+    {
+      "path": "campayn.api.signup.signup",
+      "shortPath": "signup.signup",
+      "description": "Create a Campayn account via POST /signup on the site root (not /api/v1).",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "first_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "password",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "subdomain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "site",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "number | boolean"
+          },
+          {
+            "key": "msg",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "errorCode",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "campayn.api.webforms.deleteWebform",
+      "shortPath": "webforms.deleteWebform",
+      "description": "Delete a webform by list ID and webform ID.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "listId",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "webformId",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean | 1 | 0"
+          }
+        ]
+      }
+    },
+    {
+      "path": "campayn.api.webforms.getWebform",
+      "shortPath": "webforms.getWebform",
+      "description": "Get a webform by list ID and webform ID.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "listId",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "webformId",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "contact_list_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "form_title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "form_type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "form_html",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "signup_count",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "campayn.api.webforms.getWebforms",
+      "shortPath": "webforms.getWebforms",
+      "description": "List webforms for a contact list, with optional form type filter.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "listId",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "form_type",
+            "optional": true,
+            "type": "0 | 1 | 2 | 3"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, contact_list_id: string, form_title: string, form_type: string, form_html: string, signup_count: string | number }[]"
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "campayn.db.contacts.search",
+      "entityName": "contacts",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "first_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "last_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "company",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "address",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "country_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "country",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "city",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "state",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "zip",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "birthday",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "tags",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "image_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "campayn.db.lists.search",
+      "entityName": "lists",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "list_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "tags",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "campayn.db.messages.search",
+      "entityName": "messages",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "scheduled_date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "campaign_title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "preview_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "preview_thumb",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "campayn.db.reports.search",
+      "entityName": "reports",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "scheduled_date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "preview_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "report_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "campayn.db.webforms.search",
+      "entityName": "webforms",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "contact_list_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "form_title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "form_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "form_html",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

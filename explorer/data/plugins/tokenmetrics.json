@@ -1,0 +1,354 @@
+{
+  "id": "tokenmetrics",
+  "displayName": "Token Metrics",
+  "description": "Token Metrics plugin for Corsair",
+  "npmPackageName": "@corsair-dev/tokenmetrics",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 5,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "tokenmetrics.api.market.getPrice",
+      "shortPath": "market.getPrice",
+      "description": "Retrieve token price, volume, and market-cap data",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "token_id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "symbol",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ token_id?: string | number, symbol?: string, name?: string, price?: number, market_cap?: number, volume_24h?: number | null, number_of_holders?: number | null, token_creation_date?: string }[]"
+          },
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tokenmetrics.api.market.getTopMarketCap",
+      "shortPath": "market.getTopMarketCap",
+      "description": "List tokens ranked by market capitalization",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "top_k",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ token_id?: string | number, symbol?: string, name?: string, price?: number, market_cap?: number, volume_24h?: number | null, number_of_holders?: number | null, token_creation_date?: string }[]"
+          },
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tokenmetrics.api.technical.getIndicators",
+      "shortPath": "technical.getIndicators",
+      "description": "Retrieve a technical indicator for a token and interval",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "indicator",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ symbol?: string, indicator?: string, value?: number, datetime?: string }[]"
+          },
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tokenmetrics.api.tokens.list",
+      "shortPath": "tokens.list",
+      "description": "List supported tokens and their identifiers",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "token_id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "symbol",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "exchange",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "marketcap",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "volume",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "fdv",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ token_id?: string | number, symbol?: string, name?: string, price?: number, market_cap?: number, volume_24h?: number | null, number_of_holders?: number | null, token_creation_date?: string }[]"
+          },
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tokenmetrics.api.trading.getSignals",
+      "shortPath": "trading.getSignals",
+      "description": "Retrieve AI-generated token entry and exit signals",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "token_id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "symbol",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "exchange",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "marketcap",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "volume",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "fdv",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "signal",
+            "optional": true,
+            "type": "-1 | 0 | 1"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ token_id?: string | number, symbol?: string, signal?: number, date?: string }[]"
+          },
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

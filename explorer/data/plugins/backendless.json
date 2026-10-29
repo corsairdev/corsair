@@ -1,0 +1,1041 @@
+{
+  "id": "backendless",
+  "displayName": "Backendless",
+  "description": "Backend-as-a-service for databases, user auth, file storage, and serverless logic.",
+  "npmPackageName": "@corsair-dev/backendless",
+  "authTypes": [],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 26,
+    "webhooks": 0,
+    "db": 4
+  },
+  "auth": [],
+  "api": [
+    {
+      "path": "backendless.api.counters.get",
+      "shortPath": "counters.get",
+      "description": "Read a Backendless atomic counter.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "counterName",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "number"
+      }
+    },
+    {
+      "path": "backendless.api.counters.reset",
+      "shortPath": "counters.reset",
+      "description": "Reset a Backendless atomic counter.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "counterName",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "null | undefined | "
+      }
+    },
+    {
+      "path": "backendless.api.counters.set",
+      "shortPath": "counters.set",
+      "description": "Conditionally update a Backendless atomic counter.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "counterName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "expected",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "updated",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "boolean"
+      }
+    },
+    {
+      "path": "backendless.api.data.retrieve",
+      "shortPath": "data.retrieve",
+      "description": "Retrieve Backendless database objects.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tableName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "objectId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "where",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sortBy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "excludeProperties",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "loadRelations",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ objectId?: string, ___class?: string, created?: number, updated?: number | null, ownerId?: string | null } | { objectId?: string, ___class?: string, created?: number, updated?: number | null, ownerId?: string | null }[]"
+      }
+    },
+    {
+      "path": "backendless.api.files.copy",
+      "shortPath": "files.copy",
+      "description": "Copy a Backendless file or directory.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sourcePath",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "targetPath",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string"
+      }
+    },
+    {
+      "path": "backendless.api.files.count",
+      "shortPath": "files.count",
+      "description": "Count Backendless files and directories.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "pattern",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "recursive",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "directoryCount",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "number"
+      }
+    },
+    {
+      "path": "backendless.api.files.createDirectory",
+      "shortPath": "files.createDirectory",
+      "description": "Create a Backendless directory.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "null | undefined | "
+      }
+    },
+    {
+      "path": "backendless.api.files.delete",
+      "shortPath": "files.delete",
+      "description": "Delete a Backendless file.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fileName",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "null | undefined | "
+      }
+    },
+    {
+      "path": "backendless.api.files.deleteDirectory",
+      "shortPath": "files.deleteDirectory",
+      "description": "Delete a Backendless directory.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "null | undefined | "
+      }
+    },
+    {
+      "path": "backendless.api.files.list",
+      "shortPath": "files.list",
+      "description": "List Backendless files and directories.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "pattern",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sub",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ name: string, createdOn?: number, publicUrl?: string, size?: number, url?: string }[]"
+      }
+    },
+    {
+      "path": "backendless.api.files.move",
+      "shortPath": "files.move",
+      "description": "Move a Backendless file or directory.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sourcePath",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "targetPath",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string"
+      }
+    },
+    {
+      "path": "backendless.api.hive.create",
+      "shortPath": "hive.create",
+      "description": "Create a Backendless Hive.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "hiveName",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "null | undefined | "
+      }
+    },
+    {
+      "path": "backendless.api.hive.keyItems",
+      "shortPath": "hive.keyItems",
+      "description": "Retrieve items from a Backendless Hive list.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "hiveName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "index",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any[] | string | number | boolean | null | {}"
+      }
+    },
+    {
+      "path": "backendless.api.hive.mapPut",
+      "shortPath": "hive.mapPut",
+      "description": "Insert or update a Backendless Hive map value.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "hiveName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "mapKey",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "keyName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "boolean"
+      }
+    },
+    {
+      "path": "backendless.api.hive.values",
+      "shortPath": "hive.values",
+      "description": "Retrieve values from a Backendless Hive map.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "hiveName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "backendless.api.messaging.publish",
+      "shortPath": "messaging.publish",
+      "description": "Publish a message to a Backendless channel.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "any"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "subtopic",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "publishAt",
+            "optional": true,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "errorMessage",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "messageId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "backendless.api.permissions.grant",
+      "shortPath": "permissions.grant",
+      "description": "Grant a Backendless data permission; security-sensitive.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tableName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "permission",
+            "optional": false,
+            "type": "ADD | UPDATE | FIND | REMOVE | DESCRIBE | PERMISSION | LOAD_RELATIONS | ADD_RELATION | DELETE_RELATION | UPSERT | *"
+          },
+          {
+            "key": "objectId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "null | undefined | "
+      }
+    },
+    {
+      "path": "backendless.api.permissions.revoke",
+      "shortPath": "permissions.revoke",
+      "description": "Revoke a Backendless data permission; security-sensitive.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tableName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "permission",
+            "optional": false,
+            "type": "ADD | UPDATE | FIND | REMOVE | DESCRIBE | PERMISSION | LOAD_RELATIONS | ADD_RELATION | DELETE_RELATION | UPSERT | *"
+          },
+          {
+            "key": "objectId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "null | undefined | "
+      }
+    },
+    {
+      "path": "backendless.api.users.delete",
+      "shortPath": "users.delete",
+      "description": "Delete a Backendless user.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "number | { deletionTime?: number } | null | undefined | "
+      }
+    },
+    {
+      "path": "backendless.api.users.find",
+      "shortPath": "users.find",
+      "description": "Find a Backendless user by object ID.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "objectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "___class",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "updated",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "ownerId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user-token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "backendless.api.users.login",
+      "shortPath": "users.login",
+      "description": "Log in to Backendless and return a user token.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "login",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "password",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "stayLoggedIn",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{ objectId: string, email?: string, ___class?: string, created?: number, updated?: number | null, ownerId?: string | null, user-token?: string }"
+          },
+          {
+            "key": "userToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "backendless.api.users.logout",
+      "shortPath": "users.logout",
+      "description": "Log out the current Backendless user session.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "null | undefined | "
+      }
+    },
+    {
+      "path": "backendless.api.users.passwordRecovery",
+      "shortPath": "users.passwordRecovery",
+      "description": "Request Backendless password recovery.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identity",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "null | undefined | "
+      }
+    },
+    {
+      "path": "backendless.api.users.register",
+      "shortPath": "users.register",
+      "description": "Register a Backendless user.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identity",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "password",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "objectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "___class",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "updated",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "ownerId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user-token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "backendless.api.users.update",
+      "shortPath": "users.update",
+      "description": "Update a Backendless user.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "properties",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "objectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "___class",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "updated",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "ownerId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user-token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "backendless.api.users.validateToken",
+      "shortPath": "users.validateToken",
+      "description": "Validate a Backendless user token.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "boolean"
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "backendless.db.dataObjects.search",
+      "entityName": "dataObjects",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "objectId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "___class",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "updated",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "ownerId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "backendless.db.files.search",
+      "entityName": "files",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdOn",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "publicUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "size",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "backendless.db.messages.search",
+      "entityName": "messages",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "errorMessage",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "messageId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "backendless.db.users.search",
+      "entityName": "users",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "objectId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "___class",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "updated",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "ownerId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "user-token",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

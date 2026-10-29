@@ -1,0 +1,11 @@
+displayName: Prisma
+description: Prisma plugin for Corsair
+overviewNote: |
+  Prisma is the company behind Prisma ORM and the Prisma Data Platform: Prisma
+  Postgres (managed PostgreSQL), Accelerate (global database cache), and the
+  Console for managing workspaces, projects, databases, API keys, backups, and
+  integrations. This plugin drives all of that through the Prisma Management
+  API (https://api.prisma.io/v1) plus direct Postgres wire-protocol access for
+  read-only queries, write commands, and schema inspection. Use Corsair
+  permissions for destructive actions such as deleting projects, deleting
+  databases, restoring backups, and revoking connections.

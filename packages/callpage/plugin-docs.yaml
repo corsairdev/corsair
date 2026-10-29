@@ -1,0 +1,17 @@
+displayName: CallPage
+description: Click-to-call widgets that connect website visitors with your sales team.
+examples:
+  read:
+    path: widgets.list
+    args:
+      limit: 20
+  write:
+    path: widgets.create
+    args:
+      url: https://example.com
+      description: Landing page
+dbExample:
+  entity: widgets
+  data:
+    enabled: true
+  limit: 20

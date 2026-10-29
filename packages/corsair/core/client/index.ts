@@ -17,13 +17,17 @@ import type {
 	IntegrationKeyManagerFor,
 	PluginAuthConfig,
 } from '../auth/types';
+import type { CorsairChatsNamespace } from '../chats';
+import { buildChatsNamespace } from '../chats';
 import type { AuthTypes } from '../constants';
 import type { BindEndpoints, EndpointTree } from '../endpoints';
 import { bindEndpointsRecursively } from '../endpoints/bind';
 import type { CorsairErrorHandler } from '../errors';
 import type { CorsairInternalConfig } from '../index';
 import type { CorsairManageNamespace } from '../management';
+import { DB_METHOD_RISK } from '../management/db';
 import type { CorsairPermissionsNamespace } from '../permissions';
+import { assertModeAllows } from '../permissions';
 import type {
 	CorsairKeyBuilderBase,
 	CorsairManualConfig,
@@ -35,6 +39,7 @@ import type {
 	PermissionPolicy,
 } from '../plugins';
 import { ensureTenantProvisioned } from '../tenant-provision';
+import { managedPricingDisablesWebhooks } from '../utils/plugin-auth';
 import type {
 	BindWebhooks,
 	CorsairWebhookTenantMatcher,
@@ -42,6 +47,8 @@ import type {
 	WebhookTree,
 } from '../webhooks';
 import { bindWebhooksRecursively } from '../webhooks/bind';
+import type { CorsairWorkflowsNamespace } from '../workflows';
+import { buildWorkflowsNamespace } from '../workflows';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Entity Client Types
@@ -207,7 +214,20 @@ type InferPluginNamespaces<Plugins extends readonly CorsairPlugin[]> =
  * The main Corsair client type that provides access to all plugin APIs, entities, webhooks, and keys.
  */
 export type CorsairClient<Plugins extends readonly CorsairPlugin[]> =
-	InferPluginNamespaces<Plugins>;
+	InferPluginNamespaces<Plugins> & {
+		/**
+		 * Chat interface over the Hub-hosted workflow agent, scoped to this
+		 * client's tenant. Create/list chats and send messages that author or
+		 * edit workflows. Requires `hub` to be configured on `createCorsair`.
+		 */
+		chats: CorsairChatsNamespace;
+		/**
+		 * Manage this tenant's workflows — list/get, run, its runs under
+		 * `workflows.runs` (feed or one workflow's), pause/resume (disable/enable),
+		 * archive/unarchive, rename. Requires `hub` to be configured.
+		 */
+		workflows: CorsairWorkflowsNamespace;
+	};
 
 /**
  * Multi-tenant wrapper that provides a `withTenant` method to scope operations to a specific tenant.
@@ -302,6 +322,45 @@ function createAccountIdResolver(
  * @param dataSchema - The Zod schema for data validation
  * @returns An entity client with CRUD operations
  */
+type EntityClient = PluginEntityClient<ZodTypeAny>;
+
+// These reach the database without passing through the binding layer, so the
+// mode is checked here.
+function guardEntityClients(
+	pluginId: string,
+	clients: Record<string, EntityClient>,
+): Record<string, EntityClient> {
+	const guarded: Record<string, EntityClient> = {};
+	for (const [entityType, client] of Object.entries(clients)) {
+		guarded[entityType] = new Proxy(client, {
+			get(target, method) {
+				// Two casts a Proxy cannot avoid: `get` is handed `string | symbol`,
+				// and wrapping a method generically means describing it as callable.
+				// Both are checked below before anything is invoked.
+				const value = target[method as keyof EntityClient];
+				if (typeof method !== 'string' || typeof value !== 'function') {
+					return value;
+				}
+				// hasOwn, not a plain lookup: inherited keys would read as methods.
+				const risk = Object.hasOwn(DB_METHOD_RISK, method)
+					? DB_METHOD_RISK[method]
+					: undefined;
+				if (!risk) return value;
+				const call = value as (
+					...args: Parameters<typeof value>
+				) => ReturnType<typeof value>;
+				// async: these methods reject, so a sync throw would slip past a
+				// caller that only attached a .catch().
+				return async (...args: Parameters<typeof call>) => {
+					assertModeAllows(`${pluginId}.db.${entityType}.${method}`, risk);
+					return call.apply(target, args);
+				};
+			},
+		});
+	}
+	return guarded;
+}
+
 function createEntityClient(
 	database: CorsairDatabase | undefined,
 	getAccountId: () => Promise<string>,
@@ -382,9 +441,15 @@ export function buildCorsairClient<
 		internalConfig,
 	} = options;
 
+	// Canonical tenant scope for this client. Single-tenant clients pass no
+	// tenantId → 'default', which is Hub's own single-tenant convention. Used
+	// identically for provisioning, plugin operations, and the chats API so a
+	// client's scope is the same everywhere.
+	const effectiveTenantId = tenantId ?? 'default';
+
 	const ensureProvisioned =
 		internalConfig && database
-			? () => ensureTenantProvisioned(internalConfig, tenantId ?? 'default')
+			? () => ensureTenantProvisioned(internalConfig, effectiveTenantId)
 			: undefined;
 
 	const apiUnsafe: Record<string, Record<string, unknown>> = {};
@@ -397,7 +462,6 @@ export function buildCorsairClient<
 
 	for (const plugin of plugins) {
 		const schema = plugin.schema;
-		const effectiveTenantId = tenantId ?? 'default';
 
 		// Create a shared account ID resolver for this plugin
 		const getAccountId = createAccountIdResolver(
@@ -409,7 +473,7 @@ export function buildCorsairClient<
 
 		// Create typed entity clients from plugin schema, nested under `db`
 		if (schema?.entities) {
-			const dbClients: Record<string, unknown> = {};
+			const dbClients: Record<string, EntityClient> = {};
 			for (const [entityTypeName, dataSchema] of Object.entries(
 				schema.entities,
 			)) {
@@ -420,6 +484,9 @@ export function buildCorsairClient<
 							entityTypeName,
 							schema.version,
 							dataSchema,
+							internalConfig?.encryptDataAtRest
+								? { encryptDataAtRest: true, kek: kek ?? '' }
+								: undefined,
 						)
 					: createEntityClient(
 							undefined,
@@ -430,8 +497,10 @@ export function buildCorsairClient<
 						);
 				dbClients[entityTypeName] = entityClient;
 			}
+			// ctx.db stays raw: an endpoint body runs once the guard has cleared
+			// it, and re-checking its writes would ask for a second approval.
 			pluginEntitiesUnsafe[plugin.id]!.db = dbClients;
-			apiUnsafe[plugin.id]!.db = dbClients;
+			apiUnsafe[plugin.id]!.db = guardEntityClients(plugin.id, dbClients);
 		}
 
 		// Create account-level key manager BEFORE binding endpoints so keyBuilder can access it
@@ -469,6 +538,9 @@ export function buildCorsairClient<
 				: {}),
 			// Include tenantId in context for keyBuilder and webhook hooks
 			tenantId: effectiveTenantId,
+			...(internalConfig?.encryptDataAtRest
+				? { encryptDataAtRest: true, kek }
+				: {}),
 			...(hubConfig ? { hub: hubConfig } : {}),
 		};
 
@@ -521,6 +593,8 @@ export function buildCorsairClient<
 			plugin,
 			kek,
 			allPlugins: plugins,
+			multiTenancy: internalConfig?.multiTenancy,
+			encryptDataAtRest: internalConfig?.encryptDataAtRest === true,
 		});
 
 		if (Object.keys(boundTree).length > 0) {
@@ -535,7 +609,10 @@ export function buildCorsairClient<
 			| Record<string, unknown>
 			| undefined;
 
-		if (Object.keys(webhooks).length > 0) {
+		if (
+			Object.keys(webhooks).length > 0 &&
+			!managedPricingDisablesWebhooks(pluginOptions?.authType)
+		) {
 			const boundWebhooks: Record<string, unknown> = {};
 			bindWebhooksRecursively({
 				webhooks,
@@ -559,6 +636,16 @@ export function buildCorsairClient<
 		}
 	}
 
+	// Tenant-scoped chat interface to the Hub workflow agent. Attached to every
+	// client (single- and multi-tenant); throws on use if `hub` isn't configured.
+	(apiUnsafe as Record<string, unknown>).chats = buildChatsNamespace(
+		hubConfig,
+		effectiveTenantId,
+	);
+	(apiUnsafe as Record<string, unknown>).workflows = buildWorkflowsNamespace(
+		hubConfig,
+		effectiveTenantId,
+	);
 	return apiUnsafe as CorsairClient<Plugins>;
 }
 

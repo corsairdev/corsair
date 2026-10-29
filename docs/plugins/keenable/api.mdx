@@ -1,0 +1,110 @@
+---
+title: API
+description: "API reference for Keenable: every `keenable.api.*` operation with input and output types."
+---
+
+Every `keenable.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Fetch
+
+### get
+
+`fetch.get`
+
+Fetch a page as markdown by URL, optionally extracting with a prompt
+
+**Risk:** `read`
+
+```ts
+await corsair.keenable.api.fetch.get({ url: 'https://example.com', max_chars: 20000 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `max_chars` | `number` | No | — |
+| `live` | `boolean` | No | — |
+| `prompt` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `title` | `string` | No | — |
+| `description` | `string` | No | — |
+| `author` | `string` | No | — |
+| `published_at` | `string \| number` | No | — |
+| `content` | `string` | Yes | — |
+
+
+
+---
+
+## Search
+
+### post
+
+`search.post`
+
+Search the web and return ranked results (realtime or pro mode)
+
+**Risk:** `read`
+
+```ts
+await corsair.keenable.api.search.post({ query: 'typescript best practices', max_results: 5, published_after: '30d' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `mode` | `realtime \| pro` | No | — |
+| `site` | `string` | No | — |
+| `acquired_after` | `string` | No | — |
+| `acquired_before` | `string` | No | — |
+| `published_after` | `string` | No | — |
+| `published_before` | `string` | No | — |
+| `query_time` | `string` | No | — |
+| `snippet_max_length` | `number` | No | — |
+| `max_results` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `mode` | `string` | Yes | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  title: string,
+  url: string,
+  description?: string,
+  snippet?: string,
+  published_at?: string,
+  acquired_at?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

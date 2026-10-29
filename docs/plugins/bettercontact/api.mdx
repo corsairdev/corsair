@@ -1,0 +1,354 @@
+---
+title: API
+description: "API reference for BetterContact: every `bettercontact.api.*` operation with input and output types."
+---
+
+Every `bettercontact.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Credits
+
+### get
+
+`credits.get`
+
+Check remaining API credits balance
+
+**Risk:** `read`
+
+```ts
+await corsair.bettercontact.api.credits.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `credits_left` | `number` | Yes | — |
+| `email` | `string` | No | — |
+
+
+
+---
+
+## Enrichment
+
+### enrich
+
+`enrichment.enrich`
+
+Submit lead enrichment request for work emails and phone numbers
+
+**Risk:** `write`
+
+```ts
+await corsair.bettercontact.api.enrichment.enrich({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `enrich_email_address` | `boolean` | No | — |
+| `enrich_phone_number` | `boolean` | No | — |
+| `enrich_profile` | `boolean` | No | — |
+| `verify_catch_all` | `boolean` | No | — |
+| `webhook` | `string` | No | — |
+| `push_contact_individually` | `boolean` | No | — |
+| `contact_webhook` | `string` | No | — |
+| `process_flow` | `string` | No | — |
+| `timeout_seconds` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  first_name?: string,
+  last_name?: string,
+  company?: string,
+  company_domain?: string,
+  linkedin_url?: string,
+  custom_fields?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `id` | `string` | Yes | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+### getResults
+
+`enrichment.getResults`
+
+Retrieve results for a submitted enrichment request
+
+**Risk:** `read`
+
+```ts
+await corsair.bettercontact.api.enrichment.getResults({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `status` | `not_started \| processing \| on_hold \| terminated \| string` | Yes | — |
+| `message` | `string` | No | — |
+| `credits_consumed` | `number` | No | — |
+| `credits_left` | `number` | No | — |
+| `summary` | `object` | No | — |
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="summary full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Lead Finder
+
+### create
+
+`leadFinder.create`
+
+Create a new Lead Finder search to discover leads based on criteria
+
+**Risk:** `write`
+
+```ts
+await corsair.bettercontact.api.leadFinder.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filters` | `object` | Yes | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `max_leads` | `number` | No | — |
+| `webhook` | `string` | No | — |
+| `enrich_email_address` | `boolean` | No | — |
+| `enrich_phone_number` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+  company?: {
+    include?: string[],
+    exclude?: string[]
+  },
+  company_linkedin_url?: {
+    include?: string[],
+    exclude?: string[]
+  },
+  company_industry?: {
+    include?: string[],
+    exclude?: string[]
+  },
+  company_hq_location?: {
+    include?: string[],
+    exclude?: string[]
+  },
+  company_technologies?: {
+    include?: string[],
+    exclude?: string[]
+  },
+  company_keywords?: {
+    include?: string[],
+    exclude?: string[]
+  },
+  company_description?: {
+    include?: string[],
+    exclude?: string[]
+  },
+  company_headcount_min?: number,
+  company_headcount_max?: number,
+  revenue_ranges?: {
+    include?: string[],
+    exclude?: string[]
+  },
+  last_funding_round_names?: {
+    include?: string[],
+    exclude?: string[]
+  },
+  last_funding_date_range?: {
+    gte?: string,
+    lte?: string
+  },
+  last_amount_raised_usd?: {
+    gte?: number,
+    lte?: number
+  },
+  total_amount_raised_usd?: {
+    gte?: number,
+    lte?: number
+  },
+  is_b2b?: boolean,
+  is_b2c?: boolean,
+  is_public?: boolean,
+  job_post_titles?: {
+    include?: string[]
+  },
+  job_posting_countries?: {
+    include?: string[]
+  },
+  job_posting_locations?: {
+    include?: string[]
+  },
+  limit_per_company?: number,
+  lead_fullname?: {
+    include?: string[],
+    exclude?: string[]
+  },
+  lead_linkedin_url?: {
+    include?: string[],
+    exclude?: string[]
+  },
+  lead_job_title?: {
+    include?: string[],
+    exclude?: string[],
+    exact_match?: boolean
+  },
+  lead_seniority?: {
+    include?: string[],
+    exclude?: string[]
+  },
+  lead_department?: {
+    include?: string[],
+    exclude?: string[]
+  },
+  lead_function?: {
+    include?: string[],
+    exclude?: string[]
+  },
+  lead_skills?: {
+    include?: string[],
+    exclude?: string[]
+  },
+  lead_location?: {
+    include?: string[],
+    exclude?: string[]
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+| `request_id` | `string` | Yes | — |
+
+
+
+---
+
+### getResults
+
+`leadFinder.getResults`
+
+Retrieve results from a submitted Lead Finder search
+
+**Risk:** `read`
+
+```ts
+await corsair.bettercontact.api.leadFinder.getResults({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `status` | `not_started \| processing \| on_hold \| terminated \| string` | Yes | — |
+| `message` | `string` | No | — |
+| `credits_consumed` | `number` | No | — |
+| `credits_left` | `number` | No | — |
+| `summary` | `object` | No | — |
+| `leads` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="summary full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="leads full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

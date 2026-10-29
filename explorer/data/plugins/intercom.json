@@ -1,0 +1,4068 @@
+{
+  "id": "intercom",
+  "displayName": "Intercom",
+  "description": "Customer messaging platform for support chat, product tours, and user engagement.",
+  "npmPackageName": "@corsair-dev/intercom",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 51,
+    "webhooks": 7,
+    "db": 5
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "app_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "intercom.api.admins.get",
+      "shortPath": "admins.get",
+      "description": "Retrieve a single admin",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "away_mode_enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "away_mode_reassign",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "has_inbox_seat",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "team_ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "avatar",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "intercom.api.admins.identify",
+      "shortPath": "admins.identify",
+      "description": "Identify the currently authorised admin",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "away_mode_enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "away_mode_reassign",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "has_inbox_seat",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "team_ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "avatar",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "intercom.api.admins.list",
+      "shortPath": "admins.list",
+      "description": "List all admins in the workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "admins",
+            "optional": false,
+            "type": "{ type?: string, id: string, name?: string, email?: string, away_mode_enabled?: boolean, away_mode_reassign?: boolean, has_inbox_seat?: boolean, team_ids?: number[], avatar?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "intercom.api.admins.listActivityLogs",
+      "shortPath": "admins.listActivityLogs",
+      "description": "List all admin activity logs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "created_at_after",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at_before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pages",
+            "optional": true,
+            "type": "{ type?: string, page?: number, per_page?: number, total_pages?: number, next?: string | null }"
+          },
+          {
+            "key": "activity_logs",
+            "optional": false,
+            "type": "{ id: string, performed_by?: { type?: string, id?: string, email?: string }, metadata?: {}, created_at?: number, activity_type?: string, activity_description?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "intercom.api.admins.setAway",
+      "shortPath": "admins.setAway",
+      "description": "Set an admin as away",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "away_mode_enabled",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "away_mode_reassign",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "away_mode_enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "away_mode_reassign",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "has_inbox_seat",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "team_ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "avatar",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "intercom.api.articles.create",
+      "shortPath": "articles.create",
+      "description": "Create a new article",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "author_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "draft | published"
+          },
+          {
+            "key": "parent_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "parent_type",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "author_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "intercom.api.articles.delete",
+      "shortPath": "articles.delete",
+      "description": "Delete an article",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "deleted",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "intercom.api.articles.get",
+      "shortPath": "articles.get",
+      "description": "Retrieve a single article",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "author_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "intercom.api.articles.list",
+      "shortPath": "articles.list",
+      "description": "List all articles",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "draft | published"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type?: string, id: string, title?: string, description?: string | null, body?: string | null, author_id?: number, state?: string, created_at?: number, updated_at?: number, url?: string | null }[]"
+          },
+          {
+            "key": "pages",
+            "optional": true,
+            "type": "{ type?: string, page?: number, per_page?: number, total_pages?: number, next?: string | null }"
+          },
+          {
+            "key": "total_count",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "intercom.api.articles.search",
+      "shortPath": "articles.search",
+      "description": "Search for articles",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "phrase",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "help_center_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "draft | published"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type?: string, id: string, title?: string, description?: string | null, body?: string | null, author_id?: number, state?: string, created_at?: number, updated_at?: number, url?: string | null }[]"
+          },
+          {
+            "key": "pages",
+            "optional": true,
+            "type": "{ type?: string, page?: number, per_page?: number, total_pages?: number, next?: string | null }"
+          },
+          {
+            "key": "total_count",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "intercom.api.articles.update",
+      "shortPath": "articles.update",
+      "description": "Update an existing article",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "author_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "draft | published"
+          },
+          {
+            "key": "parent_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "parent_type",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "author_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "intercom.api.collections.create",
+      "shortPath": "collections.create",
+      "description": "Create a new collection",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "help_center_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "parent_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "icon",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "help_center_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "intercom.api.collections.delete",
+      "shortPath": "collections.delete",
+      "description": "Delete a collection",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "deleted",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "intercom.api.collections.get",
+      "shortPath": "collections.get",
+      "description": "Retrieve a single collection",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "icon",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "help_center_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "intercom.api.collections.list",
+      "shortPath": "collections.list",
+      "description": "List all collections",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "help_center_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type?: string, id: string, name?: string, description?: string | null, created_at?: number, updated_at?: number, url?: string | null, icon?: string | null, order?: number, help_center_id?: number | null }[]"
+          },
+          {
+            "key": "pages",
+            "optional": true,
+            "type": "{ type?: string, page?: number, per_page?: number, total_pages?: number, next?: string | null }"
+          },
+          {
+            "key": "total_count",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "intercom.api.collections.update",
+      "shortPath": "collections.update",
+      "description": "Update a collection",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "icon",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "help_center_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "intercom.api.companies.createOrUpdate",
+      "shortPath": "companies.createOrUpdate",
+      "description": "Create or update a company",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "company_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "remote_created_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "plan",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "website",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "industry",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "monthly_spend",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "custom_attributes",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "company_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "monthly_spend",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "session_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "user_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "website",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "industry",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "intercom.api.companies.delete",
+      "shortPath": "companies.delete",
+      "description": "Delete a company",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "deleted",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "intercom.api.companies.get",
+      "shortPath": "companies.get",
+      "description": "Retrieve a company by Intercom ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "company_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "monthly_spend",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "session_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "user_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "website",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "industry",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "intercom.api.companies.list",
+      "shortPath": "companies.list",
+      "description": "List all companies",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tag_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "segment_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type?: string, id: string, company_id?: string, name?: string, created_at?: number, updated_at?: number, monthly_spend?: number, session_count?: number, user_count?: number, size?: number | null, website?: string | null, industry?: string | null }[]"
+          },
+          {
+            "key": "pages",
+            "optional": true,
+            "type": "{ type?: string, page?: number, per_page?: number, total_pages?: number, next?: string | null }"
+          },
+          {
+            "key": "total_count",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "intercom.api.companies.listAttachedContacts",
+      "shortPath": "companies.listAttachedContacts",
+      "description": "List contacts attached to a company",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type?: string, id: string, external_id?: string | null, user_id?: string | null, email?: string, name?: string | null, phone?: string | null, role?: string, created_at?: number, updated_at?: number, last_seen_at?: number | null, unsubscribed_from_emails?: boolean }[]"
+          },
+          {
+            "key": "pages",
+            "optional": true,
+            "type": "{ type?: string, page?: number, per_page?: number, total_pages?: number, next?: string | null }"
+          },
+          {
+            "key": "total_count",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "intercom.api.companies.listAttachedSegments",
+      "shortPath": "companies.listAttachedSegments",
+      "description": "List segments attached to a company",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type?: string, id: string, name?: string, created_at?: number, updated_at?: number, person_type?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "intercom.api.companies.retrieve",
+      "shortPath": "companies.retrieve",
+      "description": "Retrieve a company by company_id or name",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "company_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "company_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "monthly_spend",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "session_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "user_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "website",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "industry",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "intercom.api.companies.scroll",
+      "shortPath": "companies.scroll",
+      "description": "Scroll over all companies for large datasets",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "scroll_param",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type?: string, id: string, company_id?: string, name?: string, created_at?: number, updated_at?: number, monthly_spend?: number, session_count?: number, user_count?: number, size?: number | null, website?: string | null, industry?: string | null }[]"
+          },
+          {
+            "key": "scroll_param",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pages",
+            "optional": true,
+            "type": "{ type?: string, page?: number, per_page?: number, total_pages?: number, next?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "intercom.api.contacts.addSubscription",
+      "shortPath": "contacts.addSubscription",
+      "description": "Add a subscription to a contact",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "consent_type",
+            "optional": false,
+            "type": "opt_in | opt_out"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "consent_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "default_translation",
+            "optional": true,
+            "type": "{ name?: string, description?: string, locale?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "intercom.api.contacts.addTag",
+      "shortPath": "contacts.addTag",
+      "description": "Add a tag to a contact",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tag_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "intercom.api.contacts.attachToCompany",
+      "shortPath": "contacts.attachToCompany",
+      "description": "Attach a contact to a company",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "company_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "company_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "monthly_spend",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "session_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "user_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "website",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "industry",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "intercom.api.contacts.createNote",
+      "shortPath": "contacts.createNote",
+      "description": "Create a note for a contact",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "admin_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "author",
+            "optional": true,
+            "type": "{ type?: string, id?: string, name?: string }"
+          },
+          {
+            "key": "contact",
+            "optional": true,
+            "type": "{ type?: string, id?: string }"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "intercom.api.contacts.delete",
+      "shortPath": "contacts.delete",
+      "description": "Delete a contact",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "deleted",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "intercom.api.contacts.detachFromCompany",
+      "shortPath": "contacts.detachFromCompany",
+      "description": "Detach a contact from a company",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "company_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "company_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "monthly_spend",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "session_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "user_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "website",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "industry",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "intercom.api.contacts.get",
+      "shortPath": "contacts.get",
+      "description": "Get a single contact by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "last_seen_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "unsubscribed_from_emails",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "intercom.api.contacts.list",
+      "shortPath": "contacts.list",
+      "description": "List all contacts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "starting_after",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type?: string, id: string, external_id?: string | null, user_id?: string | null, email?: string, name?: string | null, phone?: string | null, role?: string, created_at?: number, updated_at?: number, last_seen_at?: number | null, unsubscribed_from_emails?: boolean }[]"
+          },
+          {
+            "key": "pages",
+            "optional": true,
+            "type": "{ type?: string, page?: number, per_page?: number, total_pages?: number, next?: string | null }"
+          },
+          {
+            "key": "total_count",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "intercom.api.contacts.listAttachedCompanies",
+      "shortPath": "contacts.listAttachedCompanies",
+      "description": "List companies attached to a contact",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type?: string, id: string, company_id?: string, name?: string, created_at?: number, updated_at?: number, monthly_spend?: number, session_count?: number, user_count?: number, size?: number | null, website?: string | null, industry?: string | null }[]"
+          },
+          {
+            "key": "pages",
+            "optional": true,
+            "type": "{ type?: string, page?: number, per_page?: number, total_pages?: number, next?: string | null }"
+          },
+          {
+            "key": "total_count",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "intercom.api.contacts.listAttachedSegments",
+      "shortPath": "contacts.listAttachedSegments",
+      "description": "List segments attached to a contact",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type?: string, id: string, name?: string, created_at?: number, updated_at?: number, person_type?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "intercom.api.contacts.listNotes",
+      "shortPath": "contacts.listNotes",
+      "description": "List all notes for a contact",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type?: string, id: string, body?: string, author?: { type?: string, id?: string, name?: string }, contact?: { type?: string, id?: string }, created_at?: number }[]"
+          },
+          {
+            "key": "pages",
+            "optional": true,
+            "type": "{ type?: string, page?: number, per_page?: number, total_pages?: number, next?: string | null }"
+          },
+          {
+            "key": "total_count",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "intercom.api.contacts.listSubscriptions",
+      "shortPath": "contacts.listSubscriptions",
+      "description": "List subscription types for a contact",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type?: string, id: string, state?: string, consent_type?: string, default_translation?: { name?: string, description?: string, locale?: string } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "intercom.api.contacts.listTags",
+      "shortPath": "contacts.listTags",
+      "description": "List all tags attached to a contact",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type?: string, id: string, name?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "intercom.api.contacts.merge",
+      "shortPath": "contacts.merge",
+      "description": "Merge a lead into a user contact",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lead_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "last_seen_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "unsubscribed_from_emails",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "intercom.api.contacts.removeSubscription",
+      "shortPath": "contacts.removeSubscription",
+      "description": "Remove a subscription from a contact",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "subscription_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "consent_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "default_translation",
+            "optional": true,
+            "type": "{ name?: string, description?: string, locale?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "intercom.api.contacts.removeTag",
+      "shortPath": "contacts.removeTag",
+      "description": "Remove a tag from a contact",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tag_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "intercom.api.contacts.update",
+      "shortPath": "contacts.update",
+      "description": "Update an existing contact",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "user | lead"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "unsubscribed_from_emails",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "custom_attributes",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "last_seen_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "unsubscribed_from_emails",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "intercom.api.conversations.assign",
+      "shortPath": "conversations.assign",
+      "description": "Assign a conversation to an admin or team",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "admin_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "assignee_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "admin | team"
+          },
+          {
+            "key": "message_type",
+            "optional": true,
+            "type": "assignment"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "waiting_since",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "snoozed_until",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "read",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assignee",
+            "optional": true,
+            "type": "{ type?: string, id?: number | null }"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "{ type?: string, id?: string, subject?: string | null, body?: string | null, author?: { type?: string, id?: string } }"
+          },
+          {
+            "key": "conversation_parts",
+            "optional": true,
+            "type": "{ type?: string, conversation_parts?: { type?: string, id?: string, part_type?: string, body?: string | null, created_at?: number, updated_at?: number, author?: { type?: string, id?: string, name?: string | null } }[], total_count?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "intercom.api.conversations.close",
+      "shortPath": "conversations.close",
+      "description": "Close a conversation",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "admin_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message_type",
+            "optional": true,
+            "type": "close"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "waiting_since",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "snoozed_until",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "read",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assignee",
+            "optional": true,
+            "type": "{ type?: string, id?: number | null }"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "{ type?: string, id?: string, subject?: string | null, body?: string | null, author?: { type?: string, id?: string } }"
+          },
+          {
+            "key": "conversation_parts",
+            "optional": true,
+            "type": "{ type?: string, conversation_parts?: { type?: string, id?: string, part_type?: string, body?: string | null, created_at?: number, updated_at?: number, author?: { type?: string, id?: string, name?: string | null } }[], total_count?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "intercom.api.conversations.create",
+      "shortPath": "conversations.create",
+      "description": "Create a new conversation",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "from",
+            "optional": false,
+            "type": "{ type: user | lead | contact, id: string }"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "waiting_since",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "snoozed_until",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "read",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assignee",
+            "optional": true,
+            "type": "{ type?: string, id?: number | null }"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "{ type?: string, id?: string, subject?: string | null, body?: string | null, author?: { type?: string, id?: string } }"
+          },
+          {
+            "key": "conversation_parts",
+            "optional": true,
+            "type": "{ type?: string, conversation_parts?: { type?: string, id?: string, part_type?: string, body?: string | null, created_at?: number, updated_at?: number, author?: { type?: string, id?: string, name?: string | null } }[], total_count?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "intercom.api.conversations.get",
+      "shortPath": "conversations.get",
+      "description": "Get a conversation by ID with all messages and details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "display_as",
+            "optional": true,
+            "type": "plaintext | html"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "waiting_since",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "snoozed_until",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "read",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assignee",
+            "optional": true,
+            "type": "{ type?: string, id?: number | null }"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "{ type?: string, id?: string, subject?: string | null, body?: string | null, author?: { type?: string, id?: string } }"
+          },
+          {
+            "key": "conversation_parts",
+            "optional": true,
+            "type": "{ type?: string, conversation_parts?: { type?: string, id?: string, part_type?: string, body?: string | null, created_at?: number, updated_at?: number, author?: { type?: string, id?: string, name?: string | null } }[], total_count?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "intercom.api.conversations.list",
+      "shortPath": "conversations.list",
+      "description": "List conversations with filtering and pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "starting_after",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pages",
+            "optional": true,
+            "type": "{ type?: string, page?: number, per_page?: number, total_pages?: number, next?: string | null }"
+          },
+          {
+            "key": "total_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "conversations",
+            "optional": false,
+            "type": "{ type?: string, id: string, created_at?: number, updated_at?: number, waiting_since?: number | null, snoozed_until?: number | null, state?: string, read?: boolean, priority?: string, assignee?: { type?: string, id?: number | null }, source?: { type?: string, id?: string, subject?: string | null, body?: string | null, author?: { type?: string, id?: string } }, conversation_parts?: { type?: string, conversation_parts?: { type?: string, id?: string, part_type?: string, body?: string | null, created_at?: number, updated_at?: number, author?: { type?: string, id?: string, name?: string | null } }[], total_count?: number } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "intercom.api.conversations.reopen",
+      "shortPath": "conversations.reopen",
+      "description": "Reopen a closed conversation",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "admin_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message_type",
+            "optional": true,
+            "type": "open"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "waiting_since",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "snoozed_until",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "read",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assignee",
+            "optional": true,
+            "type": "{ type?: string, id?: number | null }"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "{ type?: string, id?: string, subject?: string | null, body?: string | null, author?: { type?: string, id?: string } }"
+          },
+          {
+            "key": "conversation_parts",
+            "optional": true,
+            "type": "{ type?: string, conversation_parts?: { type?: string, id?: string, part_type?: string, body?: string | null, created_at?: number, updated_at?: number, author?: { type?: string, id?: string, name?: string | null } }[], total_count?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "intercom.api.conversations.reply",
+      "shortPath": "conversations.reply",
+      "description": "Send a reply to a conversation",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "admin_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "intercom_user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message_type",
+            "optional": true,
+            "type": "comment | note"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "admin | user"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "attachment_urls",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "waiting_since",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "snoozed_until",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "read",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assignee",
+            "optional": true,
+            "type": "{ type?: string, id?: number | null }"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "{ type?: string, id?: string, subject?: string | null, body?: string | null, author?: { type?: string, id?: string } }"
+          },
+          {
+            "key": "conversation_parts",
+            "optional": true,
+            "type": "{ type?: string, conversation_parts?: { type?: string, id?: string, part_type?: string, body?: string | null, created_at?: number, updated_at?: number, author?: { type?: string, id?: string, name?: string | null } }[], total_count?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "intercom.api.conversations.search",
+      "shortPath": "conversations.search",
+      "description": "Search conversations using query string",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{ field?: string, operator?: string, value?: string }"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "{ field?: string, order?: ascending | descending }"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ per_page?: number, starting_after?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pages",
+            "optional": true,
+            "type": "{ type?: string, page?: number, per_page?: number, total_pages?: number, next?: string | null }"
+          },
+          {
+            "key": "total_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "conversations",
+            "optional": false,
+            "type": "{ type?: string, id: string, created_at?: number, updated_at?: number, waiting_since?: number | null, snoozed_until?: number | null, state?: string, read?: boolean, priority?: string, assignee?: { type?: string, id?: number | null }, source?: { type?: string, id?: string, subject?: string | null, body?: string | null, author?: { type?: string, id?: string } }, conversation_parts?: { type?: string, conversation_parts?: { type?: string, id?: string, part_type?: string, body?: string | null, created_at?: number, updated_at?: number, author?: { type?: string, id?: string, name?: string | null } }[], total_count?: number } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "intercom.api.helpCenters.get",
+      "shortPath": "helpCenters.get",
+      "description": "Retrieve a single help center",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "workspace_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "identifier",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "website_turned_on",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "display_name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "intercom.api.helpCenters.list",
+      "shortPath": "helpCenters.list",
+      "description": "List all help centers",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type?: string, id: number, workspace_id?: string, identifier?: string, website_turned_on?: boolean, display_name?: string }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "intercom.webhooks.contacts.created",
+      "shortPath": "contacts.created",
+      "description": "A new contact was created in Intercom",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "topic",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "app_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "first_sent_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type?: string, item: {} }"
+          }
+        ]
+      },
+      "responseType": "{ id: string, email?: string, name?: string, role?: string, created_at?: number }",
+      "usageExample": "intercom({\n    webhookHooks: {\n        contacts: {\n            created: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "intercom.webhooks.contacts.deleted",
+      "shortPath": "contacts.deleted",
+      "description": "A contact was deleted from Intercom",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "topic",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "app_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "first_sent_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type?: string, item: {} }"
+          }
+        ]
+      },
+      "responseType": "{ id: string, deleted?: boolean }",
+      "usageExample": "intercom({\n    webhookHooks: {\n        contacts: {\n            deleted: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "intercom.webhooks.contacts.tagCreated",
+      "shortPath": "contacts.tagCreated",
+      "description": "A tag was added to a contact",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "topic",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "app_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "first_sent_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type?: string, item: {} }"
+          }
+        ]
+      },
+      "responseType": "{ id: string, tag_id?: string, contact_id?: string }",
+      "usageExample": "intercom({\n    webhookHooks: {\n        contacts: {\n            tagCreated: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "intercom.webhooks.conversations.assigned",
+      "shortPath": "conversations.assigned",
+      "description": "A conversation was assigned to an admin or team",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "topic",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "app_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "first_sent_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type?: string, item: {} }"
+          }
+        ]
+      },
+      "responseType": "{ id: string, assignee?: { type?: string, id?: number | null } }",
+      "usageExample": "intercom({\n    webhookHooks: {\n        conversations: {\n            assigned: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "intercom.webhooks.conversations.closed",
+      "shortPath": "conversations.closed",
+      "description": "A conversation was closed",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "topic",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "app_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "first_sent_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type?: string, item: {} }"
+          }
+        ]
+      },
+      "responseType": "{ id: string, state?: string }",
+      "usageExample": "intercom({\n    webhookHooks: {\n        conversations: {\n            closed: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "intercom.webhooks.conversations.created",
+      "shortPath": "conversations.created",
+      "description": "A new conversation was created",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "topic",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "app_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "first_sent_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type?: string, item: {} }"
+          }
+        ]
+      },
+      "responseType": "{ id: string, created_at?: number, state?: string }",
+      "usageExample": "intercom({\n    webhookHooks: {\n        conversations: {\n            created: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "intercom.webhooks.ping",
+      "shortPath": "ping",
+      "description": "Initial ping sent by Intercom when a webhook URL is first registered",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "topic",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "app_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "first_sent_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type?: string, item: {} }"
+          }
+        ]
+      },
+      "responseType": "{ type: ping, message: string }",
+      "usageExample": "intercom({\n    webhookHooks: {\n        ping: {\n            before(ctx, args) {\n                return { ctx, args };\n            },\n            after(ctx, response) {\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": [
+    {
+      "path": "intercom.db.admins.search",
+      "entityName": "admins",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "away_mode_enabled",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "away_mode_reassign",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "has_inbox_seat",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "avatar",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "intercom.db.articles.search",
+      "entityName": "articles",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "body",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "author_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "state",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "parent_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "parent_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "default_locale",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "intercom.db.companies.search",
+      "entityName": "companies",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "company_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "remote_created_at",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "last_request_at",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "monthly_spend",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "session_count",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "user_count",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "size",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "website",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "industry",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "intercom.db.contacts.search",
+      "entityName": "contacts",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "external_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "user_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "phone",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "role",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "last_seen_at",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "last_replied_at",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "signed_up_at",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "unsubscribed_from_emails",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "has_hard_bounced",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "marked_email_as_spam",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "browser",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "browser_language",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "os",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "owner_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "intercom.db.conversations.search",
+      "entityName": "conversations",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "waiting_since",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "snoozed_until",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "state",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "read",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "priority",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "admin_assignee_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "team_assignee_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "contact_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "source_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "source_subject",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

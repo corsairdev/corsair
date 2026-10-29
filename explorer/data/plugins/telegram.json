@@ -1,0 +1,754 @@
+{
+  "id": "telegram",
+  "displayName": "Telegram",
+  "description": "Messaging platform for bots, channels, groups, and programmatic chat automation.",
+  "npmPackageName": "@corsair-dev/telegram",
+  "authTypes": ["api_key", "oauth_2"],
+  "defaultAuthType": "bot_token",
+  "counts": {
+    "api": 24,
+    "webhooks": 9,
+    "db": 5
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    },
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "telegram.api.callback.answerCallbackQuery",
+      "shortPath": "callback.answerCallbackQuery",
+      "description": "Answer callback query",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "unknown"
+      }
+    },
+    {
+      "path": "telegram.api.callback.answerInlineQuery",
+      "shortPath": "callback.answerInlineQuery",
+      "description": "Answer inline query",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "unknown"
+      }
+    },
+    {
+      "path": "telegram.api.chat.getChat",
+      "shortPath": "chat.getChat",
+      "description": "Get chat information",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "unknown"
+      }
+    },
+    {
+      "path": "telegram.api.chat.getChatAdministrators",
+      "shortPath": "chat.getChatAdministrators",
+      "description": "Get chat administrators",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "unknown"
+      }
+    },
+    {
+      "path": "telegram.api.chat.getChatMember",
+      "shortPath": "chat.getChatMember",
+      "description": "Get chat member information",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "unknown"
+      }
+    },
+    {
+      "path": "telegram.api.file.getFile",
+      "shortPath": "file.getFile",
+      "description": "Get a file",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "unknown"
+      }
+    },
+    {
+      "path": "telegram.api.me.getMe",
+      "shortPath": "me.getMe",
+      "description": "Get bot info",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "unknown"
+      }
+    },
+    {
+      "path": "telegram.api.messages.deleteMessage",
+      "shortPath": "messages.deleteMessage",
+      "description": "Delete a message",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "unknown"
+      }
+    },
+    {
+      "path": "telegram.api.messages.editMessageText",
+      "shortPath": "messages.editMessageText",
+      "description": "Edit message text",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "unknown"
+      }
+    },
+    {
+      "path": "telegram.api.messages.pinChatMessage",
+      "shortPath": "messages.pinChatMessage",
+      "description": "Pin a chat message",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "unknown"
+      }
+    },
+    {
+      "path": "telegram.api.messages.sendAnimation",
+      "shortPath": "messages.sendAnimation",
+      "description": "Send animation",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "unknown"
+      }
+    },
+    {
+      "path": "telegram.api.messages.sendAudio",
+      "shortPath": "messages.sendAudio",
+      "description": "Send audio",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "unknown"
+      }
+    },
+    {
+      "path": "telegram.api.messages.sendChatAction",
+      "shortPath": "messages.sendChatAction",
+      "description": "Send a chat action",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "unknown"
+      }
+    },
+    {
+      "path": "telegram.api.messages.sendDocument",
+      "shortPath": "messages.sendDocument",
+      "description": "Send document",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "unknown"
+      }
+    },
+    {
+      "path": "telegram.api.messages.sendLocation",
+      "shortPath": "messages.sendLocation",
+      "description": "Send location",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "unknown"
+      }
+    },
+    {
+      "path": "telegram.api.messages.sendMediaGroup",
+      "shortPath": "messages.sendMediaGroup",
+      "description": "Send media group",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "unknown"
+      }
+    },
+    {
+      "path": "telegram.api.messages.sendMessage",
+      "shortPath": "messages.sendMessage",
+      "description": "Send a message",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "unknown"
+      }
+    },
+    {
+      "path": "telegram.api.messages.sendPhoto",
+      "shortPath": "messages.sendPhoto",
+      "description": "Send photo",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "unknown"
+      }
+    },
+    {
+      "path": "telegram.api.messages.sendSticker",
+      "shortPath": "messages.sendSticker",
+      "description": "Send sticker",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "unknown"
+      }
+    },
+    {
+      "path": "telegram.api.messages.sendVideo",
+      "shortPath": "messages.sendVideo",
+      "description": "Send video",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "unknown"
+      }
+    },
+    {
+      "path": "telegram.api.messages.unpinChatMessage",
+      "shortPath": "messages.unpinChatMessage",
+      "description": "Unpin a chat message",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "unknown"
+      }
+    },
+    {
+      "path": "telegram.api.updates.getUpdates",
+      "shortPath": "updates.getUpdates",
+      "description": "Get updates",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "unknown"
+      }
+    },
+    {
+      "path": "telegram.api.webhook.deleteWebhook",
+      "shortPath": "webhook.deleteWebhook",
+      "description": "Delete webhook",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "unknown"
+      }
+    },
+    {
+      "path": "telegram.api.webhook.setWebhook",
+      "shortPath": "webhook.setWebhook",
+      "description": "Set webhook",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "unknown"
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "telegram.webhooks.callbackQuery.callbackQuery",
+      "shortPath": "callbackQuery.callbackQuery",
+      "payload": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "usageExample": "telegram({\n    webhookHooks: {\n        callbackQuery: {\n            callbackQuery: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "telegram.webhooks.channelPost.channelPost",
+      "shortPath": "channelPost.channelPost",
+      "payload": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "usageExample": "telegram({\n    webhookHooks: {\n        channelPost: {\n            channelPost: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "telegram.webhooks.editedChannelPost.editedChannelPost",
+      "shortPath": "editedChannelPost.editedChannelPost",
+      "payload": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "usageExample": "telegram({\n    webhookHooks: {\n        editedChannelPost: {\n            editedChannelPost: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "telegram.webhooks.editedMessage.editedMessage",
+      "shortPath": "editedMessage.editedMessage",
+      "payload": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "usageExample": "telegram({\n    webhookHooks: {\n        editedMessage: {\n            editedMessage: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "telegram.webhooks.inlineQuery.inlineQuery",
+      "shortPath": "inlineQuery.inlineQuery",
+      "payload": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "usageExample": "telegram({\n    webhookHooks: {\n        inlineQuery: {\n            inlineQuery: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "telegram.webhooks.message.message",
+      "shortPath": "message.message",
+      "payload": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "usageExample": "telegram({\n    webhookHooks: {\n        message: {\n            message: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "telegram.webhooks.poll.poll",
+      "shortPath": "poll.poll",
+      "payload": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "usageExample": "telegram({\n    webhookHooks: {\n        poll: {\n            poll: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "telegram.webhooks.preCheckoutQuery.preCheckoutQuery",
+      "shortPath": "preCheckoutQuery.preCheckoutQuery",
+      "payload": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "usageExample": "telegram({\n    webhookHooks: {\n        preCheckoutQuery: {\n            preCheckoutQuery: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "telegram.webhooks.shippingQuery.shippingQuery",
+      "shortPath": "shippingQuery.shippingQuery",
+      "payload": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "usageExample": "telegram({\n    webhookHooks: {\n        shippingQuery: {\n            shippingQuery: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": [
+    {
+      "path": "telegram.db.chats.search",
+      "entityName": "chats",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "chat_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "username",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "first_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "last_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "is_forum",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "invite_link",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "telegram.db.files.search",
+      "entityName": "files",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "file_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "file_unique_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "file_size",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "file_path",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "telegram.db.messages.search",
+      "entityName": "messages",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "message_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "chat_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "from_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "authorId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "date",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "text",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "caption",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "edit_date",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "media_group_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "reply_to_message_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "forward_from_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "forward_from_chat_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "forward_from_message_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "telegram.db.polls.search",
+      "entityName": "polls",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "poll_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "question",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "total_voter_count",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "is_closed",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "is_anonymous",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "allows_multiple_answers",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "telegram.db.users.search",
+      "entityName": "users",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "user_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "is_bot",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "first_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "last_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "username",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "language_code",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "is_premium",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

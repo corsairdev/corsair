@@ -1,9 +1,19 @@
 import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import type { AnyCorsairInstance } from 'corsair';
-import { listOperations, setupCorsair } from 'corsair';
+import { listOperations, runReadonly } from 'corsair';
 import { z } from 'zod';
 import type { BaseMcpOptions } from './adapters.js';
 import { formatGetSchemaResponse } from './schema-format.js';
+import { formatRunScriptError, formatRunScriptResult } from './tool-result.js';
+
+export {
+	callToolResultToText,
+	formatRunScriptError,
+	formatRunScriptResult,
+	isActionToolError,
+	isAgentFacingActionMessage,
+	toolErrorResult,
+} from './tool-result.js';
 
 export type CorsairToolDef = {
 	name: string;
@@ -15,13 +25,7 @@ export type CorsairToolDef = {
 export function buildCorsairToolDefs(
 	options: BaseMcpOptions,
 ): CorsairToolDef[] {
-	const {
-		corsair,
-		permissions,
-		basePermissionUrl,
-		setup,
-		tenantId: defaultTenantId,
-	} = options;
+	const { corsair, runOptions } = options;
 
 	const defs: CorsairToolDef[] = [
 		{
@@ -81,128 +85,25 @@ export function buildCorsairToolDefs(
 					),
 			},
 			handler: async ({ code }) => {
+				const readonly = runOptions?.readonly || false;
 				try {
 					const fn = new Function(
 						'corsair',
 						`return (async () => { ${code} })()`,
 					);
-					const result = await (fn as (c: unknown) => Promise<unknown>)(
-						corsair,
-					);
-					return {
-						content: [
-							{
-								type: 'text',
-								text: JSON.stringify(result ?? null, null, 2),
-							},
-						],
-					};
+					const invoke = () =>
+						(fn as (c: unknown) => Promise<unknown>)(corsair);
+					// When readonly is required, run the whole script inside a readonly
+					// scope that takes precedence over the developer's permission config.
+					// Any write/destructive endpoint throws and aborts the script.
+					const result = readonly ? await runReadonly(invoke) : await invoke();
+					return formatRunScriptResult(result);
 				} catch (err) {
-					const message = err instanceof Error ? err.message : String(err);
-					const extra =
-						err instanceof Error && err.cause
-							? `\nCause: ${String(err.cause)}`
-							: '';
-					const full = JSON.stringify(err, Object.getOwnPropertyNames(err));
-					return {
-						isError: true,
-						content: [
-							{
-								type: 'text',
-								text: `Error running snippet: ${message}${extra}\n${full}`,
-							},
-						],
-					};
+					return formatRunScriptError(err);
 				}
 			},
 		},
 	];
-
-	if (setup == null || setup === true) {
-		defs.push({
-			name: 'corsair_setup',
-			description:
-				'Helps the user configure Corsair. Call this to see if any keys or tokens need to be set up. It will also provide the instructions to set them up. For multi-tenant Corsair instances, pass tenantId to set up a specific tenant.',
-			shape: {
-				tenantId: z
-					.string()
-					.optional()
-					.describe(
-						"Tenant ID to configure for multi-tenant Corsair instances. Defaults to the server's configured tenantId, then 'default'.",
-					),
-			},
-			handler: async ({ tenantId }) => {
-				try {
-					const setupTenantId =
-						typeof tenantId === 'string' && tenantId.length > 0
-							? tenantId
-							: defaultTenantId;
-					const text = await setupCorsair(
-						corsair as Parameters<typeof setupCorsair>[0],
-						setupTenantId ? { tenantId: setupTenantId } : undefined,
-					);
-					return {
-						content: [
-							{ type: 'text', text: text || 'Corsair setup complete.' },
-						],
-					};
-				} catch (err) {
-					const message = err instanceof Error ? err.message : String(err);
-					return {
-						isError: true,
-						content: [{ type: 'text', text: `Setup failed: ${message}` }],
-					};
-				}
-			},
-		});
-	}
-
-	if (permissions && basePermissionUrl) {
-		defs.push({
-			name: 'request_permission',
-			description:
-				'Request permission from the user to execute a protected endpoint. Call this when a script returns a [PERMISSION_REQUIRED] message. Returns an approval URL. After calling this, call ask_human with the approval URL so the user can review and approve.',
-			shape: {
-				endpoint: z
-					.string()
-					.describe(
-						'Full endpoint path from the PERMISSION_REQUIRED message, e.g. "slack.messages.post"',
-					),
-				args: z
-					.record(z.string(), z.unknown())
-					.describe(
-						'The arguments object from the PERMISSION_REQUIRED message',
-					),
-				description: z
-					.string()
-					.describe(
-						'Short human-readable summary of what this action will do, e.g. "Post a message to #general in Slack"',
-					),
-				jid: z
-					.string()
-					.optional()
-					.describe(
-						'Optional chat/conversation ID for resuming after approval',
-					),
-			},
-			handler: async ({ endpoint, args, description }) => {
-				const { permissionId, approvalUrl } =
-					await permissions.createPermissionRequest({
-						endpoint: endpoint as string,
-						args: args as Record<string, unknown>,
-						description: description as string,
-					});
-				const result = {
-					permissionId,
-					approvalUrl,
-					message: `Permission request created. Ask the user to approve at: ${approvalUrl}`,
-				};
-				return {
-					content: [{ type: 'text', text: JSON.stringify(result) }],
-				};
-			},
-		});
-	}
 
 	return defs;
 }

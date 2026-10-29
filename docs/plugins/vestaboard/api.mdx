@@ -1,0 +1,85 @@
+---
+title: API
+description: "API reference for Vestaboard: every `vestaboard.api.*` operation with input and output types."
+---
+
+Every `vestaboard.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Subscriptions
+
+### list
+
+`subscriptions.list`
+
+List Vestaboard subscriptions accessible with the current API key and secret
+
+**Risk:** `read`
+
+```ts
+await corsair.vestaboard.api.subscriptions.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subscriptions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="subscriptions full type">
+
+```ts
+{
+  id: string,
+  boardId: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### postMessage
+
+`subscriptions.postMessage`
+
+Send text or a 6x22 character grid to a Vestaboard subscription
+
+**Risk:** `write`
+
+```ts
+await corsair.vestaboard.api.subscriptions.postMessage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subscriptionId` | `string` | Yes | — |
+| `text` | `string` | No | — |
+| `characters` | `number[][]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `text` | `string` | Yes | — |
+| `created` | `string` | Yes | — |
+| `muted` | `boolean` | Yes | — |
+
+
+
+---
+

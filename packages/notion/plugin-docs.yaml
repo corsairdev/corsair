@@ -1,0 +1,26 @@
+displayName: Notion
+description: All-in-one workspace for notes, databases, wikis, tasks, and team documentation.
+recommendedAuth: managed
+examples:
+  read:
+    path: pages.searchPage
+    title: Search pages
+  write:
+    path: pages.createPage
+    title: Create a new page
+    args:
+      parent:
+        type: database_id
+        database_id: d9824bdc-8445-4327-be8b-5b47500af6ce
+dbExample:
+  entity: pages
+  note: Search synced pages without hitting Notion's API.
+  data:
+    archived: false
+  limit: 50
+exampleWebhook:
+  path: databasePages.pageCreated
+  note: Fires when a page is created in a Notion database.
+  after: |
+    const pageId = result.data?.entity?.id;
+    console.log('New Notion page created with ID:', pageId);

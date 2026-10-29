@@ -1,0 +1,4421 @@
+{
+  "id": "bitbucket",
+  "displayName": "Bitbucket",
+  "description": "Git repository hosting for source code, pull requests, and CI/CD pipelines.",
+  "npmPackageName": "@corsair-dev/bitbucket",
+  "authTypes": ["oauth_2"],
+  "defaultAuthType": "oauth_2",
+  "counts": {
+    "api": 104,
+    "webhooks": 0,
+    "db": 11
+  },
+  "auth": [
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature",
+        "account_id"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "bitbucket.api.commitsAndInsights.createRepositoriesCommitReportsAnnotations",
+      "shortPath": "commitsAndInsights.createRepositoriesCommitReportsAnnotations",
+      "description": "Adds multiple annotations to a commit report in bulk. Use when you need to add code analysis findings (vulnerabilities, code smells, bugs) to a report attached to a specific commit.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "repo_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "commit",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "reportId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{} | {}[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.commitsAndInsights.createRepositoriesCommits2",
+      "shortPath": "commitsAndInsights.createRepositoriesCommits2",
+      "description": "Tool to list commits from a revision using POST method. Identical to GET endpoint but allows sending include/exclude parameters in request body to avoid URL length limits. Use when include/exclude parameters are too long for query strings.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repo_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "revision",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{} | {}[]"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagelen",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.commitsAndInsights.deleteCommitComment",
+      "shortPath": "commitsAndInsights.deleteCommitComment",
+      "description": "Permanently deletes a specific comment on a commit. Use when removing outdated, incorrect, or unwanted feedback on a commit.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "comment_id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "commit",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "repo_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "null"
+      }
+    },
+    {
+      "path": "bitbucket.api.commitsAndInsights.deleteRepositoriesCommitReportsAnnotations",
+      "shortPath": "commitsAndInsights.deleteRepositoriesCommitReportsAnnotations",
+      "description": "Deletes a single annotation matching the provided ID from a commit report. Use when you need to remove a specific annotation from a code analysis report.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "repo_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "commit",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "reportId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "annotationId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "null"
+      }
+    },
+    {
+      "path": "bitbucket.api.commitsAndInsights.getCommitBuildStatus",
+      "shortPath": "commitsAndInsights.getCommitBuildStatus",
+      "description": "Get a specific build status for a commit in Bitbucket. Use when you need to check the status of a particular build/CI run for a commit.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "commit",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "repo_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.commitsAndInsights.getCommitChanges",
+      "shortPath": "commitsAndInsights.getCommitChanges",
+      "description": "Tool to retrieve a page of changes made in a specified commit, showing all changed files with their change statistics (lines added/removed, status). Use when you need to enumerate files modified in a specific commit or commit range.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repo_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "spec",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "ignore_whitespace",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "merge",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "path",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "renames",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "topic",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagelen",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.commitsAndInsights.getCommitComment",
+      "shortPath": "commitsAndInsights.getCommitComment",
+      "description": "Retrieves a specific comment from a commit by its ID. Use when you need to fetch details of a particular commit comment including content, author, timestamps, and inline location.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "comment_id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "commit",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "repo_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.commitsAndInsights.getCommitDiff",
+      "shortPath": "commitsAndInsights.getCommitDiff",
+      "description": "Tool to retrieve the unified diff between two provided revisions or for a single commit in a Bitbucket repository. Use when you need to see the actual code changes in a commit or between two commits. Supports filtering by file path and various diff options.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repo_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "spec",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "context",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "path",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ignore_whitespace",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "binary",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "renames",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "merge",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "topic",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string"
+      }
+    },
+    {
+      "path": "bitbucket.api.commitsAndInsights.getRepositoriesCommit",
+      "shortPath": "commitsAndInsights.getRepositoriesCommit",
+      "description": "Tool to retrieve detailed information about a specific commit in a Bitbucket repository. Use when you need to get complete commit details including author, message, date, parents, and related links.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "commit",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "repo_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.commitsAndInsights.getRepositoriesCommitComments",
+      "shortPath": "commitsAndInsights.getRepositoriesCommitComments",
+      "description": "Retrieves all comments on a specific commit in a Bitbucket repository. Returns both global and inline code comments. Use when you need to view feedback, discussions, or notes left on a specific commit.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "commit",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "repo_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagelen",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.commitsAndInsights.getRepositoriesCommitReport",
+      "shortPath": "commitsAndInsights.getRepositoriesCommitReport",
+      "description": "Returns a single report matching the provided ID from a commit. Use when you need to retrieve details of a specific analysis report (e.g., security scan, code coverage, test results, or bug report) for a commit.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "repo_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "commit",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "reportId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.commitsAndInsights.getRepositoriesCommitReports",
+      "shortPath": "commitsAndInsights.getRepositoriesCommitReports",
+      "description": "Tool to get reports linked to a specific commit. Use when you need to retrieve analysis results, test reports, security scans, or code coverage data associated with a commit.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "repo_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "commit",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagelen",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.commitsAndInsights.getRepositoriesCommitReportsAnnotations",
+      "shortPath": "commitsAndInsights.getRepositoriesCommitReportsAnnotations",
+      "description": "Returns a single annotation matching the provided ID from a commit report. Use when you need to retrieve details of a specific code analysis finding (e.g., vulnerability, code smell, or bug) identified in a commit.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "repo_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "commit",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "reportId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "annotationId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.commitsAndInsights.getRepositoriesCommitStatuses",
+      "shortPath": "commitsAndInsights.getRepositoriesCommitStatuses",
+      "description": "Returns all build statuses (e.g., CI/CD pipeline results) for a specific commit. Use when you need to check build status, verify test results, or monitor deployment pipelines for a particular commit.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "commit",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "repo_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "refname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagelen",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.commitsAndInsights.getRepositoriesMergeBase",
+      "shortPath": "commitsAndInsights.getRepositoriesMergeBase",
+      "description": "Get the merge base (best common ancestor) between two commits in a Bitbucket repository. Use when you need to find the common ancestor commit between two branches or commits for comparison or merge operations.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repo_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "revspec",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.commitsAndInsights.getRepositoryPatch",
+      "shortPath": "commitsAndInsights.getRepositoryPatch",
+      "description": "Tool to retrieve the git patch content for a Bitbucket repository at a specified revision or commit range. Use when you need to review code changes, generate diffs, or analyze modifications between commits. Returns raw patch in unified diff format.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repo_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "spec",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string"
+      }
+    },
+    {
+      "path": "bitbucket.api.commitsAndInsights.listCommits",
+      "shortPath": "commitsAndInsights.listCommits",
+      "description": "Tool to retrieve a page of commits from a Bitbucket repository. Returns commits in reverse chronological order (newest first), similar to git log. Use when you need to browse commit history, filter commits by branch/tag, or restrict to commits affecting a specific path.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repo_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagelen",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.commitsAndInsights.listCommitsFromRevision",
+      "shortPath": "commitsAndInsights.listCommitsFromRevision",
+      "description": "Tool to list commits starting from a specific revision in a Bitbucket repository. Commits are paginated and returned in reverse chronological order. Use when you need to retrieve commit history from a specific commit, branch, or tag.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repo_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "revision",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagelen",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.commitsAndInsights.listCommitsOnMaster",
+      "shortPath": "commitsAndInsights.listCommitsOnMaster",
+      "description": "Lists commits on the master branch of a Bitbucket repository. Use when you need to retrieve the commit history for the master branch, including commit messages, authors, dates, and parent relationships.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repo_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagelen",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.commitsAndInsights.updateInsightsProjectsReposCommitsReports",
+      "shortPath": "commitsAndInsights.updateInsightsProjectsReposCommitsReports",
+      "description": "Create or update an insight report for a commit. Creates a new report if it doesn't exist, or replaces the existing one if a report already exists for the given repository, commit, and report key. Note: replacing an existing report will be rejected if the authenticated user was not the creator of the specified report.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "repo_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "commit",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "reportId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{} | {}[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.commitsAndInsights.updateRepositoriesCommitComments",
+      "shortPath": "commitsAndInsights.updateRepositoriesCommitComments",
+      "description": "Updates the contents of a comment on a commit. Use when you need to modify an existing comment's text on a commit.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "comment_id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "commit",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "repo_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{} | {}[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.commitsAndInsights.updateRepositoriesCommitReportsAnnotations",
+      "shortPath": "commitsAndInsights.updateRepositoriesCommitReportsAnnotations",
+      "description": "Creates or updates an individual annotation for a commit report. Use when you need to add or modify code analysis findings (vulnerabilities, code smells, or bugs) identified in a commit.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "repo_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "commit",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "reportId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "annotationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{} | {}[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.issues.createIssue",
+      "shortPath": "issues.createIssue",
+      "description": "Creates a new issue in a Bitbucket repository, setting the authenticated user as reporter; ensures assignee (if provided) has repository access, and that any specified milestone, version, or component IDs exist.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repo_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ title: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.issues.createIssueComment",
+      "shortPath": "issues.createIssueComment",
+      "description": "Adds a new comment with markdown support to an existing Bitbucket issue.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "issue_id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "repo_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{} | {}[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.issues.deleteIssue",
+      "shortPath": "issues.deleteIssue",
+      "description": "Permanently deletes a specific issue, identified by its `issue_id`, from the repository specified by `repo_slug` within the given `workspace`.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "issue_id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "repo_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "null"
+      }
+    },
+    {
+      "path": "bitbucket.api.issues.getRepositoriesIssuesVote",
+      "shortPath": "issues.getRepositoriesIssuesVote",
+      "description": "Tool to check whether the authenticated user has voted for a specific issue in a Bitbucket repository. Use when you need to verify if the current user has already voted on an issue before attempting to vote or unvote.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "issue_id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "repo_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.issues.listIssues",
+      "shortPath": "issues.listIssues",
+      "description": "Lists issues in a Bitbucket repository with optional filtering by state, priority, kind, or assignee. Use when you need to discover issue IDs or get an overview of repository issues.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repo_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagelen",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.issues.listVersions",
+      "shortPath": "issues.listVersions",
+      "description": "Lists versions (milestones) in a Bitbucket repository's issue tracker. Use when you need to discover available versions for associating with issues, or to retrieve version IDs for use with create_issue.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repo_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagelen",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.issues.updateIssue",
+      "shortPath": "issues.updateIssue",
+      "description": "Updates an existing issue in a Bitbucket repository by modifying specified attributes; requires `workspace`, `repo_slug`, `issue_id`, and at least one attribute to update.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "issue_id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "repo_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ title?: string, content?: { raw: string }, state?: new | open | resolved | on hold | invalid | duplicate | wontfix | closed, kind?: bug | enhancement | proposal | task, priority?: trivial | minor | major | critical | blocker, assignee?: {} | null, milestone?: {} | null, component?: {} | null, version?: {} | null }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.pipelinesAndDeployments.createTeamsPipelinesConfigVariables",
+      "shortPath": "pipelinesAndDeployments.createTeamsPipelinesConfigVariables",
+      "description": "Creates a team-level pipeline configuration variable in Bitbucket. Use when you need to add environment variables or configuration values that should be available to all pipelines within a team.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{} | {}[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.pipelinesAndDeployments.createUsersPipelinesConfigVariables",
+      "shortPath": "pipelinesAndDeployments.createUsersPipelinesConfigVariables",
+      "description": "Creates a user-level pipeline variable for Bitbucket pipelines. Use when you need to create account-level configuration variables that can be used across all repositories owned by the user.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "selected_user",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{} | {}[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.pipelinesAndDeployments.deleteUserPipelineVariable",
+      "shortPath": "pipelinesAndDeployments.deleteUserPipelineVariable",
+      "description": "Permanently deletes a user-level pipeline configuration variable identified by its UUID. Use this to remove pipeline variables that are no longer needed at the account level.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "selected_user",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "variable_uuid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "null"
+      }
+    },
+    {
+      "path": "bitbucket.api.pipelinesAndDeployments.getDeploymentEnvironmentVariables",
+      "shortPath": "pipelinesAndDeployments.getDeploymentEnvironmentVariables",
+      "description": "Retrieves deployment environment level variables for a specific Bitbucket repository environment. Use when you need to view or audit environment-specific configuration variables for deployments.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "repo_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "environment_uuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagelen",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.pipelinesAndDeployments.getOpenidConfiguration",
+      "shortPath": "pipelinesAndDeployments.getOpenidConfiguration",
+      "description": "Retrieves the OpenID Connect discovery configuration for Bitbucket Pipelines OIDC. Use when integrating Bitbucket Pipelines with resource servers (AWS, GCP, Vault) using OpenID Connect authentication. Returns issuer URL, JWKS URI, and supported capabilities.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.pipelinesAndDeployments.getRepositoriesEnvironments2",
+      "shortPath": "pipelinesAndDeployments.getRepositoriesEnvironments2",
+      "description": "Retrieve detailed information about a specific deployment environment in a Bitbucket repository. Use when you need to get environment configuration, deployment settings, or check environment properties like locks and restrictions.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "repo_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "environment_uuid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.pipelinesAndDeployments.getRepositoriesPipelines2",
+      "shortPath": "pipelinesAndDeployments.getRepositoriesPipelines2",
+      "description": "Retrieve a specified pipeline from a Bitbucket repository. Use when you need to get detailed information about a specific pipeline execution including its status, build number, and results.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "repo_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "pipeline_uuid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.pipelinesAndDeployments.getRepositoriesPipelinesConfigCaches",
+      "shortPath": "pipelinesAndDeployments.getRepositoriesPipelinesConfigCaches",
+      "description": "Retrieves the repository pipelines caches. Use when you need to list all caches configured for Bitbucket Pipelines in a specific repository.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "repo_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagelen",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.pipelinesAndDeployments.getRepositoriesPipelinesConfigRunners",
+      "shortPath": "pipelinesAndDeployments.getRepositoriesPipelinesConfigRunners",
+      "description": "Retrieves the list of self-hosted runners configured for a repository's pipelines. Use when you need to view available runners for pipeline execution.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "repo_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagelen",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.pipelinesAndDeployments.getRepositoriesPipelinesConfigSchedules",
+      "shortPath": "pipelinesAndDeployments.getRepositoriesPipelinesConfigSchedules",
+      "description": "Retrieves configured pipeline schedules for a Bitbucket repository. Use when you need to view scheduled pipeline runs and their cron patterns.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "repo_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagelen",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.pipelinesAndDeployments.getRepositoriesPipelinesConfigSshKnownHosts",
+      "shortPath": "pipelinesAndDeployments.getRepositoriesPipelinesConfigSshKnownHosts",
+      "description": "Retrieves repository-level SSH known hosts configured for Bitbucket Pipelines. Use when you need to list or verify SSH known hosts that Pipelines can connect to during builds.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "repo_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagelen",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.pipelinesAndDeployments.getRepositoriesPipelinesConfigVariables",
+      "shortPath": "pipelinesAndDeployments.getRepositoriesPipelinesConfigVariables",
+      "description": "Retrieves repository-level pipeline variables for a specific Bitbucket repository. Use when you need to view or audit pipeline configuration variables that are scoped to a repository.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "repo_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagelen",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.pipelinesAndDeployments.getRepositoriesPipelinesSteps",
+      "shortPath": "pipelinesAndDeployments.getRepositoriesPipelinesSteps",
+      "description": "Retrieves all steps for a given pipeline. Use when you need to inspect the individual steps of a pipeline execution, including their state, duration, and commands.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "repo_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "pipeline_uuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagelen",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.pipelinesAndDeployments.listDeployments",
+      "shortPath": "pipelinesAndDeployments.listDeployments",
+      "description": "Lists deployments for a specified Bitbucket repository. Use when you need to view deployment history and status across environments.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "repo_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagelen",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.pipelinesAndDeployments.listPipelines",
+      "shortPath": "pipelinesAndDeployments.listPipelines",
+      "description": "Tool to find pipelines in a Bitbucket repository. Returns pipeline metadata including state, trigger, and duration. Use when you need to browse pipeline history or check pipeline status.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "repo_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "creator.uuid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "target.ref_type",
+            "optional": true,
+            "type": "BRANCH | TAG | ANNOTATED_TAG"
+          },
+          {
+            "key": "target.ref_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "target.branch",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "target.commit.hash",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "target.selector.pattern",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "target.selector.type",
+            "optional": true,
+            "type": "BRANCH | TAG | CUSTOM | PULLREQUESTS | DEFAULT"
+          },
+          {
+            "key": "created_on",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "trigger_type",
+            "optional": true,
+            "type": "PUSH | MANUAL | SCHEDULED | PARENT_STEP"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "PARSING | PENDING | PAUSED | HALTED | BUILDING | ERROR | PASSED | FAILED | STOPPED | UNKNOWN"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "creator.uuid | created_on | run_creation_date"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagelen",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.pipelinesAndDeployments.listRepositoriesEnvironments",
+      "shortPath": "pipelinesAndDeployments.listRepositoriesEnvironments",
+      "description": "List all deployment environments configured for a Bitbucket repository. Use when you need to view available environments for deployments, check environment configurations, or select an environment for deployment operations.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "repo_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagelen",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.pipelinesAndDeployments.updateTeamsPipelinesConfigVariables",
+      "shortPath": "pipelinesAndDeployments.updateTeamsPipelinesConfigVariables",
+      "description": "Updates a team-level pipeline configuration variable in Bitbucket. Use when you need to modify existing environment variables or configuration values that are available to all pipelines within a team.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "variable_uuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{} | {}[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.pipelinesAndDeployments.updateUsersPipelinesConfigVariables",
+      "shortPath": "pipelinesAndDeployments.updateUsersPipelinesConfigVariables",
+      "description": "Updates a user-level pipeline variable for Bitbucket pipelines. Use when you need to modify account-level configuration variables such as changing the value, key name, or security status.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "selected_user",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "variable_uuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{} | {}[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.pullRequests.approvePullRequest",
+      "shortPath": "pullRequests.approvePullRequest",
+      "description": "Tool to approve a pull request as the authenticated user. Use when you need to formally approve changes in a pull request review process.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pull_request_id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "repo_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.pullRequests.createPullRequest",
+      "shortPath": "pullRequests.createPullRequest",
+      "description": "Creates a new pull request in a specified Bitbucket repository, ensuring the source branch exists and is distinct from the (optional) destination branch.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repo_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ title: string, source: { branch: { name: string } } }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.pullRequests.createPullRequestComment",
+      "shortPath": "pullRequests.createPullRequestComment",
+      "description": "Creates a new comment on a Bitbucket pull request. Supports top-level comments, threaded replies, and inline code comments. Use when providing feedback on a PR, replying to existing comments, or commenting on specific code lines.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pull_request_id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "repo_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{} | {}[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.pullRequests.getPullRequest",
+      "shortPath": "pullRequests.getPullRequest",
+      "description": "Get a single pull request by ID with complete details.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pull_request_id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "repo_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.pullRequests.getPullRequestComment",
+      "shortPath": "pullRequests.getPullRequestComment",
+      "description": "Tool to retrieve a specific comment from a pull request by its ID. Use when you need to fetch details of a particular pull request comment including content, author, timestamps, and inline location.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "comment_id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "pull_request_id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "repo_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.pullRequests.getPullRequestCommits",
+      "shortPath": "pullRequests.getPullRequestCommits",
+      "description": "Tool to retrieve commits for a specified pull request. Use when reviewing the commit history of a PR or analyzing changes included in a pull request.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pull_request_id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "repo_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagelen",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.pullRequests.getPullRequestDiff",
+      "shortPath": "pullRequests.getPullRequestDiff",
+      "description": "Tool to fetch the unified diff for a Bitbucket pull request (follows 302 redirect to repository diff). Use when reviewing code changes in a PR. Supports optional truncation for large diffs via max_chars parameter.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pull_request_id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "repo_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string"
+      }
+    },
+    {
+      "path": "bitbucket.api.pullRequests.getPullRequestDiffstat",
+      "shortPath": "pullRequests.getPullRequestDiffstat",
+      "description": "Tool to get the diffstat for a Bitbucket pull request, showing all changed files with their change statistics (lines added/removed, status). Use when you need to enumerate files modified in a PR.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pull_request_id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "repo_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagelen",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.pullRequests.getRepositoriesPullrequestsActivity",
+      "shortPath": "pullRequests.getRepositoriesPullrequestsActivity",
+      "description": "Get paginated activity log for all pull requests in a repository. Returns comments, updates, approvals, and request changes. Use when you need to track pull request activity history.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repo_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagelen",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.pullRequests.getRepositoriesPullrequestsComments",
+      "shortPath": "pullRequests.getRepositoriesPullrequestsComments",
+      "description": "Retrieves a paginated list of comments on a specific pull request in a Bitbucket repository. Returns global, inline, and threaded comments. Use when you need to view feedback, discussions, or reviews left on a pull request.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pull_request_id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "repo_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagelen",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.pullRequests.getRepositoriesPullrequestsStatuses",
+      "shortPath": "pullRequests.getRepositoriesPullrequestsStatuses",
+      "description": "Returns all build statuses (e.g., CI/CD pipeline results) for a specific pull request. Use when you need to check build status, verify test results, or monitor deployment pipelines for a pull request.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pull_request_id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "repo_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagelen",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.pullRequests.listPullRequests",
+      "shortPath": "pullRequests.listPullRequests",
+      "description": "Lists pull requests in a specified, accessible Bitbucket repository, optionally filtering by state (OPEN, MERGED, DECLINED).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repo_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "OPEN | MERGED | DECLINED | SUPERSEDED"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagelen",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.pullRequests.listPullRequestTasks",
+      "shortPath": "pullRequests.listPullRequestTasks",
+      "description": "Lists all tasks associated with a pull request in a Bitbucket repository. Use when you need to view or track tasks on a PR.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pull_request_id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "repo_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pagelen",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.pullRequests.requestPullRequestChanges",
+      "shortPath": "pullRequests.requestPullRequestChanges",
+      "description": "Tool to request changes on a pull request as the authenticated user. Use when you need to formally request changes in a pull request review process, indicating the PR needs modifications before approval.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pull_request_id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "repo_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.repositories.createRepository",
+      "shortPath": "repositories.createRepository",
+      "description": "Creates a new Bitbucket 'git' repository in a specified workspace, defaulting to the workspace's oldest project if `project_key` is not provided.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repo_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{} | {}[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.repositories.deleteRepository",
+      "shortPath": "repositories.deleteRepository",
+      "description": "Permanently deletes a specified Bitbucket repository; this action is irreversible and does not affect forks.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repo_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "redirect_to",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "null"
+      }
+    },
+    {
+      "path": "bitbucket.api.repositories.getRepositoriesWatchers",
+      "shortPath": "repositories.getRepositoriesWatchers",
+      "description": "Retrieves a paginated list of all the watchers on the specified repository. Use when you need to see who is watching a particular repository.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repo_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagelen",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.repositories.getRepository",
+      "shortPath": "repositories.getRepository",
+      "description": "Retrieves detailed information about a specific repository in a Bitbucket workspace. Use when you need to get repository metadata, settings, or details.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repo_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.repositories.listRepositories",
+      "shortPath": "repositories.listRepositories",
+      "description": "Retrieves a paginated list of all public repositories on Bitbucket. Use when you need to discover or search across public repositories, optionally filtered by role, query string, creation date, or sorted by various fields.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "admin | contributor | member | owner"
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagelen",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.repositories.listRepositoriesInWorkspace",
+      "shortPath": "repositories.listRepositoriesInWorkspace",
+      "description": "Lists repositories in a specified Bitbucket workspace, accessible to the authenticated user, with options to filter by role or query string, and sort results. Responses are paginated; iterate using the `next` field in each response until it is absent to retrieve all repositories.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "admin | contributor | member | owner"
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagelen",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.searchAndDiscovery.getHookEvents",
+      "shortPath": "searchAndDiscovery.getHookEvents",
+      "description": "Retrieves a paginated list of all valid webhook events for a specified entity type (repository or workspace). Use when you need to discover available webhook event types for subscription or webhook configuration.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subject_type",
+            "optional": false,
+            "type": "repository | workspace"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagelen",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.searchAndDiscovery.getWorkspacesSearchCode",
+      "shortPath": "searchAndDiscovery.getWorkspacesSearchCode",
+      "description": "Tool to search for code in the repositories of the specified workspace. Use when you need to find specific code patterns, function definitions, or text across all repositories in a workspace.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "search_query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagelen",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.searchAndDiscovery.searchTeamCode",
+      "shortPath": "searchAndDiscovery.searchTeamCode",
+      "description": "Search for code in repositories of a specified team. Matches can occur in file content or paths. Note: Teams endpoints were deprecated in Oct 2020; use workspace search endpoints for new integrations.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "search_query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagelen",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.searchAndDiscovery.searchUserRepositoriesCode",
+      "shortPath": "searchAndDiscovery.searchUserRepositoriesCode",
+      "description": "Tool to search for code in the repositories of a specified user. Use when you need to find specific code patterns, functions, or text across all repositories owned by a user.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "selected_user",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "search_query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagelen",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.snippets.createSnippetComment",
+      "shortPath": "snippets.createSnippetComment",
+      "description": "Posts a new top-level comment or a threaded reply to an existing comment on a specified Bitbucket snippet.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "encoded_id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{} | {}[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.snippets.deleteSnippetsWatch",
+      "shortPath": "snippets.deleteSnippetsWatch",
+      "description": "Stops watching a specific snippet. Use when you want to unsubscribe from notifications for a snippet.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "encoded_id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "null"
+      }
+    },
+    {
+      "path": "bitbucket.api.snippets.getSnippet",
+      "shortPath": "snippets.getSnippet",
+      "description": "Retrieves a specific Bitbucket snippet by its encoded ID from an existing workspace, returning its metadata and file structure.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "encoded_id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.snippets.getSnippetsWatch",
+      "shortPath": "snippets.getSnippetsWatch",
+      "description": "Checks if the current user is watching a specific snippet. Use when you need to verify watch status for a snippet.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "encoded_id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.snippets.listSnippets",
+      "shortPath": "snippets.listSnippets",
+      "description": "Returns all snippets accessible to the authenticated user. Use when you need to discover or list snippets, optionally filtered by role (owner, contributor, or member).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "role",
+            "optional": true,
+            "type": "owner | contributor | member"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagelen",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.sourceAndRefs.browseRepositoryPath",
+      "shortPath": "sourceAndRefs.browseRepositoryPath",
+      "description": "Tool to retrieve content for a file path or browse directory contents at a specified revision in a Bitbucket repository. Use when you need flexible access to repository content - returns raw file data for files or paginated directory listings for directories.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "commit",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "repo_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "meta | rendered"
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "max_depth",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagelen",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.sourceAndRefs.createBranch",
+      "shortPath": "sourceAndRefs.createBranch",
+      "description": "Creates a new branch in a Bitbucket repository from a target commit hash; the branch name must be unique, adhere to Bitbucket's naming conventions, and not include the 'refs/heads/' prefix.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repo_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ name: string, target: { hash: string } }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.sourceAndRefs.getBranch",
+      "shortPath": "sourceAndRefs.getBranch",
+      "description": "Retrieves detailed information about a specific branch in a Bitbucket repository. Use when you need to get branch metadata, the commit it points to, or verify a branch exists.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "repo_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.sourceAndRefs.getFileFromRepository",
+      "shortPath": "sourceAndRefs.getFileFromRepository",
+      "description": "Retrieves a specific file's content from a Bitbucket repository at a given commit (hash, branch, or tag), failing if the file path is invalid for that commit.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "commit",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "repo_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "meta | rendered"
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "max_depth",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagelen",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.sourceAndRefs.getRawFileContent",
+      "shortPath": "sourceAndRefs.getRawFileContent",
+      "description": "Tool to retrieve the raw content of a file from a Bitbucket repository at a specified commit, branch, or tag. Use when you need to read file contents from a specific revision.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "commit",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "repo_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "meta | rendered"
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "max_depth",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string"
+      }
+    },
+    {
+      "path": "bitbucket.api.sourceAndRefs.getRepositoriesBranchingModel",
+      "shortPath": "sourceAndRefs.getRepositoriesBranchingModel",
+      "description": "Return the branching model as applied to the repository. Use when you need to understand the repository's branch workflow configuration, including development/production branches and branch type prefixes.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repo_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.sourceAndRefs.getRepositoriesEffectiveBranchingModel",
+      "shortPath": "sourceAndRefs.getRepositoriesEffectiveBranchingModel",
+      "description": "Retrieves the effective branching model for a Bitbucket repository, showing which branching model is currently applied (including any inheritance from project-level settings). Use when you need to understand the repository's branch workflow configuration, including development and production branches and branch type prefixes.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repo_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.sourceAndRefs.getRepositoriesFilehistory",
+      "shortPath": "sourceAndRefs.getRepositoriesFilehistory",
+      "description": "Returns a paginated list of commits that modified the specified file. Use when you need to track file changes over time, find who modified a file, or determine when a file was created or last changed.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "commit",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "repo_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "renames",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagelen",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.sourceAndRefs.getRepositoriesRefs",
+      "shortPath": "sourceAndRefs.getRepositoriesRefs",
+      "description": "Returns the branches and tags in the repository. Use when you need to list all refs (both branches and tags) in a single API call with optional filtering by type, name pattern, or commit hash.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repo_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagelen",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.sourceAndRefs.getRepositoriesRefsTags",
+      "shortPath": "sourceAndRefs.getRepositoriesRefsTags",
+      "description": "Retrieves detailed information about a specific tag in a Bitbucket repository. Use when you need to get tag metadata, target commit details, or verify a tag exists.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "repo_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.sourceAndRefs.getRepositoriesSrc",
+      "shortPath": "sourceAndRefs.getRepositoriesSrc",
+      "description": "Lists the contents of the root directory on the repository's main branch without needing to specify a commit or branch. This endpoint redirects to the main branch automatically.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repo_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "meta"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagelen",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.sourceAndRefs.listBranches",
+      "shortPath": "sourceAndRefs.listBranches",
+      "description": "Lists branches in a Bitbucket repository with optional server-side filtering by name pattern (BBQL) and sorting. Use when you need to discover available branches, search for specific branch patterns, or navigate repository branch structure.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repo_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagelen",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.sourceAndRefs.listRepositoryPaths",
+      "shortPath": "sourceAndRefs.listRepositoryPaths",
+      "description": "Lists file and directory entries under a repository path at a given revision, with optional breadth-first recursion via max_depth for repository traversal and scanning. Fails if the path points to a file rather than a directory.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "commit",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "repo_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "meta | rendered"
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "max_depth",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagelen",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.sourceAndRefs.listTags",
+      "shortPath": "sourceAndRefs.listTags",
+      "description": "Lists tags in a Bitbucket repository with optional server-side filtering by name pattern or commit hash (BBQL) and sorting. Use when you need to discover available tags, search for specific tag patterns, or find tags pointing to specific commits.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repo_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagelen",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.usersAndPermissions.getCurrentUser2",
+      "shortPath": "usersAndPermissions.getCurrentUser2",
+      "description": "Tool to retrieve complete profile information for the currently authenticated Bitbucket user. Use when you need comprehensive user details including account_id, username, nickname, and other profile fields.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.usersAndPermissions.getSshLatestKeys",
+      "shortPath": "usersAndPermissions.getSshLatestKeys",
+      "description": "Retrieves a paginated list of SSH keys for a specified Bitbucket user. Use when you need to view or audit SSH keys configured for a user account.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "selected_user",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagelen",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.usersAndPermissions.getUser",
+      "shortPath": "usersAndPermissions.getUser",
+      "description": "Retrieves public profile information for a specific Bitbucket user by username or UUID. Use when you need to get user details like display name, avatar, creation date, and links to related resources.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "selected_user",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.usersAndPermissions.getUserEmails",
+      "shortPath": "usersAndPermissions.getUserEmails",
+      "description": "Returns all the authenticated user's email addresses, both confirmed and unconfirmed. Use when you need to retrieve all email addresses associated with the current user's account.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.usersAndPermissions.getUserEmails2",
+      "shortPath": "usersAndPermissions.getUserEmails2",
+      "description": "Retrieves details about a specific email address for the authenticated user. Use when you need to check if an email is primary, confirmed, or verify email ownership.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.usersAndPermissions.getUserPermissionsRepositories",
+      "shortPath": "usersAndPermissions.getUserPermissionsRepositories",
+      "description": "Returns an object for each repository the caller has explicit access to, including their permission level. Use when you need to discover which repositories the authenticated user can access and their specific permissions.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagelen",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.usersAndPermissions.getUserPermissionsWorkspaces",
+      "shortPath": "usersAndPermissions.getUserPermissionsWorkspaces",
+      "description": "Retrieves workspace memberships and permission levels for the authenticated user. Returns an object for each workspace the caller is a member of, along with their effective role (highest privilege level). Use when you need to determine which workspaces a user can access and their permission level in each.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagelen",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.usersAndPermissions.getUserWorkspaces",
+      "shortPath": "usersAndPermissions.getUserWorkspaces",
+      "description": "Tool to retrieve all workspaces accessible to the authenticated user. Use when you need to list workspaces the current user can access, optionally filtered by workspace slug or permission level.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "administrator",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagelen",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.workspacesAndProjects.getProjectsRepos",
+      "shortPath": "workspacesAndProjects.getProjectsRepos",
+      "description": "Retrieves repositories from a project in a Bitbucket workspace. Use when you need to list all repositories belonging to a specific project key within a workspace.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "admin | contributor | member | owner"
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "project_key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagelen",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.workspacesAndProjects.getWorkspace",
+      "shortPath": "workspacesAndProjects.getWorkspace",
+      "description": "Retrieves detailed information about a specific Bitbucket workspace. Use when you need to get workspace metadata, settings, or details.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.workspacesAndProjects.getWorkspacesPullrequests",
+      "shortPath": "workspacesAndProjects.getWorkspacesPullrequests",
+      "description": "Tool to get all workspace pull requests authored by a specified user. Use when you need to retrieve pull requests created by a specific user across all repositories in a workspace.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "selected_user",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "OPEN | MERGED | DECLINED | SUPERSEDED"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagelen",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.workspacesAndProjects.listWorkspaceMembers",
+      "shortPath": "workspacesAndProjects.listWorkspaceMembers",
+      "description": "Lists all members of a specified Bitbucket workspace; the workspace must exist.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagelen",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.workspacesAndProjects.listWorkspaceProjects",
+      "shortPath": "workspacesAndProjects.listWorkspaceProjects",
+      "description": "Lists projects in a specified Bitbucket workspace. Use when you need to retrieve all projects belonging to a workspace.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagelen",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "bitbucket.api.workspacesAndProjects.listWorkspaces",
+      "shortPath": "workspacesAndProjects.listWorkspaces",
+      "description": "Lists Bitbucket workspaces accessible to the authenticated user, optionally filtered and sorted. Results are paginated; follow the `next` field in each response to retrieve subsequent pages until `next` is absent. When multiple workspaces are returned, verify the correct `slug` or UUID before passing to downstream tools.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "role",
+            "optional": true,
+            "type": "owner | collaborator | member"
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagelen",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "bitbucket.db.branches.search",
+      "entityName": "branches",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "default_merge_strategy",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "bitbucket.db.commits.search",
+      "entityName": "commits",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "hash",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "message",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "bitbucket.db.issues.search",
+      "entityName": "issues",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "state",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "kind",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "priority",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "votes",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "created_on",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_on",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "edited_on",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "bitbucket.db.pipelines.search",
+      "entityName": "pipelines",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "uuid",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "build_number",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "created_on",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "completed_on",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "build_seconds_used",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "bitbucket.db.projects.search",
+      "entityName": "projects",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "uuid",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "key",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "is_private",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "created_on",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_on",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "has_publicly_visible_repos",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    },
+    {
+      "path": "bitbucket.db.pullRequests.search",
+      "entityName": "pullRequests",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "state",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "draft",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "queued",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "reason",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "comment_count",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "task_count",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "close_source_branch",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "created_on",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_on",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "bitbucket.db.repositories.search",
+      "entityName": "repositories",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "uuid",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "full_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "slug",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "scm",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "website",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "language",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "size",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "is_private",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "has_issues",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "has_wiki",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "fork_policy",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "enforced_signed_commits",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "created_on",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_on",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "bitbucket.db.snippets.search",
+      "entityName": "snippets",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "scm",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "is_private",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "created_on",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_on",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "bitbucket.db.tags.search",
+      "entityName": "tags",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "message",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "bitbucket.db.users.search",
+      "entityName": "users",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "uuid",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "display_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "nickname",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "username",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "account_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "account_status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_on",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "has_2fa_enabled",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "is_staff",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    },
+    {
+      "path": "bitbucket.db.workspaces.search",
+      "entityName": "workspaces",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "uuid",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "slug",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "is_private",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "is_personal",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "is_privacy_enforced",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "forking_mode",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "sign_system_commits",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "created_on",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_on",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

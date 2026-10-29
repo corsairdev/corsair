@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import type { BaseMcpOptions } from '../core/adapters.js';
+import { callToolResultToText } from '../core/tool-result.js';
 import { buildCorsairToolDefs } from '../core/tools.js';
 
 // Note: MastraProvider does not extend BaseProvider because build() must be async
@@ -20,11 +21,7 @@ export class MastraProvider {
 					const result = await def.handler(
 						inputData as Record<string, unknown>,
 					);
-					const textItems = result.content.filter((c) => c.type === 'text');
-					if (result.isError) {
-						throw new Error(textItems.map((c) => c.text).join('\n'));
-					}
-					const text = textItems[0]?.text ?? '';
+					const text = callToolResultToText(result);
 					try {
 						return JSON.parse(text);
 					} catch {

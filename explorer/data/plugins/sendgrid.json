@@ -1,0 +1,2909 @@
+{
+  "id": "sendgrid",
+  "displayName": "SendGrid",
+  "description": "Email delivery platform for transactional mail, marketing campaigns, and sender reputation tools.",
+  "npmPackageName": "@corsair-dev/sendgrid",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 100,
+    "webhooks": 0,
+    "db": 4
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "one"]
+    }
+  ],
+  "api": [
+    {
+      "path": "sendgrid.api.apiKeys.create",
+      "shortPath": "apiKeys.create",
+      "description": "Create an API key",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "scopes",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "sendgrid.api.apiKeys.get",
+      "shortPath": "apiKeys.get",
+      "description": "Retrieve an API key",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "sendgrid.api.apiKeys.getAll",
+      "shortPath": "apiKeys.getAll",
+      "description": "Retrieve all API keys",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "sendgrid.api.apiKeys.remove",
+      "shortPath": "apiKeys.remove",
+      "description": "Delete an API key",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "sendgrid.api.apiKeys.update",
+      "shortPath": "apiKeys.update",
+      "description": "Update an API key name or scopes",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "scopes",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "sendgrid.api.asm.addGroupSuppressions",
+      "shortPath": "asm.addGroupSuppressions",
+      "description": "Add suppressions to an unsubscribe group",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "recipient_emails",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "sendgrid.api.asm.createGroup",
+      "shortPath": "asm.createGroup",
+      "description": "Create an unsubscribe group",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "is_default",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "sendgrid.api.asm.deleteGroup",
+      "shortPath": "asm.deleteGroup",
+      "description": "Delete an unsubscribe group",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "sendgrid.api.asm.deleteGroupSuppression",
+      "shortPath": "asm.deleteGroupSuppression",
+      "description": "Delete a suppression from an unsubscribe group",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "sendgrid.api.asm.getGroup",
+      "shortPath": "asm.getGroup",
+      "description": "Retrieve an unsubscribe group",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "sendgrid.api.asm.getGroups",
+      "shortPath": "asm.getGroups",
+      "description": "Retrieve unsubscribe groups",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}[]"
+      }
+    },
+    {
+      "path": "sendgrid.api.asm.getGroupSuppressions",
+      "shortPath": "asm.getGroupSuppressions",
+      "description": "Retrieve suppressions for an unsubscribe group",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}[]"
+      }
+    },
+    {
+      "path": "sendgrid.api.asm.updateGroup",
+      "shortPath": "asm.updateGroup",
+      "description": "Update an unsubscribe group",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_default",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "sendgrid.api.contacts.addOrUpdate",
+      "shortPath": "contacts.addOrUpdate",
+      "description": "Add or update contacts in SendGrid Marketing",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "contacts",
+            "optional": false,
+            "type": "{ id?: string, email?: string, phone_number_id?: string, external_id?: string, anonymous_id?: string, first_name?: string, last_name?: string, address_line_1?: string, address_line_2?: string, alternate_emails?: string[], city?: string, country?: string, postal_code?: string, state_province_region?: string, custom_fields?: {} }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "job_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sendgrid.api.contacts.export",
+      "shortPath": "contacts.export",
+      "description": "Create a marketing contacts export job",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "segment_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "file_type",
+            "optional": true,
+            "type": "csv | json"
+          },
+          {
+            "key": "max_file_size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "sendgrid.api.contacts.exportStatus",
+      "shortPath": "contacts.exportStatus",
+      "description": "Get a marketing contacts export job",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "sendgrid.api.contacts.get",
+      "shortPath": "contacts.get",
+      "description": "Get a marketing contact by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "sendgrid.api.contacts.getCount",
+      "shortPath": "contacts.getCount",
+      "description": "Get marketing contact count",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "sendgrid.api.contacts.getSample",
+      "shortPath": "contacts.getSample",
+      "description": "Get a sample of marketing contacts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "sendgrid.api.contacts.import",
+      "shortPath": "contacts.import",
+      "description": "Create a marketing contacts import job",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_type",
+            "optional": false,
+            "type": "csv"
+          },
+          {
+            "key": "field_mappings",
+            "optional": false,
+            "type": "string | null[]"
+          },
+          {
+            "key": "list_ids",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "sendgrid.api.contacts.importStatus",
+      "shortPath": "contacts.importStatus",
+      "description": "Get a marketing contacts import job",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "sendgrid.api.contacts.listExports",
+      "shortPath": "contacts.listExports",
+      "description": "List marketing contacts export jobs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "sendgrid.api.contacts.remove",
+      "shortPath": "contacts.remove",
+      "description": "Delete marketing contacts by ID",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ids",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "job_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sendgrid.api.contacts.search",
+      "shortPath": "contacts.search",
+      "description": "Search marketing contacts with SGQL",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "sendgrid.api.contacts.searchEmails",
+      "shortPath": "contacts.searchEmails",
+      "description": "Search marketing contacts by email",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "emails",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "sendgrid.api.fields.create",
+      "shortPath": "fields.create",
+      "description": "Create a custom field definition",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "field_type",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "sendgrid.api.fields.getAll",
+      "shortPath": "fields.getAll",
+      "description": "Get all marketing field definitions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "sendgrid.api.fields.remove",
+      "shortPath": "fields.remove",
+      "description": "Delete a custom field definition",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "sendgrid.api.fields.update",
+      "shortPath": "fields.update",
+      "description": "Update a custom field definition",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "sendgrid.api.lists.create",
+      "shortPath": "lists.create",
+      "description": "Create a new marketing contact list",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "contact_count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "_metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sendgrid.api.lists.get",
+      "shortPath": "lists.get",
+      "description": "Get a marketing list by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "contact_sample",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "sendgrid.api.lists.getAll",
+      "shortPath": "lists.getAll",
+      "description": "Retrieve all marketing contact lists",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ id: string, name: string, contact_count: number, _metadata?: {} }[]"
+          },
+          {
+            "key": "_metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sendgrid.api.lists.getContactCount",
+      "shortPath": "lists.getContactCount",
+      "description": "Get contact count for a marketing list",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "sendgrid.api.lists.remove",
+      "shortPath": "lists.remove",
+      "description": "Delete a marketing list",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "delete_contacts",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "sendgrid.api.lists.removeContacts",
+      "shortPath": "lists.removeContacts",
+      "description": "Remove contacts from a marketing list",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "contact_ids",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "job_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sendgrid.api.lists.update",
+      "shortPath": "lists.update",
+      "description": "Update a marketing list",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "contact_count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "_metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sendgrid.api.mail.cancelScheduledSend",
+      "shortPath": "mail.cancelScheduledSend",
+      "description": "Cancel or pause a scheduled send",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "batch_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "pause | cancel"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "sendgrid.api.mail.createBatchId",
+      "shortPath": "mail.createBatchId",
+      "description": "Create a batch ID for scheduled mail",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "sendgrid.api.mail.deleteScheduledSend",
+      "shortPath": "mail.deleteScheduledSend",
+      "description": "Delete a cancellation/pause for a scheduled send",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "batch_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "sendgrid.api.mail.getScheduledSend",
+      "shortPath": "mail.getScheduledSend",
+      "description": "Retrieve a scheduled send by batch ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "batch_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}[]"
+      }
+    },
+    {
+      "path": "sendgrid.api.mail.listScheduledSends",
+      "shortPath": "mail.listScheduledSends",
+      "description": "Retrieve all scheduled sends",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}[]"
+      }
+    },
+    {
+      "path": "sendgrid.api.mail.send",
+      "shortPath": "mail.send",
+      "description": "Send an email via SendGrid Mail Send API v3",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "personalizations",
+            "optional": false,
+            "type": "{ to: { email: string, name?: string }[], cc?: { email: string, name?: string }[], bcc?: { email: string, name?: string }[], subject?: string, headers?: {}, substitutions?: {}, dynamic_template_data?: {}, custom_args?: {}, send_at?: number }[]"
+          },
+          {
+            "key": "from",
+            "optional": false,
+            "type": "{ email: string, name?: string }"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "{ type: string, value: string }[]"
+          },
+          {
+            "key": "reply_to",
+            "optional": true,
+            "type": "{ email: string, name?: string }"
+          },
+          {
+            "key": "template_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "categories",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "send_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "batch_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ip_pool_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asm",
+            "optional": true,
+            "type": "{ group_id: number, groups_to_display?: number[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "x_message_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sendgrid.api.mail.updateScheduledSend",
+      "shortPath": "mail.updateScheduledSend",
+      "description": "Update a scheduled send status",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "batch_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "pause | cancel"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "sendgrid.api.mail.validateBatchId",
+      "shortPath": "mail.validateBatchId",
+      "description": "Validate a mail batch ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "batch_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "sendgrid.api.segments.create",
+      "shortPath": "segments.create",
+      "description": "Create a Marketing Campaigns segment 2.0",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "query_dsl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parent_list_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "sendgrid.api.segments.get",
+      "shortPath": "segments.get",
+      "description": "Get a Marketing Campaigns segment 2.0",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "contacts_sample",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "sendgrid.api.segments.getAll",
+      "shortPath": "segments.getAll",
+      "description": "Get all Marketing Campaigns segments 2.0",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "parent_list_ids",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "no_parent_list_id",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "sendgrid.api.segments.refresh",
+      "shortPath": "segments.refresh",
+      "description": "Manually refresh a Marketing Campaigns segment 2.0",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user_time_zone",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "sendgrid.api.segments.remove",
+      "shortPath": "segments.remove",
+      "description": "Delete a Marketing Campaigns segment 2.0",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "sendgrid.api.segments.update",
+      "shortPath": "segments.update",
+      "description": "Update a Marketing Campaigns segment 2.0",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query_dsl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "sendgrid.api.senders.create",
+      "shortPath": "senders.create",
+      "description": "Create a verified sender",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "nickname",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "from_email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "from_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "reply_to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "zip",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "sendgrid.api.senders.createIdentity",
+      "shortPath": "senders.createIdentity",
+      "description": "Create a Marketing Campaigns sender identity",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "sendgrid.api.senders.getAll",
+      "shortPath": "senders.getAll",
+      "description": "Retrieve verified senders",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lastSeenID",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: number, nickname: string, from_email: string, from_name?: string, reply_to?: string, reply_to_name?: string, address?: string, address2?: string, state?: string, city?: string, zip?: string, country?: string, verified: boolean, locked?: boolean }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sendgrid.api.senders.getIdentity",
+      "shortPath": "senders.getIdentity",
+      "description": "Get a Marketing Campaigns sender identity",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "sendgrid.api.senders.listIdentities",
+      "shortPath": "senders.listIdentities",
+      "description": "Get Marketing Campaigns sender identities",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "sendgrid.api.senders.remove",
+      "shortPath": "senders.remove",
+      "description": "Delete a verified sender",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "sendgrid.api.senders.resend",
+      "shortPath": "senders.resend",
+      "description": "Resend verified sender verification",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "sendgrid.api.senders.update",
+      "shortPath": "senders.update",
+      "description": "Update a verified sender",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "nickname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from_email",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "sendgrid.api.stats.getCategory",
+      "shortPath": "stats.getCategory",
+      "description": "Retrieve category statistics",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "start_date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "aggregated_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "mailbox_providers",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "categories",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}[]"
+      }
+    },
+    {
+      "path": "sendgrid.api.stats.getClient",
+      "shortPath": "stats.getClient",
+      "description": "Retrieve email client statistics",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "start_date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "aggregated_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "mailbox_providers",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}[]"
+      }
+    },
+    {
+      "path": "sendgrid.api.stats.getDevice",
+      "shortPath": "stats.getDevice",
+      "description": "Retrieve device statistics",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "start_date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "aggregated_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "mailbox_providers",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}[]"
+      }
+    },
+    {
+      "path": "sendgrid.api.stats.getGeo",
+      "shortPath": "stats.getGeo",
+      "description": "Retrieve geographic statistics",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "start_date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "aggregated_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "mailbox_providers",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}[]"
+      }
+    },
+    {
+      "path": "sendgrid.api.stats.getGlobal",
+      "shortPath": "stats.getGlobal",
+      "description": "Retrieve global email statistics",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "start_date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "aggregated_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "mailbox_providers",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}[]"
+      }
+    },
+    {
+      "path": "sendgrid.api.stats.getMailboxProvider",
+      "shortPath": "stats.getMailboxProvider",
+      "description": "Retrieve mailbox provider statistics",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "start_date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "aggregated_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "mailbox_providers",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}[]"
+      }
+    },
+    {
+      "path": "sendgrid.api.suppressions.addGlobalUnsubscribes",
+      "shortPath": "suppressions.addGlobalUnsubscribes",
+      "description": "Add emails to the global unsubscribe list",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "recipient_emails",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "sendgrid.api.suppressions.deleteBlock",
+      "shortPath": "suppressions.deleteBlock",
+      "description": "Delete a block by email",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "sendgrid.api.suppressions.deleteBlocks",
+      "shortPath": "suppressions.deleteBlocks",
+      "description": "Delete blocked emails",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "delete_all",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "emails",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "sendgrid.api.suppressions.deleteBounce",
+      "shortPath": "suppressions.deleteBounce",
+      "description": "Delete a bounce by email",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "sendgrid.api.suppressions.deleteBounces",
+      "shortPath": "suppressions.deleteBounces",
+      "description": "Delete bounce suppressions",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "delete_all",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "emails",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "sendgrid.api.suppressions.deleteGlobalUnsubscribe",
+      "shortPath": "suppressions.deleteGlobalUnsubscribe",
+      "description": "Delete a global unsubscribe by email",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "sendgrid.api.suppressions.deleteInvalidEmail",
+      "shortPath": "suppressions.deleteInvalidEmail",
+      "description": "Delete an invalid email",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "sendgrid.api.suppressions.deleteInvalidEmails",
+      "shortPath": "suppressions.deleteInvalidEmails",
+      "description": "Delete invalid emails",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "delete_all",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "emails",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "sendgrid.api.suppressions.deleteSpamReport",
+      "shortPath": "suppressions.deleteSpamReport",
+      "description": "Delete a spam report by email",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "sendgrid.api.suppressions.deleteSpamReports",
+      "shortPath": "suppressions.deleteSpamReports",
+      "description": "Delete spam reports",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "delete_all",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "emails",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "sendgrid.api.suppressions.getBlock",
+      "shortPath": "suppressions.getBlock",
+      "description": "Retrieve a block by email",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}[]"
+      }
+    },
+    {
+      "path": "sendgrid.api.suppressions.getBlocks",
+      "shortPath": "suppressions.getBlocks",
+      "description": "Retrieve blocked emails",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "start_time",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "end_time",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sendgrid.api.suppressions.getBounce",
+      "shortPath": "suppressions.getBounce",
+      "description": "Retrieve a bounce by email",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}[]"
+      }
+    },
+    {
+      "path": "sendgrid.api.suppressions.getBounces",
+      "shortPath": "suppressions.getBounces",
+      "description": "Retrieve email bounce suppressions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "start_time",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "end_time",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bounces",
+            "optional": false,
+            "type": "{ created: number, email: string, reason: string, status: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sendgrid.api.suppressions.getGlobalUnsubscribe",
+      "shortPath": "suppressions.getGlobalUnsubscribe",
+      "description": "Retrieve a global unsubscribe by email",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "sendgrid.api.suppressions.getGlobalUnsubscribes",
+      "shortPath": "suppressions.getGlobalUnsubscribes",
+      "description": "Retrieve global unsubscribes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "start_time",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "end_time",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sendgrid.api.suppressions.getInvalidEmail",
+      "shortPath": "suppressions.getInvalidEmail",
+      "description": "Retrieve an invalid email",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}[]"
+      }
+    },
+    {
+      "path": "sendgrid.api.suppressions.getInvalidEmails",
+      "shortPath": "suppressions.getInvalidEmails",
+      "description": "Retrieve invalid emails",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "start_time",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "end_time",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sendgrid.api.suppressions.getSpamReport",
+      "shortPath": "suppressions.getSpamReport",
+      "description": "Retrieve a spam report by email",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}[]"
+      }
+    },
+    {
+      "path": "sendgrid.api.suppressions.getSpamReports",
+      "shortPath": "suppressions.getSpamReports",
+      "description": "Retrieve spam reports",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "start_time",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "end_time",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sendgrid.api.templates.activateVersion",
+      "shortPath": "templates.activateVersion",
+      "description": "Activate a transactional template version",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "sendgrid.api.templates.create",
+      "shortPath": "templates.create",
+      "description": "Create a transactional template",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "generation",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "sendgrid.api.templates.createVersion",
+      "shortPath": "templates.createVersion",
+      "description": "Create a transactional template version",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "html_content",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "plain_content",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "sendgrid.api.templates.get",
+      "shortPath": "templates.get",
+      "description": "Get a transactional template",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "sendgrid.api.templates.getAll",
+      "shortPath": "templates.getAll",
+      "description": "Get all transactional templates",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "generations",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "sendgrid.api.templates.getVersion",
+      "shortPath": "templates.getVersion",
+      "description": "Get a transactional template version",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "sendgrid.api.templates.remove",
+      "shortPath": "templates.remove",
+      "description": "Delete a transactional template",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "sendgrid.api.templates.removeVersion",
+      "shortPath": "templates.removeVersion",
+      "description": "Delete a transactional template version",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "sendgrid.api.templates.update",
+      "shortPath": "templates.update",
+      "description": "Update a transactional template",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "sendgrid.api.templates.updateVersion",
+      "shortPath": "templates.updateVersion",
+      "description": "Update a transactional template version",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "html_content",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "plain_content",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "sendgrid.api.user.getAccount",
+      "shortPath": "user.getAccount",
+      "description": "Retrieve the user account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "sendgrid.api.user.getCredits",
+      "shortPath": "user.getCredits",
+      "description": "Retrieve remaining email credits",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "sendgrid.api.user.getEmail",
+      "shortPath": "user.getEmail",
+      "description": "Retrieve the account email address",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "sendgrid.api.user.getProfile",
+      "shortPath": "user.getProfile",
+      "description": "Retrieve the user profile",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "sendgrid.api.user.getScopes",
+      "shortPath": "user.getScopes",
+      "description": "Retrieve API key scopes for the current key",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "sendgrid.api.user.getUsername",
+      "shortPath": "user.getUsername",
+      "description": "Retrieve the account username",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "sendgrid.db.bounces.search",
+      "entityName": "bounces",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "reason",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "sendgrid.db.contacts.search",
+      "entityName": "contacts",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "phone_number_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "external_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "anonymous_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "first_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "last_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "address_line_1",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "address_line_2",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "city",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "country",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "postal_code",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "state_province_region",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "sendgrid.db.lists.search",
+      "entityName": "lists",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "contact_count",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "sendgrid.db.senders.search",
+      "entityName": "senders",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "nickname",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "from_email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "from_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "reply_to",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "reply_to_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "address",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "address2",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "state",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "city",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "zip",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "country",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "verified",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "locked",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    }
+  ]
+}

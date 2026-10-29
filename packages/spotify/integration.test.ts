@@ -4,8 +4,18 @@ import { createCorsairOrm } from 'corsair/orm';
 import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
 import { spotify } from './index';
 
+const TEST_ACCESS_TOKEN = process.env.SPOTIFY_ACCESS_TOKEN || '';
+
+if (!TEST_ACCESS_TOKEN) {
+	console.warn(
+		'Skipping Spotify integration tests: SPOTIFY_ACCESS_TOKEN is not set.',
+	);
+}
+
+const describeIntegration = TEST_ACCESS_TOKEN ? describe : describe.skip;
+
 async function createSpotifyClient() {
-	const accessToken = process.env.SPOTIFY_ACCESS_TOKEN;
+	const accessToken = TEST_ACCESS_TOKEN;
 
 	if (!accessToken) {
 		return null;
@@ -32,7 +42,7 @@ async function createSpotifyClient() {
 	return { corsair, testDb };
 }
 
-describe('Spotify plugin integration', () => {
+describeIntegration('Spotify plugin integration', () => {
 	it('albums endpoints interact with API and DB', async () => {
 		const setup = await createSpotifyClient();
 		if (!setup) {

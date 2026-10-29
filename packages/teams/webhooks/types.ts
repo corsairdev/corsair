@@ -1,3 +1,4 @@
+import { timingSafeEqual } from 'node:crypto';
 import type { CorsairWebhookMatcher, RawWebhookRequest } from 'corsair/core';
 import { z } from 'zod';
 
@@ -195,9 +196,22 @@ export function verifyTeamsClientState(
 	if (!expectedClientState) {
 		return { valid: false, error: 'clientState is required' };
 	}
-	const allMatch = payload.value.every(
-		(n) => n.clientState === expectedClientState,
-	);
+
+	const notifications = payload?.value;
+	if (!Array.isArray(notifications) || notifications.length === 0) {
+		return { valid: false, error: 'Invalid payload: missing value array' };
+	}
+
+	const expected = Buffer.from(expectedClientState);
+	const allMatch = notifications.every((n) => {
+		if (!n || typeof n !== 'object') return false;
+		const clientState = (n as TeamsNotification).clientState;
+		if (typeof clientState !== 'string') return false;
+		const actual = Buffer.from(clientState);
+		return (
+			actual.length === expected.length && timingSafeEqual(actual, expected)
+		);
+	});
 	if (!allMatch) {
 		return { valid: false, error: 'clientState mismatch' };
 	}

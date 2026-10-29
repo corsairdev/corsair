@@ -12,7 +12,7 @@ import type {
 	RawWebhookRequest,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
-import { AuthMissingError } from 'corsair/core';
+import { AuthMissingError, getOAuthAccessToken } from 'corsair/core';
 import { attachManagedRefreshAuth, getManagedAccessToken } from 'corsair/hub';
 import type { GithubEndpointInputs, GithubEndpointOutputs } from './endpoints';
 import {
@@ -24,6 +24,7 @@ import {
 	PullRequestsEndpoints,
 	ReleasesEndpoints,
 	RepositoriesEndpoints,
+	SearchEndpoints,
 	UsersEndpoints,
 	WorkflowsEndpoints,
 } from './endpoints';
@@ -321,6 +322,7 @@ export type GithubEndpoints = {
 	repositoriesUnstar: GithubEndpoint<'repositoriesUnstar'>;
 	repositoriesCheckStarred: GithubEndpoint<'repositoriesCheckStarred'>;
 	repositoriesListStarred: GithubEndpoint<'repositoriesListStarred'>;
+	repositoriesListStargazers: GithubEndpoint<'repositoriesListStargazers'>;
 	releasesList: GithubEndpoint<'releasesList'>;
 	releasesGet: GithubEndpoint<'releasesGet'>;
 	releasesCreate: GithubEndpoint<'releasesCreate'>;
@@ -331,6 +333,7 @@ export type GithubEndpoints = {
 	discussionsList: GithubEndpoint<'discussionsList'>;
 	discussionsGet: GithubEndpoint<'discussionsGet'>;
 	forksList: GithubEndpoint<'forksList'>;
+	forksCreate: GithubEndpoint<'forksCreate'>;
 	commentsList: GithubEndpoint<'commentsList'>;
 	commentsListForIssue: GithubEndpoint<'commentsListForIssue'>;
 	commentsGet: GithubEndpoint<'commentsGet'>;
@@ -342,6 +345,9 @@ export type GithubEndpoints = {
 	usersGetAuthenticated: GithubEndpoint<'usersGetAuthenticated'>;
 	usersUpdate: GithubEndpoint<'usersUpdate'>;
 	usersGetHovercard: GithubEndpoint<'usersGetHovercard'>;
+	searchIssues: GithubEndpoint<'searchIssues'>;
+	searchRepositories: GithubEndpoint<'searchRepositories'>;
+	searchUsers: GithubEndpoint<'searchUsers'>;
 };
 
 export type GithubBoundEndpoints = BindEndpoints<typeof githubEndpointsNested>;
@@ -636,6 +642,7 @@ const githubEndpointsNested = {
 		unstar: RepositoriesEndpoints.unstar,
 		checkStarred: RepositoriesEndpoints.checkStarred,
 		listStarred: RepositoriesEndpoints.listStarred,
+		listStargazers: RepositoriesEndpoints.listStargazers,
 	},
 	releases: {
 		list: ReleasesEndpoints.list,
@@ -654,6 +661,7 @@ const githubEndpointsNested = {
 	},
 	forks: {
 		list: ForksEndpoints.list,
+		create: ForksEndpoints.create,
 	},
 	comments: {
 		list: CommentsEndpoints.list,
@@ -680,6 +688,11 @@ const githubEndpointsNested = {
 		getAuthenticated: UsersEndpoints.getAuthenticated,
 		update: UsersEndpoints.update,
 		getHovercard: UsersEndpoints.getHovercard,
+	},
+	search: {
+		issues: SearchEndpoints.issues,
+		repositories: SearchEndpoints.repositories,
+		users: SearchEndpoints.users,
 	},
 } as const;
 
@@ -792,6 +805,10 @@ export const githubEndpointSchemas = {
 		input: GithubEndpointInputSchemas.repositoriesListStarred,
 		output: GithubEndpointOutputSchemas.repositoriesListStarred,
 	},
+	'repositories.listStargazers': {
+		input: GithubEndpointInputSchemas.repositoriesListStargazers,
+		output: GithubEndpointOutputSchemas.repositoriesListStargazers,
+	},
 	'releases.list': {
 		input: GithubEndpointInputSchemas.releasesList,
 		output: GithubEndpointOutputSchemas.releasesList,
@@ -831,6 +848,10 @@ export const githubEndpointSchemas = {
 	'forks.list': {
 		input: GithubEndpointInputSchemas.forksList,
 		output: GithubEndpointOutputSchemas.forksList,
+	},
+	'forks.create': {
+		input: GithubEndpointInputSchemas.forksCreate,
+		output: GithubEndpointOutputSchemas.forksCreate,
 	},
 	'comments.list': {
 		input: GithubEndpointInputSchemas.commentsList,
@@ -875,6 +896,18 @@ export const githubEndpointSchemas = {
 	'users.getHovercard': {
 		input: GithubEndpointInputSchemas.usersGetHovercard,
 		output: GithubEndpointOutputSchemas.usersGetHovercard,
+	},
+	'search.issues': {
+		input: GithubEndpointInputSchemas.searchIssues,
+		output: GithubEndpointOutputSchemas.searchIssues,
+	},
+	'search.repositories': {
+		input: GithubEndpointInputSchemas.searchRepositories,
+		output: GithubEndpointOutputSchemas.searchRepositories,
+	},
+	'search.users': {
+		input: GithubEndpointInputSchemas.searchUsers,
+		output: GithubEndpointOutputSchemas.searchUsers,
 	},
 } as const;
 
@@ -1683,6 +1716,10 @@ const githubEndpointMeta = {
 		riskLevel: 'read',
 		description: 'List repositories starred by the authenticated user',
 	},
+	'repositories.listStargazers': {
+		riskLevel: 'read',
+		description: 'List users who have starred a repository',
+	},
 	'releases.list': {
 		riskLevel: 'read',
 		description: 'List releases in a repository',
@@ -1719,6 +1756,10 @@ const githubEndpointMeta = {
 	'forks.list': {
 		riskLevel: 'read',
 		description: 'List forks of a repository',
+	},
+	'forks.create': {
+		riskLevel: 'write',
+		description: 'Create a fork of a repository',
 	},
 	'comments.list': {
 		riskLevel: 'read',
@@ -1763,6 +1804,18 @@ const githubEndpointMeta = {
 	'users.getHovercard': {
 		riskLevel: 'read',
 		description: 'Get contextual hovercard information for a user',
+	},
+	'search.issues': {
+		riskLevel: 'read',
+		description: 'Search GitHub issues and pull requests',
+	},
+	'search.repositories': {
+		riskLevel: 'read',
+		description: 'Search GitHub repositories',
+	},
+	'search.users': {
+		riskLevel: 'read',
+		description: 'Search GitHub users and organizations',
 	},
 } satisfies RequiredPluginEndpointMeta<typeof githubEndpointsNested>;
 
@@ -1885,13 +1938,10 @@ export function github<const PluginOptions extends GithubPluginOptions>(
 
 					return res;
 				} else if (ctx.authType === 'oauth_2') {
-					const res = await ctx.keys.get_access_token();
-
-					if (!res) {
-						throw new AuthMissingError('github', 'oauth_2');
-					}
-
-					return res;
+					return getOAuthAccessToken(ctx, {
+						plugin: 'github',
+						tokenUrl: 'https://github.com/login/oauth/access_token',
+					});
 				} else if (ctx.authType === 'managed') {
 					if (!ctx.hub) {
 						throw new Error(

@@ -1,7 +1,7 @@
 import { createHmac, randomUUID } from 'node:crypto';
 import { CORSAIR_INTERNAL } from '../core';
 import { resetDeliveryReplayGuardForTests } from '../hub/internal/delivery-replay-guard';
-import { processCorsair } from '../tunnel/index';
+import { connectLinkAck, processCorsair } from '../tunnel/index';
 import { createTestDatabase } from './setup-db';
 
 function createMockCorsair() {
@@ -49,6 +49,29 @@ async function ensurePermissionsTable(
 		.addColumn('error', 'text')
 		.execute();
 }
+
+describe('connectLinkAck (backward compat)', () => {
+	// TunnelAck.connectLink shipped in v0.1.102; keep it populated as a
+	// deprecated alias alongside webhookResponse so direct processCorsair
+	// consumers that read ack.connectLink don't break on upgrade.
+	it('populates both the deprecated connectLink alias and webhookResponse', () => {
+		const ack = connectLinkAck({
+			connectUrl: 'https://hub.example/connect/sess-1',
+			expiresAt: '2026-07-11T01:00:00.000Z',
+		});
+
+		expect(ack.status).toBe('ok');
+		expect(ack.connectLink).toEqual({
+			connectUrl: 'https://hub.example/connect/sess-1',
+			expiresAt: '2026-07-11T01:00:00.000Z',
+		});
+		expect(ack.webhookResponse?.body).toEqual({
+			status: 'ok',
+			connectUrl: 'https://hub.example/connect/sess-1',
+			expiresAt: '2026-07-11T01:00:00.000Z',
+		});
+	});
+});
 
 describe('processCorsair', () => {
 	beforeEach(() => {
@@ -342,5 +365,44 @@ describe('processCorsair — permission decisions', () => {
 			.executeTakeFirst();
 
 		expect(record?.status).toBe('denied');
+	});
+});
+
+describe('processCorsair — probe tunnel', () => {
+	beforeEach(() => {
+		resetDeliveryReplayGuardForTests();
+	});
+
+	const secret = 'tunnel-signing-secret';
+
+	function probeRequest(code: string) {
+		const body = JSON.stringify({
+			type: 'probe',
+			payload: { tenantId: 'default', code },
+		});
+		return { headers: signedTunnelHeaders(body, secret), body };
+	}
+
+	it('is gated behind allowWorkflowExecution (off by default)', async () => {
+		const ack = await processCorsair(
+			createMockCorsair(),
+			probeRequest('return 42;'),
+			{ signingSecret: secret },
+		);
+		expect(ack.status).toBe('failed');
+		expect(ack.error).toMatch(/Workflow execution is not enabled/);
+	});
+
+	it('runs the read-only script and returns its value when enabled', async () => {
+		const ack = await processCorsair(
+			createMockCorsair(),
+			probeRequest('return 40 + 2;'),
+			{ signingSecret: secret, allowWorkflowExecution: true },
+		);
+		expect(ack.status).toBe('ok');
+		expect(ack.webhookResponse?.body).toEqual({
+			status: 'ok',
+			probe: { status: 'ok', value: 42 },
+		});
 	});
 });

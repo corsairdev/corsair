@@ -111,7 +111,8 @@ function isPluginAuthTypeValue(value: unknown): value is AuthTypes {
 		value === 'oauth_2' ||
 		value === 'api_key' ||
 		value === 'bot_token' ||
-		value === 'managed'
+		value === 'managed' ||
+		value === 'managed_pricing'
 	);
 }
 
@@ -415,4 +416,97 @@ export function parseHubApiErrorBody(payload: unknown): string | null {
 
 	const body = payload as HubApiErrorBody;
 	return body.error ?? body.message ?? null;
+}
+
+/** Full agent-facing message from a Hub JSON error body (includes hint, fix steps, diagnostics). */
+export function formatHubApiErrorMessage(
+	payload: unknown,
+	status: number,
+	notFoundMessage?: string,
+): string {
+	if (status === 404 && notFoundMessage) {
+		return notFoundMessage;
+	}
+
+	const headline = parseHubApiErrorBody(payload);
+	if (!headline) {
+		return `Hub API returned HTTP ${status}`;
+	}
+
+	if (!payload || typeof payload !== 'object') {
+		return headline;
+	}
+
+	const body = payload as Record<string, unknown>;
+	const lines: string[] = [headline];
+
+	if (typeof body.code === 'string' && body.code.length > 0) {
+		lines.push(`Hub error code: ${body.code}`);
+	}
+	if (typeof body.hint === 'string' && body.hint.length > 0) {
+		lines.push('', body.hint);
+	}
+	if (Array.isArray(body.fix)) {
+		const steps = body.fix.filter(
+			(step): step is string =>
+				typeof step === 'string' && step.trim().length > 0,
+		);
+		if (steps.length > 0) {
+			lines.push('', 'What to do:');
+			for (const step of steps) {
+				lines.push(`- ${step}`);
+			}
+		}
+	}
+	if (body.received !== undefined) {
+		try {
+			lines.push('', `Hub received: ${JSON.stringify(body.received)}`);
+		} catch {
+			// omit unserializable diagnostics
+		}
+	}
+	if (body.details !== undefined) {
+		try {
+			lines.push('', `Details: ${JSON.stringify(body.details)}`);
+		} catch {
+			// omit
+		}
+	}
+	if (typeof body.creditsRequired === 'number') {
+		lines.push('', `Credits required for this call: ${body.creditsRequired}`);
+	}
+
+	return lines.join('\n');
+}
+
+export type HubReconnectBody = {
+	message: string | null;
+	connectUrl: string | null;
+	plugin: string | null;
+	tenantId: string | null;
+	reason: string | null;
+};
+
+// Recognizes Hub's `reconnect_required` error body and pulls out the scoped
+// connect link + identity. Returns null for any other error shape, so callers
+// fall back to their generic handling.
+export function parseHubReconnectBody(
+	payload: unknown,
+): HubReconnectBody | null {
+	if (!payload || typeof payload !== 'object') {
+		return null;
+	}
+	const body = payload as Record<string, unknown>;
+	if (body.errorType !== 'reconnect_required') {
+		return null;
+	}
+	const str = (v: unknown) =>
+		typeof v === 'string' && v.length > 0 ? v : null;
+	return {
+		message: str(body.error),
+		connectUrl: str(body.connectUrl),
+		plugin: str(body.plugin),
+		tenantId: str(body.tenantId),
+		reason: str(body.reason),
+	};
 }

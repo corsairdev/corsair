@@ -1,0 +1,1362 @@
+---
+title: API
+description: "API reference for Appointo: every `appointo.api.*` operation with input and output types."
+---
+
+Every `appointo.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Appointments
+
+### getAvailability
+
+`appointments.getAvailability`
+
+Get calendar availability for an appointment
+
+**Risk:** `read`
+
+```ts
+await corsair.appointo.api.appointments.getAvailability({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `appointment_id` | `number` | Yes | — |
+| `start_date` | `string` | Yes | — |
+| `end_date` | `string` | No | — |
+| `impersonated_tms` | `number[]` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: number,
+  weekday?: string,
+  weekday_index?: number,
+  slots?: {
+    start_time: string,
+    end_time: string,
+    surge?: boolean,
+    price?: string,
+    max_capacity?: number
+  }[],
+  shop_id?: number,
+  appointment_id?: number,
+  day_available?: boolean,
+  max_capacity?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`appointments.list`
+
+List all appointments
+
+**Risk:** `read`
+
+```ts
+await corsair.appointo.api.appointments.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `appointment_id` | `number` | No | — |
+| `product_id` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `search_term` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  activate?: boolean | null,
+  product_uuid?: string,
+  calendly_event_uuid?: string | null,
+  duration_uuid?: string,
+  shop_id?: number,
+  product_detail_id?: number,
+  name?: string,
+  is_combo_service?: boolean,
+  price?: string,
+  currency?: string,
+  description?: string | null,
+  archived?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### upsertConfig
+
+`appointments.upsertConfig`
+
+Update appointment configuration
+
+**Risk:** `write`
+
+```ts
+await corsair.appointo.api.appointments.upsertConfig({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `appointment_id` | `number` | Yes | — |
+| `config` | `object` | No | — |
+| `availabilities` | `object[]` | No | — |
+| `override` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="config full type">
+
+```ts
+{
+  timezone?: string,
+  duration?: string,
+  minimum_notice?: string,
+  max_capacity?: string,
+  meeting_detail?: string,
+  note?: string,
+  interval?: string,
+  reminder_duration?: string,
+  send_reminder?: boolean,
+  whatsapp_duration?: string,
+  send_whatsapp_reminder?: boolean,
+  enable_max_events_per_day?: boolean,
+  max_events_per_day?: number,
+  start_buffer_time?: string,
+  end_buffer_time?: string,
+  location_type?: string,
+  location_value?: string,
+  allow_cancel?: boolean,
+  allow_reschedule?: boolean,
+  reschedule_duration?: number,
+  cancel_duration?: number,
+  date_range_type?: string,
+  tm_assign_rule?: string,
+  days_in_future?: string,
+  start_date_range?: string,
+  end_date_range?: string,
+  is_combo_service?: boolean,
+  send_text_reminder?: boolean,
+  text_duration?: string,
+  min_day_duration?: string,
+  max_day_duration?: string,
+  fixed_multi_day_price?: boolean,
+  rem_group_slot_after_booking?: boolean,
+  start_month?: string,
+  color?: string,
+  allow_waitlist?: boolean,
+  email_label?: string,
+  name_label?: string,
+  phone_label?: string,
+  show_phone?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="availabilities full type">
+
+```ts
+{
+  id?: number,
+  weekday?: string,
+  weekday_index?: number,
+  slots?: {
+    start_time: string,
+    end_time: string,
+    surge?: boolean,
+    price?: string,
+    max_capacity?: number
+  }[],
+  shop_id?: number,
+  appointment_id?: number,
+  day_available?: boolean,
+  max_capacity?: number | null
+}[]
+```
+</Accordion>
+
+<Accordion title="override full type">
+
+```ts
+{
+  id?: number,
+  day: string,
+  slots?: {
+    start_time: string,
+    end_time: string,
+    surge?: boolean,
+    price?: string,
+    max_capacity?: number
+  }[],
+  shop_id?: number,
+  appointment_id?: number,
+  day_available?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  activate?: boolean | null,
+  product_uuid?: string,
+  calendly_event_uuid?: string | null,
+  duration_uuid?: string,
+  shop_id?: number,
+  product_detail_id?: number,
+  name?: string,
+  is_combo_service?: boolean,
+  price?: string,
+  currency?: string,
+  description?: string | null,
+  archived?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Bookings
+
+### cancel
+
+`bookings.cancel`
+
+Cancel a booking
+
+**Risk:** `destructive`
+
+```ts
+await corsair.appointo.api.bookings.cancel({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `booking_id` | `number` | Yes | — |
+| `customer_ids` | `number[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `response` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="response full type">
+
+```ts
+{
+  status: string,
+  booking?: {
+    id: number,
+    selected_time?: string,
+    timestring?: string,
+    shop_id?: number,
+    appointment_id?: number,
+    created_at?: string,
+    updated_at?: string,
+    customers_count?: number,
+    duration?: number,
+    product_name?: string,
+    variant_name?: string,
+    order_uuid?: string,
+    price?: string,
+    order_name?: string,
+    currency?: string,
+    meeting_detail?: string,
+    note?: string,
+    google_meta?: {
+    },
+    google_event_id?: string,
+    location_value?: string | null,
+    location_type?: string | null,
+    location_meta?: {
+    } | null,
+    quantity?: number,
+    team_member_id?: number | null,
+    scenario?: string,
+    day_duration?: number,
+    end_date?: string,
+    start_date?: string,
+    group_id?: number | null,
+    start_buffer_time?: number,
+    end_buffer_time?: number,
+    category?: string | null,
+    archived?: boolean,
+    notes_count?: number,
+    customers?: {
+      id: number,
+      email?: string,
+      payload?: {
+        phone?: string
+      },
+      name?: string,
+      shop_id?: number,
+      appointment_id?: number,
+      booking_id?: number,
+      created_at?: string,
+      updated_at?: string,
+      customer_uuid?: string,
+      reschedule_uuid?: string | null,
+      cancel_uuid?: string | null,
+      order_name?: string,
+      order_uuid?: string | null,
+      shipping_address?: {
+        id?: number,
+        customer_id?: number,
+        first_name?: string | null,
+        last_name?: string | null,
+        company?: string | null,
+        address1?: string | null,
+        address2?: string | null,
+        city?: string | null,
+        province?: string | null,
+        country?: string | null,
+        zip?: string | null,
+        phone?: string | null,
+        name?: string | null,
+        province_code?: string | null,
+        country_code?: string | null,
+        country_name?: string | null,
+        default?: boolean
+      },
+      override?: boolean,
+      signpanda_cust_uuid?: string | null,
+      parent_customer_id?: number | null,
+      is_active_sub?: boolean,
+      sub_interval?: string | null,
+      sub_booking_count?: number | null,
+      sub_booking_num?: number | null,
+      sub_recurring_type?: string | null,
+      customer_type?: string | null,
+      customer_timezone?: string | null,
+      archived?: boolean,
+      subscription_contract_id?: string | number | null,
+      selling_plan_id?: string | number | null,
+      checkin?: boolean,
+      checkin_qr_code?: string | null,
+      image_data?: string | null
+    }[],
+    archived_customers?: {
+      id: number,
+      email?: string,
+      payload?: {
+        phone?: string
+      },
+      name?: string,
+      shop_id?: number,
+      appointment_id?: number,
+      booking_id?: number,
+      created_at?: string,
+      updated_at?: string,
+      customer_uuid?: string,
+      reschedule_uuid?: string | null,
+      cancel_uuid?: string | null,
+      order_name?: string,
+      order_uuid?: string | null,
+      shipping_address?: {
+        id?: number,
+        customer_id?: number,
+        first_name?: string | null,
+        last_name?: string | null,
+        company?: string | null,
+        address1?: string | null,
+        address2?: string | null,
+        city?: string | null,
+        province?: string | null,
+        country?: string | null,
+        zip?: string | null,
+        phone?: string | null,
+        name?: string | null,
+        province_code?: string | null,
+        country_code?: string | null,
+        country_name?: string | null,
+        default?: boolean
+      },
+      override?: boolean,
+      signpanda_cust_uuid?: string | null,
+      parent_customer_id?: number | null,
+      is_active_sub?: boolean,
+      sub_interval?: string | null,
+      sub_booking_count?: number | null,
+      sub_booking_num?: number | null,
+      sub_recurring_type?: string | null,
+      customer_type?: string | null,
+      customer_timezone?: string | null,
+      archived?: boolean,
+      subscription_contract_id?: string | number | null,
+      selling_plan_id?: string | number | null,
+      checkin?: boolean,
+      checkin_qr_code?: string | null,
+      image_data?: string | null
+    }[],
+    appointment?: {
+      id: number,
+      activate?: boolean | null,
+      product_uuid?: string,
+      duration_uuid?: string,
+      shop_id?: number,
+      product_detail_id?: number,
+      name?: string,
+      is_combo_service?: boolean,
+      price?: string,
+      currency?: string,
+      description?: string | null,
+      archived?: boolean
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`bookings.create`
+
+Create a new booking
+
+**Risk:** `write`
+
+```ts
+await corsair.appointo.api.bookings.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `appointment_id` | `number` | Yes | — |
+| `timestring` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `quantity` | `number` | No | — |
+| `phone` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  selected_time?: string,
+  timestring?: string,
+  shop_id?: number,
+  appointment_id?: number,
+  created_at?: string,
+  updated_at?: string,
+  customers_count?: number,
+  duration?: number,
+  product_name?: string,
+  variant_name?: string,
+  order_uuid?: string,
+  price?: string,
+  order_name?: string,
+  currency?: string,
+  meeting_detail?: string,
+  note?: string,
+  google_meta?: {
+  },
+  google_event_id?: string,
+  location_value?: string | null,
+  location_type?: string | null,
+  location_meta?: {
+  } | null,
+  quantity?: number,
+  team_member_id?: number | null,
+  scenario?: string,
+  day_duration?: number,
+  end_date?: string,
+  start_date?: string,
+  group_id?: number | null,
+  start_buffer_time?: number,
+  end_buffer_time?: number,
+  category?: string | null,
+  archived?: boolean,
+  notes_count?: number,
+  customers?: {
+    id: number,
+    email?: string,
+    payload?: {
+      phone?: string
+    },
+    name?: string,
+    shop_id?: number,
+    appointment_id?: number,
+    booking_id?: number,
+    created_at?: string,
+    updated_at?: string,
+    customer_uuid?: string,
+    reschedule_uuid?: string | null,
+    cancel_uuid?: string | null,
+    order_name?: string,
+    order_uuid?: string | null,
+    shipping_address?: {
+      id?: number,
+      customer_id?: number,
+      first_name?: string | null,
+      last_name?: string | null,
+      company?: string | null,
+      address1?: string | null,
+      address2?: string | null,
+      city?: string | null,
+      province?: string | null,
+      country?: string | null,
+      zip?: string | null,
+      phone?: string | null,
+      name?: string | null,
+      province_code?: string | null,
+      country_code?: string | null,
+      country_name?: string | null,
+      default?: boolean
+    },
+    override?: boolean,
+    signpanda_cust_uuid?: string | null,
+    parent_customer_id?: number | null,
+    is_active_sub?: boolean,
+    sub_interval?: string | null,
+    sub_booking_count?: number | null,
+    sub_booking_num?: number | null,
+    sub_recurring_type?: string | null,
+    customer_type?: string | null,
+    customer_timezone?: string | null,
+    archived?: boolean,
+    subscription_contract_id?: string | number | null,
+    selling_plan_id?: string | number | null,
+    checkin?: boolean,
+    checkin_qr_code?: string | null,
+    image_data?: string | null
+  }[],
+  archived_customers?: {
+    id: number,
+    email?: string,
+    payload?: {
+      phone?: string
+    },
+    name?: string,
+    shop_id?: number,
+    appointment_id?: number,
+    booking_id?: number,
+    created_at?: string,
+    updated_at?: string,
+    customer_uuid?: string,
+    reschedule_uuid?: string | null,
+    cancel_uuid?: string | null,
+    order_name?: string,
+    order_uuid?: string | null,
+    shipping_address?: {
+      id?: number,
+      customer_id?: number,
+      first_name?: string | null,
+      last_name?: string | null,
+      company?: string | null,
+      address1?: string | null,
+      address2?: string | null,
+      city?: string | null,
+      province?: string | null,
+      country?: string | null,
+      zip?: string | null,
+      phone?: string | null,
+      name?: string | null,
+      province_code?: string | null,
+      country_code?: string | null,
+      country_name?: string | null,
+      default?: boolean
+    },
+    override?: boolean,
+    signpanda_cust_uuid?: string | null,
+    parent_customer_id?: number | null,
+    is_active_sub?: boolean,
+    sub_interval?: string | null,
+    sub_booking_count?: number | null,
+    sub_booking_num?: number | null,
+    sub_recurring_type?: string | null,
+    customer_type?: string | null,
+    customer_timezone?: string | null,
+    archived?: boolean,
+    subscription_contract_id?: string | number | null,
+    selling_plan_id?: string | number | null,
+    checkin?: boolean,
+    checkin_qr_code?: string | null,
+    image_data?: string | null
+  }[],
+  appointment?: {
+    id: number,
+    activate?: boolean | null,
+    product_uuid?: string,
+    duration_uuid?: string,
+    shop_id?: number,
+    product_detail_id?: number,
+    name?: string,
+    is_combo_service?: boolean,
+    price?: string,
+    currency?: string,
+    description?: string | null,
+    archived?: boolean
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`bookings.list`
+
+List all bookings
+
+**Risk:** `read`
+
+```ts
+await corsair.appointo.api.bookings.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `status` | `past \| upcoming` | No | — |
+| `booking_id` | `number` | No | — |
+| `search_term` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  selected_time?: string,
+  timestring?: string,
+  shop_id?: number,
+  appointment_id?: number,
+  created_at?: string,
+  updated_at?: string,
+  customers_count?: number,
+  duration?: number,
+  product_name?: string,
+  variant_name?: string,
+  order_uuid?: string,
+  price?: string,
+  order_name?: string,
+  currency?: string,
+  meeting_detail?: string,
+  note?: string,
+  google_meta?: {
+  },
+  google_event_id?: string,
+  location_value?: string | null,
+  location_type?: string | null,
+  location_meta?: {
+  } | null,
+  quantity?: number,
+  team_member_id?: number | null,
+  scenario?: string,
+  day_duration?: number,
+  end_date?: string,
+  start_date?: string,
+  group_id?: number | null,
+  start_buffer_time?: number,
+  end_buffer_time?: number,
+  category?: string | null,
+  archived?: boolean,
+  notes_count?: number,
+  customers?: {
+    id: number,
+    email?: string,
+    payload?: {
+      phone?: string
+    },
+    name?: string,
+    shop_id?: number,
+    appointment_id?: number,
+    booking_id?: number,
+    created_at?: string,
+    updated_at?: string,
+    customer_uuid?: string,
+    reschedule_uuid?: string | null,
+    cancel_uuid?: string | null,
+    order_name?: string,
+    order_uuid?: string | null,
+    shipping_address?: {
+      id?: number,
+      customer_id?: number,
+      first_name?: string | null,
+      last_name?: string | null,
+      company?: string | null,
+      address1?: string | null,
+      address2?: string | null,
+      city?: string | null,
+      province?: string | null,
+      country?: string | null,
+      zip?: string | null,
+      phone?: string | null,
+      name?: string | null,
+      province_code?: string | null,
+      country_code?: string | null,
+      country_name?: string | null,
+      default?: boolean
+    },
+    override?: boolean,
+    signpanda_cust_uuid?: string | null,
+    parent_customer_id?: number | null,
+    is_active_sub?: boolean,
+    sub_interval?: string | null,
+    sub_booking_count?: number | null,
+    sub_booking_num?: number | null,
+    sub_recurring_type?: string | null,
+    customer_type?: string | null,
+    customer_timezone?: string | null,
+    archived?: boolean,
+    subscription_contract_id?: string | number | null,
+    selling_plan_id?: string | number | null,
+    checkin?: boolean,
+    checkin_qr_code?: string | null,
+    image_data?: string | null
+  }[],
+  archived_customers?: {
+    id: number,
+    email?: string,
+    payload?: {
+      phone?: string
+    },
+    name?: string,
+    shop_id?: number,
+    appointment_id?: number,
+    booking_id?: number,
+    created_at?: string,
+    updated_at?: string,
+    customer_uuid?: string,
+    reschedule_uuid?: string | null,
+    cancel_uuid?: string | null,
+    order_name?: string,
+    order_uuid?: string | null,
+    shipping_address?: {
+      id?: number,
+      customer_id?: number,
+      first_name?: string | null,
+      last_name?: string | null,
+      company?: string | null,
+      address1?: string | null,
+      address2?: string | null,
+      city?: string | null,
+      province?: string | null,
+      country?: string | null,
+      zip?: string | null,
+      phone?: string | null,
+      name?: string | null,
+      province_code?: string | null,
+      country_code?: string | null,
+      country_name?: string | null,
+      default?: boolean
+    },
+    override?: boolean,
+    signpanda_cust_uuid?: string | null,
+    parent_customer_id?: number | null,
+    is_active_sub?: boolean,
+    sub_interval?: string | null,
+    sub_booking_count?: number | null,
+    sub_booking_num?: number | null,
+    sub_recurring_type?: string | null,
+    customer_type?: string | null,
+    customer_timezone?: string | null,
+    archived?: boolean,
+    subscription_contract_id?: string | number | null,
+    selling_plan_id?: string | number | null,
+    checkin?: boolean,
+    checkin_qr_code?: string | null,
+    image_data?: string | null
+  }[],
+  appointment?: {
+    id: number,
+    activate?: boolean | null,
+    product_uuid?: string,
+    duration_uuid?: string,
+    shop_id?: number,
+    product_detail_id?: number,
+    name?: string,
+    is_combo_service?: boolean,
+    price?: string,
+    currency?: string,
+    description?: string | null,
+    archived?: boolean
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### reschedule
+
+`bookings.reschedule`
+
+Reschedule an existing booking
+
+**Risk:** `write`
+
+```ts
+await corsair.appointo.api.bookings.reschedule({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `booking_id` | `number` | Yes | — |
+| `timestring` | `string` | Yes | — |
+| `customer_ids` | `number[]` | No | — |
+| `override` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `response` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="response full type">
+
+```ts
+{
+  status: string,
+  booking?: {
+    id: number,
+    selected_time?: string,
+    timestring?: string,
+    shop_id?: number,
+    appointment_id?: number,
+    created_at?: string,
+    updated_at?: string,
+    customers_count?: number,
+    duration?: number,
+    product_name?: string,
+    variant_name?: string,
+    order_uuid?: string,
+    price?: string,
+    order_name?: string,
+    currency?: string,
+    meeting_detail?: string,
+    note?: string,
+    google_meta?: {
+    },
+    google_event_id?: string,
+    location_value?: string | null,
+    location_type?: string | null,
+    location_meta?: {
+    } | null,
+    quantity?: number,
+    team_member_id?: number | null,
+    scenario?: string,
+    day_duration?: number,
+    end_date?: string,
+    start_date?: string,
+    group_id?: number | null,
+    start_buffer_time?: number,
+    end_buffer_time?: number,
+    category?: string | null,
+    archived?: boolean,
+    notes_count?: number,
+    customers?: {
+      id: number,
+      email?: string,
+      payload?: {
+        phone?: string
+      },
+      name?: string,
+      shop_id?: number,
+      appointment_id?: number,
+      booking_id?: number,
+      created_at?: string,
+      updated_at?: string,
+      customer_uuid?: string,
+      reschedule_uuid?: string | null,
+      cancel_uuid?: string | null,
+      order_name?: string,
+      order_uuid?: string | null,
+      shipping_address?: {
+        id?: number,
+        customer_id?: number,
+        first_name?: string | null,
+        last_name?: string | null,
+        company?: string | null,
+        address1?: string | null,
+        address2?: string | null,
+        city?: string | null,
+        province?: string | null,
+        country?: string | null,
+        zip?: string | null,
+        phone?: string | null,
+        name?: string | null,
+        province_code?: string | null,
+        country_code?: string | null,
+        country_name?: string | null,
+        default?: boolean
+      },
+      override?: boolean,
+      signpanda_cust_uuid?: string | null,
+      parent_customer_id?: number | null,
+      is_active_sub?: boolean,
+      sub_interval?: string | null,
+      sub_booking_count?: number | null,
+      sub_booking_num?: number | null,
+      sub_recurring_type?: string | null,
+      customer_type?: string | null,
+      customer_timezone?: string | null,
+      archived?: boolean,
+      subscription_contract_id?: string | number | null,
+      selling_plan_id?: string | number | null,
+      checkin?: boolean,
+      checkin_qr_code?: string | null,
+      image_data?: string | null
+    }[],
+    archived_customers?: {
+      id: number,
+      email?: string,
+      payload?: {
+        phone?: string
+      },
+      name?: string,
+      shop_id?: number,
+      appointment_id?: number,
+      booking_id?: number,
+      created_at?: string,
+      updated_at?: string,
+      customer_uuid?: string,
+      reschedule_uuid?: string | null,
+      cancel_uuid?: string | null,
+      order_name?: string,
+      order_uuid?: string | null,
+      shipping_address?: {
+        id?: number,
+        customer_id?: number,
+        first_name?: string | null,
+        last_name?: string | null,
+        company?: string | null,
+        address1?: string | null,
+        address2?: string | null,
+        city?: string | null,
+        province?: string | null,
+        country?: string | null,
+        zip?: string | null,
+        phone?: string | null,
+        name?: string | null,
+        province_code?: string | null,
+        country_code?: string | null,
+        country_name?: string | null,
+        default?: boolean
+      },
+      override?: boolean,
+      signpanda_cust_uuid?: string | null,
+      parent_customer_id?: number | null,
+      is_active_sub?: boolean,
+      sub_interval?: string | null,
+      sub_booking_count?: number | null,
+      sub_booking_num?: number | null,
+      sub_recurring_type?: string | null,
+      customer_type?: string | null,
+      customer_timezone?: string | null,
+      archived?: boolean,
+      subscription_contract_id?: string | number | null,
+      selling_plan_id?: string | number | null,
+      checkin?: boolean,
+      checkin_qr_code?: string | null,
+      image_data?: string | null
+    }[],
+    appointment?: {
+      id: number,
+      activate?: boolean | null,
+      product_uuid?: string,
+      duration_uuid?: string,
+      shop_id?: number,
+      product_detail_id?: number,
+      name?: string,
+      is_combo_service?: boolean,
+      price?: string,
+      currency?: string,
+      description?: string | null,
+      archived?: boolean
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`bookings.update`
+
+Update a booking (buffer updates)
+
+**Risk:** `write`
+
+```ts
+await corsair.appointo.api.bookings.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `booking_id` | `number` | Yes | — |
+| `start_buffer_time` | `number` | No | — |
+| `end_buffer_time` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `response` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="response full type">
+
+```ts
+{
+  status: string,
+  booking?: {
+    id: number,
+    selected_time?: string,
+    timestring?: string,
+    shop_id?: number,
+    appointment_id?: number,
+    created_at?: string,
+    updated_at?: string,
+    customers_count?: number,
+    duration?: number,
+    product_name?: string,
+    variant_name?: string,
+    order_uuid?: string,
+    price?: string,
+    order_name?: string,
+    currency?: string,
+    meeting_detail?: string,
+    note?: string,
+    google_meta?: {
+    },
+    google_event_id?: string,
+    location_value?: string | null,
+    location_type?: string | null,
+    location_meta?: {
+    } | null,
+    quantity?: number,
+    team_member_id?: number | null,
+    scenario?: string,
+    day_duration?: number,
+    end_date?: string,
+    start_date?: string,
+    group_id?: number | null,
+    start_buffer_time?: number,
+    end_buffer_time?: number,
+    category?: string | null,
+    archived?: boolean,
+    notes_count?: number,
+    customers?: {
+      id: number,
+      email?: string,
+      payload?: {
+        phone?: string
+      },
+      name?: string,
+      shop_id?: number,
+      appointment_id?: number,
+      booking_id?: number,
+      created_at?: string,
+      updated_at?: string,
+      customer_uuid?: string,
+      reschedule_uuid?: string | null,
+      cancel_uuid?: string | null,
+      order_name?: string,
+      order_uuid?: string | null,
+      shipping_address?: {
+        id?: number,
+        customer_id?: number,
+        first_name?: string | null,
+        last_name?: string | null,
+        company?: string | null,
+        address1?: string | null,
+        address2?: string | null,
+        city?: string | null,
+        province?: string | null,
+        country?: string | null,
+        zip?: string | null,
+        phone?: string | null,
+        name?: string | null,
+        province_code?: string | null,
+        country_code?: string | null,
+        country_name?: string | null,
+        default?: boolean
+      },
+      override?: boolean,
+      signpanda_cust_uuid?: string | null,
+      parent_customer_id?: number | null,
+      is_active_sub?: boolean,
+      sub_interval?: string | null,
+      sub_booking_count?: number | null,
+      sub_booking_num?: number | null,
+      sub_recurring_type?: string | null,
+      customer_type?: string | null,
+      customer_timezone?: string | null,
+      archived?: boolean,
+      subscription_contract_id?: string | number | null,
+      selling_plan_id?: string | number | null,
+      checkin?: boolean,
+      checkin_qr_code?: string | null,
+      image_data?: string | null
+    }[],
+    archived_customers?: {
+      id: number,
+      email?: string,
+      payload?: {
+        phone?: string
+      },
+      name?: string,
+      shop_id?: number,
+      appointment_id?: number,
+      booking_id?: number,
+      created_at?: string,
+      updated_at?: string,
+      customer_uuid?: string,
+      reschedule_uuid?: string | null,
+      cancel_uuid?: string | null,
+      order_name?: string,
+      order_uuid?: string | null,
+      shipping_address?: {
+        id?: number,
+        customer_id?: number,
+        first_name?: string | null,
+        last_name?: string | null,
+        company?: string | null,
+        address1?: string | null,
+        address2?: string | null,
+        city?: string | null,
+        province?: string | null,
+        country?: string | null,
+        zip?: string | null,
+        phone?: string | null,
+        name?: string | null,
+        province_code?: string | null,
+        country_code?: string | null,
+        country_name?: string | null,
+        default?: boolean
+      },
+      override?: boolean,
+      signpanda_cust_uuid?: string | null,
+      parent_customer_id?: number | null,
+      is_active_sub?: boolean,
+      sub_interval?: string | null,
+      sub_booking_count?: number | null,
+      sub_booking_num?: number | null,
+      sub_recurring_type?: string | null,
+      customer_type?: string | null,
+      customer_timezone?: string | null,
+      archived?: boolean,
+      subscription_contract_id?: string | number | null,
+      selling_plan_id?: string | number | null,
+      checkin?: boolean,
+      checkin_qr_code?: string | null,
+      image_data?: string | null
+    }[],
+    appointment?: {
+      id: number,
+      activate?: boolean | null,
+      product_uuid?: string,
+      duration_uuid?: string,
+      shop_id?: number,
+      product_detail_id?: number,
+      name?: string,
+      is_combo_service?: boolean,
+      price?: string,
+      currency?: string,
+      description?: string | null,
+      archived?: boolean
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Products
+
+### list
+
+`products.list`
+
+List all products
+
+**Risk:** `read`
+
+```ts
+await corsair.appointo.api.products.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `search_term` | `string` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  activate?: boolean,
+  product_uuid?: string,
+  shop_id?: number,
+  created_at?: string,
+  updated_at?: string,
+  product_name?: string,
+  show_widget?: boolean,
+  appointment_type?: string,
+  vendor_name?: string,
+  include_variant_booking?: boolean,
+  book_without_pay?: boolean,
+  image_url?: string | null,
+  variants_count?: number,
+  appointments?: {
+    id: number,
+    activate?: boolean | null,
+    product_uuid?: string,
+    calendly_event_uuid?: string | null,
+    duration_uuid?: string,
+    shop_id?: number,
+    product_detail_id?: number,
+    name?: string,
+    is_combo_service?: boolean,
+    price?: string,
+    currency?: string,
+    description?: string | null,
+    archived?: boolean
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Subscriptions
+
+### list
+
+`subscriptions.list`
+
+List all appointment subscriptions
+
+**Risk:** `read`
+
+```ts
+await corsair.appointo.api.subscriptions.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_term` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+

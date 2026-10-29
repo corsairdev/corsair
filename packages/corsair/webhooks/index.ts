@@ -181,6 +181,18 @@ export async function processWebhook(
 		tenantId?: string;
 		[x: string]: string | string[] | undefined;
 	},
+	options?: {
+		/**
+		 * Authoritative plugin id for hub-verified deliveries (Hub routed the
+		 * event by its per-plugin endpoint, so the id is trusted). Bypasses
+		 * shape-matching, which cannot distinguish MS Graph siblings — their
+		 * notification bodies are identical and some pluginWebhookMatchers are
+		 * wildcards.
+		 */
+		plugin?: string;
+		/** Hub already verified the provider signature; skip app-side re-verify. */
+		hubVerified?: boolean;
+	},
 ): Promise<WebhookFilterResult> {
 	const normalizedHeaders = normalizeHeaders(headers);
 	let parsedBody =
@@ -206,8 +218,11 @@ export async function processWebhook(
 		? corsair.withTenant(tenantId)
 		: corsair;
 
-	// Known plugin IDs to check
-	const pluginIds = BaseProviders;
+	// Known plugin IDs to check — or exactly the hub-identified one
+	const hintedPlugin = options?.plugin as
+		| (typeof BaseProviders)[number]
+		| undefined;
+	const pluginIds = hintedPlugin ? [hintedPlugin] : BaseProviders;
 
 	for (const pluginId of pluginIds) {
 		const plugin = tenantScopedCorsair[pluginId];
@@ -218,8 +233,11 @@ export async function processWebhook(
 		}
 
 		// First, check the plugin-level pluginWebhookMatcher if it exists
-		// This is a quick check to see if the webhook is even for this plugin
+		// This is a quick check to see if the webhook is even for this plugin.
+		// Skipped when hub already identified the plugin — Hub's routing is
+		// authoritative; matchers only exist to guess.
 		if (
+			!hintedPlugin &&
 			plugin.pluginWebhookMatcher &&
 			!plugin.pluginWebhookMatcher(rawRequest)
 		) {
@@ -239,6 +257,7 @@ export async function processWebhook(
 			headers: normalizedHeaders,
 			rawBody: typeof body === 'string' ? body : JSON.stringify(body),
 			...(query ? { query } : {}),
+			...(options?.hubVerified ? { hubVerified: true } : {}),
 		};
 
 		try {

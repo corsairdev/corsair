@@ -1,0 +1,62 @@
+{
+  "meta": {
+    "title": "Corsair vs Composio",
+    "description": "Corsair vs Composio: REST API and MCP, credentials in your database, open-source plugins, and built-in agent permissions."
+  },
+  "hero": {
+    "competitor": "Composio",
+    "title": "Corsair vs Composio",
+    "description": "Corsair gives you a typed REST API in your app with MCP on top. Composio is only built for MCP."
+  },
+  "sections": [
+    {
+      "title": "More than MCP",
+      "body": "<p>Composio is built on MCP. Corsair is built on a more fundamental REST API, with an MCP on top for agent use cases. That means when your users sign into their integrations through Corsair, you're not limited to agent tool calls. You can build dashboards, custom UIs, webhooks, and more on the same connections.</p>"
+    },
+    {
+      "title": "Security",
+      "body": "<p>Composio recently had a <a href=\"https://x.com/composio/status/2057583584719020371\">huge security incident</a>. That's because all keys, tokens, data, and secrets live on their main database. One attack compromises so much. When you use Corsair, you and your customers' data is on your database. We never touch it. That means if our main database gets compromised, there's nothing worthwhile there.</p>"
+    },
+    {
+      "title": "Open-source catalog",
+      "body": "<p>Composio's catalog is closed-source, and we've heard of missing-integration requests taking 3-6 months, or never happening. Ours is open source. If we don't support something, your agent can write the connector itself in a few seconds.</p>"
+    }
+  ],
+  "recap": {
+    "title": "Recap",
+    "columns": {
+      "feature": "Feature",
+      "corsair": "Corsair",
+      "competitor": "Composio"
+    },
+    "rows": [
+      { "feature": "Self-hostable", "corsair": true, "competitor": false },
+      {
+        "feature": "Supports workflow automation",
+        "corsair": true,
+        "competitor": false
+      },
+      { "feature": "Data caching", "corsair": true, "competitor": false },
+      {
+        "feature": "Strongly typed TypeScript API",
+        "corsair": true,
+        "competitor": false
+      },
+      {
+        "feature": "Bring your own plugins",
+        "corsair": true,
+        "competitor": false
+      },
+      {
+        "feature": "Permission modes + approval",
+        "corsair": true,
+        "competitor": false
+      },
+      { "feature": "OAuth connect", "corsair": true, "competitor": true },
+      { "feature": "Agents / MCP", "corsair": true, "competitor": true },
+      { "feature": "Python support", "corsair": false, "competitor": true },
+      { "feature": "Fully hosted", "corsair": false, "competitor": true }
+    ],
+    "footer": "<p>Composio is a strong pick if you want a hosted MCP tool layer with minimal setup.</p><p>Corsair is a strong pick if you need a full product API that supports MCP, knowledge bases, workflow automation, and custom UIs.</p>"
+  }
+}

@@ -1,0 +1,882 @@
+---
+title: API
+description: "API reference for Best Buy Remix API: every `bestbuy.api.*` operation with input and output types."
+---
+
+Every `bestbuy.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Categories
+
+### get
+
+`categories.get`
+
+Retrieve detailed information about a category by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.bestbuy.api.categories.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The ID of the category to retrieve |
+| `show` | `string` | No | Comma-delimited list of fields to include |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `url` | `string` | No | — |
+| `path` | `object[]` | No | — |
+| `subCategories` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="subCategories full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`categories.list`
+
+List or filter Best Buy product categories
+
+**Risk:** `read`
+
+```ts
+await corsair.bestbuy.api.categories.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | Filter by category ID(s), pipe- or comma-separated |
+| `name` | `string` | No | Filter by category name(s), pipe- or comma-separated |
+| `page` | `number` | No | Page number to retrieve (1-based) |
+| `pageSize` | `number` | No | Number of categories per page (1-100) |
+| `show` | `string` | No | Comma-separated fields to include in each category |
+| `sort` | `string` | No | Sort order, e.g. 'name.asc' or 'id.dsc' |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `from` | `number` | No | — |
+| `to` | `number` | No | — |
+| `total` | `number` | No | — |
+| `currentPage` | `number` | No | — |
+| `totalPages` | `number` | No | — |
+| `queryTime` | `string` | No | — |
+| `totalTime` | `string` | No | — |
+| `partial` | `boolean` | No | — |
+| `canonicalUrl` | `string` | No | — |
+| `categories` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="categories full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  url?: string | null,
+  path?: {
+    id?: string | null,
+    name?: string | null
+  }[] | null,
+  subCategories?: {
+    id?: string | null,
+    name?: string | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Products
+
+### get
+
+`products.get`
+
+Retrieve detailed information about a product by SKU
+
+**Risk:** `read`
+
+```ts
+await corsair.bestbuy.api.products.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sku` | `string \| number` | Yes | The SKU of the product to retrieve |
+| `show` | `string` | No | Comma-separated attributes to include, or all |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sku` | `string \| number` | No | — |
+| `name` | `string` | No | — |
+| `upc` | `string` | No | — |
+| `manufacturer` | `string` | No | — |
+| `modelNumber` | `string` | No | — |
+| `color` | `string` | No | — |
+| `condition` | `string` | No | — |
+| `description` | `string` | No | — |
+| `longDescription` | `string` | No | — |
+| `longDescriptionHtml` | `string` | No | — |
+| `shortDescription` | `string` | No | — |
+| `shortDescriptionHtml` | `string` | No | — |
+| `customerReviewAverage` | `number` | No | — |
+| `customerReviewCount` | `number` | No | — |
+| `customerTopRated` | `boolean` | No | — |
+| `depth` | `string` | No | — |
+| `height` | `string` | No | — |
+| `width` | `string` | No | — |
+| `weight` | `string` | No | — |
+| `digital` | `boolean` | No | — |
+| `format` | `string` | No | — |
+| `preowned` | `boolean` | No | — |
+| `quantityLimit` | `number` | No | — |
+| `releaseDate` | `string` | No | — |
+| `warrantyLabor` | `string` | No | — |
+| `warrantyParts` | `string` | No | — |
+| `accessories` | `object[]` | No | — |
+| `details` | `object[]` | No | — |
+| `features` | `object[]` | No | — |
+| `includedItemList` | `object[]` | No | — |
+| `productVariations` | `object[]` | No | — |
+| `proposition65WarningMessage` | `string` | No | — |
+| `proposition65WarningType` | `string` | No | — |
+| `dollarSavings` | `number` | No | — |
+| `lowPriceGuarantee` | `boolean` | No | — |
+| `onSale` | `boolean` | No | — |
+| `percentSavings` | `string` | No | — |
+| `priceRestriction` | `string` | No | — |
+| `priceUpdateDate` | `string` | No | — |
+| `regularPrice` | `number` | No | — |
+| `salePrice` | `number` | No | — |
+| `contracts` | `object[]` | No | — |
+| `priceWithPlan` | `object` | No | — |
+| `friendsAndFamilyPickup` | `boolean` | No | — |
+| `homeDelivery` | `boolean` | No | — |
+| `inStoreAvailability` | `boolean` | No | — |
+| `inStoreAvailabilityUpdateDate` | `string` | No | — |
+| `inStorePickup` | `boolean` | No | — |
+| `onlineAvailability` | `boolean` | No | — |
+| `onlineAvailabilityUpdateDate` | `string` | No | — |
+| `orderable` | `string` | No | — |
+| `specialOrder` | `boolean` | No | — |
+| `freeShipping` | `boolean` | No | — |
+| `freeShippingEligible` | `boolean` | No | — |
+| `shippingCost` | `number` | No | — |
+| `shippingWeight` | `number` | No | — |
+| `shippingLevelsOfService` | `object[]` | No | — |
+| `accessoriesImage` | `string` | No | — |
+| `alternateViewsImage` | `string` | No | — |
+| `angleImage` | `string` | No | — |
+| `backViewImage` | `string` | No | — |
+| `energyGuideImage` | `string` | No | — |
+| `image` | `string` | No | — |
+| `largeFrontImage` | `string` | No | — |
+| `largeImage` | `string` | No | — |
+| `leftViewImage` | `string` | No | — |
+| `mediumImage` | `string` | No | — |
+| `remoteControlImage` | `string` | No | — |
+| `rightViewImage` | `string` | No | — |
+| `spin360Url` | `string` | No | — |
+| `thumbnailImage` | `string` | No | — |
+| `topViewImage` | `string` | No | — |
+| `addToCartUrl` | `string` | No | — |
+| `url` | `string` | No | — |
+| `affiliateAddToCartUrl` | `string` | No | — |
+| `affiliateUrl` | `string` | No | — |
+| `class` | `string` | No | — |
+| `classId` | `number` | No | — |
+| `department` | `string` | No | — |
+| `departmentId` | `number` | No | — |
+| `subclass` | `string` | No | — |
+| `subclassId` | `number` | No | — |
+| `categoryPath` | `object[]` | No | — |
+| `lists` | `object[]` | No | — |
+| `offers` | `object[]` | No | — |
+| `active` | `boolean` | No | — |
+| `activeUpdateDate` | `string` | No | — |
+| `bundledIn` | `object[]` | No | — |
+| `itemUpdateDate` | `string` | No | — |
+| `members` | `object[]` | No | — |
+| `new` | `boolean` | No | — |
+| `secondaryMarket` | `boolean` | No | — |
+| `startDate` | `string` | No | — |
+| `type` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="accessories full type">
+
+```ts
+{
+  sku?: string | number | null
+}[]
+```
+</Accordion>
+
+<Accordion title="details full type">
+
+```ts
+{
+  name?: string | null,
+  value?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="features full type">
+
+```ts
+{
+  feature?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="includedItemList full type">
+
+```ts
+{
+  includedItem?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="productVariations full type">
+
+```ts
+{
+  sku?: string | number | null
+}[]
+```
+</Accordion>
+
+<Accordion title="contracts full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="priceWithPlan full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="shippingLevelsOfService full type">
+
+```ts
+{
+  serviceLevelId?: number | null,
+  serviceLevelName?: string | null,
+  unitShippingPrice?: number | null
+}[]
+```
+</Accordion>
+
+<Accordion title="categoryPath full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="lists full type">
+
+```ts
+{
+  endDate?: string | null,
+  listId?: string | null,
+  startDate?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="offers full type">
+
+```ts
+{
+  endDate?: string | null,
+  id?: string | null,
+  startDate?: string | null,
+  text?: string | null,
+  type?: string | null,
+  url?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="bundledIn full type">
+
+```ts
+{
+  sku?: string | number | null
+}[]
+```
+</Accordion>
+
+<Accordion title="members full type">
+
+```ts
+{
+  sku?: string | number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`products.list`
+
+Retrieve products with optional SKU, UPC, name, salePrice, and categoryPath.id filters
+
+**Risk:** `read`
+
+```ts
+await corsair.bestbuy.api.products.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sku` | `string \| number` | No | Filter for a specific SKU |
+| `upc` | `string` | No | Filter for a specific UPC |
+| `name` | `string` | No | Filter by product name with wildcard, e.g. iPad* |
+| `salePrice` | `string` | No | Filter by sale price, e.g. 'salePrice>100' or '>100' |
+| `categoryPathId` | `string` | No | Filter products by categoryPath.id |
+| `page` | `number` | No | Page number to retrieve (1-based) |
+| `pageSize` | `number` | No | Number of products per page (1-100) |
+| `show` | `string` | No | Comma-separated attributes to include, or all |
+| `sort` | `string` | No | Sort format, e.g. 'name.asc' or 'salePrice.dsc' |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `from` | `number` | No | — |
+| `to` | `number` | No | — |
+| `total` | `number` | No | — |
+| `currentPage` | `number` | No | — |
+| `totalPages` | `number` | No | — |
+| `queryTime` | `string` | No | — |
+| `totalTime` | `string` | No | — |
+| `partial` | `boolean` | No | — |
+| `canonicalUrl` | `string` | No | — |
+| `products` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="products full type">
+
+```ts
+{
+  sku?: string | number | null,
+  name?: string | null,
+  upc?: string | null,
+  manufacturer?: string | null,
+  modelNumber?: string | null,
+  color?: string | null,
+  condition?: string | null,
+  description?: string | null,
+  longDescription?: string | null,
+  longDescriptionHtml?: string | null,
+  shortDescription?: string | null,
+  shortDescriptionHtml?: string | null,
+  customerReviewAverage?: number | null,
+  customerReviewCount?: number | null,
+  customerTopRated?: boolean | null,
+  depth?: string | null,
+  height?: string | null,
+  width?: string | null,
+  weight?: string | null,
+  digital?: boolean | null,
+  format?: string | null,
+  preowned?: boolean | null,
+  quantityLimit?: number | null,
+  releaseDate?: string | null,
+  warrantyLabor?: string | null,
+  warrantyParts?: string | null,
+  accessories?: {
+    sku?: string | number | null
+  }[] | null,
+  details?: {
+    name?: string | null,
+    value?: string | null
+  }[] | null,
+  features?: {
+    feature?: string | null
+  }[] | null,
+  includedItemList?: {
+    includedItem?: string | null
+  }[] | null,
+  productVariations?: {
+    sku?: string | number | null
+  }[] | null,
+  proposition65WarningMessage?: string | null,
+  proposition65WarningType?: string | null,
+  dollarSavings?: number | null,
+  lowPriceGuarantee?: boolean | null,
+  onSale?: boolean | null,
+  percentSavings?: string | null,
+  priceRestriction?: string | null,
+  priceUpdateDate?: string | null,
+  regularPrice?: number | null,
+  salePrice?: number | null,
+  contracts?: {
+  }[] | null,
+  priceWithPlan?: {
+  } | null,
+  friendsAndFamilyPickup?: boolean | null,
+  homeDelivery?: boolean | null,
+  inStoreAvailability?: boolean | null,
+  inStoreAvailabilityUpdateDate?: string | null,
+  inStorePickup?: boolean | null,
+  onlineAvailability?: boolean | null,
+  onlineAvailabilityUpdateDate?: string | null,
+  orderable?: string | null,
+  specialOrder?: boolean | null,
+  freeShipping?: boolean | null,
+  freeShippingEligible?: boolean | null,
+  shippingCost?: number | null,
+  shippingWeight?: number | null,
+  shippingLevelsOfService?: {
+    serviceLevelId?: number | null,
+    serviceLevelName?: string | null,
+    unitShippingPrice?: number | null
+  }[] | null,
+  accessoriesImage?: string | null,
+  alternateViewsImage?: string | null,
+  angleImage?: string | null,
+  backViewImage?: string | null,
+  energyGuideImage?: string | null,
+  image?: string | null,
+  largeFrontImage?: string | null,
+  largeImage?: string | null,
+  leftViewImage?: string | null,
+  mediumImage?: string | null,
+  remoteControlImage?: string | null,
+  rightViewImage?: string | null,
+  spin360Url?: string | null,
+  thumbnailImage?: string | null,
+  topViewImage?: string | null,
+  addToCartUrl?: string | null,
+  url?: string | null,
+  affiliateAddToCartUrl?: string | null,
+  affiliateUrl?: string | null,
+  class?: string | null,
+  classId?: number | null,
+  department?: string | null,
+  departmentId?: number | null,
+  subclass?: string | null,
+  subclassId?: number | null,
+  categoryPath?: {
+    id?: string | null,
+    name?: string | null
+  }[] | null,
+  lists?: {
+    endDate?: string | null,
+    listId?: string | null,
+    startDate?: string | null
+  }[] | null,
+  offers?: {
+    endDate?: string | null,
+    id?: string | null,
+    startDate?: string | null,
+    text?: string | null,
+    type?: string | null,
+    url?: string | null
+  }[] | null,
+  active?: boolean | null,
+  activeUpdateDate?: string | null,
+  bundledIn?: {
+    sku?: string | number | null
+  }[] | null,
+  itemUpdateDate?: string | null,
+  members?: {
+    sku?: string | number | null
+  }[] | null,
+  new?: boolean | null,
+  secondaryMarket?: boolean | null,
+  startDate?: string | null,
+  type?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Reviews
+
+### get
+
+`reviews.get`
+
+Retrieve a single review by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.bestbuy.api.reviews.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The unique identifier of the review to retrieve |
+| `show` | `string` | No | Comma-separated fields to include |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `sku` | `string \| number` | No | — |
+| `title` | `string` | No | — |
+| `comment` | `string` | No | — |
+| `rating` | `number` | No | — |
+| `submissionTime` | `string` | No | — |
+| `recommended` | `boolean` | No | — |
+| `qualityRating` | `number` | No | — |
+| `valueRating` | `number` | No | — |
+| `easeOfUseRating` | `number` | No | — |
+| `reviewer` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="reviewer full type">
+
+```ts
+{
+  name?: string | null
+} | {
+  name?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`reviews.list`
+
+Retrieve product reviews with optional SKU, reviewer, and score filters
+
+**Risk:** `read`
+
+```ts
+await corsair.bestbuy.api.reviews.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sku` | `string \| number` | No | Filter reviews by product SKU |
+| `reviewer` | `string` | No | Filter reviews by reviewer name |
+| `minScore` | `number` | No | Minimum rating score (1-5) |
+| `maxScore` | `number` | No | Maximum rating score (1-5) |
+| `page` | `number` | No | Page number for pagination |
+| `pageSize` | `number` | No | Number of reviews per page (1-100) |
+| `show` | `string` | No | Comma-separated fields to include |
+| `sort` | `string` | No | Sort expression, e.g. 'submissionTime.dsc' |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `from` | `number` | No | — |
+| `to` | `number` | No | — |
+| `total` | `number` | No | — |
+| `currentPage` | `number` | No | — |
+| `totalPages` | `number` | No | — |
+| `queryTime` | `string` | No | — |
+| `totalTime` | `string` | No | — |
+| `partial` | `boolean` | No | — |
+| `canonicalUrl` | `string` | No | — |
+| `reviews` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="reviews full type">
+
+```ts
+{
+  id?: string | number | null,
+  sku?: string | number | null,
+  title?: string | null,
+  comment?: string | null,
+  rating?: number | null,
+  submissionTime?: string | null,
+  recommended?: boolean | null,
+  qualityRating?: number | null,
+  valueRating?: number | null,
+  easeOfUseRating?: number | null,
+  reviewer?: {
+    name?: string | null
+  } | {
+    name?: string | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Stores
+
+### get
+
+`stores.get`
+
+Retrieve detailed information about a store by store ID
+
+**Risk:** `read`
+
+```ts
+await corsair.bestbuy.api.stores.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `storeId` | `string` | Yes | Unique identifier for the Best Buy store |
+| `show` | `string` | No | Comma-separated fields to include, or all for detailedHours |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `storeId` | `number` | No | — |
+| `name` | `string` | No | — |
+| `longName` | `string` | No | — |
+| `address` | `string` | No | — |
+| `address2` | `string` | No | — |
+| `city` | `string` | No | — |
+| `region` | `string` | No | — |
+| `postalCode` | `string` | No | — |
+| `fullPostalCode` | `string` | No | — |
+| `country` | `string` | No | — |
+| `lat` | `number` | No | — |
+| `lng` | `number` | No | — |
+| `distance` | `number` | No | — |
+| `location` | `string` | No | — |
+| `locationType` | `string` | No | — |
+| `storeType` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `hours` | `string` | No | — |
+| `hoursAmPm` | `string` | No | — |
+| `gmtOffset` | `number` | No | — |
+| `detailedHours` | `object[]` | No | — |
+| `services` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="detailedHours full type">
+
+```ts
+{
+  day?: string | null,
+  date?: string | null,
+  open?: string | null,
+  close?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="services full type">
+
+```ts
+{
+  service?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`stores.list`
+
+List Best Buy stores with optional city, region, postalCode, or area() geo search
+
+**Risk:** `read`
+
+```ts
+await corsair.bestbuy.api.stores.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `geo` | `object` | No | Remix area(location,distance): postalCode or lat+lng; distance defaults to 10 miles |
+| `city` | `string` | No | Filter stores by city name |
+| `state` | `string` | No | Two-letter state code (maps to region) |
+| `region` | `string` | No | Filter stores by region / state |
+| `storeId` | `number` | No | Specific store ID |
+| `postalCode` | `string` | No | Filter stores by postal code |
+| `storeType` | `string` | No | Filter stores by store type |
+| `services` | `string` | No | Filter by services.service, comma-separated |
+| `page` | `number` | No | Page number to retrieve (must be > 0) |
+| `pageSize` | `number` | No | Number of results per page (1-100) |
+| `show` | `string` | No | Comma-separated store fields to include |
+| `sort` | `string` | No | Sort directive, e.g. 'city.asc' or 'name.dsc' |
+
+<AccordionGroup>
+<Accordion title="geo full type">
+
+```ts
+{
+  postalCode?: string,
+  lat?: number,
+  lng?: number,
+  distance?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `from` | `number` | No | — |
+| `to` | `number` | No | — |
+| `total` | `number` | No | — |
+| `currentPage` | `number` | No | — |
+| `totalPages` | `number` | No | — |
+| `queryTime` | `string` | No | — |
+| `totalTime` | `string` | No | — |
+| `partial` | `boolean` | No | — |
+| `canonicalUrl` | `string` | No | — |
+| `stores` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="stores full type">
+
+```ts
+{
+  storeId?: number | null,
+  name?: string | null,
+  longName?: string | null,
+  address?: string | null,
+  address2?: string | null,
+  city?: string | null,
+  region?: string | null,
+  postalCode?: string | null,
+  fullPostalCode?: string | null,
+  country?: string | null,
+  lat?: number | null,
+  lng?: number | null,
+  distance?: number | null,
+  location?: string | null,
+  locationType?: string | null,
+  storeType?: string | null,
+  phone?: string | null,
+  hours?: string | null,
+  hoursAmPm?: string | null,
+  gmtOffset?: number | null,
+  detailedHours?: {
+    day?: string | null,
+    date?: string | null,
+    open?: string | null,
+    close?: string | null
+  }[] | null,
+  services?: {
+    service?: string | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
