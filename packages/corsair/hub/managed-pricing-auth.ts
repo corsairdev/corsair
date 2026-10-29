@@ -297,6 +297,20 @@ const OUTCOME_REPORT_TIMEOUT_MS = 3_000;
  * effort and bounded: it never throws, and never holds the caller's own error
  * up by more than OUTCOME_REPORT_TIMEOUT_MS.
  */
+/** Signed like the key request: Hub moves credits on these reports, and takes
+ *  them only from Corsair Cloud's runtime. Empty outside it. */
+export function managedPricingOutcomeHeaders(
+	hub: HubConfig,
+	call: ManagedPricingCall,
+): Record<string, string> {
+	return runtimeProofHeaders(hub, {
+		path: '/managed-pricing/usage/outcome',
+		plugin: call.plugin,
+		tenantId: call.tenantId,
+		operation: call.operation,
+	});
+}
+
 export async function reportManagedPricingCallFailed(
 	hub: HubConfig,
 	call: ManagedPricingCall,
@@ -309,6 +323,7 @@ export async function reportManagedPricingCallFailed(
 			hub,
 			path: '/managed-pricing/usage/outcome',
 			body: { ...call, outcome: 'failed', error: reason.slice(0, 300) },
+			extraHeaders: managedPricingOutcomeHeaders(hub, call),
 			parseResponse: (payload) => payload,
 			signal: AbortSignal.timeout(OUTCOME_REPORT_TIMEOUT_MS),
 		});

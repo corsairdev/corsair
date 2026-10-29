@@ -1,5 +1,8 @@
+import { createHmac } from 'node:crypto';
 import { bindEndpointsRecursively } from '../core/endpoints/bind';
 import type { CorsairPlugin, EndpointMetaEntry } from '../core/plugins';
+import { reportManagedPricingCallFailed } from '../hub/managed-pricing-auth';
+import { RUNTIME_PROOF_HEADER } from '../hub/runtime-proof';
 import type { HubConfig } from '../hub/types';
 
 const hub: HubConfig = {
@@ -123,6 +126,46 @@ describe('a managed call that fails', () => {
 		});
 		expect(outcome?.headers.get('authorization')).toBe('Bearer ck_cloud_test');
 		expect(outcome?.headers.get('x-corsair-instance-key')).toBe('main');
+	});
+
+	it('is signed for the outcome endpoint from the cloud runtime', async () => {
+		const sent: Headers[] = [];
+		jest.spyOn(globalThis, 'fetch').mockImplementation(async (_input, init) => {
+			sent.push(new Headers(init?.headers));
+			return new Response('{}', {
+				status: 200,
+				headers: { 'content-type': 'application/json' },
+			});
+		});
+		const call = {
+			plugin: 'reducto',
+			tenantId: 'me',
+			operation: 'parse.parse',
+			idempotencyKey: 'k1',
+		};
+		await reportManagedPricingCallFailed(
+			{ ...hub, runtimeProofKey: 'proof-key' },
+			call,
+			new Error('boom'),
+		);
+		const header = sent[0]?.get(RUNTIME_PROOF_HEADER) ?? '';
+		const t = Number(/t=(\d+)/.exec(header)?.[1]);
+		const expected = createHmac('sha256', 'proof-key')
+			.update(
+				[
+					t,
+					'/managed-pricing/usage/outcome',
+					'reducto',
+					'me',
+					'parse.parse',
+				].join('\n'),
+			)
+			.digest('base64url');
+		expect(header).toBe(`t=${t},v1=${expected}`);
+
+		// A self-hosted SDK has no key and sends no proof.
+		await reportManagedPricingCallFailed(hub, call, new Error('boom'));
+		expect(sent[1]?.has(RUNTIME_PROOF_HEADER)).toBe(false);
 	});
 
 	it('is not reported when the call succeeds', async () => {
