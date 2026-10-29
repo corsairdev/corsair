@@ -146,14 +146,14 @@ describe('Enginemailer endpoint schemas', () => {
 		).toEqual(input);
 	});
 
-	it.each([
-		'2026-10-29T12:34:56.000Z',
-		'2026-10-29 12:34:56',
-	])('accepts polling timestamp %s unchanged', (lastpollingdate) => {
-		expect(
-			EnginemailerEndpointInputSchemas.newSubscribers.parse({
-				lastpollingdate,
-			}),
-		).toEqual({ lastpollingdate });
-	});
+	it.each(['2026-10-29T12:34:56.000Z', '2026-10-29 12:34:56'])(
+		'accepts polling timestamp %s unchanged',
+		(lastpollingdate) => {
+			expect(
+				EnginemailerEndpointInputSchemas.newSubscribers.parse({
+					lastpollingdate,
+				}),
+			).toEqual({ lastpollingdate });
+		},
+	);
 });
