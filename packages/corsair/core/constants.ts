@@ -363,6 +363,7 @@ export const BaseProviders = [
 	'telegram',
 	'textrazor',
 	'ticktick',
+	'tikhub',
 	'timecamp',
 	'timelink',
 	'tinypng',
@@ -771,6 +772,7 @@ export const ProviderDisplayNames = {
 	telegram: 'Telegram',
 	textrazor: 'TextRazor',
 	ticktick: 'TickTick',
+	tikhub: 'TikHub',
 	timecamp: 'TimeCamp',
 	timelink: 'Timelink',
 	tinypng: 'TinyPNG',
@@ -1186,6 +1188,7 @@ export type AllProviders =
 	| 'telegram'
 	| 'textrazor'
 	| 'ticktick'
+	| 'tikhub'
 	| 'timecamp'
 	| 'timelink'
 	| 'tinypng'

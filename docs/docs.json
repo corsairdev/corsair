@@ -3038,6 +3038,14 @@
                 ]
               },
               {
+                "group": "TikHub",
+                "pages": [
+                  "plugins/tikhub/overview",
+                  "plugins/tikhub/api",
+                  "plugins/tikhub/database"
+                ]
+              },
+              {
                 "group": "TimeCamp",
                 "pages": [
                   "plugins/timecamp/overview",
