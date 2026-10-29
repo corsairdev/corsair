@@ -1,5 +1,9 @@
+import { createHmac } from 'node:crypto';
 import { bindEndpointsRecursively } from '../core/endpoints/bind';
 import type { CorsairPlugin, EndpointMetaEntry } from '../core/plugins';
+import type { ManagedJobKind } from '../hub/managed-pricing-jobs';
+import { reportManagedJobCall } from '../hub/managed-pricing-jobs';
+import { RUNTIME_PROOF_HEADER } from '../hub/runtime-proof';
 import type { HubConfig } from '../hub/types';
 
 const hub: HubConfig = {
@@ -387,6 +391,57 @@ describe('after review', () => {
 		await api.crawl.start({ url: 'https://example.com', limit: 50 });
 		expect(hubCalls.starts()).toHaveLength(3);
 		expect(hubCalls.outcomes()).toHaveLength(0);
+	});
+});
+
+describe('the runtime proof on job reports', () => {
+	it('signs the start and the read report for their own endpoints', async () => {
+		const sent: { url: string; headers: Headers }[] = [];
+		jest.spyOn(globalThis, 'fetch').mockImplementation(async (input, init) => {
+			sent.push({ url: String(input), headers: new Headers(init?.headers) });
+			return new Response('{}', {
+				status: 200,
+				headers: { 'content-type': 'application/json' },
+			});
+		});
+		const signed = { ...hub, runtimeProofKey: 'proof-key' };
+		const [start, , read] = KINDS as ManagedJobKind[];
+		await reportManagedJobCall(
+			signed,
+			start!,
+			{
+				plugin: 'firecrawl',
+				tenantId: 'me',
+				operation: 'crawl.start',
+				idempotencyKey: 'k1',
+			},
+			{},
+			{ id: 'crawl-abc' },
+		);
+		await reportManagedJobCall(
+			signed,
+			read!,
+			{ plugin: 'firecrawl', tenantId: 'me', operation: 'crawl.get' },
+			{ id: 'crawl-abc' },
+			{ status: 'completed', creditsUsed: 3 },
+		);
+		const expected = (header: string, path: string, operation: string) => {
+			const t = Number(/t=(\d+)/.exec(header)?.[1]);
+			const v1 = createHmac('sha256', 'proof-key')
+				.update([t, path, 'firecrawl', 'me', operation].join('\n'))
+				.digest('base64url');
+			return `t=${t},v1=${v1}`;
+		};
+		const [startSent, readSent] = sent;
+		expect(startSent?.url).toMatch(/\/managed-pricing\/jobs$/);
+		const startHeader = startSent?.headers.get(RUNTIME_PROOF_HEADER) ?? '';
+		expect(startHeader).toBe(
+			expected(startHeader, '/managed-pricing/jobs', 'crawl.start'),
+		);
+		const readHeader = readSent?.headers.get(RUNTIME_PROOF_HEADER) ?? '';
+		expect(readHeader).toBe(
+			expected(readHeader, '/managed-pricing/jobs/report', 'crawl.get'),
+		);
 	});
 });
 

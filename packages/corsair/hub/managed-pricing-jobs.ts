@@ -2,6 +2,7 @@ import { singleFlight } from '../core/auth/single-flight';
 import { hubApiGet, hubApiPost } from './client/http';
 import type { ManagedPricingCall } from './managed-pricing-auth';
 import { managedPricingHubScope, readUsageUnits } from './managed-pricing-auth';
+import { runtimeProofHeaders } from './runtime-proof';
 import type { HubConfig } from './types';
 
 /**
@@ -158,19 +159,32 @@ export function managedJobRequestFields(
 }
 
 // Best effort and bounded, like the outcome reports in managed-pricing-auth.ts:
-// a report that does not arrive leaves the hold standing.
+// a report that does not arrive leaves the hold standing. Signed like the key
+// request: Hub settles a job on these reports, and takes them only from
+// Corsair Cloud's runtime.
 async function post(
 	hub: HubConfig,
 	path: string,
-	body: Record<string, unknown>,
+	// unknown: the rest of the body is the report's own fields.
+	body: { plugin: string; tenantId: string; operation: string } & Record<
+		string,
+		unknown
+	>,
 	attempts = 1,
 ): Promise<boolean> {
+	const extraHeaders = runtimeProofHeaders(hub, {
+		path,
+		plugin: body.plugin,
+		tenantId: body.tenantId,
+		operation: body.operation,
+	});
 	for (let attempt = 1; attempt <= attempts; attempt++) {
 		try {
 			await hubApiPost({
 				hub,
 				path,
 				body,
+				extraHeaders,
 				parseResponse: (payload) => payload,
 				signal: AbortSignal.timeout(REPORT_TIMEOUT_MS),
 			});
