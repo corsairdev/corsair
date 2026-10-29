@@ -1,0 +1,184 @@
+---
+title: Overview
+description: "Instantly API v2 for cold email - campaigns, subsequences and leads, the Unibox, sending accounts and warmup, inbox placement tests, email verification, the blocklist, webhooks and workspace admin."
+---
+
+Use **Instantly** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
+
+Create an API v2 key in Instantly under Settings, Integrations, API keys, with the scopes you need. Things to know before you send:
+
+- **Real email.** `campaigns.activate` starts sending to the campaign's leads and `emails.reply` sends a reply straight away. Neither is ever retried automatically; only read operations are.
+- **Lifetime contact limit.** Every lead uploaded counts toward the plan's lifetime contact limit (1,000 on Growth), including re-uploads and the same person in a second campaign. `leads.create` and `leads.addBulk` default `skip_if_in_workspace` to `true` for that reason. Re-adding or moving a lead who already replied restarts their sequence at step 1.
+- **Stopping a lead.** A lead's `status` is read-only. To stop follow-ups (for example after they answered on LinkedIn), call `leads.updateInterestStatus`, which completes the lead in its campaign.
+- **Replies without webhooks.** Webhooks need the Hypergrowth plan or higher. On a plan without them, poll `emails.list` with `email_type: 'received'` for replies; it allows 20 requests a minute.
+- **Credits.** `emailVerification.verify` spends Instantly email-verification credits and is never retried. `leadLabels.testAiReplyLabel` is limited to 500 calls per 30 days per workspace.
+- **Secrets.** `apiKeys.create` returns the new key once; `apiKeys.list` and `apiKeys.delete` redact it, as webhook results redact header values.
+- **Not covered yet:** Instantly's AI agents (sales, inbox manager, lead finder, deliverability), SuperSearch enrichment, company lists, done-for-you account orders and the Google/Microsoft OAuth account connection.
+- **Time zones.** Campaign schedules take Instantly's own time zone list plus 63 common IANA zones it lacks (`America/New_York`, `Europe/London`, `UTC` and more), each sent as the listed zone with the same offsets and DST rules: `America/New_York` goes out as `America/Detroit`. The plugin re-checks each pair against the runtime's time zone data and refuses an alias that no longer matches. Zones with no exact match are rejected, including Pacific time (Instantly's `America/Dawson` stays at UTC-7 all year) and Canadian zones, several of which moved to permanent time in 2026.
+
+**Webhook verification.** Instantly does not sign deliveries, but each webhook can carry custom headers. Store a random secret with `corsair.instantly.keys.set_webhook_signature(secret)` (or pass `webhookSecret`); `webhooks.create` then sends it as the `x-corsair-webhook-secret` header and the plugin rejects any delivery without it. For a webhook made in the Instantly UI, add that header by hand. Deliveries route to a tenant by their `workspace` ID: store it with `keys.set_tenant_external_id(workspaceId)` (the ID `workspace.get` returns).
+
+**What you get:**
+
+- 165 typed API operations
+- 4 synced entities (`accounts`, `campaigns`, `emails`, `leads`) for fast `.search()` / `.list()`
+- 19 incoming webhook event types
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/instantly
+```
+```bash yarn
+yarn add corsair @corsair-dev/instantly
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/instantly
+```
+```bash bun
+bun add corsair @corsair-dev/instantly
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { instantly } from '@corsair-dev/instantly';
+
+export const corsair = createCorsair({
+	plugins: [
+		instantly(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+instantly()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'instantly',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Read unread Unibox emails**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.instantly.api.emails.list({ is_unread: true, min_timestamp_created: '2026-10-28T00:00:00Z', limit: 20 });
+```
+
+
+**Add leads to a campaign**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.instantly.api.leads.addBulk({
+	campaign_id: '01a181d1-c62c-745b-b842-870ce5b29862',
+	leads: [{
+		email: 'jordan@acme-logistics.com',
+		first_name: 'Jordan',
+		company_name: 'Acme Logistics',
+		custom_variables: { pain_point: 'slow onboarding' },
+	}],
+});
+```
+
+
+See the full list on the [API](/plugins/instantly/api) page.
+
+## Query synced data
+
+Leads seen through leads.list and leads.get are kept locally.
+
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.instantly.db.leads.search({
+	data: { company_name: 'Acme Logistics' },
+	limit: 10,
+});
+```
+
+Synced entities: `accounts`, `campaigns`, `emails`, `leads`. See [Database](/plugins/instantly/database) for filters and operators.
+
+## Webhooks
+
+Stop the lead's other outreach the moment they reply.
+
+```ts
+instantly({
+    webhookHooks: {
+        emails: {
+            replyReceived: {
+                after: async (ctx, result) => {
+                    console.log('Reply from', result.data?.lead_email, result.data?.reply_text_snippet);
+                }
+            },
+        },
+    },
+})
+```
+
+Mount your framework handler once (see [Frameworks](/frameworks/next)), then point the provider at that URL. Full event list: [Webhooks](/plugins/instantly/webhooks). Concepts: [Webhooks](/concepts/webhooks), [Hooks](/concepts/hooks).
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/instantly/api">
+    Every `instantly.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/instantly/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Webhooks" href="/plugins/instantly/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

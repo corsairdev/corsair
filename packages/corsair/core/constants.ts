@@ -261,6 +261,7 @@ export const BaseProviders = [
 	'imgbb',
 	'insightoai',
 	'instagram',
+	'instantly',
 	'intercom',
 	'jigsawstack',
 	'jira',
@@ -668,6 +669,7 @@ export const ProviderDisplayNames = {
 	imgbb: 'ImgBB',
 	insightoai: 'Insighto.ai',
 	instagram: 'Instagram',
+	instantly: 'Instantly',
 	intercom: 'Intercom',
 	jigsawstack: 'JigsawStack',
 	jira: 'Jira',
@@ -1080,6 +1082,7 @@ export type AllProviders =
 	| 'imgbb'
 	| 'insightoai'
 	| 'instagram'
+	| 'instantly'
 	| 'intercom'
 	| 'jigsawstack'
 	| 'jira'
