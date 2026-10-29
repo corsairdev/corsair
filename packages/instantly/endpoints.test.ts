@@ -1342,13 +1342,6 @@ describe('deletes drop local rows', () => {
 			'leads',
 			LEAD_ID,
 		],
-		[
-			'leads.deleteMany',
-			Leads.deleteMany,
-			{ campaign_id: CAMPAIGN_ID, ids: [LEAD_ID] },
-			'leads',
-			LEAD_ID,
-		],
 	] as const)(
 		'%s removes the stored row',
 		async (_, endpoint, input, entity, entityId) => {
@@ -1394,6 +1387,37 @@ describe('deletes drop local rows', () => {
 		);
 		expect(db.leads.deleteByEntityId).not.toHaveBeenCalled();
 	});
+
+	it('removes the rows of a bulk delete that deleted every ID', async () => {
+		const db = { leads: store() };
+		respond({ count: 2 });
+		await invoke(
+			Leads.deleteMany,
+			{ campaign_id: CAMPAIGN_ID, ids: [LEAD_ID, 'lead-2', LEAD_ID] },
+			{ key: API_KEY, db },
+		);
+		expect(db.leads.deleteByEntityId.mock.calls).toEqual([
+			[LEAD_ID],
+			['lead-2'],
+		]);
+	});
+
+	it.each([
+		['a limit left one in place', { limit: 1 }, { count: 1 }],
+		['the response has no count', {}, { ok: true }],
+	])(
+		'keeps the rows of a bulk delete by ID when %s',
+		async (_, extra, answer) => {
+			const db = { leads: store() };
+			respond(answer);
+			await invoke(
+				Leads.deleteMany,
+				{ campaign_id: CAMPAIGN_ID, ids: [LEAD_ID, 'lead-2'], ...extra },
+				{ key: API_KEY, db },
+			);
+			expect(db.leads.deleteByEntityId).not.toHaveBeenCalled();
+		},
+	);
 
 	it('does not log the address being verified', async () => {
 		respond({

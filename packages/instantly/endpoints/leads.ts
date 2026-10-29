@@ -137,9 +137,20 @@ export const deleteMany: InstantlyEndpoints['leadsDeleteMany'] = (ctx, input) =>
 		input,
 		(body) => ({ method: 'DELETE', path: '/leads', body }),
 		{
-			// Only deletes by ID can be mirrored locally; a delete by campaign,
-			// list or status does not say which leads it removed.
-			onSuccess: ({ ids }) => forgetLeads(ctx, ids ?? []),
+			// Instantly answers with a count, not the deleted IDs. Rows go only
+			// when that count covers every ID asked for: a limit, a status, or a
+			// lead outside the campaign or list can leave some in place, and the
+			// answer doesn't say which. A delete by filter alone names no leads.
+			onSuccess: async ({ ids }, raw) => {
+				const asked = [...new Set(ids ?? [])];
+				const count =
+					raw && typeof raw === 'object'
+						? (raw as { count?: unknown }).count
+						: undefined;
+				if (asked.length > 0 && count === asked.length) {
+					await forgetLeads(ctx, asked);
+				}
+			},
 		},
 	);
 

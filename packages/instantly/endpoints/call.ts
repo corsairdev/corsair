@@ -73,9 +73,13 @@ export async function call<K extends InstantlyOperation>(
 		/**
 		 * Runs after any 2xx, whether or not the response matched its schema.
 		 * Deletes use it to drop local rows, which must go even when the
-		 * response comes back unverified.
+		 * response comes back unverified; `raw` is that unchecked response.
 		 */
-		onSuccess?: (parsed: InstantlyParsedInputs[K]) => Promise<void>;
+		onSuccess?: (
+			parsed: InstantlyParsedInputs[K],
+			// unknown: the response before its schema check.
+			raw: unknown,
+		) => Promise<void>;
 	} = {},
 ): Promise<InstantlyEndpointOutputs[K]> {
 	// The schema maps are indexed by a generic key, which TypeScript cannot
@@ -90,7 +94,7 @@ export async function call<K extends InstantlyOperation>(
 	// A 204 (share, delete) has no body; treat it as an empty object.
 	const raw = answer === undefined ? {} : answer;
 	try {
-		await options.onSuccess?.(parsed);
+		await options.onSuccess?.(parsed, raw);
 	} catch (error) {
 		console.warn(`Failed to update local data after ${event}:`, error);
 	}
