@@ -241,8 +241,8 @@ export const AdminInputSchemas = {
 			.describe('The ID of the intent for which a checkpoint must be resent.'),
 	}),
 	scopesList: z.object({
-		offset: z.string().optional(),
-		limit: z.string().optional(),
+		offset: z.number().int().min(0).optional(),
+		limit: z.number().int().min(1).optional(),
 		status: z.enum(['active', 'disabled']).optional(),
 		search: z.string().optional(),
 	}),
@@ -292,8 +292,8 @@ export const AdminInputSchemas = {
 	apiKeysList: z.object({
 		access: z.enum(['global', 'scope']).optional(),
 		account_scope_id: z.string().optional(),
-		offset: z.string().optional(),
-		limit: z.string().optional(),
+		offset: z.number().int().min(0).optional(),
+		limit: z.number().int().min(1).optional(),
 	}),
 	apiKeysCreate: ApiKeysCreateInputSchema,
 	apiKeysDelete: z.object({
@@ -353,8 +353,8 @@ export const AdminInputSchemas = {
 		status: z.enum(['success', 'failed']).optional(),
 		created_after: z.string().optional(),
 		created_before: z.string().optional(),
-		offset: z.string().optional(),
-		limit: z.string().optional(),
+		offset: z.number().int().min(0).optional(),
+		limit: z.number().int().min(1).optional(),
 	}),
 	webhookEventsReplay: z.object({
 		id: z.string().min(1),

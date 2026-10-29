@@ -1161,7 +1161,7 @@ export const LinkedinInputSchemas = {
 				id: z
 					.string()
 					.describe(
-						'A parameter ID. Use List Search Parameters with `SAVED_PEOPLE_SEARCH` type to find out the possible values. Native filter : Saved search',
+						'A parameter ID. Use List Search Parameters with `SAVED_COMPANY_SEARCH` type to find out the possible values. Native filter : Saved search',
 					),
 				last_viewed_at: z
 					.number()

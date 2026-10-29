@@ -7,6 +7,7 @@ import {
 	Emails,
 	LinkedIn,
 	Messages,
+	Scopes,
 	Users,
 } from './endpoints';
 import { ACCOUNT_ID, problem } from './test-fixtures';
@@ -186,6 +187,16 @@ describe('Unipile hand-written inputs and responses', () => {
 			}),
 		).rejects.toThrow();
 		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('takes numeric offset and limit on the admin lists', async () => {
+		respond({ object: 'Scopes', data: [], has_more: false });
+
+		await invoke(Scopes.list, { offset: 0, limit: 10 });
+
+		const url = new URL(lastCall().url);
+		expect(url.searchParams.get('offset')).toBe('0');
+		expect(url.searchParams.get('limit')).toBe('10');
 	});
 
 	it('never returns a full key from apiKeys.list', async () => {
