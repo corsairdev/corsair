@@ -7,7 +7,7 @@ const get = <T>(
 	path: string,
 	// N8N polling filters vary by event endpoint and are schema-validated.
 	query?: Record<string, unknown>,
-	) => {
+) => {
 	const transportQuery: Record<string, string | number | boolean | undefined> =
 		{};
 	for (const [key, value] of Object.entries(query ?? {})) {
