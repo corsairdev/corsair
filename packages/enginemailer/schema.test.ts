@@ -146,6 +146,20 @@ describe('Enginemailer endpoint schemas', () => {
 		).toEqual(input);
 	});
 
+	it('accepts the official N8N All filter value', () => {
+		expect(
+			EnginemailerEndpointInputSchemas.newSubscribers.parse({
+				filter_form: 'All',
+				filter_page: 12,
+				filter_popups: 'All',
+			}),
+		).toEqual({
+			filter_form: 'All',
+			filter_page: 12,
+			filter_popups: 'All',
+		});
+	});
+
 	it.each(['2026-10-29T12:34:56.000Z', '2026-10-29 12:34:56'])(
 		'accepts polling timestamp %s unchanged',
 		(lastpollingdate) => {

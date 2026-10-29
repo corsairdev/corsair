@@ -113,9 +113,9 @@ export type EnginemailerEndpointInputs = {
 	untagSubscriber: z.infer<typeof N8nSubscriberCategorySchema>;
 	newSubscribers: z.infer<typeof N8nPollingSchema> & {
 		source?: string;
-		filter_form?: number;
-		filter_page?: number;
-		filter_popups?: number;
+		filter_form?: number | 'All';
+		filter_page?: number | 'All';
+		filter_popups?: number | 'All';
 	};
 	unsubscribedSubscribers: z.infer<typeof N8nPollingSchema> & {
 		filter?: string;
@@ -214,9 +214,9 @@ export const EnginemailerEndpointInputSchemas = {
 	untagSubscriber: N8nSubscriberCategorySchema,
 	newSubscribers: N8nPollingSchema.extend({
 		source: z.string().optional(),
-		filter_form: z.number().int().optional(),
-		filter_page: z.number().int().optional(),
-		filter_popups: z.number().int().optional(),
+		filter_form: z.union([z.number().int(), z.literal('All')]).optional(),
+		filter_page: z.union([z.number().int(), z.literal('All')]).optional(),
+		filter_popups: z.union([z.number().int(), z.literal('All')]).optional(),
 	}),
 	unsubscribedSubscribers: N8nPollingSchema.extend({
 		filter: z.string().optional(),

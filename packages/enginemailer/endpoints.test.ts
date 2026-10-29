@@ -399,4 +399,18 @@ describe('Enginemailer endpoint routes', () => {
 			expect.objectContaining({ body: { email: 'person@example.com' } }),
 		);
 	});
+
+	it('omits the N8N All filter while preserving numeric filters', async () => {
+		await n8nEndpoints.newSubscribers(ctx, {
+			filter_form: 'All',
+			filter_page: 12,
+			filter_popups: 'All',
+		});
+
+		expect(n8nRequest).toHaveBeenCalledWith(
+			'/newsubscribers',
+			'test-api-key',
+			expect.objectContaining({ query: { filter_page: 12 } }),
+		);
+	});
 });
