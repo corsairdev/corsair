@@ -829,6 +829,25 @@ describe('webhook subscriptions', () => {
 		expect(JSON.stringify(result)).not.toContain('whsec-live-value');
 	});
 
+	it('masks an echoed secret even if the key store fails after create', async () => {
+		respond({ ...webhookSubscription, name: 'hook stored-secret' });
+		const read = jest
+			.fn<Promise<string | null>, []>()
+			.mockResolvedValueOnce('stored-secret')
+			.mockRejectedValueOnce(new Error('key store down'));
+		const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+		const ctx: FakeContext = {
+			key: API_KEY,
+			keys: { get_webhook_signature: read },
+		};
+
+		const result = await invoke(Webhooks.create, target, ctx);
+
+		expect(JSON.stringify(result)).not.toContain('stored-secret');
+		expect(read).toHaveBeenCalledTimes(1);
+		warn.mockRestore();
+	});
+
 	it('prefers the webhookSecret option and keeps caller headers', async () => {
 		respond(webhookSubscription);
 		await invoke(

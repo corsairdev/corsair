@@ -11,6 +11,8 @@ import type {
 // counted into one warning. `ctx.db` is optional chained because endpoint
 // unit tests call endpoints with a bare `{ key }` context.
 
+// unknown: API rows carry fields the entity schema doesn't model; they are
+// stored as returned.
 type Partially<T> = Partial<T> & Record<string, unknown>;
 
 async function saveAll<T>(

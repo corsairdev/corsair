@@ -39,8 +39,14 @@ export function scrubSecrets(
 	return out;
 }
 
-async function protect<T>(ctx: InstantlyContext, result: T): Promise<T> {
-	const secret = await resolveWebhookSecret(ctx.options, ctx.keys);
+// `known` is the secret create already resolved. Reusing it means a failed
+// second key-store read can't leave an echoed copy unmasked after the write.
+async function protect<T>(
+	ctx: InstantlyContext,
+	result: T,
+	known?: string,
+): Promise<T> {
+	const secret = known ?? (await resolveWebhookSecret(ctx.options, ctx.keys));
 	// scrubSecrets keeps the shape and only replaces string values, so the
 	// result is still a T.
 	return scrubSecrets(result, secret) as T;
@@ -105,7 +111,7 @@ export const create: InstantlyEndpoints['webhooksCreate'] = async (
 			}),
 		},
 	);
-	return protect(ctx, result);
+	return protect(ctx, result, secret);
 };
 
 export const remove: InstantlyEndpoints['webhooksDelete'] = async (
