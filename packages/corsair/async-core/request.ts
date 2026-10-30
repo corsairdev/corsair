@@ -86,17 +86,50 @@ const getQueryString = (params: Record<string, any>): string => {
 	return '';
 };
 
+const replacePathParameters = (
+	path: string,
+	parameters: Record<string, any> | undefined,
+	encoder: (value: string) => string,
+): string => {
+	if (!parameters) return path;
+
+	let result = '';
+	let index = 0;
+	while (index < path.length) {
+		if (path[index] !== '{') {
+			result += path[index];
+			index += 1;
+			continue;
+		}
+
+		const closingBrace = path.indexOf('}', index + 1);
+		if (closingBrace === -1) {
+			result += path[index];
+			index += 1;
+			continue;
+		}
+
+		const placeholder = path.slice(index, closingBrace + 1);
+		const name = path.slice(index + 1, closingBrace);
+		if (Object.prototype.hasOwnProperty.call(parameters, name)) {
+			result += encoder(String(parameters[name]));
+		} else {
+			result += placeholder;
+		}
+		index = closingBrace + 1;
+	}
+
+	return result;
+};
+
 const getUrl = (config: OpenAPIConfig, options: ApiRequestOptions): string => {
 	const encoder = config.ENCODE_PATH || encodeURI;
 
-	let path = options.url
-		.replace('{api-version}', config.VERSION)
-		.replace(/{(.*?)}/g, (substring: string, group: string) => {
-			if (options.path?.hasOwnProperty(group)) {
-				return encoder(String(options.path[group]));
-			}
-			return substring;
-		});
+	const path = replacePathParameters(
+		options.url.replace('{api-version}', config.VERSION),
+		options.path,
+		encoder,
+	);
 
 	const baseUrl = config.BASE.endsWith('/')
 		? config.BASE.slice(0, -1)
