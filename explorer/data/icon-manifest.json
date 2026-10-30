@@ -4,8 +4,8 @@
   "fallbackSource": "https://www.google.com/s2/favicons",
   "size": 128,
   "format": "png",
-  "total": 406,
-  "succeeded": 406,
+  "total": 407,
+  "succeeded": 407,
   "failed": 0,
   "domains": {
     "ably": "ably.io",
@@ -155,6 +155,7 @@
     "cloudflare": "cloudflare.com",
     "cloudflareapikey": "cloudflare.com",
     "cloudinary": "cloudinary.com",
+    "coassemble": "coassemble.com",
     "coda": "coda.com",
     "codeinterpreter": "codeinterpreter.com",
     "cody": "cody.com",
@@ -417,6 +418,7 @@
   },
   "sources": {
     "apollo": "twenty-icons",
+    "coassemble": "twenty-icons",
     "reducto": "twenty-icons",
     "contextdev": "twenty-icons",
     "ably": "twenty-icons",

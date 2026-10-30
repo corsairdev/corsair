@@ -2215,6 +2215,21 @@
       }
     },
     {
+      "id": "coassemble",
+      "displayName": "Coassemble",
+      "description": "Course and training platform. List clients, courses and users, and read learners' progress through a course.",
+      "npmPackageName": "@corsair-dev/coassemble",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 4,
+        "webhooks": 0,
+        "db": 4
+      }
+    },
+    {
       "id": "coda",
       "displayName": "Coda",
       "description": "All-in-one doc for teams that combines pages, tables, automations and Packs.",
@@ -41969,6 +41984,30 @@
       "kind": "webhook",
       "shortPath": "upload.upload",
       "haystack": "upload.upload cloudinary.webhooks.upload.upload notification when an upload completes"
+    },
+    {
+      "pluginId": "coassemble",
+      "kind": "api",
+      "shortPath": "clients.get",
+      "haystack": "clients.get coassemble.api.clients.get get a paginated list of coassemble clients read"
+    },
+    {
+      "pluginId": "coassemble",
+      "kind": "api",
+      "shortPath": "courses.get",
+      "haystack": "courses.get coassemble.api.courses.get get a paginated list of coassemble courses read"
+    },
+    {
+      "pluginId": "coassemble",
+      "kind": "api",
+      "shortPath": "trackings.get",
+      "haystack": "trackings.get coassemble.api.trackings.get get learner progress tracking for a coassemble course read"
+    },
+    {
+      "pluginId": "coassemble",
+      "kind": "api",
+      "shortPath": "users.get",
+      "haystack": "users.get coassemble.api.users.get get a paginated list of coassemble users read"
     },
     {
       "pluginId": "coda",
