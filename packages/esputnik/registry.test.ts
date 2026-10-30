@@ -96,6 +96,11 @@ describe('eSputnik endpoint registry', () => {
 			if (typeof endpoint !== 'function')
 				throw new Error(`Missing endpoint ${operation}`);
 			await endpoint({ key: 'test-api-key' }, input);
+			expect(request).toHaveBeenLastCalledWith(
+				expect.any(String),
+				'test-api-key',
+				expect.any(Object),
+			);
 		}
 
 		expect(request).toHaveBeenCalledTimes(110);
