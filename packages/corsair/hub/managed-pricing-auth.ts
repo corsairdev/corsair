@@ -216,10 +216,23 @@ export function createManagedPricingCredentialCache(): object {
  * Resolves a provider API key for managed_pricing endpoint auth.
  * Forwards `meteredOperationId` to Hub; credit cost is configured in Hub only.
  */
-export async function resolveManagedPricingApiKey(
+/** What Hub charged for one managed endpoint call, as it was sent. */
+export type ManagedPricingCall = {
+	plugin: string;
+	tenantId: string;
+	operation: string;
+	idempotencyKey: string;
+};
+
+/**
+ * Fetches the provider key for one endpoint call and returns, with it, what
+ * the charge was made under, so a failed call can be reported against it
+ * (reportManagedPricingCallFailed).
+ */
+export async function resolveManagedPricingCall(
 	ctx: ManagedPricingKeyBuilderContext,
 	input: { plugin: string; cache: object; operation?: string },
-): Promise<string> {
+): Promise<{ apiKey: string; call: ManagedPricingCall }> {
 	requireHubForManagedPricing(input.plugin, ctx.hub);
 	const tenantId = ctx.tenantId?.trim();
 	if (!tenantId) {
@@ -237,16 +250,106 @@ export async function resolveManagedPricingApiKey(
 			`[auth-missing:${input.plugin}:managed_pricing]: Endpoint operation id missing — cannot meter usage.`,
 		);
 	}
-	const result = await getManagedPricingApiKey(
-		{
-			hub: ctx.hub,
-			plugin: input.plugin,
-			tenantId,
-			cache: input.cache,
-		},
-		// Each endpoint call is metered on its own; retries inside the call
-		// reuse the key resolved here.
-		{ operation, idempotencyKey: randomUUID() },
+	// Each endpoint call is metered on its own; retries inside the call
+	// reuse the key resolved here.
+	const idempotencyKey = randomUUID();
+	const call = { plugin: input.plugin, tenantId, operation, idempotencyKey };
+	try {
+		const result = await getManagedPricingApiKey(
+			{
+				hub: ctx.hub,
+				plugin: input.plugin,
+				tenantId,
+				cache: input.cache,
+			},
+			{ operation, idempotencyKey },
+		);
+		return { apiKey: result.apiKey, call };
+	} catch (error) {
+		// Hub may have charged a key request whose answer never arrived (it
+		// timed out, or the connection dropped), so it is reported like a failed
+		// call: Hub gives the credits back, or says it never charged that key.
+		// A request Hub answered with a refusal charged nothing.
+		if (gotNoAnswer(error)) {
+			await reportManagedPricingCallFailed(ctx.hub, call, error);
+		}
+		throw error;
+	}
+}
+
+// unknown: whatever fetch threw. An abort or timeout comes as a DOMException
+// named for it, a failed connection as fetch's TypeError. Read by name: a
+// DOMException is not always an Error instance across realms.
+function gotNoAnswer(error: unknown): boolean {
+	const name =
+		typeof error === 'object' && error !== null && 'name' in error
+			? error.name
+			: undefined;
+	return (
+		name === 'TimeoutError' || name === 'AbortError' || name === 'TypeError'
 	);
-	return result.apiKey;
+}
+
+export async function resolveManagedPricingApiKey(
+	ctx: ManagedPricingKeyBuilderContext,
+	input: { plugin: string; cache: object; operation?: string },
+): Promise<string> {
+	return (await resolveManagedPricingCall(ctx, input)).apiKey;
+}
+
+// unknown: a thrown value can be anything. String() itself throws for some
+// (an object without a prototype), and the report must never replace the
+// caller's own error.
+function describeThrown(error: unknown): string {
+	try {
+		return error instanceof Error
+			? `${error.name}: ${error.message}`
+			: String(error);
+	} catch {
+		return 'Unprintable thrown value';
+	}
+}
+
+/** How long the end of a call waits on its report. A report that does not
+ *  arrive leaves the charge in place, which is what happened before. */
+const OUTCOME_REPORT_TIMEOUT_MS = 3_000;
+
+/**
+ * Tells Hub a managed call failed, so it gives the call's credits back. Best
+ * effort and bounded: it never throws, and never holds the caller's own error
+ * up by more than OUTCOME_REPORT_TIMEOUT_MS.
+ */
+/** Signed like the key request: Hub moves credits on these reports, and takes
+ *  them only from Corsair Cloud's runtime. Empty outside it. */
+export function managedPricingOutcomeHeaders(
+	hub: HubConfig,
+	call: ManagedPricingCall,
+): Record<string, string> {
+	return runtimeProofHeaders(hub, {
+		path: '/managed-pricing/usage/outcome',
+		plugin: call.plugin,
+		tenantId: call.tenantId,
+		operation: call.operation,
+	});
+}
+
+export async function reportManagedPricingCallFailed(
+	hub: HubConfig,
+	call: ManagedPricingCall,
+	// unknown: a thrown value can be anything, not only an Error.
+	error: unknown,
+): Promise<void> {
+	const reason = describeThrown(error);
+	try {
+		await hubApiPost({
+			hub,
+			path: '/managed-pricing/usage/outcome',
+			body: { ...call, outcome: 'failed', error: reason.slice(0, 300) },
+			extraHeaders: managedPricingOutcomeHeaders(hub, call),
+			parseResponse: (payload) => payload,
+			signal: AbortSignal.timeout(OUTCOME_REPORT_TIMEOUT_MS),
+		});
+	} catch {
+		// Unreported means still charged: the behaviour before this report.
+	}
 }
