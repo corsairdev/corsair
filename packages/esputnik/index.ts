@@ -180,7 +180,7 @@ export type EsputnikEndpoints = {
 	deleteTranslatedSmsMessage: EsputnikEndpoint<'deleteTranslatedSmsMessage'>;
 };
 
-const esputnikEndpointsNested = {
+export const esputnikEndpointsNested = {
 	account: accountEndpoints,
 	contacts: contactEndpoints,
 	accountExtended: accountExtendedEndpoints,
