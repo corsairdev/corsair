@@ -62,6 +62,8 @@ const TokenPathSchema = z.object({
 	app_uuid: z.string().min(1),
 	token_id: z.string().min(1),
 });
+// Provider request objects intentionally allow documented extension fields;
+// eSputnik does not publish a closed schema for these payloads.
 const GenericObjectSchema = z.record(z.string(), z.unknown());
 
 type JsonValue =
@@ -73,6 +75,7 @@ type JsonValue =
 	| { [key: string]: JsonValue };
 
 const EmptyOutputSchema = z.undefined();
+const TextOrEmptyOutputSchema = z.string().or(EmptyOutputSchema);
 
 // eSputnik documents these responses as provider-defined JSON without stable
 // envelopes, so expose a JSON-safe contract instead of leaking `unknown`.
@@ -97,6 +100,7 @@ const EmailLanguagePathSchema = z.object({
 	id: z.number().int().positive(),
 	language: z.string().min(2),
 });
+// Query filters are provider-defined and forwarded without transformation.
 const BehaviorQuerySchema = z.record(z.string(), z.unknown());
 const DomainSchema = z.object({ domain: z.string().min(1) });
 const WebPushDomainSchema = z.object({
@@ -108,6 +112,7 @@ const WebPushDomainSchema = z.object({
 const MessageSearchSchema = ContactPageQuerySchema.extend({
 	search: z.string().optional(),
 });
+// Message bodies vary by channel and are validated by the provider.
 const GenericMessageBodySchema = z.record(z.string(), z.unknown());
 const MobilePushBodySchema = z
 	.object({
@@ -281,7 +286,7 @@ export type EsputnikEndpointOutputs = {
 	getBalance: z.infer<typeof BalanceSchema>;
 	addContact: { id: number };
 	getContact: z.infer<typeof ContactSchema>;
-	updateContact: string;
+	updateContact: string | undefined;
 	// eSputnik documents an empty response for this mutation, so the provider
 	// response is intentionally opaque and accepted without a local envelope.
 	deleteContactByExternalCustomerId: undefined;
@@ -316,47 +321,47 @@ export type EsputnikEndpointOutputs = {
 	sendPreparedMessage: JsonValue;
 	addEmail: { id: number };
 	getEmail: z.infer<typeof GenericObjectSchema>;
-	updateMessage: string;
+	updateMessage: string | undefined;
 	deleteEmail: undefined;
-	updateTranslatedMessage: string;
+	updateTranslatedMessage: string | undefined;
 	deleteTranslatedEmail: undefined;
 	sendEmail: z.infer<typeof GenericObjectSchema>;
 	searchMobilePushMessages: JsonValue[];
 	addMobilePushMessage: { id: number };
 	getMobilePushMessage: z.infer<typeof GenericObjectSchema>;
-	updateBaseMobilePushMessage: string;
+	updateBaseMobilePushMessage: string | undefined;
 	deleteMobilePushMessage: undefined;
-	updateTranslatedMobilePushMessage: string;
+	updateTranslatedMobilePushMessage: string | undefined;
 	deleteTranslatedMobilePushMessage: undefined;
 	searchViberMessages: JsonValue[];
 	addViberMessage: { id: number };
 	getViberMessage: z.infer<typeof GenericObjectSchema>;
-	updateBaseViberMessage: string;
+	updateBaseViberMessage: string | undefined;
 	deleteViberMessage: undefined;
 	searchAppInboxMessages: JsonValue[];
 	addAppInboxMessage: { id: number };
 	getAppInboxMessage: z.infer<typeof GenericObjectSchema>;
-	updateBaseAppInboxMessage: string;
+	updateBaseAppInboxMessage: string | undefined;
 	deleteAppInboxMessage: undefined;
 	searchTelegramBotMessages: JsonValue[];
 	addTelegramBotMessage: { id: number };
 	getTelegramBotMessage: z.infer<typeof GenericObjectSchema>;
-	updateBaseTelegramBotMessage: string;
+	updateBaseTelegramBotMessage: string | undefined;
 	deleteTelegramBotMessage: undefined;
 	searchSmsMessages: JsonValue[];
 	getSms: z.infer<typeof GenericObjectSchema>;
-	updateBaseSmsMessage: string;
+	updateBaseSmsMessage: string | undefined;
 	deleteSmsMessage: undefined;
 	getBroadcasts: JsonValue[];
 	createBroadcast: { id: number };
 	getBroadcast: z.infer<typeof GenericObjectSchema>;
 	getSmsInterfaces: JsonValue[];
 	getEmailInterfaces: JsonValue[];
-	updateTranslatedViberMessage: string;
+	updateTranslatedViberMessage: string | undefined;
 	deleteTranslatedViberMessage: undefined;
-	updateTranslatedAppInboxMessage: string;
+	updateTranslatedAppInboxMessage: string | undefined;
 	deleteTranslatedAppInboxMessage: undefined;
-	updateTranslatedTelegramMessage: string;
+	updateTranslatedTelegramMessage: string | undefined;
 	deleteTranslatedTelegramMessage: undefined;
 	addSmsMessage: { id: number };
 	sendSms: z.infer<typeof GenericObjectSchema>;
@@ -389,7 +394,7 @@ export type EsputnikEndpointOutputs = {
 	sendViber: z.infer<typeof GenericObjectSchema>;
 	sendAppInbox: JsonValue;
 	sendTelegramBot: JsonValue;
-	updateTranslatedSmsMessage: string;
+	updateTranslatedSmsMessage: string | undefined;
 	deleteTranslatedSmsMessage: undefined;
 };
 
@@ -549,7 +554,7 @@ export const EsputnikEndpointOutputSchemas = {
 	getBalance: BalanceSchema,
 	addContact: z.object({ id: z.number().int() }),
 	getContact: ContactSchema,
-	updateContact: z.string(),
+	updateContact: TextOrEmptyOutputSchema,
 	deleteContactByExternalCustomerId: EmptyOutputSchema,
 	searchContacts: z.array(ContactSchema),
 	subscribeContact: ContactSubscriptionResultSchema,
@@ -580,47 +585,47 @@ export const EsputnikEndpointOutputSchemas = {
 	sendPreparedMessage: ProviderJsonSchema,
 	addEmail: z.object({ id: z.number().int() }),
 	getEmail: z.record(z.string(), ProviderJsonSchema),
-	updateMessage: z.string(),
+	updateMessage: TextOrEmptyOutputSchema,
 	deleteEmail: EmptyOutputSchema,
-	updateTranslatedMessage: z.string(),
+	updateTranslatedMessage: TextOrEmptyOutputSchema,
 	deleteTranslatedEmail: EmptyOutputSchema,
 	sendEmail: z.record(z.string(), ProviderJsonSchema),
 	searchMobilePushMessages: z.array(ProviderJsonSchema),
 	addMobilePushMessage: z.object({ id: z.number().int() }),
 	getMobilePushMessage: z.record(z.string(), ProviderJsonSchema),
-	updateBaseMobilePushMessage: z.string(),
+	updateBaseMobilePushMessage: TextOrEmptyOutputSchema,
 	deleteMobilePushMessage: EmptyOutputSchema,
-	updateTranslatedMobilePushMessage: z.string(),
+	updateTranslatedMobilePushMessage: TextOrEmptyOutputSchema,
 	deleteTranslatedMobilePushMessage: EmptyOutputSchema,
 	searchViberMessages: z.array(ProviderJsonSchema),
 	addViberMessage: z.object({ id: z.number().int() }),
 	getViberMessage: z.record(z.string(), ProviderJsonSchema),
-	updateBaseViberMessage: z.string(),
+	updateBaseViberMessage: TextOrEmptyOutputSchema,
 	deleteViberMessage: EmptyOutputSchema,
 	searchAppInboxMessages: z.array(ProviderJsonSchema),
 	addAppInboxMessage: z.object({ id: z.number().int() }),
 	getAppInboxMessage: z.record(z.string(), ProviderJsonSchema),
-	updateBaseAppInboxMessage: z.string(),
+	updateBaseAppInboxMessage: TextOrEmptyOutputSchema,
 	deleteAppInboxMessage: EmptyOutputSchema,
 	searchTelegramBotMessages: z.array(ProviderJsonSchema),
 	addTelegramBotMessage: z.object({ id: z.number().int() }),
 	getTelegramBotMessage: z.record(z.string(), ProviderJsonSchema),
-	updateBaseTelegramBotMessage: z.string(),
+	updateBaseTelegramBotMessage: TextOrEmptyOutputSchema,
 	deleteTelegramBotMessage: EmptyOutputSchema,
 	searchSmsMessages: z.array(ProviderJsonSchema),
 	getSms: z.record(z.string(), ProviderJsonSchema),
-	updateBaseSmsMessage: z.string(),
+	updateBaseSmsMessage: TextOrEmptyOutputSchema,
 	deleteSmsMessage: EmptyOutputSchema,
 	getBroadcasts: z.array(ProviderJsonSchema),
 	createBroadcast: z.object({ id: z.number().int() }),
 	getBroadcast: z.record(z.string(), ProviderJsonSchema),
 	getSmsInterfaces: z.array(ProviderJsonSchema),
 	getEmailInterfaces: z.array(ProviderJsonSchema),
-	updateTranslatedViberMessage: z.string(),
+	updateTranslatedViberMessage: TextOrEmptyOutputSchema,
 	deleteTranslatedViberMessage: EmptyOutputSchema,
-	updateTranslatedAppInboxMessage: z.string(),
+	updateTranslatedAppInboxMessage: TextOrEmptyOutputSchema,
 	deleteTranslatedAppInboxMessage: EmptyOutputSchema,
-	updateTranslatedTelegramMessage: z.string(),
+	updateTranslatedTelegramMessage: TextOrEmptyOutputSchema,
 	deleteTranslatedTelegramMessage: EmptyOutputSchema,
 	addSmsMessage: z.object({ id: z.number().int() }),
 	sendSms: z.record(z.string(), ProviderJsonSchema),
@@ -653,6 +658,6 @@ export const EsputnikEndpointOutputSchemas = {
 	sendViber: z.record(z.string(), ProviderJsonSchema),
 	sendAppInbox: ProviderJsonSchema,
 	sendTelegramBot: ProviderJsonSchema,
-	updateTranslatedSmsMessage: z.string(),
+	updateTranslatedSmsMessage: TextOrEmptyOutputSchema,
 	deleteTranslatedSmsMessage: EmptyOutputSchema,
 } as const;

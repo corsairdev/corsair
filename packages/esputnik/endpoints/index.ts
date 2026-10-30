@@ -2,7 +2,17 @@ import type { EsputnikEndpoints } from '..';
 import { makeEsputnikRequest } from '../client';
 import type { EsputnikEndpointInputs, EsputnikEndpointOutputs } from './types';
 
-const request = <T>(
+type ProviderJson =
+	| string
+	| number
+	| boolean
+	| null
+	| ProviderJson[]
+	| { [key: string]: ProviderJson };
+
+// Some handlers still use provider-defined envelopes; this fallback keeps
+// those responses JSON-safe until eSputnik publishes stable endpoint schemas.
+const request = <T = ProviderJson>(
 	ctx: { key: string },
 	path: string,
 	options: Parameters<typeof makeEsputnikRequest>[2],
