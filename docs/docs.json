@@ -1359,6 +1359,14 @@
                 ]
               },
               {
+                "group": "Coassemble",
+                "pages": [
+                  "plugins/coassemble/overview",
+                  "plugins/coassemble/api",
+                  "plugins/coassemble/database"
+                ]
+              },
+              {
                 "group": "Coda",
                 "pages": [
                   "plugins/coda/overview",

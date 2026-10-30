@@ -1,0 +1,254 @@
+---
+title: API
+description: "API reference for Coassemble: every `coassemble.api.*` operation with input and output types."
+---
+
+Every `coassemble.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Clients
+
+### get
+
+`clients.get`
+
+Get a paginated list of Coassemble clients
+
+**Risk:** `read`
+
+```ts
+await corsair.coassemble.api.clients.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `length` | `number` | No | — |
+| `page` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  clientIdentifier: string,
+  userCount?: number | null,
+  metadata?: {
+  },
+  created?: string | number | null,
+  updated?: string | number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Courses
+
+### get
+
+`courses.get`
+
+Get a paginated list of Coassemble courses
+
+**Risk:** `read`
+
+```ts
+await corsair.coassemble.api.courses.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `length` | `number` | No | — |
+| `page` | `number` | No | — |
+| `identifier` | `string` | No | — |
+| `clientIdentifier` | `string` | No | — |
+| `title` | `string` | No | — |
+| `deleted` | `boolean` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  title?: string | null,
+  description?: string | null,
+  image?: string | null,
+  imageAltText?: string | null,
+  imageSource?: number | null,
+  thumbnail?: string | null,
+  thumbnailRevision?: string | null,
+  thumbnailOutdated?: boolean | null,
+  start?: {
+  } | null,
+  timeEstimateMinutes?: number | null,
+  finish?: {
+  } | null,
+  theme?: {
+  } | null,
+  clientId?: number | null,
+  active?: boolean | null,
+  identified?: boolean | null,
+  private?: boolean | null,
+  paid?: boolean | null,
+  domain?: boolean | null,
+  price?: number | null,
+  key?: string | null,
+  source?: string | null,
+  identifier?: string | null,
+  clientIdentifier?: string | null,
+  language?: string | null,
+  revision?: string | number | null,
+  collabSeq?: number | null,
+  published?: string | number | boolean | null,
+  narrationsGenerated?: string | number | null,
+  narrationLanguage?: string | null,
+  created?: string | number | null,
+  updated?: string | number | null,
+  type?: string | null,
+  legacy?: boolean | null,
+  documentFlow?: string | null,
+  deleted?: string | number | boolean | null,
+  folderId?: number | null,
+  parentId?: number | null,
+  themeId?: number | null,
+  draftId?: number | null,
+  startScreenId?: number | null,
+  finishScreenId?: number | null,
+  sequence?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Trackings
+
+### get
+
+`trackings.get`
+
+Get learner progress tracking for a Coassemble course
+
+**Risk:** `read`
+
+```ts
+await corsair.coassemble.api.trackings.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `length` | `number` | No | — |
+| `page` | `number` | No | — |
+| `id` | `number` | Yes | — |
+| `identifier` | `string` | No | — |
+| `clientIdentifier` | `string` | No | — |
+| `start` | `string` | No | — |
+| `end` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  commenced?: string | number | null,
+  completed?: string | number | null,
+  feedback?: string | null,
+  email?: string | null,
+  identifier?: string | null,
+  clientIdentifier?: string | null,
+  passed?: boolean | null,
+  score?: number | null,
+  progress_percent?: number | null,
+  total_time?: number | null,
+  language?: string | null,
+  scorm?: boolean | null,
+  success?: boolean | null,
+  score_percent?: number | null,
+  last_activity?: string | number | null,
+  runtime_errors?: number | null,
+  has_progress_signal?: boolean | null,
+  progress_status?: string | null,
+  attempt_count?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Users
+
+### get
+
+`users.get`
+
+Get a paginated list of Coassemble users
+
+**Risk:** `read`
+
+```ts
+await corsair.coassemble.api.users.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `length` | `number` | No | — |
+| `page` | `number` | No | — |
+| `clientIdentifier` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  identifier?: string | null,
+  clientIdentifier?: string | null,
+  metadata?: {
+  },
+  name?: string | null,
+  avatar?: string | null,
+  testMode?: boolean | null,
+  created?: string | number | null,
+  updated?: string | number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
