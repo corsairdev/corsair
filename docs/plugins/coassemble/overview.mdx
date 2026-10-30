@@ -5,6 +5,8 @@ description: "Course and training platform. List clients, courses and users, and
 
 Use **Coassemble** through Corsair: one client, typed API calls, local DB sync.
 
+Coassemble's operations return live data but don't save it to the local database yet, so `.search()` on the entities below returns nothing until you write rows yourself. Call the API operations for current data.
+
 **What you get:**
 
 - 4 typed API operations
@@ -106,9 +108,17 @@ See the full list on the [API](/plugins/coassemble/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.coassemble.db.<entity>.search()` and `.list()`: `clients`, `courses`, `trackings`, `users`.
+These tables exist, but Coassemble calls don't fill them yet. This returns only rows you have written yourself.
 
-See [Database](/plugins/coassemble/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.coassemble.db.courses.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `clients`, `courses`, `trackings`, `users`. See [Database](/plugins/coassemble/database) for filters and operators.
 
 ## What's next
 

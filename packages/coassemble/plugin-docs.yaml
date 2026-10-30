@@ -1,2 +1,14 @@
 displayName: Coassemble
 description: Course and training platform. List clients, courses and users, and read learners' progress through a course.
+overviewNote: >-
+  Coassemble's operations return live data but don't save it to the local
+  database yet, so `.search()` on the entities below returns nothing until you
+  write rows yourself. Call the API operations for current data.
+apiExamples:
+  trackings.get:
+    call: "{ id: 123 }"
+dbExample:
+  entity: courses
+  note: >-
+    These tables exist, but Coassemble calls don't fill them yet. This returns
+    only rows you have written yourself.
