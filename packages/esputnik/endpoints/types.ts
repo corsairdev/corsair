@@ -72,6 +72,8 @@ type JsonValue =
 	| JsonValue[]
 	| { [key: string]: JsonValue };
 
+const EmptyOutputSchema = z.undefined();
+
 // eSputnik documents these responses as provider-defined JSON without stable
 // envelopes, so expose a JSON-safe contract instead of leaking `unknown`.
 const ProviderJsonSchema: z.ZodType<JsonValue> = z.json();
@@ -282,7 +284,7 @@ export type EsputnikEndpointOutputs = {
 	updateContact: string;
 	// eSputnik documents an empty response for this mutation, so the provider
 	// response is intentionally opaque and accepted without a local envelope.
-	deleteContactByExternalCustomerId: JsonValue;
+	deleteContactByExternalCustomerId: undefined;
 	searchContacts: z.infer<typeof ContactSchema>[];
 	subscribeContact: z.infer<typeof ContactSubscriptionResultSchema>;
 	// Bulk/import response envelopes vary by provider validation outcome and are
@@ -301,7 +303,7 @@ export type EsputnikEndpointOutputs = {
 	getContactIdByToken: { id: number };
 	getContactSubscriptionCategories: JsonValue[];
 	changeContactSubscriptionCategories: string;
-	deleteContactById: string;
+	deleteContactById: undefined;
 	contactRecoms: JsonValue[];
 	getAdditionalFields: z.infer<typeof GenericObjectSchema>;
 	getOrganisationBalanceHistory: z.infer<typeof GenericObjectSchema>;
@@ -315,50 +317,50 @@ export type EsputnikEndpointOutputs = {
 	addEmail: { id: number };
 	getEmail: z.infer<typeof GenericObjectSchema>;
 	updateMessage: string;
-	deleteEmail: string;
+	deleteEmail: undefined;
 	updateTranslatedMessage: string;
-	deleteTranslatedEmail: string;
+	deleteTranslatedEmail: undefined;
 	sendEmail: z.infer<typeof GenericObjectSchema>;
 	searchMobilePushMessages: JsonValue[];
 	addMobilePushMessage: { id: number };
 	getMobilePushMessage: z.infer<typeof GenericObjectSchema>;
 	updateBaseMobilePushMessage: string;
-	deleteMobilePushMessage: string;
+	deleteMobilePushMessage: undefined;
 	updateTranslatedMobilePushMessage: string;
-	deleteTranslatedMobilePushMessage: string;
+	deleteTranslatedMobilePushMessage: undefined;
 	searchViberMessages: JsonValue[];
 	addViberMessage: { id: number };
 	getViberMessage: z.infer<typeof GenericObjectSchema>;
 	updateBaseViberMessage: string;
-	deleteViberMessage: string;
+	deleteViberMessage: undefined;
 	searchAppInboxMessages: JsonValue[];
 	addAppInboxMessage: { id: number };
 	getAppInboxMessage: z.infer<typeof GenericObjectSchema>;
 	updateBaseAppInboxMessage: string;
-	deleteAppInboxMessage: string;
+	deleteAppInboxMessage: undefined;
 	searchTelegramBotMessages: JsonValue[];
 	addTelegramBotMessage: { id: number };
 	getTelegramBotMessage: z.infer<typeof GenericObjectSchema>;
 	updateBaseTelegramBotMessage: string;
-	deleteTelegramBotMessage: string;
+	deleteTelegramBotMessage: undefined;
 	searchSmsMessages: JsonValue[];
 	getSms: z.infer<typeof GenericObjectSchema>;
 	updateBaseSmsMessage: string;
-	deleteSmsMessage: string;
+	deleteSmsMessage: undefined;
 	getBroadcasts: JsonValue[];
 	createBroadcast: { id: number };
 	getBroadcast: z.infer<typeof GenericObjectSchema>;
 	getSmsInterfaces: JsonValue[];
 	getEmailInterfaces: JsonValue[];
 	updateTranslatedViberMessage: string;
-	deleteTranslatedViberMessage: string;
+	deleteTranslatedViberMessage: undefined;
 	updateTranslatedAppInboxMessage: string;
-	deleteTranslatedAppInboxMessage: string;
+	deleteTranslatedAppInboxMessage: undefined;
 	updateTranslatedTelegramMessage: string;
-	deleteTranslatedTelegramMessage: string;
+	deleteTranslatedTelegramMessage: undefined;
 	addSmsMessage: { id: number };
 	sendSms: z.infer<typeof GenericObjectSchema>;
-	cancelBroadcast: string;
+	cancelBroadcast: undefined;
 	contactActivity: JsonValue[];
 	contactMessages: JsonValue[];
 	getTokenActivated: { active: boolean };
@@ -368,7 +370,7 @@ export type EsputnikEndpointOutputs = {
 	getScript: string;
 	getWebPushDomains: Record<string, unknown>;
 	addWebPushDomain: Record<string, unknown>;
-	deleteWebPushDomain: string;
+	deleteWebPushDomain: undefined;
 	getWebPushScript: Record<string, unknown>;
 	getProductFeedsConfiguration: Record<string, unknown>;
 	configureProductFeeds: JsonValue;
@@ -388,7 +390,7 @@ export type EsputnikEndpointOutputs = {
 	sendAppInbox: JsonValue;
 	sendTelegramBot: JsonValue;
 	updateTranslatedSmsMessage: string;
-	deleteTranslatedSmsMessage: string;
+	deleteTranslatedSmsMessage: undefined;
 };
 
 export const EsputnikEndpointInputSchemas = {
@@ -548,7 +550,7 @@ export const EsputnikEndpointOutputSchemas = {
 	addContact: z.object({ id: z.number().int() }),
 	getContact: ContactSchema,
 	updateContact: z.string(),
-	deleteContactByExternalCustomerId: ProviderJsonSchema,
+	deleteContactByExternalCustomerId: EmptyOutputSchema,
 	searchContacts: z.array(ContactSchema),
 	subscribeContact: ContactSubscriptionResultSchema,
 	contactsBulkUpdate: z.record(z.string(), ProviderJsonSchema),
@@ -565,7 +567,7 @@ export const EsputnikEndpointOutputSchemas = {
 	getContactIdByToken: z.object({ id: z.number().int() }),
 	getContactSubscriptionCategories: z.array(ProviderJsonSchema),
 	changeContactSubscriptionCategories: z.string(),
-	deleteContactById: z.string(),
+	deleteContactById: EmptyOutputSchema,
 	contactRecoms: z.array(ProviderJsonSchema),
 	getAdditionalFields: z.record(z.string(), ProviderJsonSchema),
 	getOrganisationBalanceHistory: z.record(z.string(), ProviderJsonSchema),
@@ -579,50 +581,50 @@ export const EsputnikEndpointOutputSchemas = {
 	addEmail: z.object({ id: z.number().int() }),
 	getEmail: z.record(z.string(), ProviderJsonSchema),
 	updateMessage: z.string(),
-	deleteEmail: z.string(),
+	deleteEmail: EmptyOutputSchema,
 	updateTranslatedMessage: z.string(),
-	deleteTranslatedEmail: z.string(),
+	deleteTranslatedEmail: EmptyOutputSchema,
 	sendEmail: z.record(z.string(), ProviderJsonSchema),
 	searchMobilePushMessages: z.array(ProviderJsonSchema),
 	addMobilePushMessage: z.object({ id: z.number().int() }),
 	getMobilePushMessage: z.record(z.string(), ProviderJsonSchema),
 	updateBaseMobilePushMessage: z.string(),
-	deleteMobilePushMessage: z.string(),
+	deleteMobilePushMessage: EmptyOutputSchema,
 	updateTranslatedMobilePushMessage: z.string(),
-	deleteTranslatedMobilePushMessage: z.string(),
+	deleteTranslatedMobilePushMessage: EmptyOutputSchema,
 	searchViberMessages: z.array(ProviderJsonSchema),
 	addViberMessage: z.object({ id: z.number().int() }),
 	getViberMessage: z.record(z.string(), ProviderJsonSchema),
 	updateBaseViberMessage: z.string(),
-	deleteViberMessage: z.string(),
+	deleteViberMessage: EmptyOutputSchema,
 	searchAppInboxMessages: z.array(ProviderJsonSchema),
 	addAppInboxMessage: z.object({ id: z.number().int() }),
 	getAppInboxMessage: z.record(z.string(), ProviderJsonSchema),
 	updateBaseAppInboxMessage: z.string(),
-	deleteAppInboxMessage: z.string(),
+	deleteAppInboxMessage: EmptyOutputSchema,
 	searchTelegramBotMessages: z.array(ProviderJsonSchema),
 	addTelegramBotMessage: z.object({ id: z.number().int() }),
 	getTelegramBotMessage: z.record(z.string(), ProviderJsonSchema),
 	updateBaseTelegramBotMessage: z.string(),
-	deleteTelegramBotMessage: z.string(),
+	deleteTelegramBotMessage: EmptyOutputSchema,
 	searchSmsMessages: z.array(ProviderJsonSchema),
 	getSms: z.record(z.string(), ProviderJsonSchema),
 	updateBaseSmsMessage: z.string(),
-	deleteSmsMessage: z.string(),
+	deleteSmsMessage: EmptyOutputSchema,
 	getBroadcasts: z.array(ProviderJsonSchema),
 	createBroadcast: z.object({ id: z.number().int() }),
 	getBroadcast: z.record(z.string(), ProviderJsonSchema),
 	getSmsInterfaces: z.array(ProviderJsonSchema),
 	getEmailInterfaces: z.array(ProviderJsonSchema),
 	updateTranslatedViberMessage: z.string(),
-	deleteTranslatedViberMessage: z.string(),
+	deleteTranslatedViberMessage: EmptyOutputSchema,
 	updateTranslatedAppInboxMessage: z.string(),
-	deleteTranslatedAppInboxMessage: z.string(),
+	deleteTranslatedAppInboxMessage: EmptyOutputSchema,
 	updateTranslatedTelegramMessage: z.string(),
-	deleteTranslatedTelegramMessage: z.string(),
+	deleteTranslatedTelegramMessage: EmptyOutputSchema,
 	addSmsMessage: z.object({ id: z.number().int() }),
 	sendSms: z.record(z.string(), ProviderJsonSchema),
-	cancelBroadcast: z.string(),
+	cancelBroadcast: EmptyOutputSchema,
 	contactActivity: z.array(ProviderJsonSchema),
 	contactMessages: z.array(ProviderJsonSchema),
 	getTokenActivated: z.object({ active: z.boolean() }),
@@ -632,7 +634,7 @@ export const EsputnikEndpointOutputSchemas = {
 	getScript: z.string(),
 	getWebPushDomains: z.record(z.string(), ProviderJsonSchema),
 	addWebPushDomain: z.record(z.string(), ProviderJsonSchema),
-	deleteWebPushDomain: z.string(),
+	deleteWebPushDomain: EmptyOutputSchema,
 	getWebPushScript: z.record(z.string(), ProviderJsonSchema),
 	getProductFeedsConfiguration: z.record(z.string(), ProviderJsonSchema),
 	configureProductFeeds: ProviderJsonSchema,
@@ -652,5 +654,5 @@ export const EsputnikEndpointOutputSchemas = {
 	sendAppInbox: ProviderJsonSchema,
 	sendTelegramBot: ProviderJsonSchema,
 	updateTranslatedSmsMessage: z.string(),
-	deleteTranslatedSmsMessage: z.string(),
+	deleteTranslatedSmsMessage: EmptyOutputSchema,
 } as const;

@@ -80,23 +80,15 @@ export const contactEndpoints: Pick<
 		);
 	},
 	deleteContactById: (ctx, input) =>
-		request<EsputnikEndpointOutputs['deleteContactById']>(
-			ctx,
-			`/api/v1/contact/${input.id}`,
-			{
-				method: 'DELETE',
-				query: { erase: input.erase },
-			},
-		),
+		typedRequest('deleteContactById', ctx, `/api/v1/contact/${input.id}`, {
+			method: 'DELETE',
+			query: { erase: input.erase },
+		}),
 	deleteContactByExternalCustomerId: (ctx, input) =>
-		request<EsputnikEndpointOutputs['deleteContactByExternalCustomerId']>(
-			ctx,
-			'/api/v1/contact',
-			{
-				method: 'DELETE',
-				query: input,
-			},
-		),
+		typedRequest('deleteContactByExternalCustomerId', ctx, '/api/v1/contact', {
+			method: 'DELETE',
+			query: input,
+		}),
 	searchContacts: (ctx, input) =>
 		request<EsputnikEndpointOutputs['searchContacts']>(
 			ctx,

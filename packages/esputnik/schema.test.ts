@@ -228,6 +228,18 @@ describe('eSputnik endpoint schemas', () => {
 		).toBe(true);
 	});
 
+	it('accepts empty successful deletion responses', () => {
+		expect(
+			EsputnikEndpointOutputSchemas.deleteContactByExternalCustomerId.safeParse(
+				undefined,
+			).success,
+		).toBe(true);
+		expect(
+			EsputnikEndpointOutputSchemas.deleteContactById.safeParse(undefined)
+				.success,
+		).toBe(true);
+	});
+
 	it('rejects malformed path and required-body inputs', () => {
 		expect(
 			EsputnikEndpointInputSchemas.getContactIdByToken.safeParse({
