@@ -89,6 +89,19 @@ describe('resolveManagedPricingApiKey', () => {
 		}
 	});
 
+	it('gives up on a key request Hub does not answer', async () => {
+		const fetchMock = mockHubCredentials();
+
+		await resolveManagedPricingApiKey(
+			{ hub, tenantId: 'tenant_a' },
+			{ plugin: 'firecrawl', cache, operation: TEST_OPERATION },
+		);
+
+		const [, init] = fetchMock.mock.calls[0] ?? [];
+		expect(init?.signal).toBeInstanceOf(AbortSignal);
+		expect(init?.signal?.aborted).toBe(false);
+	});
+
 	it('does not merge concurrent calls into one charge', async () => {
 		const fetchMock = mockHubCredentials();
 

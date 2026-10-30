@@ -10,6 +10,9 @@ import type { HubConfig } from './types';
 const HUB_SCOPE_FIELD_SEP = '\x1e';
 
 const CREDENTIAL_REFRESH_BUFFER_SECONDS = 60;
+/** Every managed call waits on its key, so a Hub that stalls fails the call
+ *  instead of holding it until the runtime's own wall. */
+const KEY_REQUEST_TIMEOUT_MS = 10_000;
 
 export type ManagedPricingAuthContext = {
 	hub: HubConfig;
@@ -183,6 +186,7 @@ export async function getManagedPricingApiKey(
 			},
 			notFoundMessage: 'Managed pricing is not configured for this project',
 			parseResponse: parseManagedPricingCredentialsResponse,
+			signal: AbortSignal.timeout(KEY_REQUEST_TIMEOUT_MS),
 		});
 
 		const expiresAt =
