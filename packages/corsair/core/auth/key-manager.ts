@@ -577,12 +577,15 @@ export function createAccountKeyManager<T extends AuthTypes>(
 	// Add OAuth2-specific get_integration_credentials method
 	if (authType === 'oauth_2') {
 		// Serialises token refresh for this (tenant, integration) across processes.
-		// A transaction-scoped advisory lock, not SELECT ... FOR UPDATE on the
-		// account row: the refresh persists through other pooled connections, and
-		// a row lock held by this transaction would block those very writes.
-		// Held on a side connection, so the pool needs >1 connection.
-		manager.with_refresh_lock = async <R>(fn: () => Promise<R>): Promise<R> => {
-			if (database.isPg === false) return fn();
+		// A transaction-scoped advisory lock (works behind a transaction-mode
+		// pooler) rather than FOR UPDATE on the account row. fn gets a key manager
+		// bound to the lock's own transaction, so its reads and the token persist
+		// reuse that one connection: the hosted runtime's pool has max 1.
+		manager.with_refresh_lock = async <R>(
+			fn: (keys: AccountKeyManagerFor<T>) => Promise<R>,
+		): Promise<R> => {
+			if (database.isPg === false)
+				return fn(manager as AccountKeyManagerFor<T>);
 			let lockFailed = false;
 			try {
 				return await database.db.transaction().execute(async (trx) => {
@@ -595,11 +598,17 @@ export function createAccountKeyManager<T extends AuthTypes>(
 						lockFailed = true;
 						throw err;
 					}
-					return fn();
+					// isPg false: the scoped manager must not try to lock again.
+					return fn(
+						createAccountKeyManager({
+							...options,
+							database: { ...database, db: trx, isPg: false },
+						}),
+					);
 				});
 			} catch (err) {
 				// Lock timeout (stuck holder) or unsupported dialect: plain refresh.
-				if (lockFailed) return fn();
+				if (lockFailed) return fn(manager as AccountKeyManagerFor<T>);
 				throw err;
 			}
 		};

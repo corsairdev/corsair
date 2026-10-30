@@ -194,4 +194,49 @@ describe('oauth refresh cross-process lock', () => {
 			},
 		);
 	}
+
+	// The hosted runtime serves one request per environment, so its pool is
+	// max: 1. The lock must not need a second connection.
+	for (const [label, shared] of [
+		['one shared max:1 pool', true],
+		['a max:1 pool per process', false],
+	] as const) {
+		pgIt(
+			`${label}: completes, one token request, both get the new token`,
+			async () => {
+				const poolA = postgres(PG_URL, {
+					max: 1,
+					connection: { search_path: SCHEMA },
+				});
+				const poolB = shared
+					? poolA
+					: postgres(PG_URL, { max: 1, connection: { search_path: SCHEMA } });
+				try {
+					await seed(createCorsairDatabase(sql), {
+						client_id: 'cid',
+						client_secret: 'sec',
+					});
+					const state = installRotatingEndpoint('rt-0');
+					const procA = {
+						keys: makeKeys(createCorsairDatabase(poolA)),
+						tenantId: 'default',
+					};
+					const procB = {
+						keys: makeKeys(createCorsairDatabase(poolB)),
+						tenantId: 'default',
+					};
+					const [a, b] = await Promise.all([
+						getOAuthAccessToken(procA, opts),
+						getOAuthAccessToken(procB, opts),
+					]);
+					expect([a, b]).toEqual(['at-1', 'at-1']);
+					expect(state.requests).toBe(1);
+				} finally {
+					await poolA.end({ timeout: 1 });
+					if (!shared) await poolB.end({ timeout: 1 });
+				}
+			},
+			8000,
+		);
+	}
 });

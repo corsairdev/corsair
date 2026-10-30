@@ -26,18 +26,20 @@ export type OAuthAccessOptions = {
 
 // Cross-process lock when a database is configured (see with_refresh_lock);
 // inside it callers re-read freshness, so the loser reuses the winner's token.
+// fn receives keys bound to the lock's connection, so it never needs a second one.
 const underLock = <R>(
 	ctx: OAuthAccessContext,
-	fn: () => Promise<R>,
+	fn: (keys: OAuthAccessContext['keys']) => Promise<R>,
 ): Promise<R> =>
-	ctx.keys.with_refresh_lock ? ctx.keys.with_refresh_lock(fn) : fn();
+	ctx.keys.with_refresh_lock ? ctx.keys.with_refresh_lock(fn) : fn(ctx.keys);
 
 // A forced (401) refresh must not spend a refresh_token another process already
 // rotated while we waited for the lock.
-const rotatedSince = async (
-	ctx: OAuthAccessContext,
+const stillForced = async (
+	force: boolean,
+	keys: OAuthAccessContext['keys'],
 	before: string | null,
-): Promise<boolean> => (await ctx.keys.get_refresh_token()) !== before;
+): Promise<boolean> => force && (await keys.get_refresh_token()) === before;
 
 // Single acquisition path for an oauth_2 access token. Dispatches on where the
 // client_secret lives: absent locally ⇒ the secret is in the hub (BYO+Hub), so
@@ -70,11 +72,11 @@ export async function getOAuthAccessToken(
 		const runHubRefresh = (force: boolean): Promise<string> =>
 			singleFlight(ctx.keys, flightKey, async () => {
 				const before = await ctx.keys.get_refresh_token();
-				return underLock(ctx, async () => {
-					const forceRefresh =
-						force && (await rotatedSince(ctx, before)) === false;
-					return (await getHubAccessToken(hubContext, { forceRefresh }))
-						.accessToken;
+				return underLock(ctx, async (keys) => {
+					const forceRefresh = await stillForced(force, keys, before);
+					return (
+						await getHubAccessToken({ ...hubContext, keys }, { forceRefresh })
+					).accessToken;
 				});
 			});
 		(ctx as Record<string, unknown>)._refreshAuth = () => runHubRefresh(true);
@@ -102,16 +104,16 @@ export async function getOAuthAccessToken(
 	const runRefresh = (force: boolean): Promise<string> =>
 		singleFlight(ctx.keys, flightKey, async () => {
 			const before = await ctx.keys.get_refresh_token();
-			return underLock(ctx, async () => {
+			return underLock(ctx, async (keys) => {
 				const [currentAccess, expiresAt, refreshToken] = await Promise.all([
-					ctx.keys.get_access_token(),
-					ctx.keys.get_expires_at(),
-					ctx.keys.get_refresh_token(),
+					keys.get_access_token(),
+					keys.get_expires_at(),
+					keys.get_refresh_token(),
 				]);
 				// Re-check under the single-flight: a concurrent caller may have just
 				// refreshed and persisted a token while we waited.
 				if (
-					!(force && (await rotatedSince(ctx, before)) === false) &&
+					!(await stillForced(force, keys, before)) &&
 					isAccessTokenFresh({ accessToken: currentAccess, expiresAt })
 				) {
 					return currentAccess as string;
@@ -128,7 +130,7 @@ export async function getOAuthAccessToken(
 					clientSecret,
 					refreshToken,
 				});
-				await cacheRefreshedTokens(ctx.keys, tokens, expiresAt);
+				await cacheRefreshedTokens(keys, tokens, expiresAt);
 				return tokens.access_token;
 			});
 		});
