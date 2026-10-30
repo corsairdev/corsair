@@ -213,6 +213,21 @@ describe('eSputnik endpoint schemas', () => {
 			EsputnikEndpointOutputSchemas.searchContacts.safeParse([]).success,
 		).toBe(true);
 	});
+
+	it('rejects malformed path and required-body inputs', () => {
+		expect(
+			EsputnikEndpointInputSchemas.getContactIdByToken.safeParse({
+				app_uuid: '',
+				token_id: 'token',
+			}).success,
+		).toBe(false);
+		expect(
+			EsputnikEndpointInputSchemas.changeTokenActivated.safeParse({
+				app_uuid: 'app',
+				token_id: 'token',
+			}).success,
+		).toBe(false);
+	});
 });
 
 // Per .github/PLUGIN_PR_RULES.md (R2), every implemented endpoint

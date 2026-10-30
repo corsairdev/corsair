@@ -41,10 +41,7 @@ export async function makeEsputnikRequest<T>(
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: endpoint,
-		body:
-			method === 'POST' || method === 'PUT' || method === 'PATCH'
-				? body
-				: undefined,
+		body: method === 'GET' ? undefined : body,
 		mediaType: 'application/json; charset=utf-8',
 		query: method === 'GET' || method === 'DELETE' ? query : undefined,
 	};

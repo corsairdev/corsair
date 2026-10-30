@@ -1,5 +1,7 @@
 import { esputnikEndpointSchemas, esputnikEndpointsNested } from './index';
 
+// Recursive traversal intentionally uses unknown because endpoint groups mix
+// nested objects and callable leaves; every leaf is checked before use.
 type EndpointTree = Record<string, unknown>;
 
 function operationNames(tree: EndpointTree, prefix = ''): string[] {

@@ -46,6 +46,19 @@ describe('eSputnik transport', () => {
 		});
 	});
 
+	it('forwards DELETE request bodies', async () => {
+		mockRequest.mockResolvedValue({});
+		await makeEsputnikRequest('/api/v1/past_events', 'secret', {
+			method: 'DELETE',
+			body: { from: '2024-01-01', to: '2024-01-02' },
+		});
+
+		expect(lastCall()[1]).toMatchObject({
+			method: 'DELETE',
+			body: { from: '2024-01-01', to: '2024-01-02' },
+		});
+	});
+
 	it('preserves status and retry-after from provider errors', async () => {
 		mockRequest.mockRejectedValue(
 			new ApiError(

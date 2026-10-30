@@ -666,6 +666,36 @@ export const esputnikEndpointSchemas = {
 	typeof esputnikEndpointsNested
 >;
 
+type EndpointTree = Record<string, unknown>;
+type EndpointHandler = (
+	context: EsputnikContext,
+	input: unknown,
+) => Promise<unknown>;
+
+function withEsputnikSchemas<T extends EndpointTree>(tree: T, prefix = ''): T {
+	const entries = Object.entries(tree).map(([name, value]) => {
+		const operation = prefix ? `${prefix}.${name}` : name;
+		if (typeof value === 'function') {
+			const schemas =
+				esputnikEndpointSchemas[
+					operation as keyof typeof esputnikEndpointSchemas
+				];
+			if (!schemas)
+				throw new Error(`Missing eSputnik schemas for ${operation}`);
+			return [
+				name,
+				async (context: EsputnikContext, input: unknown) => {
+					const parsedInput = schemas.input.parse(input ?? {});
+					const result = await (value as EndpointHandler)(context, parsedInput);
+					return schemas.output.parse(result);
+				},
+			];
+		}
+		return [name, withEsputnikSchemas(value as EndpointTree, operation)];
+	});
+	return Object.fromEntries(entries) as T;
+}
+
 const esputnikEndpointMeta = {
 	'account.getAccountInfo': {
 		riskLevel: 'read',
@@ -1141,7 +1171,7 @@ export function esputnik<const T extends EsputnikPluginOptions>(
 		schema: EsputnikSchema,
 		options,
 		hooks: options.hooks,
-		endpoints: esputnikEndpointsNested,
+		endpoints: withEsputnikSchemas(esputnikEndpointsNested),
 		webhooks: {},
 		endpointMeta: esputnikEndpointMeta,
 		endpointSchemas: esputnikEndpointSchemas,

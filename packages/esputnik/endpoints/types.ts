@@ -266,9 +266,13 @@ export type EsputnikEndpointOutputs = {
 	addContact: { id: number };
 	getContact: z.infer<typeof ContactSchema>;
 	updateContact: string;
+	// eSputnik documents an empty response for this mutation, so the provider
+	// response is intentionally opaque and accepted without a local envelope.
 	deleteContactByExternalCustomerId: unknown;
 	searchContacts: z.infer<typeof ContactSchema>[];
 	subscribeContact: z.infer<typeof ContactSubscriptionResultSchema>;
+	// Bulk/import response envelopes vary by provider validation outcome and are
+	// not stable enough in the public OpenAPI contract for a narrower type.
 	contactsBulkUpdate: z.infer<typeof GenericObjectSchema>;
 	fileContactsBulkUpdate: z.infer<typeof GenericObjectSchema>;
 	getImportSessionStatus: z.infer<typeof GenericObjectSchema>;

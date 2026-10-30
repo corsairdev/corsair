@@ -17,7 +17,14 @@ export const corsair = createCorsair({
 
 ## Current Operations
 
-The first batch covers 40 documented, non-deprecated operations across account, contacts, orders, events, and email messages. The implementation uses the official API base URL `https://esputnik.com/api/` and validates every public operation input and output with Zod schemas.
+The plugin covers 110 documented, non-deprecated operations across:
+
+- Account, contacts, segments, workflows, and subscription categories.
+- Orders, current and historical events, and behavior tracking.
+- Email, mobile push, Viber, App Inbox, Telegram bot, SMS, and broadcast messaging.
+- Domains, web push, product feeds, application tokens, promotional codes, preprocessor files, and interaction status.
+
+The implementation uses the official API base URL `https://esputnik.com/api/` and validates every public operation input and output with Zod schemas.
 
 See the official documentation for request and response details:
 

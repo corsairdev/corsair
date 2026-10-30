@@ -8,6 +8,8 @@ const request = <T>(
 	options: Parameters<typeof makeEsputnikRequest>[2],
 ) => makeEsputnikRequest<T>(path, ctx.key, options);
 
+const segment = (value: string): string => encodeURIComponent(value);
+
 export const accountEndpoints: Pick<
 	EsputnikEndpoints,
 	'getAccountInfo' | 'getBalance'
@@ -110,7 +112,7 @@ export const contactEndpoints: Pick<
 	fileContactsBulkUpdate: (ctx, input) =>
 		request(ctx, '/api/v1/contacts/upload', { method: 'POST', body: input }),
 	getImportSessionStatus: (ctx, input) =>
-		request(ctx, `/api/v1/importstatus/${input.sessionId}`, {}),
+		request(ctx, `/api/v1/importstatus/${segment(input.sessionId)}`, {}),
 	getContactEmails: (ctx, input) =>
 		request(ctx, '/api/v1/contacts/email', { query: input }),
 	addToUnsubscribed: (ctx, input) =>
@@ -148,7 +150,7 @@ export const contactEndpoints: Pick<
 	getContactIdByToken: (ctx, input) =>
 		request(
 			ctx,
-			`/api/v1/contact/token/${input.app_uuid}/${input.token_id}/contactId`,
+			`/api/v1/contact/token/${segment(input.app_uuid)}/${segment(input.token_id)}/contactId`,
 			{},
 		),
 	getContactSubscriptionCategories: (ctx, input) =>
@@ -232,7 +234,7 @@ export const emailEndpoints = {
 		input: EsputnikEndpointInputs['updateTranslatedMessage'],
 	) => {
 		const { id, language, ...body } = input;
-		return request(ctx, `/api/v1/messages/email/${id}/${language}`, {
+		return request(ctx, `/api/v1/messages/email/${id}/${segment(language)}`, {
 			method: 'PUT',
 			body,
 		});
@@ -241,9 +243,13 @@ export const emailEndpoints = {
 		ctx: { key: string },
 		input: EsputnikEndpointInputs['deleteTranslatedEmail'],
 	) =>
-		request(ctx, `/api/v1/messages/email/${input.id}/${input.language}`, {
-			method: 'DELETE',
-		}),
+		request(
+			ctx,
+			`/api/v1/messages/email/${input.id}/${segment(input.language)}`,
+			{
+				method: 'DELETE',
+			},
+		),
 	sendEmail: (
 		ctx: { key: string },
 		input: EsputnikEndpointInputs['sendEmail'],
@@ -289,46 +295,85 @@ export const mobilePushEndpoints = {
 		input: EsputnikEndpointInputs['updateTranslatedMobilePushMessage'],
 	) => {
 		const { id, language, ...body } = input;
-		return request(ctx, `/api/v1/messages/mobilepush/${id}/${language}`, {
-			method: 'PUT',
-			body,
-		});
+		return request(
+			ctx,
+			`/api/v1/messages/mobilepush/${id}/${segment(language)}`,
+			{
+				method: 'PUT',
+				body,
+			},
+		);
 	},
 	deleteTranslatedMobilePushMessage: (
 		ctx: { key: string },
 		input: EsputnikEndpointInputs['deleteTranslatedMobilePushMessage'],
 	) =>
-		request(ctx, `/api/v1/messages/mobilepush/${input.id}/${input.language}`, {
-			method: 'DELETE',
-		}),
+		request(
+			ctx,
+			`/api/v1/messages/mobilepush/${input.id}/${segment(input.language)}`,
+			{
+				method: 'DELETE',
+			},
+		),
 };
 
-const messageFamily = (base: string) => ({
+const messageFamily = <
+	SearchOutput,
+	AddOutput,
+	GetOutput,
+	UpdateOutput,
+	DeleteOutput,
+>(
+	base: string,
+) => ({
 	search: (
 		ctx: { key: string },
 		input: Record<string, string | number | boolean | undefined>,
-	) => request(ctx, `/api/v1/messages/${base}`, { query: input }),
+	) => request<SearchOutput>(ctx, `/api/v1/messages/${base}`, { query: input }),
 	add: (ctx: { key: string }, input: Record<string, unknown>) =>
-		request(ctx, `/api/v1/messages/${base}`, { method: 'POST', body: input }),
+		request<AddOutput>(ctx, `/api/v1/messages/${base}`, {
+			method: 'POST',
+			body: input,
+		}),
 	get: (ctx: { key: string }, input: { id: number }) =>
-		request(ctx, `/api/v1/messages/${base}/${input.id}`, {}),
+		request<GetOutput>(ctx, `/api/v1/messages/${base}/${input.id}`, {}),
 	update: (
 		ctx: { key: string },
 		input: { id: number } & Record<string, unknown>,
 	) => {
 		const { id, ...body } = input;
-		return request(ctx, `/api/v1/messages/${base}/${id}`, {
+		return request<UpdateOutput>(ctx, `/api/v1/messages/${base}/${id}`, {
 			method: 'PUT',
 			body,
 		});
 	},
 	delete: (ctx: { key: string }, input: { id: number }) =>
-		request(ctx, `/api/v1/messages/${base}/${input.id}`, { method: 'DELETE' }),
+		request<DeleteOutput>(ctx, `/api/v1/messages/${base}/${input.id}`, {
+			method: 'DELETE',
+		}),
 });
 
-export const viberEndpoints = messageFamily('viber');
-export const appInboxEndpoints = messageFamily('appinbox');
-export const telegramBotEndpoints = messageFamily('telegrambot');
+export const viberEndpoints = messageFamily<
+	unknown[],
+	{ id: number },
+	Record<string, unknown>,
+	string,
+	string
+>('viber');
+export const appInboxEndpoints = messageFamily<
+	unknown[],
+	{ id: number },
+	Record<string, unknown>,
+	string,
+	string
+>('appinbox');
+export const telegramBotEndpoints = messageFamily<
+	unknown[],
+	{ id: number },
+	Record<string, unknown>,
+	string,
+	string
+>('telegrambot');
 export const smsEndpoints = {
 	search: (
 		ctx: { key: string },
@@ -371,7 +416,7 @@ export const batchTwoRemainderEndpoints = {
 		input: EsputnikEndpointInputs['updateTranslatedViberMessage'],
 	) => {
 		const { id, language, ...body } = input;
-		return request(ctx, `/api/v1/messages/viber/${id}/${language}`, {
+		return request(ctx, `/api/v1/messages/viber/${id}/${segment(language)}`, {
 			method: 'PUT',
 			body,
 		});
@@ -380,43 +425,63 @@ export const batchTwoRemainderEndpoints = {
 		ctx: { key: string },
 		input: EsputnikEndpointInputs['deleteTranslatedViberMessage'],
 	) =>
-		request(ctx, `/api/v1/messages/viber/${input.id}/${input.language}`, {
-			method: 'DELETE',
-		}),
+		request(
+			ctx,
+			`/api/v1/messages/viber/${input.id}/${segment(input.language)}`,
+			{
+				method: 'DELETE',
+			},
+		),
 	updateTranslatedAppInboxMessage: (
 		ctx: { key: string },
 		input: EsputnikEndpointInputs['updateTranslatedAppInboxMessage'],
 	) => {
 		const { id, language, ...body } = input;
-		return request(ctx, `/api/v1/messages/appinbox/${id}/${language}`, {
-			method: 'PUT',
-			body,
-		});
+		return request(
+			ctx,
+			`/api/v1/messages/appinbox/${id}/${segment(language)}`,
+			{
+				method: 'PUT',
+				body,
+			},
+		);
 	},
 	deleteTranslatedAppInboxMessage: (
 		ctx: { key: string },
 		input: EsputnikEndpointInputs['deleteTranslatedAppInboxMessage'],
 	) =>
-		request(ctx, `/api/v1/messages/appinbox/${input.id}/${input.language}`, {
-			method: 'DELETE',
-		}),
+		request(
+			ctx,
+			`/api/v1/messages/appinbox/${input.id}/${segment(input.language)}`,
+			{
+				method: 'DELETE',
+			},
+		),
 	updateTranslatedTelegramMessage: (
 		ctx: { key: string },
 		input: EsputnikEndpointInputs['updateTranslatedTelegramMessage'],
 	) => {
 		const { id, language, ...body } = input;
-		return request(ctx, `/api/v1/messages/telegrambot/${id}/${language}`, {
-			method: 'PUT',
-			body,
-		});
+		return request(
+			ctx,
+			`/api/v1/messages/telegrambot/${id}/${segment(language)}`,
+			{
+				method: 'PUT',
+				body,
+			},
+		);
 	},
 	deleteTranslatedTelegramMessage: (
 		ctx: { key: string },
 		input: EsputnikEndpointInputs['deleteTranslatedTelegramMessage'],
 	) =>
-		request(ctx, `/api/v1/messages/telegrambot/${input.id}/${input.language}`, {
-			method: 'DELETE',
-		}),
+		request(
+			ctx,
+			`/api/v1/messages/telegrambot/${input.id}/${segment(input.language)}`,
+			{
+				method: 'DELETE',
+			},
+		),
 	addSmsMessage: (
 		ctx: { key: string },
 		input: EsputnikEndpointInputs['addSmsMessage'],
@@ -444,7 +509,7 @@ export const finalBatchEndpoints = {
 	) =>
 		request(
 			ctx,
-			`/api/v1/contact/token/activated/${input.app_uuid}/${input.token_id}`,
+			`/api/v1/contact/token/activated/${segment(input.app_uuid)}/${segment(input.token_id)}`,
 			{},
 		),
 	changeTokenActivated: (
@@ -454,7 +519,7 @@ export const finalBatchEndpoints = {
 		const { app_uuid, token_id, active } = input;
 		return request(
 			ctx,
-			`/api/v1/contact/token/activated/${app_uuid}/${token_id}`,
+			`/api/v1/contact/token/activated/${segment(app_uuid)}/${segment(token_id)}`,
 			{ method: 'PUT', body: { active } },
 		);
 	},
@@ -506,7 +571,8 @@ export const finalBatchEndpoints = {
 	getPreprocessorFileStatus: (
 		ctx: { key: string },
 		input: { sessionId: string },
-	) => request(ctx, `/api/v1/preprocessor/file/${input.sessionId}`, {}),
+	) =>
+		request(ctx, `/api/v1/preprocessor/file/${segment(input.sessionId)}`, {}),
 	updatePreprocessorFile: (
 		ctx: { key: string },
 		input: Record<string, unknown>,
@@ -537,7 +603,7 @@ export const finalBatchEndpoints = {
 		input: EsputnikEndpointInputs['updateTranslatedSmsMessage'],
 	) => {
 		const { id, language, ...body } = input;
-		return request(ctx, `/api/v1/messages/sms/${id}/${language}`, {
+		return request(ctx, `/api/v1/messages/sms/${id}/${segment(language)}`, {
 			method: 'PUT',
 			body,
 		});
@@ -546,9 +612,13 @@ export const finalBatchEndpoints = {
 		ctx: { key: string },
 		input: EsputnikEndpointInputs['deleteTranslatedSmsMessage'],
 	) =>
-		request(ctx, `/api/v1/messages/sms/${input.id}/${input.language}`, {
-			method: 'DELETE',
-		}),
+		request(
+			ctx,
+			`/api/v1/messages/sms/${input.id}/${segment(input.language)}`,
+			{
+				method: 'DELETE',
+			},
+		),
 };
 
 export * from './types';
