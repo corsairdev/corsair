@@ -325,62 +325,72 @@ export const mobilePushEndpoints = {
 };
 
 const messageFamily = <
-	SearchOutput,
-	AddOutput,
-	GetOutput,
-	UpdateOutput,
-	DeleteOutput,
+	SearchKey extends keyof EsputnikEndpointOutputs,
+	AddKey extends keyof EsputnikEndpointOutputs,
+	GetKey extends keyof EsputnikEndpointOutputs,
+	UpdateKey extends keyof EsputnikEndpointOutputs,
+	DeleteKey extends keyof EsputnikEndpointOutputs,
 >(
 	base: string,
+	keys: {
+		search: SearchKey;
+		add: AddKey;
+		get: GetKey;
+		update: UpdateKey;
+		delete: DeleteKey;
+	},
 ) => ({
 	search: (
 		ctx: { key: string },
 		input: Record<string, string | number | boolean | undefined>,
-	) => request<SearchOutput>(ctx, `/api/v1/messages/${base}`, { query: input }),
+	) =>
+		typedRequest(keys.search, ctx, `/api/v1/messages/${base}`, {
+			query: input,
+		}),
 	add: (ctx: { key: string }, input: Record<string, unknown>) =>
-		request<AddOutput>(ctx, `/api/v1/messages/${base}`, {
+		typedRequest(keys.add, ctx, `/api/v1/messages/${base}`, {
 			method: 'POST',
 			body: input,
 		}),
 	get: (ctx: { key: string }, input: { id: number }) =>
-		request<GetOutput>(ctx, `/api/v1/messages/${base}/${input.id}`, {}),
+		typedRequest(keys.get, ctx, `/api/v1/messages/${base}/${input.id}`, {}),
 	update: (
 		ctx: { key: string },
 		input: { id: number } & Record<string, unknown>,
 	) => {
 		const { id, ...body } = input;
-		return request<UpdateOutput>(ctx, `/api/v1/messages/${base}/${id}`, {
+		return typedRequest(keys.update, ctx, `/api/v1/messages/${base}/${id}`, {
 			method: 'PUT',
 			body,
 		});
 	},
 	delete: (ctx: { key: string }, input: { id: number }) =>
-		request<DeleteOutput>(ctx, `/api/v1/messages/${base}/${input.id}`, {
+		typedRequest(keys.delete, ctx, `/api/v1/messages/${base}/${input.id}`, {
 			method: 'DELETE',
 		}),
 });
 
-export const viberEndpoints = messageFamily<
-	unknown[],
-	{ id: number },
-	Record<string, unknown>,
-	string,
-	string
->('viber');
-export const appInboxEndpoints = messageFamily<
-	unknown[],
-	{ id: number },
-	Record<string, unknown>,
-	string,
-	string
->('appinbox');
-export const telegramBotEndpoints = messageFamily<
-	unknown[],
-	{ id: number },
-	Record<string, unknown>,
-	string,
-	string
->('telegrambot');
+export const viberEndpoints = messageFamily('viber', {
+	search: 'searchViberMessages',
+	add: 'addViberMessage',
+	get: 'getViberMessage',
+	update: 'updateBaseViberMessage',
+	delete: 'deleteViberMessage',
+});
+export const appInboxEndpoints = messageFamily('appinbox', {
+	search: 'searchAppInboxMessages',
+	add: 'addAppInboxMessage',
+	get: 'getAppInboxMessage',
+	update: 'updateBaseAppInboxMessage',
+	delete: 'deleteAppInboxMessage',
+});
+export const telegramBotEndpoints = messageFamily('telegrambot', {
+	search: 'searchTelegramBotMessages',
+	add: 'addTelegramBotMessage',
+	get: 'getTelegramBotMessage',
+	update: 'updateBaseTelegramBotMessage',
+	delete: 'deleteTelegramBotMessage',
+});
 export const smsEndpoints = {
 	search: (
 		ctx: { key: string },
