@@ -1,0 +1,1207 @@
+{
+  "id": "giphy",
+  "displayName": "GIPHY",
+  "description": "The world's largest library of animated GIFs, stickers, and emojis for apps and agents.",
+  "npmPackageName": "@corsair-dev/giphy",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 22,
+    "webhooks": 0,
+    "db": 2
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "giphy.api.analytics.register",
+      "shortPath": "analytics.register",
+      "description": "Register a GIF view, click, or send via its analytics pingback URL",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pingback_url",
+            "optional": false,
+            "type": "string",
+            "description": "Tracking URL from a GIF analytics object (onload, onclick, or onsent)"
+          },
+          {
+            "key": "customer_id",
+            "optional": false,
+            "type": "string",
+            "description": "Identifier assigned to a user in your platform"
+          },
+          {
+            "key": "ts",
+            "optional": true,
+            "type": "number",
+            "description": "UNIX timestamp in milliseconds of when the action occurred. Default: now"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "giphy.api.categories.getById",
+      "shortPath": "categories.getById",
+      "description": "Get subcategories of a specific GIPHY category by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "category_id",
+            "optional": false,
+            "type": "string",
+            "description": "Category identifier (name_encoded value from categories.list, e.g. \"actions\")"
+          },
+          {
+            "key": "customer_id",
+            "optional": true,
+            "type": "string",
+            "description": "Identifier assigned to a user in your platform"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ name: string, name_encoded?: string, subcategories?: { name: string, name_encoded?: string }[], gif?: { type?: string, id: string, url?: string, slug?: string, bitly_gif_url?: string, bitly_url?: string, embed_url?: string, username?: string, source?: string, title?: string, rating?: string, content_url?: string, source_tld?: string, source_post_url?: string, is_sticker?: number, import_datetime?: string, trending_datetime?: string, images?: {}, user?: { avatar_url?: string, banner_image?: string, banner_url?: string, profile_url?: string, username?: string, display_name?: string, description?: string, instagram_url?: string, website_url?: string, is_verified?: boolean } } }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ total_count?: number, count?: number, offset?: number }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ status?: number, msg?: string, response_id?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "giphy.api.categories.gifs",
+      "shortPath": "categories.gifs",
+      "description": "Fetch GIFs associated with a specific GIPHY category",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "category_id",
+            "optional": false,
+            "type": "string",
+            "description": "Category identifier (name_encoded value from categories.list, e.g. \"actions\")"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "The maximum number of objects to return. Default: 25"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Specifies the starting position of the results. Default: 0"
+          },
+          {
+            "key": "rating",
+            "optional": true,
+            "type": "g | pg | pg-13 | r",
+            "description": "Filters results by specified rating"
+          },
+          {
+            "key": "customer_id",
+            "optional": true,
+            "type": "string",
+            "description": "Identifier assigned to a user in your platform"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type?: string, id: string, url?: string, slug?: string, bitly_gif_url?: string, bitly_url?: string, embed_url?: string, username?: string, source?: string, title?: string, rating?: string, content_url?: string, source_tld?: string, source_post_url?: string, is_sticker?: number, import_datetime?: string, trending_datetime?: string, images?: {}, user?: { avatar_url?: string, banner_image?: string, banner_url?: string, profile_url?: string, username?: string, display_name?: string, description?: string, instagram_url?: string, website_url?: string, is_verified?: boolean } }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ total_count?: number, count?: number, offset?: number }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ status?: number, msg?: string, response_id?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "giphy.api.categories.list",
+      "shortPath": "categories.list",
+      "description": "List all categories and subcategories on GIPHY",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customer_id",
+            "optional": true,
+            "type": "string",
+            "description": "Identifier assigned to a user in your platform"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ name: string, name_encoded?: string, subcategories?: { name: string, name_encoded?: string }[], gif?: { type?: string, id: string, url?: string, slug?: string, bitly_gif_url?: string, bitly_url?: string, embed_url?: string, username?: string, source?: string, title?: string, rating?: string, content_url?: string, source_tld?: string, source_post_url?: string, is_sticker?: number, import_datetime?: string, trending_datetime?: string, images?: {}, user?: { avatar_url?: string, banner_image?: string, banner_url?: string, profile_url?: string, username?: string, display_name?: string, description?: string, instagram_url?: string, website_url?: string, is_verified?: boolean } } }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ total_count?: number, count?: number, offset?: number }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ status?: number, msg?: string, response_id?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "giphy.api.channels.search",
+      "shortPath": "channels.search",
+      "description": "Search GIPHY channels matching a query term",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string",
+            "description": "Term to search through GIPHY channels"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "The maximum number of objects to return. Default: 25, maximum: 50"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Specifies the starting position of the results. Default: 0"
+          },
+          {
+            "key": "customer_id",
+            "optional": true,
+            "type": "string",
+            "description": "Identifier assigned to a user in your platform"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: number, slug?: string, display_name?: string, content_type?: string, user?: { avatar_url?: string, banner_image?: string, banner_url?: string, profile_url?: string, username?: string, display_name?: string, description?: string, instagram_url?: string, website_url?: string, is_verified?: boolean } }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ total_count?: number, count?: number, offset?: number }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ status?: number, msg?: string, response_id?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "giphy.api.emoji.get",
+      "shortPath": "emoji.get",
+      "description": "Fetch animated emojis from GIPHY",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "The maximum number of objects to return. Default: 25"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Specifies the starting position of the results. Default: 0"
+          },
+          {
+            "key": "customer_id",
+            "optional": true,
+            "type": "string",
+            "description": "Identifier assigned to a user in your platform"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type?: string, id: string, url?: string, slug?: string, bitly_gif_url?: string, bitly_url?: string, embed_url?: string, username?: string, source?: string, title?: string, rating?: string, content_url?: string, source_tld?: string, source_post_url?: string, is_sticker?: number, import_datetime?: string, trending_datetime?: string, images?: {}, user?: { avatar_url?: string, banner_image?: string, banner_url?: string, profile_url?: string, username?: string, display_name?: string, description?: string, instagram_url?: string, website_url?: string, is_verified?: boolean } }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ total_count?: number, count?: number, offset?: number }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ status?: number, msg?: string, response_id?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "giphy.api.emoji.variations",
+      "shortPath": "emoji.variations",
+      "description": "Get variations of a specific GIPHY emoji by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "gif_id",
+            "optional": false,
+            "type": "string",
+            "description": "GIPHY Emoji GIF ID to get variations for"
+          },
+          {
+            "key": "customer_id",
+            "optional": true,
+            "type": "string",
+            "description": "Identifier assigned to a user in your platform"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type?: string, id: string, url?: string, slug?: string, bitly_gif_url?: string, bitly_url?: string, embed_url?: string, username?: string, source?: string, title?: string, rating?: string, content_url?: string, source_tld?: string, source_post_url?: string, is_sticker?: number, import_datetime?: string, trending_datetime?: string, images?: {}, user?: { avatar_url?: string, banner_image?: string, banner_url?: string, profile_url?: string, username?: string, display_name?: string, description?: string, instagram_url?: string, website_url?: string, is_verified?: boolean } }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ total_count?: number, count?: number, offset?: number }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ status?: number, msg?: string, response_id?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "giphy.api.gifs.getById",
+      "shortPath": "gifs.getById",
+      "description": "Get details and renditions of a specific GIF by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "gif_id",
+            "optional": false,
+            "type": "string",
+            "description": "GIPHY GIF ID"
+          },
+          {
+            "key": "rating",
+            "optional": true,
+            "type": "g | pg | pg-13 | r",
+            "description": "If the GIF rating exceeds this, the API returns an empty error response"
+          },
+          {
+            "key": "customer_id",
+            "optional": true,
+            "type": "string",
+            "description": "Identifier assigned to a user in your platform"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type?: string, id: string, url?: string, slug?: string, bitly_gif_url?: string, bitly_url?: string, embed_url?: string, username?: string, source?: string, title?: string, rating?: string, content_url?: string, source_tld?: string, source_post_url?: string, is_sticker?: number, import_datetime?: string, trending_datetime?: string, images?: {}, user?: { avatar_url?: string, banner_image?: string, banner_url?: string, profile_url?: string, username?: string, display_name?: string, description?: string, instagram_url?: string, website_url?: string, is_verified?: boolean } }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ status?: number, msg?: string, response_id?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "giphy.api.gifs.getByIds",
+      "shortPath": "gifs.getByIds",
+      "description": "Get details and renditions for multiple GIFs by their IDs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ids",
+            "optional": false,
+            "type": "string[] | string",
+            "description": "Array of GIF IDs or comma-separated string"
+          },
+          {
+            "key": "rating",
+            "optional": true,
+            "type": "g | pg | pg-13 | r",
+            "description": "Filters results by specified rating"
+          },
+          {
+            "key": "customer_id",
+            "optional": true,
+            "type": "string",
+            "description": "Identifier assigned to a user in your platform"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type?: string, id: string, url?: string, slug?: string, bitly_gif_url?: string, bitly_url?: string, embed_url?: string, username?: string, source?: string, title?: string, rating?: string, content_url?: string, source_tld?: string, source_post_url?: string, is_sticker?: number, import_datetime?: string, trending_datetime?: string, images?: {}, user?: { avatar_url?: string, banner_image?: string, banner_url?: string, profile_url?: string, username?: string, display_name?: string, description?: string, instagram_url?: string, website_url?: string, is_verified?: boolean } }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ total_count?: number, count?: number, offset?: number }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ status?: number, msg?: string, response_id?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "giphy.api.gifs.random",
+      "shortPath": "gifs.random",
+      "description": "Fetch a random GIF from GIPHY optionally filtered by tag",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string",
+            "description": "Filters results by specified tag"
+          },
+          {
+            "key": "rating",
+            "optional": true,
+            "type": "g | pg | pg-13 | r",
+            "description": "Filters results by specified rating"
+          },
+          {
+            "key": "random_id",
+            "optional": true,
+            "type": "string",
+            "description": "Deprecated alias for customer_id, kept for backwards compatibility"
+          },
+          {
+            "key": "customer_id",
+            "optional": true,
+            "type": "string",
+            "description": "Identifier assigned to a user in your platform"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type?: string, id: string, url?: string, slug?: string, bitly_gif_url?: string, bitly_url?: string, embed_url?: string, username?: string, source?: string, title?: string, rating?: string, content_url?: string, source_tld?: string, source_post_url?: string, is_sticker?: number, import_datetime?: string, trending_datetime?: string, images?: {}, user?: { avatar_url?: string, banner_image?: string, banner_url?: string, profile_url?: string, username?: string, display_name?: string, description?: string, instagram_url?: string, website_url?: string, is_verified?: boolean } }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ status?: number, msg?: string, response_id?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "giphy.api.gifs.search",
+      "shortPath": "gifs.search",
+      "description": "Search all GIPHY GIFs for a word or phrase",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string",
+            "description": "Search query term or phrase"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "The maximum number of objects to return. Default: 25"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Specifies the starting position of the results. Default: 0"
+          },
+          {
+            "key": "rating",
+            "optional": true,
+            "type": "g | pg | pg-13 | r",
+            "description": "Filters results by specified rating"
+          },
+          {
+            "key": "lang",
+            "optional": true,
+            "type": "string",
+            "description": "Specify default language for regional content"
+          },
+          {
+            "key": "random_id",
+            "optional": true,
+            "type": "string",
+            "description": "Deprecated alias for customer_id, kept for backwards compatibility"
+          },
+          {
+            "key": "customer_id",
+            "optional": true,
+            "type": "string",
+            "description": "Identifier assigned to a user in your platform"
+          },
+          {
+            "key": "channel_ids",
+            "optional": true,
+            "type": "string",
+            "description": "Filters results by specified channel IDs, separated by commas. Maximum: 5"
+          },
+          {
+            "key": "bundle",
+            "optional": true,
+            "type": "string",
+            "description": "Returns upload or clips data"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type?: string, id: string, url?: string, slug?: string, bitly_gif_url?: string, bitly_url?: string, embed_url?: string, username?: string, source?: string, title?: string, rating?: string, content_url?: string, source_tld?: string, source_post_url?: string, is_sticker?: number, import_datetime?: string, trending_datetime?: string, images?: {}, user?: { avatar_url?: string, banner_image?: string, banner_url?: string, profile_url?: string, username?: string, display_name?: string, description?: string, instagram_url?: string, website_url?: string, is_verified?: boolean } }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ total_count?: number, count?: number, offset?: number }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ status?: number, msg?: string, response_id?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "giphy.api.gifs.translate",
+      "shortPath": "gifs.translate",
+      "description": "Translate a word or phrase into a GIF using GIPHY translate endpoint",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "s",
+            "optional": false,
+            "type": "string",
+            "description": "Search term to translate into a GIF"
+          },
+          {
+            "key": "weirdness",
+            "optional": true,
+            "type": "number",
+            "description": "Value from 0-10 on the weirdness scale"
+          },
+          {
+            "key": "rating",
+            "optional": true,
+            "type": "g | pg | pg-13 | r",
+            "description": "Filters results by specified rating"
+          },
+          {
+            "key": "customer_id",
+            "optional": true,
+            "type": "string",
+            "description": "Identifier assigned to a user in your platform"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type?: string, id: string, url?: string, slug?: string, bitly_gif_url?: string, bitly_url?: string, embed_url?: string, username?: string, source?: string, title?: string, rating?: string, content_url?: string, source_tld?: string, source_post_url?: string, is_sticker?: number, import_datetime?: string, trending_datetime?: string, images?: {}, user?: { avatar_url?: string, banner_image?: string, banner_url?: string, profile_url?: string, username?: string, display_name?: string, description?: string, instagram_url?: string, website_url?: string, is_verified?: boolean } }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ status?: number, msg?: string, response_id?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "giphy.api.gifs.trending",
+      "shortPath": "gifs.trending",
+      "description": "Fetch currently trending GIFs from GIPHY",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "The maximum number of objects to return. Default: 25"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Specifies the starting position of the results. Default: 0"
+          },
+          {
+            "key": "rating",
+            "optional": true,
+            "type": "g | pg | pg-13 | r",
+            "description": "Filters results by specified rating"
+          },
+          {
+            "key": "random_id",
+            "optional": true,
+            "type": "string",
+            "description": "Deprecated alias for customer_id, kept for backwards compatibility"
+          },
+          {
+            "key": "customer_id",
+            "optional": true,
+            "type": "string",
+            "description": "Identifier assigned to a user in your platform"
+          },
+          {
+            "key": "bundle",
+            "optional": true,
+            "type": "string",
+            "description": "Returns upload or clips data"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type?: string, id: string, url?: string, slug?: string, bitly_gif_url?: string, bitly_url?: string, embed_url?: string, username?: string, source?: string, title?: string, rating?: string, content_url?: string, source_tld?: string, source_post_url?: string, is_sticker?: number, import_datetime?: string, trending_datetime?: string, images?: {}, user?: { avatar_url?: string, banner_image?: string, banner_url?: string, profile_url?: string, username?: string, display_name?: string, description?: string, instagram_url?: string, website_url?: string, is_verified?: boolean } }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ total_count?: number, count?: number, offset?: number }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ status?: number, msg?: string, response_id?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "giphy.api.gifs.upload",
+      "shortPath": "gifs.upload",
+      "description": "Upload an animated GIF or video to GIPHY from a file or a public URL",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_base64",
+            "optional": true,
+            "type": "string",
+            "description": "Animated GIF or video file content as base64. Required when source_image_url is omitted"
+          },
+          {
+            "key": "file_name",
+            "optional": true,
+            "type": "string",
+            "description": "Filename for the multipart upload part. Default: upload.gif"
+          },
+          {
+            "key": "source_image_url",
+            "optional": true,
+            "type": "string",
+            "description": "Public URL of the image or video to upload. Required when file_base64 is omitted"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-delimited list of tags applied to the upload"
+          },
+          {
+            "key": "source_post_url",
+            "optional": true,
+            "type": "string",
+            "description": "URL of the source of the asset"
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string",
+            "description": "Assigned username (approved production apps only)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ status?: number, msg?: string, response_id?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "giphy.api.randomId.get",
+      "shortPath": "randomId.get",
+      "description": "Generate a privacy-safe random ID to use as customer_id on other endpoints",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ random_id: string }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ status?: number, msg?: string, response_id?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "giphy.api.stickers.random",
+      "shortPath": "stickers.random",
+      "description": "Fetch a random sticker from GIPHY optionally filtered by tag",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string",
+            "description": "Filters results by specified tag"
+          },
+          {
+            "key": "rating",
+            "optional": true,
+            "type": "g | pg | pg-13 | r",
+            "description": "Filters results by specified rating"
+          },
+          {
+            "key": "customer_id",
+            "optional": true,
+            "type": "string",
+            "description": "Identifier assigned to a user in your platform"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type?: string, id: string, url?: string, slug?: string, bitly_gif_url?: string, bitly_url?: string, embed_url?: string, username?: string, source?: string, title?: string, rating?: string, content_url?: string, source_tld?: string, source_post_url?: string, is_sticker?: number, import_datetime?: string, trending_datetime?: string, images?: {}, user?: { avatar_url?: string, banner_image?: string, banner_url?: string, profile_url?: string, username?: string, display_name?: string, description?: string, instagram_url?: string, website_url?: string, is_verified?: boolean } }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ status?: number, msg?: string, response_id?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "giphy.api.stickers.search",
+      "shortPath": "stickers.search",
+      "description": "Search GIPHY animated stickers for a word or phrase",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string",
+            "description": "Search query term or phrase"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "The maximum number of objects to return. Default: 25"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Specifies the starting position of the results. Default: 0"
+          },
+          {
+            "key": "rating",
+            "optional": true,
+            "type": "g | pg | pg-13 | r",
+            "description": "Filters results by specified rating"
+          },
+          {
+            "key": "lang",
+            "optional": true,
+            "type": "string",
+            "description": "Specify default language for regional content"
+          },
+          {
+            "key": "customer_id",
+            "optional": true,
+            "type": "string",
+            "description": "Identifier assigned to a user in your platform"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type?: string, id: string, url?: string, slug?: string, bitly_gif_url?: string, bitly_url?: string, embed_url?: string, username?: string, source?: string, title?: string, rating?: string, content_url?: string, source_tld?: string, source_post_url?: string, is_sticker?: number, import_datetime?: string, trending_datetime?: string, images?: {}, user?: { avatar_url?: string, banner_image?: string, banner_url?: string, profile_url?: string, username?: string, display_name?: string, description?: string, instagram_url?: string, website_url?: string, is_verified?: boolean } }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ total_count?: number, count?: number, offset?: number }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ status?: number, msg?: string, response_id?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "giphy.api.stickers.translate",
+      "shortPath": "stickers.translate",
+      "description": "Translate a word or phrase into a sticker",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "s",
+            "optional": false,
+            "type": "string",
+            "description": "Search term to translate into a sticker"
+          },
+          {
+            "key": "weirdness",
+            "optional": true,
+            "type": "number",
+            "description": "Value from 0-10 on the weirdness scale"
+          },
+          {
+            "key": "rating",
+            "optional": true,
+            "type": "g | pg | pg-13 | r",
+            "description": "Filters results by specified rating"
+          },
+          {
+            "key": "customer_id",
+            "optional": true,
+            "type": "string",
+            "description": "Identifier assigned to a user in your platform"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type?: string, id: string, url?: string, slug?: string, bitly_gif_url?: string, bitly_url?: string, embed_url?: string, username?: string, source?: string, title?: string, rating?: string, content_url?: string, source_tld?: string, source_post_url?: string, is_sticker?: number, import_datetime?: string, trending_datetime?: string, images?: {}, user?: { avatar_url?: string, banner_image?: string, banner_url?: string, profile_url?: string, username?: string, display_name?: string, description?: string, instagram_url?: string, website_url?: string, is_verified?: boolean } }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ status?: number, msg?: string, response_id?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "giphy.api.stickers.trending",
+      "shortPath": "stickers.trending",
+      "description": "Fetch currently trending stickers from GIPHY",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "The maximum number of objects to return. Default: 25"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Specifies the starting position of the results. Default: 0"
+          },
+          {
+            "key": "rating",
+            "optional": true,
+            "type": "g | pg | pg-13 | r",
+            "description": "Filters results by specified rating"
+          },
+          {
+            "key": "customer_id",
+            "optional": true,
+            "type": "string",
+            "description": "Identifier assigned to a user in your platform"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type?: string, id: string, url?: string, slug?: string, bitly_gif_url?: string, bitly_url?: string, embed_url?: string, username?: string, source?: string, title?: string, rating?: string, content_url?: string, source_tld?: string, source_post_url?: string, is_sticker?: number, import_datetime?: string, trending_datetime?: string, images?: {}, user?: { avatar_url?: string, banner_image?: string, banner_url?: string, profile_url?: string, username?: string, display_name?: string, description?: string, instagram_url?: string, website_url?: string, is_verified?: boolean } }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ total_count?: number, count?: number, offset?: number }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ status?: number, msg?: string, response_id?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "giphy.api.tags.autocomplete",
+      "shortPath": "tags.autocomplete",
+      "description": "Autocomplete a tag term on the GIPHY network",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string",
+            "description": "Tag term to autocomplete"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "The maximum number of objects to return. Default: 5"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Specifies the starting position of the results. Default: 0"
+          },
+          {
+            "key": "customer_id",
+            "optional": true,
+            "type": "string",
+            "description": "Identifier assigned to a user in your platform"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ name: string }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ status?: number, msg?: string, response_id?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "giphy.api.tags.related",
+      "shortPath": "tags.related",
+      "description": "List tag terms related to the given tag on GIPHY",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "term",
+            "optional": false,
+            "type": "string",
+            "description": "Tag term to find related tags for"
+          },
+          {
+            "key": "customer_id",
+            "optional": true,
+            "type": "string",
+            "description": "Identifier assigned to a user in your platform"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ name: string }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ status?: number, msg?: string, response_id?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "giphy.api.tags.trending",
+      "shortPath": "tags.trending",
+      "description": "List the most popular trending search terms on GIPHY",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customer_id",
+            "optional": true,
+            "type": "string",
+            "description": "Identifier assigned to a user in your platform"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ status?: number, msg?: string, response_id?: string }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "giphy.db.categories.search",
+      "entityName": "categories",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "nameEncoded",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "giphy.db.gifs.search",
+      "entityName": "gifs",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "slug",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "embedUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "rating",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "username",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "source",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "importedAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

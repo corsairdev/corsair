@@ -1,0 +1,202 @@
+---
+title: API
+description: "API reference for Anonyflow: every `anonyflow.api.*` operation with input and output types."
+---
+
+Every `anonyflow.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Core
+
+### anonymize
+
+`core.anonymize`
+
+Anonymize sensitive data in text
+
+**Risk:** `write`
+
+```ts
+await corsair.anonyflow.api.core.anonymize({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `text` | `string` | Yes | The raw text to anonymize |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `anonymizedText` | `string` | Yes | — |
+
+
+
+---
+
+### anonymizePacket
+
+`core.anonymizePacket`
+
+Encrypt field values within a data packet based on keys
+
+**Risk:** `write`
+
+```ts
+await corsair.anonyflow.api.core.anonymizePacket({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | The data packet to anonymize |
+| `keys` | `string[]` | Yes | The keys within the data packet to anonymize |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `true` | Yes | — |
+| `value` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deanonymize
+
+`core.deanonymize`
+
+Restore original text from anonymized mapping
+
+**Risk:** `write`
+
+```ts
+await corsair.anonyflow.api.core.deanonymize({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `anonymizedText` | `string` | Yes | The anonymized text to decode |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `originalText` | `string` | Yes | — |
+
+
+
+---
+
+### deanonymizePacket
+
+`core.deanonymizePacket`
+
+Decrypt field values within a data packet based on keys
+
+**Risk:** `write`
+
+```ts
+await corsair.anonyflow.api.core.deanonymizePacket({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | The data packet to deanonymize |
+| `keys` | `string[]` | Yes | The keys within the data packet to deanonymize |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `true` | Yes | — |
+| `value` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### testConnection
+
+`core.testConnection`
+
+Verify API key and connectivity
+
+**Risk:** `read`
+
+```ts
+await corsair.anonyflow.api.core.testConnection({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `true` | Yes | — |
+
+
+
+---
+

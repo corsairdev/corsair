@@ -158,7 +158,7 @@ describe('connect-link generation in endpoint binding', () => {
 		expect(result).toBe('sent');
 	});
 
-	it('returns connect link message when keyBuilder throws AuthMissingError', async () => {
+	it('throws connect link message when keyBuilder throws AuthMissingError', async () => {
 		const boundFn = createBoundEndpoint({
 			keyBuilder: async () => {
 				throw new AuthMissingError('gmail', 'oauth_2');
@@ -175,9 +175,13 @@ describe('connect-link generation in endpoint binding', () => {
 			},
 		});
 
-		const result = await boundFn();
-		expect(result).toContain('[auth-missing:gmail]');
-		expect(result).toContain('https://myapp.com/connect');
+		await expect(boundFn()).rejects.toMatchObject({
+			name: 'AuthMissingError',
+			pluginId: 'gmail',
+			authType: 'oauth_2',
+		});
+		await expect(boundFn()).rejects.toThrow('[auth-missing:gmail]');
+		await expect(boundFn()).rejects.toThrow('https://myapp.com/connect');
 	});
 
 	it('propagates non-AuthMissingError from keyBuilder even with manualConfig', async () => {
@@ -225,9 +229,8 @@ describe('connect-link generation in endpoint binding', () => {
 			},
 		});
 
-		const result = await boundFn();
-		expect(result).toContain('Please connect gmail');
-		expect(result).toContain('https://myapp.com/connect');
+		await expect(boundFn()).rejects.toThrow('Please connect gmail');
+		await expect(boundFn()).rejects.toThrow('https://myapp.com/connect');
 	});
 
 	it('does not intercept errors when manualConfig is not set', async () => {
@@ -294,11 +297,10 @@ describe('connect-link generation in endpoint binding', () => {
 			},
 		});
 
-		const result = await boundFn();
-		expect(result).toBe('[auth-missing:slack:api_key]');
+		await expect(boundFn()).rejects.toThrow('[auth-missing:slack:api_key]');
 	});
 
-	it('returns hub connect link message when keyBuilder throws AuthMissingError', async () => {
+	it('throws hub connect link message when keyBuilder throws AuthMissingError', async () => {
 		const boundFn = createBoundEndpoint({
 			keyBuilder: async () => {
 				throw new AuthMissingError('gmail', 'oauth_2');
@@ -307,12 +309,13 @@ describe('connect-link generation in endpoint binding', () => {
 			plugin: gmailPlugin,
 		});
 
-		const result = await boundFn();
-		expect(result).toContain('[auth-missing:gmail]');
-		expect(result).toContain('https://hub.example/connect/sess-1');
+		await expect(boundFn()).rejects.toThrow('[auth-missing:gmail]');
+		await expect(boundFn()).rejects.toThrow(
+			'https://hub.example/connect/sess-1',
+		);
 	});
 
-	it('returns hub connect link message for managed AuthMissingError', async () => {
+	it('throws hub connect link message for managed AuthMissingError', async () => {
 		const boundFn = createBoundEndpoint({
 			keyBuilder: async () => {
 				throw new AuthMissingError('github', 'managed');
@@ -321,11 +324,12 @@ describe('connect-link generation in endpoint binding', () => {
 			plugin: githubPlugin,
 		});
 
-		const result = await boundFn();
-		expect(result).toContain('https://hub.example/connect/sess-1');
+		await expect(boundFn()).rejects.toThrow(
+			'https://hub.example/connect/sess-1',
+		);
 	});
 
-	it('returns hub connect link message for api_key AuthMissingError', async () => {
+	it('throws hub connect link message for api_key AuthMissingError', async () => {
 		const boundFn = createBoundEndpoint({
 			keyBuilder: async () => {
 				throw new AuthMissingError('slack', 'api_key');
@@ -334,18 +338,18 @@ describe('connect-link generation in endpoint binding', () => {
 			plugin: slackPlugin,
 		});
 
-		const result = await boundFn();
-		expect(result).toContain('https://hub.example/connect/sess-1');
+		await expect(boundFn()).rejects.toThrow(
+			'https://hub.example/connect/sess-1',
+		);
 	});
 
-	it('returns plain auth-missing tag when hub config is missing', async () => {
+	it('throws plain auth-missing tag when hub config is missing', async () => {
 		const boundFn = createBoundEndpoint({
 			keyBuilder: async () => {
 				throw new AuthMissingError('gmail', 'oauth_2');
 			},
 		});
 
-		const result = await boundFn();
-		expect(result).toBe('[auth-missing:gmail:oauth_2]');
+		await expect(boundFn()).rejects.toThrow('[auth-missing:gmail:oauth_2]');
 	});
 });

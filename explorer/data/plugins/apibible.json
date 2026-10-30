@@ -1,0 +1,1187 @@
+{
+  "id": "apibible",
+  "displayName": "API.Bible",
+  "description": "Bible content API for accessing scripture text, versions, and passage lookups.",
+  "npmPackageName": "@corsair-dev/apibible",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 19,
+    "webhooks": 0,
+    "db": 8
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "apibible.api.audioBibles.get",
+      "shortPath": "audioBibles.get",
+      "description": "Get a specific audio Bible version",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "audioBibleId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, dblId?: string, relatedDbl?: string | null, name: string, nameLocal: string, abbreviation?: string | null, abbreviationLocal?: string | null, description?: string | null, descriptionLocal?: string | null, language: { id: string, name: string, nameLocal: string, script?: string | null, scriptDirection?: string | null }, countries: { id: string, name: string, nameLocal: string }[], type: string, updatedAt: string, copyright?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apibible.api.audioBibles.list",
+      "shortPath": "audioBibles.list",
+      "description": "List audio Bible versions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, dblId?: string, relatedDbl?: string | null, name: string, nameLocal: string, abbreviation?: string | null, abbreviationLocal?: string | null, description?: string | null, descriptionLocal?: string | null, language: { id: string, name: string, nameLocal: string, script?: string | null, scriptDirection?: string | null }, countries: { id: string, name: string, nameLocal: string }[], type: string, updatedAt: string, copyright?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apibible.api.audioBooks.get",
+      "shortPath": "audioBooks.get",
+      "description": "Get a specific book of an audio Bible",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "audioBibleId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "bookId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, bibleId: string, abbreviation: string, name: string, nameLong?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apibible.api.audioBooks.list",
+      "shortPath": "audioBooks.list",
+      "description": "List all books of an audio Bible",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "audioBibleId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, bibleId: string, abbreviation: string, name: string, nameLong?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apibible.api.audioChapters.get",
+      "shortPath": "audioChapters.get",
+      "description": "Get an audio chapter (includes an mp3 resource URL)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "audioBibleId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "chapterId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, bibleId: string, bookId: string, number: string, reference: string, resourceUrl: string, expiresAt: string, copyright?: string, next?: { id: string, number?: string, bookId?: string, title?: string } | null, previous?: { id: string, number?: string, bookId?: string, title?: string } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apibible.api.audioChapters.list",
+      "shortPath": "audioChapters.list",
+      "description": "List all chapters of an audio book",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "audioBibleId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "bookId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, bibleId: string, bookId: string, number: string, reference: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apibible.api.bibles.get",
+      "shortPath": "bibles.get",
+      "description": "Get details for a specific Bible version",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bibleId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, dblId: string, relatedDbl?: string | null, name: string, nameLocal: string, abbreviation?: string | null, abbreviationLocal?: string | null, description?: string | null, descriptionLocal?: string | null, language: { id: string, name: string, nameLocal: string, script?: string | null, scriptDirection?: string | null }, countries: { id: string, name: string, nameLocal: string }[], type: string, updatedAt: string, copyright?: string, info?: string, audioBibles?: any[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apibible.api.bibles.list",
+      "shortPath": "bibles.list",
+      "description": "List supported Bible versions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, dblId: string, relatedDbl?: string | null, name: string, nameLocal: string, abbreviation?: string | null, abbreviationLocal?: string | null, description?: string | null, descriptionLocal?: string | null, language: { id: string, name: string, nameLocal: string, script?: string | null, scriptDirection?: string | null }, countries: { id: string, name: string, nameLocal: string }[], type: string, updatedAt: string, copyright?: string, info?: string, audioBibles?: any[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apibible.api.books.get",
+      "shortPath": "books.get",
+      "description": "Get a specific book of a Bible version",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bibleId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "bookId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "includeChapters",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, bibleId: string, abbreviation: string, name: string, nameLong?: string, chapters?: { id: string, bibleId: string, bookId: string, number: string, position?: number }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apibible.api.books.list",
+      "shortPath": "books.list",
+      "description": "List all books of a Bible version",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bibleId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, bibleId: string, abbreviation: string, name: string, nameLong?: string, chapters?: { id: string, bibleId: string, bookId: string, number: string, position?: number }[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apibible.api.chapters.get",
+      "shortPath": "chapters.get",
+      "description": "Get a chapter with its text content",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "includeNotes",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "includeTitles",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "includeChapterNumbers",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "includeVerseNumbers",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "includeVerseSpans",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "bibleId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "chapterId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, bibleId: string, bookId: string, number: string, reference: string, content: string, copyright?: string, verseCount?: number, next?: { id: string, number?: string, bookId?: string, title?: string } | null, previous?: { id: string, number?: string, bookId?: string, title?: string } | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ fumsToken?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apibible.api.chapters.list",
+      "shortPath": "chapters.list",
+      "description": "List all chapters of a book",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bibleId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "bookId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, bibleId: string, bookId: string, number: string, reference: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apibible.api.chapters.listSections",
+      "shortPath": "chapters.listSections",
+      "description": "List sections (usfm headings) within a chapter",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bibleId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "chapterId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, bibleId: string, bookId: string, title: string, firstVerseId?: string, lastVerseId?: string, firstVerseOrgId?: string, lastVerseOrgId?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apibible.api.passages.get",
+      "shortPath": "passages.get",
+      "description": "Get one or more verses of scripture text by passage reference",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "includeNotes",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "includeTitles",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "includeChapterNumbers",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "includeVerseNumbers",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "includeVerseSpans",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "bibleId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "passageId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, orgId?: string, bibleId: string, bookId?: string, chapterIds?: string[], content: string, reference: string, copyright?: string, verseCount?: number }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ fumsToken?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apibible.api.search.query",
+      "shortPath": "search.query",
+      "description": "Search for verses within a Bible version",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bibleId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "relevance | canonical | usfm"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ query: string, limit: number, offset: number, total: number, verseCount: number, verses: { id: string, orgId?: string, bibleId: string, bookId: string, chapterId: string, reference: string, text: string }[] }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ fumsToken?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apibible.api.sections.get",
+      "shortPath": "sections.get",
+      "description": "Get a section with its text content",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "includeNotes",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "includeTitles",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "includeChapterNumbers",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "includeVerseNumbers",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "includeVerseSpans",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "bibleId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sectionId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, bibleId: string, bookId: string, title: string, firstVerseId?: string, lastVerseId?: string, firstVerseOrgId?: string, lastVerseOrgId?: string, chapterId?: string, content: string, copyright?: string, verseCount?: number, next?: { id: string, number?: string, bookId?: string, title?: string } | null, previous?: { id: string, number?: string, bookId?: string, title?: string } | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ fumsToken?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apibible.api.sections.list",
+      "shortPath": "sections.list",
+      "description": "List sections (usfm headings) of a book",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bibleId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "bookId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, bibleId: string, bookId: string, title: string, firstVerseId?: string, lastVerseId?: string, firstVerseOrgId?: string, lastVerseOrgId?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apibible.api.verses.get",
+      "shortPath": "verses.get",
+      "description": "Get a single verse with its text content",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "includeNotes",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "includeTitles",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "includeChapterNumbers",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "includeVerseNumbers",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "includeVerseSpans",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "bibleId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "verseId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, orgId?: string, bibleId: string, bookId: string, chapterId: string, reference: string, content: string, copyright?: string, verseCount?: number, next?: { id: string, number?: string, bookId?: string, title?: string } | null, previous?: { id: string, number?: string, bookId?: string, title?: string } | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ fumsToken?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apibible.api.verses.list",
+      "shortPath": "verses.list",
+      "description": "List all verses of a chapter",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "includeNotes",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "includeTitles",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "includeChapterNumbers",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "includeVerseNumbers",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "includeVerseSpans",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "bibleId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "chapterId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, orgId?: string, bibleId: string, bookId: string, chapterId: string, reference: string }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "apibible.db.audioBibles.search",
+      "entityName": "audioBibles",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "dblId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "nameLocal",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "abbreviation",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "abbreviationLocal",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "copyright",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "apibible.db.audioChapters.search",
+      "entityName": "audioChapters",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "bibleId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "bookId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "number",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "reference",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "resourceUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "expiresAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "copyright",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "apibible.db.bibles.search",
+      "entityName": "bibles",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "dblId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "relatedDbl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "nameLocal",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "abbreviation",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "abbreviationLocal",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "descriptionLocal",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "copyright",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "apibible.db.books.search",
+      "entityName": "books",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "bibleId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "abbreviation",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "nameLong",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "apibible.db.chapters.search",
+      "entityName": "chapters",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "bibleId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "bookId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "number",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "reference",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "apibible.db.passages.search",
+      "entityName": "passages",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "orgId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "bibleId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "bookId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "reference",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "content",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "copyright",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "verseCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "apibible.db.sections.search",
+      "entityName": "sections",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "bibleId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "bookId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "firstVerseId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lastVerseId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "apibible.db.verses.search",
+      "entityName": "verses",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "orgId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "bibleId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "bookId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "chapterId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "reference",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "content",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "copyright",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

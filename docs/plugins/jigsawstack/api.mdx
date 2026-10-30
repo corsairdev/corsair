@@ -1,0 +1,1392 @@
+---
+title: API
+description: "API reference for JigsawStack: every `jigsawstack.api.*` operation with input and output types."
+---
+
+Every `jigsawstack.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Ai
+
+### imageGeneration
+
+`ai.imageGeneration`
+
+Generate an image from a text prompt
+
+**Risk:** `write`
+
+```ts
+await corsair.jigsawstack.api.ai.imageGeneration({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `prompt` | `string` | Yes | — |
+| `aspect_ratio` | `string` | No | — |
+| `width` | `number` | No | — |
+| `height` | `number` | No | — |
+| `steps` | `number` | No | — |
+| `output_format` | `png \| svg` | No | — |
+| `return_type` | `url \| binary \| base64` | No | — |
+| `url` | `string` | No | — |
+| `file_store_key` | `string` | No | — |
+| `advance_config` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="advance_config full type">
+
+```ts
+{
+  negative_prompt?: string,
+  guidance?: number,
+  seed?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  success: boolean,
+  content_type: string,
+  base64: string
+} | {
+  success: boolean,
+  _usage?: {
+    input_tokens?: number,
+    output_tokens?: number,
+    inference_time_tokens?: number,
+    total_tokens?: number
+  },
+  log_id?: string,
+  url?: string,
+  base64?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### prediction
+
+`ai.prediction`
+
+Forecast a time series from dated values
+
+**Risk:** `read`
+
+```ts
+await corsair.jigsawstack.api.ai.prediction({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dataset` | `object[]` | Yes | — |
+| `steps` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="dataset full type">
+
+```ts
+{
+  value: number | string,
+  date: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `_usage` | `object` | No | — |
+| `log_id` | `string` | No | — |
+| `prediction` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="_usage full type">
+
+```ts
+{
+  input_tokens?: number,
+  output_tokens?: number,
+  inference_time_tokens?: number,
+  total_tokens?: number
+}
+```
+</Accordion>
+
+<Accordion title="prediction full type">
+
+```ts
+{
+  value?: number | string,
+  date?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### sentiment
+
+`ai.sentiment`
+
+Analyze sentiment and emotion in text
+
+**Risk:** `read`
+
+```ts
+await corsair.jigsawstack.api.ai.sentiment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `text` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `_usage` | `object` | No | — |
+| `log_id` | `string` | No | — |
+| `sentiment` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="_usage full type">
+
+```ts
+{
+  input_tokens?: number,
+  output_tokens?: number,
+  inference_time_tokens?: number,
+  total_tokens?: number
+}
+```
+</Accordion>
+
+<Accordion title="sentiment full type">
+
+```ts
+{
+  emotion?: string,
+  sentiment?: string,
+  score?: number,
+  sentences?: {
+    text?: string,
+    emotion?: string,
+    sentiment?: string,
+    score?: number
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### summary
+
+`ai.summary`
+
+Summarize text or a PDF as a paragraph or bullet points
+
+**Risk:** `read`
+
+```ts
+await corsair.jigsawstack.api.ai.summary({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `text` | `string` | No | — |
+| `url` | `string` | No | — |
+| `file_store_key` | `string` | No | — |
+| `type` | `text \| points` | No | — |
+| `max_points` | `number` | No | — |
+| `max_characters` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `_usage` | `object` | No | — |
+| `log_id` | `string` | No | — |
+| `summary` | `string \| string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="_usage full type">
+
+```ts
+{
+  input_tokens?: number,
+  output_tokens?: number,
+  inference_time_tokens?: number,
+  total_tokens?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### translate
+
+`ai.translate`
+
+Translate text into a target language
+
+**Risk:** `read`
+
+```ts
+await corsair.jigsawstack.api.ai.translate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `text` | `string \| string[]` | Yes | — |
+| `target_language` | `string` | Yes | — |
+| `current_language` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `_usage` | `object` | No | — |
+| `log_id` | `string` | No | — |
+| `translated_text` | `string \| string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="_usage full type">
+
+```ts
+{
+  input_tokens?: number,
+  output_tokens?: number,
+  inference_time_tokens?: number,
+  total_tokens?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Audio
+
+### createVoiceClone
+
+`audio.createVoiceClone`
+
+Clone a voice from an audio sample for later TTS
+
+**Risk:** `write`
+
+```ts
+await corsair.jigsawstack.api.audio.createVoiceClone({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `url` | `string` | No | — |
+| `file_store_key` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `_usage` | `object` | No | — |
+| `log_id` | `string` | No | — |
+| `voice_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="_usage full type">
+
+```ts
+{
+  input_tokens?: number,
+  output_tokens?: number,
+  inference_time_tokens?: number,
+  total_tokens?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### speechToText
+
+`audio.speechToText`
+
+Transcribe audio or video to text
+
+**Risk:** `read`
+
+```ts
+await corsair.jigsawstack.api.audio.speechToText({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | No | — |
+| `file_store_key` | `string` | No | — |
+| `language` | `string` | No | — |
+| `translate` | `boolean` | No | — |
+| `by_speaker` | `boolean` | No | — |
+| `webhook_url` | `string` | No | — |
+| `batch_size` | `number` | No | — |
+| `chunk_duration` | `number` | No | — |
+| `word_timestamps` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `_usage` | `object` | No | — |
+| `log_id` | `string` | No | — |
+| `text` | `string` | No | — |
+| `chunks` | `any[]` | No | — |
+| `status` | `string` | No | — |
+| `id` | `string` | No | — |
+| `language_detected` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="_usage full type">
+
+```ts
+{
+  input_tokens?: number,
+  output_tokens?: number,
+  inference_time_tokens?: number,
+  total_tokens?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### textToSpeech
+
+`audio.textToSpeech`
+
+Convert text to speech audio
+
+**Risk:** `write`
+
+```ts
+await corsair.jigsawstack.api.audio.textToSpeech({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `text` | `string` | Yes | — |
+| `accent` | `string` | No | — |
+| `voice_clone_id` | `string` | No | — |
+| `speaker_clone_url` | `string` | No | — |
+| `speaker_clone_file_store_key` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `content_type` | `string` | Yes | — |
+| `base64` | `string` | Yes | — |
+
+
+
+---
+
+## Classification
+
+### classify
+
+`classification.classify`
+
+Classify text or images with custom labels
+
+**Risk:** `read`
+
+```ts
+await corsair.jigsawstack.api.classification.classify({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dataset` | `object[]` | Yes | — |
+| `labels` | `object[]` | Yes | — |
+| `multiple_labels` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="dataset full type">
+
+```ts
+{
+  type: text | image,
+  value: string
+}[]
+```
+</Accordion>
+
+<Accordion title="labels full type">
+
+```ts
+{
+  key?: string,
+  type: text | image,
+  value: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `_usage` | `object` | No | — |
+| `log_id` | `string` | No | — |
+| `predictions` | `(string \| string[])[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="_usage full type">
+
+```ts
+{
+  input_tokens?: number,
+  output_tokens?: number,
+  inference_time_tokens?: number,
+  total_tokens?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Embedding
+
+### createV2
+
+`embedding.createV2`
+
+Create v2 embeddings from text, image, audio, or PDF
+
+**Risk:** `read`
+
+```ts
+await corsair.jigsawstack.api.embedding.createV2({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `text` | `string` | No | — |
+| `url` | `string` | No | — |
+| `file_store_key` | `string` | No | — |
+| `type` | `text \| text-other \| image \| audio \| pdf` | Yes | — |
+| `token_overflow_mode` | `truncate \| error` | No | — |
+| `dimensions` | `number` | No | — |
+| `instruction` | `string` | No | — |
+| `query` | `boolean` | No | — |
+| `speaker_fingerprint` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `_usage` | `object` | No | — |
+| `log_id` | `string` | No | — |
+| `embeddings` | `number[][]` | No | — |
+| `chunks` | `any` | No | — |
+| `speaker_embeddings` | `number[][]` | No | — |
+
+<AccordionGroup>
+<Accordion title="_usage full type">
+
+```ts
+{
+  input_tokens?: number,
+  output_tokens?: number,
+  inference_time_tokens?: number,
+  total_tokens?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Prompt Engine
+
+### create
+
+`promptEngine.create`
+
+Create a reusable Prompt Engine template
+
+**Risk:** `write`
+
+```ts
+await corsair.jigsawstack.api.promptEngine.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `prompt` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `return_prompt` | `any` | No | — |
+| `inputs` | `object[]` | No | — |
+| `use_internet` | `boolean` | No | — |
+| `optimize_prompt` | `boolean` | No | — |
+| `prompt_guard` | `defamation \| specialized_advice \| privacy \| intellectual_property \| indiscriminate_weapons \| hate \| sexual_content \| elections \| code_interpreter_abuse[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="inputs full type">
+
+```ts
+{
+  key: string,
+  optional?: boolean,
+  initial_value?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `_usage` | `object` | No | — |
+| `log_id` | `string` | No | — |
+| `prompt_engine_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="_usage full type">
+
+```ts
+{
+  input_tokens?: number,
+  output_tokens?: number,
+  inference_time_tokens?: number,
+  total_tokens?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`promptEngine.list`
+
+List Prompt Engine templates
+
+**Risk:** `read`
+
+```ts
+await corsair.jigsawstack.api.promptEngine.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `_usage` | `object` | No | — |
+| `log_id` | `string` | No | — |
+| `prompt_engines` | `any[]` | No | — |
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `has_more` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="_usage full type">
+
+```ts
+{
+  input_tokens?: number,
+  output_tokens?: number,
+  inference_time_tokens?: number,
+  total_tokens?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### run
+
+`promptEngine.run`
+
+Run a stored Prompt Engine by id
+
+**Risk:** `write`
+
+```ts
+await corsair.jigsawstack.api.promptEngine.run({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `input_values` | `object` | No | — |
+| `stream` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="input_values full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `_usage` | `object` | No | — |
+| `log_id` | `string` | No | — |
+| `result` | `any` | No | — |
+| `message` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="_usage full type">
+
+```ts
+{
+  input_tokens?: number,
+  output_tokens?: number,
+  inference_time_tokens?: number,
+  total_tokens?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Validate
+
+### nsfw
+
+`validate.nsfw`
+
+Detect NSFW content in an image
+
+**Risk:** `read`
+
+```ts
+await corsair.jigsawstack.api.validate.nsfw({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | No | — |
+| `file_store_key` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `_usage` | `object` | No | — |
+| `log_id` | `string` | No | — |
+| `nsfw` | `boolean` | No | — |
+| `nudity` | `boolean` | No | — |
+| `gore` | `boolean` | No | — |
+| `nsfw_score` | `number` | No | — |
+| `nudity_score` | `number` | No | — |
+| `gore_score` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="_usage full type">
+
+```ts
+{
+  input_tokens?: number,
+  output_tokens?: number,
+  inference_time_tokens?: number,
+  total_tokens?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### profanity
+
+`validate.profanity`
+
+Check text for profanity and return a cleaned copy
+
+**Risk:** `read`
+
+```ts
+await corsair.jigsawstack.api.validate.profanity({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `text` | `string` | Yes | — |
+| `censor_replacement` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `_usage` | `object` | No | — |
+| `log_id` | `string` | No | — |
+| `message` | `string` | No | — |
+| `clean_text` | `string` | No | — |
+| `profanities_found` | `boolean` | No | — |
+| `profanities` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="_usage full type">
+
+```ts
+{
+  input_tokens?: number,
+  output_tokens?: number,
+  inference_time_tokens?: number,
+  total_tokens?: number
+}
+```
+</Accordion>
+
+<Accordion title="profanities full type">
+
+```ts
+{
+  profanity?: string | null,
+  startIndex?: number,
+  endIndex?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### spamCheck
+
+`validate.spamCheck`
+
+Score text for spam likelihood
+
+**Risk:** `read`
+
+```ts
+await corsair.jigsawstack.api.validate.spamCheck({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `text` | `string \| string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `_usage` | `object` | No | — |
+| `log_id` | `string` | No | — |
+| `check` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="_usage full type">
+
+```ts
+{
+  input_tokens?: number,
+  output_tokens?: number,
+  inference_time_tokens?: number,
+  total_tokens?: number
+}
+```
+</Accordion>
+
+<Accordion title="check full type">
+
+```ts
+{
+  is_spam?: boolean,
+  score?: number
+} | {
+  is_spam?: boolean,
+  score?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### spellCheck
+
+`validate.spellCheck`
+
+Detect and auto-correct spelling mistakes
+
+**Risk:** `read`
+
+```ts
+await corsair.jigsawstack.api.validate.spellCheck({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `text` | `string` | Yes | — |
+| `language_code` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `_usage` | `object` | No | — |
+| `log_id` | `string` | No | — |
+| `misspellings_found` | `boolean` | No | — |
+| `auto_correct_text` | `string` | No | — |
+| `misspellings` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="_usage full type">
+
+```ts
+{
+  input_tokens?: number,
+  output_tokens?: number,
+  inference_time_tokens?: number,
+  total_tokens?: number
+}
+```
+</Accordion>
+
+<Accordion title="misspellings full type">
+
+```ts
+{
+  word?: string | null,
+  startIndex?: number,
+  endIndex?: number,
+  expected?: string[],
+  auto_corrected?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Vision
+
+### detectObjects
+
+`vision.detectObjects`
+
+Detect objects and GUI elements in an image
+
+**Risk:** `read`
+
+```ts
+await corsair.jigsawstack.api.vision.detectObjects({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | No | — |
+| `file_store_key` | `string` | No | — |
+| `prompts` | `string[]` | No | — |
+| `enhance_prompts` | `boolean` | No | — |
+| `features` | `object \| gui[]` | No | — |
+| `annotated_image` | `boolean` | No | — |
+| `return_type` | `url \| base64` | No | — |
+| `return_masks` | `boolean` | No | — |
+| `return_tags` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `_usage` | `object` | No | — |
+| `log_id` | `string` | No | — |
+| `annotated_image` | `string` | No | — |
+| `gui_elements` | `any[]` | No | — |
+| `objects` | `any[]` | No | — |
+| `tags` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="_usage full type">
+
+```ts
+{
+  input_tokens?: number,
+  output_tokens?: number,
+  inference_time_tokens?: number,
+  total_tokens?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### vocr
+
+`vision.vocr`
+
+Extract text and fields from an image or PDF
+
+**Risk:** `read`
+
+```ts
+await corsair.jigsawstack.api.vision.vocr({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | No | — |
+| `file_store_key` | `string` | No | — |
+| `prompt` | `object` | No | — |
+| `page_range` | `number[]` | No | — |
+| `fine_grained` | `boolean` | No | — |
+| `return_bounds` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="prompt full type">
+
+```ts
+string | string[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `_usage` | `object` | No | — |
+| `log_id` | `string` | No | — |
+| `context` | `any` | No | — |
+| `width` | `number` | No | — |
+| `height` | `number` | No | — |
+| `tags` | `string[]` | No | — |
+| `has_text` | `boolean` | No | — |
+| `sections` | `any[]` | No | — |
+| `total_pages` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="_usage full type">
+
+```ts
+{
+  input_tokens?: number,
+  output_tokens?: number,
+  inference_time_tokens?: number,
+  total_tokens?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Web
+
+### htmlToAny
+
+`web.htmlToAny`
+
+Convert HTML or a URL to PNG, JPEG, WEBP, or PDF
+
+**Risk:** `write`
+
+```ts
+await corsair.jigsawstack.api.web.htmlToAny({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `html` | `string` | No | — |
+| `url` | `string` | No | — |
+| `type` | `pdf \| png \| jpeg \| webp` | No | — |
+| `full_page` | `boolean` | No | — |
+| `width` | `number` | No | — |
+| `height` | `number` | No | — |
+| `return_type` | `url \| binary \| base64` | No | — |
+| `quality` | `number` | No | — |
+| `is_mobile` | `boolean` | No | — |
+| `dark_mode` | `boolean` | No | — |
+| `size_preset` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  success: boolean,
+  content_type: string,
+  base64: string
+} | {
+  success: boolean,
+  _usage?: {
+    input_tokens?: number,
+    output_tokens?: number,
+    inference_time_tokens?: number,
+    total_tokens?: number
+  },
+  log_id?: string,
+  url?: string,
+  base64?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### scrape
+
+`web.scrape`
+
+Scrape a page into structured data with AI prompts
+
+**Risk:** `read`
+
+```ts
+await corsair.jigsawstack.api.web.scrape({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | No | — |
+| `html` | `string` | No | — |
+| `element_prompts` | `object` | No | — |
+| `selectors` | `string[]` | No | — |
+| `root_element_selector` | `string` | No | — |
+| `scroll` | `boolean` | No | — |
+| `page_position` | `number` | No | — |
+| `features` | `meta \| link[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="element_prompts full type">
+
+```ts
+string[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `_usage` | `object` | No | — |
+| `log_id` | `string` | No | — |
+| `data` | `any[]` | No | — |
+| `page_position` | `number` | No | — |
+| `page_position_length` | `number` | No | — |
+| `meta` | `any` | No | — |
+| `link` | `any[]` | No | — |
+| `selectors` | `object` | No | — |
+| `context` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="_usage full type">
+
+```ts
+{
+  input_tokens?: number,
+  output_tokens?: number,
+  inference_time_tokens?: number,
+  total_tokens?: number
+}
+```
+</Accordion>
+
+<Accordion title="selectors full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`web.search`
+
+Search the web with optional AI overview
+
+**Risk:** `read`
+
+```ts
+await corsair.jigsawstack.api.web.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `spell_check` | `boolean` | No | — |
+| `max_results` | `number` | No | — |
+| `safe_search` | `strict \| moderate \| off` | No | — |
+| `ai_overview` | `boolean` | No | — |
+| `auto_scrape` | `boolean` | No | — |
+| `country_code` | `string` | No | — |
+| `byo_urls` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `_usage` | `object` | No | — |
+| `log_id` | `string` | No | — |
+| `query` | `string` | No | — |
+| `ai_overview` | `string` | No | — |
+| `spell_fixed` | `boolean` | No | — |
+| `is_safe` | `boolean` | No | — |
+| `results` | `any[]` | No | — |
+| `image_urls` | `string[]` | No | — |
+| `links` | `string[]` | No | — |
+| `geo_results` | `any[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="_usage full type">
+
+```ts
+{
+  input_tokens?: number,
+  output_tokens?: number,
+  inference_time_tokens?: number,
+  total_tokens?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### searchSuggestions
+
+`web.searchSuggestions`
+
+Get search autocomplete suggestions for a query
+
+**Risk:** `read`
+
+```ts
+await corsair.jigsawstack.api.web.searchSuggestions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `_usage` | `object` | No | — |
+| `log_id` | `string` | No | — |
+| `suggestions` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="_usage full type">
+
+```ts
+{
+  input_tokens?: number,
+  output_tokens?: number,
+  inference_time_tokens?: number,
+  total_tokens?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

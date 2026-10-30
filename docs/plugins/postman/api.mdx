@@ -1,0 +1,8764 @@
+---
+title: API
+description: "API reference for Postman: every `postman.api.*` operation with input and output types."
+---
+
+Every `postman.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Access Keys
+
+### list
+
+`accessKeys.list`
+
+Get collection access keys
+
+**Risk:** `read`
+
+```ts
+await corsair.postman.api.accessKeys.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collectionId` | `string` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  token?: string,
+  status?: ACTIVE | INACTIVE,
+  teamId?: number,
+  userId?: number,
+  collectionId?: string,
+  expiresAfter?: string,
+  lastUsedAt?: string,
+  createdAt?: string,
+  updatedAt?: string,
+  deletedAt?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  nextCursor?: string,
+  prevCursor?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Account
+
+### me
+
+`account.me`
+
+Get authenticated user
+
+**Risk:** `read`
+
+```ts
+await corsair.postman.api.account.me({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `object` | No | — |
+| `operations` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id?: number,
+  sub?: string,
+  username?: string,
+  email?: string,
+  fullName?: string,
+  avatar?: string | null,
+  isPublic?: boolean,
+  emailVerified?: boolean,
+  teamId?: number,
+  teamName?: string,
+  teamDomain?: string,
+  roles?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="operations full type">
+
+```ts
+{
+  limit?: number,
+  name?: string,
+  overage?: number,
+  usage?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Apis
+
+### create
+
+`apis.create`
+
+Create an API (Deprecated by Postman.)
+
+**Risk:** `write`
+
+```ts
+await corsair.postman.api.apis.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `summary` | `string` | No | — |
+| `description` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `summary` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `createdBy` | `number` | No | — |
+| `updatedAt` | `string` | No | — |
+| `updatedBy` | `number` | No | — |
+| `description` | `string` | No | — |
+
+
+
+---
+
+### createCollectionFromSchema
+
+`apis.createCollectionFromSchema`
+
+Add a collection (Deprecated by Postman.)
+
+**Risk:** `write`
+
+```ts
+await corsair.postman.api.apis.createCollectionFromSchema({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `apiId` | `string` | Yes | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  data?: {
+    collectionId?: string
+  },
+  operationType?: COPY_COLLECTION
+} | {
+  data?: {
+    info?: {
+      name?: string,
+      schema?: https://schema.postman.com/json/collection/v2.1.0/collection.json
+    },
+    item?: {
+      id?: string,
+      uid?: string,
+      name?: string,
+      description?: string | null,
+      variable?: {
+        key?: string,
+        value?: string | boolean | number,
+        description?: string,
+        disabled?: boolean,
+        type?: string
+      }[],
+      event?: {
+        id?: string,
+        listen?: test | prerequest,
+        script?: {
+          id?: string,
+          name?: string,
+          type?: string,
+          exec?: string[]
+        }
+      }[],
+      request?: string | {
+        url?: string | {
+          raw?: string,
+          protocol?: string,
+          host?: string[],
+          path?: string[],
+          port?: string,
+          query?: {
+            key?: string,
+            value?: string,
+            description?: string | null,
+            disabled?: boolean
+          }[],
+          variable?: {
+            key?: string,
+            value?: string,
+            description?: string | null,
+            disabled?: boolean
+          }[]
+        },
+        auth?: any,
+        method?: string,
+        description?: string | null,
+        header?: {
+          key?: string,
+          value?: string,
+          description?: string | null,
+          disabled?: boolean
+        }[],
+        body?: string | {
+          mode?: string,
+          raw?: string,
+          urlencoded?: {
+            key?: string,
+            value?: string,
+            description?: string | null,
+            disabled?: boolean
+          }[],
+          formdata?: {
+            key?: string,
+            value?: string,
+            description?: string | null,
+            disabled?: boolean
+          }[],
+          file?: {
+            src?: string,
+            content?: string
+          },
+          graphql?: {
+          },
+          options?: {
+          }
+        }
+      },
+      response?: {
+        id?: string,
+        name?: string,
+        status?: string,
+        code?: string | number,
+        header?: {
+          key?: string,
+          value?: string,
+          description?: string | null,
+          disabled?: boolean
+        }[],
+        cookie?: {
+          key?: string,
+          value?: string,
+          description?: string | null,
+          disabled?: boolean
+        }[],
+        body?: string,
+        responseTime?: string | number,
+        originalRequest?: {
+          url?: string | {
+            raw?: string,
+            protocol?: string,
+            host?: string[],
+            path?: string[],
+            port?: string,
+            query?: {
+              key?: string,
+              value?: string,
+              description?: string | null,
+              disabled?: boolean
+            }[],
+            variable?: {
+              key?: string,
+              value?: string,
+              description?: string | null,
+              disabled?: boolean
+            }[]
+          },
+          auth?: any,
+          method?: string,
+          description?: string | null,
+          header?: {
+            key?: string,
+            value?: string,
+            description?: string | null,
+            disabled?: boolean
+          }[],
+          body?: string | {
+            mode?: string,
+            raw?: string,
+            urlencoded?: {
+              key?: string,
+              value?: string,
+              description?: string | null,
+              disabled?: boolean
+            }[],
+            formdata?: {
+              key?: string,
+              value?: string,
+              description?: string | null,
+              disabled?: boolean
+            }[],
+            file?: {
+              src?: string,
+              content?: string
+            },
+            graphql?: {
+            },
+            options?: {
+            }
+          }
+        }
+      }[],
+      protocolProfileBehavior?: {
+        strictSSL?: boolean,
+        followRedirects?: boolean,
+        maxRedirects?: number,
+        disableBodyPruning?: boolean,
+        disableUrlEncoding?: boolean,
+        disabledSystemHeaders?: string[],
+        insecureHTTPParser?: boolean,
+        followOriginalHttpMethod?: boolean,
+        followAuthorizationHeader?: boolean,
+        protocolVersion?: http1 | http2 | auto,
+        removeRefererHeaderOnRedirect?: boolean,
+        tlsPreferServerCiphers?: boolean,
+        tlsDisabledProtocols?: string[],
+        tlsCipherSelection?: string[]
+      },
+      createdAt?: string,
+      updatedAt?: string,
+      item?: lazy[]
+    }[]
+  },
+  operationType?: CREATE_NEW
+} | {
+  name?: string,
+  operationType?: GENERATE_FROM_SCHEMA,
+  options?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+
+
+
+---
+
+### createOrUpdateSchemaFile
+
+`apis.createOrUpdateSchemaFile`
+
+Create or update a schema file (Deprecated by Postman.)
+
+**Risk:** `write`
+
+```ts
+await corsair.postman.api.apis.createOrUpdateSchemaFile({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `apiId` | `string` | Yes | — |
+| `schemaId` | `string` | Yes | — |
+| `filePath` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `root` | `object` | No | — |
+| `content` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="root full type">
+
+```ts
+{
+  enabled?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `createdBy` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `root` | `object` | No | — |
+| `name` | `string` | No | — |
+| `path` | `string` | No | — |
+| `updatedBy` | `string` | No | — |
+| `id` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="root full type">
+
+```ts
+{
+  enabled?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createRelations
+
+`apis.createRelations`
+
+Create API version relations
+
+**Risk:** `write`
+
+```ts
+await corsair.postman.api.apis.createRelations({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `apiId` | `string` | Yes | — |
+| `versionId` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### createSchema
+
+`apis.createSchema`
+
+Create a schema (Deprecated by Postman.)
+
+**Risk:** `write`
+
+```ts
+await corsair.postman.api.apis.createSchema({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `apiId` | `string` | Yes | — |
+| `type` | `proto:2 \| proto:3 \| graphql \| openapi:3_1 \| openapi:3 \| openapi:2 \| openapi:1 \| raml:1 \| raml:0_8 \| wsdl:2 \| wsdl:1 \| asyncapi:2` | Yes | — |
+| `files` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="files full type">
+
+```ts
+{
+  path?: string,
+  root?: {
+    enabled?: boolean
+  },
+  content?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `type` | `proto:2 \| proto:3 \| graphql \| openapi:3_1 \| openapi:3 \| openapi:2 \| openapi:1 \| raml:1 \| raml:0_8 \| wsdl:2 \| wsdl:1 \| asyncapi:2` | No | — |
+| `files` | `object[]` | No | — |
+| `createdAt` | `string` | No | — |
+| `createdBy` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+| `updatedBy` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="files full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  path?: string,
+  createdAt?: string,
+  root?: {
+    enabled?: boolean
+  },
+  createdBy?: string,
+  updatedAt?: string,
+  updatedBy?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteComment
+
+`apis.deleteComment`
+
+Delete an API's comment (Deprecated by Postman.)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.postman.api.apis.deleteComment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `apiId` | `string` | Yes | — |
+| `commentId` | `number` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteSchemaFile
+
+`apis.deleteSchemaFile`
+
+Delete a schema file (Deprecated by Postman.)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.postman.api.apis.deleteSchemaFile({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `apiId` | `string` | Yes | — |
+| `schemaId` | `string` | Yes | — |
+| `filePath` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### get
+
+`apis.get`
+
+Get an API (Deprecated by Postman.)
+
+**Risk:** `read`
+
+```ts
+await corsair.postman.api.apis.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `apiId` | `string` | Yes | — |
+| `include` | `collections \| versions \| schemas \| gitInfo[]` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  summary?: string,
+  createdAt?: string,
+  createdBy?: number,
+  updatedAt?: string,
+  updatedBy?: number,
+  description?: string
+} | {
+  id?: string,
+  name?: string,
+  summary?: string,
+  createdAt?: string,
+  createdBy?: number,
+  updatedAt?: string,
+  updatedBy?: number,
+  description?: string,
+  gitInfo?: {
+    domain?: string | null,
+    repository?: string,
+    organization?: string,
+    schemaFolder?: string,
+    collectionFolder?: string
+  },
+  schemas?: {
+    id?: string
+  }[],
+  versions?: {
+    id?: string,
+    name?: string
+  }[],
+  collections?: {
+    id?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getComments
+
+`apis.getComments`
+
+Get an API's comments (Deprecated by Postman.)
+
+**Risk:** `read`
+
+```ts
+await corsair.postman.api.apis.getComments({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `apiId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  threadId?: number,
+  status?: Open | Resolved,
+  createdBy?: number,
+  createdAt?: string,
+  updatedAt?: string,
+  body?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getContractTestRelations
+
+`apis.getContractTestRelations`
+
+Get contract test relations
+
+**Risk:** `read`
+
+```ts
+await corsair.postman.api.apis.getContractTestRelations({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `apiId` | `string` | Yes | — |
+| `versionId` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getDocumentationRelations
+
+`apis.getDocumentationRelations`
+
+Get documentation relations
+
+**Risk:** `read`
+
+```ts
+await corsair.postman.api.apis.getDocumentationRelations({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `apiId` | `string` | Yes | — |
+| `versionId` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getEnvironmentRelations
+
+`apis.getEnvironmentRelations`
+
+Get environment relations
+
+**Risk:** `read`
+
+```ts
+await corsair.postman.api.apis.getEnvironmentRelations({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `apiId` | `string` | Yes | — |
+| `versionId` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getIntegrationTestRelations
+
+`apis.getIntegrationTestRelations`
+
+Get integration test relations
+
+**Risk:** `read`
+
+```ts
+await corsair.postman.api.apis.getIntegrationTestRelations({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `apiId` | `string` | Yes | — |
+| `versionId` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getLinkedRelations
+
+`apis.getLinkedRelations`
+
+Get all linked relations
+
+**Risk:** `read`
+
+```ts
+await corsair.postman.api.apis.getLinkedRelations({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `apiId` | `string` | Yes | — |
+| `versionId` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getSchema
+
+`apis.getSchema`
+
+Get a schema (Deprecated by Postman.)
+
+**Risk:** `read`
+
+```ts
+await corsair.postman.api.apis.getSchema({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `apiId` | `string` | Yes | — |
+| `schemaId` | `string` | Yes | — |
+| `versionId` | `string` | No | — |
+| `bundled` | `boolean` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  type?: string,
+  files?: {
+    data?: {
+      id?: string,
+      name?: string,
+      path?: string,
+      createdAt?: string,
+      createdBy?: string,
+      updatedAt?: string,
+      updatedBy?: string
+    }[],
+    meta?: {
+      nextPath?: string
+    }
+  },
+  createdAt?: string,
+  createdBy?: string,
+  updatedAt?: string,
+  updatedBy?: string
+} | {
+  id?: string,
+  type?: string,
+  createdBy?: string,
+  updatedBy?: string,
+  createdAt?: string,
+  updatedAt?: string,
+  content?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getSchemaFileContents
+
+`apis.getSchemaFileContents`
+
+Get schema file contents (Deprecated by Postman.)
+
+**Risk:** `read`
+
+```ts
+await corsair.postman.api.apis.getSchemaFileContents({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `apiId` | `string` | Yes | — |
+| `schemaId` | `string` | Yes | — |
+| `filePath` | `string` | Yes | — |
+| `versionId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `path` | `string` | No | — |
+| `content` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `createdBy` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+| `updatedBy` | `string` | No | — |
+
+
+
+---
+
+### getSchemaFiles
+
+`apis.getSchemaFiles`
+
+Get schema files (Deprecated by Postman.)
+
+**Risk:** `read`
+
+```ts
+await corsair.postman.api.apis.getSchemaFiles({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `apiId` | `string` | Yes | — |
+| `schemaId` | `string` | Yes | — |
+| `versionId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object` | No | — |
+| `files` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  nextCursor?: string
+}
+```
+</Accordion>
+
+<Accordion title="files full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  path?: string,
+  createdAt?: string,
+  createdBy?: number,
+  updatedAt?: string,
+  updatedBy?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getTestRelations
+
+`apis.getTestRelations`
+
+Get all test relations
+
+**Risk:** `read`
+
+```ts
+await corsair.postman.api.apis.getTestRelations({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `apiId` | `string` | Yes | — |
+| `versionId` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getTestSuiteRelations
+
+`apis.getTestSuiteRelations`
+
+Get test suite relations
+
+**Risk:** `read`
+
+```ts
+await corsair.postman.api.apis.getTestSuiteRelations({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `apiId` | `string` | Yes | — |
+| `versionId` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getUnclassifiedRelations
+
+`apis.getUnclassifiedRelations`
+
+Get unclassified relations
+
+**Risk:** `read`
+
+```ts
+await corsair.postman.api.apis.getUnclassifiedRelations({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `apiId` | `string` | Yes | — |
+| `versionId` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getVersion
+
+`apis.getVersion`
+
+Get a version (Deprecated by Postman.)
+
+**Risk:** `read`
+
+```ts
+await corsair.postman.api.apis.getVersion({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `apiId` | `string` | Yes | — |
+| `versionId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `version` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="version full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  createdAt?: string,
+  updatedAt?: string,
+  releaseNotes?: string,
+  schemas?: {
+    id?: string,
+    type?: string
+  }[],
+  collections?: {
+    id?: string,
+    type?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`apis.list`
+
+Get all APIs (Deprecated by Postman.)
+
+**Risk:** `read`
+
+```ts
+await corsair.postman.api.apis.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | Yes | — |
+| `createdBy` | `number` | No | — |
+| `cursor` | `string` | No | — |
+| `description` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `apis` | `object[]` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="apis full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  summary?: string,
+  createdAt?: string,
+  createdBy?: number,
+  updatedAt?: string,
+  updatedBy?: number,
+  description?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  limit?: number,
+  total?: number,
+  nextCursor?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listReleases
+
+`apis.listReleases`
+
+Get all API releases
+
+**Risk:** `read`
+
+```ts
+await corsair.postman.api.apis.listReleases({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `apiId` | `string` | Yes | — |
+| `versionId` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listVersions
+
+`apis.listVersions`
+
+Get all versions (Deprecated by Postman.)
+
+**Risk:** `read`
+
+```ts
+await corsair.postman.api.apis.listVersions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `apiId` | `string` | Yes | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object` | No | — |
+| `versions` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  limit?: number,
+  total?: number,
+  nextCursor?: string
+}
+```
+</Accordion>
+
+<Accordion title="versions full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  createdAt?: string,
+  updatedAt?: string,
+  releaseNotes?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`apis.remove`
+
+Delete an API (Deprecated by Postman.)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.postman.api.apis.remove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `apiId` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### update
+
+`apis.update`
+
+Update an API (Deprecated by Postman.)
+
+**Risk:** `write`
+
+```ts
+await corsair.postman.api.apis.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `apiId` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `summary` | `string` | No | — |
+| `description` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | Yes | — |
+| `summary` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `createdBy` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+| `updatedBy` | `string` | No | — |
+| `description` | `string` | No | — |
+
+
+
+---
+
+### updateComment
+
+`apis.updateComment`
+
+Update an API's comment (Deprecated by Postman.)
+
+**Risk:** `write`
+
+```ts
+await corsair.postman.api.apis.updateComment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `apiId` | `string` | Yes | — |
+| `commentId` | `number` | Yes | — |
+| `body` | `string` | Yes | — |
+| `tags` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="tags full type">
+
+```ts
+{
+  {
+    {
+      userName
+    }
+  }?: {
+    type: user,
+    id: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  threadId?: number,
+  createdBy?: number,
+  createdAt?: string,
+  updatedAt?: string,
+  body?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Billing
+
+### getAccount
+
+`billing.getAccount`
+
+Get accounts
+
+**Risk:** `read`
+
+```ts
+await corsair.postman.api.billing.getAccount({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `billingEmail` | `string` | No | — |
+| `id` | `number` | No | — |
+| `state` | `string` | No | — |
+| `teamId` | `number` | No | — |
+| `salesChannel` | `SELF_SERVE \| SALES_SERVE` | No | — |
+| `slots` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="slots full type">
+
+```ts
+{
+  available?: number,
+  consumed?: number,
+  total?: number,
+  unbilled?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listInvoices
+
+`billing.listInvoices`
+
+List account invoices
+
+**Risk:** `read`
+
+```ts
+await corsair.postman.api.billing.listInvoices({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `status` | `PAID` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  status?: string,
+  issuedAt?: string,
+  totalAmount?: {
+    value?: number,
+    currency?: string
+  },
+  links?: {
+    web?: any
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Collections
+
+### create
+
+`collections.create`
+
+Create a collection
+
+**Risk:** `write`
+
+```ts
+await corsair.postman.api.collections.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace` | `string` | Yes | — |
+| `collection` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="collection full type">
+
+```ts
+{
+  info: {
+    name: string,
+    description?: string,
+    schema: https://schema.postman.com/json/collection/v2.1.0/collection.json
+  },
+  item: {
+    name?: string,
+    description?: string | null,
+    variable?: {
+      key?: string,
+      value?: string | boolean | number,
+      description?: string,
+      disabled?: boolean,
+      type?: string
+    }[],
+    event?: {
+      id?: string,
+      listen?: test | prerequest,
+      script?: {
+        id?: string,
+        name?: string,
+        type?: string,
+        exec?: string[]
+      }
+    }[],
+    request?: {
+      url?: string | {
+        raw?: string,
+        protocol?: string,
+        host?: string[],
+        path?: string[],
+        port?: string,
+        query?: {
+          key?: string,
+          value?: string,
+          description?: string | null,
+          disabled?: boolean
+        }[],
+        variable?: {
+          key?: string,
+          value?: string,
+          description?: string | null,
+          disabled?: boolean
+        }[]
+      },
+      auth?: any,
+      method?: string,
+      description?: string | null,
+      header?: {
+        key?: string,
+        value?: string,
+        description?: string | null,
+        disabled?: boolean
+      }[],
+      body?: string | {
+        mode?: string,
+        raw?: string,
+        urlencoded?: {
+          key?: string,
+          value?: string,
+          description?: string | null,
+          disabled?: boolean
+        }[],
+        formdata?: {
+          key?: string,
+          value?: string,
+          description?: string | null,
+          disabled?: boolean
+        }[],
+        file?: {
+          src?: string,
+          content?: string
+        },
+        graphql?: {
+        },
+        options?: {
+        }
+      }
+    },
+    response?: {
+      id?: string,
+      name?: string,
+      status?: string,
+      code?: string | number,
+      header?: {
+        key?: string,
+        value?: string,
+        description?: string | null,
+        disabled?: boolean
+      }[],
+      cookie?: {
+        key?: string,
+        value?: string,
+        description?: string | null,
+        disabled?: boolean
+      }[],
+      body?: string,
+      responseTime?: string | number,
+      originalRequest?: {
+        url?: string | {
+          raw?: string,
+          protocol?: string,
+          host?: string[],
+          path?: string[],
+          port?: string,
+          query?: {
+            key?: string,
+            value?: string,
+            description?: string | null,
+            disabled?: boolean
+          }[],
+          variable?: {
+            key?: string,
+            value?: string,
+            description?: string | null,
+            disabled?: boolean
+          }[]
+        },
+        auth?: any,
+        method?: string,
+        description?: string | null,
+        header?: {
+          key?: string,
+          value?: string,
+          description?: string | null,
+          disabled?: boolean
+        }[],
+        body?: string | {
+          mode?: string,
+          raw?: string,
+          urlencoded?: {
+            key?: string,
+            value?: string,
+            description?: string | null,
+            disabled?: boolean
+          }[],
+          formdata?: {
+            key?: string,
+            value?: string,
+            description?: string | null,
+            disabled?: boolean
+          }[],
+          file?: {
+            src?: string,
+            content?: string
+          },
+          graphql?: {
+          },
+          options?: {
+          }
+        }
+      }
+    }[],
+    protocolProfileBehavior?: {
+      strictSSL?: boolean,
+      followRedirects?: boolean,
+      maxRedirects?: number,
+      disableBodyPruning?: boolean,
+      disableUrlEncoding?: boolean,
+      disabledSystemHeaders?: string[],
+      insecureHTTPParser?: boolean,
+      followOriginalHttpMethod?: boolean,
+      followAuthorizationHeader?: boolean,
+      protocolVersion?: http1 | http2 | auto,
+      removeRefererHeaderOnRedirect?: boolean,
+      tlsPreferServerCiphers?: boolean,
+      tlsDisabledProtocols?: string[],
+      tlsCipherSelection?: string[]
+    }
+  }[],
+  event?: {
+    listen: test | prerequest,
+    script?: {
+      type?: string,
+      exec?: string[]
+    }
+  }[],
+  variable?: {
+    key?: string,
+    value?: string | boolean | number,
+    description?: string,
+    disabled?: boolean
+  }[],
+  auth?: {
+    type: noauth | basic | bearer | apikey | digest | oauth1 | oauth2 | hawk | awsv4 | ntlm | edgegrid,
+    noauth?: any,
+    apikey?: {
+      key: string,
+      value?: string | {
+        key: string,
+        value?: string | number | boolean,
+        type?: string
+      }[],
+      type?: string | boolean | number | array | object | any
+    }[],
+    awsv4?: {
+      key: string,
+      value?: string | {
+        key: string,
+        value?: string | number | boolean,
+        type?: string
+      }[],
+      type?: string | boolean | number | array | object | any
+    }[],
+    basic?: {
+      key: string,
+      value?: string | {
+        key: string,
+        value?: string | number | boolean,
+        type?: string
+      }[],
+      type?: string | boolean | number | array | object | any
+    }[],
+    bearer?: {
+      key: string,
+      value?: string | {
+        key: string,
+        value?: string | number | boolean,
+        type?: string
+      }[],
+      type?: string | boolean | number | array | object | any
+    }[],
+    digest?: {
+      key: string,
+      value?: string | {
+        key: string,
+        value?: string | number | boolean,
+        type?: string
+      }[],
+      type?: string | boolean | number | array | object | any
+    }[],
+    edgegrid?: {
+      key: string,
+      value?: string | {
+        key: string,
+        value?: string | number | boolean,
+        type?: string
+      }[],
+      type?: string | boolean | number | array | object | any
+    }[],
+    hawk?: {
+      key: string,
+      value?: string | {
+        key: string,
+        value?: string | number | boolean,
+        type?: string
+      }[],
+      type?: string | boolean | number | array | object | any
+    }[],
+    ntlm?: {
+      key: string,
+      value?: string | {
+        key: string,
+        value?: string | number | boolean,
+        type?: string
+      }[],
+      type?: string | boolean | number | array | object | any
+    }[],
+    oauth1?: {
+      key: string,
+      value?: string | {
+        key: string,
+        value?: string | number | boolean,
+        type?: string
+      }[],
+      type?: string | boolean | number | array | object | any
+    }[],
+    oauth2?: {
+      key: string,
+      value?: string | {
+        key: string,
+        value?: string | number | boolean,
+        type?: string
+      }[],
+      type?: string | boolean | number | array | object | any
+    }[]
+  },
+  protocolProfileBehavior?: {
+    strictSSL?: boolean,
+    followRedirects?: boolean,
+    maxRedirects?: number,
+    disableBodyPruning?: boolean,
+    disableUrlEncoding?: boolean,
+    disabledSystemHeaders?: {
+      cache-control?: boolean,
+      postman-token?: boolean,
+      content-type?: boolean,
+      content-length?: boolean,
+      accept-encoding?: boolean,
+      connection?: boolean,
+      host?: boolean
+    },
+    insecureHTTPParser?: boolean,
+    followOriginalHttpMethod?: boolean,
+    followAuthorizationHeader?: boolean,
+    protocolVersion?: http1 | http2 | auto,
+    removeRefererHeaderOnRedirect?: boolean,
+    tlsPreferServerCiphers?: boolean,
+    tlsDisabledProtocols?: string[],
+    tlsCipherSelection?: string[]
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collection` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="collection full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  uid?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createComment
+
+`collections.createComment`
+
+Create a collection comment
+
+**Risk:** `write`
+
+```ts
+await corsair.postman.api.collections.createComment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collectionId` | `string` | Yes | — |
+| `body` | `string` | Yes | — |
+| `threadId` | `number` | No | — |
+| `tags` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="tags full type">
+
+```ts
+{
+  {
+    {
+      userName
+    }
+  }?: {
+    type: user,
+    id: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  threadId?: number,
+  createdBy?: number,
+  createdAt?: string,
+  updatedAt?: string,
+  body?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createFolder
+
+`collections.createFolder`
+
+Create a folder
+
+**Risk:** `write`
+
+```ts
+await corsair.postman.api.collections.createFolder({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collectionId` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `folder` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | No | — |
+| `model_id` | `string` | No | — |
+| `revision` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  order?: string[],
+  owner?: string,
+  folder?: string | null,
+  folders?: string[],
+  requests?: string[],
+  createdAt?: string,
+  updatedAt?: string,
+  collection?: string,
+  description?: string,
+  folders_order?: string[],
+  lastUpdatedBy?: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createFolderComment
+
+`collections.createFolderComment`
+
+Create a folder comment
+
+**Risk:** `write`
+
+```ts
+await corsair.postman.api.collections.createFolderComment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collectionId` | `string` | Yes | — |
+| `folderId` | `string` | Yes | — |
+| `body` | `string` | Yes | — |
+| `threadId` | `number` | No | — |
+| `tags` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="tags full type">
+
+```ts
+{
+  {
+    {
+      userName
+    }
+  }?: {
+    type: user,
+    id: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  threadId?: number,
+  createdBy?: number,
+  createdAt?: string,
+  updatedAt?: string,
+  body?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createPullRequest
+
+`collections.createPullRequest`
+
+Create a pull request
+
+**Risk:** `write`
+
+```ts
+await corsair.postman.api.collections.createPullRequest({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collectionId` | `string` | Yes | — |
+| `title` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `reviewers` | `string[]` | Yes | — |
+| `destinationId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `createdAt` | `string` | No | — |
+| `createdBy` | `string` | No | — |
+| `description` | `string` | No | — |
+| `destinationId` | `string` | No | — |
+| `id` | `string` | No | — |
+| `sourceId` | `string` | No | — |
+| `status` | `string` | No | — |
+| `title` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+
+
+
+---
+
+### createRequest
+
+`collections.createRequest`
+
+Create a request
+
+**Risk:** `write`
+
+```ts
+await corsair.postman.api.collections.createRequest({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collectionId` | `string` | Yes | — |
+| `folder` | `string` | No | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `method` | `GET \| PUT \| POST \| PATCH \| DELETE \| COPY \| HEAD \| OPTIONS \| LINK \| UNLINK \| PURGE \| LOCK \| UNLOCK \| PROPFIND \| VIEW` | No | — |
+| `url` | `object` | No | — |
+| `headerData` | `object[]` | No | — |
+| `queryParams` | `object[]` | No | — |
+| `dataMode` | `raw \| urlencoded \| formdata \| binary \| graphql` | No | — |
+| `data` | `object[]` | No | — |
+| `rawModeData` | `string` | No | — |
+| `graphqlModeData` | `object` | No | — |
+| `dataOptions` | `object` | No | — |
+| `auth` | `object` | No | — |
+| `events` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="url full type">
+
+```ts
+string | string | {
+  raw?: string,
+  protocol?: string,
+  host?: string[],
+  path?: string[],
+  port?: string,
+  query?: {
+    key?: string,
+    value?: string,
+    description?: string | null,
+    disabled?: boolean
+  }[],
+  variable?: {
+    key?: string,
+    value?: string,
+    description?: string | null,
+    disabled?: boolean
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="headerData full type">
+
+```ts
+{
+  key?: string,
+  value?: string,
+  description?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="queryParams full type">
+
+```ts
+{
+  key?: string,
+  value?: string,
+  description?: string,
+  enabled?: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  key?: string,
+  value?: string,
+  description?: string,
+  enabled?: boolean,
+  type?: text | file,
+  uuid?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="graphqlModeData full type">
+
+```ts
+{
+  query?: string,
+  variables?: string
+}
+```
+</Accordion>
+
+<Accordion title="dataOptions full type">
+
+```ts
+{
+  raw?: {
+    language?: string
+  },
+  urlencoded?: {
+  },
+  params?: {
+  },
+  binary?: {
+  },
+  graphql?: {
+  }
+}
+```
+</Accordion>
+
+<Accordion title="auth full type">
+
+```ts
+{
+  type: basic | bearer | apikey | digest | oauth1 | oauth2 | hawk | awsv4 | ntlm | edgegrid | jwt | asap | noauth,
+  apikey?: {
+    key: string,
+    value?: string | {
+      key: string,
+      value?: string | number | boolean,
+      type?: string
+    }[],
+    type?: string | boolean | number | array | object | any
+  }[],
+  awsv4?: {
+    key: string,
+    value?: string | {
+      key: string,
+      value?: string | number | boolean,
+      type?: string
+    }[],
+    type?: string | boolean | number | array | object | any
+  }[],
+  basic?: {
+    key: string,
+    value?: string | {
+      key: string,
+      value?: string | number | boolean,
+      type?: string
+    }[],
+    type?: string | boolean | number | array | object | any
+  }[],
+  bearer?: {
+    key: string,
+    value?: string | {
+      key: string,
+      value?: string | number | boolean,
+      type?: string
+    }[],
+    type?: string | boolean | number | array | object | any
+  }[],
+  digest?: {
+    key: string,
+    value?: string | {
+      key: string,
+      value?: string | number | boolean,
+      type?: string
+    }[],
+    type?: string | boolean | number | array | object | any
+  }[],
+  edgegrid?: {
+    key: string,
+    value?: string | {
+      key: string,
+      value?: string | number | boolean,
+      type?: string
+    }[],
+    type?: string | boolean | number | array | object | any
+  }[],
+  hawk?: {
+    key: string,
+    value?: string | {
+      key: string,
+      value?: string | number | boolean,
+      type?: string
+    }[],
+    type?: string | boolean | number | array | object | any
+  }[],
+  ntlm?: {
+    key: string,
+    value?: string | {
+      key: string,
+      value?: string | number | boolean,
+      type?: string
+    }[],
+    type?: string | boolean | number | array | object | any
+  }[],
+  oauth1?: {
+    key: string,
+    value?: string | {
+      key: string,
+      value?: string | number | boolean,
+      type?: string
+    }[],
+    type?: string | boolean | number | array | object | any
+  }[],
+  oauth2?: {
+    key: string,
+    value?: string | {
+      key: string,
+      value?: string | number | boolean,
+      type?: string
+    }[],
+    type?: string | boolean | number | array | object | any
+  }[],
+  jwt?: {
+    key: string,
+    value?: string | {
+      key: string,
+      value?: string | number | boolean,
+      type?: string
+    }[],
+    type?: string | boolean | number | array | object | any
+  }[],
+  asap?: {
+    key: string,
+    value?: string | {
+      key: string,
+      value?: string | number | boolean,
+      type?: string
+    }[],
+    type?: string | boolean | number | array | object | any
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="events full type">
+
+```ts
+{
+  listen?: test | prerequest,
+  script?: {
+    id?: string,
+    type?: string,
+    exec?: string[]
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | No | — |
+| `model_id` | `string` | No | — |
+| `revision` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  owner?: string,
+  folder?: string | null,
+  responses?: string[],
+  collection?: string,
+  responses_order?: string[],
+  createdAt?: string,
+  updatedAt?: string,
+  lastUpdatedBy?: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createRequestComment
+
+`collections.createRequestComment`
+
+Create a request comment
+
+**Risk:** `write`
+
+```ts
+await corsair.postman.api.collections.createRequestComment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collectionId` | `string` | Yes | — |
+| `requestId` | `string` | Yes | — |
+| `body` | `string` | Yes | — |
+| `threadId` | `number` | No | — |
+| `tags` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="tags full type">
+
+```ts
+{
+  {
+    {
+      userName
+    }
+  }?: {
+    type: user,
+    id: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  threadId?: number,
+  createdBy?: number,
+  createdAt?: string,
+  updatedAt?: string,
+  body?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createResponse
+
+`collections.createResponse`
+
+Create a response
+
+**Risk:** `write`
+
+```ts
+await corsair.postman.api.collections.createResponse({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collectionId` | `string` | Yes | — |
+| `request` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `url` | `object` | No | — |
+| `method` | `GET \| PUT \| POST \| PATCH \| DELETE \| COPY \| HEAD \| OPTIONS \| LINK \| UNLINK \| PURGE \| LOCK \| UNLOCK \| PROPFIND \| VIEW` | No | — |
+| `headers` | `object[]` | No | — |
+| `dataMode` | `raw \| urlencoded \| formdata \| binary \| graphql` | No | — |
+| `rawModeData` | `string` | No | — |
+| `dataOptions` | `object` | No | — |
+| `responseCode` | `object` | No | — |
+| `status` | `string` | No | — |
+| `time` | `string` | No | — |
+| `cookies` | `string` | No | — |
+| `mime` | `string` | No | — |
+| `text` | `string` | No | — |
+| `language` | `string` | No | — |
+| `rawDataType` | `string` | No | — |
+| `requestObject` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="url full type">
+
+```ts
+string | string | {
+  raw?: string,
+  protocol?: string,
+  host?: string[],
+  path?: string[],
+  port?: string,
+  query?: {
+    key?: string,
+    value?: string,
+    description?: string | null,
+    disabled?: boolean
+  }[],
+  variable?: {
+    key?: string,
+    value?: string,
+    description?: string | null,
+    disabled?: boolean
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+  key: string,
+  value: string,
+  description?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="dataOptions full type">
+
+```ts
+{
+  raw?: {
+    language?: string
+  },
+  urlencoded?: {
+  },
+  params?: {
+  },
+  binary?: {
+  },
+  graphql?: {
+  }
+}
+```
+</Accordion>
+
+<Accordion title="responseCode full type">
+
+```ts
+{
+  code?: number,
+  name?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | No | — |
+| `model_id` | `string` | No | — |
+| `revision` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  owner?: string,
+  request?: string,
+  createdAt?: string,
+  updatedAt?: string,
+  lastUpdatedBy?: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createResponseComment
+
+`collections.createResponseComment`
+
+Create a response comment
+
+**Risk:** `write`
+
+```ts
+await corsair.postman.api.collections.createResponseComment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collectionId` | `string` | Yes | — |
+| `responseId` | `string` | Yes | — |
+| `body` | `string` | Yes | — |
+| `threadId` | `number` | No | — |
+| `tags` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="tags full type">
+
+```ts
+{
+  {
+    {
+      userName
+    }
+  }?: {
+    type: user,
+    id: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  threadId?: number,
+  createdBy?: number,
+  createdAt?: string,
+  updatedAt?: string,
+  body?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteComment
+
+`collections.deleteComment`
+
+Delete a collection's comment
+
+**Risk:** `destructive`
+
+```ts
+await corsair.postman.api.collections.deleteComment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collectionId` | `string` | Yes | — |
+| `commentId` | `number` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteFolder
+
+`collections.deleteFolder`
+
+Delete a folder
+
+**Risk:** `destructive`
+
+```ts
+await corsair.postman.api.collections.deleteFolder({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `folderId` | `string` | Yes | — |
+| `collectionId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | No | — |
+| `model_id` | `string` | No | — |
+| `revision` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  owner?: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteFolderComment
+
+`collections.deleteFolderComment`
+
+Delete a folder's comment
+
+**Risk:** `destructive`
+
+```ts
+await corsair.postman.api.collections.deleteFolderComment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collectionId` | `string` | Yes | — |
+| `folderId` | `string` | Yes | — |
+| `commentId` | `number` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteRequestComment
+
+`collections.deleteRequestComment`
+
+Delete a request's comment
+
+**Risk:** `destructive`
+
+```ts
+await corsair.postman.api.collections.deleteRequestComment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collectionId` | `string` | Yes | — |
+| `requestId` | `string` | Yes | — |
+| `commentId` | `number` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteResponse
+
+`collections.deleteResponse`
+
+Delete a response
+
+**Risk:** `destructive`
+
+```ts
+await corsair.postman.api.collections.deleteResponse({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `responseId` | `string` | Yes | — |
+| `collectionId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model_id` | `string` | No | — |
+| `meta` | `object` | No | — |
+| `data` | `object` | No | — |
+| `revision` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  owner?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteResponseComment
+
+`collections.deleteResponseComment`
+
+Delete a response's comment
+
+**Risk:** `destructive`
+
+```ts
+await corsair.postman.api.collections.deleteResponseComment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collectionId` | `string` | Yes | — |
+| `responseId` | `string` | Yes | — |
+| `commentId` | `number` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### duplicate
+
+`collections.duplicate`
+
+Duplicate a collection
+
+**Risk:** `write`
+
+```ts
+await corsair.postman.api.collections.duplicate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collectionId` | `string` | Yes | — |
+| `workspace` | `string` | Yes | — |
+| `suffix` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="task full type">
+
+```ts
+{
+  id?: string,
+  status?: processing | completed | failed,
+  reason?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### fork
+
+`collections.fork`
+
+Create a fork
+
+**Risk:** `write`
+
+```ts
+await corsair.postman.api.collections.fork({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collectionId` | `string` | Yes | — |
+| `workspace` | `string` | Yes | — |
+| `label` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collection` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="collection full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  fork?: {
+    label?: string,
+    createdAt?: string,
+    from?: string
+  },
+  uid?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### generateSpec
+
+`collections.generateSpec`
+
+Generate spec from collection
+
+**Risk:** `write`
+
+```ts
+await corsair.postman.api.collections.generateSpec({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collectionUid` | `string` | Yes | — |
+| `elementType` | `spec` | Yes | — |
+| `name` | `string` | Yes | — |
+| `type` | `OPENAPI:2.0 \| OPENAPI:3.0 \| OPENAPI:3.1` | No | — |
+| `format` | `JSON \| YAML` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `taskId` | `string` | No | — |
+| `url` | `string` | No | — |
+
+
+
+---
+
+### getComments
+
+`collections.getComments`
+
+Get a collection's comments
+
+**Risk:** `read`
+
+```ts
+await corsair.postman.api.collections.getComments({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collectionId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  threadId?: number,
+  status?: Open | Resolved,
+  createdBy?: number,
+  createdAt?: string,
+  updatedAt?: string,
+  body?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getDuplicationStatus
+
+`collections.getDuplicationStatus`
+
+Get duplication task status
+
+**Risk:** `read`
+
+```ts
+await corsair.postman.api.collections.getDuplicationStatus({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `taskId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="task full type">
+
+```ts
+{
+  id?: string,
+  status?: processing | completed | failed,
+  reason?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getFolder
+
+`collections.getFolder`
+
+Get a folder
+
+**Risk:** `read`
+
+```ts
+await corsair.postman.api.collections.getFolder({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `folderId` | `string` | Yes | — |
+| `collectionId` | `string` | Yes | — |
+| `ids` | `boolean` | No | — |
+| `uid` | `boolean` | No | — |
+| `populate` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model_id` | `string` | No | — |
+| `meta` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  description?: string,
+  createdAt?: string,
+  updatedAt?: string,
+  owner?: string,
+  lastUpdatedBy?: string,
+  lastRevision?: number,
+  collection?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getFolderComments
+
+`collections.getFolderComments`
+
+Get a folder's comments
+
+**Risk:** `read`
+
+```ts
+await corsair.postman.api.collections.getFolderComments({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collectionId` | `string` | Yes | — |
+| `folderId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  threadId?: number,
+  status?: Open | Resolved,
+  createdBy?: number,
+  createdAt?: string,
+  updatedAt?: string,
+  body?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getForks
+
+`collections.getForks`
+
+Get a collection's forks
+
+**Risk:** `read`
+
+```ts
+await corsair.postman.api.collections.getForks({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collectionId` | `string` | Yes | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `direction` | `asc \| desc` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  createdAt?: string,
+  createdBy?: string,
+  forkId?: string,
+  forkName?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  nextCursor?: string | null,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getGeneratedSpecs
+
+`collections.getGeneratedSpecs`
+
+Get generated spec
+
+**Risk:** `read`
+
+```ts
+await corsair.postman.api.collections.getGeneratedSpecs({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collectionUid` | `string` | Yes | — |
+| `elementType` | `spec` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `specs` | `object[]` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="specs full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  state?: in-sync | out-of-sync | sync-in-progress,
+  createdAt?: string,
+  updatedAt?: string,
+  createdBy?: number,
+  updatedBy?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  nextCursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getPullRequests
+
+`collections.getPullRequests`
+
+Get a collection's pull requests
+
+**Risk:** `read`
+
+```ts
+await corsair.postman.api.collections.getPullRequests({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collectionId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  createdAt?: string,
+  createdBy?: string,
+  description?: string,
+  destinationId?: string,
+  href?: string,
+  id?: string,
+  sourceId?: string,
+  status?: open | approved | declined | merged,
+  comment?: string,
+  title?: string,
+  updatedBy?: string,
+  updatedAt?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getRequest
+
+`collections.getRequest`
+
+Get a request
+
+**Risk:** `read`
+
+```ts
+await corsair.postman.api.collections.getRequest({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+| `collectionId` | `string` | Yes | — |
+| `ids` | `boolean` | No | — |
+| `uid` | `boolean` | No | — |
+| `populate` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model_id` | `string` | No | — |
+| `meta` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  owner?: string,
+  lastRevision?: number,
+  lastUpdatedBy?: string,
+  createdAt?: string,
+  updatedAt?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getRequestComments
+
+`collections.getRequestComments`
+
+Get a request's comments
+
+**Risk:** `read`
+
+```ts
+await corsair.postman.api.collections.getRequestComments({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collectionId` | `string` | Yes | — |
+| `requestId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  threadId?: number,
+  status?: Open | Resolved,
+  createdBy?: number,
+  createdAt?: string,
+  updatedAt?: string,
+  body?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getResponse
+
+`collections.getResponse`
+
+Get a response
+
+**Risk:** `read`
+
+```ts
+await corsair.postman.api.collections.getResponse({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `responseId` | `string` | Yes | — |
+| `collectionId` | `string` | Yes | — |
+| `ids` | `boolean` | No | — |
+| `uid` | `boolean` | No | — |
+| `populate` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | No | — |
+| `model_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  request?: string,
+  name?: string,
+  owner?: string,
+  createdAt?: string,
+  updatedAt?: string,
+  lastRevision?: number,
+  lastUpdatedBy?: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getResponseComments
+
+`collections.getResponseComments`
+
+Get a response's comments
+
+**Risk:** `read`
+
+```ts
+await corsair.postman.api.collections.getResponseComments({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collectionId` | `string` | Yes | — |
+| `responseId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  threadId?: number,
+  status?: Open | Resolved,
+  createdBy?: number,
+  createdAt?: string,
+  updatedAt?: string,
+  body?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getRoles
+
+`collections.getRoles`
+
+Get a collection's roles
+
+**Risk:** `read`
+
+```ts
+await corsair.postman.api.collections.getRoles({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collectionId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group` | `object[]` | No | — |
+| `team` | `object[]` | No | — |
+| `user` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="group full type">
+
+```ts
+{
+  role?: VIEWER | EDITOR,
+  id?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="team full type">
+
+```ts
+{
+  role?: VIEWER | EDITOR,
+  id?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="user full type">
+
+```ts
+{
+  role?: VIEWER | EDITOR,
+  id?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getSourceStatus
+
+`collections.getSourceStatus`
+
+Get source collection's status
+
+**Risk:** `read`
+
+```ts
+await corsair.postman.api.collections.getSourceStatus({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collectionId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collection` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="collection full type">
+
+```ts
+{
+  collectionUid?: {
+    isSourceAhead?: boolean
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getUpdateStatus
+
+`collections.getUpdateStatus`
+
+Get async collection update status
+
+**Risk:** `read`
+
+```ts
+await corsair.postman.api.collections.getUpdateStatus({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `taskId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `status` | `successful \| failed \| in-progress` | No | — |
+
+
+
+---
+
+### list
+
+`collections.list`
+
+Get all collections
+
+**Risk:** `read`
+
+```ts
+await corsair.postman.api.collections.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace` | `string` | No | — |
+| `name` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collections` | `object[]` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="collections full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  owner?: string,
+  createdAt?: string,
+  updatedAt?: string,
+  uid?: string,
+  fork?: {
+    label?: string,
+    createdAt?: string,
+    from?: string
+  },
+  isPublic?: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  offset?: number,
+  limit?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listForked
+
+`collections.listForked`
+
+Get all forked collections
+
+**Risk:** `read`
+
+```ts
+await corsair.postman.api.collections.listForked({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `direction` | `asc \| desc` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  forkName?: string,
+  forkId?: string,
+  sourceId?: string,
+  createdAt?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  nextCursor?: string | null,
+  inaccessibleFork?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### mergeFork
+
+`collections.mergeFork`
+
+Merge a fork (Deprecated by Postman.)
+
+**Risk:** `write`
+
+```ts
+await corsair.postman.api.collections.mergeFork({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `destination` | `string` | Yes | — |
+| `source` | `string` | Yes | — |
+| `strategy` | `deleteSource \| updateSourceWithDestination` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collection` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="collection full type">
+
+```ts
+{
+  id?: string,
+  uid?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### pullChanges
+
+`collections.pullChanges`
+
+Pull source changes
+
+**Risk:** `write`
+
+```ts
+await corsair.postman.api.collections.pullChanges({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collectionId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collection` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="collection full type">
+
+```ts
+{
+  destinationId?: string,
+  sourceId?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`collections.remove`
+
+Delete a collection
+
+**Risk:** `destructive`
+
+```ts
+await corsair.postman.api.collections.remove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collectionId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collection` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="collection full type">
+
+```ts
+{
+  id?: string,
+  uid?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### replace
+
+`collections.replace`
+
+Replace a collection's data
+
+**Risk:** `write`
+
+```ts
+await corsair.postman.api.collections.replace({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collectionId` | `string` | Yes | — |
+| `collection` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="collection full type">
+
+```ts
+{
+  info: {
+    name: string,
+    _postman_id?: string,
+    description?: string,
+    schema: https://schema.postman.com/json/collection/v2.1.0/collection.json,
+    updatedAt?: string,
+    createdAt?: string,
+    lastUpdatedBy?: string,
+    uid?: string
+  },
+  item: {
+    id: string,
+    name?: string,
+    description?: string | null,
+    variable?: {
+      key?: string,
+      value?: string | boolean | number,
+      description?: string,
+      disabled?: boolean,
+      type?: string
+    }[],
+    event?: {
+      id?: string,
+      listen?: test | prerequest,
+      script?: {
+        id?: string,
+        name?: string,
+        type?: string,
+        exec?: string[]
+      }
+    }[],
+    request?: {
+      url?: string | {
+        raw?: string,
+        protocol?: string,
+        host?: string[],
+        path?: string[],
+        port?: string,
+        query?: {
+          key?: string,
+          value?: string,
+          description?: string | null,
+          disabled?: boolean
+        }[],
+        variable?: {
+          key?: string,
+          value?: string,
+          description?: string | null,
+          disabled?: boolean
+        }[]
+      },
+      auth?: any,
+      method?: string,
+      description?: string | null,
+      header?: {
+        key?: string,
+        value?: string,
+        description?: string | null,
+        disabled?: boolean
+      }[],
+      body?: string | {
+        mode?: string,
+        raw?: string,
+        urlencoded?: {
+          key?: string,
+          value?: string,
+          description?: string | null,
+          disabled?: boolean
+        }[],
+        formdata?: {
+          key?: string,
+          value?: string,
+          description?: string | null,
+          disabled?: boolean
+        }[],
+        file?: {
+          src?: string,
+          content?: string
+        },
+        graphql?: {
+        },
+        options?: {
+        }
+      }
+    },
+    response?: {
+      id?: string,
+      name?: string,
+      status?: string,
+      code?: string | number,
+      header?: {
+        key?: string,
+        value?: string,
+        description?: string | null,
+        disabled?: boolean
+      }[],
+      cookie?: {
+        key?: string,
+        value?: string,
+        description?: string | null,
+        disabled?: boolean
+      }[],
+      body?: string,
+      responseTime?: string | number,
+      originalRequest?: {
+        url?: string | {
+          raw?: string,
+          protocol?: string,
+          host?: string[],
+          path?: string[],
+          port?: string,
+          query?: {
+            key?: string,
+            value?: string,
+            description?: string | null,
+            disabled?: boolean
+          }[],
+          variable?: {
+            key?: string,
+            value?: string,
+            description?: string | null,
+            disabled?: boolean
+          }[]
+        },
+        auth?: any,
+        method?: string,
+        description?: string | null,
+        header?: {
+          key?: string,
+          value?: string,
+          description?: string | null,
+          disabled?: boolean
+        }[],
+        body?: string | {
+          mode?: string,
+          raw?: string,
+          urlencoded?: {
+            key?: string,
+            value?: string,
+            description?: string | null,
+            disabled?: boolean
+          }[],
+          formdata?: {
+            key?: string,
+            value?: string,
+            description?: string | null,
+            disabled?: boolean
+          }[],
+          file?: {
+            src?: string,
+            content?: string
+          },
+          graphql?: {
+          },
+          options?: {
+          }
+        }
+      }
+    }[],
+    protocolProfileBehavior?: {
+      strictSSL?: boolean,
+      followRedirects?: boolean,
+      maxRedirects?: number,
+      disableBodyPruning?: boolean,
+      disableUrlEncoding?: boolean,
+      disabledSystemHeaders?: string[],
+      insecureHTTPParser?: boolean,
+      followOriginalHttpMethod?: boolean,
+      followAuthorizationHeader?: boolean,
+      protocolVersion?: http1 | http2 | auto,
+      removeRefererHeaderOnRedirect?: boolean,
+      tlsPreferServerCiphers?: boolean,
+      tlsDisabledProtocols?: string[],
+      tlsCipherSelection?: string[]
+    },
+    createdAt?: string,
+    updatedAt?: string,
+    uid?: string
+  }[],
+  event?: {
+    id?: string,
+    listen: test | prerequest,
+    script?: {
+      id?: string,
+      type?: string,
+      exec?: string[]
+    }
+  }[],
+  variable?: (
+    {
+      key?: string,
+      value?: string | boolean | number,
+      disabled?: boolean
+    } | {
+      enabled?: boolean,
+      key?: string,
+      secret?: boolean,
+      source?: {
+        postman?: {
+        },
+        provider?: postman
+      },
+      description?: string
+    }
+  )[],
+  auth?: {
+    type: basic | bearer | apikey | digest | oauth1 | oauth2 | hawk | awsv4 | ntlm | edgegrid | jwt | asap,
+    apikey?: {
+      key: string,
+      value?: string | {
+        key: string,
+        value?: string | number | boolean,
+        type?: string
+      }[],
+      type?: string | boolean | number | array | object | any
+    }[],
+    awsv4?: {
+      key: string,
+      value?: string | {
+        key: string,
+        value?: string | number | boolean,
+        type?: string
+      }[],
+      type?: string | boolean | number | array | object | any
+    }[],
+    basic?: {
+      key: string,
+      value?: string | {
+        key: string,
+        value?: string | number | boolean,
+        type?: string
+      }[],
+      type?: string | boolean | number | array | object | any
+    }[],
+    bearer?: {
+      key: string,
+      value?: string | {
+        key: string,
+        value?: string | number | boolean,
+        type?: string
+      }[],
+      type?: string | boolean | number | array | object | any
+    }[],
+    digest?: {
+      key: string,
+      value?: string | {
+        key: string,
+        value?: string | number | boolean,
+        type?: string
+      }[],
+      type?: string | boolean | number | array | object | any
+    }[],
+    edgegrid?: {
+      key: string,
+      value?: string | {
+        key: string,
+        value?: string | number | boolean,
+        type?: string
+      }[],
+      type?: string | boolean | number | array | object | any
+    }[],
+    hawk?: {
+      key: string,
+      value?: string | {
+        key: string,
+        value?: string | number | boolean,
+        type?: string
+      }[],
+      type?: string | boolean | number | array | object | any
+    }[],
+    ntlm?: {
+      key: string,
+      value?: string | {
+        key: string,
+        value?: string | number | boolean,
+        type?: string
+      }[],
+      type?: string | boolean | number | array | object | any
+    }[],
+    oauth1?: {
+      key: string,
+      value?: string | {
+        key: string,
+        value?: string | number | boolean,
+        type?: string
+      }[],
+      type?: string | boolean | number | array | object | any
+    }[],
+    oauth2?: {
+      key: string,
+      value?: string | {
+        key: string,
+        value?: string | number | boolean,
+        type?: string
+      }[],
+      type?: string | boolean | number | array | object | any
+    }[],
+    jwt?: {
+      key: string,
+      value?: string | {
+        key: string,
+        value?: string | number | boolean,
+        type?: string
+      }[],
+      type?: string | boolean | number | array | object | any
+    }[],
+    asap?: {
+      key: string,
+      value?: string | {
+        key: string,
+        value?: string | number | boolean,
+        type?: string
+      }[],
+      type?: string | boolean | number | array | object | any
+    }[]
+  },
+  protocolProfileBehavior?: {
+    strictSSL?: boolean,
+    followRedirects?: boolean,
+    maxRedirects?: number,
+    disableBodyPruning?: boolean,
+    disableUrlEncoding?: boolean,
+    disabledSystemHeaders?: {
+      cache-control?: boolean,
+      postman-token?: boolean,
+      content-type?: boolean,
+      content-length?: boolean,
+      accept-encoding?: boolean,
+      connection?: boolean,
+      host?: boolean
+    },
+    insecureHTTPParser?: boolean,
+    followOriginalHttpMethod?: boolean,
+    followAuthorizationHeader?: boolean,
+    protocolVersion?: http1 | http2 | auto,
+    removeRefererHeaderOnRedirect?: boolean,
+    tlsPreferServerCiphers?: boolean,
+    tlsDisabledProtocols?: string[],
+    tlsCipherSelection?: string[]
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collection` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="collection full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  uid?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### syncWithSchema
+
+`collections.syncWithSchema`
+
+Sync collection with schema (Deprecated by Postman.)
+
+**Risk:** `write`
+
+```ts
+await corsair.postman.api.collections.syncWithSchema({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `apiId` | `string` | Yes | — |
+| `collectionId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `taskId` | `string` | No | — |
+
+
+
+---
+
+### syncWithSpec
+
+`collections.syncWithSpec`
+
+Sync collection with spec
+
+**Risk:** `write`
+
+```ts
+await corsair.postman.api.collections.syncWithSpec({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collectionUid` | `string` | Yes | — |
+| `specId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `taskId` | `string` | No | — |
+| `url` | `string` | No | — |
+
+
+
+---
+
+### transferFolders
+
+`collections.transferFolders`
+
+Transfer folders
+
+**Risk:** `write`
+
+```ts
+await corsair.postman.api.collections.transferFolders({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `string[]` | Yes | — |
+| `mode` | `copy \| move` | Yes | — |
+| `target` | `object` | Yes | — |
+| `location` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="target full type">
+
+```ts
+{
+  id: string,
+  model: collection | folder | request
+}
+```
+</Accordion>
+
+<Accordion title="location full type">
+
+```ts
+{
+  id?: string | null,
+  model?: string | null,
+  position: start | end | before | after
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `string[]` | No | — |
+
+
+
+---
+
+### transformToOpenapi
+
+`collections.transformToOpenapi`
+
+Transform collection to OpenAPI
+
+**Risk:** `read`
+
+```ts
+await corsair.postman.api.collections.transformToOpenapi({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collectionId` | `string` | Yes | — |
+| `format` | `json \| yaml` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `output` | `string` | No | — |
+
+
+
+---
+
+### update
+
+`collections.update`
+
+Update part of a collection
+
+**Risk:** `write`
+
+```ts
+await corsair.postman.api.collections.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collectionId` | `string` | Yes | — |
+| `collection` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="collection full type">
+
+```ts
+string | {
+  info?: {
+    name?: string,
+    description?: string,
+    schema?: string
+  },
+  item?: {
+    id?: string,
+    uid?: string,
+    name?: string,
+    description?: string | null,
+    variable?: {
+      key?: string,
+      value?: string | boolean | number,
+      description?: string,
+      disabled?: boolean,
+      type?: string
+    }[],
+    event?: {
+      id?: string,
+      listen?: test | prerequest,
+      script?: {
+        id?: string,
+        name?: string,
+        type?: string,
+        exec?: string[]
+      }
+    }[],
+    request?: string | {
+      url?: string | {
+        raw?: string,
+        protocol?: string,
+        host?: string[],
+        path?: string[],
+        port?: string,
+        query?: {
+          key?: string,
+          value?: string,
+          description?: string | null,
+          disabled?: boolean
+        }[],
+        variable?: {
+          key?: string,
+          value?: string,
+          description?: string | null,
+          disabled?: boolean
+        }[]
+      },
+      auth?: any,
+      method?: string,
+      description?: string | null,
+      header?: {
+        key?: string,
+        value?: string,
+        description?: string | null,
+        disabled?: boolean
+      }[],
+      body?: string | {
+        mode?: string,
+        raw?: string,
+        urlencoded?: {
+          key?: string,
+          value?: string,
+          description?: string | null,
+          disabled?: boolean
+        }[],
+        formdata?: {
+          key?: string,
+          value?: string,
+          description?: string | null,
+          disabled?: boolean
+        }[],
+        file?: {
+          src?: string,
+          content?: string
+        },
+        graphql?: {
+        },
+        options?: {
+        }
+      }
+    },
+    response?: {
+      id?: string,
+      name?: string,
+      status?: string,
+      code?: string | number,
+      header?: {
+        key?: string,
+        value?: string,
+        description?: string | null,
+        disabled?: boolean
+      }[],
+      cookie?: {
+        key?: string,
+        value?: string,
+        description?: string | null,
+        disabled?: boolean
+      }[],
+      body?: string,
+      responseTime?: string | number,
+      originalRequest?: {
+        url?: string | {
+          raw?: string,
+          protocol?: string,
+          host?: string[],
+          path?: string[],
+          port?: string,
+          query?: {
+            key?: string,
+            value?: string,
+            description?: string | null,
+            disabled?: boolean
+          }[],
+          variable?: {
+            key?: string,
+            value?: string,
+            description?: string | null,
+            disabled?: boolean
+          }[]
+        },
+        auth?: any,
+        method?: string,
+        description?: string | null,
+        header?: {
+          key?: string,
+          value?: string,
+          description?: string | null,
+          disabled?: boolean
+        }[],
+        body?: string | {
+          mode?: string,
+          raw?: string,
+          urlencoded?: {
+            key?: string,
+            value?: string,
+            description?: string | null,
+            disabled?: boolean
+          }[],
+          formdata?: {
+            key?: string,
+            value?: string,
+            description?: string | null,
+            disabled?: boolean
+          }[],
+          file?: {
+            src?: string,
+            content?: string
+          },
+          graphql?: {
+          },
+          options?: {
+          }
+        }
+      }
+    }[],
+    protocolProfileBehavior?: {
+      strictSSL?: boolean,
+      followRedirects?: boolean,
+      maxRedirects?: number,
+      disableBodyPruning?: boolean,
+      disableUrlEncoding?: boolean,
+      disabledSystemHeaders?: string[],
+      insecureHTTPParser?: boolean,
+      followOriginalHttpMethod?: boolean,
+      followAuthorizationHeader?: boolean,
+      protocolVersion?: http1 | http2 | auto,
+      removeRefererHeaderOnRedirect?: boolean,
+      tlsPreferServerCiphers?: boolean,
+      tlsDisabledProtocols?: string[],
+      tlsCipherSelection?: string[]
+    },
+    createdAt?: string,
+    updatedAt?: string,
+    item?: lazy[]
+  }[],
+  event?: {
+    id?: string,
+    listen?: test | prerequest,
+    script?: {
+      id?: string,
+      name?: string,
+      type?: string,
+      exec?: string[]
+    }
+  }[],
+  variable?: {
+    key?: string,
+    value?: string | boolean | number,
+    description?: string,
+    disabled?: boolean,
+    type?: string
+  }[],
+  auth?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collection` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="collection full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  description?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateFolder
+
+`collections.updateFolder`
+
+Update a folder
+
+**Risk:** `write`
+
+```ts
+await corsair.postman.api.collections.updateFolder({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `folderId` | `string` | Yes | — |
+| `collectionId` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | No | — |
+| `model_id` | `string` | No | — |
+| `revision` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  description?: string,
+  createdAt?: string,
+  updatedAt?: string,
+  owner?: string,
+  lastUpdatedBy?: string,
+  lastRevision?: number,
+  collection?: string,
+  folder?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateFolderComment
+
+`collections.updateFolderComment`
+
+Update a folder's comment
+
+**Risk:** `write`
+
+```ts
+await corsair.postman.api.collections.updateFolderComment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collectionId` | `string` | Yes | — |
+| `folderId` | `string` | Yes | — |
+| `commentId` | `number` | Yes | — |
+| `body` | `string` | Yes | — |
+| `tags` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="tags full type">
+
+```ts
+{
+  {
+    {
+      userName
+    }
+  }?: {
+    type: user,
+    id: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  threadId?: number,
+  createdBy?: number,
+  createdAt?: string,
+  updatedAt?: string,
+  body?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateRequest
+
+`collections.updateRequest`
+
+Update a request
+
+**Risk:** `write`
+
+```ts
+await corsair.postman.api.collections.updateRequest({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+| `collectionId` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `method` | `GET \| PUT \| POST \| PATCH \| DELETE \| COPY \| HEAD \| OPTIONS \| LINK \| UNLINK \| PURGE \| LOCK \| UNLOCK \| PROPFIND \| VIEW` | No | — |
+| `url` | `object` | No | — |
+| `headerData` | `object[]` | No | — |
+| `queryParams` | `object[]` | No | — |
+| `dataMode` | `raw \| urlencoded \| formdata \| binary \| graphql` | No | — |
+| `data` | `object[]` | No | — |
+| `rawModeData` | `string` | No | — |
+| `graphqlModeData` | `object` | No | — |
+| `dataOptions` | `object` | No | — |
+| `auth` | `object` | No | — |
+| `events` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="url full type">
+
+```ts
+string | string | {
+  raw?: string,
+  protocol?: string,
+  host?: string[],
+  path?: string[],
+  port?: string,
+  query?: {
+    key?: string,
+    value?: string,
+    description?: string | null,
+    disabled?: boolean
+  }[],
+  variable?: {
+    key?: string,
+    value?: string,
+    description?: string | null,
+    disabled?: boolean
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="headerData full type">
+
+```ts
+{
+  key?: string,
+  value?: string,
+  description?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="queryParams full type">
+
+```ts
+{
+  key?: string,
+  value?: string,
+  description?: string,
+  enabled?: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  key?: string,
+  value?: string,
+  description?: string,
+  enabled?: boolean,
+  type?: text | file,
+  uuid?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="graphqlModeData full type">
+
+```ts
+{
+  query?: string,
+  variables?: string
+}
+```
+</Accordion>
+
+<Accordion title="dataOptions full type">
+
+```ts
+{
+  raw?: {
+    language?: string
+  },
+  urlencoded?: {
+  },
+  params?: {
+  },
+  binary?: {
+  },
+  graphql?: {
+  }
+}
+```
+</Accordion>
+
+<Accordion title="auth full type">
+
+```ts
+{
+  type: basic | bearer | apikey | digest | oauth1 | oauth2 | hawk | awsv4 | ntlm | edgegrid | jwt | asap | noauth,
+  apikey?: {
+    key: string,
+    value?: string | {
+      key: string,
+      value?: string | number | boolean,
+      type?: string
+    }[],
+    type?: string | boolean | number | array | object | any
+  }[],
+  awsv4?: {
+    key: string,
+    value?: string | {
+      key: string,
+      value?: string | number | boolean,
+      type?: string
+    }[],
+    type?: string | boolean | number | array | object | any
+  }[],
+  basic?: {
+    key: string,
+    value?: string | {
+      key: string,
+      value?: string | number | boolean,
+      type?: string
+    }[],
+    type?: string | boolean | number | array | object | any
+  }[],
+  bearer?: {
+    key: string,
+    value?: string | {
+      key: string,
+      value?: string | number | boolean,
+      type?: string
+    }[],
+    type?: string | boolean | number | array | object | any
+  }[],
+  digest?: {
+    key: string,
+    value?: string | {
+      key: string,
+      value?: string | number | boolean,
+      type?: string
+    }[],
+    type?: string | boolean | number | array | object | any
+  }[],
+  edgegrid?: {
+    key: string,
+    value?: string | {
+      key: string,
+      value?: string | number | boolean,
+      type?: string
+    }[],
+    type?: string | boolean | number | array | object | any
+  }[],
+  hawk?: {
+    key: string,
+    value?: string | {
+      key: string,
+      value?: string | number | boolean,
+      type?: string
+    }[],
+    type?: string | boolean | number | array | object | any
+  }[],
+  ntlm?: {
+    key: string,
+    value?: string | {
+      key: string,
+      value?: string | number | boolean,
+      type?: string
+    }[],
+    type?: string | boolean | number | array | object | any
+  }[],
+  oauth1?: {
+    key: string,
+    value?: string | {
+      key: string,
+      value?: string | number | boolean,
+      type?: string
+    }[],
+    type?: string | boolean | number | array | object | any
+  }[],
+  oauth2?: {
+    key: string,
+    value?: string | {
+      key: string,
+      value?: string | number | boolean,
+      type?: string
+    }[],
+    type?: string | boolean | number | array | object | any
+  }[],
+  jwt?: {
+    key: string,
+    value?: string | {
+      key: string,
+      value?: string | number | boolean,
+      type?: string
+    }[],
+    type?: string | boolean | number | array | object | any
+  }[],
+  asap?: {
+    key: string,
+    value?: string | {
+      key: string,
+      value?: string | number | boolean,
+      type?: string
+    }[],
+    type?: string | boolean | number | array | object | any
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="events full type">
+
+```ts
+{
+  listen?: test | prerequest,
+  script?: {
+    id?: string,
+    type?: string,
+    exec?: string[]
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | No | — |
+| `model_id` | `string` | No | — |
+| `revision` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  description?: string,
+  createdAt?: string,
+  updatedAt?: string,
+  owner?: string,
+  lastUpdatedBy?: string,
+  lastRevision?: number
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateRequestComment
+
+`collections.updateRequestComment`
+
+Update a request's comment
+
+**Risk:** `write`
+
+```ts
+await corsair.postman.api.collections.updateRequestComment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collectionId` | `string` | Yes | — |
+| `requestId` | `string` | Yes | — |
+| `commentId` | `number` | Yes | — |
+| `body` | `string` | Yes | — |
+| `tags` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="tags full type">
+
+```ts
+{
+  {
+    {
+      userName
+    }
+  }?: {
+    type: user,
+    id: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  threadId?: number,
+  createdBy?: number,
+  createdAt?: string,
+  updatedAt?: string,
+  body?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateResponse
+
+`collections.updateResponse`
+
+Update a response
+
+**Risk:** `write`
+
+```ts
+await corsair.postman.api.collections.updateResponse({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `responseId` | `string` | Yes | — |
+| `collectionId` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `url` | `object` | No | — |
+| `method` | `GET \| PUT \| POST \| PATCH \| DELETE \| COPY \| HEAD \| OPTIONS \| LINK \| UNLINK \| PURGE \| LOCK \| UNLOCK \| PROPFIND \| VIEW` | No | — |
+| `headers` | `object[]` | No | — |
+| `dataMode` | `raw \| urlencoded \| formdata \| binary \| graphql` | No | — |
+| `rawModeData` | `string` | No | — |
+| `dataOptions` | `object` | No | — |
+| `responseCode` | `object` | No | — |
+| `status` | `string` | No | — |
+| `time` | `string` | No | — |
+| `cookies` | `string` | No | — |
+| `mime` | `string` | No | — |
+| `text` | `string` | No | — |
+| `language` | `string` | No | — |
+| `rawDataType` | `string` | No | — |
+| `requestObject` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="url full type">
+
+```ts
+string | string | {
+  raw?: string,
+  protocol?: string,
+  host?: string[],
+  path?: string[],
+  port?: string,
+  query?: {
+    key?: string,
+    value?: string,
+    description?: string | null,
+    disabled?: boolean
+  }[],
+  variable?: {
+    key?: string,
+    value?: string,
+    description?: string | null,
+    disabled?: boolean
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+  key: string,
+  value: string,
+  description?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="dataOptions full type">
+
+```ts
+{
+  raw?: {
+    language?: string
+  },
+  urlencoded?: {
+  },
+  params?: {
+  },
+  binary?: {
+  },
+  graphql?: {
+  }
+}
+```
+</Accordion>
+
+<Accordion title="responseCode full type">
+
+```ts
+{
+  code?: number,
+  name?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | No | — |
+| `model_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  owner?: string,
+  createdAt?: string,
+  updatedAt?: string,
+  lastRevision?: number,
+  lastUpdatedBy?: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateResponseComment
+
+`collections.updateResponseComment`
+
+Update a response's comment
+
+**Risk:** `write`
+
+```ts
+await corsair.postman.api.collections.updateResponseComment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collectionId` | `string` | Yes | — |
+| `responseId` | `string` | Yes | — |
+| `commentId` | `number` | Yes | — |
+| `body` | `string` | Yes | — |
+| `tags` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="tags full type">
+
+```ts
+{
+  {
+    {
+      userName
+    }
+  }?: {
+    type: user,
+    id: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  threadId?: number,
+  createdBy?: number,
+  createdAt?: string,
+  updatedAt?: string,
+  body?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Comments
+
+### resolve
+
+`comments.resolve`
+
+Resolve a comment thread
+
+**Risk:** `write`
+
+```ts
+await corsair.postman.api.comments.resolve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `threadId` | `number` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+## Environments
+
+### create
+
+`environments.create`
+
+Create an environment
+
+**Risk:** `write`
+
+```ts
+await corsair.postman.api.environments.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace` | `string` | Yes | — |
+| `environment` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="environment full type">
+
+```ts
+{
+  name: string,
+  values?: (
+    {
+      enabled?: boolean,
+      key?: string,
+      value?: string,
+      type?: secret | default,
+      description?: string
+    } | {
+      enabled?: boolean,
+      key?: string,
+      value?: string,
+      type?: secret | default,
+      secret?: boolean,
+      source?: {
+        postman?: {
+        },
+        provider?: postman
+      },
+      description?: string
+    }
+  )[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `environment` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="environment full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  uid?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### fork
+
+`environments.fork`
+
+Create a fork
+
+**Risk:** `write`
+
+```ts
+await corsair.postman.api.environments.fork({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `environmentId` | `string` | Yes | — |
+| `workspaceId` | `string` | Yes | — |
+| `forkName` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `environment` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="environment full type">
+
+```ts
+{
+  uid?: string,
+  name?: string,
+  forkName?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`environments.get`
+
+Get an environment
+
+**Risk:** `read`
+
+```ts
+await corsair.postman.api.environments.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `environmentId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `environment` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="environment full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  owner?: string,
+  createdAt?: string,
+  updatedAt?: string,
+  values?: (
+    {
+      enabled?: boolean,
+      key?: string,
+      value?: string,
+      type?: secret | default,
+      description?: string
+    } | {
+      enabled?: boolean,
+      key?: string,
+      value?: string,
+      type?: secret | default,
+      secret?: boolean,
+      source?: {
+      },
+      description?: string
+    }
+  )[],
+  isPublic?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getForks
+
+`environments.getForks`
+
+Get an environment's forks
+
+**Risk:** `read`
+
+```ts
+await corsair.postman.api.environments.getForks({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `environmentId` | `string` | Yes | — |
+| `cursor` | `string` | No | — |
+| `direction` | `asc \| desc` | No | — |
+| `limit` | `number` | No | — |
+| `sort` | `createdAt` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  forkId?: string,
+  forkName?: string,
+  createdAt?: string,
+  createdBy?: string,
+  updatedAt?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  nextCursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`environments.list`
+
+Get all environments
+
+**Risk:** `read`
+
+```ts
+await corsair.postman.api.environments.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `environments` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="environments full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  createdAt?: string,
+  updatedAt?: string,
+  owner?: string,
+  uid?: string,
+  isPublic?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### mergeFork
+
+`environments.mergeFork`
+
+Merge a fork
+
+**Risk:** `write`
+
+```ts
+await corsair.postman.api.environments.mergeFork({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `environmentId` | `string` | Yes | — |
+| `source` | `string` | Yes | — |
+| `deleteSource` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `environment` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="environment full type">
+
+```ts
+{
+  uid?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`environments.remove`
+
+Delete an environment
+
+**Risk:** `destructive`
+
+```ts
+await corsair.postman.api.environments.remove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `environmentId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `environment` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="environment full type">
+
+```ts
+{
+  id?: string,
+  uid?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### replace
+
+`environments.replace`
+
+Replace an environment's data
+
+**Risk:** `write`
+
+```ts
+await corsair.postman.api.environments.replace({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `environmentId` | `string` | Yes | — |
+| `environment` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="environment full type">
+
+```ts
+{
+  name?: string,
+  values?: (
+    {
+      enabled?: boolean,
+      key?: string,
+      value?: string,
+      type?: secret | default,
+      description?: string
+    } | {
+      enabled?: boolean,
+      key?: string,
+      value?: string,
+      type?: secret | default,
+      secret?: boolean,
+      source?: {
+        postman?: {
+        },
+        provider?: postman
+      },
+      description?: string
+    }
+  )[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `environment` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="environment full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  uid?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`environments.update`
+
+Update an environment
+
+**Risk:** `write`
+
+```ts
+await corsair.postman.api.environments.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `environmentId` | `string` | Yes | — |
+| `body` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  op: string,
+  path: string,
+  value: {
+    enabled?: boolean,
+    key?: string,
+    value?: string,
+    type?: secret | default,
+    description?: string
+  } | {
+    enabled?: boolean,
+    key?: string,
+    value?: string,
+    type?: secret | default,
+    secret?: boolean,
+    source?: {
+      postman?: {
+      },
+      provider?: postman
+    },
+    description?: string
+  }
+}[] | {
+  op: string,
+  path: string,
+  value: string
+}[] | {
+  op: string,
+  path: string,
+  value: string
+}[] | {
+  op: string,
+  path: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `environment` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="environment full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  owner?: string,
+  createdAt?: string,
+  updatedAt?: string,
+  values?: (
+    {
+      enabled?: boolean,
+      key?: string,
+      value?: string,
+      type?: secret | default,
+      description?: string
+    } | {
+      enabled?: boolean,
+      key?: string,
+      value?: string,
+      type?: secret | default,
+      secret?: boolean,
+      source?: {
+      },
+      description?: string
+    }
+  )[],
+  uid?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Groups
+
+### list
+
+`groups.list`
+
+Get all groups
+
+**Risk:** `read`
+
+```ts
+await corsair.postman.api.groups.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  teamId?: number,
+  name?: string,
+  summary?: string,
+  createdBy?: number,
+  createdAt?: string,
+  updatedAt?: string,
+  members?: number[],
+  roles?: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Mocks
+
+### create
+
+`mocks.create`
+
+Create a mock server
+
+**Risk:** `write`
+
+```ts
+await corsair.postman.api.mocks.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace` | `string` | Yes | — |
+| `mock` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="mock full type">
+
+```ts
+{
+  collection: string,
+  environment?: string,
+  name?: string,
+  private?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mock` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="mock full type">
+
+```ts
+{
+  id?: string,
+  owner?: string,
+  uid?: string,
+  collection?: string,
+  mockUrl?: string,
+  name?: string,
+  config?: {
+    delay?: {
+      type?: fixed,
+      preset?: 1 | 2,
+      duration?: number
+    },
+    headers?: string[],
+    matchBody?: boolean,
+    matchHeader?: boolean,
+    matchQueryParams?: boolean,
+    matchWildcards?: boolean,
+    serverResponseId?: string | null
+  },
+  createdAt?: string,
+  updatedAt?: string,
+  environment?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createServerResponse
+
+`mocks.createServerResponse`
+
+Create a server response
+
+**Risk:** `write`
+
+```ts
+await corsair.postman.api.mocks.createServerResponse({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mockId` | `string` | Yes | — |
+| `serverResponse` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="serverResponse full type">
+
+```ts
+{
+  name: string,
+  statusCode: number,
+  headers?: {
+    key?: string,
+    value?: string
+  }[],
+  language?: text | javascript | json | html | xml,
+  body?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `statusCode` | `number` | No | — |
+| `headers` | `object[]` | No | — |
+| `language` | `text \| javascript \| json \| html \| xml` | No | — |
+| `body` | `string` | No | — |
+| `createdBy` | `string` | No | — |
+| `updatedBy` | `string` | No | — |
+| `mock` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="headers full type">
+
+```ts
+{
+  key?: string,
+  value?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteServerResponse
+
+`mocks.deleteServerResponse`
+
+Delete a server response
+
+**Risk:** `destructive`
+
+```ts
+await corsair.postman.api.mocks.deleteServerResponse({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mockId` | `string` | Yes | — |
+| `serverResponseId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `statusCode` | `number` | No | — |
+| `headers` | `object[]` | No | — |
+| `language` | `text \| javascript \| json \| html \| xml` | No | — |
+| `body` | `string` | No | — |
+| `createdBy` | `string` | No | — |
+| `updatedBy` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="headers full type">
+
+```ts
+{
+  key?: string,
+  value?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`mocks.list`
+
+Get all mock servers
+
+**Risk:** `read`
+
+```ts
+await corsair.postman.api.mocks.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | No | — |
+| `workspace` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mocks` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="mocks full type">
+
+```ts
+{
+  id?: string,
+  owner?: string,
+  uid?: string,
+  collection?: string,
+  mockUrl?: string,
+  name?: string,
+  config?: {
+    delay?: any,
+    headers?: string[],
+    matchBody?: boolean,
+    matchHeader?: boolean,
+    matchQueryParams?: boolean,
+    matchWildcards?: boolean,
+    serverResponseId?: string | null
+  },
+  createdAt?: string,
+  updatedAt?: string,
+  isPublic?: boolean,
+  deactivated?: boolean,
+  environment?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### publish
+
+`mocks.publish`
+
+Publish a mock server
+
+**Risk:** `write`
+
+```ts
+await corsair.postman.api.mocks.publish({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mockId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mock` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="mock full type">
+
+```ts
+{
+  id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`mocks.update`
+
+Update a mock server
+
+**Risk:** `write`
+
+```ts
+await corsair.postman.api.mocks.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mockId` | `string` | Yes | — |
+| `mock` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="mock full type">
+
+```ts
+{
+  name?: string,
+  environment?: string,
+  description?: string,
+  private?: boolean,
+  versionTag?: string,
+  collection?: string,
+  config?: {
+    serverResponseId?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mock` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="mock full type">
+
+```ts
+{
+  id?: string,
+  owner?: string,
+  uid?: string,
+  collection?: string,
+  mockUrl?: string,
+  name?: string,
+  config?: {
+    delay?: {
+      type?: fixed,
+      preset?: 1 | 2,
+      duration?: number
+    },
+    headers?: string[],
+    matchBody?: boolean,
+    matchHeader?: boolean,
+    matchQueryParams?: boolean,
+    matchWildcards?: boolean,
+    serverResponseId?: string | null
+  },
+  createdAt?: string,
+  updatedAt?: string,
+  environment?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateServerResponse
+
+`mocks.updateServerResponse`
+
+Update a server response
+
+**Risk:** `write`
+
+```ts
+await corsair.postman.api.mocks.updateServerResponse({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mockId` | `string` | Yes | — |
+| `serverResponseId` | `string` | Yes | — |
+| `serverResponse` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="serverResponse full type">
+
+```ts
+{
+  name?: string,
+  statusCode?: number,
+  headers?: {
+    key?: string,
+    value?: string
+  }[],
+  language?: text | javascript | json | html | xml,
+  body?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `statusCode` | `number` | No | — |
+| `headers` | `object[]` | No | — |
+| `language` | `text \| javascript \| json \| html \| xml` | No | — |
+| `body` | `string` | No | — |
+| `createdBy` | `string` | No | — |
+| `updatedBy` | `string` | No | — |
+| `mock` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="headers full type">
+
+```ts
+{
+  key?: string,
+  value?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Monitors
+
+### create
+
+`monitors.create`
+
+Create a monitor
+
+**Risk:** `write`
+
+```ts
+await corsair.postman.api.monitors.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace` | `string` | Yes | — |
+| `monitor` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="monitor full type">
+
+```ts
+{
+  name: string,
+  active?: boolean,
+  notificationLimit?: number,
+  collection: string,
+  environment?: string,
+  retry?: {
+    attempts?: number
+  },
+  options?: {
+    followRedirects?: boolean,
+    requestDelay?: number,
+    requestTimeout?: number,
+    strictSSL?: boolean
+  },
+  schedule: {
+    cron?: string,
+    timezone?: string
+  },
+  distribution?: {
+    region?: us-east | us-west | ap-southeast | ca-central | eu-central | sa-east | uk | us-east-staticip | us-west-staticip
+  }[],
+  notifications?: {
+    onError?: {
+      email?: string
+    }[],
+    onFailure?: {
+      email?: string
+    }[]
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `monitor` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="monitor full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  active?: boolean,
+  uid?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`monitors.get`
+
+Get a monitor
+
+**Risk:** `read`
+
+```ts
+await corsair.postman.api.monitors.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `monitorId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `monitor` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="monitor full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  uid?: string,
+  owner?: number,
+  active?: boolean,
+  notificationLimit?: number,
+  collectionUid?: string,
+  environmentUid?: string,
+  jobId?: string,
+  options?: {
+    followRedirects?: boolean,
+    requestDelay?: number,
+    requestTimeout?: number,
+    strictSSL?: boolean
+  },
+  notifications?: {
+    onError?: any[],
+    onFailure?: any[]
+  },
+  distribution?: {
+    region?: us-east | us-west | ap-southeast | ca-central | eu-central | sa-east | uk | us-east-staticip | us-west-staticip
+  }[],
+  schedule?: {
+    cron?: string,
+    nextRun?: string,
+    timezone?: string
+  },
+  retry?: {
+    attempts?: number
+  },
+  lastRun?: {
+    status?: string,
+    startedAt?: string,
+    finishedAt?: string,
+    stats?: {
+      assertions?: any,
+      requests?: any,
+      runCount?: number,
+      errorCount?: number,
+      abortedCount?: number,
+      responseLatency?: number,
+      responseSize?: number
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`monitors.list`
+
+Get all monitors
+
+**Risk:** `read`
+
+```ts
+await corsair.postman.api.monitors.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace` | `string` | No | — |
+| `active` | `boolean` | No | — |
+| `owner` | `number` | No | — |
+| `collectionUid` | `string` | No | — |
+| `environmentUid` | `string` | No | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `monitors` | `object[]` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="monitors full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  active?: boolean,
+  uid?: string,
+  owner?: number,
+  collectionUid?: string,
+  environmentUid?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  nextCursor?: string | null,
+  limit?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`monitors.remove`
+
+Delete a monitor
+
+**Risk:** `destructive`
+
+```ts
+await corsair.postman.api.monitors.remove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `monitorId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `monitor` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="monitor full type">
+
+```ts
+{
+  id?: string,
+  uid?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### run
+
+`monitors.run`
+
+Run a monitor
+
+**Risk:** `write`
+
+```ts
+await corsair.postman.api.monitors.run({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `monitorId` | `string` | Yes | — |
+| `async` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `run` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="run full type">
+
+```ts
+{
+  info?: {
+    jobId?: string,
+    collectionUid?: string,
+    environmentUid?: string,
+    monitorId?: string,
+    name?: string,
+    status?: string,
+    startedAt?: string,
+    finishedAt?: string
+  },
+  stats?: {
+    assertions?: {
+      total?: number,
+      failed?: number
+    },
+    requests?: {
+      total?: number,
+      failed?: number
+    },
+    runCount?: number,
+    errorCount?: number,
+    abortedCount?: number,
+    responseLatency?: number,
+    responseSize?: number
+  },
+  executions?: {
+    id?: number,
+    item?: any,
+    request?: any,
+    response?: any,
+    errors?: any[]
+  }[],
+  failures?: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`monitors.update`
+
+Update a monitor
+
+**Risk:** `write`
+
+```ts
+await corsair.postman.api.monitors.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `monitorId` | `string` | Yes | — |
+| `monitor` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="monitor full type">
+
+```ts
+{
+  name?: string,
+  active?: boolean,
+  notificationLimit?: number,
+  retry?: {
+    attempts?: number
+  },
+  options?: {
+    followRedirects?: boolean,
+    requestDelay?: number,
+    requestTimeout?: number,
+    strictSSL?: boolean
+  },
+  schedule?: {
+    cron?: string,
+    timezone?: string
+  },
+  distribution?: {
+    region?: us-east | us-west | ap-southeast | ca-central | eu-central | sa-east | uk | us-east-staticip | us-west-staticip
+  }[],
+  notifications?: {
+    onError?: {
+      email?: string
+    }[],
+    onFailure?: {
+      email?: string
+    }[]
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `monitor` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="monitor full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  active?: boolean,
+  uid?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Pull Requests
+
+### review
+
+`pullRequests.review`
+
+Review a pull request
+
+**Risk:** `write`
+
+```ts
+await corsair.postman.api.pullRequests.review({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pullRequestId` | `string` | Yes | — |
+| `action` | `approve \| decline \| merge \| unapprove` | Yes | — |
+| `comment` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `reviewedBy` | `object` | No | — |
+| `status` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="reviewedBy full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  username?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`pullRequests.update`
+
+Update a pull request
+
+**Risk:** `write`
+
+```ts
+await corsair.postman.api.pullRequests.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pullRequestId` | `string` | Yes | — |
+| `title` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `reviewers` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `createdAt` | `string` | No | — |
+| `createdBy` | `string` | No | — |
+| `description` | `string` | No | — |
+| `destinationId` | `string` | No | — |
+| `forkType` | `string` | No | — |
+| `id` | `string` | No | — |
+| `sourceId` | `string` | No | — |
+| `status` | `open \| approved \| declined \| merged` | No | — |
+| `title` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+
+
+
+---
+
+## Scim
+
+### getResourceTypes
+
+`scim.getResourceTypes`
+
+Get resource types
+
+**Risk:** `read`
+
+```ts
+await corsair.postman.api.scim.getResourceTypes({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  schemas?: string[],
+  id?: string,
+  name?: string,
+  endpoint?: string,
+  description?: string,
+  schema?: string,
+  schemaExtensions?: {
+    schema?: string,
+    required?: boolean
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getServiceConfig
+
+`scim.getServiceConfig`
+
+Get service provider configuration
+
+**Risk:** `read`
+
+```ts
+await corsair.postman.api.scim.getServiceConfig({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `schemas` | `string[]` | No | — |
+| `documentationUri` | `string` | No | — |
+| `patch` | `object` | No | — |
+| `bulk` | `object` | No | — |
+| `filter` | `object` | No | — |
+| `changePassword` | `object` | No | — |
+| `sort` | `object` | No | — |
+| `authenticationSchemes` | `object[]` | No | — |
+| `etag` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="patch full type">
+
+```ts
+{
+  supported?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="bulk full type">
+
+```ts
+{
+  maxOperations?: number,
+  maxPayloadSize?: number,
+  supported?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="filter full type">
+
+```ts
+{
+  maxResults?: number,
+  supported?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="changePassword full type">
+
+```ts
+{
+  supported?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="sort full type">
+
+```ts
+{
+  supported?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="authenticationSchemes full type">
+
+```ts
+{
+  description?: string,
+  name?: string,
+  specUri?: string,
+  type?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="etag full type">
+
+```ts
+{
+  supported?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  resourceType?: string,
+  location?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Specs
+
+### create
+
+`specs.create`
+
+Create a spec
+
+**Risk:** `write`
+
+```ts
+await corsair.postman.api.specs.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `type` | `OPENAPI:2.0 \| OPENAPI:3.0 \| OPENAPI:3.1 \| ASYNCAPI:2.0 \| ASYNCAPI:3.0 \| PROTOBUF:2 \| PROTOBUF:3 \| GRAPHQL \| SMITHY:2.0` | Yes | — |
+| `files` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="files full type">
+
+```ts
+(
+  {
+    path: string,
+    content: string,
+    type: DEFAULT | ROOT
+  } | {
+    path: string,
+    content: string
+  }
+)[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `type` | `OPENAPI:2.0 \| OPENAPI:3.0 \| OPENAPI:3.1 \| ASYNCAPI:2.0 \| ASYNCAPI:3.0 \| PROTOBUF:2 \| PROTOBUF:3 \| GRAPHQL \| SMITHY:2.0` | No | — |
+| `id` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+| `createdBy` | `number` | No | — |
+| `updatedBy` | `number` | No | — |
+
+
+
+---
+
+### createFile
+
+`specs.createFile`
+
+Create a spec file
+
+**Risk:** `write`
+
+```ts
+await corsair.postman.api.specs.createFile({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `specId` | `string` | Yes | — |
+| `path` | `string` | Yes | — |
+| `content` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `createdAt` | `string` | No | — |
+| `createdBy` | `number` | No | — |
+| `id` | `string` | No | — |
+| `path` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+| `updatedBy` | `number` | No | — |
+| `type` | `DEFAULT \| ROOT` | No | — |
+
+
+
+---
+
+### deleteFile
+
+`specs.deleteFile`
+
+Delete a spec file
+
+**Risk:** `destructive`
+
+```ts
+await corsair.postman.api.specs.deleteFile({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `specId` | `string` | Yes | — |
+| `filePath` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### generateCollection
+
+`specs.generateCollection`
+
+Generate a collection from spec
+
+**Risk:** `write`
+
+```ts
+await corsair.postman.api.specs.generateCollection({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `specId` | `string` | Yes | — |
+| `elementType` | `collection` | Yes | — |
+| `name` | `string` | Yes | — |
+| `options` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="options full type">
+
+```ts
+{
+  requestNameSource?: Fallback | URL,
+  indentCharacter?: Tab | Space,
+  parametersResolution?: string,
+  folderStrategy?: Paths | Tags,
+  includeAuthInfoInExample?: boolean,
+  enableOptionalParameters?: boolean,
+  keepImplicitHeaders?: boolean,
+  includeDeprecated?: boolean,
+  alwaysInheritAuthentication?: boolean,
+  nestedFolderHierarchy?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `taskId` | `string` | No | — |
+| `url` | `string` | No | — |
+
+
+
+---
+
+### get
+
+`specs.get`
+
+Get a spec
+
+**Risk:** `read`
+
+```ts
+await corsair.postman.api.specs.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `specId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `fileFormat` | `json \| yaml \| proto \| graphql \| smithy` | No | — |
+| `name` | `string` | No | — |
+| `type` | `OPENAPI:2.0 \| OPENAPI:3.0 \| OPENAPI:3.1 \| ASYNCAPI:2.0 \| ASYNCAPI:3.0 \| PROTOBUF:2 \| PROTOBUF:3 \| GRAPHQL \| SMITHY:2.0` | No | — |
+| `createdBy` | `number` | No | — |
+| `updatedBy` | `number` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+
+
+
+---
+
+### getDefinition
+
+`specs.getDefinition`
+
+Get a spec's definition
+
+**Risk:** `read`
+
+```ts
+await corsair.postman.api.specs.getDefinition({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `specId` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getFile
+
+`specs.getFile`
+
+Get a spec file
+
+**Risk:** `read`
+
+```ts
+await corsair.postman.api.specs.getFile({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `specId` | `string` | Yes | — |
+| `filePath` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `path` | `string` | No | — |
+| `createdBy` | `number` | No | — |
+| `updatedBy` | `number` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+| `type` | `ROOT \| DEFAULT` | No | — |
+| `content` | `string` | No | — |
+
+
+
+---
+
+### getFiles
+
+`specs.getFiles`
+
+Get a spec's files
+
+**Risk:** `read`
+
+```ts
+await corsair.postman.api.specs.getFiles({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `specId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `files` | `object[]` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="files full type">
+
+```ts
+{
+  id?: string,
+  path?: string,
+  name?: string,
+  createdBy?: number,
+  updatedBy?: number,
+  createdAt?: string,
+  updatedAt?: string,
+  type?: ROOT | DEFAULT
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  nextCursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getGeneratedCollections
+
+`specs.getGeneratedCollections`
+
+Get a spec's generated collections
+
+**Risk:** `read`
+
+```ts
+await corsair.postman.api.specs.getGeneratedCollections({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `specId` | `string` | Yes | — |
+| `elementType` | `collection` | Yes | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collections` | `object[]` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="collections full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  state?: in-sync | out-of-sync | sync-in-progress,
+  createdAt?: string,
+  updatedAt?: string,
+  createdBy?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  nextCursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`specs.list`
+
+Get all specs
+
+**Risk:** `read`
+
+```ts
+await corsair.postman.api.specs.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | Yes | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object` | No | — |
+| `specs` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  nextCursor?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="specs full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  type?: OPENAPI:2.0 | OPENAPI:3.0 | OPENAPI:3.1 | ASYNCAPI:2.0 | ASYNCAPI:3.0 | PROTOBUF:2 | PROTOBUF:3 | GRAPHQL | SMITHY:2.0,
+  createdBy?: number,
+  updatedBy?: number,
+  createdAt?: string,
+  updatedAt?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`specs.remove`
+
+Delete a spec
+
+**Risk:** `destructive`
+
+```ts
+await corsair.postman.api.specs.remove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `specId` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### syncWithCollection
+
+`specs.syncWithCollection`
+
+Sync spec with collection
+
+**Risk:** `write`
+
+```ts
+await corsair.postman.api.specs.syncWithCollection({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `specId` | `string` | Yes | — |
+| `collectionUid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `taskId` | `string` | No | — |
+| `url` | `string` | No | — |
+
+
+
+---
+
+### update
+
+`specs.update`
+
+Update a spec's properties
+
+**Risk:** `write`
+
+```ts
+await corsair.postman.api.specs.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `specId` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `type` | `OPENAPI:2.0 \| OPENAPI:3.0 \| OPENAPI:3.1 \| ASYNCAPI:2.0 \| ASYNCAPI:3.0 \| PROTOBUF:2 \| PROTOBUF:3 \| GRAPHQL \| SMITHY:2.0` | No | — |
+| `createdBy` | `number` | No | — |
+| `updatedBy` | `number` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+| `name` | `string` | No | — |
+
+
+
+---
+
+### updateFile
+
+`specs.updateFile`
+
+Update a spec file
+
+**Risk:** `write`
+
+```ts
+await corsair.postman.api.specs.updateFile({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `specId` | `string` | Yes | — |
+| `filePath` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `type` | `DEFAULT \| ROOT` | No | — |
+| `content` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `createdAt` | `string` | No | — |
+| `createdBy` | `number` | No | — |
+| `id` | `string` | No | — |
+| `path` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+| `updatedBy` | `number` | No | — |
+| `type` | `DEFAULT \| ROOT` | No | — |
+
+
+
+---
+
+## Tools
+
+### importOpenapi
+
+`tools.importOpenapi`
+
+Import an OpenAPI definition
+
+**Risk:** `write`
+
+```ts
+await corsair.postman.api.tools.importOpenapi({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace` | `string` | Yes | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  type: json,
+  input: {
+  },
+  options?: {
+    requestNameSource?: Fallback | URL,
+    indentCharacter?: Tab | Space,
+    parametersResolution?: string,
+    folderStrategy?: Paths | Tags,
+    includeAuthInfoInExample?: boolean,
+    enableOptionalParameters?: boolean,
+    keepImplicitHeaders?: boolean,
+    includeDeprecated?: boolean,
+    alwaysInheritAuthentication?: boolean,
+    nestedFolderHierarchy?: boolean
+  }
+} | {
+  type: string,
+  input: string,
+  options?: {
+    requestNameSource?: Fallback | URL,
+    indentCharacter?: Tab | Space,
+    parametersResolution?: string,
+    folderStrategy?: Paths | Tags,
+    includeAuthInfoInExample?: boolean,
+    enableOptionalParameters?: boolean,
+    keepImplicitHeaders?: boolean,
+    includeDeprecated?: boolean,
+    alwaysInheritAuthentication?: boolean,
+    nestedFolderHierarchy?: boolean
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collections` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="collections full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  uid?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Users
+
+### get
+
+`users.get`
+
+Get a team user
+
+**Risk:** `read`
+
+```ts
+await corsair.postman.api.users.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `name` | `string` | No | — |
+| `username` | `string` | No | — |
+| `email` | `string` | No | — |
+| `roles` | `string[]` | No | — |
+| `joinedAt` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`users.list`
+
+Get all team users
+
+**Risk:** `read`
+
+```ts
+await corsair.postman.api.users.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `groupId` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  username?: string,
+  email?: string,
+  roles?: string[],
+  joinedAt?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Webhooks
+
+### create
+
+`webhooks.create`
+
+Create a webhook
+
+**Risk:** `write`
+
+```ts
+await corsair.postman.api.webhooks.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `collection` | `string` | Yes | — |
+| `workspace` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhook` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="webhook full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  collection?: string,
+  webhookUrl?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Workspaces
+
+### create
+
+`workspaces.create`
+
+Create a workspace
+
+**Risk:** `write`
+
+```ts
+await corsair.postman.api.workspaces.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="workspace full type">
+
+```ts
+{
+  name: string,
+  type: personal | private | public | team | partner,
+  description?: string,
+  about?: string,
+  teamId?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="workspace full type">
+
+```ts
+{
+  id?: string,
+  name?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`workspaces.get`
+
+Get a workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.postman.api.workspaces.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | Yes | — |
+| `include` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="workspace full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  type?: personal | team | private | public | partner,
+  description?: string | null,
+  visibility?: personal | team | private | public | partner,
+  createdBy?: string,
+  updatedBy?: string,
+  createdAt?: string,
+  updatedAt?: string,
+  about?: string,
+  team?: string,
+  collections?: {
+    id?: string,
+    name?: string,
+    uid?: string
+  }[],
+  environments?: {
+    id?: string,
+    name?: string,
+    uid?: string
+  }[],
+  mocks?: {
+    id?: string,
+    name?: string,
+    uid?: string,
+    deactivated?: boolean
+  }[],
+  monitors?: {
+    id?: string,
+    name?: string,
+    uid?: string,
+    deactivated?: boolean
+  }[],
+  specs?: {
+    id?: string,
+    name?: string,
+    uid?: string
+  }[],
+  scim?: {
+    createdBy?: string,
+    updatedBy?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getActivity
+
+`workspaces.getActivity`
+
+Get a workspace's activity feed
+
+**Risk:** `read`
+
+```ts
+await corsair.postman.api.workspaces.getActivity({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | Yes | — |
+| `userId` | `number` | No | — |
+| `elementType` | `collection \| workspace \| environment \| mock \| monitor` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  workspaceId?: string,
+  createdAt?: string,
+  updatedAt?: string,
+  id?: number,
+  user?: {
+    id?: number,
+    username?: string,
+    isPartner?: boolean,
+    name?: string
+  },
+  action?: create | update | destroy,
+  elementType?: string,
+  trigger?: string,
+  elementId?: string,
+  elementName?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  nextCursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getGlobalVariables
+
+`workspaces.getGlobalVariables`
+
+Get global variables
+
+**Risk:** `read`
+
+```ts
+await corsair.postman.api.workspaces.getGlobalVariables({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `values` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="values full type">
+
+```ts
+{
+  key?: string,
+  type?: default | secret,
+  value?: string,
+  enabled?: boolean,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getRoles
+
+`workspaces.getRoles`
+
+Get a workspace's roles
+
+**Risk:** `read`
+
+```ts
+await corsair.postman.api.workspaces.getRoles({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | Yes | — |
+| `include` | `scim` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `roles` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="roles full type">
+
+```ts
+{
+  id?: string,
+  user?: string[],
+  usergroup?: string[],
+  partner?: string[],
+  displayName?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`workspaces.list`
+
+Get all workspaces
+
+**Risk:** `read`
+
+```ts
+await corsair.postman.api.workspaces.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `personal \| team \| private \| public \| partner` | No | — |
+| `createdBy` | `number` | No | — |
+| `include` | `mocks:deactivated \| scim` | No | — |
+| `elementType` | `collection \| specification` | No | — |
+| `elementId` | `string` | No | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaces` | `object[]` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="workspaces full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  type?: personal | team | private | public | partner,
+  visibility?: personal | team | private | public | partner,
+  createdBy?: string,
+  about?: string,
+  createdAt?: string,
+  updatedAt?: string,
+  scim?: {
+    createdBy?: string
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  nextCursor?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`workspaces.remove`
+
+Delete a workspace
+
+**Risk:** `destructive`
+
+```ts
+await corsair.postman.api.workspaces.remove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="workspace full type">
+
+```ts
+{
+  id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`workspaces.update`
+
+Update a workspace
+
+**Risk:** `write`
+
+```ts
+await corsair.postman.api.workspaces.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | Yes | — |
+| `workspace` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="workspace full type">
+
+```ts
+{
+  name?: string,
+  type?: private | personal | team | public,
+  description?: string,
+  about?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="workspace full type">
+
+```ts
+{
+  id?: string,
+  name?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateGlobalVariables
+
+`workspaces.updateGlobalVariables`
+
+Update global variables
+
+**Risk:** `write`
+
+```ts
+await corsair.postman.api.workspaces.updateGlobalVariables({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | Yes | — |
+| `values` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="values full type">
+
+```ts
+{
+  key?: string,
+  type?: default | secret,
+  value?: string,
+  enabled?: boolean,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `values` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="values full type">
+
+```ts
+{
+  key?: string,
+  type?: default | secret,
+  value?: string,
+  enabled?: boolean,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

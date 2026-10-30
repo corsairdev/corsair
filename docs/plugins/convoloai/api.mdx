@@ -1,0 +1,1046 @@
+---
+title: API
+description: "API reference for ConvoloAi: every `convoloai.api.*` operation with input and output types."
+---
+
+Every `convoloai.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Agent
+
+### create
+
+`agent.create`
+
+Create a new agent
+
+**Risk:** `write`
+
+```ts
+await corsair.convoloai.api.agent.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### delete
+
+`agent.delete`
+
+Delete an agent
+
+**Risk:** `destructive`
+
+```ts
+await corsair.convoloai.api.agent.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### get
+
+`agent.get`
+
+Get one agent by id
+
+**Risk:** `read`
+
+```ts
+await corsair.convoloai.api.agent.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`agent.list`
+
+List agents with filtering, sorting, and pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.convoloai.api.agent.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `searchString` | `string` | No | — |
+| `page` | `number` | No | — |
+| `itemsPerPage` | `number` | No | — |
+| `sortBy` | `name` | No | — |
+| `sortDirection` | `ASC \| DESC` | No | — |
+| `status` | `boolean` | No | — |
+| `withStats` | `boolean` | No | — |
+| `withActiveWidgetsData` | `boolean` | No | — |
+| `withDeletedWidgetsData` | `boolean` | No | — |
+| `dateFrom` | `string` | No | — |
+| `dateTo` | `string` | No | — |
+| `isDeleted` | `boolean` | No | — |
+| `isDelegate` | `boolean` | No | — |
+| `teamMemberOnly` | `boolean` | No | — |
+| `fullAccountAccess` | `boolean` | No | — |
+| `delegateAccessToDialerAgentId` | `number` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### listV2
+
+`agent.listV2`
+
+List agents via the v2 endpoint
+
+**Risk:** `read`
+
+```ts
+await corsair.convoloai.api.agent.listV2({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `searchString` | `string` | No | — |
+| `page` | `number` | No | — |
+| `itemsPerPage` | `number` | No | — |
+| `sortBy` | `name` | No | — |
+| `sortDirection` | `ASC \| DESC` | No | — |
+| `status` | `boolean` | No | — |
+| `withStats` | `boolean` | No | — |
+| `withActiveWidgetsData` | `boolean` | No | — |
+| `withDeletedWidgetsData` | `boolean` | No | — |
+| `dateFrom` | `string` | No | — |
+| `dateTo` | `string` | No | — |
+| `isDeleted` | `boolean` | No | — |
+| `isDelegate` | `boolean` | No | — |
+| `teamMemberOnly` | `boolean` | No | — |
+| `fullAccountAccess` | `boolean` | No | — |
+| `delegateAccessToDialerAgentId` | `number` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### update
+
+`agent.update`
+
+Update an agent
+
+**Risk:** `write`
+
+```ts
+await corsair.convoloai.api.agent.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### updateSchedule
+
+`agent.updateSchedule`
+
+Update the working schedule of an agent
+
+**Risk:** `write`
+
+```ts
+await corsair.convoloai.api.agent.updateSchedule({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Call
+
+### getDetails
+
+`call.getDetails`
+
+Get detailed info for one call
+
+**Risk:** `read`
+
+```ts
+await corsair.convoloai.api.call.getDetails({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `callId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getEndWebhookPayload
+
+`call.getEndWebhookPayload`
+
+Get the end-call webhook payload for one call
+
+**Risk:** `read`
+
+```ts
+await corsair.convoloai.api.call.getEndWebhookPayload({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `callId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getLog
+
+`call.getLog`
+
+Get the log for one call
+
+**Risk:** `read`
+
+```ts
+await corsair.convoloai.api.call.getLog({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `callId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`call.list`
+
+List calls with filters and pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.convoloai.api.call.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `date_from` | `string` | No | — |
+| `date_to` | `string` | No | — |
+| `widget_ids` | `string[]` | No | — |
+| `max_calls` | `number` | No | — |
+| `page` | `number` | No | — |
+| `search_string` | `string` | No | — |
+| `status` | `CallStatusType.OPERATOR_ANSWERED \| CallStatusType.CLIENT_ANSWERED \| CallStatusType.NO_ANSWER \| CallStatusType.FAILED \| CallStatusType.PENDING \| CallStatusType.INITIATED \| CallStatusType.ON_DEMAND \| CallStatusType.FUTURE \| CallStatusType.DONE \| CallStatusType.PROCESSED` | No | — |
+| `filter_url` | `string` | No | — |
+| `filter_referer` | `string` | No | — |
+| `filter_lead_number` | `string` | No | — |
+| `filter_agent` | `string` | No | — |
+| `filter_answer_time_from` | `number` | No | — |
+| `filter_answer_time_to` | `number` | No | — |
+| `filter_talk_time_from` | `number` | No | — |
+| `filter_talk_time_to` | `number` | No | — |
+| `filter_wait_time_from` | `number` | No | — |
+| `filter_wait_time_to` | `number` | No | — |
+| `filter_disconnected_by` | `lead \| agent \| none` | No | — |
+| `timezone` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### listPayloadData
+
+`call.listPayloadData`
+
+List webhook payload data for calls
+
+**Risk:** `read`
+
+```ts
+await corsair.convoloai.api.call.listPayloadData({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `date_from` | `string` | No | — |
+| `date_to` | `string` | No | — |
+| `widget_ids` | `string[]` | No | — |
+| `max_calls` | `number` | No | — |
+| `page` | `number` | No | — |
+| `search_string` | `string` | No | — |
+| `status` | `CallStatusType.OPERATOR_ANSWERED \| CallStatusType.CLIENT_ANSWERED \| CallStatusType.NO_ANSWER \| CallStatusType.FAILED \| CallStatusType.PENDING \| CallStatusType.INITIATED \| CallStatusType.ON_DEMAND \| CallStatusType.FUTURE \| CallStatusType.DONE \| CallStatusType.PROCESSED` | No | — |
+| `filter_url` | `string` | No | — |
+| `filter_referer` | `string` | No | — |
+| `filter_lead_number` | `string` | No | — |
+| `filter_agent` | `string` | No | — |
+| `filter_answer_time_from` | `number` | No | — |
+| `filter_answer_time_to` | `number` | No | — |
+| `filter_talk_time_from` | `number` | No | — |
+| `filter_talk_time_to` | `number` | No | — |
+| `filter_wait_time_from` | `number` | No | — |
+| `filter_wait_time_to` | `number` | No | — |
+| `filter_disconnected_by` | `lead \| agent \| none` | No | — |
+| `timezone` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### listV5
+
+`call.listV5`
+
+List calls via the v5 endpoint with fixed delegate logic
+
+**Risk:** `read`
+
+```ts
+await corsair.convoloai.api.call.listV5({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `date_from` | `string` | No | — |
+| `date_to` | `string` | No | — |
+| `widget_ids` | `string[]` | No | — |
+| `max_calls` | `number` | No | — |
+| `page` | `number` | No | — |
+| `search_string` | `string` | No | — |
+| `status` | `CallStatusType.OPERATOR_ANSWERED \| CallStatusType.CLIENT_ANSWERED \| CallStatusType.NO_ANSWER \| CallStatusType.FAILED \| CallStatusType.PENDING \| CallStatusType.INITIATED \| CallStatusType.ON_DEMAND \| CallStatusType.FUTURE \| CallStatusType.DONE \| CallStatusType.PROCESSED` | No | — |
+| `filter_url` | `string` | No | — |
+| `filter_referer` | `string` | No | — |
+| `filter_lead_number` | `string` | No | — |
+| `filter_agent` | `string` | No | — |
+| `filter_answer_time_from` | `number` | No | — |
+| `filter_answer_time_to` | `number` | No | — |
+| `filter_talk_time_from` | `number` | No | — |
+| `filter_talk_time_to` | `number` | No | — |
+| `filter_wait_time_from` | `number` | No | — |
+| `filter_wait_time_to` | `number` | No | — |
+| `filter_disconnected_by` | `lead \| agent \| none` | No | — |
+| `timezone` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### listWithTags
+
+`call.listWithTags`
+
+List calls with S2L tag filters
+
+**Risk:** `read`
+
+```ts
+await corsair.convoloai.api.call.listWithTags({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `date_from` | `string` | No | — |
+| `date_to` | `string` | No | — |
+| `widget_ids` | `string[]` | No | — |
+| `max_calls` | `number` | No | — |
+| `page` | `number` | No | — |
+| `search_string` | `string` | No | — |
+| `status` | `CallStatusType.OPERATOR_ANSWERED \| CallStatusType.CLIENT_ANSWERED \| CallStatusType.NO_ANSWER \| CallStatusType.FAILED \| CallStatusType.PENDING \| CallStatusType.INITIATED \| CallStatusType.ON_DEMAND \| CallStatusType.FUTURE \| CallStatusType.DONE \| CallStatusType.PROCESSED` | No | — |
+| `filter_url` | `string` | No | — |
+| `filter_referer` | `string` | No | — |
+| `filter_lead_number` | `string` | No | — |
+| `filter_agent` | `string` | No | — |
+| `filter_answer_time_from` | `number` | No | — |
+| `filter_answer_time_to` | `number` | No | — |
+| `filter_talk_time_from` | `number` | No | — |
+| `filter_talk_time_to` | `number` | No | — |
+| `filter_wait_time_from` | `number` | No | — |
+| `filter_wait_time_to` | `number` | No | — |
+| `filter_disconnected_by` | `lead \| agent \| none` | No | — |
+| `timezone` | `string` | No | — |
+| `filter_s2l_ai_action_set_ids` | `string[]` | No | — |
+| `filter_s2l_tag_names` | `string[]` | No | — |
+| `filter_s2l_tag_categories` | `string[]` | No | — |
+| `filter_s2l_has_tag` | `boolean` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### setRating
+
+`call.setRating`
+
+Set a rating on a call for an agent or supervisor
+
+**Risk:** `write`
+
+```ts
+await corsair.convoloai.api.call.setRating({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `callId` | `string` | Yes | — |
+| `tag` | `string` | No | — |
+| `type` | `positive \| negative \| neutral` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### setS2lTag
+
+`call.setS2lTag`
+
+Set an S2L tag on a call from an external AI agent
+
+**Risk:** `write`
+
+```ts
+await corsair.convoloai.api.call.setS2lTag({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `callId` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### trigger
+
+`call.trigger`
+
+Trigger a call through the external call API
+
+**Risk:** `write`
+
+```ts
+await corsair.convoloai.api.call.trigger({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `api_key` | `string` | Yes | — |
+| `widget_key` | `string` | Yes | — |
+| `lc_number` | `string` | Yes | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Get Custom Widget Params
+
+### getCustomWidgetParams
+
+`getCustomWidgetParams`
+
+Get custom widget fields for integrations
+
+**Risk:** `read`
+
+```ts
+await corsair.convoloai.api.getCustomWidgetParams({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `widget_key` | `string` | Yes | — |
+| `api_key` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Get Open Api Document
+
+### getOpenApiDocument
+
+`getOpenApiDocument`
+
+Get the OpenAPI document this API key may call
+
+**Risk:** `read`
+
+```ts
+await corsair.convoloai.api.getOpenApiDocument({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+## Lead
+
+### getOutcomeTags
+
+`lead.getOutcomeTags`
+
+Get widget outcome tags by lead id
+
+**Risk:** `read`
+
+```ts
+await corsair.convoloai.api.lead.getOutcomeTags({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`lead.list`
+
+List leads with filters and pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.convoloai.api.lead.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_string` | `string` | No | — |
+| `name` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `email` | `string` | No | — |
+| `websites` | `string[]` | No | — |
+| `widgets` | `string[]` | No | — |
+| `lc_params` | `string[]` | No | — |
+| `date_from` | `string` | No | — |
+| `date_to` | `string` | No | — |
+| `agent_answer_time_lte` | `number` | No | — |
+| `agent_answer_time_gte` | `number` | No | — |
+| `talk_time_lte` | `number` | No | — |
+| `talk_time_gte` | `number` | No | — |
+| `status` | `string[]` | No | — |
+| `agents` | `string[]` | No | — |
+| `lead_status` | `string` | No | — |
+| `search_lead_data` | `string` | No | — |
+| `rating` | `string` | No | — |
+| `comment` | `string` | No | — |
+| `visitor_source` | `string` | No | — |
+| `page` | `number` | No | — |
+| `items_per_page` | `number` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### listByPost
+
+`lead.listByPost`
+
+List leads via a POST body query
+
+**Risk:** `read`
+
+```ts
+await corsair.convoloai.api.lead.listByPost({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Widget
+
+### create
+
+`widget.create`
+
+Create a new widget
+
+**Risk:** `write`
+
+```ts
+await corsair.convoloai.api.widget.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### delete
+
+`widget.delete`
+
+Delete a widget
+
+**Risk:** `destructive`
+
+```ts
+await corsair.convoloai.api.widget.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### get
+
+`widget.get`
+
+Get one widget by id
+
+**Risk:** `read`
+
+```ts
+await corsair.convoloai.api.widget.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getHtmlSiteCode
+
+`widget.getHtmlSiteCode`
+
+Get the HTML site code for a widget
+
+**Risk:** `read`
+
+```ts
+await corsair.convoloai.api.widget.getHtmlSiteCode({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`widget.list`
+
+List widgets with filters and pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.convoloai.api.widget.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `searchString` | `string` | No | — |
+| `status` | `boolean` | No | — |
+| `page` | `number` | No | — |
+| `itemsPerPage` | `number` | No | — |
+| `sortBy` | `siteName \| createDate` | No | — |
+| `sortDirection` | `ASC \| DESC` | No | — |
+| `statsDateFrom` | `string` | No | — |
+| `statsDateTo` | `string` | No | — |
+| `needCallsAndVisitsStats` | `boolean` | No | — |
+| `createdDateFrom` | `string` | No | — |
+| `createdDateTo` | `string` | No | — |
+| `isDelegate` | `boolean` | No | — |
+| `isDeleted` | `boolean` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### toggle
+
+`widget.toggle`
+
+Toggle a widget on or off
+
+**Risk:** `write`
+
+```ts
+await corsair.convoloai.api.widget.toggle({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `new_state` | `0 \| 1` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### update
+
+`widget.update`
+
+Update a widget
+
+**Risk:** `write`
+
+```ts
+await corsair.convoloai.api.widget.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### updateSettings
+
+`widget.updateSettings`
+
+Update widget settings via the external API
+
+**Risk:** `write`
+
+```ts
+await corsair.convoloai.api.widget.updateSettings({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `widget_key` | `string` | Yes | — |
+| `api_key` | `string` | Yes | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### updateV2
+
+`widget.updateV2`
+
+Update a widget via the v2 endpoint
+
+**Risk:** `write`
+
+```ts
+await corsair.convoloai.api.widget.updateV2({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `widgetId` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+

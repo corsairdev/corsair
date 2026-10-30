@@ -1,0 +1,4238 @@
+---
+title: API
+description: "API reference for Databricks: every `databricks.api.*` operation with input and output types."
+---
+
+Every `databricks.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Apps
+
+### createDatabricksApp
+
+`apps.createDatabricksApp`
+
+Create app
+
+**Risk:** `write`
+
+```ts
+await corsair.databricks.api.apps.createDatabricksApp({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `spec` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="spec full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+---
+
+### deleteDatabricksApp
+
+`apps.deleteDatabricksApp`
+
+Delete app
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.databricks.api.apps.deleteDatabricksApp({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### deployDatabricksApp
+
+`apps.deployDatabricksApp`
+
+Deploy app
+
+**Risk:** `write`
+
+```ts
+await corsair.databricks.api.apps.deployDatabricksApp({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `source_code_path` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deployment_id` | `string` | No | — |
+
+
+
+---
+
+## Catalog
+
+### assignMetastoreToWorkspace
+
+`catalog.assignMetastoreToWorkspace`
+
+Assign metastore to workspace
+
+**Risk:** `write`
+
+```ts
+await corsair.databricks.api.catalog.assignMetastoreToWorkspace({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `metastore_id` | `string` | Yes | — |
+| `workspace_id` | `number` | Yes | — |
+| `default_catalog_name` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### batchCreateAccessRequests
+
+`catalog.batchCreateAccessRequests`
+
+Batch create access requests
+
+**Risk:** `write`
+
+```ts
+await corsair.databricks.api.catalog.batchCreateAccessRequests({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requests` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="requests full type">
+
+```ts
+{
+  securable_type: string,
+  securable_full_name: string,
+  privileges: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `responses` | `any[]` | No | — |
+
+
+
+---
+
+### checkTableExists
+
+`catalog.checkTableExists`
+
+Check table existence
+
+**Risk:** `read`
+
+```ts
+await corsair.databricks.api.catalog.checkTableExists({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `catalog_name` | `string` | Yes | — |
+| `schema_name` | `string` | Yes | — |
+| `table_name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `exists` | `boolean` | Yes | — |
+
+
+
+---
+
+### createCatalogConnection
+
+`catalog.createCatalogConnection`
+
+Create catalog connection
+
+**Risk:** `write`
+
+```ts
+await corsair.databricks.api.catalog.createCatalogConnection({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `connection_type` | `string` | Yes | — |
+| `options` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="options full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+---
+
+### createCatalogCredential
+
+`catalog.createCatalogCredential`
+
+Create catalog credential
+
+**Risk:** `write`
+
+```ts
+await corsair.databricks.api.catalog.createCatalogCredential({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `credential_type` | `string` | No | — |
+| `aws_iam_role` | `object` | No | — |
+| `azure_service_principal` | `object` | No | — |
+| `gcp_service_account_key` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="aws_iam_role full type">
+
+```ts
+{
+  role_arn: string
+}
+```
+</Accordion>
+
+<Accordion title="azure_service_principal full type">
+
+```ts
+{
+  directory_id: string,
+  application_id: string,
+  client_secret: string
+}
+```
+</Accordion>
+
+<Accordion title="gcp_service_account_key full type">
+
+```ts
+{
+  email: string,
+  private_key: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+---
+
+### createExternalLocation
+
+`catalog.createExternalLocation`
+
+Create external location
+
+**Risk:** `write`
+
+```ts
+await corsair.databricks.api.catalog.createExternalLocation({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `url` | `string` | Yes | — |
+| `credential_name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+---
+
+### createMetastore
+
+`catalog.createMetastore`
+
+Create Unity Catalog metastore
+
+**Risk:** `write`
+
+```ts
+await corsair.databricks.api.catalog.createMetastore({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `storage_root` | `string` | Yes | — |
+| `owner` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `metastore_id` | `string` | Yes | — |
+
+
+
+---
+
+### createStorageCredential
+
+`catalog.createStorageCredential`
+
+Create storage credential
+
+**Risk:** `write`
+
+```ts
+await corsair.databricks.api.catalog.createStorageCredential({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `aws_iam_role` | `object` | No | — |
+| `azure_service_principal` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="aws_iam_role full type">
+
+```ts
+{
+  role_arn: string
+}
+```
+</Accordion>
+
+<Accordion title="azure_service_principal full type">
+
+```ts
+{
+  directory_id: string,
+  application_id: string,
+  client_secret: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+---
+
+### deleteCatalog
+
+`catalog.deleteCatalog`
+
+Delete catalog
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.databricks.api.catalog.deleteCatalog({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `force` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### deleteCatalogConnection
+
+`catalog.deleteCatalogConnection`
+
+Delete catalog connection
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.databricks.api.catalog.deleteCatalogConnection({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### deleteCatalogCredential
+
+`catalog.deleteCatalogCredential`
+
+Delete catalog credential
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.databricks.api.catalog.deleteCatalogCredential({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `force` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### deleteCatalogTable
+
+`catalog.deleteCatalogTable`
+
+Delete catalog table
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.databricks.api.catalog.deleteCatalogTable({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `full_name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### deleteExternalLocation
+
+`catalog.deleteExternalLocation`
+
+Delete external location
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.databricks.api.catalog.deleteExternalLocation({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `force` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### deleteMetastore
+
+`catalog.deleteMetastore`
+
+Delete metastore
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.databricks.api.catalog.deleteMetastore({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `force` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### deleteOnlineTable
+
+`catalog.deleteOnlineTable`
+
+Delete online table
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.databricks.api.catalog.deleteOnlineTable({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### deleteStorageCredential
+
+`catalog.deleteStorageCredential`
+
+Delete storage credential
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.databricks.api.catalog.deleteStorageCredential({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `force` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### disableSystemSchema
+
+`catalog.disableSystemSchema`
+
+Disable system schema
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.databricks.api.catalog.disableSystemSchema({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `metastore_id` | `string` | Yes | — |
+| `schema_name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+## Cleanrooms
+
+### createCleanRoom
+
+`cleanrooms.createCleanRoom`
+
+Create clean room
+
+**Risk:** `write`
+
+```ts
+await corsair.databricks.api.cleanrooms.createCleanRoom({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `collaborators` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="collaborators full type">
+
+```ts
+{
+  collaborator_alias: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `status` | `string` | No | — |
+
+
+
+---
+
+### createCleanRoomAutoApprovalRule
+
+`cleanrooms.createCleanRoomAutoApprovalRule`
+
+Create clean room auto approval rule
+
+**Risk:** `write`
+
+```ts
+await corsair.databricks.api.cleanrooms.createCleanRoomAutoApprovalRule({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `clean_room_name` | `string` | Yes | — |
+| `author_collaborator_alias` | `string` | No | — |
+| `author_scope` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `rule_id` | `string` | No | — |
+
+
+
+---
+
+## Compute
+
+### addComputeInstanceProfile
+
+`compute.addComputeInstanceProfile`
+
+Add compute instance profile
+
+**Risk:** `write`
+
+```ts
+await corsair.databricks.api.compute.addComputeInstanceProfile({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `instance_profile_arn` | `string` | Yes | — |
+| `iam_role_arn` | `string` | No | — |
+| `is_meta_instance_profile` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### createComputeClusterPolicy
+
+`compute.createComputeClusterPolicy`
+
+Create cluster policy
+
+**Risk:** `write`
+
+```ts
+await corsair.databricks.api.compute.createComputeClusterPolicy({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `definition` | `string` | No | — |
+| `policy_family_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `policy_id` | `string` | Yes | — |
+
+
+
+---
+
+### createComputeInstancePool
+
+`compute.createComputeInstancePool`
+
+Create instance pool
+
+**Risk:** `write`
+
+```ts
+await corsair.databricks.api.compute.createComputeInstancePool({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `instance_pool_name` | `string` | Yes | — |
+| `node_type_id` | `string` | Yes | — |
+| `min_idle_instances` | `number` | No | — |
+| `max_capacity` | `number` | No | — |
+| `idle_instance_autotermination_minutes` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `instance_pool_id` | `string` | Yes | — |
+
+
+
+---
+
+### createDatabricksCluster
+
+`compute.createDatabricksCluster`
+
+Create Spark cluster
+
+**Risk:** `write`
+
+```ts
+await corsair.databricks.api.compute.createDatabricksCluster({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cluster_name` | `string` | Yes | — |
+| `spark_version` | `string` | Yes | — |
+| `node_type_id` | `string` | Yes | — |
+| `num_workers` | `number` | No | — |
+| `autoscale` | `object` | No | — |
+| `autotermination_minutes` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="autoscale full type">
+
+```ts
+{
+  min_workers: number,
+  max_workers: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cluster_id` | `string` | Yes | — |
+
+
+
+---
+
+### createGlobalInitScript
+
+`compute.createGlobalInitScript`
+
+Create global init script
+
+**Risk:** `write`
+
+```ts
+await corsair.databricks.api.compute.createGlobalInitScript({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `script` | `string` | Yes | Base64 encoded script |
+| `position` | `number` | No | — |
+| `enabled` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `script_id` | `string` | Yes | — |
+
+
+
+---
+
+### deleteComputeClusterPolicy
+
+`compute.deleteComputeClusterPolicy`
+
+Delete cluster policy
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.databricks.api.compute.deleteComputeClusterPolicy({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `policy_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### deleteComputeInstancePool
+
+`compute.deleteComputeInstancePool`
+
+Delete instance pool
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.databricks.api.compute.deleteComputeInstancePool({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `instance_pool_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### deleteDatabricksCluster
+
+`compute.deleteDatabricksCluster`
+
+Terminate Spark cluster
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.databricks.api.compute.deleteDatabricksCluster({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cluster_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### deleteGlobalInitScript
+
+`compute.deleteGlobalInitScript`
+
+Delete global init script
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.databricks.api.compute.deleteGlobalInitScript({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `script_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+## Dashboards
+
+### createGenieMessage
+
+`dashboards.createGenieMessage`
+
+Create Genie message
+
+**Risk:** `write`
+
+```ts
+await corsair.databricks.api.dashboards.createGenieMessage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `space_id` | `string` | Yes | — |
+| `conversation_id` | `string` | Yes | — |
+| `content` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message_id` | `string` | No | — |
+| `status` | `string` | No | — |
+
+
+
+---
+
+### createGenieSpace
+
+`dashboards.createGenieSpace`
+
+Create Genie space
+
+**Risk:** `write`
+
+```ts
+await corsair.databricks.api.dashboards.createGenieSpace({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `warehouse_id` | `string` | Yes | — |
+| `serialized_space` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `space_id` | `string` | Yes | — |
+
+
+
+---
+
+### createLakeviewDashboard
+
+`dashboards.createLakeviewDashboard`
+
+Create Lakeview dashboard
+
+**Risk:** `write`
+
+```ts
+await corsair.databricks.api.dashboards.createLakeviewDashboard({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `display_name` | `string` | Yes | — |
+| `serialized_dashboard` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dashboard_id` | `string` | No | — |
+
+
+
+---
+
+### deleteGenieConversation
+
+`dashboards.deleteGenieConversation`
+
+Delete Genie conversation
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.databricks.api.dashboards.deleteGenieConversation({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `space_id` | `string` | Yes | — |
+| `conversation_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### deleteGenieConversationMessage
+
+`dashboards.deleteGenieConversationMessage`
+
+Delete Genie message
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.databricks.api.dashboards.deleteGenieConversationMessage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `space_id` | `string` | Yes | — |
+| `conversation_id` | `string` | Yes | — |
+| `message_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### deleteLakeviewDashboardSchedule
+
+`dashboards.deleteLakeviewDashboardSchedule`
+
+Delete Lakeview schedule
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.databricks.api.dashboards.deleteLakeviewDashboardSchedule({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dashboard_id` | `string` | Yes | — |
+| `schedule_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+## Database
+
+### createDatabaseInstance
+
+`database.createDatabaseInstance`
+
+Create database instance
+
+**Risk:** `write`
+
+```ts
+await corsair.databricks.api.database.createDatabaseInstance({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `capacity` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `status` | `string` | No | — |
+
+
+
+---
+
+### deleteDatabaseInstance
+
+`database.deleteDatabaseInstance`
+
+Delete database instance
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.databricks.api.database.deleteDatabaseInstance({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### deleteSyncedDatabaseTable
+
+`database.deleteSyncedDatabaseTable`
+
+Delete synced database table
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.databricks.api.database.deleteSyncedDatabaseTable({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+## Dataquality
+
+### createDataQualityMonitor
+
+`dataquality.createDataQualityMonitor`
+
+Create data quality monitor
+
+**Risk:** `write`
+
+```ts
+await corsair.databricks.api.dataquality.createDataQualityMonitor({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `table_name` | `string` | Yes | — |
+| `assets_dir` | `string` | Yes | — |
+| `output_schema_name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `monitor_id` | `string` | No | — |
+
+
+
+---
+
+### createQualityMonitorV2
+
+`dataquality.createQualityMonitorV2`
+
+Create quality monitor V2
+
+**Risk:** `write`
+
+```ts
+await corsair.databricks.api.dataquality.createQualityMonitorV2({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `table_name` | `string` | Yes | — |
+| `assets_dir` | `string` | Yes | — |
+| `output_schema_name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `monitor_id` | `string` | No | — |
+
+
+
+---
+
+## Dbfs
+
+### addBlockToDbfsStream
+
+`dbfs.addBlockToDbfsStream`
+
+Add block to DBFS stream
+
+**Risk:** `write`
+
+```ts
+await corsair.databricks.api.dbfs.addBlockToDbfsStream({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `handle` | `number` | Yes | — |
+| `data` | `string` | Yes | Base64-encoded string block (max 1MB) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### createDbfsFileStream
+
+`dbfs.createDbfsFileStream`
+
+Create DBFS file stream
+
+**Risk:** `write`
+
+```ts
+await corsair.databricks.api.dbfs.createDbfsFileStream({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `string` | Yes | — |
+| `overwrite` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `handle` | `number` | Yes | — |
+
+
+
+---
+
+### deleteDbfsFileOrDirectory
+
+`dbfs.deleteDbfsFileOrDirectory`
+
+Delete file or directory from DBFS
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.databricks.api.dbfs.deleteDbfsFileOrDirectory({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `string` | Yes | — |
+| `recursive` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+## Iam
+
+### addMemberToSecurityGroup
+
+`iam.addMemberToSecurityGroup`
+
+Add member to security group
+
+**Risk:** `write`
+
+```ts
+await corsair.databricks.api.iam.addMemberToSecurityGroup({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group_id` | `string` | Yes | — |
+| `member_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### createIamGroupV2
+
+`iam.createIamGroupV2`
+
+Create IAM group
+
+**Risk:** `write`
+
+```ts
+await corsair.databricks.api.iam.createIamGroupV2({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `displayName` | `string` | Yes | — |
+| `members` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="members full type">
+
+```ts
+{
+  value: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `displayName` | `string` | Yes | — |
+
+
+
+---
+
+### createIamServicePrincipalV2
+
+`iam.createIamServicePrincipalV2`
+
+Create IAM service principal
+
+**Risk:** `write`
+
+```ts
+await corsair.databricks.api.iam.createIamServicePrincipalV2({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `applicationId` | `string` | Yes | — |
+| `displayName` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `applicationId` | `string` | Yes | — |
+
+
+
+---
+
+### createIamUserV2
+
+`iam.createIamUserV2`
+
+Create IAM user
+
+**Risk:** `write`
+
+```ts
+await corsair.databricks.api.iam.createIamUserV2({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userName` | `string` | Yes | — |
+| `displayName` | `string` | No | — |
+| `active` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `userName` | `string` | Yes | — |
+
+
+
+---
+
+### createIpAccessList
+
+`iam.createIpAccessList`
+
+Create IP access list
+
+**Risk:** `write`
+
+```ts
+await corsair.databricks.api.iam.createIpAccessList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `label` | `string` | Yes | — |
+| `list_type` | `ALLOW \| BLOCK` | Yes | — |
+| `ip_addresses` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ip_access_list` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="ip_access_list full type">
+
+```ts
+{
+  list_id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteIamGroupV2
+
+`iam.deleteIamGroupV2`
+
+Delete IAM group
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.databricks.api.iam.deleteIamGroupV2({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### deleteIamServicePrincipalV2
+
+`iam.deleteIamServicePrincipalV2`
+
+Delete service principal
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.databricks.api.iam.deleteIamServicePrincipalV2({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### deleteIamUserV2
+
+`iam.deleteIamUserV2`
+
+Delete user
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.databricks.api.iam.deleteIamUserV2({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+## Jobs
+
+### cancelAllJobRuns
+
+`jobs.cancelAllJobRuns`
+
+Cancel all job runs
+
+**Risk:** `write`
+
+```ts
+await corsair.databricks.api.jobs.cancelAllJobRuns({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job_id` | `number` | No | — |
+| `all_queued_runs` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### cancelJobRun
+
+`jobs.cancelJobRun`
+
+Cancel job run
+
+**Risk:** `write`
+
+```ts
+await corsair.databricks.api.jobs.cancelJobRun({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `run_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### deleteDatabricksJobRun
+
+`jobs.deleteDatabricksJobRun`
+
+Delete job run
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.databricks.api.jobs.deleteDatabricksJobRun({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `run_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+## Marketplace
+
+### batchGetMarketplaceConsumerListings
+
+`marketplace.batchGetMarketplaceConsumerListings`
+
+Batch get consumer listings
+
+**Risk:** `read`
+
+```ts
+await corsair.databricks.api.marketplace.batchGetMarketplaceConsumerListings({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `listings` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="listings full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### batchGetMarketplaceConsumerProviders
+
+`marketplace.batchGetMarketplaceConsumerProviders`
+
+Batch get consumer providers
+
+**Risk:** `read`
+
+```ts
+await corsair.databricks.api.marketplace.batchGetMarketplaceConsumerProviders({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `providers` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="providers full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createMarketplaceConsumerInstallation
+
+`marketplace.createMarketplaceConsumerInstallation`
+
+Create marketplace consumer installation
+
+**Risk:** `write`
+
+```ts
+await corsair.databricks.api.marketplace.createMarketplaceConsumerInstallation({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `listing_id` | `string` | Yes | — |
+| `catalog_name` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### createMarketplaceProviderListing
+
+`marketplace.createMarketplaceProviderListing`
+
+Create marketplace provider listing
+
+**Risk:** `write`
+
+```ts
+await corsair.databricks.api.marketplace.createMarketplaceProviderListing({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `summary` | `string` | Yes | — |
+| `listing_type` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### createProviderAnalyticsDashboard
+
+`marketplace.createProviderAnalyticsDashboard`
+
+Create provider analytics dashboard
+
+**Risk:** `write`
+
+```ts
+await corsair.databricks.api.marketplace.createProviderAnalyticsDashboard({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dashboard_id` | `string` | No | — |
+
+
+
+---
+
+### deleteListingFromExchange
+
+`marketplace.deleteListingFromExchange`
+
+Delete listing from exchange
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.databricks.api.marketplace.deleteListingFromExchange({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `exchange_id` | `string` | Yes | — |
+| `listing_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### deleteMarketplaceConsumerInstallation
+
+`marketplace.deleteMarketplaceConsumerInstallation`
+
+Delete marketplace consumer installation
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.databricks.api.marketplace.deleteMarketplaceConsumerInstallation({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+## Ml
+
+### createLoggedModel
+
+`ml.createLoggedModel`
+
+Create logged model
+
+**Risk:** `write`
+
+```ts
+await corsair.databricks.api.ml.createLoggedModel({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `experiment_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model_id` | `string` | Yes | — |
+
+
+
+---
+
+### createMlExperiment
+
+`ml.createMlExperiment`
+
+Create ML experiment
+
+**Risk:** `write`
+
+```ts
+await corsair.databricks.api.ml.createMlExperiment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `artifact_location` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `experiment_id` | `string` | Yes | — |
+
+
+
+---
+
+### createMlFeatureStoreOnlineStore
+
+`ml.createMlFeatureStoreOnlineStore`
+
+Create ML online feature store
+
+**Risk:** `write`
+
+```ts
+await corsair.databricks.api.ml.createMlFeatureStoreOnlineStore({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `store_type` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+---
+
+### createMlflowExperimentRun
+
+`ml.createMlflowExperimentRun`
+
+Create MLflow experiment run
+
+**Risk:** `write`
+
+```ts
+await corsair.databricks.api.ml.createMlflowExperimentRun({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `experiment_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `run_id` | `string` | Yes | — |
+
+
+
+---
+
+### createMlForecastingExperiment
+
+`ml.createMlForecastingExperiment`
+
+Create ML forecasting experiment
+
+**Risk:** `write`
+
+```ts
+await corsair.databricks.api.ml.createMlForecastingExperiment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `target_col` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `experiment_id` | `string` | Yes | — |
+
+
+
+---
+
+### deleteLoggedModel
+
+`ml.deleteLoggedModel`
+
+Delete logged model
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.databricks.api.ml.deleteLoggedModel({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### deleteLoggedModelTag
+
+`ml.deleteLoggedModelTag`
+
+Delete logged model tag
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.databricks.api.ml.deleteLoggedModelTag({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model_id` | `string` | Yes | — |
+| `key` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### deleteMlExperiment
+
+`ml.deleteMlExperiment`
+
+Delete ML experiment
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.databricks.api.ml.deleteMlExperiment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `experiment_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### deleteMlExperimentRun
+
+`ml.deleteMlExperimentRun`
+
+Delete ML run
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.databricks.api.ml.deleteMlExperimentRun({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `run_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### deleteMlExperimentRuns
+
+`ml.deleteMlExperimentRuns`
+
+Delete ML runs
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.databricks.api.ml.deleteMlExperimentRuns({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `experiment_id` | `string` | Yes | — |
+| `max_timestamp_millis` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### deleteMlExperimentRunTag
+
+`ml.deleteMlExperimentRunTag`
+
+Delete ML run tag
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.databricks.api.ml.deleteMlExperimentRunTag({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `run_id` | `string` | Yes | — |
+| `key` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### deleteMlFeatureEngKafkaConfig
+
+`ml.deleteMlFeatureEngKafkaConfig`
+
+Delete Kafka config
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.databricks.api.ml.deleteMlFeatureEngKafkaConfig({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `config_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### deleteMlFeatureStoreOnlineStore
+
+`ml.deleteMlFeatureStoreOnlineStore`
+
+Delete ML online store
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.databricks.api.ml.deleteMlFeatureStoreOnlineStore({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### deleteMlFeatureTag
+
+`ml.deleteMlFeatureTag`
+
+Delete ML feature tag
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.databricks.api.ml.deleteMlFeatureTag({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `feature_table_name` | `string` | Yes | — |
+| `feature_name` | `string` | Yes | — |
+| `tag_key` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+## Security
+
+### createNotificationDestination
+
+`security.createNotificationDestination`
+
+Create notification destination
+
+**Risk:** `write`
+
+```ts
+await corsair.databricks.api.security.createNotificationDestination({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `display_name` | `string` | Yes | — |
+| `config` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="config full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### createOAuthServicePrincipalSecret
+
+`security.createOAuthServicePrincipalSecret`
+
+Create OAuth SP secret
+
+**Risk:** `write`
+
+```ts
+await corsair.databricks.api.security.createOAuthServicePrincipalSecret({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | Yes | — |
+| `service_principal_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `secret_id` | `string` | Yes | — |
+| `secret_value` | `string` | No | — |
+
+
+
+---
+
+### createPersonalAccessToken
+
+`security.createPersonalAccessToken`
+
+Create personal access token
+
+**Risk:** `write`
+
+```ts
+await corsair.databricks.api.security.createPersonalAccessToken({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `comment` | `string` | No | — |
+| `lifetime_seconds` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `token_value` | `string` | No | — |
+| `token_info` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="token_info full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteNotificationDestination
+
+`security.deleteNotificationDestination`
+
+Delete notification destination
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.databricks.api.security.deleteNotificationDestination({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### deleteOAuth2ServicePrincipalSecret
+
+`security.deleteOAuth2ServicePrincipalSecret`
+
+Delete OAuth SP secret
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.databricks.api.security.deleteOAuth2ServicePrincipalSecret({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | Yes | — |
+| `service_principal_id` | `string` | Yes | — |
+| `secret_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### deleteTokenManagement
+
+`security.deleteTokenManagement`
+
+Delete token management
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.databricks.api.security.deleteTokenManagement({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `token_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+## Serving
+
+### createProvisionedThroughputEndpoint
+
+`serving.createProvisionedThroughputEndpoint`
+
+Create provisioned throughput endpoint
+
+**Risk:** `write`
+
+```ts
+await corsair.databricks.api.serving.createProvisionedThroughputEndpoint({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `config` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="config full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+---
+
+### createVectorSearchEndpoint
+
+`serving.createVectorSearchEndpoint`
+
+Create vector search endpoint
+
+**Risk:** `write`
+
+```ts
+await corsair.databricks.api.serving.createVectorSearchEndpoint({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `endpoint_type` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+---
+
+### deleteServingEndpoint
+
+`serving.deleteServingEndpoint`
+
+Delete serving endpoint
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.databricks.api.serving.deleteServingEndpoint({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### deleteVectorSearchIndex
+
+`serving.deleteVectorSearchIndex`
+
+Delete vector search index
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.databricks.api.serving.deleteVectorSearchIndex({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+## Sharing
+
+### createShare
+
+`sharing.createShare`
+
+Create share
+
+**Risk:** `write`
+
+```ts
+await corsair.databricks.api.sharing.createShare({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+---
+
+### createSharingProvider
+
+`sharing.createSharingProvider`
+
+Create sharing provider
+
+**Risk:** `write`
+
+```ts
+await corsair.databricks.api.sharing.createSharingProvider({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `authentication_type` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+---
+
+### createSharingRecipient
+
+`sharing.createSharingRecipient`
+
+Create sharing recipient
+
+**Risk:** `write`
+
+```ts
+await corsair.databricks.api.sharing.createSharingRecipient({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `authentication_type` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+---
+
+### deleteShare
+
+`sharing.deleteShare`
+
+Delete share
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.databricks.api.sharing.deleteShare({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### deleteSharingRecipient
+
+`sharing.deleteSharingRecipient`
+
+Delete sharing recipient
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.databricks.api.sharing.deleteSharingRecipient({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+## Sql
+
+### cancelSqlStatementExecution
+
+`sql.cancelSqlStatementExecution`
+
+Cancel SQL statement execution
+
+**Risk:** `write`
+
+```ts
+await corsair.databricks.api.sql.cancelSqlStatementExecution({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `statement_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+
+
+
+---
+
+### createLegacySqlAlert
+
+`sql.createLegacySqlAlert`
+
+Create legacy SQL alert
+
+**Risk:** `write`
+
+```ts
+await corsair.databricks.api.sql.createLegacySqlAlert({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `query_id` | `string` | Yes | — |
+| `options` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="options full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### createLegacySqlQuery
+
+`sql.createLegacySqlQuery`
+
+Create legacy SQL query
+
+**Risk:** `write`
+
+```ts
+await corsair.databricks.api.sql.createLegacySqlQuery({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `query` | `string` | Yes | — |
+| `data_source_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### createLegacySqlQueryVisualization
+
+`sql.createLegacySqlQueryVisualization`
+
+Create legacy SQL visualization
+
+**Risk:** `write`
+
+```ts
+await corsair.databricks.api.sql.createLegacySqlQueryVisualization({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query_id` | `string` | Yes | — |
+| `type` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `options` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="options full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### createSqlAlert
+
+`sql.createSqlAlert`
+
+Create SQL alert
+
+**Risk:** `write`
+
+```ts
+await corsair.databricks.api.sql.createSqlAlert({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `query_id` | `string` | Yes | — |
+| `options` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="options full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### createSqlQuery
+
+`sql.createSqlQuery`
+
+Create SQL query
+
+**Risk:** `write`
+
+```ts
+await corsair.databricks.api.sql.createSqlQuery({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `query` | `string` | Yes | — |
+| `warehouse_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### createSqlQueryVisualization
+
+`sql.createSqlQueryVisualization`
+
+Create SQL query visualization
+
+**Risk:** `write`
+
+```ts
+await corsair.databricks.api.sql.createSqlQueryVisualization({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query_id` | `string` | Yes | — |
+| `type` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `options` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="options full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### deleteLegacySqlAlert
+
+`sql.deleteLegacySqlAlert`
+
+Delete legacy SQL alert
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.databricks.api.sql.deleteLegacySqlAlert({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### deleteLegacySqlQuery
+
+`sql.deleteLegacySqlQuery`
+
+Delete legacy SQL query
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.databricks.api.sql.deleteLegacySqlQuery({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### deleteLegacySqlQueryVisualization
+
+`sql.deleteLegacySqlQueryVisualization`
+
+Delete legacy SQL visualization
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.databricks.api.sql.deleteLegacySqlQueryVisualization({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### deleteSqlAlert
+
+`sql.deleteSqlAlert`
+
+Delete SQL alert
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.databricks.api.sql.deleteSqlAlert({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### deleteSqlDashboard
+
+`sql.deleteSqlDashboard`
+
+Delete SQL dashboard
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.databricks.api.sql.deleteSqlDashboard({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### deleteSqlQuery
+
+`sql.deleteSqlQuery`
+
+Delete SQL query
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.databricks.api.sql.deleteSqlQuery({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### deleteSqlWarehouse
+
+`sql.deleteSqlWarehouse`
+
+Delete SQL warehouse
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.databricks.api.sql.deleteSqlWarehouse({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+## Workspace
+
+### createSecretScope
+
+`workspace.createSecretScope`
+
+Create secret scope
+
+**Risk:** `write`
+
+```ts
+await corsair.databricks.api.workspace.createSecretScope({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `scope` | `string` | Yes | — |
+| `initial_manage_principal` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### createTagPolicy
+
+`workspace.createTagPolicy`
+
+Create tag policy
+
+**Risk:** `write`
+
+```ts
+await corsair.databricks.api.workspace.createTagPolicy({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tag_key` | `string` | Yes | — |
+| `values` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tag_key` | `string` | Yes | — |
+
+
+
+---
+
+### createWorkspaceDirectory
+
+`workspace.createWorkspaceDirectory`
+
+Create workspace directory
+
+**Risk:** `write`
+
+```ts
+await corsair.databricks.api.workspace.createWorkspaceDirectory({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### createWorkspaceGitCredentials
+
+`workspace.createWorkspaceGitCredentials`
+
+Create workspace git credentials
+
+**Risk:** `write`
+
+```ts
+await corsair.databricks.api.workspace.createWorkspaceGitCredentials({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `git_username` | `string` | Yes | — |
+| `git_provider` | `string` | Yes | — |
+| `personal_access_token` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `credential_id` | `number` | No | — |
+
+
+
+---
+
+### createWorkspaceRepo
+
+`workspace.createWorkspaceRepo`
+
+Create workspace repo
+
+**Risk:** `write`
+
+```ts
+await corsair.databricks.api.workspace.createWorkspaceRepo({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `provider` | `string` | Yes | — |
+| `path` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+
+
+
+---
+
+### deleteAibiDashboardEmbeddingAccessPolicy
+
+`workspace.deleteAibiDashboardEmbeddingAccessPolicy`
+
+Delete AI/BI dashboard embedding access policy
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.databricks.api.workspace.deleteAibiDashboardEmbeddingAccessPolicy({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### deleteAibiDashboardEmbeddingApprovedDomains
+
+`workspace.deleteAibiDashboardEmbeddingApprovedDomains`
+
+Delete AI/BI embedding approved domains
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.databricks.api.workspace.deleteAibiDashboardEmbeddingApprovedDomains({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### deleteCustomLlmAgent
+
+`workspace.deleteCustomLlmAgent`
+
+Delete custom LLM agent
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.databricks.api.workspace.deleteCustomLlmAgent({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `agent_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### deleteDashboardEmailSubscriptionsSetting
+
+`workspace.deleteDashboardEmailSubscriptionsSetting`
+
+Delete dashboard email subscriptions setting
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.databricks.api.workspace.deleteDashboardEmailSubscriptionsSetting({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### deleteDatabricksPipeline
+
+`workspace.deleteDatabricksPipeline`
+
+Delete Databricks pipeline
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.databricks.api.workspace.deleteDatabricksPipeline({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pipeline_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### deleteDefaultNamespaceSetting
+
+`workspace.deleteDefaultNamespaceSetting`
+
+Delete default namespace setting
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.databricks.api.workspace.deleteDefaultNamespaceSetting({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### deleteDefaultWarehouseIdSetting
+
+`workspace.deleteDefaultWarehouseIdSetting`
+
+Delete default warehouse ID setting
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.databricks.api.workspace.deleteDefaultWarehouseIdSetting({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### deleteDisableLegacyAccessSetting
+
+`workspace.deleteDisableLegacyAccessSetting`
+
+Delete disable legacy access setting
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.databricks.api.workspace.deleteDisableLegacyAccessSetting({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### deleteDisableLegacyDbfsSetting
+
+`workspace.deleteDisableLegacyDbfsSetting`
+
+Delete disable legacy DBFS setting
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.databricks.api.workspace.deleteDisableLegacyDbfsSetting({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### deleteLlmProxyPartnerSetting
+
+`workspace.deleteLlmProxyPartnerSetting`
+
+Delete LLM proxy partner setting
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.databricks.api.workspace.deleteLlmProxyPartnerSetting({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### deleteRestrictWorkspaceAdminsSetting
+
+`workspace.deleteRestrictWorkspaceAdminsSetting`
+
+Delete restrict workspace admins setting
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.databricks.api.workspace.deleteRestrictWorkspaceAdminsSetting({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### deleteSecretsAcl
+
+`workspace.deleteSecretsAcl`
+
+Delete secrets ACL
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.databricks.api.workspace.deleteSecretsAcl({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `scope` | `string` | Yes | — |
+| `principal` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### deleteSecretScope
+
+`workspace.deleteSecretScope`
+
+Delete secret scope
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.databricks.api.workspace.deleteSecretScope({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `scope` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### deleteSqlResultsDownloadSetting
+
+`workspace.deleteSqlResultsDownloadSetting`
+
+Delete SQL results download setting
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.databricks.api.workspace.deleteSqlResultsDownloadSetting({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### deleteTagPolicy
+
+`workspace.deleteTagPolicy`
+
+Delete tag policy
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.databricks.api.workspace.deleteTagPolicy({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tag_key` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### deleteWorkspaceGitCredentials
+
+`workspace.deleteWorkspaceGitCredentials`
+
+Delete workspace git credentials
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.databricks.api.workspace.deleteWorkspaceGitCredentials({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `credential_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### deleteWorkspaceObject
+
+`workspace.deleteWorkspaceObject`
+
+Delete workspace object
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.databricks.api.workspace.deleteWorkspaceObject({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `string` | Yes | — |
+| `recursive` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### deleteWorkspaceRepo
+
+`workspace.deleteWorkspaceRepo`
+
+Delete workspace repo
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.databricks.api.workspace.deleteWorkspaceRepo({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repo_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### deleteWorkspaceSecret
+
+`workspace.deleteWorkspaceSecret`
+
+Delete workspace secret
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.databricks.api.workspace.deleteWorkspaceSecret({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `scope` | `string` | Yes | — |
+| `key` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+

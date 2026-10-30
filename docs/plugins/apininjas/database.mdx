@@ -1,0 +1,417 @@
+---
+title: Database
+description: "API Ninjas local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The API Ninjas plugin syncs data locally. Use `corsair.apininjas.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Aircraft
+
+Path: `apininjas.db.aircraft.search`
+
+```ts
+const rows = await corsair.apininjas.db.aircraft.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `manufacturer` | `string` | equals, contains, startsWith, endsWith, in |
+| `model` | `string` | equals, contains, startsWith, endsWith, in |
+| `engine_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `captured_at` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Airlines
+
+Path: `apininjas.db.airlines.search`
+
+```ts
+const rows = await corsair.apininjas.db.airlines.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `iata` | `string` | equals, contains, startsWith, endsWith, in |
+| `icao` | `string` | equals, contains, startsWith, endsWith, in |
+| `country` | `string` | equals, contains, startsWith, endsWith, in |
+| `year_created` | `string` | equals, contains, startsWith, endsWith, in |
+| `base` | `string` | equals, contains, startsWith, endsWith, in |
+| `logo_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `brandmark_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `tail_logo_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `captured_at` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Airports
+
+Path: `apininjas.db.airports.search`
+
+```ts
+const rows = await corsair.apininjas.db.airports.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `iata` | `string` | equals, contains, startsWith, endsWith, in |
+| `icao` | `string` | equals, contains, startsWith, endsWith, in |
+| `ident` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `city` | `string` | equals, contains, startsWith, endsWith, in |
+| `region` | `string` | equals, contains, startsWith, endsWith, in |
+| `region_code` | `string` | equals, contains, startsWith, endsWith, in |
+| `country` | `string` | equals, contains, startsWith, endsWith, in |
+| `country_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `continent` | `string` | equals, contains, startsWith, endsWith, in |
+| `timezone` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `size` | `string` | equals, contains, startsWith, endsWith, in |
+| `gps_code` | `string` | equals, contains, startsWith, endsWith, in |
+| `local_code` | `string` | equals, contains, startsWith, endsWith, in |
+| `home_link` | `string` | equals, contains, startsWith, endsWith, in |
+| `wikipedia_link` | `string` | equals, contains, startsWith, endsWith, in |
+| `captured_at` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Animals
+
+Path: `apininjas.db.animals.search`
+
+```ts
+const rows = await corsair.apininjas.db.animals.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `captured_at` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Cities
+
+Path: `apininjas.db.cities.search`
+
+```ts
+const rows = await corsair.apininjas.db.cities.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `country` | `string` | equals, contains, startsWith, endsWith, in |
+| `captured_at` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Countries
+
+Path: `apininjas.db.countries.search`
+
+```ts
+const rows = await corsair.apininjas.db.countries.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `iso2` | `string` | equals, contains, startsWith, endsWith, in |
+| `capital` | `string` | equals, contains, startsWith, endsWith, in |
+| `region` | `string` | equals, contains, startsWith, endsWith, in |
+| `captured_at` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Emoji
+
+Path: `apininjas.db.emoji.search`
+
+```ts
+const rows = await corsair.apininjas.db.emoji.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `code` | `string` | equals, contains, startsWith, endsWith, in |
+| `character` | `string` | equals, contains, startsWith, endsWith, in |
+| `image` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `group` | `string` | equals, contains, startsWith, endsWith, in |
+| `subgroup` | `string` | equals, contains, startsWith, endsWith, in |
+| `captured_at` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Planets
+
+Path: `apininjas.db.planets.search`
+
+```ts
+const rows = await corsair.apininjas.db.planets.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `captured_at` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Sp500
+
+Path: `apininjas.db.sp500.search`
+
+```ts
+const rows = await corsair.apininjas.db.sp500.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `ticker` | `string` | equals, contains, startsWith, endsWith, in |
+| `company_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `sector` | `string` | equals, contains, startsWith, endsWith, in |
+| `sub_industry` | `string` | equals, contains, startsWith, endsWith, in |
+| `headquarters` | `string` | equals, contains, startsWith, endsWith, in |
+| `date_added` | `string` | equals, contains, startsWith, endsWith, in |
+| `cik` | `string` | equals, contains, startsWith, endsWith, in |
+| `captured_at` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Stars
+
+Path: `apininjas.db.stars.search`
+
+```ts
+const rows = await corsair.apininjas.db.stars.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `constellation` | `string` | equals, contains, startsWith, endsWith, in |
+| `right_ascension` | `string` | equals, contains, startsWith, endsWith, in |
+| `declination` | `string` | equals, contains, startsWith, endsWith, in |
+| `spectral_class` | `string` | equals, contains, startsWith, endsWith, in |
+| `captured_at` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Stock Exchanges
+
+Path: `apininjas.db.stockExchanges.search`
+
+```ts
+const rows = await corsair.apininjas.db.stockExchanges.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `mic` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `city` | `string` | equals, contains, startsWith, endsWith, in |
+| `country` | `string` | equals, contains, startsWith, endsWith, in |
+| `iso2` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `address` | `string` | equals, contains, startsWith, endsWith, in |
+| `website` | `string` | equals, contains, startsWith, endsWith, in |
+| `founded` | `string` | equals, contains, startsWith, endsWith, in |
+| `currency` | `string` | equals, contains, startsWith, endsWith, in |
+| `timezone` | `string` | equals, contains, startsWith, endsWith, in |
+| `market_open` | `string` | equals, contains, startsWith, endsWith, in |
+| `market_close` | `string` | equals, contains, startsWith, endsWith, in |
+| `closed_reason` | `string` | equals, contains, startsWith, endsWith, in |
+| `captured_at` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Universities
+
+Path: `apininjas.db.universities.search`
+
+```ts
+const rows = await corsair.apininjas.db.universities.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `address` | `string` | equals, contains, startsWith, endsWith, in |
+| `city` | `string` | equals, contains, startsWith, endsWith, in |
+| `state` | `string` | equals, contains, startsWith, endsWith, in |
+| `postal_code` | `string` | equals, contains, startsWith, endsWith, in |
+| `country` | `string` | equals, contains, startsWith, endsWith, in |
+| `county` | `string` | equals, contains, startsWith, endsWith, in |
+| `timezone` | `string` | equals, contains, startsWith, endsWith, in |
+| `latitude` | `string` | equals, contains, startsWith, endsWith, in |
+| `longitude` | `string` | equals, contains, startsWith, endsWith, in |
+| `phone` | `string` | equals, contains, startsWith, endsWith, in |
+| `email` | `string` | equals, contains, startsWith, endsWith, in |
+| `website` | `string` | equals, contains, startsWith, endsWith, in |
+| `institution_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `years` | `string` | equals, contains, startsWith, endsWith, in |
+| `enrollment` | `string` | equals, contains, startsWith, endsWith, in |
+| `student_faculty_ratio` | `string` | equals, contains, startsWith, endsWith, in |
+| `captured_at` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Vehicles
+
+Path: `apininjas.db.vehicles.search`
+
+```ts
+const rows = await corsair.apininjas.db.vehicles.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `make` | `string` | equals, contains, startsWith, endsWith, in |
+| `model` | `string` | equals, contains, startsWith, endsWith, in |
+| `class` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `fuel_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `drive` | `string` | equals, contains, startsWith, endsWith, in |
+| `transmission` | `string` | equals, contains, startsWith, endsWith, in |
+| `battery_capacity` | `string` | equals, contains, startsWith, endsWith, in |
+| `captured_at` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

@@ -1,0 +1,73 @@
+---
+title: Database
+description: "Google Analytics local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Google Analytics plugin syncs data locally. Use `corsair.googleanalytics.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Accounts
+
+Path: `googleanalytics.db.accounts.search`
+
+```ts
+const rows = await corsair.googleanalytics.db.accounts.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `displayName` | `string` | equals, contains, startsWith, endsWith, in |
+| `regionCode` | `string` | equals, contains, startsWith, endsWith, in |
+| `countryCode` | `string` | equals, contains, startsWith, endsWith, in |
+| `createTime` | `string` | equals, contains, startsWith, endsWith, in |
+| `updateTime` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Properties
+
+Path: `googleanalytics.db.properties.search`
+
+```ts
+const rows = await corsair.googleanalytics.db.properties.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `parent` | `string` | equals, contains, startsWith, endsWith, in |
+| `displayName` | `string` | equals, contains, startsWith, endsWith, in |
+| `propertyType` | `string` | equals, contains, startsWith, endsWith, in |
+| `timeZone` | `string` | equals, contains, startsWith, endsWith, in |
+| `currencyCode` | `string` | equals, contains, startsWith, endsWith, in |
+| `industryCategory` | `string` | equals, contains, startsWith, endsWith, in |
+| `account` | `string` | equals, contains, startsWith, endsWith, in |
+| `createTime` | `string` | equals, contains, startsWith, endsWith, in |
+| `updateTime` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

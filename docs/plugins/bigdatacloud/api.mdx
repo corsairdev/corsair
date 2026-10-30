@@ -1,0 +1,1104 @@
+---
+title: API
+description: "API reference for BigDataCloud: every `bigdatacloud.api.*` operation with input and output types."
+---
+
+Every `bigdatacloud.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Asn
+
+### asnExtendedReceivingFromInfo
+
+`asn.asnExtendedReceivingFromInfo`
+
+Tool to return upstream providers (receivingFrom) for a given ASN. Use when you need a paginated list of ASes feeding traffic for the specified ASN.
+
+**Risk:** `read`
+
+```ts
+await corsair.bigdatacloud.api.asn.asnExtendedReceivingFromInfo({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `asn` | `string` | Yes | — |
+| `batchSize` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `localityLanguage` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `asn` | `string` | Yes | — |
+| `asnNumeric` | `number` | Yes | — |
+| `organisation` | `string` | No | — |
+| `name` | `string` | No | — |
+| `totalReceivingFrom` | `number` | No | — |
+| `receivingFrom` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="receivingFrom full type">
+
+```ts
+{
+  asn?: string,
+  asnNumeric?: number,
+  organisation?: string,
+  name?: string,
+  registry?: string,
+  registeredCountry?: string,
+  registeredCountryName?: string,
+  registrationDate?: string,
+  registrationLastChange?: string,
+  totalIpv4Addresses?: number,
+  totalIpv4Prefixes?: number,
+  totalIpv4BogonPrefixes?: number,
+  totalIpv6Prefixes?: number,
+  totalIpv6BogonPrefixes?: number,
+  rank?: number,
+  rankText?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### asnExtendedTransitToInfo
+
+`asn.asnExtendedTransitToInfo`
+
+Tool to return downstream customers (transitTo) for a given ASN. Use when you need a paginated list of ASes receiving traffic from a specific ASN.
+
+**Risk:** `read`
+
+```ts
+await corsair.bigdatacloud.api.asn.asnExtendedTransitToInfo({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `asn` | `string` | Yes | — |
+| `batchSize` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `localityLanguage` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `asn` | `string` | Yes | — |
+| `asnNumeric` | `number` | Yes | — |
+| `organisation` | `string` | No | — |
+| `name` | `string` | No | — |
+| `totalTransitTo` | `number` | No | — |
+| `transitTo` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="transitTo full type">
+
+```ts
+{
+  asn?: string,
+  asnNumeric?: number,
+  organisation?: string,
+  name?: string,
+  registry?: string,
+  registeredCountry?: string,
+  registeredCountryName?: string,
+  registrationDate?: string,
+  registrationLastChange?: string,
+  totalIpv4Addresses?: number,
+  totalIpv4Prefixes?: number,
+  totalIpv4BogonPrefixes?: number,
+  totalIpv6Prefixes?: number,
+  totalIpv6BogonPrefixes?: number,
+  rank?: number,
+  rankText?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### asnRankList
+
+`asn.asnRankList`
+
+Retrieves a ranked list of Autonomous Systems (ASNs) sorted by IPv4 address announcement volumes. Use cases: - Find the largest ASNs by IP address count (DoD, Amazon, Microsoft, etc.) - Look up ASN rankings for network analysis - Paginate through the global ASN database (79,000+ entries) - Sort ASNs by various criteria (rank, name, organisation, country) Returns paginated results with total count for navigation.
+
+**Risk:** `read`
+
+```ts
+await corsair.bigdatacloud.api.asn.asnRankList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `batchSize` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `sort` | `rank \| asn \| asnNumeric \| organisation \| countryCode` | No | — |
+| `order` | `asc \| desc` | No | — |
+| `localityLanguage` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `number` | Yes | — |
+| `offset` | `number` | Yes | — |
+| `batch` | `number` | Yes | — |
+| `asns` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="asns full type">
+
+```ts
+{
+  asn?: string,
+  asnNumeric?: number,
+  organisation?: string,
+  name?: string,
+  registry?: string,
+  registeredCountry?: string,
+  registeredCountryName?: string,
+  registrationDate?: string,
+  registrationLastChange?: string,
+  totalIpv4Addresses?: number,
+  totalIpv4Prefixes?: number,
+  totalIpv4BogonPrefixes?: number,
+  totalIpv6Prefixes?: number,
+  totalIpv6BogonPrefixes?: number,
+  rank?: number,
+  rankText?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### bgpActivePrefixes
+
+`asn.bgpActivePrefixes`
+
+Tool to retrieve IPv4 or IPv6 prefixes currently announced on BGP. Use when inspecting BGP routing announcements for a given ASN.
+
+**Risk:** `read`
+
+```ts
+await corsair.bigdatacloud.api.asn.bgpActivePrefixes({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `asn` | `string` | Yes | — |
+| `isv4` | `boolean` | No | — |
+| `bogonsOnly` | `boolean` | No | — |
+| `batchSize` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `sort` | `bgpPrefix \| bgpPrefixNetworkAddress \| bgpPrefixLastAddress \| registryStatus \| isBogon \| isAnnounced \| carriers` | No | — |
+| `order` | `asc \| desc` | No | — |
+| `localityLanguage` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `number` | Yes | — |
+| `offset` | `number` | Yes | — |
+| `batch` | `number` | Yes | — |
+| `prefixes` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="prefixes full type">
+
+```ts
+{
+  bgpPrefix: string,
+  bgpPrefixNetworkAddress?: string,
+  bgpPrefixLastAddress?: string,
+  registryStatus?: string,
+  isBogon?: boolean,
+  isAnnounced?: boolean,
+  carriers?: {
+    asn?: string,
+    asnNumeric?: number,
+    organisation?: string,
+    name?: string,
+    registry?: string,
+    registeredCountry?: string,
+    registeredCountryName?: string,
+    registrationDate?: string,
+    registrationLastChange?: string,
+    totalIpv4Addresses?: number,
+    totalIpv4Prefixes?: number,
+    totalIpv4BogonPrefixes?: number,
+    totalIpv6Prefixes?: number,
+    totalIpv6BogonPrefixes?: number,
+    rank?: number,
+    rankText?: string
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Location
+
+### amIRoaming
+
+`location.amIRoaming`
+
+Tool to determine if the user is roaming based on their IP address and GPS coordinates. Use after obtaining device location to verify roaming status before mobile actions.
+
+**Risk:** `read`
+
+```ts
+await corsair.bigdatacloud.api.location.amIRoaming({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `latitude` | `number` | Yes | — |
+| `longitude` | `number` | Yes | — |
+| `ip` | `string` | Yes | — |
+| `localityLanguage` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `isRoaming` | `boolean` | Yes | — |
+
+
+
+---
+
+### countryByIpAddress
+
+`location.countryByIpAddress`
+
+Tool to geolocate an IP address and retrieve country details and demographics. Use when you need country-level data after obtaining the target IP address.
+
+**Risk:** `read`
+
+```ts
+await corsair.bigdatacloud.api.location.countryByIpAddress({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ip` | `string` | Yes | — |
+| `localityLanguage` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ip` | `string` | Yes | — |
+| `localityLanguageRequested` | `string` | No | — |
+| `isReachableGlobally` | `boolean` | No | — |
+| `country` | `object` | No | — |
+| `lastUpdated` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="country full type">
+
+```ts
+{
+  isoAlpha2: string,
+  isoAlpha3?: string,
+  m49Code?: number,
+  name: string,
+  isoName?: string,
+  isoNameFull?: string,
+  isoAdminLanguages?: {
+    isoAlpha3?: string,
+    isoAlpha2?: string,
+    isoName?: string,
+    nativeName?: string
+  }[],
+  unRegion?: string,
+  currency?: {
+    numericCode?: number,
+    code?: string,
+    name?: string,
+    minorUnits?: number
+  },
+  wbRegion?: {
+    id?: string,
+    iso2Code?: string,
+    value?: string
+  },
+  wbIncomeLevel?: {
+    id?: string,
+    iso2Code?: string,
+    value?: string
+  },
+  callingCode?: string,
+  countryFlagEmoji?: string,
+  wikidataId?: string,
+  geonameId?: number,
+  isIndependent?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### countryInfo
+
+`location.countryInfo`
+
+Tool to fetch detailed country information by ISO code. Use when you need localized names, currencies, regions, and other metadata for a country.
+
+**Risk:** `read`
+
+```ts
+await corsair.bigdatacloud.api.location.countryInfo({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string` | Yes | — |
+| `localityLanguage` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `isoAlpha2` | `string` | Yes | — |
+| `isoAlpha3` | `string` | No | — |
+| `m49Code` | `number` | No | — |
+| `name` | `string` | Yes | — |
+| `isoName` | `string` | No | — |
+| `isoNameFull` | `string` | No | — |
+| `isoAdminLanguages` | `object[]` | No | — |
+| `unRegion` | `string` | No | — |
+| `currency` | `object` | No | — |
+| `wbRegion` | `object` | No | — |
+| `wbIncomeLevel` | `object` | No | — |
+| `callingCode` | `string` | No | — |
+| `countryFlagEmoji` | `string` | No | — |
+| `wikidataId` | `string` | No | — |
+| `geonameId` | `number` | No | — |
+| `isIndependent` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="isoAdminLanguages full type">
+
+```ts
+{
+  isoAlpha3?: string,
+  isoAlpha2?: string,
+  isoName?: string,
+  nativeName?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="currency full type">
+
+```ts
+{
+  numericCode?: number,
+  code?: string,
+  name?: string,
+  minorUnits?: number
+}
+```
+</Accordion>
+
+<Accordion title="wbRegion full type">
+
+```ts
+{
+  id?: string,
+  iso2Code?: string,
+  value?: string
+}
+```
+</Accordion>
+
+<Accordion title="wbIncomeLevel full type">
+
+```ts
+{
+  id?: string,
+  iso2Code?: string,
+  value?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### reverseGeocodingWithTimezone
+
+`location.reverseGeocodingWithTimezone`
+
+Tool to return reverse geocoding and time zone info for given coordinates. Use when you need both locality details and timezone data in one call.
+
+**Risk:** `read`
+
+```ts
+await corsair.bigdatacloud.api.location.reverseGeocodingWithTimezone({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `latitude` | `number` | Yes | — |
+| `longitude` | `number` | Yes | — |
+| `localityLanguage` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `latitude` | `number` | Yes | — |
+| `longitude` | `number` | Yes | — |
+| `localityLanguageRequested` | `string` | No | — |
+| `continent` | `string` | No | — |
+| `continentCode` | `string` | No | — |
+| `countryName` | `string` | No | — |
+| `countryCode` | `string` | No | — |
+| `principalSubdivision` | `string` | No | — |
+| `principalSubdivisionCode` | `string` | No | — |
+| `city` | `string` | No | — |
+| `locality` | `string` | No | — |
+| `postcode` | `string` | No | — |
+| `plusCode` | `string` | No | — |
+| `localityInfo` | `object` | No | — |
+| `timeZone` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="localityInfo full type">
+
+```ts
+{
+  administrative?: {
+    name?: string,
+    description?: string,
+    isoName?: string,
+    order?: number,
+    adminLevel?: number,
+    isoCode?: string,
+    wikidataId?: string,
+    geonameId?: number
+  }[],
+  informative?: {
+    name?: string,
+    description?: string,
+    isoName?: string,
+    order?: number,
+    isoCode?: string,
+    wikidataId?: string,
+    geonameId?: number
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="timeZone full type">
+
+```ts
+{
+  ianaTimeId: string,
+  displayName?: string,
+  effectiveTimeZoneFull?: string,
+  effectiveTimeZoneShort?: string,
+  utcOffsetSeconds?: number,
+  utcOffset?: string,
+  isDaylightSavingTime?: boolean,
+  localTime?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### timeZoneByIpAddress
+
+`location.timeZoneByIpAddress`
+
+Tool to retrieve time zone information for a given IP address. Use when you need DST status, UTC offsets, and local/UTC time for a specific IP.
+
+**Risk:** `read`
+
+```ts
+await corsair.bigdatacloud.api.location.timeZoneByIpAddress({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ip` | `string` | Yes | — |
+| `utcReference` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ianaTimeId` | `string` | Yes | — |
+| `displayName` | `string` | No | — |
+| `effectiveTimeZoneFull` | `string` | No | — |
+| `effectiveTimeZoneShort` | `string` | No | — |
+| `utcOffsetSeconds` | `number` | No | — |
+| `utcOffset` | `string` | No | — |
+| `isDaylightSavingTime` | `boolean` | No | — |
+| `localTime` | `string` | No | — |
+
+
+
+---
+
+## Network
+
+### networkByIpAddress
+
+`network.networkByIpAddress`
+
+Tool to retrieve registry, ASN, and BGP details for a given IP address’s network. Use when you need detailed network information (e.g., ASNs, prefixes) after confirming the target IP.
+
+**Risk:** `read`
+
+```ts
+await corsair.bigdatacloud.api.network.networkByIpAddress({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ip` | `string` | Yes | — |
+| `localityLanguage` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ip` | `string` | Yes | — |
+| `registry` | `string` | No | — |
+| `registryStatus` | `string` | No | — |
+| `registeredCountry` | `string` | No | — |
+| `registeredCountryName` | `string` | No | — |
+| `organisation` | `string` | No | — |
+| `isReachableGlobally` | `boolean` | No | — |
+| `isBogon` | `boolean` | No | — |
+| `bgpPrefix` | `string` | No | — |
+| `bgpPrefixNetworkAddress` | `string` | No | — |
+| `bgpPrefixLastAddress` | `string` | No | — |
+| `totalAddresses` | `number` | No | — |
+| `carriers` | `object[]` | No | — |
+| `viaCarriers` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="carriers full type">
+
+```ts
+{
+  asn?: string,
+  asnNumeric?: number,
+  organisation?: string,
+  name?: string,
+  registry?: string,
+  registeredCountry?: string,
+  registeredCountryName?: string,
+  registrationDate?: string,
+  registrationLastChange?: string,
+  totalIpv4Addresses?: number,
+  totalIpv4Prefixes?: number,
+  totalIpv4BogonPrefixes?: number,
+  totalIpv6Prefixes?: number,
+  totalIpv6BogonPrefixes?: number,
+  rank?: number,
+  rankText?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="viaCarriers full type">
+
+```ts
+{
+  asn?: string,
+  asnNumeric?: number,
+  organisation?: string,
+  name?: string,
+  registry?: string,
+  registeredCountry?: string,
+  registeredCountryName?: string,
+  registrationDate?: string,
+  registrationLastChange?: string,
+  totalIpv4Addresses?: number,
+  totalIpv4Prefixes?: number,
+  totalIpv4BogonPrefixes?: number,
+  totalIpv6Prefixes?: number,
+  totalIpv6BogonPrefixes?: number,
+  rank?: number,
+  rankText?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### networksByCidr
+
+`network.networksByCidr`
+
+Tool to retrieve BGP-announced networks within a specified CIDR range. Use when you need to analyze network announcements within a particular CIDR after confirming the range format.
+
+**Risk:** `read`
+
+```ts
+await corsair.bigdatacloud.api.network.networksByCidr({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cidr` | `string` | Yes | — |
+| `localityLanguage` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cidr` | `string` | Yes | — |
+| `parent` | `string` | No | — |
+| `network` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="network full type">
+
+```ts
+{
+  cidr?: string,
+  type?: string,
+  carriers?: {
+    asn?: string,
+    asnNumeric?: number,
+    organisation?: string,
+    name?: string,
+    registry?: string,
+    registeredCountry?: string,
+    registeredCountryName?: string,
+    registrationDate?: string,
+    registrationLastChange?: string,
+    totalIpv4Addresses?: number,
+    totalIpv4Prefixes?: number,
+    totalIpv4BogonPrefixes?: number,
+    totalIpv6Prefixes?: number,
+    totalIpv6BogonPrefixes?: number,
+    rank?: number,
+    rankText?: string
+  }[],
+  viaCarriers?: {
+    asn?: string,
+    asnNumeric?: number,
+    organisation?: string,
+    name?: string,
+    registry?: string,
+    registeredCountry?: string,
+    registeredCountryName?: string,
+    registrationDate?: string,
+    registrationLastChange?: string,
+    totalIpv4Addresses?: number,
+    totalIpv4Prefixes?: number,
+    totalIpv4BogonPrefixes?: number,
+    totalIpv6Prefixes?: number,
+    totalIpv6BogonPrefixes?: number,
+    rank?: number,
+    rankText?: string
+  }[],
+  totalSubnets?: number,
+  subnets?: {
+    startAddress?: string,
+    endAddress?: string,
+    organisation?: string,
+    registeredCountry?: string,
+    registeredCountryName?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Security
+
+### hazardReport
+
+`security.hazardReport`
+
+Tool to fetch a cybersecurity hazard report for a specified IP address. Use when assessing an IP's threat profile (VPN, proxy, blacklists, hosting risk).
+
+**Risk:** `read`
+
+```ts
+await corsair.bigdatacloud.api.security.hazardReport({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ip` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `isKnownAsTorServer` | `boolean` | No | — |
+| `isKnownAsVpn` | `boolean` | No | — |
+| `isKnownAsProxy` | `boolean` | No | — |
+| `isSpamhausDrop` | `boolean` | No | — |
+| `isSpamhausEdrop` | `boolean` | No | — |
+| `isSpamhausAsnDrop` | `boolean` | No | — |
+| `isBlacklistedUceprotect` | `boolean` | No | — |
+| `isBlacklistedBlocklistDe` | `boolean` | No | — |
+| `isKnownAsMailServer` | `boolean` | No | — |
+| `isKnownAsPublicRouter` | `boolean` | No | — |
+| `isBogon` | `boolean` | No | — |
+| `isUnreachable` | `boolean` | No | — |
+| `hostingLikelihood` | `number` | No | — |
+| `isHostingAsn` | `boolean` | No | — |
+| `isCellular` | `boolean` | No | — |
+| `iCloudPrivateRelay` | `boolean` | No | — |
+
+
+
+---
+
+### torExitNodesGeolocated
+
+`security.torExitNodesGeolocated`
+
+Retrieve a paginated list of active TOR exit node IP addresses with geolocation and carrier (ASN) details. Use this tool to: - Get a list of known TOR exit node IPs to detect/block anonymous traffic - Analyze geographic distribution of TOR exit nodes by country - Look up carrier/ASN information for TOR nodes - Build IP blocklists or allowlists for TOR traffic Returns nodes with IP address, country info (when available), and detailed carrier/ASN data including BGP prefix counts and global ranking.
+
+**Risk:** `read`
+
+```ts
+await corsair.bigdatacloud.api.security.torExitNodesGeolocated({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `batchSize` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `localityLanguage` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `number` | Yes | — |
+| `offset` | `number` | Yes | — |
+| `batch` | `number` | Yes | — |
+| `nodes` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="nodes full type">
+
+```ts
+{
+  ip: string,
+  countryName?: string,
+  countryCode?: string,
+  carriers?: {
+    asn?: string,
+    asnNumeric?: number,
+    organisation?: string,
+    name?: string,
+    registry?: string,
+    registeredCountry?: string,
+    registeredCountryName?: string,
+    registrationDate?: string,
+    registrationLastChange?: string,
+    totalIpv4Addresses?: number,
+    totalIpv4Prefixes?: number,
+    totalIpv4BogonPrefixes?: number,
+    totalIpv6Prefixes?: number,
+    totalIpv6BogonPrefixes?: number,
+    rank?: number,
+    rankText?: string
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### userRisk
+
+`security.userRisk`
+
+Tool to return a risk assessment for a user based on IP signals for fraud prevention. Use after initial IP checks to decide whether to bypass or require captcha challenges.
+
+**Risk:** `read`
+
+```ts
+await corsair.bigdatacloud.api.security.userRisk({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ip` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `risk` | `string` | Yes | — |
+| `description` | `string` | No | — |
+
+
+
+---
+
+## Validation
+
+### emailAddressVerification
+
+`validation.emailAddressVerification`
+
+Tool to verify email addresses for syntax, domain validity, and disposability. Use after obtaining the email input.
+
+**Risk:** `read`
+
+```ts
+await corsair.bigdatacloud.api.validation.emailAddressVerification({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emailAddress` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `inputData` | `string` | Yes | — |
+| `isValid` | `boolean` | Yes | — |
+| `isSyntaxValid` | `boolean` | No | — |
+| `isMailServerDefined` | `boolean` | No | — |
+| `isKnownSpammerDomain` | `boolean` | No | — |
+| `isDisposable` | `boolean` | No | — |
+
+
+
+---
+
+### phoneNumberValidationByIp
+
+`validation.phoneNumberValidationByIp`
+
+Tool to validate phone numbers by inferring country from client IP. Use when you want to validate a number without specifying country.
+
+**Risk:** `read`
+
+```ts
+await corsair.bigdatacloud.api.validation.phoneNumberValidationByIp({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `number` | `string` | No | — |
+| `phoneNumber` | `string` | No | — |
+| `ip` | `string` | No | — |
+| `localityLanguage` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `isValid` | `boolean` | Yes | — |
+| `e164Format` | `string` | No | — |
+| `internationalFormat` | `string` | No | — |
+| `nationalFormat` | `string` | No | — |
+| `location` | `string` | No | — |
+| `lineType` | `string` | No | — |
+| `country` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="country full type">
+
+```ts
+{
+  isoAlpha2: string,
+  isoAlpha3?: string,
+  m49Code?: number,
+  name: string,
+  isoName?: string,
+  isoNameFull?: string,
+  isoAdminLanguages?: {
+    isoAlpha3?: string,
+    isoAlpha2?: string,
+    isoName?: string,
+    nativeName?: string
+  }[],
+  unRegion?: string,
+  currency?: {
+    numericCode?: number,
+    code?: string,
+    name?: string,
+    minorUnits?: number
+  },
+  wbRegion?: {
+    id?: string,
+    iso2Code?: string,
+    value?: string
+  },
+  wbIncomeLevel?: {
+    id?: string,
+    iso2Code?: string,
+    value?: string
+  },
+  callingCode?: string,
+  countryFlagEmoji?: string,
+  wikidataId?: string,
+  geonameId?: number,
+  isIndependent?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### userAgentParser
+
+`validation.userAgentParser`
+
+Tool to parse a User-Agent string into device, OS, browser, and bot details. Use when you have a raw User-Agent header and need structured client info.
+
+**Risk:** `read`
+
+```ts
+await corsair.bigdatacloud.api.validation.userAgentParser({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userAgentRaw` | `string` | No | — |
+| `userAgent` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `device` | `string` | No | — |
+| `os` | `string` | No | — |
+| `userAgent` | `string` | No | — |
+| `family` | `string` | No | — |
+| `versionMajor` | `string` | No | — |
+| `versionMinor` | `string` | No | — |
+| `versionPatch` | `string` | No | — |
+| `isSpider` | `boolean` | No | — |
+| `isMobile` | `boolean` | No | — |
+| `userAgentDisplay` | `string` | No | — |
+
+
+
+---
+

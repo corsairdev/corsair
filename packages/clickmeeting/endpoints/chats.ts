@@ -1,0 +1,44 @@
+import { logEventFromContext } from 'corsair/core';
+import { makeClickmeetingRequest } from '../client';
+import type { ClickmeetingEndpoints } from '../index';
+import { ClickmeetingEndpointOutputSchemas } from './types';
+
+export const getChats: ClickmeetingEndpoints['getChats'] = async (
+	ctx,
+	input,
+) => {
+	const query = input.page ? { page: input.page } : undefined;
+	// unknown: provider JSON shape is untyped before Zod parsing
+	const res = await makeClickmeetingRequest<unknown>('/chats', ctx.key, {
+		method: 'GET',
+		query,
+	});
+	await logEventFromContext(
+		ctx,
+		'clickmeeting.chats.getChats',
+		{},
+		'completed',
+	);
+	return ClickmeetingEndpointOutputSchemas.getChats.parse(res);
+};
+
+export const getChatDetails: ClickmeetingEndpoints['getChatDetails'] = async (
+	ctx,
+	input,
+) => {
+	// unknown: provider JSON shape is untyped before Zod parsing
+	const res = await makeClickmeetingRequest<unknown>(
+		`/chats/${encodeURIComponent(String(input.chatId))}`,
+		ctx.key,
+		{
+			method: 'GET',
+		},
+	);
+	await logEventFromContext(
+		ctx,
+		'clickmeeting.chats.getChatDetails',
+		{ chatId: input.chatId },
+		'completed',
+	);
+	return ClickmeetingEndpointOutputSchemas.getChatDetails.parse(res);
+};

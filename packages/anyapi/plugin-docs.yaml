@@ -1,0 +1,42 @@
+displayName: AnyAPI
+description: One key for 470+ scraping and data APIs (LinkedIn, X, Reddit, Instagram, TikTok, Google search and Maps, Amazon, any web page), paid per request in USD with automatic failover between sources.
+domain: getanyapi.com
+recommendedAuth: api_key
+examples:
+  read:
+    path: linkedin.getCompany
+    title: Look up a LinkedIn company
+    args:
+      url: https://www.linkedin.com/company/vercel
+apiExamples:
+  apis.search:
+    call: "{ query: 'linkedin company employees', limit: 5 }"
+  apis.list:
+    call: "{ category: 'search' }"
+  apis.get:
+    call: "{ sku: 'linkedin.company' }"
+  apis.quote:
+    call: "{ sku: 'linkedin.company', input: { url: 'https://www.linkedin.com/company/vercel' } }"
+  apis.run:
+    call: "{ sku: 'youtube.video_transcript', input: { url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' }, maxCostUsd: 0.01 }"
+  results.get:
+    call: "{ resultId: 'd668386e-e52f-4383-8951-8f6b9a1c3df9', fields: 'name,industry' }"
+  requests.get:
+    call: "{ requestId: '5f0c2d3e-8a51-4c2b-9d0e-1f2a3b4c5d6e' }"
+  account.getBalance: {}
+  google.search:
+    call: "{ query: 'model context protocol servers', gl: 'us', limit: 10 }"
+  web.scrape:
+    call: "{ url: 'https://modelcontextprotocol.io', formats: ['markdown'], onlyMainContent: true }"
+  linkedin.getProfile:
+    call: "{ url: 'https://www.linkedin.com/in/williamhgates' }"
+  linkedin.getCompany:
+    call: "{ url: 'https://www.linkedin.com/company/vercel' }"
+  twitter.search:
+    call: "{ query: '\"model context protocol\" -is:retweet', queryType: 'Top', limit: 20 }"
+  reddit.search:
+    call: "{ query: 'model context protocol', sort: 'top', timeframe: 'week' }"
+  instagram.getProfile:
+    call: "{ handle: 'nasa' }"
+  maps.search:
+    call: "{ query: 'coffee shop', location: 'Austin, USA', limit: 5 }"

@@ -1,0 +1,1729 @@
+{
+  "id": "coinbase",
+  "displayName": "Coinbase",
+  "description": "Coinbase plugin for Corsair",
+  "npmPackageName": "@corsair-dev/coinbase",
+  "authTypes": ["api_key", "oauth_2"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 27,
+    "webhooks": 2,
+    "db": 6
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "account", "user_id"]
+    },
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature",
+        "user_id"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "coinbase.api.accounts.get",
+      "shortPath": "accounts.get",
+      "description": "Get a Coinbase account by id or currency code",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "account_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "primary",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string | { code: string, name?: string, type?: string, asset_id?: string, slug?: string, color?: string, exponent?: number, sort_index?: number, address_regex?: string }"
+          },
+          {
+            "key": "balance",
+            "optional": true,
+            "type": "{ amount: string, currency: string }"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "resource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "resource_path",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ready",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "coinbase.api.accounts.list",
+      "shortPath": "accounts.list",
+      "description": "List Coinbase accounts and balances",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "starting_after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ending_before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "asc | desc"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ ending_before?: string | null, starting_after?: string | null, limit?: number, order?: string, previous_uri?: string | null, next_uri?: string | null }"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name?: string, primary?: boolean, type?: string, currency?: string | { code: string, name?: string, type?: string, asset_id?: string, slug?: string, color?: string, exponent?: number, sort_index?: number, address_regex?: string }, balance?: { amount: string, currency: string }, created_at?: string | null, updated_at?: string | null, resource?: string, resource_path?: string, ready?: boolean }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "coinbase.api.data.getExchangeRates",
+      "shortPath": "data.getExchangeRates",
+      "description": "Get exchange rates for a base currency",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "currency",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "rates",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "coinbase.api.data.getTime",
+      "shortPath": "data.getTime",
+      "description": "Get Coinbase API server time",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "iso",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "epoch",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "coinbase.api.data.listCurrencies",
+      "shortPath": "data.listCurrencies",
+      "description": "List currencies supported by Coinbase",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name: string, min_size?: string, status?: string, message?: string | null, convertible_to?: string[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "coinbase.api.markets.getCurrency",
+      "shortPath": "markets.getCurrency",
+      "description": "Get a Coinbase App currency by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "currency_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name: string, min_size?: string, status?: string, message?: string | null, convertible_to?: string[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "coinbase.api.markets.getMarketProductBook",
+      "shortPath": "markets.getMarketProductBook",
+      "description": "Get the Advanced Trade public product book",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "product_id",
+            "optional": false,
+            "type": "string",
+            "description": "Currency pair such as BTC-USD"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pricebook",
+            "optional": true,
+            "type": "{ product_id?: string, bids?: { price?: string, size?: string }[], asks?: { price?: string, size?: string }[], time?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "coinbase.api.markets.getProduct",
+      "shortPath": "markets.getProduct",
+      "description": "Get an Advanced Trade product by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "product_id",
+            "optional": false,
+            "type": "string",
+            "description": "Currency pair such as BTC-USD"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "product_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "price",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "base_currency_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "quote_currency_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "volume_24h",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "coinbase.api.markets.getProductBook",
+      "shortPath": "markets.getProductBook",
+      "description": "Get the Advanced Trade product order book",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "product_id",
+            "optional": false,
+            "type": "string",
+            "description": "Currency pair such as BTC-USD"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pricebook",
+            "optional": true,
+            "type": "{ product_id?: string, bids?: { price?: string, size?: string }[], asks?: { price?: string, size?: string }[], time?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "coinbase.api.markets.getPublicTrades",
+      "shortPath": "markets.getPublicTrades",
+      "description": "Get public Advanced Trade market trades",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "product_id",
+            "optional": false,
+            "type": "string",
+            "description": "Currency pair such as BTC-USD"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "trades",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "best_bid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "best_ask",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "coinbase.api.markets.getServerTime",
+      "shortPath": "markets.getServerTime",
+      "description": "Get Coinbase Advanced Trade server time",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "iso",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "epochSeconds",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "epochMillis",
+            "optional": true,
+            "type": "string | number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "coinbase.api.markets.getTicker",
+      "shortPath": "markets.getTicker",
+      "description": "Get the Advanced Trade public product ticker and trades",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "product_id",
+            "optional": false,
+            "type": "string",
+            "description": "Currency pair such as BTC-USD"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "trades",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "best_bid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "best_ask",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "coinbase.api.markets.getVolumeSummary",
+      "shortPath": "markets.getVolumeSummary",
+      "description": "List Advanced Trade products including 24h volume",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "product_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "product_ids",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "products",
+            "optional": true,
+            "type": "{ product_id?: string, price?: string, base_currency_id?: string, quote_currency_id?: string, status?: string, volume_24h?: string }[]"
+          },
+          {
+            "key": "num_products",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "coinbase.api.markets.listExchangeProducts",
+      "shortPath": "markets.listExchangeProducts",
+      "description": "List Advanced Trade trading products",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "product_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "product_ids",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "products",
+            "optional": true,
+            "type": "{ product_id?: string, price?: string, base_currency_id?: string, quote_currency_id?: string, status?: string, volume_24h?: string }[]"
+          },
+          {
+            "key": "num_products",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "coinbase.api.markets.listProductCandles",
+      "shortPath": "markets.listProductCandles",
+      "description": "List Advanced Trade product candles",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "product_id",
+            "optional": false,
+            "type": "string",
+            "description": "Currency pair such as BTC-USD"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "end",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "granularity",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "candles",
+            "optional": true,
+            "type": "{ start?: string, low?: string, high?: string, open?: string, close?: string, volume?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "coinbase.api.markets.listProducts",
+      "shortPath": "markets.listProducts",
+      "description": "List Advanced Trade market products",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "product_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "product_ids",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "products",
+            "optional": true,
+            "type": "{ product_id?: string, price?: string, base_currency_id?: string, quote_currency_id?: string, status?: string, volume_24h?: string }[]"
+          },
+          {
+            "key": "num_products",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "coinbase.api.markets.listProductsCandles",
+      "shortPath": "markets.listProductsCandles",
+      "description": "List Advanced Trade candlestick history",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "product_id",
+            "optional": false,
+            "type": "string",
+            "description": "Currency pair such as BTC-USD"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "end",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "granularity",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "candles",
+            "optional": true,
+            "type": "{ start?: string, low?: string, high?: string, open?: string, close?: string, volume?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "coinbase.api.markets.listStats",
+      "shortPath": "markets.listStats",
+      "description": "Get Advanced Trade product details and 24h stats",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "product_id",
+            "optional": false,
+            "type": "string",
+            "description": "Currency pair such as BTC-USD"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "product_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "price",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "base_currency_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "quote_currency_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "volume_24h",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "coinbase.api.markets.listTrades",
+      "shortPath": "markets.listTrades",
+      "description": "List recent Advanced Trade market trades",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "product_id",
+            "optional": false,
+            "type": "string",
+            "description": "Currency pair such as BTC-USD"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "trades",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "best_bid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "best_ask",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "coinbase.api.markets.listWallets",
+      "shortPath": "markets.listWallets",
+      "description": "List Coinbase App wallets (accounts)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "starting_after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ending_before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "asc | desc"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ ending_before?: string | null, starting_after?: string | null, limit?: number, order?: string, previous_uri?: string | null, next_uri?: string | null }"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name?: string, primary?: boolean, type?: string, currency?: string | { code: string, name?: string, type?: string, asset_id?: string, slug?: string, color?: string, exponent?: number, sort_index?: number, address_regex?: string }, balance?: { amount: string, currency: string }, created_at?: string | null, updated_at?: string | null, resource?: string, resource_path?: string, ready?: boolean }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "coinbase.api.paymentMethods.list",
+      "shortPath": "paymentMethods.list",
+      "description": "List payment methods on the authenticated Coinbase account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "starting_after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ending_before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "asc | desc"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ ending_before?: string | null, starting_after?: string | null, limit?: number, order?: string, previous_uri?: string | null, next_uri?: string | null }"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type?: string, name?: string, currency?: string, primary_buy?: boolean, primary_sell?: boolean, allow_buy?: boolean, allow_sell?: boolean, allow_deposit?: boolean, allow_withdraw?: boolean, instant_buy?: boolean, instant_sell?: boolean, created_at?: string | null, updated_at?: string | null, resource?: string, resource_path?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "coinbase.api.prices.getBuy",
+      "shortPath": "prices.getBuy",
+      "description": "Get the Coinbase buy price for a currency pair",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "currency_pair",
+            "optional": false,
+            "type": "string",
+            "description": "Currency pair such as BTC-USD"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "amount",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "currency",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "base",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "coinbase.api.prices.getSell",
+      "shortPath": "prices.getSell",
+      "description": "Get the Coinbase sell price for a currency pair",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "currency_pair",
+            "optional": false,
+            "type": "string",
+            "description": "Currency pair such as BTC-USD"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "amount",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "currency",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "base",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "coinbase.api.prices.getSpot",
+      "shortPath": "prices.getSpot",
+      "description": "Get the current or historic spot price for a currency pair",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "currency_pair",
+            "optional": false,
+            "type": "string",
+            "description": "Currency pair such as BTC-USD"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string",
+            "description": "Historic spot price date (YYYY-MM-DD, UTC)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "amount",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "currency",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "base",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "coinbase.api.transactions.get",
+      "shortPath": "transactions.get",
+      "description": "Get a transaction on a Coinbase account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "account_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "transaction_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "amount",
+            "optional": true,
+            "type": "{ amount: string, currency: string }"
+          },
+          {
+            "key": "native_amount",
+            "optional": true,
+            "type": "{ amount: string, currency: string }"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "resource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "resource_path",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "instant_exchange",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "network",
+            "optional": true,
+            "type": "{ status?: string, hash?: string | null, name?: string, transaction_url?: string | null, status_description?: string | null }"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "details",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "coinbase.api.transactions.list",
+      "shortPath": "transactions.list",
+      "description": "List transactions for a Coinbase account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "starting_after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ending_before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "account_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ ending_before?: string | null, starting_after?: string | null, limit?: number, order?: string, previous_uri?: string | null, next_uri?: string | null }"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type?: string, status?: string, amount?: { amount: string, currency: string }, native_amount?: { amount: string, currency: string }, description?: string | null, created_at?: string | null, updated_at?: string | null, resource?: string, resource_path?: string, instant_exchange?: boolean, network?: { status?: string, hash?: string | null, name?: string, transaction_url?: string | null, status_description?: string | null }, to?: {}, from?: {}, details?: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "coinbase.api.user.get",
+      "shortPath": "user.get",
+      "description": "Get the authenticated Coinbase user profile",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "profile_location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "profile_bio",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "profile_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "avatar_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "resource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "resource_path",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time_zone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "native_currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "bitcoin_unit",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "{ code: string, name?: string }"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "coinbase.webhooks.notifications.newPayment",
+      "shortPath": "notifications.newPayment",
+      "description": "A new on-chain payment arrived at a watched address",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "wallet:addresses:new-payment"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{ id?: string, resource?: string, resource_path?: string }"
+          },
+          {
+            "key": "account",
+            "optional": true,
+            "type": "{ id?: string, resource?: string, resource_path?: string }"
+          },
+          {
+            "key": "delivery_attempts",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "resource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "resource_path",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "responseType": "{ id?: string, type: wallet:addresses:new-payment, data?: {}, user?: { id?: string, resource?: string, resource_path?: string }, account?: { id?: string, resource?: string, resource_path?: string }, delivery_attempts?: number, created_at?: string, resource?: string, resource_path?: string }",
+      "usageExample": "coinbase({\n    webhookHooks: {\n        notifications: {\n            newPayment: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "coinbase.webhooks.notifications.ping",
+      "shortPath": "notifications.ping",
+      "description": "Coinbase webhook ping used to verify a notification URL",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "ping"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{ id?: string, resource?: string, resource_path?: string }"
+          },
+          {
+            "key": "account",
+            "optional": true,
+            "type": "{ id?: string, resource?: string, resource_path?: string }"
+          },
+          {
+            "key": "delivery_attempts",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "resource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "resource_path",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "responseType": "{ id?: string, type: ping, data?: {}, user?: { id?: string, resource?: string, resource_path?: string }, account?: { id?: string, resource?: string, resource_path?: string }, delivery_attempts?: number, created_at?: string, resource?: string, resource_path?: string }",
+      "usageExample": "coinbase({\n    webhookHooks: {\n        notifications: {\n            ping: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": [
+    {
+      "path": "coinbase.db.accounts.search",
+      "entityName": "accounts",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "primary",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "resource",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "resource_path",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "ready",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    },
+    {
+      "path": "coinbase.db.currencies.search",
+      "entityName": "currencies",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "min_size",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "message",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "coinbase.db.paymentMethods.search",
+      "entityName": "paymentMethods",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "currency",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "primary_buy",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "primary_sell",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "allow_buy",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "allow_sell",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "allow_deposit",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "allow_withdraw",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "instant_buy",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "instant_sell",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "resource",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "resource_path",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "coinbase.db.prices.search",
+      "entityName": "prices",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "amount",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "currency",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "base",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "coinbase.db.transactions.search",
+      "entityName": "transactions",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "resource",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "resource_path",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "instant_exchange",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    },
+    {
+      "path": "coinbase.db.users.search",
+      "entityName": "users",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "username",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "profile_location",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "profile_bio",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "profile_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "avatar_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "resource",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "resource_path",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "time_zone",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "native_currency",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "bitcoin_unit",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

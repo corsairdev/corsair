@@ -1,0 +1,1290 @@
+{
+  "id": "tally",
+  "displayName": "Tally",
+  "description": "Simple form builder for surveys, signup flows, and collecting responses without code.",
+  "npmPackageName": "@corsair-dev/tally",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 26,
+    "webhooks": 1,
+    "db": 3
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "form_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "tally.api.forms.create",
+      "shortPath": "forms.create",
+      "description": "Create a new form",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "templateId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "blocks",
+            "optional": false,
+            "type": "{}[]"
+          },
+          {
+            "key": "settings",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "blocks",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "settings",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tally.api.forms.delete",
+      "shortPath": "forms.delete",
+      "description": "Delete a form",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "formId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "tally.api.forms.get",
+      "shortPath": "forms.get",
+      "description": "Retrieve a form by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "formId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "blocks",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "settings",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tally.api.forms.list",
+      "shortPath": "forms.list",
+      "description": "List all forms with optional pagination and workspace filter",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "workspaceIds",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: string, name?: string, status?: string, workspaceId?: string | null, createdAt?: string, updatedAt?: string, blocks?: {}[], settings?: {} }[]"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hasMore",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tally.api.forms.update",
+      "shortPath": "forms.update",
+      "description": "Update an existing form",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "formId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "blocks",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "settings",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "blocks",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "settings",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tally.api.organizations.cancelInvite",
+      "shortPath": "organizations.cancelInvite",
+      "description": "Cancel a pending organization invite",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organizationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "inviteId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "tally.api.organizations.createInvite",
+      "shortPath": "organizations.createInvite",
+      "description": "Invite users to an organization",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organizationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspaceIds",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "emails",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "tally.api.organizations.listInvites",
+      "shortPath": "organizations.listInvites",
+      "description": "List pending invites for an organization",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organizationId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, organizationId?: string, email?: string, createdAt?: string, updatedAt?: string }[]"
+      }
+    },
+    {
+      "path": "tally.api.organizations.listUsers",
+      "shortPath": "organizations.listUsers",
+      "description": "List all users in an organization",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organizationId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, email?: string, name?: string | null, subscriptionPlan?: string | null }[]"
+      }
+    },
+    {
+      "path": "tally.api.organizations.removeUser",
+      "shortPath": "organizations.removeUser",
+      "description": "Remove a user from an organization",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organizationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "userId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "tally.api.questions.list",
+      "shortPath": "questions.list",
+      "description": "List all questions for a form",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "formId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "questions",
+            "optional": false,
+            "type": "{ id: string, type?: string, title?: string | null, isTitleModifiedByUser?: boolean, formId?: string, isDeleted?: boolean, numberOfResponses?: number, createdAt?: string, updatedAt?: string, fields?: {}[] }[]"
+          },
+          {
+            "key": "hasResponses",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tally.api.submissions.delete",
+      "shortPath": "submissions.delete",
+      "description": "Delete a form submission",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "formId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "submissionId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "tally.api.submissions.get",
+      "shortPath": "submissions.get",
+      "description": "Retrieve a specific form submission",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "formId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "submissionId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "questions",
+            "optional": true,
+            "type": "{ id: string, type?: string, title?: string | null, isTitleModifiedByUser?: boolean, formId?: string, isDeleted?: boolean, numberOfResponses?: number, createdAt?: string, updatedAt?: string, fields?: {}[] }[]"
+          },
+          {
+            "key": "submission",
+            "optional": false,
+            "type": "{ id: string, respondentId?: string | null, formId?: string, createdAt?: string, isCompleted?: boolean, responses?: { id: string, formId?: string, questionId?: string, respondentId?: string, submissionId?: string | null, sessionUuid?: string, answer?: any, formattedAnswer?: string, createdAt?: string, updatedAt?: string }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tally.api.submissions.list",
+      "shortPath": "submissions.list",
+      "description": "List form submissions with optional filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "formId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "all | completed | partial"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "afterId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hasMore",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "totalNumberOfSubmissionsPerFilter",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "questions",
+            "optional": true,
+            "type": "{ id: string, type?: string, title?: string | null, isTitleModifiedByUser?: boolean, formId?: string, isDeleted?: boolean, numberOfResponses?: number, createdAt?: string, updatedAt?: string, fields?: {}[] }[]"
+          },
+          {
+            "key": "submissions",
+            "optional": false,
+            "type": "{ id: string, respondentId?: string | null, formId?: string, createdAt?: string, isCompleted?: boolean, responses?: { id: string, formId?: string, questionId?: string, respondentId?: string, submissionId?: string | null, sessionUuid?: string, answer?: any, formattedAnswer?: string, createdAt?: string, updatedAt?: string }[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tally.api.users.getMe",
+      "shortPath": "users.getMe",
+      "description": "Retrieve the current authenticated user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subscriptionPlan",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tally.api.webhookManagement.create",
+      "shortPath": "webhookManagement.create",
+      "description": "Create a new webhook subscription",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "formId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "eventTypes",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "signingSecret",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "httpHeaders",
+            "optional": true,
+            "type": "{ name: string, value: string }[]"
+          },
+          {
+            "key": "externalSubscriber",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "eventTypes",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "isEnabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "signingSecret",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tally.api.webhookManagement.delete",
+      "shortPath": "webhookManagement.delete",
+      "description": "Delete a webhook subscription",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhookId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "tally.api.webhookManagement.list",
+      "shortPath": "webhookManagement.list",
+      "description": "List all webhooks",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhooks",
+            "optional": false,
+            "type": "{ id: string, url?: string, eventTypes?: string[], isEnabled?: boolean, signingSecret?: string | null, createdAt?: string }[]"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hasMore",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "totalCount",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tally.api.webhookManagement.listEvents",
+      "shortPath": "webhookManagement.listEvents",
+      "description": "List delivery events for a webhook",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhookId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "events",
+            "optional": false,
+            "type": "{ id?: string, eventType?: string, deliveryStatus?: string, statusCode?: number | null, response?: string | null, retry?: number, payload?: {}, createdAt?: string, updatedAt?: string }[]"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hasMore",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "totalNumberOfEvents",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tally.api.webhookManagement.retryEvent",
+      "shortPath": "webhookManagement.retryEvent",
+      "description": "Retry a failed webhook event delivery",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhookId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "eventId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "tally.api.webhookManagement.update",
+      "shortPath": "webhookManagement.update",
+      "description": "Update a webhook subscription",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhookId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "formId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "eventTypes",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "isEnabled",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "signingSecret",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "httpHeaders",
+            "optional": true,
+            "type": "{ name: string, value: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "tally.api.workspaces.create",
+      "shortPath": "workspaces.create",
+      "description": "Create a new workspace (Pro subscription required)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "members",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "invites",
+            "optional": true,
+            "type": "any[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tally.api.workspaces.delete",
+      "shortPath": "workspaces.delete",
+      "description": "Delete a workspace",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "tally.api.workspaces.get",
+      "shortPath": "workspaces.get",
+      "description": "Retrieve a workspace by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "members",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "invites",
+            "optional": true,
+            "type": "any[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tally.api.workspaces.list",
+      "shortPath": "workspaces.list",
+      "description": "List all workspaces",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: string, name?: string, createdAt?: string, updatedAt?: string, members?: any[], invites?: any[] }[]"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hasMore",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tally.api.workspaces.update",
+      "shortPath": "workspaces.update",
+      "description": "Update a workspace name",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "members",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "invites",
+            "optional": true,
+            "type": "any[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "tally.webhooks.formResponse.formResponse",
+      "shortPath": "formResponse.formResponse",
+      "description": "A new form response was submitted",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "eventId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "eventType",
+            "optional": false,
+            "type": "FORM_RESPONSE"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ responseId?: string, submissionId: string, respondentId?: string | null, formId: string, formName?: string, createdAt?: string, fields: { key: string, label?: string, type?: string, value?: any, options?: any[], rows?: any[], columns?: any[] }[] }"
+          }
+        ]
+      },
+      "responseType": "{ eventId: string, eventType: FORM_RESPONSE, createdAt: string, data: { responseId?: string, submissionId: string, respondentId?: string | null, formId: string, formName?: string, createdAt?: string, fields: { key: string, label?: string, type?: string, value?: any, options?: any[], rows?: any[], columns?: any[] }[] } }",
+      "usageExample": "tally({\n    webhookHooks: {\n        formResponse: {\n            formResponse: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": [
+    {
+      "path": "tally.db.forms.search",
+      "entityName": "forms",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "workspaceId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "tally.db.submissions.search",
+      "entityName": "submissions",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "formId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "respondentId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "isCompleted",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "tally.db.workspaces.search",
+      "entityName": "workspaces",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

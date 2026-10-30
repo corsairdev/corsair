@@ -1,0 +1,6026 @@
+{
+  "id": "surf",
+  "displayName": "Surf",
+  "description": "Crypto and US equity market data from the Surf Data API.",
+  "npmPackageName": "@corsair-dev/surf",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 124,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "surf.api.dex.tokenPrice",
+      "shortPath": "dex.tokenPrice",
+      "description": "DEX Token OHLCV Price",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "chain",
+            "optional": false,
+            "type": "ethereum | base | bsc | arbitrum | optimism | polygon | avalanche | solana"
+          },
+          {
+            "key": "address",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": true,
+            "type": "1m | 5m | 15m | 30m | 1h | 4h | 12h | 1d | 7d"
+          },
+          {
+            "key": "time_range",
+            "optional": true,
+            "type": "1h | 6h | 12h | 24h | 7d | 30d | 90d | 180d | 365d | max"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ close: number, high: number, low: number, open: number, timestamp: number, volume_usd: number }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.equity.balanceSheet",
+      "shortPath": "equity.balanceSheet",
+      "description": "Equity Balance Sheet",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "period",
+            "optional": true,
+            "type": "quarterly | annual"
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ accumulated_oci: {}, calculated_at?: number, cash_and_equivalents: {}, currency: string, current_assets: {}, current_debt: {}, current_investments: {}, current_liabilities: {}, deferred_revenue: {}, deposit_liabilities: {}, duration_days?: number, duration_months?: number, fiscal_period?: string | null, fiscal_quarter?: number, fiscal_year?: number, formula_version?: string, goodwill_and_intangible_assets: {}, inventory: {}, liabilities_and_equity: {}, net_debt: {}, non_current_assets: {}, non_current_debt: {}, non_current_investments: {}, non_current_liabilities: {}, other_current_liabilities: {}, other_non_current_assets: {}, other_non_current_liabilities: {}, outstanding_shares: {}, payables: {}, period: quarterly | ytd | annual | ttm, period_start?: string, property_plant_and_equipment: {}, receivables: {}, report_period: string, retained_earnings: {}, shareholders_equity: {}, source_updated_at?: number, symbol: string, tax_assets: {}, tax_liabilities: {}, total_assets: {}, total_debt: {}, total_liabilities: {}, working_capital: {} }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.equity.candles",
+      "shortPath": "equity.candles",
+      "description": "Equity Price Candles",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": true,
+            "type": "day | week | month | year"
+          },
+          {
+            "key": "interval_multiplier",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ candles?: {}[] | null, end_date?: string, interval: string, interval_multiplier: number, latest_price: { day_change?: number, day_change_percent?: number, price: number, timestamp: number }, latest_price_available: boolean, start_date?: string, symbol: string }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.equity.cashFlow",
+      "shortPath": "equity.cashFlow",
+      "description": "Equity Cash Flow",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "period",
+            "optional": true,
+            "type": "quarterly | ytd | annual | ttm"
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ beginning_cash: {}, business_acquisitions_and_disposals: {}, calculated_at?: number, capital_expenditure: {}, change_in_cash: {}, currency: string, debt_issuance_repayment: {}, depreciation_and_amortization: {}, dividends_and_distributions: {}, duration_days?: number, duration_months?: number, ending_cash: {}, equity_issuance_purchase: {}, financing_cash_flow: {}, fiscal_period?: string | null, fiscal_quarter?: number, fiscal_year?: number, formula_version?: string, free_cash_flow: {}, fx_effect: {}, investing_cash_flow: {}, investment_acquisitions_and_disposals: {}, net_income: {}, operating_cash_flow: {}, period: quarterly | ytd | annual | ttm, period_start?: string, report_period: string, share_based_compensation: {}, source_updated_at?: number, symbol: string }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.equity.etfHoldings",
+      "shortPath": "equity.etfHoldings",
+      "description": "ETF Holdings",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "as_of",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_class",
+            "optional": true,
+            "type": "equity | bond"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ available_periods?: {}[] | null, snapshots?: {}[] | null, symbol: string }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.equity.filings",
+      "shortPath": "equity.filings",
+      "description": "Equity SEC Filings",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ accepted_at?: number, accession: string, filed_on: string, financial_metric_count: number, form_type: string, normalized_statement_field_count: number, report_periods?: string[] | null, sec_url: string, source_observed_at?: number, source_revision_ids?: string[] | null, source_statement_ids?: string[] | null, statement_types?: string[] | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.equity.incomeStatement",
+      "shortPath": "equity.incomeStatement",
+      "description": "Equity Income Statement",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "period",
+            "optional": true,
+            "type": "quarterly | ytd | annual | ttm"
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ calculated_at?: number, cost_of_revenue: {}, currency: string, dividends_per_common_share: {}, duration_days?: number, duration_months?: number, ebit: {}, ebitda: {}, eps_basic: {}, eps_calculation_method?: string, eps_diluted: {}, fiscal_period?: string | null, fiscal_quarter?: number, fiscal_year?: number, formula_version?: string, gross_profit: {}, income_tax_expense: {}, interest_expense: {}, net_income: {}, net_income_common_stock: {}, net_income_discontinued_operations: {}, net_income_non_controlling_interests: {}, net_income_yoy: {}, operating_expense: {}, operating_income: {}, operating_income_yoy: {}, period: quarterly | ytd | annual | ttm, period_start?: string, report_period: string, research_and_development: {}, revenue: {}, revenue_yoy: {}, sga_expense: {}, source_updated_at?: number, symbol: string, total_operating_costs: {}, weighted_average_shares: {}, weighted_average_shares_diluted: {} }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.equity.latestFilings",
+      "shortPath": "equity.latestFilings",
+      "description": "Latest Equity Filings",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ accepted_at?: number, company_name: string, coverage_fields: number, filed_on: string, financial_metric_count: number, form_type: string, logo_url: string, report_period: string, sec_url: string, symbol: string }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.equity.latestFinancials",
+      "shortPath": "equity.latestFinancials",
+      "description": "Latest Equity Financials",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "market_cap_min",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ company_name: string, duration_days?: number, duration_months?: number, filed_on: string, free_cash_flow: {}, gross_margin: {}, logo_url: string, operating_margin: {}, pe_ttm: {}, period_start?: string, report_period: string, return_on_equity: {}, revenue_growth: {}, source_updated_at?: number, symbol: string }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.equity.listings",
+      "shortPath": "equity.listings",
+      "description": "Equity Listings",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ financial_serving_reason?: reporting_series_missing | publication_missing | publication_terminal_excluded, financial_serving_status: string, is_current: boolean, is_primary: boolean, issuer_cik: string, issuer_company_id: string, issuer_legal_name: string, listing_currency?: string, listing_exchange_code?: string, listing_id: string, listing_lifecycle_status: string, listing_symbol_id: string, reporting_series_display_name?: string, reporting_series_id?: string, security_id: string, security_name?: string, security_type: string, share_class?: string, stock_type: string, symbol_exchange_code?: string, symbol_identity_status: string, ticker: string, valid_from?: string, valid_to?: string }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.equity.meta",
+      "shortPath": "equity.meta",
+      "description": "Equity Metadata",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "include_tokenized",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ currency: string, day_change?: number, day_change_percent?: number, logo_url: string, name: string, price: number, price_timestamp: number, symbol: string, tokenized?: {}[] | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.equity.metrics",
+      "shortPath": "equity.metrics",
+      "description": "Equity Financial Metrics",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "period",
+            "optional": true,
+            "type": "quarterly | annual | ttm"
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ asset_turnover: {}, book_value_growth: {}, book_value_per_share: {}, calculated_at?: number, cash_ratio: {}, change_in_cash_per_share: {}, currency: string, current_ratio: {}, days_sales_outstanding: {}, debt_to_assets: {}, debt_to_equity: {}, duration_days?: number, duration_months?: number, earnings_growth: {}, earnings_per_share: {}, earnings_per_share_growth: {}, ebit_margin: {}, ebitda: {}, ebitda_growth: {}, ebitda_margin: {}, enterprise_value: {}, enterprise_value_to_ebitda_ratio: {}, enterprise_value_to_revenue_ratio: {}, fiscal_period?: string | null, fiscal_quarter?: number, fiscal_year?: number, free_cash_flow_growth: {}, free_cash_flow_margin: {}, free_cash_flow_per_share: {}, free_cash_flow_yield: {}, gross_margin: {}, interest_coverage: {}, inventory_turnover: {}, liabilities_to_assets: {}, market_cap: {}, net_debt: {}, net_margin: {}, operating_cash_flow_per_share: {}, operating_cash_flow_ratio: {}, operating_cycle: {}, operating_income_growth: {}, operating_margin: {}, payout_ratio: {}, peg_ratio: {}, period: quarterly | annual | ttm, period_start?: string, price_to_book_ratio: {}, price_to_earnings_ratio: {}, price_to_sales_ratio: {}, quick_ratio: {}, receivables_turnover: {}, report_period: string, return_on_assets: {}, return_on_equity: {}, return_on_invested_capital: {}, revenue_growth: {}, source_updated_at?: number, symbol: string, working_capital_turnover: {} }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.equity.overview",
+      "shortPath": "equity.overview",
+      "description": "Equity Financial Overview",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "period",
+            "optional": true,
+            "type": "quarterly | ytd | annual | ttm"
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ calculated_at?: number, cash_and_equivalents: {}, company_name: string, currency: string, current_ratio: {}, debt_to_equity: {}, duration_days?: number, duration_months?: number, ebit: {}, ebit_margin: {}, ebitda: {}, ebitda_margin: {}, eps_basic: {}, eps_diluted: {}, exchange: string, fiscal_period?: string | null, fiscal_quarter?: number, fiscal_year?: number, formula_version?: string, free_cash_flow: {}, gross_margin: {}, gross_profit: {}, industry?: string, liabilities_to_assets: {}, net_debt: {}, net_income: {}, net_margin: {}, operating_cash_flow: {}, operating_income: {}, operating_margin: {}, pb_mrq: {}, pe_lyr: {}, pe_ttm: {}, period: quarterly | ytd | annual | ttm, period_start?: string, ps_ttm: {}, report_period: string, return_on_assets: {}, return_on_equity: {}, return_on_invested_capital: {}, revenue: {}, revenue_yoy: {}, sector?: string, shareholders_equity: {}, source_updated_at?: number, symbol: string, total_assets: {}, total_debt: {}, total_liabilities: {} }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.equity.profile",
+      "shortPath": "equity.profile",
+      "description": "Equity Profile",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ cik?: string, company_name: string, description?: string, employee_count?: number, exchange: string, industry?: string, is_active: boolean, listing_date?: string, location?: string, sec_filings_url?: string, sector?: string, sic_code?: string, sic_industry?: string, sic_sector?: string, source_updated_at?: number, symbol: string, website_url?: string }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.equity.segments",
+      "shortPath": "equity.segments",
+      "description": "Equity Segment Financials",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "period",
+            "optional": true,
+            "type": "quarterly | annual"
+          },
+          {
+            "key": "statement_type",
+            "optional": true,
+            "type": "income | balance_sheet | cash_flow"
+          },
+          {
+            "key": "metric_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dimension_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ calculated_at?: number, currency?: string, dimension_type: product | segment, fiscal_quarter?: number, fiscal_year?: number, label: string, label_key: string, materialized_at?: number, metric_code: string, period: quarterly | annual, presentation_period: single_quarter | annual, reason_code?: string, report_period: string, source_accessions?: string[] | null, source_observed_at?: number, source_provider_tickers?: string[] | null, statement_type: income | balance_sheet | cash_flow, status: reported | source_null | source_missing, symbol: string, unit?: string, value?: number | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.exchange.candles",
+      "shortPath": "exchange.candles",
+      "description": "Exchange Historical Candles",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "exchange",
+            "optional": false,
+            "type": "bithumb | upbit | hashkey | bitflyer | coinone | korbit"
+          },
+          {
+            "key": "pair",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": true,
+            "type": "5m | 4h | 1w"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "include_synthetic",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ close: number, close_time: number, exchange: string, high: number, interval: string, is_synthetic: boolean, low: number, open: number, pair: string, region: string, timestamp: number, trade_count?: number, volume_base?: number, volume_quote?: number }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.exchange.coverage",
+      "shortPath": "exchange.coverage",
+      "description": "Exchange Market Coverage",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "exchange",
+            "optional": true,
+            "type": "bithumb | upbit | hashkey | bitflyer | coinone | korbit"
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "quote",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "spot"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "active | inactive"
+          },
+          {
+            "key": "data_status",
+            "optional": true,
+            "type": "covered | official_empty_all | official_empty_ticker | official_empty_5m | official_empty_weekly | stale_gt_7d | stale_30m_to_7d | recent_but_lt_min_ta_candles | missing_4h | missing_latest_ta"
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "pair | price | change_24h | volume_24h | technical_score | latest_candle_at | status"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ active: boolean, base: string, change_24h_abs?: number, change_24h_pct?: number, data_actionability?: string, data_status?: string, exchange: string, high_24h?: number, latest_4h_candle_at?: number, latest_5m_candle_at?: number, latest_candle_at?: number, latest_price?: number, latest_ticker_at?: number, latest_weekly_candle_at?: number, listing_date?: number, low_24h?: number, open_24h?: number, pair: string, prev_close?: number, quote: string, region: string, status: string, technical_score?: number, technical_score_at?: number, technical_score_label?: string, type: string, volume_24h_base?: number, volume_24h_quote?: number }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.exchange.depth",
+      "shortPath": "exchange.depth",
+      "description": "Exchange Order Book Depth",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pair",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "spot | swap | perpetual | perp"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "exchange",
+            "optional": true,
+            "type": "binance | okx | bybit | bitget | coinbase | kraken | gate | mexc | upbit | bitstamp | deribit | bitmex | bithumb | hyperliquid"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ ask_depth?: number | null, asks?: {}[] | null, bid_depth?: number | null, bids?: {}[] | null, exchange: string, mid_price?: number | null, pair: string, spread?: number | null, spread_pct?: number | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.exchange.fundingHistory",
+      "shortPath": "exchange.fundingHistory",
+      "description": "Exchange Funding Rate History",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pair",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "exchange",
+            "optional": true,
+            "type": "binance | okx | bybit | bitget | gate | htx | mexc | bitfinex | bitmex | hyperliquid"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ exchange: string, funding_interval_hours?: number | null, funding_rate?: number | null, funding_rate_1h?: number, funding_rate_8h?: number, funding_rate_annualized?: number, funding_rate_raw?: number, pair: string, timestamp?: number | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.exchange.klines",
+      "shortPath": "exchange.klines",
+      "description": "Exchange OHLCV Candlesticks",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pair",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "spot | swap | perpetual | perp"
+          },
+          {
+            "key": "interval",
+            "optional": true,
+            "type": "1m | 3m | 5m | 15m | 30m | 1h | 2h | 4h | 6h | 8h | 12h | 1d | 3d | 1w | 1M"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "exchange",
+            "optional": true,
+            "type": "binance | okx | bybit | bitget | coinbase | kraken | gate | htx | kucoin | mexc | upbit | bitfinex | bitstamp | deribit | bitmex | bithumb | hyperliquid"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ candles?: {}[] | null, count: number, exchange: string, interval: string, pair: string, period_end?: string | null, period_high?: number | null, period_low?: number | null, period_start?: string | null, period_volume?: number | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.exchange.longShortRatio",
+      "shortPath": "exchange.longShortRatio",
+      "description": "Exchange Long/Short Ratio History",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pair",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": true,
+            "type": "1h | 4h | 1d"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "exchange",
+            "optional": true,
+            "type": "binance | okx | bybit | bitget"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ exchange: string, long_short_ratio?: number | null, pair: string, timestamp?: number | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.exchange.markets",
+      "shortPath": "exchange.markets",
+      "description": "Exchange Trading Pairs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "exchange",
+            "optional": true,
+            "type": "binance | okx | bybit | bitget | coinbase | kraken | gate | htx | kucoin | mexc | upbit | bitfinex | bitstamp | deribit | bitmex | bithumb | hyperliquid"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "spot | swap | future | option | perpetual | perp"
+          },
+          {
+            "key": "base",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "quote",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ active?: boolean | null, base?: string | null, exchange: string, maker_fee?: number | null, pair: string, quote?: string | null, taker_fee?: number | null, type?: string | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.exchange.perp",
+      "shortPath": "exchange.perp",
+      "description": "Exchange Perpetual Contract Snapshot",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pair",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "exchange",
+            "optional": true,
+            "type": "binance | okx | bybit | bitget | htx | bitfinex | bitmex | hyperliquid"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ exchange: string, funding: { exchange: string, funding_interval_hours?: number | null, funding_rate?: number | null, funding_rate_1h?: number, funding_rate_8h?: number, funding_rate_annualized?: number, funding_rate_raw?: number, index_price?: number | null, interval?: string | null, mark_price?: number | null, next_funding?: string | null, pair: string }, open_interest: { exchange: string, open_interest_amount?: number | null, open_interest_usd?: number | null, pair: string, timestamp?: number | null }, pair: string }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.exchange.price",
+      "shortPath": "exchange.price",
+      "description": "Exchange Ticker Price",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pair",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "spot | swap | perpetual | perp"
+          },
+          {
+            "key": "exchange",
+            "optional": true,
+            "type": "binance | okx | bybit | bitget | coinbase | kraken | gate | htx | kucoin | mexc | upbit | bitfinex | bitstamp | deribit | bitmex | bithumb | hyperliquid"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ ask?: number | null, bid?: number | null, change_24h_pct?: number | null, exchange: string, high_24h?: number | null, last?: number | null, low_24h?: number | null, pair: string, timestamp?: number | null, volume_24h_base?: number | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.fund.detail",
+      "shortPath": "fund.detail",
+      "description": "Fund Profile Detail",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ description?: string, id: string, image?: string, invested_projects_count: number, jurisdiction?: string, links?: {}[] | null, members?: {}[] | null, name: string, recent_researches?: {}[] | null, tier: number, type?: string, x_accounts?: {}[] | null }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.fund.portfolio",
+      "shortPath": "fund.portfolio",
+      "description": "Fund Portfolio",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "is_lead",
+            "optional": true,
+            "type": "true | false | "
+          },
+          {
+            "key": "invested_after",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "invested_before",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "invested_at | recent_raise | total_raise"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "asc | desc"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ invested_at?: number, is_lead: boolean, project_id: string, project_logo?: string, project_name: string, project_slug?: string, recent_raise?: number, total_raise?: number }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.fund.ranking",
+      "shortPath": "fund.ranking",
+      "description": "Fund Ranking",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "metric",
+            "optional": false,
+            "type": "tier | portfolio_count"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id: string, image?: string, invested_projects_count: number, name: string, tier: number, top_projects?: {}[] | null, type?: string }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.heatscore.detail",
+      "shortPath": "heatscore.detail",
+      "description": "Signal Detail",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "project_slug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time_range",
+            "optional": true,
+            "type": "24h | 7d"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ ai_summary?: {}, baseline?: number, change_percent?: number, change_vs_previous_percent?: number, computed_hour?: number, core_state: { driver?: string, priority?: number, reason?: string, state?: string, state_type?: string, strength?: string }, driver?: string, evidence_score?: number, heat_dimensions: { derivative?: number, derivative_components?: {}[] | null, flow?: number, movement?: number, social?: number }, heat_score?: number, heat_score_by_range?: {}, heat_score_change_vs_previous_percent_by_range?: {}, heat_score_previous_by_range?: {}, liquidation_long_24h?: number, liquidation_long_short_ratio_24h?: number, liquidation_short_24h?: number, logo?: string, market_relevance?: number, metric?: string, name?: string, open_interest?: number, points_used?: number, previous_value?: number, price?: number, price_change_percent: { 1h?: number, 24h?: number, 7d?: number }, project_id?: string, project_slug?: string, rank?: number, score?: number, signed_z?: number, symbol?: string, time_range?: string, token_id?: string, token_signals?: {}, updated_at?: number, value?: number, volume_24h?: number, volume_24h_change_percent?: number }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.heatscore.projects",
+      "shortPath": "heatscore.projects",
+      "description": "Signal Projects",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "time_range",
+            "optional": true,
+            "type": "24h | 7d"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ ai_summary?: {}, baseline?: number, change_percent?: number, change_vs_previous_percent?: number, computed_hour?: number, core_state: {}, driver?: string, evidence_score?: number, heat_dimensions: {}, heat_score?: number, heat_score_by_range?: {}, heat_score_change_vs_previous_percent_by_range?: {}, heat_score_previous_by_range?: {}, liquidation_long_24h?: number, liquidation_long_short_ratio_24h?: number, liquidation_short_24h?: number, logo?: string, market_relevance?: number, metric?: string, name?: string, open_interest?: number, points_used?: number, previous_value?: number, price?: number, price_change_percent: {}, project_id?: string, project_slug?: string, rank?: number, score?: number, signed_z?: number, symbol?: string, time_range?: string, token_id?: string, token_signals?: {}, updated_at?: number, value?: number, volume_24h?: number, volume_24h_change_percent?: number }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.heatscore.tokenOfTheDay",
+      "shortPath": "heatscore.tokenOfTheDay",
+      "description": "Signal Token Of The Day",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ ai_summary?: {}, baseline?: number, change_percent?: number, change_vs_previous_percent?: number, computed_hour?: number, core_state: {}, driver?: string, evidence_score?: number, heat_dimensions: {}, heat_score?: number, heat_score_by_range?: {}, heat_score_change_vs_previous_percent_by_range?: {}, heat_score_previous_by_range?: {}, liquidation_long_24h?: number, liquidation_long_short_ratio_24h?: number, liquidation_short_24h?: number, logo?: string, market_relevance?: number, metric?: string, name?: string, open_interest?: number, points_used?: number, previous_value?: number, price?: number, price_change_percent: {}, project_id?: string, project_slug?: string, rank?: number, score?: number, signed_z?: number, symbol?: string, time_range?: string, token_id?: string, token_signals?: {}, updated_at?: number, value?: number, volume_24h?: number, volume_24h_change_percent?: number }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.heatscore.tokenOfWeek",
+      "shortPath": "heatscore.tokenOfWeek",
+      "description": "Signal Token Of The Week",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ ai_summary?: {}, baseline?: number, change_percent?: number, change_vs_previous_percent?: number, computed_hour?: number, core_state: {}, driver?: string, evidence_score?: number, heat_dimensions: {}, heat_score?: number, heat_score_by_range?: {}, heat_score_change_vs_previous_percent_by_range?: {}, heat_score_previous_by_range?: {}, liquidation_long_24h?: number, liquidation_long_short_ratio_24h?: number, liquidation_short_24h?: number, logo?: string, market_relevance?: number, metric?: string, name?: string, open_interest?: number, points_used?: number, previous_value?: number, price?: number, price_change_percent: {}, project_id?: string, project_slug?: string, rank?: number, score?: number, signed_z?: number, symbol?: string, time_range?: string, token_id?: string, token_signals?: {}, updated_at?: number, value?: number, volume_24h?: number, volume_24h_change_percent?: number }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.hyperliquid.account",
+      "shortPath": "hyperliquid.account",
+      "description": "Account Portfolio",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "address",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ address: string, as_of: number, errors?: {}[] | null, perp?: { account_value: number, open_position_count: number, total_margin_used: number, withdrawable: number }, spot?: { balances?: {}[] | null }, staking?: { delegated_hype: number, pending_withdrawal_count: number, total_pending_withdrawal_hype: number, undelegated_hype: number }, total_value_usd?: number, unpriced_token_count: number, vaults?: { positions?: {}[] | null, total_equity: number } }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.hyperliquid.candles",
+      "shortPath": "hyperliquid.candles",
+      "description": "Market Candles",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": true,
+            "type": "1m | 3m | 5m | 15m | 30m | 1h | 2h | 4h | 8h | 12h | 1d | 3d | 1w | 1M"
+          },
+          {
+            "key": "from",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ close: number, close_time: number, closed: boolean, high: number, interval: string, low: number, open: number, open_time: number, quote?: number | null, symbol: string, trades: number, volume: number }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.hyperliquid.fills",
+      "shortPath": "hyperliquid.fills",
+      "description": "Fills",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "address",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to_ms",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "to_fill_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "desc | asc"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "symbol",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ closed_pnl: number, crossed: boolean, direction: string, fee: number, fee_token: string, fill_id: string, hash: string, is_internal: boolean, price: number, side: string, size: number, start_position: number, symbol: string, time: number, time_ms: number, tx_index: number }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more: boolean, limit: number, next_cursor?: string, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.hyperliquid.leaderboard",
+      "shortPath": "hyperliquid.leaderboard",
+      "description": "Trader Leaderboard",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "time_range",
+            "optional": true,
+            "type": "1d | 7d | 30d | 90d | all"
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "total_pnl | win_rate | volume_traded"
+          },
+          {
+            "key": "min_trades",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "min_days_active",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "min_account_age_days",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "min_human_score",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "dex",
+            "optional": true,
+            "type": "main_dex | xyz | flx | vntl | hyna | km | abcd | cash | para | mkts"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ account_age_days?: number, address: string, days_active: number, human_score: number, rank: number, total_fees: number, total_funding: number, total_pnl: number, total_trades: number, traded_pairs?: string[] | null, volume_traded: number, win_rate: number }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.hyperliquid.orders",
+      "shortPath": "hyperliquid.orders",
+      "description": "Open & Recent Orders",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "address",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "open_limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "historical_limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ address: string, as_of: number, errors?: {}[] | null, historical?: {}[] | null, historical_total: number, open?: {}[] | null, open_total: number }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.hyperliquid.performance",
+      "shortPath": "hyperliquid.performance",
+      "description": "Trading Performance",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "address",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "dex",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ account_value?: number, address: string, errors?: {}[] | null, open_positions?: {}[] | null, partial: boolean, performance?: { avg_loss?: number, avg_win?: number, fees: number, first_trade: number, gross_pnl: number, last_trade: number, losses: number, net_pnl: number, profit_factor?: number, scratches: number, trades: number, volume_usd: number, win_rate: number, wins: number }, total_unrealized_pnl?: number, traded_pairs: number, watermark: number }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.hyperliquid.positions",
+      "shortPath": "hyperliquid.positions",
+      "description": "Open Positions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "address",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "dex",
+            "optional": true,
+            "type": "main_dex | xyz | flx | vntl | hyna | km | abcd | cash | para | mkts"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ account_value: number, address: string, cross_maintenance_margin_used: number, margin_ratio: number, positions?: {}[] | null, timestamp: number, total_margin_used: number, total_notional_pos: number, total_raw_usd: number, withdrawable: number }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.hyperliquid.trades",
+      "shortPath": "hyperliquid.trades",
+      "description": "Closed Trades",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "address",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "symbol",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "direction",
+            "optional": true,
+            "type": "long | short"
+          },
+          {
+            "key": "dex",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ close_time: number, direction: string, entry_px: number, episode_id?: string, exit_px: number, fees: number, funding_pnl: number, funding_status: complete | partial | unavailable, gross_pnl: number, hold_seconds: number, is_win: boolean, leverage?: number, leverage_semantics?: completed_trade_reported, leverage_type?: cross | isolated, net_pnl: number, notional_usd: number, open_time: number, opened_sz: number, reported_leverage?: number, reported_leverage_type?: cross | isolated, source: string, symbol: string }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more: boolean, limit: number, next_cursor?: string, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.hyperliquid.tradesAggregate",
+      "shortPath": "hyperliquid.tradesAggregate",
+      "description": "Closed Trades Aggregate",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "address",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "group_by",
+            "optional": true,
+            "type": "day | symbol | direction | size_bucket | hold_bucket"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dex",
+            "optional": true,
+            "type": "main_dex | xyz | flx | vntl | hyna | km | abcd | cash | para | mkts"
+          },
+          {
+            "key": "fill_gaps",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ avg_loss?: number, avg_win?: number, fees: number, funding_pnl: number, funding_status: complete | partial | unavailable, gross_pnl: number, key: string, net_pnl: number, trade_count: number, volume_usd: number, win_rate: number }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.hyperliquid.tradesContext",
+      "shortPath": "hyperliquid.tradesContext",
+      "description": "Closed Trade Funding and Leverage",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "address",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "direction",
+            "optional": false,
+            "type": "long | short"
+          },
+          {
+            "key": "open_time",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "close_time",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ funding_pnl?: number, funding_status: complete | partial | unavailable, leverage?: number, leverage_semantics?: completed_trade_reported, leverage_type?: cross | isolated, reported_leverage?: number, reported_leverage_type?: cross | isolated }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.market.etf",
+      "shortPath": "market.etf",
+      "description": "ETF Flow History",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "BTC | ETH | XRP | SOL | HYPE"
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "flow_usd | timestamp"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ etfs?: {}[] | null, flow_usd: number, price_usd: number, project_id?: string, settled: boolean, symbol?: string, timestamp: number }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.market.exchangeFlowExchanges",
+      "shortPath": "market.exchangeFlowExchanges",
+      "description": "Exchange Flow Exchanges",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "BTC | ETH"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ name: string, supported_flow_filter: boolean, symbol: string, type: string }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.market.fearGreed",
+      "shortPath": "market.fearGreed",
+      "description": "Fear & Greed Index History",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ classification: string, price: number, timestamp: number, value: number }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.market.futures",
+      "shortPath": "market.futures",
+      "description": "Futures Market Overview",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "open_interest | funding_rate | volume_24h | long_short_ratio"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "asc | desc"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ funding_rate: number, long_short_ratio: number, open_interest: number, project_id?: string, symbol: string, updated_at: number, volume_24h: number, volume_change_24h: number }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.market.liquidationChart",
+      "shortPath": "market.liquidationChart",
+      "description": "Liquidation Chart",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": true,
+            "type": "1m | 3m | 5m | 15m | 30m | 1h | 4h | 6h | 8h | 12h | 1d | 1w"
+          },
+          {
+            "key": "exchange",
+            "optional": true,
+            "type": "Binance | OKX | Bybit | Bitget | Hyperliquid | Gate | HTX | Bitmex | Bitfinex | CoinEx | Aster | Lighter"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ contributing_exchanges?: string[] | null, excluded_exchanges?: string[] | null, long_liquidation_usd: number, short_liquidation_usd: number, timestamp: number }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.market.liquidationExchangeList",
+      "shortPath": "market.liquidationExchangeList",
+      "description": "Liquidation by Exchange",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time_range",
+            "optional": true,
+            "type": "1h | 4h | 12h | 24h"
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "liquidation_usd | long_liquidation_usd | short_liquidation_usd"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "asc | desc"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ exchange: string, liquidation_usd: number, long_liquidation_usd: number, short_liquidation_usd: number }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.market.liquidationOrder",
+      "shortPath": "market.liquidationOrder",
+      "description": "Large Liquidation Orders",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "exchange",
+            "optional": true,
+            "type": "Binance | OKX | Bybit | Bitget | Hyperliquid | Gate | HTX | Bitmex | Bitfinex | CoinEx | Aster | Lighter"
+          },
+          {
+            "key": "symbol",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "min_amount",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "side",
+            "optional": true,
+            "type": "long | short"
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "usd_value | timestamp | price"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ base_asset: string, exchange: string, order_id: string, price: number, side: string, symbol: string, timestamp: number, usd_value: number }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.market.listing",
+      "shortPath": "market.listing",
+      "description": "Exchange Listing Events",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "from",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "symbol",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "exchange",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "product",
+            "optional": true,
+            "type": "spot | margin | perp | pre_market_perp | all"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "listing | delisting | cancelled | advanced | postponed"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ base_symbol?: string, effective_at: number, event_type: string, exchange_name: string, product: string, published_at?: number, quote_symbol?: string, trading_pair: string }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.market.onchainIndicator",
+      "shortPath": "market.onchainIndicator",
+      "description": "On-Chain Indicator",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "BTC | ETH"
+          },
+          {
+            "key": "metric",
+            "optional": false,
+            "type": "nupl | sopr | mvrv | puell-multiple | nvm | nvt | nvt-golden-cross | exchange-flows/inflow | exchange-flows/outflow | exchange-flows/netflow | exchange-flows/reserve"
+          },
+          {
+            "key": "granularity",
+            "optional": true,
+            "type": "day"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "exchange",
+            "optional": true,
+            "type": "all_exchange | spot_exchange | derivative_exchange | coinbase_prime | binance | coinbase_advanced | okx | kraken | bybit | bitstamp | gemini | bitget | kucoin | bitfinex | gate_io | deribit | mexc | htx_global | bitflyer | coinone | bithumb | upbit | hashkey_exchange"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ exchange?: string, exchange_name?: string, metric?: string, project_id?: string, symbol?: string, timestamp: number, value: number }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.market.options",
+      "shortPath": "market.options",
+      "description": "Options Market Data",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "BTC | ETH | SOL | XRP | BNB | DOGE | ADA | AVAX"
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "open_interest | volume_24h"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "asc | desc"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ exchange: string, max_pain_price?: number, open_interest: number, project_id?: string, put_call_ratio?: number, symbol: string, updated_at: number, volume_24h: number }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.market.price",
+      "shortPath": "market.price",
+      "description": "Token Price History",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "time_range",
+            "optional": true,
+            "type": "1d | 7d | 14d | 30d | 90d | 180d | 365d | max"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ exchange?: string, exchange_name?: string, metric?: string, project_id?: string, symbol?: string, timestamp: number, value: number }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string }"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "summary",
+            "optional": false,
+            "type": "{ change_abs: number, change_pct: number, first: number, high: number, last: number, latest_dt: number, low: number, n_points: number }"
+          },
+          {
+            "key": "symbol",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.market.priceIndicator",
+      "shortPath": "market.priceIndicator",
+      "description": "Technical Indicator",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "indicator",
+            "optional": false,
+            "type": "rsi | macd | ema | sma | bbands | stoch | adx | atr | cci | obv | vwap | dmi | ichimoku | supertrend"
+          },
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": true,
+            "type": "1m | 5m | 15m | 30m | 1h | 2h | 4h | 12h | 1d | 1w"
+          },
+          {
+            "key": "exchange",
+            "optional": true,
+            "type": "binance | bybit | coinbase | kraken"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ interval: string, name: string, project_id?: string, symbol: string, timestamp?: number, updated_at?: number, value: number, values?: {} }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.market.publicSale",
+      "shortPath": "market.publicSale",
+      "description": "Public Sale / Crowdsale",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ allocation_of_supply?: number, ath_roi?: number, crowdsale_end_date?: number, crowdsale_price?: number, crowdsale_raise?: number, crowdsale_start_date?: number, crowdsale_status?: string, crowdsale_type?: string, launchpad_name?: string, name?: string, project_id?: string, symbol?: string }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.market.ranking",
+      "shortPath": "market.ranking",
+      "description": "Token Rankings",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "market_cap | change_24h | volume_24h"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "MEME | AI | AI_AGENTS | L1 | L2 | DEFI | GAMING | STABLECOIN | RWA | DEPIN | SOL_ECO | BASE_ECO | LST"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ ath?: number, ath_date?: number, atl?: number, atl_date?: number, change_24h_pct: number, circulating_supply?: number, fdv?: number, high_24h: number, id?: string, image?: string, low_24h: number, market_cap_usd: number, max_supply?: number, name: string, price_usd: number, rank: number, slug?: string, symbol: string, total_supply?: number, volume_24h_usd: number }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.market.tge",
+      "shortPath": "market.tge",
+      "description": "Token Generation Event",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ current_status: string, exchanges?: string[] | null, last_event_time?: number, project_id: string, project_name?: string }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.news.detail",
+      "shortPath": "news.detail",
+      "description": "News Article Detail",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ content: string, id: string, project_id?: string, project_name?: string, published_at: number, source?: string, summary?: string, title: string, url?: string }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.news.feed",
+      "shortPath": "news.feed",
+      "description": "Crypto News Feed",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "source",
+            "optional": true,
+            "type": "coindesk | cointelegraph | theblock | decrypt | dlnews | blockbeats | bitcoincom | coinpedia | ambcrypto | cryptodaily | cryptopotato | phemex | panews | odaily | tradingview | chaincatcher | techflow"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "recency | trending"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ highlights?: {}, id: string, project_id?: string, project_name?: string, published_at: number, source?: string, summary?: string, title: string, url?: string }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.onchain.bridgeRanking",
+      "shortPath": "onchain.bridgeRanking",
+      "description": "Bridge Protocol Ranking",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "time_range",
+            "optional": true,
+            "type": "7d | 30d | 90d | 180d | 1y | all"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ project: string, tx_count: number, volume_usd: number }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.onchain.dexActivity",
+      "shortPath": "onchain.dexActivity",
+      "description": "DEX Protocol Activity",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "chain",
+            "optional": false,
+            "type": "ethereum | base | bsc | arbitrum | tron"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time_range",
+            "optional": true,
+            "type": "1d | 7d | 30d | 90d"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "group_by",
+            "optional": true,
+            "type": "total | day"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ active_traders: number, enriched_ratio?: number, timestamp?: number, trades: number, volume_usd?: number }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.onchain.gasPrice",
+      "shortPath": "onchain.gasPrice",
+      "description": "Current Gas Price",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "chain",
+            "optional": false,
+            "type": "ethereum | polygon | bsc | arbitrum | optimism | base | avalanche | fantom | linea | cyber"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ chain: string, gas_price: string, gas_price_gwei: number }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.onchain.getSqlJobsJobId",
+      "shortPath": "onchain.getSqlJobsJobId",
+      "description": "Get Asynchronous Blockchain SQL Job",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "job_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ cancellation_requested: boolean, created_at: number, csv_url?: string, elapsed_ms: number, error?: { code: string, message: string }, estimated_bytes?: number, estimated_rows?: number, executed_sql: string, expires_at: number, external_request_id?: string, finished_at?: number, job_id: string, max_rows: number, parameters: {}, poll_url?: string, processed_bytes: number, processed_rows: number, progress_percent?: number, query_id: string, recommended_action: string, request_id: string, result_url?: string, retry_after_ms?: number, retryable: boolean, row_count?: number, sql: string, started_at?: number, status: queued | running | succeeded | failed | canceled }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.onchain.query",
+      "shortPath": "onchain.query",
+      "description": "Blockchain Structured Query",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "{ field: string, op: string, value: string }[]"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "{ field: string, order?: string }[]"
+          },
+          {
+            "key": "source",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.onchain.schema",
+      "shortPath": "onchain.schema",
+      "description": "On-Chain Table Schema",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "table",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ columns?: {}[] | null, database: string, engine?: string, partition_key?: string, physical_sources?: {}[] | null, primary_key?: string, sorting_key?: string, table: string, total_bytes?: number, total_rows?: number }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.onchain.sql",
+      "shortPath": "onchain.sql",
+      "description": "Blockchain SQL Query",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "max_rows",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sql",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.onchain.sqlJobs",
+      "shortPath": "onchain.sqlJobs",
+      "description": "Submit Asynchronous Blockchain SQL Job",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "max_rows",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sql",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ cancellation_requested: boolean, created_at: number, csv_url?: string, elapsed_ms: number, error?: { code: string, message: string }, estimated_bytes?: number, estimated_rows?: number, executed_sql: string, expires_at: number, external_request_id?: string, finished_at?: number, job_id: string, max_rows: number, parameters: {}, poll_url?: string, processed_bytes: number, processed_rows: number, progress_percent?: number, query_id: string, recommended_action: string, request_id: string, result_url?: string, retry_after_ms?: number, retryable: boolean, row_count?: number, sql: string, started_at?: number, status: queued | running | succeeded | failed | canceled }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.onchain.sqlJobsJobId",
+      "shortPath": "onchain.sqlJobsJobId",
+      "description": "Cancel Asynchronous Blockchain SQL Job",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "job_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ cancellation_requested: boolean, created_at: number, csv_url?: string, elapsed_ms: number, error?: { code: string, message: string }, estimated_bytes?: number, estimated_rows?: number, executed_sql: string, expires_at: number, external_request_id?: string, finished_at?: number, job_id: string, max_rows: number, parameters: {}, poll_url?: string, processed_bytes: number, processed_rows: number, progress_percent?: number, query_id: string, recommended_action: string, request_id: string, result_url?: string, retry_after_ms?: number, retryable: boolean, row_count?: number, sql: string, started_at?: number, status: queued | running | succeeded | failed | canceled }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.onchain.sqlJobsJobIdResults",
+      "shortPath": "onchain.sqlJobsJobIdResults",
+      "description": "Download Asynchronous Blockchain SQL Results",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "job_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "json | csv"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ data?: {}[] | null, meta: { cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number } } | string"
+      }
+    },
+    {
+      "path": "surf.api.onchain.sqlPreflight",
+      "shortPath": "onchain.sqlPreflight",
+      "description": "Preflight Blockchain SQL Query",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "max_rows",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sql",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ accepted: boolean, budget: { max_bytes_to_read: number, max_execution_time_seconds: number, max_rows_to_read: number }, estimate: { by_table?: {}[] | null, bytes: number, marks: number, parts: number, rows: number }, executed_sql: string, query_id: string, request_id: string, sql: string, tables?: {}[] | null, warnings?: {}[] | null }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.onchain.tx",
+      "shortPath": "onchain.tx",
+      "description": "Transaction Details by Hash",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "hash",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "chain",
+            "optional": false,
+            "type": "ethereum | polygon | bsc | arbitrum | optimism | base | avalanche | fantom | linea | cyber"
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ accessList?: {}[] | null, blobVersionedHashes?: string[] | null, blockHash?: string | null, blockNumber?: string | null, chainId?: string, from: string, from_label?: {}, gas: string, gasPrice?: string, hash: string, input: string, maxFeePerBlobGas?: string, maxFeePerGas?: string, maxPriorityFeePerGas?: string, nonce: string, r: string, s: string, to?: string | null, to_label?: {}, transactionIndex?: string | null, type: string, v: string, value: string, yParity?: string }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.onchain.yieldRanking",
+      "shortPath": "onchain.yieldRanking",
+      "description": "Yield Pool Ranking",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "apy | tvl_usd"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ apy: number, apy_base: number, apy_reward: number, pool_address: string, project: string, symbol: string, token_address: string, tvl_usd: number, version: string }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.portfolio.wallets",
+      "shortPath": "portfolio.wallets",
+      "description": "Current User Portfolio Wallets",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ wallets?: {}[] | null }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.predictionMarket.analytics",
+      "shortPath": "predictionMarket.analytics",
+      "description": "Prediction Market Analytics",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "category",
+            "optional": true,
+            "type": "crypto | culture | economics | financials | politics | stem | sports"
+          },
+          {
+            "key": "platform",
+            "optional": true,
+            "type": "polymarket | kalshi"
+          },
+          {
+            "key": "time_range",
+            "optional": true,
+            "type": "7d | 30d | 90d | 180d | 1y"
+          },
+          {
+            "key": "top_n",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "volume_7d | whale_flow_net_7d | price_change_7d | oi_change_7d"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ category_trends?: {}[] | null, momentum_markets?: {}[] | null, momentum_summary: { confirming_down: number, confirming_up: number, diverging_down: number, diverging_up: number, neutral: number, total_active: number, volume_decreasing: number, volume_increasing: number }, top_markets?: {}[] | null }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.predictionMarket.correlations",
+      "shortPath": "predictionMarket.correlations",
+      "description": "Market Correlations",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "category",
+            "optional": false,
+            "type": "crypto | culture | economics | financials | politics | stem | sports"
+          },
+          {
+            "key": "condition_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "min_correlation",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ category: string, correlation: number, market_a_condition_id: string, market_a_question?: string, market_b_condition_id: string, market_b_question?: string, overlapping_days: number }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.predictionMarket.kalshiEvents",
+      "shortPath": "predictionMarket.kalshiEvents",
+      "description": "Kalshi Events",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event_ticker",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ event_subtitle?: string, event_ticker: string, event_title: string, market_count: number, markets?: {}[] | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.predictionMarket.kalshiMarkets",
+      "shortPath": "predictionMarket.kalshiMarkets",
+      "description": "Kalshi Markets",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "market_ticker",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ category?: string, close_time?: number, end_time?: number, event_ticker: string, event_title?: string, last_day_open_interest: number, market_ticker: string, notional_volume_usd: number, open_interest: number, payout_type: string, result?: string, start_time?: number, status: string, subcategory?: string, title: string, total_volume: number }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.predictionMarket.kalshiOpenInterest",
+      "shortPath": "predictionMarket.kalshiOpenInterest",
+      "description": "Kalshi Open Interest History",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ticker",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "time_range",
+            "optional": true,
+            "type": "7d | 30d | 90d | 180d | 1y"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ open_interest: number, timestamp: number }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.predictionMarket.kalshiOrderbooks",
+      "shortPath": "predictionMarket.kalshiOrderbooks",
+      "description": "Kalshi Orderbook History",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ticker",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "start_time",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "end_time",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagination_key",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ count: number, has_more: boolean, limit: number, pagination_key?: string }"
+          },
+          {
+            "key": "snapshots",
+            "optional": true,
+            "type": "{ ask_depth: number, best_ask: number, best_bid: number, bid_depth: number, sequence: number, ticker: string, timestamp: number, yes_asks?: {}[] | null, yes_bids?: {}[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.predictionMarket.kalshiPrices",
+      "shortPath": "predictionMarket.kalshiPrices",
+      "description": "Kalshi Price History",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ticker",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "time_range",
+            "optional": true,
+            "type": "7d | 30d | 90d | 180d | 1y"
+          },
+          {
+            "key": "interval",
+            "optional": true,
+            "type": "1h | 1d | latest"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ high: number, low: number, open?: number, side_a: {}, side_b: {}, timestamp: number }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.predictionMarket.kalshiTrades",
+      "shortPath": "predictionMarket.kalshiTrades",
+      "description": "Kalshi Trades",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ticker",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "taker_side",
+            "optional": true,
+            "type": "yes | no"
+          },
+          {
+            "key": "min_amount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "timestamp | notional_volume_usd"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ market_ticker: string, no_price: number, notional_volume_usd: number, taker_side: string, timestamp: number, trade_id: string, yes_price: number }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.predictionMarket.kalshiVolumes",
+      "shortPath": "predictionMarket.kalshiVolumes",
+      "description": "Kalshi Volume History",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ticker",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "time_range",
+            "optional": true,
+            "type": "7d | 30d | 90d | 180d | 1y"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ notional_volume_usd: number, timestamp: number }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.predictionMarket.matchingDaily",
+      "shortPath": "predictionMarket.matchingDaily",
+      "description": "Cross-Platform Daily Comparison (Polymarket <> Kalshi)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "polymarket_condition_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "kalshi_market_ticker",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "time_range",
+            "optional": true,
+            "type": "1d | 7d | 30d | 90d | 180d | 1y | all"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ kalshi_oi_contracts: number, kalshi_volume_contracts: number, polymarket_oi_usd: number, polymarket_volume_usd: number, timestamp: number }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.predictionMarket.matchingPairs",
+      "shortPath": "predictionMarket.matchingPairs",
+      "description": "Cross-Platform Prediction Market Matcher (Polymarket <> Kalshi)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "category",
+            "optional": true,
+            "type": "crypto | culture | economics | financials | politics | stem | sports"
+          },
+          {
+            "key": "match_type",
+            "optional": true,
+            "type": "exact | related"
+          },
+          {
+            "key": "active_only",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "min_confidence",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "polymarket_condition_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kalshi_market_ticker",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "confidence | polymarket_volume | kalshi_volume | spread_pct"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ category: string, confidence: number, kalshi: {}, kalshi_price?: number, match_type: string, polymarket: {}, polymarket_price?: number, spread_pct?: number }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.predictionMarket.polymarketEvents",
+      "shortPath": "predictionMarket.polymarketEvents",
+      "description": "Polymarket Events",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ category?: string, description?: string, end_time?: number, event_slug: string, image?: string, market_count: number, markets?: {}[] | null, settlement_sources?: string, start_time?: number, status: string, subcategory?: string, tags?: string[] | null, title: string, volume_total: number }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.predictionMarket.polymarketLeaderboard",
+      "shortPath": "predictionMarket.polymarketLeaderboard",
+      "description": "Polymarket Leaderboard",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "pnl | volume | trade_count"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ address: string, pnl: number, positions: number, positions_lost: number, positions_open: number, positions_won: number, trade_count: number, volume: number }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.predictionMarket.polymarketMarkets",
+      "shortPath": "predictionMarket.polymarketMarkets",
+      "description": "Polymarket Markets",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "market_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ category?: string, close_time?: number, completed_time?: number, condition_id: string, description?: string, end_time?: number, event_slug?: string, game_start_time?: number, image?: string, market_slug: string, negative_risk_id?: string, polymarket_link?: string, resolution_source?: string, side_a?: {}, side_b?: {}, start_time?: number, status: string, subcategory?: string, tags?: string[] | null, title: string, volume_1_month: number, volume_1_week: number, volume_1_year: number, volume_total: number, winning_side?: string }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.predictionMarket.polymarketOpenInterest",
+      "shortPath": "predictionMarket.polymarketOpenInterest",
+      "description": "Polymarket Open Interest History",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "condition_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "time_range",
+            "optional": true,
+            "type": "7d | 30d | 90d | 180d | 1y"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ daily_net_change_usd: number, open_interest_usd: number, timestamp: number }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.predictionMarket.polymarketOrderbooks",
+      "shortPath": "predictionMarket.polymarketOrderbooks",
+      "description": "Polymarket Orderbook History",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "token_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "start_time",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "end_time",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagination_key",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ count: number, has_more: boolean, limit: number, pagination_key?: string }"
+          },
+          {
+            "key": "snapshots",
+            "optional": true,
+            "type": "{ asks?: {}[] | null, assetId: string, bids?: {}[] | null, hash: string, indexedAt: number, market: string, tickSize: string, timestamp: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.predictionMarket.polymarketPositions",
+      "shortPath": "predictionMarket.polymarketPositions",
+      "description": "Polymarket Wallet Positions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "address",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ avg_price: number, cash_pnl: number, condition_id: string, cur_price: number, current_value: number, outcome_label: string, question: string, realized_pnl: number, redeemable: boolean, size: number }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.predictionMarket.polymarketPriceOhlcvConditionId",
+      "shortPath": "predictionMarket.polymarketPriceOhlcvConditionId",
+      "description": "Polymarket OHLCV Candlesticks",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "condition_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "start_time",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "end_time",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "interval",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "candles",
+            "optional": true,
+            "type": "{ close: number, end_period_ts: number, high: number, low: number, open: number, timestamp: number, trades_count: number, volume: number }[]"
+          },
+          {
+            "key": "condition_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.predictionMarket.polymarketPrices",
+      "shortPath": "predictionMarket.polymarketPrices",
+      "description": "Polymarket Price History",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "condition_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "time_range",
+            "optional": true,
+            "type": "7d | 30d | 90d | 180d | 1y"
+          },
+          {
+            "key": "interval",
+            "optional": true,
+            "type": "1h | 1d | latest"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ side_a?: {}, side_b?: {}, timestamp: number }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.predictionMarket.polymarketSmartMoney",
+      "shortPath": "predictionMarket.polymarketSmartMoney",
+      "description": "Polymarket Smart Money",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "view",
+            "optional": true,
+            "type": "positioning | trades"
+          },
+          {
+            "key": "condition_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "crypto | culture | economics | financials | politics | stem | sports"
+          },
+          {
+            "key": "direction",
+            "optional": true,
+            "type": "bullish | bearish | neutral"
+          },
+          {
+            "key": "whale_tier",
+            "optional": true,
+            "type": "whale | large | mega"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "smart_wallets_involved | smart_buy_volume_usd | smart_sell_volume_usd | amount_usd | block_time"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.predictionMarket.polymarketTrades",
+      "shortPath": "predictionMarket.polymarketTrades",
+      "description": "Polymarket Trades",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "condition_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "trade | redemption | all"
+          },
+          {
+            "key": "outcome_label",
+            "optional": true,
+            "type": "Yes | No"
+          },
+          {
+            "key": "min_amount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "timestamp | notional_volume_usd"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.predictionMarket.polymarketVolumes",
+      "shortPath": "predictionMarket.polymarketVolumes",
+      "description": "Polymarket Volume History",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "condition_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "token_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time_range",
+            "optional": true,
+            "type": "7d | 30d | 90d | 180d | 1y"
+          },
+          {
+            "key": "interval",
+            "optional": true,
+            "type": "1h | 1d"
+          },
+          {
+            "key": "granularity",
+            "optional": true,
+            "type": "day | week | month | year | all"
+          },
+          {
+            "key": "start_time",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "end_time",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ buy_volume?: number, notional_volume_usd: number, sell_volume?: number, timestamp: number, trade_count: number }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.predictionMarket.polymarketVolumeSplitConditionId",
+      "shortPath": "predictionMarket.polymarketVolumeSplitConditionId",
+      "description": "Polymarket Volume Split (YES/NO)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "condition_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "granularity",
+            "optional": true,
+            "type": "hour | day | week"
+          },
+          {
+            "key": "start_time",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "end_time",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "condition_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data_points",
+            "optional": true,
+            "type": "{ no_volume: number, timestamp: number, total_volume: number, trades_count: number, yes_volume: number }[]"
+          },
+          {
+            "key": "end_time",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "granularity",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "start_time",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.project.aiNews",
+      "shortPath": "project.aiNews",
+      "description": "Project AI News",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lang",
+            "optional": true,
+            "type": "en | zh | ja | kr"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id: string, signal_type: string, slug?: string, sources?: string[] | null, subtitle?: string, timestamp: number, title: string, tldr?: string[] | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.project.defiMetrics",
+      "shortPath": "project.defiMetrics",
+      "description": "Project DeFi Metrics",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metric",
+            "optional": true,
+            "type": "volume | fee | fees | revenue | tvl | users"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "chain",
+            "optional": true,
+            "type": "ethereum | polygon | bsc | arbitrum | optimism | base | avalanche | fantom | solana"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ timestamp: number, value: number }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.project.defiRanking",
+      "shortPath": "project.defiRanking",
+      "description": "DeFi Protocol Ranking",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "metric",
+            "optional": false,
+            "type": "tvl | revenue | fees | volume | users"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ fees?: number, id?: string, logo_url?: string, name: string, revenue?: number, slug?: string, symbol?: string, tvl?: number, users?: number, volume?: number }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.project.detail",
+      "shortPath": "project.detail",
+      "description": "Aggregated Project Detail",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "x_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "handle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ contracts?: { contracts?: {}[] | null }, funding?: { rounds?: {}[] | null, total_raise?: number }, overview?: { chains?: string[] | null, description?: string, exchanges?: string[] | null, id: string, logo_url?: string, name: string, slug?: string, tags?: string[] | null, tge_status?: string, token_symbol?: string, website?: string, x_followers: number, x_handle?: string, x_id?: string }, social?: { discord?: {}, github?: {}, telegram?: {}, twitter?: {} }, team?: { members?: {}[] | null }, tge_status?: { current_status?: string, exchanges?: string[] | null, last_event_time?: number }, token_info?: { all_time_high?: number, all_time_high_date?: number, all_time_low?: number, all_time_low_date?: number, circulating_supply?: number, fdv?: number, high_24h?: number, image?: string, low_24h?: number, market_cap_usd?: number, name: string, price_change_24h?: number, price_change_30d?: number, price_change_7d?: number, price_usd?: number, symbol: string, total_supply?: number, volume_24h?: number }, tokenomics?: { circulating_supply?: number, fdv?: number, market_cap_usd?: number, total_supply?: number } }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.search.airdrop",
+      "shortPath": "search.airdrop",
+      "description": "Airdrop Search",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phase",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "reward_type",
+            "optional": true,
+            "type": "airdrop | points | whitelist | nft | role | ambassador"
+          },
+          {
+            "key": "task_type",
+            "optional": true,
+            "type": "social | bounty-platforms | testnet | mainnet | role | form | liquidity | mint-nft | game | trading | staking | depin | node | ambassador | hold | check-wallet | mint-domain | predictions | deploy"
+          },
+          {
+            "key": "has_open",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "total_raise | xscore | last_status_update"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "include_tasks",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ coin_symbol?: string, followers_count: number, last_status_update: number, logo_url?: string, project_id?: string, project_name: string, reward_date: number, reward_type?: string, status: string, task_summary?: {}, tasks?: {}[] | null, total_raise: number, xscore: number }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.search.airdropActivities",
+      "shortPath": "search.airdropActivities",
+      "description": "Airdrop Activities",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ coin_name: string, coin_symbol?: string, created_at: number, followers_count?: string, id: string, reward: string, reward_date?: string, reward_type: string, status: string, total_raise?: number, updated_at: number, xscore?: string }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.search.events",
+      "shortPath": "search.events",
+      "description": "Project Event Search",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "launch | upgrade | partnership | news | airdrop | listing | twitter"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ date?: string, description?: string, logo_url?: string, title: string, type: string }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.search.fund",
+      "shortPath": "search.fund",
+      "description": "Fund Search",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id: string, image?: string, invested_projects_count: number, name: string, tier: number, top_projects?: {}[] | null, type?: string }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.search.fundraising",
+      "shortPath": "search.fundraising",
+      "description": "Fundraising Event Search",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "social | news"
+          },
+          {
+            "key": "lang",
+            "optional": true,
+            "type": "en | zh | ja | kr | ko"
+          },
+          {
+            "key": "min_importance",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "recency | relevance | importance"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ event_at: number, id: string, importance?: number, published_at: number, source: {}, source_count: number, summary: string, title: string }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.search.news",
+      "shortPath": "search.news",
+      "description": "News Article Search",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ highlights?: {}, id: string, project_id?: string, project_name?: string, published_at: number, source?: string, summary?: string, title: string, url?: string }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.search.predictionMarket",
+      "shortPath": "search.predictionMarket",
+      "description": "Search Prediction Markets",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "condition_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "market_ticker",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "platform",
+            "optional": true,
+            "type": "polymarket | kalshi"
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "crypto | culture | economics | financials | politics | stem | sports"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "active | closed | finalized"
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "volume_1d | volume_7d | volume_30d | open_interest | trade_count_7d | days_to_resolution"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "smart_money",
+            "optional": true,
+            "type": "bullish | bearish"
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ category: string, condition_id?: string, days_to_resolution?: number, event_group_slug?: string, event_slug?: string, event_ticker?: string, event_title?: string, latest_price?: number, market_link?: string, market_slug?: string, market_ticker?: string, matched_counterpart?: string, open_interest_usd: number, outcome_label?: string, platform: string, question: string, smart_money_direction?: string, status: string, subcategory?: string, token_id?: string, trade_count_7d: number, volume_1d: number, volume_30d: number, volume_7d: number }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.search.project",
+      "shortPath": "search.project",
+      "description": "Project Search",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ chains?: string[] | null, description?: string, id: string, logo_url?: string, name: string, slug?: string, symbol?: string, tags?: string[] | null, tokens?: {}[] | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.search.token",
+      "shortPath": "search.token",
+      "description": "Token Symbol Resolution",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "chain",
+            "optional": true,
+            "type": "ethereum | base | bsc | arbitrum | solana | polygon | optimism | avalanche | fantom | tron | linea | mantle | blast | gnosis | zksync | scroll"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ address: string, chain: string, decimals: number, symbol: string, volume_usd: number }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.search.wallet",
+      "shortPath": "search.wallet",
+      "description": "Wallet Search",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ address?: string, addresses?: {}[] | null, chain?: string, entity_name?: string, entity_type?: string, label?: string, num_addresses?: number, twitter?: string }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.search.web",
+      "shortPath": "search.web",
+      "description": "Web Search",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "site",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "include_content",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ content: string, description: string, title: string, url: string }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.token.dexTrades",
+      "shortPath": "token.dexTrades",
+      "description": "Token DEX Trade History",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "address",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "chain",
+            "optional": true,
+            "type": "ethereum | base | bsc | arbitrum | tron"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ amount_usd: number, block_time: number, project: string, taker: string, taker_label?: {}, token_bought_address?: string, token_bought_amount: number, token_bought_symbol: string, token_pair: string, token_sold_address?: string, token_sold_amount: number, token_sold_symbol: string, tx_hash: string, version: string }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.token.holders",
+      "shortPath": "token.holders",
+      "description": "Token Holders",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "address",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "chain",
+            "optional": false,
+            "type": "ethereum | polygon | bsc | solana | avalanche | arbitrum | optimism | base"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ address: string, balance: string, entity_name?: string, entity_type?: string, label?: {}, percentage?: number }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.token.tokenomics",
+      "shortPath": "token.tokenomics",
+      "description": "Token Unlock Schedule",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "symbol",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ allocations?: {}[] | null, cumulative_unlocked_amount: number, timestamp: number, total_supply?: number, unlock_amount: number, unlocked_percentage_of_total_supply?: number }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.token.transferCounterparties",
+      "shortPath": "token.transferCounterparties",
+      "description": "Top Transfer Counterparties",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "address",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "chain",
+            "optional": false,
+            "type": "ethereum | base | bsc | arbitrum | tron"
+          },
+          {
+            "key": "direction",
+            "optional": false,
+            "type": "to | from"
+          },
+          {
+            "key": "metric",
+            "optional": true,
+            "type": "count | amount | amount_usd"
+          },
+          {
+            "key": "time_range",
+            "optional": true,
+            "type": "1d | 7d | 30d | 90d"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "exclude_labels",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ amount: string, amount_usd?: number, counterparty_address: string, first_transfer_at: number, label?: {}, last_transfer_at: number, transfer_count: number }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.token.transfers",
+      "shortPath": "token.transfers",
+      "description": "Token Transfer History",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "address",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "chain",
+            "optional": false,
+            "type": "ethereum | base | solana | tron | bsc | arbitrum"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ amount: string, amount_usd?: number, block_number: number, from_address: string, from_label?: {}, symbol?: string, timestamp: number, to_address: string, to_label?: {}, tx_hash: string }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.token.transferStats",
+      "shortPath": "token.transferStats",
+      "description": "Token Transfer Activity Summary",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "address",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "chain",
+            "optional": false,
+            "type": "ethereum | base | bsc | arbitrum | tron"
+          },
+          {
+            "key": "time_range",
+            "optional": true,
+            "type": "1d | 7d | 30d | 90d"
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ enriched_ratio?: number, first_transfer_at: number, last_transfer_at: number, series?: {}[] | null, total_amount: string, total_amount_usd?: number, total_transfers: number, unique_receivers: number, unique_senders: number }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, enriched_ratio?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.wallet.detail",
+      "shortPath": "wallet.detail",
+      "description": "Aggregated Wallet Detail",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "address",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "chain",
+            "optional": true,
+            "type": "ethereum | polygon | bsc | avalanche | arbitrum | optimism | fantom | base | solana"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ active_chains?: {}[] | null, approvals?: {}[] | null, errors?: {}[] | null, evm_balance?: { address: string, chain_balances?: {}[] | null, total_usd: number }, evm_tokens?: {}[] | null, labels?: { address: string, entity_name?: string, entity_type?: string, labels?: {}[] | null }, nft?: {}[] | null, sol_balance?: { address: string, sol_balance: string }, sol_tokens?: {}[] | null }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.wallet.history",
+      "shortPath": "wallet.history",
+      "description": "Wallet Transaction History",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "address",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "chain",
+            "optional": true,
+            "type": "ethereum | polygon | bsc | avalanche | arbitrum | optimism | fantom | base"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "timestamp | value"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ from_address: string, from_label?: {}, timestamp: number, to_address: string, to_label?: {}, tx_hash: string, tx_type?: string, value: string }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.wallet.labelsBatch",
+      "shortPath": "wallet.labelsBatch",
+      "description": "Wallet Labels (Batch)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "addresses",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ address: string, entity_name?: string, entity_type?: string, labels?: {}[] | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.wallet.netWorth",
+      "shortPath": "wallet.netWorth",
+      "description": "Wallet Net Worth History",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "address",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ timestamp: number, usd_value: number }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.wallet.protocols",
+      "shortPath": "wallet.protocols",
+      "description": "Wallet DeFi Protocol Positions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "address",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ chain: string, logo_url?: string, positions?: {}[] | null, protocol_name: string, site_url?: string, total_usd: number }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.wallet.transfers",
+      "shortPath": "wallet.transfers",
+      "description": "Wallet Transfer History",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "address",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "chain",
+            "optional": true,
+            "type": "ethereum | base | solana | tron | bsc | arbitrum"
+          },
+          {
+            "key": "flow",
+            "optional": true,
+            "type": "in | out"
+          },
+          {
+            "key": "token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ activity_type?: string, amount: string, amount_usd?: number, flow?: string, from_address: string, from_label?: {}, timestamp: number, to_address: string, to_label?: {}, token_address?: string, token_symbol?: string, tx_hash: string }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.web.fetch",
+      "shortPath": "web.fetch",
+      "description": "Web Page Fetch",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "target_selector",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "remove_selector",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "wait_for_selector",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ content: string, title?: string, url: string }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surf.api.x.tweets",
+      "shortPath": "x.tweets",
+      "description": "X Tweets by IDs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ids",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ author: {}, cover_image_url?: string, created_at: number, lang?: string, media?: {}[] | null, stats: {}, text: string, title?: string, tweet_id: string, type?: string, url: string }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

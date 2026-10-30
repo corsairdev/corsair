@@ -1,0 +1,24 @@
+{
+  "name": "@corsair-dev/frpc-linux-arm64",
+  "version": "0.1.117",
+  "description": "Prebuilt frpc binary for Corsair dev tunnels (linux arm64). Installed automatically as an optional dependency of `corsair`.",
+  "license": "Apache-2.0",
+  "repository": "https://github.com/corsairdev/corsair",
+  "os": [
+    "linux"
+  ],
+  "cpu": [
+    "arm64"
+  ],
+  "files": [
+    "frpc",
+    "LICENSE.frp",
+    "NOTICE"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "prepack": "node ../../scripts/prepare-frpc-packages.mjs linux-arm64"
+  }
+}

@@ -1,0 +1,144 @@
+---
+title: Overview
+description: "Cloud HR suite for employee records, recruiting, performance, and workforce management."
+---
+
+Use **SAP SuccessFactors** through Corsair: one client, typed API calls, local DB sync.
+
+**What you get:**
+
+- 64 typed API operations
+- 12 synced entities (`calibrationSession`, `candidate`, `company`, `employment`, `goal`, `goalPlan`, and 6 more) for fast `.search()` / `.list()`
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/sapsuccessfactors
+```
+```bash yarn
+yarn add corsair @corsair-dev/sapsuccessfactors
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/sapsuccessfactors
+```
+```bash bun
+bun add corsair @corsair-dev/sapsuccessfactors
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { sapsuccessfactors } from '@corsair-dev/sapsuccessfactors';
+
+export const corsair = createCorsair({
+	plugins: [
+		sapsuccessfactors(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="OAuth 2.0 (Recommended)">
+
+Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your SAP SuccessFactors OAuth app.
+
+```ts
+sapsuccessfactors()
+```
+
+More: [OAuth 2.0](/concepts/oauth)
+
+</Tab>
+<Tab title="API Key">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+sapsuccessfactors({
+	authType: 'api_key',
+})
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'sapsuccessfactors',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`application.getApplicationInterview`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.sapsuccessfactors.api.application.getApplicationInterview({});
+```
+
+
+**`a.createAFeedbackRequest`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.sapsuccessfactors.api.a.createAFeedbackRequest({});
+```
+
+
+See the full list on the [API](/plugins/sapsuccessfactors/api) page.
+
+## Query synced data
+
+Synced entities support `tenant.sapsuccessfactors.db.<entity>.search()` and `.list()`: `calibrationSession`, `candidate`, `company`, `employment`, `goal`, `goalPlan`, `jobApplication`, `jobRequisition`, `person`, `personal`, `position`, `user`.
+
+See [Database](/plugins/sapsuccessfactors/database) for filters and operators.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/sapsuccessfactors/api">
+    Every `sapsuccessfactors.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/sapsuccessfactors/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

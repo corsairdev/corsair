@@ -1,0 +1,1004 @@
+{
+  "id": "pdl",
+  "displayName": "People Data Labs",
+  "description": "B2B person and company data - enrichment, dataset search, identity resolution, IP lookups and cleaners from People Data Labs.",
+  "npmPackageName": "@corsair-dev/pdl",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 12,
+    "webhooks": 0,
+    "db": 2
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "pdl.api.autocomplete.suggest",
+      "shortPath": "autocomplete.suggest",
+      "description": "Get value suggestions for a PDL field prefix",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "field",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "titlecase",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fields",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ count: number, name: string, meta?: {} }[]"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pdl.api.company.clean",
+      "shortPath": "company.clean",
+      "description": "Normalize a company name or website (free)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "website",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "profile",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pdl.api.company.enrich",
+      "shortPath": "company.enrich",
+      "description": "Enrich one company record (billed per match)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pdl_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "profile",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ticker",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "website",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "locality",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "street_address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "postal_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "min_likelihood",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "include_if_matched",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "required",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "data_include",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "titlecase",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ found: true, status: number, likelihood: number, company: {} } | { found: false }"
+      }
+    },
+    {
+      "path": "pdl.api.company.search",
+      "shortPath": "company.search",
+      "description": "Search the company dataset with an Elasticsearch query or SQL",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "sql",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "scroll_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "titlecase",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}[]"
+          },
+          {
+            "key": "total",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "scroll_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pdl.api.ip.enrich",
+      "shortPath": "ip.enrich",
+      "description": "Look up company and person data behind an IP address",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ip",
+            "optional": false,
+            "type": "string | string"
+          },
+          {
+            "key": "return_ip_location",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "return_ip_metadata",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "return_if_unmatched",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "return_person",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "min_confidence",
+            "optional": true,
+            "type": "very high | high | moderate | low | very low"
+          },
+          {
+            "key": "pretty",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "titlecase",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ found: true, status: number, data: { ip: { address: string, metadata?: {}, location?: {} }, company?: {}, person?: {} }, dataset_version?: string | number } | { found: false }"
+      }
+    },
+    {
+      "path": "pdl.api.job.search",
+      "shortPath": "job.search",
+      "description": "Search job postings with structured filters or an Elasticsearch query (Beta)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "company_website",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "salary_range_min",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "salary_range_max",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "remote_work_policy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "inferred_skills",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "scroll_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}[]"
+          },
+          {
+            "key": "total",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "scroll_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dataset_version",
+            "optional": true,
+            "type": "string | number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pdl.api.location.clean",
+      "shortPath": "location.clean",
+      "description": "Normalize and geocode a location string (free)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "location",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pdl.api.person.bulk",
+      "shortPath": "person.bulk",
+      "description": "Enrich up to 100 people in one request, billed per match",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requests",
+            "optional": false,
+            "type": "{ params: {}, metadata?: {} }[]"
+          },
+          {
+            "key": "required",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "include_if_matched",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ status: number, likelihood?: number, data?: {} | null, metadata?: {}, error?: { type?: string, message?: string } }[]"
+      }
+    },
+    {
+      "path": "pdl.api.person.enrich",
+      "shortPath": "person.enrich",
+      "description": "Enrich one person record (billed per match)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pdl_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "middle_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "street_address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "locality",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "postal_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "school",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email_hash",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "profile",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "birth_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "min_likelihood",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "include_if_matched",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "required",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "data_include",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "titlecase",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ found: true, status: number, likelihood: number, data?: {} | null, matched?: string[] } | { found: false }"
+      }
+    },
+    {
+      "path": "pdl.api.person.identify",
+      "shortPath": "person.identify",
+      "description": "Find candidate person profiles matching the given identity inputs (billed per call)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pdl_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "middle_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "street_address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "locality",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "postal_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "school",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email_hash",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "profile",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "birth_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "include_if_matched",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "titlecase",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ found: true, status: number, matches: { match_score: number, data: {}[], matched_on?: string[] }[] } | { found: false }"
+      }
+    },
+    {
+      "path": "pdl.api.person.search",
+      "shortPath": "person.search",
+      "description": "Search the person dataset with an Elasticsearch query or SQL",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "sql",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "scroll_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dataset",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "titlecase",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}[]"
+          },
+          {
+            "key": "total",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "scroll_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pdl.api.school.clean",
+      "shortPath": "school.clean",
+      "description": "Normalize a school name or website (free)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "website",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "profile",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "pdl.db.companies.search",
+      "entityName": "companies",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "companyId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "website",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "ticker",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "industry",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "employeeCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "foundedYear",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "likelihood",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "enrichedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "pdl.db.people.search",
+      "entityName": "people",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "pdlId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "jobTitle",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "jobCompanyName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "phone",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "country",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "locality",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "likelihood",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "enrichedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

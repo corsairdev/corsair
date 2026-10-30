@@ -128,6 +128,7 @@ export function OperationsPage({ tenant }: { tenant: string }) {
 					className="h-8 px-2 rounded-md text-xs bg-[var(--color-bg)] border border-[var(--color-border)] focus:outline-none focus:border-[var(--color-accent-dim)]"
 					value={filter}
 					onChange={(e) => setFilter(e.target.value)}
+					aria-label="Filter operations"
 				/>
 
 				<div className="flex-1 min-h-0 overflow-auto border border-[var(--color-border)] rounded-lg">

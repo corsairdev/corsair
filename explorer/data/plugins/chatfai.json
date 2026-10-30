@@ -1,0 +1,317 @@
+{
+  "id": "chatfai",
+  "displayName": "ChatFAI",
+  "description": "Character chat platform for creating AI personas and interactive fictional conversations.",
+  "npmPackageName": "@corsair-dev/chatfai",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 3,
+    "webhooks": 0,
+    "db": 2
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "one"]
+    }
+  ],
+  "api": [
+    {
+      "path": "chatfai.api.characters.get",
+      "shortPath": "characters.get",
+      "description": "Get a public ChatFAI character by ID (GET /v1/characters/{id})",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Public character ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "uid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "nickname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "publicDescription",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "image",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "categories",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "featured",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "firstMessage",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "voiceEnabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "likes",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "installs",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "followers",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chatfai.api.characters.search",
+      "shortPath": "characters.search",
+      "description": "Search public ChatFAI characters by name or keyword (GET /v1/characters/search)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string",
+            "description": "Search query for public characters by name or keyword"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "characters",
+            "optional": false,
+            "type": "{ id: string, uid: string, name: string, nickname?: string | null, publicDescription?: string | null, image?: string | null, visibility?: string, categories?: string[], featured?: boolean, firstMessage?: string | null, voiceEnabled?: boolean, likes?: number, installs?: number, followers?: number, createdAt?: string, updatedAt?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chatfai.api.conversations.list",
+      "shortPath": "conversations.list",
+      "description": "List conversations for the authenticated user (GET /v1/conversations)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "conversations",
+            "optional": false,
+            "type": "{ id: string, character_id?: string, characterId?: string, title?: string, createdAt?: string, updatedAt?: string }[]"
+          },
+          {
+            "key": "nextCursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "chatfai.db.characters.search",
+      "entityName": "characters",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "uid",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "nickname",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "publicDescription",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "image",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "visibility",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "featured",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "firstMessage",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "voiceEnabled",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "likes",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "installs",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "followers",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "chatfai.db.conversations.search",
+      "entityName": "conversations",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "character_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "characterId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

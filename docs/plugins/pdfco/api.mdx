@@ -1,0 +1,2053 @@
+---
+title: API
+description: "API reference for Pdfco: every `pdfco.api.*` operation with input and output types."
+---
+
+Every `pdfco.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account Balance
+
+### accountBalance
+
+`accountBalance`
+
+Get remaining PDF.co credit balance
+
+**Risk:** `read`
+
+```ts
+await corsair.pdfco.api.accountBalance({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+| `status` | `number` | No | — |
+| `name` | `string` | No | — |
+| `credits` | `number` | No | — |
+| `remainingCredits` | `number` | Yes | — |
+| `jobId` | `string` | No | — |
+
+
+
+---
+
+## Barcode Generate
+
+### barcodeGenerate
+
+`barcodeGenerate`
+
+Generate a barcode image
+
+**Risk:** `write`
+
+```ts
+await corsair.pdfco.api.barcodeGenerate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | Yes | Barcode type, e.g. "QRCode" or "Code128" |
+| `value` | `string` | Yes | Value to encode inside the barcode |
+| `name` | `string` | No | Output file name |
+| `inline` | `boolean` | No | Return image inline |
+| `decorationImage` | `string` | No | Logo image URL embedded inside QR-Code barcodes |
+| `async` | `boolean` | No | Run in background and return a jobId for PDF_CO_JOB_CHECK |
+| `expiration` | `number` | No | Output link lifetime in minutes |
+| `profiles` | `object` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
+
+<AccordionGroup>
+<Accordion title="profiles full type">
+
+```ts
+string | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+| `status` | `number` | No | — |
+| `name` | `string` | No | — |
+| `credits` | `number` | No | — |
+| `remainingCredits` | `number` | No | — |
+| `jobId` | `string` | No | — |
+| `url` | `string` | No | — |
+| `outputLinkValidTill` | `string` | No | — |
+| `pageCount` | `number` | No | — |
+
+
+
+---
+
+## Document Parser
+
+### documentParser
+
+`documentParser`
+
+Extract structured data with a parser template
+
+**Risk:** `read`
+
+```ts
+await corsair.pdfco.api.documentParser({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | Public URL of the source PDF |
+| `templateId` | `string` | No | Parser template id from PDF.co |
+| `template` | `string` | No | Inline YAML parser template |
+| `password` | `string` | No | PDF password if protected |
+| `inline` | `boolean` | No | Return parsed data inline in body |
+| `pages` | `string` | No | Page indices; default all |
+| `outputFormat` | `JSON \| CSV \| XML` | No | Parsed output format |
+| `async` | `boolean` | No | Run in background and return a jobId for PDF_CO_JOB_CHECK |
+| `name` | `string` | No | Output file name |
+| `expiration` | `number` | No | Output link lifetime in minutes |
+| `profiles` | `object` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
+
+<AccordionGroup>
+<Accordion title="profiles full type">
+
+```ts
+string | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+| `status` | `number` | No | — |
+| `name` | `string` | No | — |
+| `credits` | `number` | No | — |
+| `remainingCredits` | `number` | No | — |
+| `jobId` | `string` | No | — |
+| `url` | `string` | No | — |
+| `outputLinkValidTill` | `string` | No | — |
+| `pageCount` | `number` | No | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  objects?: {
+  }[],
+  elapsed?: number,
+  templateName?: string,
+  templateVersion?: string,
+  timestamp?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Excel To Csv
+
+### excelToCsv
+
+`excelToCsv`
+
+Convert Excel to CSV
+
+**Risk:** `read`
+
+```ts
+await corsair.pdfco.api.excelToCsv({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | Public URL of the source xls/xlsx/csv file |
+| `inline` | `boolean` | No | Return converted content inline |
+| `worksheetIndex` | `string` | No | Worksheet index, 1-based |
+| `async` | `boolean` | No | Run in background and return a jobId for PDF_CO_JOB_CHECK |
+| `name` | `string` | No | Output file name |
+| `expiration` | `number` | No | Output link lifetime in minutes |
+| `profiles` | `object` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
+
+<AccordionGroup>
+<Accordion title="profiles full type">
+
+```ts
+string | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+| `status` | `number` | No | — |
+| `name` | `string` | No | — |
+| `credits` | `number` | No | — |
+| `remainingCredits` | `number` | No | — |
+| `jobId` | `string` | No | — |
+| `url` | `string` | No | — |
+| `outputLinkValidTill` | `string` | No | — |
+| `pageCount` | `number` | No | — |
+| `body` | `string` | No | — |
+
+
+
+---
+
+## Excel To Html
+
+### excelToHtml
+
+`excelToHtml`
+
+Convert Excel to HTML
+
+**Risk:** `read`
+
+```ts
+await corsair.pdfco.api.excelToHtml({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | Public URL of the source xls/xlsx/csv file |
+| `inline` | `boolean` | No | Return converted content inline |
+| `worksheetIndex` | `string` | No | Worksheet index, 1-based |
+| `async` | `boolean` | No | Run in background and return a jobId for PDF_CO_JOB_CHECK |
+| `name` | `string` | No | Output file name |
+| `expiration` | `number` | No | Output link lifetime in minutes |
+| `profiles` | `object` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
+
+<AccordionGroup>
+<Accordion title="profiles full type">
+
+```ts
+string | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+| `status` | `number` | No | — |
+| `name` | `string` | No | — |
+| `credits` | `number` | No | — |
+| `remainingCredits` | `number` | No | — |
+| `jobId` | `string` | No | — |
+| `url` | `string` | No | — |
+| `outputLinkValidTill` | `string` | No | — |
+| `pageCount` | `number` | No | — |
+| `body` | `string` | No | — |
+
+
+
+---
+
+## Excel To Json
+
+### excelToJson
+
+`excelToJson`
+
+Convert Excel to JSON
+
+**Risk:** `read`
+
+```ts
+await corsair.pdfco.api.excelToJson({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | Public URL of the source xls/xlsx/csv file |
+| `inline` | `boolean` | No | Return converted content inline |
+| `worksheetIndex` | `string` | No | Worksheet index, 1-based |
+| `async` | `boolean` | No | Run in background and return a jobId for PDF_CO_JOB_CHECK |
+| `name` | `string` | No | Output file name |
+| `expiration` | `number` | No | Output link lifetime in minutes |
+| `profiles` | `object` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
+
+<AccordionGroup>
+<Accordion title="profiles full type">
+
+```ts
+string | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+| `status` | `number` | No | — |
+| `name` | `string` | No | — |
+| `credits` | `number` | No | — |
+| `remainingCredits` | `number` | No | — |
+| `jobId` | `string` | No | — |
+| `url` | `string` | No | — |
+| `outputLinkValidTill` | `string` | No | — |
+| `pageCount` | `number` | No | — |
+| `body` | `string` | No | — |
+
+
+
+---
+
+## Excel To Text
+
+### excelToText
+
+`excelToText`
+
+Convert Excel to plain text
+
+**Risk:** `read`
+
+```ts
+await corsair.pdfco.api.excelToText({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | Public URL of the source xls/xlsx/csv file |
+| `inline` | `boolean` | No | Return converted content inline |
+| `worksheetIndex` | `string` | No | Worksheet index, 1-based |
+| `async` | `boolean` | No | Run in background and return a jobId for PDF_CO_JOB_CHECK |
+| `name` | `string` | No | Output file name |
+| `expiration` | `number` | No | Output link lifetime in minutes |
+| `profiles` | `object` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
+
+<AccordionGroup>
+<Accordion title="profiles full type">
+
+```ts
+string | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+| `status` | `number` | No | — |
+| `name` | `string` | No | — |
+| `credits` | `number` | No | — |
+| `remainingCredits` | `number` | No | — |
+| `jobId` | `string` | No | — |
+| `url` | `string` | No | — |
+| `outputLinkValidTill` | `string` | No | — |
+| `pageCount` | `number` | No | — |
+| `body` | `string` | No | — |
+
+
+
+---
+
+## Excel To Xml
+
+### excelToXml
+
+`excelToXml`
+
+Convert Excel to XML
+
+**Risk:** `read`
+
+```ts
+await corsair.pdfco.api.excelToXml({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | Public URL of the source xls/xlsx/csv file |
+| `inline` | `boolean` | No | Return converted content inline |
+| `worksheetIndex` | `string` | No | Worksheet index, 1-based |
+| `async` | `boolean` | No | Run in background and return a jobId for PDF_CO_JOB_CHECK |
+| `name` | `string` | No | Output file name |
+| `expiration` | `number` | No | Output link lifetime in minutes |
+| `profiles` | `object` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
+
+<AccordionGroup>
+<Accordion title="profiles full type">
+
+```ts
+string | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+| `status` | `number` | No | — |
+| `name` | `string` | No | — |
+| `credits` | `number` | No | — |
+| `remainingCredits` | `number` | No | — |
+| `jobId` | `string` | No | — |
+| `url` | `string` | No | — |
+| `outputLinkValidTill` | `string` | No | — |
+| `pageCount` | `number` | No | — |
+| `body` | `string` | No | — |
+
+
+
+---
+
+## File Upload
+
+### fileUpload
+
+`fileUpload`
+
+Upload a file URL to PDF.co storage
+
+**Risk:** `write`
+
+```ts
+await corsair.pdfco.api.fileUpload({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | Public URL of the source file to store |
+| `name` | `string` | No | Destination file name |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+| `status` | `number` | No | — |
+| `name` | `string` | No | — |
+| `credits` | `number` | No | — |
+| `remainingCredits` | `number` | No | — |
+| `jobId` | `string` | No | — |
+| `url` | `string` | No | — |
+| `outputLinkValidTill` | `string` | No | — |
+| `pageCount` | `number` | No | — |
+
+
+
+---
+
+## File Upload Base64
+
+### fileUploadBase64
+
+`fileUploadBase64`
+
+Upload base64 content to PDF.co storage
+
+**Risk:** `write`
+
+```ts
+await corsair.pdfco.api.fileUploadBase64({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file` | `string` | Yes | Base64-encoded file content |
+| `name` | `string` | No | Destination file name |
+| `expiration` | `number` | No | Output link lifetime in minutes |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+| `status` | `number` | No | — |
+| `name` | `string` | No | — |
+| `credits` | `number` | No | — |
+| `remainingCredits` | `number` | No | — |
+| `jobId` | `string` | No | — |
+| `url` | `string` | No | — |
+| `outputLinkValidTill` | `string` | No | — |
+| `pageCount` | `number` | No | — |
+
+
+
+---
+
+## Job Check
+
+### jobCheck
+
+`jobCheck`
+
+Check an async job status
+
+**Risk:** `read`
+
+```ts
+await corsair.pdfco.api.jobCheck({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobId` | `string` | Yes | Background job id from an async call |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+| `status` | `working \| success \| failed \| aborted` | No | — |
+| `name` | `string` | No | — |
+| `credits` | `number` | No | — |
+| `remainingCredits` | `number` | No | — |
+| `jobId` | `string` | No | — |
+| `url` | `string` | No | — |
+| `outputLinkValidTill` | `string` | No | — |
+| `pageCount` | `number` | No | — |
+| `jobDuration` | `number` | No | — |
+| `duration` | `number` | No | — |
+
+
+
+---
+
+## Pdf Add
+
+### pdfAdd
+
+`pdfAdd`
+
+Overlay text, images, or form values on a PDF
+
+**Risk:** `write`
+
+```ts
+await corsair.pdfco.api.pdfAdd({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | Public URL of the source PDF |
+| `annotations` | `object[]` | No | Text annotations to overlay |
+| `images` | `object[]` | No | Images to overlay |
+| `fields` | `object[]` | No | Fillable form field values to set |
+| `annotationsString` | `string` | No | Compact ";"-separated text object notation |
+| `imagesString` | `string` | No | Compact ";"-separated image object notation |
+| `fieldsString` | `string` | No | Compact ";"-separated fillable field notation |
+| `password` | `string` | No | PDF password if protected |
+| `async` | `boolean` | No | Run in background and return a jobId for PDF_CO_JOB_CHECK |
+| `name` | `string` | No | Output file name |
+| `expiration` | `number` | No | Output link lifetime in minutes |
+| `profiles` | `object` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
+
+<AccordionGroup>
+<Accordion title="annotations full type">
+
+```ts
+{
+  text: string,
+  x: number,
+  y: number,
+  type?: string,
+  id?: string,
+  pages?: string,
+  size?: number,
+  color?: string,
+  link?: string,
+  fontName?: string,
+  width?: number,
+  height?: number,
+  alignment?: left | center | right
+}[]
+```
+</Accordion>
+
+<Accordion title="images full type">
+
+```ts
+{
+  url: string,
+  x: number,
+  y: number,
+  pages?: string,
+  width?: number,
+  height?: number,
+  link?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="fields full type">
+
+```ts
+{
+  fieldName: string,
+  text: string,
+  pages?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="profiles full type">
+
+```ts
+string | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+| `status` | `number` | No | — |
+| `name` | `string` | No | — |
+| `credits` | `number` | No | — |
+| `remainingCredits` | `number` | No | — |
+| `jobId` | `string` | No | — |
+| `url` | `string` | No | — |
+| `outputLinkValidTill` | `string` | No | — |
+| `pageCount` | `number` | No | — |
+
+
+
+---
+
+## Pdf Change Text Searchable
+
+### pdfChangeTextSearchable
+
+`pdfChangeTextSearchable`
+
+Make scanned PDF text searchable with OCR
+
+**Risk:** `write`
+
+```ts
+await corsair.pdfco.api.pdfChangeTextSearchable({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | Public URL of the scanned PDF or image |
+| `lang` | `string` | No | OCR language, e.g. "eng" or "eng+deu" |
+| `pages` | `string` | No | Page indices, e.g. "0,1,2-" |
+| `password` | `string` | No | PDF password if protected |
+| `async` | `boolean` | No | Run in background and return a jobId for PDF_CO_JOB_CHECK |
+| `name` | `string` | No | Output file name |
+| `expiration` | `number` | No | Output link lifetime in minutes |
+| `profiles` | `object` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
+
+<AccordionGroup>
+<Accordion title="profiles full type">
+
+```ts
+string | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+| `status` | `number` | No | — |
+| `name` | `string` | No | — |
+| `credits` | `number` | No | — |
+| `remainingCredits` | `number` | No | — |
+| `jobId` | `string` | No | — |
+| `url` | `string` | No | — |
+| `outputLinkValidTill` | `string` | No | — |
+| `pageCount` | `number` | No | — |
+
+
+
+---
+
+## Pdf Delete Pages
+
+### pdfDeletePages
+
+`pdfDeletePages`
+
+Delete pages from a PDF
+
+**Risk:** `write`
+
+```ts
+await corsair.pdfco.api.pdfDeletePages({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | Public URL of the source PDF |
+| `pages` | `string` | Yes | 1-based pages to delete, e.g. '1-2' |
+| `password` | `string` | No | PDF password if protected |
+| `async` | `boolean` | No | Run in background and return a jobId for PDF_CO_JOB_CHECK |
+| `name` | `string` | No | Output file name |
+| `expiration` | `number` | No | Output link lifetime in minutes |
+| `profiles` | `object` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
+
+<AccordionGroup>
+<Accordion title="profiles full type">
+
+```ts
+string | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+| `status` | `number` | No | — |
+| `name` | `string` | No | — |
+| `credits` | `number` | No | — |
+| `remainingCredits` | `number` | No | — |
+| `jobId` | `string` | No | — |
+| `url` | `string` | No | — |
+| `outputLinkValidTill` | `string` | No | — |
+| `pageCount` | `number` | No | — |
+
+
+
+---
+
+## Pdf Extract Attachments
+
+### pdfExtractAttachments
+
+`pdfExtractAttachments`
+
+Extract embedded PDF attachments
+
+**Risk:** `read`
+
+```ts
+await corsair.pdfco.api.pdfExtractAttachments({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | Public URL of the source PDF |
+| `inline` | `boolean` | No | Return attachments inline |
+| `password` | `string` | No | PDF password if protected |
+| `async` | `boolean` | No | Run in background and return a jobId for PDF_CO_JOB_CHECK |
+| `name` | `string` | No | Output file name |
+| `expiration` | `number` | No | Output link lifetime in minutes |
+| `profiles` | `object` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
+
+<AccordionGroup>
+<Accordion title="profiles full type">
+
+```ts
+string | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+| `status` | `number` | No | — |
+| `name` | `string` | No | — |
+| `credits` | `number` | No | — |
+| `remainingCredits` | `number` | No | — |
+| `jobId` | `string` | No | — |
+| `urls` | `string[]` | No | — |
+| `outputLinkValidTill` | `string` | No | — |
+| `pageCount` | `number` | No | — |
+
+
+
+---
+
+## Pdf Find
+
+### pdfFind
+
+`pdfFind`
+
+Find text and coordinates in a PDF
+
+**Risk:** `read`
+
+```ts
+await corsair.pdfco.api.pdfFind({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | Public URL of the source PDF |
+| `searchString` | `string` | Yes | Text or regex pattern to find |
+| `pages` | `string` | No | 0-based pages to search; default all |
+| `regexSearch` | `boolean` | No | Treat searchString as regex |
+| `password` | `string` | No | PDF password if protected |
+| `async` | `boolean` | No | Run in background and return a jobId for PDF_CO_JOB_CHECK |
+| `profiles` | `object` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
+
+<AccordionGroup>
+<Accordion title="profiles full type">
+
+```ts
+string | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+| `status` | `number` | No | — |
+| `name` | `string` | No | — |
+| `credits` | `number` | No | — |
+| `remainingCredits` | `number` | No | — |
+| `jobId` | `string` | No | — |
+| `body` | `object[]` | No | — |
+| `pageCount` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  text?: string,
+  pageIndex?: number,
+  left?: number,
+  top?: number,
+  width?: number,
+  height?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Pdf Forms Info Reader
+
+### pdfFormsInfoReader
+
+`pdfFormsInfoReader`
+
+Read PDF form field info
+
+**Risk:** `read`
+
+```ts
+await corsair.pdfco.api.pdfFormsInfoReader({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | Public URL of the source PDF |
+| `password` | `string` | No | PDF password if protected |
+| `async` | `boolean` | No | Run in background and return a jobId for PDF_CO_JOB_CHECK |
+| `profiles` | `object` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
+
+<AccordionGroup>
+<Accordion title="profiles full type">
+
+```ts
+string | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+| `status` | `number` | No | — |
+| `name` | `string` | No | — |
+| `credits` | `number` | No | — |
+| `remainingCredits` | `number` | No | — |
+| `jobId` | `string` | No | — |
+| `info` | `object` | No | — |
+| `fields` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="info full type">
+
+```ts
+{
+  PageCount?: number,
+  Author?: string,
+  Title?: string,
+  Subject?: string,
+  Keywords?: string,
+  Creator?: string,
+  Producer?: string,
+  CreationDate?: string,
+  ModificationDate?: string,
+  Encrypted?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="fields full type">
+
+```ts
+{
+  PageIndex?: number,
+  Type?: string,
+  FieldName?: string,
+  Value?: string,
+  Left?: number,
+  Top?: number,
+  Width?: number,
+  Height?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Pdf From Email
+
+### pdfFromEmail
+
+`pdfFromEmail`
+
+Convert an email file to PDF
+
+**Risk:** `write`
+
+```ts
+await corsair.pdfco.api.pdfFromEmail({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | Public URL of the .msg or .eml file |
+| `embedAttachments` | `boolean` | No | Embed email attachments into the PDF |
+| `convertAttachments` | `boolean` | No | Convert convertible attachments to PDF pages |
+| `margins` | `string` | No | Margins, e.g. "10px 10px 10px 10px" |
+| `paperSize` | `string` | No | Paper size, e.g. "A4" or "Letter" |
+| `orientation` | `Portrait \| Landscape` | No | Page orientation |
+| `async` | `boolean` | No | Run in background and return a jobId for PDF_CO_JOB_CHECK |
+| `name` | `string` | No | Output file name |
+| `expiration` | `number` | No | Output link lifetime in minutes |
+| `profiles` | `object` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
+
+<AccordionGroup>
+<Accordion title="profiles full type">
+
+```ts
+string | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+| `status` | `number` | No | — |
+| `name` | `string` | No | — |
+| `credits` | `number` | No | — |
+| `remainingCredits` | `number` | No | — |
+| `jobId` | `string` | No | — |
+| `url` | `string` | No | — |
+| `outputLinkValidTill` | `string` | No | — |
+| `pageCount` | `number` | No | — |
+
+
+
+---
+
+## Pdf From Html
+
+### pdfFromHtml
+
+`pdfFromHtml`
+
+Generate PDF from HTML markup
+
+**Risk:** `write`
+
+```ts
+await corsair.pdfco.api.pdfFromHtml({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `html` | `string` | Yes | Raw HTML markup to render as PDF |
+| `margins` | `string` | No | Margins, e.g. "10px 10px 10px 10px" |
+| `paperSize` | `string` | No | Paper size, e.g. "A4" or "Letter" |
+| `orientation` | `Portrait \| Landscape` | No | Page orientation |
+| `printBackground` | `boolean` | No | Print CSS backgrounds |
+| `header` | `string` | No | HTML header template |
+| `footer` | `string` | No | HTML footer template |
+| `async` | `boolean` | No | Run in background and return a jobId for PDF_CO_JOB_CHECK |
+| `name` | `string` | No | Output file name |
+| `expiration` | `number` | No | Output link lifetime in minutes |
+| `profiles` | `object` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
+
+<AccordionGroup>
+<Accordion title="profiles full type">
+
+```ts
+string | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+| `status` | `number` | No | — |
+| `name` | `string` | No | — |
+| `credits` | `number` | No | — |
+| `remainingCredits` | `number` | No | — |
+| `jobId` | `string` | No | — |
+| `url` | `string` | No | — |
+| `outputLinkValidTill` | `string` | No | — |
+| `pageCount` | `number` | No | — |
+
+
+
+---
+
+## Pdf From Text
+
+### pdfFromText
+
+`pdfFromText`
+
+Convert a text document to PDF
+
+**Risk:** `write`
+
+```ts
+await corsair.pdfco.api.pdfFromText({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | Public URL of the TXT/DOC/DOCX/RTF/PPT source file |
+| `pages` | `string` | No | Page indices, e.g. "0-" |
+| `autosize` | `boolean` | No | Autosize pages to content |
+| `async` | `boolean` | No | Run in background and return a jobId for PDF_CO_JOB_CHECK |
+| `name` | `string` | No | Output file name |
+| `expiration` | `number` | No | Output link lifetime in minutes |
+| `profiles` | `object` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
+
+<AccordionGroup>
+<Accordion title="profiles full type">
+
+```ts
+string | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+| `status` | `number` | No | — |
+| `name` | `string` | No | — |
+| `credits` | `number` | No | — |
+| `remainingCredits` | `number` | No | — |
+| `jobId` | `string` | No | — |
+| `url` | `string` | No | — |
+| `outputLinkValidTill` | `string` | No | — |
+| `pageCount` | `number` | No | — |
+
+
+
+---
+
+## Pdf Info Reader
+
+### pdfInfoReader
+
+`pdfInfoReader`
+
+Read PDF metadata and properties
+
+**Risk:** `read`
+
+```ts
+await corsair.pdfco.api.pdfInfoReader({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | Public URL of the source PDF |
+| `password` | `string` | No | PDF password if protected |
+| `async` | `boolean` | No | Run in background and return a jobId for PDF_CO_JOB_CHECK |
+| `profiles` | `object` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
+
+<AccordionGroup>
+<Accordion title="profiles full type">
+
+```ts
+string | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+| `status` | `number` | No | — |
+| `name` | `string` | No | — |
+| `credits` | `number` | No | — |
+| `remainingCredits` | `number` | No | — |
+| `jobId` | `string` | No | — |
+| `info` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="info full type">
+
+```ts
+{
+  PageCount?: number,
+  Author?: string,
+  Title?: string,
+  Subject?: string,
+  Keywords?: string,
+  Creator?: string,
+  Producer?: string,
+  CreationDate?: string,
+  ModificationDate?: string,
+  Encrypted?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Pdf Merge
+
+### pdfMerge
+
+`pdfMerge`
+
+Merge multiple PDFs into one
+
+**Risk:** `write`
+
+```ts
+await corsair.pdfco.api.pdfMerge({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | Comma-separated list of PDF URLs to merge |
+| `name` | `string` | No | Output file name |
+| `expiration` | `number` | No | Output link lifetime in minutes |
+| `async` | `boolean` | No | Run in background and return a jobId for PDF_CO_JOB_CHECK |
+| `profiles` | `object` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
+
+<AccordionGroup>
+<Accordion title="profiles full type">
+
+```ts
+string | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+| `status` | `number` | No | — |
+| `name` | `string` | No | — |
+| `credits` | `number` | No | — |
+| `remainingCredits` | `number` | No | — |
+| `jobId` | `string` | No | — |
+| `url` | `string` | No | — |
+| `outputLinkValidTill` | `string` | No | — |
+| `pageCount` | `number` | No | — |
+
+
+
+---
+
+## Pdf Rotate
+
+### pdfRotate
+
+`pdfRotate`
+
+Rotate selected PDF pages
+
+**Risk:** `write`
+
+```ts
+await corsair.pdfco.api.pdfRotate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | Public URL of the source PDF |
+| `pages` | `string` | No | 0-based pages to rotate, e.g. "0-2,4"; default all pages |
+| `angle` | `0 \| 90 \| 180 \| 270` | No | Clockwise rotation angle in degrees |
+| `async` | `boolean` | No | Run in background and return a jobId for PDF_CO_JOB_CHECK |
+| `name` | `string` | No | Output file name |
+| `expiration` | `number` | No | Output link lifetime in minutes |
+| `profiles` | `object` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
+
+<AccordionGroup>
+<Accordion title="profiles full type">
+
+```ts
+string | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+| `status` | `number` | No | — |
+| `name` | `string` | No | — |
+| `credits` | `number` | No | — |
+| `remainingCredits` | `number` | No | — |
+| `jobId` | `string` | No | — |
+| `url` | `string` | No | — |
+| `outputLinkValidTill` | `string` | No | — |
+| `pageCount` | `number` | No | — |
+| `fileSize` | `number` | No | — |
+
+
+
+---
+
+## Pdf Search And Delete Text
+
+### pdfSearchAndDeleteText
+
+`pdfSearchAndDeleteText`
+
+Search and delete text in a PDF
+
+**Risk:** `write`
+
+```ts
+await corsair.pdfco.api.pdfSearchAndDeleteText({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | Public URL of the source PDF |
+| `searchString` | `string` | No | Single text to delete |
+| `searchStrings` | `string[]` | No | Multiple texts to delete |
+| `caseSensitive` | `boolean` | No | Case-sensitive match |
+| `regex` | `boolean` | No | Treat search strings as regex |
+| `replacementLimit` | `number` | No | Max deletions per string; 0 means all |
+| `pages` | `string` | No | 0-based pages; default all |
+| `password` | `string` | No | PDF password if protected |
+| `async` | `boolean` | No | Run in background and return a jobId for PDF_CO_JOB_CHECK |
+| `name` | `string` | No | Output file name |
+| `expiration` | `number` | No | Output link lifetime in minutes |
+| `profiles` | `object` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
+
+<AccordionGroup>
+<Accordion title="profiles full type">
+
+```ts
+string | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+| `status` | `number` | No | — |
+| `name` | `string` | No | — |
+| `credits` | `number` | No | — |
+| `remainingCredits` | `number` | No | — |
+| `jobId` | `string` | No | — |
+| `url` | `string` | No | — |
+| `outputLinkValidTill` | `string` | No | — |
+| `pageCount` | `number` | No | — |
+
+
+
+---
+
+## Pdf Search And Replace Text
+
+### pdfSearchAndReplaceText
+
+`pdfSearchAndReplaceText`
+
+Search and replace text in a PDF
+
+**Risk:** `write`
+
+```ts
+await corsair.pdfco.api.pdfSearchAndReplaceText({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | Public URL of the source PDF |
+| `searchString` | `string` | No | Single text to search for |
+| `replaceString` | `string` | No | Replacement text |
+| `searchStrings` | `string[]` | No | Multiple texts to search for, in order |
+| `replaceStrings` | `string[]` | No | Replacements aligned with searchStrings |
+| `caseSensitive` | `boolean` | No | Case-sensitive match |
+| `regex` | `boolean` | No | Treat search strings as regex |
+| `replacementLimit` | `number` | No | Max replacements per string; 0 means all |
+| `pages` | `string` | No | 0-based pages; default all |
+| `password` | `string` | No | PDF password if protected |
+| `async` | `boolean` | No | Run in background and return a jobId for PDF_CO_JOB_CHECK |
+| `name` | `string` | No | Output file name |
+| `expiration` | `number` | No | Output link lifetime in minutes |
+| `profiles` | `object` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
+
+<AccordionGroup>
+<Accordion title="profiles full type">
+
+```ts
+string | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+| `status` | `number` | No | — |
+| `name` | `string` | No | — |
+| `credits` | `number` | No | — |
+| `remainingCredits` | `number` | No | — |
+| `jobId` | `string` | No | — |
+| `url` | `string` | No | — |
+| `outputLinkValidTill` | `string` | No | — |
+| `pageCount` | `number` | No | — |
+
+
+
+---
+
+## Pdf Split
+
+### pdfSplit
+
+`pdfSplit`
+
+Split a PDF into multiple files
+
+**Risk:** `write`
+
+```ts
+await corsair.pdfco.api.pdfSplit({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | Public URL of the source PDF |
+| `pages` | `string` | Yes | 1-based pages or ranges to keep, e.g. '1-2,3-' |
+| `password` | `string` | No | PDF password if protected |
+| `async` | `boolean` | No | Run in background and return a jobId for PDF_CO_JOB_CHECK |
+| `name` | `string` | No | Output file name |
+| `expiration` | `number` | No | Output link lifetime in minutes |
+| `profiles` | `object` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
+
+<AccordionGroup>
+<Accordion title="profiles full type">
+
+```ts
+string | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+| `status` | `number` | No | — |
+| `name` | `string` | No | — |
+| `credits` | `number` | No | — |
+| `remainingCredits` | `number` | No | — |
+| `jobId` | `string` | No | — |
+| `urls` | `string[]` | No | — |
+| `outputLinkValidTill` | `string` | No | — |
+| `pageCount` | `number` | No | — |
+
+
+
+---
+
+## Pdf To Csv
+
+### pdfToCsv
+
+`pdfToCsv`
+
+Convert PDF to CSV
+
+**Risk:** `read`
+
+```ts
+await corsair.pdfco.api.pdfToCsv({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | Public URL of the source PDF |
+| `pages` | `string` | No | Page indices, e.g. "0,1,2-" |
+| `inline` | `boolean` | No | Return CSV inline in body |
+| `password` | `string` | No | PDF password if protected |
+| `async` | `boolean` | No | Run in background and return a jobId for PDF_CO_JOB_CHECK |
+| `name` | `string` | No | Output file name |
+| `expiration` | `number` | No | Output link lifetime in minutes |
+| `profiles` | `object` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
+
+<AccordionGroup>
+<Accordion title="profiles full type">
+
+```ts
+string | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+| `status` | `number` | No | — |
+| `name` | `string` | No | — |
+| `credits` | `number` | No | — |
+| `remainingCredits` | `number` | No | — |
+| `jobId` | `string` | No | — |
+| `url` | `string` | No | — |
+| `outputLinkValidTill` | `string` | No | — |
+| `pageCount` | `number` | No | — |
+| `body` | `string` | No | — |
+
+
+
+---
+
+## Pdf To Html
+
+### pdfToHtml
+
+`pdfToHtml`
+
+Convert PDF to HTML
+
+**Risk:** `read`
+
+```ts
+await corsair.pdfco.api.pdfToHtml({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | Public URL of the source PDF |
+| `pages` | `string` | No | Page indices, e.g. "0,1,2-" |
+| `inline` | `boolean` | No | Return HTML inline in body |
+| `password` | `string` | No | PDF password if protected |
+| `async` | `boolean` | No | Run in background and return a jobId for PDF_CO_JOB_CHECK |
+| `name` | `string` | No | Output file name |
+| `expiration` | `number` | No | Output link lifetime in minutes |
+| `profiles` | `object` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
+
+<AccordionGroup>
+<Accordion title="profiles full type">
+
+```ts
+string | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+| `status` | `number` | No | — |
+| `name` | `string` | No | — |
+| `credits` | `number` | No | — |
+| `remainingCredits` | `number` | No | — |
+| `jobId` | `string` | No | — |
+| `url` | `string` | No | — |
+| `outputLinkValidTill` | `string` | No | — |
+| `pageCount` | `number` | No | — |
+| `body` | `string` | No | — |
+
+
+
+---
+
+## Pdf To Image
+
+### pdfToImage
+
+`pdfToImage`
+
+Convert PDF pages to images
+
+**Risk:** `read`
+
+```ts
+await corsair.pdfco.api.pdfToImage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | Public URL of the source PDF |
+| `format` | `jpg \| png \| tiff` | No | Output image format; selects the /to/jpg, /to/png, or /to/tiff endpoint |
+| `pages` | `string` | No | Page indices, e.g. "0,1,2-" |
+| `password` | `string` | No | PDF password if protected |
+| `async` | `boolean` | No | Run in background and return a jobId for PDF_CO_JOB_CHECK |
+| `name` | `string` | No | Output file name |
+| `expiration` | `number` | No | Output link lifetime in minutes |
+| `profiles` | `object` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
+
+<AccordionGroup>
+<Accordion title="profiles full type">
+
+```ts
+string | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+| `status` | `number` | No | — |
+| `name` | `string` | No | — |
+| `credits` | `number` | No | — |
+| `remainingCredits` | `number` | No | — |
+| `jobId` | `string` | No | — |
+| `urls` | `string[]` | No | — |
+| `outputLinkValidTill` | `string` | No | — |
+| `pageCount` | `number` | No | — |
+
+
+
+---
+
+## Pdf To Json
+
+### pdfToJson
+
+`pdfToJson`
+
+Convert PDF to JSON
+
+**Risk:** `read`
+
+```ts
+await corsair.pdfco.api.pdfToJson({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | Public URL of the source PDF |
+| `pages` | `string` | No | Page indices, e.g. "0,1,2-" |
+| `inline` | `boolean` | No | Return JSON inline in body |
+| `password` | `string` | No | PDF password if protected |
+| `async` | `boolean` | No | Run in background and return a jobId for PDF_CO_JOB_CHECK |
+| `name` | `string` | No | Output file name |
+| `expiration` | `number` | No | Output link lifetime in minutes |
+| `profiles` | `object` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
+
+<AccordionGroup>
+<Accordion title="profiles full type">
+
+```ts
+string | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+| `status` | `number` | No | — |
+| `name` | `string` | No | — |
+| `credits` | `number` | No | — |
+| `remainingCredits` | `number` | No | — |
+| `jobId` | `string` | No | — |
+| `url` | `string` | No | — |
+| `outputLinkValidTill` | `string` | No | — |
+| `pageCount` | `number` | No | — |
+| `body` | `string` | No | — |
+
+
+
+---
+
+## Pdf To Text
+
+### pdfToText
+
+`pdfToText`
+
+Convert PDF to plain text
+
+**Risk:** `read`
+
+```ts
+await corsair.pdfco.api.pdfToText({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | Public URL of the source PDF |
+| `pages` | `string` | No | Page indices, e.g. "0,1,2-" |
+| `inline` | `boolean` | No | Return text inline in body |
+| `password` | `string` | No | PDF password if protected |
+| `async` | `boolean` | No | Run in background and return a jobId for PDF_CO_JOB_CHECK |
+| `name` | `string` | No | Output file name |
+| `expiration` | `number` | No | Output link lifetime in minutes |
+| `profiles` | `object` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
+
+<AccordionGroup>
+<Accordion title="profiles full type">
+
+```ts
+string | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+| `status` | `number` | No | — |
+| `name` | `string` | No | — |
+| `credits` | `number` | No | — |
+| `remainingCredits` | `number` | No | — |
+| `jobId` | `string` | No | — |
+| `url` | `string` | No | — |
+| `outputLinkValidTill` | `string` | No | — |
+| `pageCount` | `number` | No | — |
+| `body` | `string` | No | — |
+
+
+
+---
+
+## Pdf To Xls
+
+### pdfToXls
+
+`pdfToXls`
+
+Convert PDF to XLS
+
+**Risk:** `read`
+
+```ts
+await corsair.pdfco.api.pdfToXls({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | Public URL of the source PDF |
+| `pages` | `string` | No | Page indices, e.g. "0,1,2-" |
+| `password` | `string` | No | PDF password if protected |
+| `async` | `boolean` | No | Run in background and return a jobId for PDF_CO_JOB_CHECK |
+| `name` | `string` | No | Output file name |
+| `expiration` | `number` | No | Output link lifetime in minutes |
+| `profiles` | `object` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
+
+<AccordionGroup>
+<Accordion title="profiles full type">
+
+```ts
+string | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+| `status` | `number` | No | — |
+| `name` | `string` | No | — |
+| `credits` | `number` | No | — |
+| `remainingCredits` | `number` | No | — |
+| `jobId` | `string` | No | — |
+| `url` | `string` | No | — |
+| `outputLinkValidTill` | `string` | No | — |
+| `pageCount` | `number` | No | — |
+
+
+
+---
+
+## Pdf To Xlsx
+
+### pdfToXlsx
+
+`pdfToXlsx`
+
+Convert PDF to XLSX
+
+**Risk:** `read`
+
+```ts
+await corsair.pdfco.api.pdfToXlsx({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | Public URL of the source PDF |
+| `pages` | `string` | No | Page indices, e.g. "0,1,2-" |
+| `password` | `string` | No | PDF password if protected |
+| `async` | `boolean` | No | Run in background and return a jobId for PDF_CO_JOB_CHECK |
+| `name` | `string` | No | Output file name |
+| `expiration` | `number` | No | Output link lifetime in minutes |
+| `profiles` | `object` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
+
+<AccordionGroup>
+<Accordion title="profiles full type">
+
+```ts
+string | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+| `status` | `number` | No | — |
+| `name` | `string` | No | — |
+| `credits` | `number` | No | — |
+| `remainingCredits` | `number` | No | — |
+| `jobId` | `string` | No | — |
+| `url` | `string` | No | — |
+| `outputLinkValidTill` | `string` | No | — |
+| `pageCount` | `number` | No | — |
+
+
+
+---
+
+## Pdf To Xml
+
+### pdfToXml
+
+`pdfToXml`
+
+Convert PDF to XML
+
+**Risk:** `read`
+
+```ts
+await corsair.pdfco.api.pdfToXml({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | Public URL of the source PDF |
+| `pages` | `string` | No | Page indices, e.g. "0,1,2-" |
+| `inline` | `boolean` | No | Return XML inline in body |
+| `password` | `string` | No | PDF password if protected |
+| `async` | `boolean` | No | Run in background and return a jobId for PDF_CO_JOB_CHECK |
+| `name` | `string` | No | Output file name |
+| `expiration` | `number` | No | Output link lifetime in minutes |
+| `profiles` | `object` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
+
+<AccordionGroup>
+<Accordion title="profiles full type">
+
+```ts
+string | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+| `status` | `number` | No | — |
+| `name` | `string` | No | — |
+| `credits` | `number` | No | — |
+| `remainingCredits` | `number` | No | — |
+| `jobId` | `string` | No | — |
+| `url` | `string` | No | — |
+| `outputLinkValidTill` | `string` | No | — |
+| `pageCount` | `number` | No | — |
+| `body` | `string` | No | — |
+
+
+
+---
+

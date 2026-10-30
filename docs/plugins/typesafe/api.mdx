@@ -1,0 +1,135 @@
+---
+title: API
+description: "API reference for TypeSafe: every `typesafe.api.*` operation with input and output types."
+---
+
+Every `typesafe.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Models
+
+### list
+
+`models.list`
+
+List the TypeSafe model names and aliases this key can use, such as jev-latest
+
+**Risk:** `read`
+
+```ts
+await corsair.typesafe.api.models.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `models` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="models full type">
+
+```ts
+{
+  name: string,
+  description: string,
+  release_date: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## System One
+
+### ask
+
+`systemOne.ask`
+
+Ask Jev typed questions about text, JSON or images in one call: yes/no (probability), choice (one option), score (ordered levels) or box (locate in an image). Answers come back with calibrated probabilities.
+
+**Risk:** `read`
+
+```ts
+await corsair.typesafe.api.systemOne.ask({ state: { message: 'I was charged twice for my order.' }, questions: { billing: { type: 'noul', instructions: 'Is `message` about billing?' }, urgency: { type: 'score', instructions: 'How urgent is `message`?', criteria: ['Can wait', 'Needs attention this week', 'Needs attention today'] } } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `string` | Yes | Model name or alias from models.list. jev-latest moves with each release; pin a version such as jev-1.14.0 to keep answers stable. |
+| `state` | `object[]` | Yes | The content every question is about: text, or JSON with descriptive keys. Leave out fields no question needs. |
+| `questions` | `object` | Yes | Questions keyed by a name you choose; answers come back under the same names. Questions run in parallel and cannot see each other. |
+| `assets` | `object` | No | Images keyed by a placeholder string. Each placeholder in state, instructions or criteria is replaced by its image. Images are experimental at TypeSafe. |
+| `longContext` | `boolean` | No | Raise the context limit from 64k (32k per question) to 262k tokens. Slower and less accurate, same price per token. |
+
+<AccordionGroup>
+<Accordion title="state full type">
+
+```ts
+string | {
+} | any[]
+```
+</Accordion>
+
+<Accordion title="questions full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="assets full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `string` | Yes | Versioned model that answered |
+| `answers` | `object` | Yes | — |
+| `usage` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="answers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="usage full type">
+
+```ts
+{
+  input_tokens: number,
+  output_tokens: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

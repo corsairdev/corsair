@@ -1,0 +1,1152 @@
+{
+  "id": "googlecalendar",
+  "displayName": "Google Calendar",
+  "description": "Scheduling service for creating events, managing calendars, and checking availability.",
+  "npmPackageName": "@corsair-dev/googlecalendar",
+  "authTypes": ["oauth_2"],
+  "defaultAuthType": "oauth_2",
+  "counts": {
+    "api": 6,
+    "webhooks": 1,
+    "db": 2
+  },
+  "auth": [
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature",
+        "channel_id"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "googlecalendar.api.calendar.getAvailability",
+      "shortPath": "calendar.getAvailability",
+      "description": "Get free/busy availability for a calendar",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "timeMin",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "timeMax",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "timeZone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "groupExpansionMax",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "calendarExpansionMax",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ id: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "calendars",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "groups",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "timeMin",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timeMax",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlecalendar.api.events.create",
+      "shortPath": "events.create",
+      "description": "Create a new calendar event",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "calendarId",
+            "optional": true,
+            "type": "string",
+            "description": "Calendar ID. Defaults to \"primary\"."
+          },
+          {
+            "key": "event",
+            "optional": false,
+            "type": "{ summary?: string, description?: string, location?: string, start?: { date?: string, dateTime?: string, timeZone?: string }, end?: { date?: string, dateTime?: string, timeZone?: string }, attendees?: { id?: string, email?: string, displayName?: string, organizer?: boolean, self?: boolean, resource?: boolean, optional?: boolean, responseStatus?: needsAction | declined | tentative | accepted, comment?: string, additionalGuests?: number }[], recurrence?: string[], colorId?: string, transparency?: opaque | transparent, visibility?: default | public | private | confidential, eventType?: default | outOfOffice | focusTime | workingLocation | birthday | fromGmail, status?: confirmed | tentative | cancelled, reminders?: { useDefault?: boolean, overrides?: { method?: email | popup, minutes?: number }[] }, guestsCanModify?: boolean, guestsCanInviteOthers?: boolean, guestsCanSeeOtherGuests?: boolean, anyoneCanAddSelf?: boolean, sequence?: number, originalStartTime?: { date?: string, dateTime?: string, timeZone?: string }, recurringEventId?: string }",
+            "description": "Event body. Provide at minimum \"summary\", \"start\", and \"end\"."
+          },
+          {
+            "key": "sendUpdates",
+            "optional": true,
+            "type": "all | externalOnly | none"
+          },
+          {
+            "key": "sendNotifications",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "conferenceDataVersion",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "maxAttendees",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "supportsAttachments",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "confirmed | tentative | cancelled"
+          },
+          {
+            "key": "htmlLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "colorId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "creator",
+            "optional": true,
+            "type": "{ id?: string, email?: string, displayName?: string, self?: boolean }"
+          },
+          {
+            "key": "organizer",
+            "optional": true,
+            "type": "{ id?: string, email?: string, displayName?: string, self?: boolean }"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "{ date?: string, dateTime?: string, timeZone?: string }"
+          },
+          {
+            "key": "end",
+            "optional": true,
+            "type": "{ date?: string, dateTime?: string, timeZone?: string }"
+          },
+          {
+            "key": "endTimeUnspecified",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "recurrence",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "recurringEventId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "originalStartTime",
+            "optional": true,
+            "type": "{ date?: string, dateTime?: string, timeZone?: string }"
+          },
+          {
+            "key": "transparency",
+            "optional": true,
+            "type": "opaque | transparent"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "default | public | private | confidential"
+          },
+          {
+            "key": "iCalUID",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sequence",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "attendees",
+            "optional": true,
+            "type": "{ id?: string, email?: string, displayName?: string, organizer?: boolean, self?: boolean, resource?: boolean, optional?: boolean, responseStatus?: needsAction | declined | tentative | accepted, comment?: string, additionalGuests?: number }[]"
+          },
+          {
+            "key": "attendeesOmitted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "hangoutLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "reminders",
+            "optional": true,
+            "type": "{ useDefault?: boolean, overrides?: { method?: email | popup, minutes?: number }[] }"
+          },
+          {
+            "key": "anyoneCanAddSelf",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "guestsCanInviteOthers",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "guestsCanModify",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "guestsCanSeeOtherGuests",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "privateCopy",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "locked",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "conferenceData",
+            "optional": true,
+            "type": "{ createRequest?: { requestId?: string, conferenceSolutionKey?: { type?: string }, status?: { statusCode?: string } }, entryPoints?: { entryPointType?: string, uri?: string, label?: string, pin?: string, accessCode?: string, meetingCode?: string, passcode?: string, password?: string }[], conferenceSolution?: { key?: { type?: string }, name?: string, iconUri?: string }, conferenceId?: string, signature?: string, notes?: string }"
+          },
+          {
+            "key": "attachments",
+            "optional": true,
+            "type": "{ fileUrl?: string, title?: string, mimeType?: string, iconLink?: string, fileId?: string }[]"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "{ url?: string, title?: string }"
+          },
+          {
+            "key": "gadget",
+            "optional": true,
+            "type": "{ type?: string, title?: string, link?: string, iconLink?: string, width?: number, height?: number, display?: string, preferences?: {} }"
+          },
+          {
+            "key": "eventType",
+            "optional": true,
+            "type": "default | outOfOffice | focusTime | workingLocation | birthday | fromGmail"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlecalendar.api.events.delete",
+      "shortPath": "events.delete",
+      "description": "Delete a calendar event",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "calendarId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sendUpdates",
+            "optional": true,
+            "type": "all | externalOnly | none"
+          },
+          {
+            "key": "sendNotifications",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "googlecalendar.api.events.get",
+      "shortPath": "events.get",
+      "description": "Get a specific calendar event",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "calendarId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "timeZone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "maxAttendees",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "confirmed | tentative | cancelled"
+          },
+          {
+            "key": "htmlLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "colorId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "creator",
+            "optional": true,
+            "type": "{ id?: string, email?: string, displayName?: string, self?: boolean }"
+          },
+          {
+            "key": "organizer",
+            "optional": true,
+            "type": "{ id?: string, email?: string, displayName?: string, self?: boolean }"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "{ date?: string, dateTime?: string, timeZone?: string }"
+          },
+          {
+            "key": "end",
+            "optional": true,
+            "type": "{ date?: string, dateTime?: string, timeZone?: string }"
+          },
+          {
+            "key": "endTimeUnspecified",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "recurrence",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "recurringEventId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "originalStartTime",
+            "optional": true,
+            "type": "{ date?: string, dateTime?: string, timeZone?: string }"
+          },
+          {
+            "key": "transparency",
+            "optional": true,
+            "type": "opaque | transparent"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "default | public | private | confidential"
+          },
+          {
+            "key": "iCalUID",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sequence",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "attendees",
+            "optional": true,
+            "type": "{ id?: string, email?: string, displayName?: string, organizer?: boolean, self?: boolean, resource?: boolean, optional?: boolean, responseStatus?: needsAction | declined | tentative | accepted, comment?: string, additionalGuests?: number }[]"
+          },
+          {
+            "key": "attendeesOmitted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "hangoutLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "reminders",
+            "optional": true,
+            "type": "{ useDefault?: boolean, overrides?: { method?: email | popup, minutes?: number }[] }"
+          },
+          {
+            "key": "anyoneCanAddSelf",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "guestsCanInviteOthers",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "guestsCanModify",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "guestsCanSeeOtherGuests",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "privateCopy",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "locked",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "conferenceData",
+            "optional": true,
+            "type": "{ createRequest?: { requestId?: string, conferenceSolutionKey?: { type?: string }, status?: { statusCode?: string } }, entryPoints?: { entryPointType?: string, uri?: string, label?: string, pin?: string, accessCode?: string, meetingCode?: string, passcode?: string, password?: string }[], conferenceSolution?: { key?: { type?: string }, name?: string, iconUri?: string }, conferenceId?: string, signature?: string, notes?: string }"
+          },
+          {
+            "key": "attachments",
+            "optional": true,
+            "type": "{ fileUrl?: string, title?: string, mimeType?: string, iconLink?: string, fileId?: string }[]"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "{ url?: string, title?: string }"
+          },
+          {
+            "key": "gadget",
+            "optional": true,
+            "type": "{ type?: string, title?: string, link?: string, iconLink?: string, width?: number, height?: number, display?: string, preferences?: {} }"
+          },
+          {
+            "key": "eventType",
+            "optional": true,
+            "type": "default | outOfOffice | focusTime | workingLocation | birthday | fromGmail"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlecalendar.api.events.getMany",
+      "shortPath": "events.getMany",
+      "description": "List calendar events",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "calendarId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timeMin",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timeMax",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timeZone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedMin",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "singleEvents",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "maxResults",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "orderBy",
+            "optional": true,
+            "type": "startTime | updated"
+          },
+          {
+            "key": "iCalUID",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "showDeleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "showHiddenInvitations",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timeZone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "accessRole",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "defaultReminders",
+            "optional": true,
+            "type": "{ method?: email | popup, minutes?: number }[]"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "nextSyncToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ id?: string, status?: confirmed | tentative | cancelled, htmlLink?: string, created?: string, updated?: string, summary?: string, description?: string, location?: string, colorId?: string, creator?: { id?: string, email?: string, displayName?: string, self?: boolean }, organizer?: { id?: string, email?: string, displayName?: string, self?: boolean }, start?: { date?: string, dateTime?: string, timeZone?: string }, end?: { date?: string, dateTime?: string, timeZone?: string }, endTimeUnspecified?: boolean, recurrence?: string[], recurringEventId?: string, originalStartTime?: { date?: string, dateTime?: string, timeZone?: string }, transparency?: opaque | transparent, visibility?: default | public | private | confidential, iCalUID?: string, sequence?: number, attendees?: { id?: string, email?: string, displayName?: string, organizer?: boolean, self?: boolean, resource?: boolean, optional?: boolean, responseStatus?: needsAction | declined | tentative | accepted, comment?: string, additionalGuests?: number }[], attendeesOmitted?: boolean, hangoutLink?: string, reminders?: { useDefault?: boolean, overrides?: { method?: email | popup, minutes?: number }[] }, anyoneCanAddSelf?: boolean, guestsCanInviteOthers?: boolean, guestsCanModify?: boolean, guestsCanSeeOtherGuests?: boolean, privateCopy?: boolean, locked?: boolean, conferenceData?: { createRequest?: { requestId?: string, conferenceSolutionKey?: { type?: string }, status?: { statusCode?: string } }, entryPoints?: { entryPointType?: string, uri?: string, label?: string, pin?: string, accessCode?: string, meetingCode?: string, passcode?: string, password?: string }[], conferenceSolution?: { key?: { type?: string }, name?: string, iconUri?: string }, conferenceId?: string, signature?: string, notes?: string }, attachments?: { fileUrl?: string, title?: string, mimeType?: string, iconLink?: string, fileId?: string }[], source?: { url?: string, title?: string }, gadget?: { type?: string, title?: string, link?: string, iconLink?: string, width?: number, height?: number, display?: string, preferences?: {} }, eventType?: default | outOfOffice | focusTime | workingLocation | birthday | fromGmail }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlecalendar.api.events.update",
+      "shortPath": "events.update",
+      "description": "Update an existing calendar event",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "calendarId",
+            "optional": true,
+            "type": "string",
+            "description": "Calendar ID. Defaults to \"primary\"."
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Event ID to update"
+          },
+          {
+            "key": "event",
+            "optional": false,
+            "type": "{ summary?: string, description?: string, location?: string, start?: { date?: string, dateTime?: string, timeZone?: string }, end?: { date?: string, dateTime?: string, timeZone?: string }, attendees?: { id?: string, email?: string, displayName?: string, organizer?: boolean, self?: boolean, resource?: boolean, optional?: boolean, responseStatus?: needsAction | declined | tentative | accepted, comment?: string, additionalGuests?: number }[], recurrence?: string[], colorId?: string, transparency?: opaque | transparent, visibility?: default | public | private | confidential, eventType?: default | outOfOffice | focusTime | workingLocation | birthday | fromGmail, status?: confirmed | tentative | cancelled, reminders?: { useDefault?: boolean, overrides?: { method?: email | popup, minutes?: number }[] }, guestsCanModify?: boolean, guestsCanInviteOthers?: boolean, guestsCanSeeOtherGuests?: boolean, anyoneCanAddSelf?: boolean, sequence?: number, originalStartTime?: { date?: string, dateTime?: string, timeZone?: string }, recurringEventId?: string }",
+            "description": "Updated event fields"
+          },
+          {
+            "key": "sendUpdates",
+            "optional": true,
+            "type": "all | externalOnly | none"
+          },
+          {
+            "key": "sendNotifications",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "conferenceDataVersion",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "maxAttendees",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "supportsAttachments",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "confirmed | tentative | cancelled"
+          },
+          {
+            "key": "htmlLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "colorId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "creator",
+            "optional": true,
+            "type": "{ id?: string, email?: string, displayName?: string, self?: boolean }"
+          },
+          {
+            "key": "organizer",
+            "optional": true,
+            "type": "{ id?: string, email?: string, displayName?: string, self?: boolean }"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "{ date?: string, dateTime?: string, timeZone?: string }"
+          },
+          {
+            "key": "end",
+            "optional": true,
+            "type": "{ date?: string, dateTime?: string, timeZone?: string }"
+          },
+          {
+            "key": "endTimeUnspecified",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "recurrence",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "recurringEventId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "originalStartTime",
+            "optional": true,
+            "type": "{ date?: string, dateTime?: string, timeZone?: string }"
+          },
+          {
+            "key": "transparency",
+            "optional": true,
+            "type": "opaque | transparent"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "default | public | private | confidential"
+          },
+          {
+            "key": "iCalUID",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sequence",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "attendees",
+            "optional": true,
+            "type": "{ id?: string, email?: string, displayName?: string, organizer?: boolean, self?: boolean, resource?: boolean, optional?: boolean, responseStatus?: needsAction | declined | tentative | accepted, comment?: string, additionalGuests?: number }[]"
+          },
+          {
+            "key": "attendeesOmitted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "hangoutLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "reminders",
+            "optional": true,
+            "type": "{ useDefault?: boolean, overrides?: { method?: email | popup, minutes?: number }[] }"
+          },
+          {
+            "key": "anyoneCanAddSelf",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "guestsCanInviteOthers",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "guestsCanModify",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "guestsCanSeeOtherGuests",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "privateCopy",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "locked",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "conferenceData",
+            "optional": true,
+            "type": "{ createRequest?: { requestId?: string, conferenceSolutionKey?: { type?: string }, status?: { statusCode?: string } }, entryPoints?: { entryPointType?: string, uri?: string, label?: string, pin?: string, accessCode?: string, meetingCode?: string, passcode?: string, password?: string }[], conferenceSolution?: { key?: { type?: string }, name?: string, iconUri?: string }, conferenceId?: string, signature?: string, notes?: string }"
+          },
+          {
+            "key": "attachments",
+            "optional": true,
+            "type": "{ fileUrl?: string, title?: string, mimeType?: string, iconLink?: string, fileId?: string }[]"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "{ url?: string, title?: string }"
+          },
+          {
+            "key": "gadget",
+            "optional": true,
+            "type": "{ type?: string, title?: string, link?: string, iconLink?: string, width?: number, height?: number, display?: string, preferences?: {} }"
+          },
+          {
+            "key": "eventType",
+            "optional": true,
+            "type": "default | outOfOffice | focusTime | workingLocation | birthday | fromGmail"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "googlecalendar.webhooks.onEventChanged",
+      "shortPath": "onEventChanged",
+      "description": "A Google Calendar event was created, updated, or deleted",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "{ data?: string, attributes?: {}, messageId?: string, publishTime?: string }"
+          },
+          {
+            "key": "subscription",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "event",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      },
+      "responseType": "{ type: eventCreated, calendarId: string, event: custom, timestamp: string } | { type: eventUpdated, calendarId: string, event: custom, timestamp: string } | { type: eventDeleted, calendarId: string, eventId: string, timestamp: string }",
+      "usageExample": "googlecalendar({\n    webhookHooks: {\n        onEventChanged: {\n            before(ctx, args) {\n                return { ctx, args };\n            },\n            after(ctx, response) {\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": [
+    {
+      "path": "googlecalendar.db.calendars.search",
+      "entityName": "calendars",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "summary",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "location",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "timeZone",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "googlecalendar.db.events.search",
+      "entityName": "events",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "htmlLink",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "summary",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "location",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "colorId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "endTimeUnspecified",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "recurringEventId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "iCalUID",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "sequence",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "attendeesOmitted",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "hangoutLink",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "anyoneCanAddSelf",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "guestsCanInviteOthers",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "guestsCanModify",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "guestsCanSeeOtherGuests",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "privateCopy",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "locked",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "calendarId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

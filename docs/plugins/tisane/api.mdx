@@ -1,0 +1,282 @@
+---
+title: API
+description: "API reference for Tisane: every `tisane.api.*` operation with input and output types."
+---
+
+Every `tisane.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Text
+
+### extractEntities
+
+`text.extractEntities`
+
+Extract named entities and topics from text
+
+**Risk:** `read`
+
+```ts
+await corsair.tisane.api.text.extractEntities({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `content` | `string` | Yes | Text to extract named entities and topics from |
+| `language` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entities` | `object[]` | Yes | — |
+| `topics` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="entities full type">
+
+```ts
+{
+  name: string,
+  type?: any,
+  subtypes?: any[],
+  wikidata?: string,
+  mentions?: any[]
+}[]
+```
+</Accordion>
+
+<Accordion title="topics full type">
+
+```ts
+{
+  topic: string,
+  coverage?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### moderate
+
+`text.moderate`
+
+Content moderation for abuse, hate speech, and harassment
+
+**Risk:** `read`
+
+```ts
+await corsair.tisane.api.text.moderate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `content` | `string` | Yes | Text to check for abusive language, hate speech, or harassment |
+| `language` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `abuse` | `object[]` | Yes | — |
+| `flagged` | `boolean` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="abuse full type">
+
+```ts
+{
+  type: string,
+  severity?: string,
+  text?: string,
+  offset?: number,
+  length?: number,
+  sentence_index?: number,
+  explanation?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### parse
+
+`text.parse`
+
+Comprehensive natural language parsing and text analysis
+
+**Risk:** `read`
+
+```ts
+await corsair.tisane.api.text.parse({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `content` | `string` | Yes | The text content to analyze |
+| `language` | `string` | Yes | ISO 639-1 language code |
+| `settings` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="settings full type">
+
+```ts
+{
+  snippets?: boolean,
+  sentiment?: boolean,
+  entities?: boolean,
+  topics?: boolean,
+  abuse?: boolean,
+  format?: string,
+  explain?: boolean,
+  topic_stats?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `text` | `string` | Yes | — |
+| `language` | `string` | No | — |
+| `topics` | `object[]` | No | — |
+| `abuse` | `object[]` | No | — |
+| `entities_summary` | `object[]` | No | — |
+| `sentiment_expressions` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="topics full type">
+
+```ts
+(
+  string | {
+    topic: string,
+    coverage?: number
+  }
+)[]
+```
+</Accordion>
+
+<Accordion title="abuse full type">
+
+```ts
+{
+  type: string,
+  severity?: string,
+  text?: string,
+  offset?: number,
+  length?: number,
+  sentence_index?: number,
+  explanation?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="entities_summary full type">
+
+```ts
+{
+  name: string,
+  type?: any,
+  subtypes?: any[],
+  wikidata?: string,
+  mentions?: any[]
+}[]
+```
+</Accordion>
+
+<Accordion title="sentiment_expressions full type">
+
+```ts
+{
+  polarity: positive | negative | mixed | neutral,
+  offset?: number,
+  length?: number,
+  sentence_index?: number,
+  targets?: any[],
+  reasons?: any[],
+  text?: string,
+  explanation?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### sentiment
+
+`text.sentiment`
+
+Aspect-based sentiment analysis and tone evaluation
+
+**Risk:** `read`
+
+```ts
+await corsair.tisane.api.text.sentiment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `content` | `string` | Yes | Text to analyze for aspect-based sentiment |
+| `language` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sentiment` | `object[]` | Yes | — |
+| `text` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="sentiment full type">
+
+```ts
+{
+  polarity: positive | negative | mixed | neutral,
+  offset?: number,
+  length?: number,
+  sentence_index?: number,
+  targets?: any[],
+  reasons?: any[],
+  text?: string,
+  explanation?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

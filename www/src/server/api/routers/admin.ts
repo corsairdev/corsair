@@ -173,6 +173,7 @@ export const adminRouter = createTRPCRouter({
 				userId: latestStatus.userId,
 				phase: 'finished',
 				greptileScore: latestStatus.greptileScore,
+				metadata: { source: 'admin' },
 			});
 
 			return {

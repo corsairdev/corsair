@@ -1,0 +1,1028 @@
+{
+  "id": "writer",
+  "displayName": "Writer",
+  "description": "Writer plugin for Corsair",
+  "npmPackageName": "@corsair-dev/writer",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 23,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "writer.api.applications.list",
+      "shortPath": "applications.list",
+      "description": "List no-code applications",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name?: string }[]"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "first_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "writer.api.chat.create",
+      "shortPath": "chat.create",
+      "description": "Generate chat completions",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "messages",
+            "optional": false,
+            "type": "{ role: user | assistant | system, content: string }[]"
+          },
+          {
+            "key": "temperature",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "stream",
+            "optional": true,
+            "type": "false"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": false,
+            "type": "chat.completion"
+          },
+          {
+            "key": "choices",
+            "optional": false,
+            "type": "{ index: number, finish_reason?: string | null, message: { role: string, content?: string | null } }[]"
+          },
+          {
+            "key": "created",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "{ prompt_tokens: number, total_tokens: number, completion_tokens: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "writer.api.completions.create",
+      "shortPath": "completions.create",
+      "description": "Generate text completions",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "prompt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "max_tokens",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "temperature",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "top_p",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "stop",
+            "optional": true,
+            "type": "string | string[]"
+          },
+          {
+            "key": "best_of",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "random_seed",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "stream",
+            "optional": true,
+            "type": "false"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "choices",
+            "optional": false,
+            "type": "{ text: string, log_probs?: any | null }[]"
+          },
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "writer.api.files.delete",
+      "shortPath": "files.delete",
+      "description": "Delete file",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deleted",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "writer.api.files.download",
+      "shortPath": "files.download",
+      "description": "Download file contents",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "writer.api.files.get",
+      "shortPath": "files.get",
+      "description": "Get file details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "writer.api.files.list",
+      "shortPath": "files.list",
+      "description": "List uploaded files",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "graph_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "in_progress | completed | failed"
+          },
+          {
+            "key": "file_types",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name?: string, status?: string }[]"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "first_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "writer.api.files.upload",
+      "shortPath": "files.upload",
+      "description": "Upload file",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "filename",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "graphId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "writer.api.knowledgeGraphs.addFile",
+      "shortPath": "knowledgeGraphs.addFile",
+      "description": "Add file to graph",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "graph_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "file_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "writer.api.knowledgeGraphs.askQuestion",
+      "shortPath": "knowledgeGraphs.askQuestion",
+      "description": "Ask question to knowledge graph",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "graph_ids",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "question",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "stream",
+            "optional": true,
+            "type": "false"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "question",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "answer",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sources",
+            "optional": true,
+            "type": "any[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "writer.api.knowledgeGraphs.create",
+      "shortPath": "knowledgeGraphs.create",
+      "description": "Create knowledge graph",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "team_ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "urls",
+            "optional": true,
+            "type": "any[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "writer.api.knowledgeGraphs.delete",
+      "shortPath": "knowledgeGraphs.delete",
+      "description": "Delete knowledge graph",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "graph_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deleted",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "writer.api.knowledgeGraphs.list",
+      "shortPath": "knowledgeGraphs.list",
+      "description": "List knowledge graphs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "team_ids",
+            "optional": true,
+            "type": "number[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name: string, description?: string | null }[]"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "first_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "writer.api.knowledgeGraphs.removeFile",
+      "shortPath": "knowledgeGraphs.removeFile",
+      "description": "Remove file from graph",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "graph_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "file_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deleted",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "writer.api.knowledgeGraphs.retrieve",
+      "shortPath": "knowledgeGraphs.retrieve",
+      "description": "Retrieve knowledge graph",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "graph_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "writer.api.knowledgeGraphs.update",
+      "shortPath": "knowledgeGraphs.update",
+      "description": "Update knowledge graph",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "graph_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "team_ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "urls",
+            "optional": true,
+            "type": "any[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "writer.api.models.list",
+      "shortPath": "models.list",
+      "description": "List available models",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "models",
+            "optional": false,
+            "type": "{ id: string, name: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "writer.api.tools.analyzeImages",
+      "shortPath": "tools.analyzeImages",
+      "description": "Analyze images with vision models",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "input",
+            "optional": false,
+            "type": "any[]"
+          },
+          {
+            "key": "stream",
+            "optional": true,
+            "type": "false"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "choices",
+            "optional": true,
+            "type": "any[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "writer.api.tools.detectAiContent",
+      "shortPath": "tools.detectAiContent",
+      "description": "Detect AI-generated content likelihood",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organizationId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ label?: string, confidence?: number }[] | any"
+      }
+    },
+    {
+      "path": "writer.api.tools.medicalComprehend",
+      "shortPath": "tools.medicalComprehend",
+      "description": "Extract structured medical entities from text",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "writer.api.tools.parsePdf",
+      "shortPath": "tools.parsePdf",
+      "description": "Parse PDF file",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "markdown",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "writer.api.tools.translateText",
+      "shortPath": "tools.translateText",
+      "description": "Translate text between languages",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "target_language",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "source_language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "formality",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mask_profanity",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "translation",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "translated_text",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "writer.api.tools.webSearch",
+      "shortPath": "tools.webSearch",
+      "description": "Search the web",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": true,
+            "type": "any[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

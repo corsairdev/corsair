@@ -1,0 +1,2653 @@
+{
+  "id": "calendly",
+  "displayName": "Calendly",
+  "description": "Scheduling software for sharing booking links and automating meeting coordination.",
+  "npmPackageName": "@corsair-dev/calendly",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 52,
+    "webhooks": 6,
+    "db": 11
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": [
+        "api_key",
+        "webhook_signature",
+        "organization",
+        "user_uri"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "calendly.api.activityLog.list",
+      "shortPath": "activityLog.list",
+      "description": "List activity log entries for an organization",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "min_occurred_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "max_occurred_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "search_term",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collection",
+            "optional": false,
+            "type": "{ uri?: string, action: string, actor: {}, details: {}, organization: string, occurred_at: string, namespace?: string }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ count?: number, next_page?: string | null, previous_page?: string | null, next_page_token?: string | null, previous_page_token?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "calendly.api.activityLog.listOutgoingCommunications",
+      "shortPath": "activityLog.listOutgoingCommunications",
+      "description": "List outgoing communications for an organization",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collection",
+            "optional": false,
+            "type": "{ uri?: string, channel?: string, sent_at?: string, status?: string, to?: string }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ count?: number, next_page?: string | null, previous_page?: string | null, next_page_token?: string | null, previous_page_token?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "calendly.api.eventTypes.create",
+      "shortPath": "eventTypes.create",
+      "description": "Create a new event type",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "co_hosts",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_setting",
+            "optional": true,
+            "type": "{ type: string, num_days?: number }"
+          },
+          {
+            "key": "location_configurations",
+            "optional": true,
+            "type": "{ kind: string, location?: string, additional_info?: string }[]"
+          },
+          {
+            "key": "description_plain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "resource",
+            "optional": false,
+            "type": "{ uri: string, name: string, active: boolean, slug?: string, scheduling_url: string, duration: number, duration_options?: number[] | null, kind?: string, pooling_type?: string | null, type?: string, color?: string, created_at: string, updated_at: string, internal_note?: string | null, description_plain?: string | null, description_html?: string | null, profile?: { type: string, name: string, owner: string }, secret?: boolean, booking_method?: string, custom_questions?: { name: string, type: string, position: number, enabled: boolean, required: boolean, answer_choices?: string[], include_other?: boolean }[], deleted_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "calendly.api.eventTypes.createOneOff",
+      "shortPath": "eventTypes.createOneOff",
+      "description": "Create a one-off event type",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "duration",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "timezone",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "date_setting",
+            "optional": false,
+            "type": "{ type: string, start_date?: string, end_date?: string }"
+          },
+          {
+            "key": "location_configuration",
+            "optional": true,
+            "type": "{ kind: string, location?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "resource",
+            "optional": false,
+            "type": "{ uri: string, scheduling_url: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "calendly.api.eventTypes.get",
+      "shortPath": "eventTypes.get",
+      "description": "Get an event type by UUID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "resource",
+            "optional": false,
+            "type": "{ uri: string, name: string, active: boolean, slug?: string, scheduling_url: string, duration: number, duration_options?: number[] | null, kind?: string, pooling_type?: string | null, type?: string, color?: string, created_at: string, updated_at: string, internal_note?: string | null, description_plain?: string | null, description_html?: string | null, profile?: { type: string, name: string, owner: string }, secret?: boolean, booking_method?: string, custom_questions?: { name: string, type: string, position: number, enabled: boolean, required: boolean, answer_choices?: string[], include_other?: boolean }[], deleted_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "calendly.api.eventTypes.list",
+      "shortPath": "eventTypes.list",
+      "description": "List all event types",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "organization",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collection",
+            "optional": false,
+            "type": "{ uri: string, name: string, active: boolean, slug?: string, scheduling_url: string, duration: number, duration_options?: number[] | null, kind?: string, pooling_type?: string | null, type?: string, color?: string, created_at: string, updated_at: string, internal_note?: string | null, description_plain?: string | null, description_html?: string | null, profile?: { type: string, name: string, owner: string }, secret?: boolean, booking_method?: string, custom_questions?: { name: string, type: string, position: number, enabled: boolean, required: boolean, answer_choices?: string[], include_other?: boolean }[], deleted_at?: string | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ count?: number, next_page?: string | null, previous_page?: string | null, next_page_token?: string | null, previous_page_token?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "calendly.api.eventTypes.listAvailableTimes",
+      "shortPath": "eventTypes.listAvailableTimes",
+      "description": "List available times for an event type",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event_type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "start_time",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "end_time",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "diagnostics",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collection",
+            "optional": false,
+            "type": "{ status: string, invitees_remaining: number, start_time: string, scheduling_url: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "calendly.api.eventTypes.listHosts",
+      "shortPath": "eventTypes.listHosts",
+      "description": "List hosts for an event type",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event_type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collection",
+            "optional": false,
+            "type": "{ uri: string, user?: string, user_membership_uri?: string }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ count?: number, next_page?: string | null, previous_page?: string | null, next_page_token?: string | null, previous_page_token?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "calendly.api.eventTypes.update",
+      "shortPath": "eventTypes.update",
+      "description": "Update an event type",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description_plain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "resource",
+            "optional": false,
+            "type": "{ uri: string, name: string, active: boolean, slug?: string, scheduling_url: string, duration: number, duration_options?: number[] | null, kind?: string, pooling_type?: string | null, type?: string, color?: string, created_at: string, updated_at: string, internal_note?: string | null, description_plain?: string | null, description_html?: string | null, profile?: { type: string, name: string, owner: string }, secret?: boolean, booking_method?: string, custom_questions?: { name: string, type: string, position: number, enabled: boolean, required: boolean, answer_choices?: string[], include_other?: boolean }[], deleted_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "calendly.api.eventTypes.updateAvailability",
+      "shortPath": "eventTypes.updateAvailability",
+      "description": "Update availability for an event type",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "rules",
+            "optional": true,
+            "type": "{ type: string, wday?: string, date?: string, intervals: { from: string, to: string }[] }[]"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "resource",
+            "optional": false,
+            "type": "{ uri: string, user: string, timezone: string, rules?: {}[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "calendly.api.groups.get",
+      "shortPath": "groups.get",
+      "description": "Get a group by UUID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "resource",
+            "optional": false,
+            "type": "{ uri: string, name: string, slug?: string, organization: string, user_count?: number, scheduling_url?: string, created_at?: string, updated_at?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "calendly.api.groups.getRelationship",
+      "shortPath": "groups.getRelationship",
+      "description": "Get a group relationship by UUID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "resource",
+            "optional": false,
+            "type": "{ uri: string, type: string, group: string, user_or_event_type?: string, managed_event_types?: string[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "calendly.api.groups.list",
+      "shortPath": "groups.list",
+      "description": "List groups in an organization",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collection",
+            "optional": false,
+            "type": "{ uri: string, name: string, slug?: string, organization: string, user_count?: number, scheduling_url?: string, created_at?: string, updated_at?: string }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ count?: number, next_page?: string | null, previous_page?: string | null, next_page_token?: string | null, previous_page_token?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "calendly.api.groups.listRelationships",
+      "shortPath": "groups.listRelationships",
+      "description": "List relationships for a group",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collection",
+            "optional": false,
+            "type": "{ uri: string, type: string, group: string }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ count?: number, next_page?: string | null, previous_page?: string | null, next_page_token?: string | null, previous_page_token?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "calendly.api.invitees.create",
+      "shortPath": "invitees.create",
+      "description": "Create an invitee for a one-off event type",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event_type_uuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "additional_guests",
+            "optional": true,
+            "type": "{ email: string }[]"
+          },
+          {
+            "key": "questions_and_answers",
+            "optional": true,
+            "type": "{ question: string, answer: string, position: number }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "resource",
+            "optional": false,
+            "type": "{ uri: string, email: string, name: string, status?: active | canceled, questions_and_answers?: { question: string, answer: string, position: number }[], timezone?: string, event: string, created_at: string, updated_at: string, tracking?: { utm_campaign?: string | null, utm_source?: string | null, utm_medium?: string | null, utm_content?: string | null, utm_term?: string | null, salesforce_uuid?: string | null }, text_reminder_number?: string | null, rescheduled?: boolean, old_invitee?: string | null, new_invitee?: string | null, cancel_url?: string, reschedule_url?: string, routing_form_submission?: string | null, payment?: { external_id: string, provider: string, amount: number, currency: string, terms: string, successful: boolean } | null, no_show?: { uri: string } | null, scheduling_method?: string | null, invitee_scheduled_by?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "calendly.api.invitees.deleteData",
+      "shortPath": "invitees.deleteData",
+      "description": "Delete all data for specified invitee emails",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "emails",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "calendly.api.invitees.deleteNoShow",
+      "shortPath": "invitees.deleteNoShow",
+      "description": "Delete an invitee no-show record",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "calendly.api.invitees.get",
+      "shortPath": "invitees.get",
+      "description": "Get an event invitee by UUID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event_uuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "invitee_uuid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "resource",
+            "optional": false,
+            "type": "{ uri: string, email: string, name: string, status?: active | canceled, questions_and_answers?: { question: string, answer: string, position: number }[], timezone?: string, event: string, created_at: string, updated_at: string, tracking?: { utm_campaign?: string | null, utm_source?: string | null, utm_medium?: string | null, utm_content?: string | null, utm_term?: string | null, salesforce_uuid?: string | null }, text_reminder_number?: string | null, rescheduled?: boolean, old_invitee?: string | null, new_invitee?: string | null, cancel_url?: string, reschedule_url?: string, routing_form_submission?: string | null, payment?: { external_id: string, provider: string, amount: number, currency: string, terms: string, successful: boolean } | null, no_show?: { uri: string } | null, scheduling_method?: string | null, invitee_scheduled_by?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "calendly.api.invitees.getNoShow",
+      "shortPath": "invitees.getNoShow",
+      "description": "Get an invitee no-show record",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "resource",
+            "optional": false,
+            "type": "{ uri: string, invitee: string, created_at: string, updated_at: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "calendly.api.invitees.list",
+      "shortPath": "invitees.list",
+      "description": "List invitees for a scheduled event",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event_uuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "active | canceled"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collection",
+            "optional": false,
+            "type": "{ uri: string, email: string, name: string, status?: active | canceled, questions_and_answers?: { question: string, answer: string, position: number }[], timezone?: string, event: string, created_at: string, updated_at: string, tracking?: { utm_campaign?: string | null, utm_source?: string | null, utm_medium?: string | null, utm_content?: string | null, utm_term?: string | null, salesforce_uuid?: string | null }, text_reminder_number?: string | null, rescheduled?: boolean, old_invitee?: string | null, new_invitee?: string | null, cancel_url?: string, reschedule_url?: string, routing_form_submission?: string | null, payment?: { external_id: string, provider: string, amount: number, currency: string, terms: string, successful: boolean } | null, no_show?: { uri: string } | null, scheduling_method?: string | null, invitee_scheduled_by?: string | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ count?: number, next_page?: string | null, previous_page?: string | null, next_page_token?: string | null, previous_page_token?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "calendly.api.invitees.markNoShow",
+      "shortPath": "invitees.markNoShow",
+      "description": "Mark an invitee as a no-show",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "invitee",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "resource",
+            "optional": false,
+            "type": "{ uri: string, invitee: string, created_at: string, updated_at: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "calendly.api.organizations.deleteMembership",
+      "shortPath": "organizations.deleteMembership",
+      "description": "Delete an organization membership",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "calendly.api.organizations.get",
+      "shortPath": "organizations.get",
+      "description": "Get an organization by UUID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "resource",
+            "optional": false,
+            "type": "{ uri: string, stage?: string, billing_email?: string, plan?: string, created_at?: string, updated_at?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "calendly.api.organizations.getInvitation",
+      "shortPath": "organizations.getInvitation",
+      "description": "Get an organization invitation",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "org_uuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "resource",
+            "optional": false,
+            "type": "{ uri: string, organization: string, email: string, status: string, created_at: string, updated_at: string, last_sent_at?: string, user?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "calendly.api.organizations.getMembership",
+      "shortPath": "organizations.getMembership",
+      "description": "Get an organization membership",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "resource",
+            "optional": false,
+            "type": "{ uri: string, role: string, user: { uri: string, name: string, slug: string, email: string, scheduling_url: string, timezone: string, avatar_url?: string | null, created_at: string, updated_at: string, current_organization?: string }, organization: string, updated_at: string, created_at: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "calendly.api.organizations.invite",
+      "shortPath": "organizations.invite",
+      "description": "Invite a user to an organization",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "org_uuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "resource",
+            "optional": false,
+            "type": "{ uri: string, organization: string, email: string, status: string, created_at: string, updated_at: string, last_sent_at?: string, user?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "calendly.api.organizations.listInvitations",
+      "shortPath": "organizations.listInvitations",
+      "description": "List organization invitations",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "org_uuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collection",
+            "optional": false,
+            "type": "{ uri: string, organization: string, email: string, status: string, created_at: string, updated_at: string, last_sent_at?: string, user?: string | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ count?: number, next_page?: string | null, previous_page?: string | null, next_page_token?: string | null, previous_page_token?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "calendly.api.organizations.listMemberships",
+      "shortPath": "organizations.listMemberships",
+      "description": "List organization memberships",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collection",
+            "optional": false,
+            "type": "{ uri: string, role: string, user: { uri: string, name: string, slug: string, email: string, scheduling_url: string, timezone: string, avatar_url?: string | null, created_at: string, updated_at: string, current_organization?: string }, organization: string, updated_at: string, created_at: string }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ count?: number, next_page?: string | null, previous_page?: string | null, next_page_token?: string | null, previous_page_token?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "calendly.api.organizations.removeMember",
+      "shortPath": "organizations.removeMember",
+      "description": "Remove a user from the organization",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "calendly.api.organizations.revokeInvitation",
+      "shortPath": "organizations.revokeInvitation",
+      "description": "Revoke a user's organization invitation",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "org_uuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "calendly.api.routingForms.get",
+      "shortPath": "routingForms.get",
+      "description": "Get a routing form by UUID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "resource",
+            "optional": false,
+            "type": "{ uri: string, name: string, organization: string, status?: string, created_at?: string, updated_at?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "calendly.api.routingForms.getSampleWebhookData",
+      "shortPath": "routingForms.getSampleWebhookData",
+      "description": "Get sample webhook data for an event type",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "scope",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "event",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "calendly.api.routingForms.getSubmission",
+      "shortPath": "routingForms.getSubmission",
+      "description": "Get a routing form submission by UUID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "resource",
+            "optional": false,
+            "type": "{ uri: string, routing_form: string, questions_and_answers?: {}[], tracking?: {}, created_at?: string, updated_at?: string, result?: {} }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "calendly.api.routingForms.list",
+      "shortPath": "routingForms.list",
+      "description": "List routing forms in an organization",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collection",
+            "optional": false,
+            "type": "{ uri: string, name: string, organization: string, status?: string, created_at?: string, updated_at?: string }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ count?: number, next_page?: string | null, previous_page?: string | null, next_page_token?: string | null, previous_page_token?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "calendly.api.scheduledEvents.cancel",
+      "shortPath": "scheduledEvents.cancel",
+      "description": "Cancel a scheduled event",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "reason",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "resource",
+            "optional": false,
+            "type": "{ canceled_by?: string, canceler_type?: string, reason?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "calendly.api.scheduledEvents.deleteData",
+      "shortPath": "scheduledEvents.deleteData",
+      "description": "Delete all scheduled event data in a time range",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "start_time",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "end_time",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "calendly.api.scheduledEvents.get",
+      "shortPath": "scheduledEvents.get",
+      "description": "Get a scheduled event by UUID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "resource",
+            "optional": false,
+            "type": "{ uri: string, name?: string, status?: active | canceled, start_time: string, end_time: string, event_type: string, location?: { type: string, location?: string, join_url?: string, status?: string, additional_info?: string }, invitees_counter?: { total: number, active: number, limit: number }, created_at?: string, updated_at?: string, event_memberships?: { user: string, user_email?: string, user_name?: string }[], event_guests?: { email: string, created_at: string, updated_at: string }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "calendly.api.scheduledEvents.list",
+      "shortPath": "scheduledEvents.list",
+      "description": "List all scheduled events",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "organization",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "active | canceled"
+          },
+          {
+            "key": "min_start_time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "max_start_time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "invitee_email",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collection",
+            "optional": false,
+            "type": "{ uri: string, name?: string, status?: active | canceled, start_time: string, end_time: string, event_type: string, location?: { type: string, location?: string, join_url?: string, status?: string, additional_info?: string }, invitees_counter?: { total: number, active: number, limit: number }, created_at?: string, updated_at?: string, event_memberships?: { user: string, user_email?: string, user_name?: string }[], event_guests?: { email: string, created_at: string, updated_at: string }[] }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ count?: number, next_page?: string | null, previous_page?: string | null, next_page_token?: string | null, previous_page_token?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "calendly.api.schedulingLinks.create",
+      "shortPath": "schedulingLinks.create",
+      "description": "Create a scheduling link",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "max_event_count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "owner_type",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "resource",
+            "optional": false,
+            "type": "{ booking_url: string, owner: string, owner_type: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "calendly.api.schedulingLinks.createShare",
+      "shortPath": "schedulingLinks.createShare",
+      "description": "Create a share link for an event type",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event_type",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "resource",
+            "optional": false,
+            "type": "{ booking_url?: string, created_at?: string, last_booking_at?: string | null, event_type?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "calendly.api.schedulingLinks.createSingleUse",
+      "shortPath": "schedulingLinks.createSingleUse",
+      "description": "Create a single-use scheduling link",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "max_event_count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "owner_type",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "resource",
+            "optional": false,
+            "type": "{ booking_url: string, owner: string, owner_type: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "calendly.api.users.get",
+      "shortPath": "users.get",
+      "description": "Get a user by UUID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "resource",
+            "optional": false,
+            "type": "{ uri: string, name: string, slug: string, email: string, scheduling_url: string, timezone: string, avatar_url?: string | null, created_at: string, updated_at: string, current_organization?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "calendly.api.users.getAvailabilitySchedule",
+      "shortPath": "users.getAvailabilitySchedule",
+      "description": "Get a user availability schedule",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "resource",
+            "optional": false,
+            "type": "{ uri: string, default?: boolean, name: string, user: string, timezone: string, rules?: {}[], created_at?: string, updated_at?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "calendly.api.users.getCurrent",
+      "shortPath": "users.getCurrent",
+      "description": "Get the currently authenticated user (deprecated)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "resource",
+            "optional": false,
+            "type": "{ uri: string, name: string, slug: string, email: string, scheduling_url: string, timezone: string, avatar_url?: string | null, created_at: string, updated_at: string, current_organization?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "calendly.api.users.listAvailabilitySchedules",
+      "shortPath": "users.listAvailabilitySchedules",
+      "description": "List all availability schedules for a user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collection",
+            "optional": false,
+            "type": "{ uri: string, default?: boolean, name: string, user: string, timezone: string, rules?: {}[], created_at?: string, updated_at?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "calendly.api.users.listBusyTimes",
+      "shortPath": "users.listBusyTimes",
+      "description": "List busy times for a user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "start_time",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "end_time",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collection",
+            "optional": false,
+            "type": "{ type: string, start_time: string, end_time: string, buffered_start_time?: string, buffered_end_time?: string, event?: string | {} | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "calendly.api.users.listEventTypes",
+      "shortPath": "users.listEventTypes",
+      "description": "List event types for a user (deprecated)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "organization",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collection",
+            "optional": false,
+            "type": "{ uri: string, name: string, active: boolean, slug?: string, scheduling_url: string, duration: number, duration_options?: number[] | null, kind?: string, pooling_type?: string | null, type?: string, color?: string, created_at: string, updated_at: string, internal_note?: string | null, description_plain?: string | null, description_html?: string | null, profile?: { type: string, name: string, owner: string }, secret?: boolean, booking_method?: string, custom_questions?: { name: string, type: string, position: number, enabled: boolean, required: boolean, answer_choices?: string[], include_other?: boolean }[], deleted_at?: string | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ count?: number, next_page?: string | null, previous_page?: string | null, next_page_token?: string | null, previous_page_token?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "calendly.api.users.listMeetingLocations",
+      "shortPath": "users.listMeetingLocations",
+      "description": "List meeting locations for a user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collection",
+            "optional": false,
+            "type": "{ kind: string, additional_info?: string, location?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "calendly.api.webhookSubscriptions.create",
+      "shortPath": "webhookSubscriptions.create",
+      "description": "Create a webhook subscription",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "events",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "organization",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "scope",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "signature_secret",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "resource",
+            "optional": false,
+            "type": "{ uri: string, callback_url: string, created_at: string, updated_at: string, retry_started_at?: string | null, state: active | disabled, events: string[], scope: string, organization: string, user?: string | null, creator: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "calendly.api.webhookSubscriptions.delete",
+      "shortPath": "webhookSubscriptions.delete",
+      "description": "Delete a webhook subscription",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "calendly.api.webhookSubscriptions.get",
+      "shortPath": "webhookSubscriptions.get",
+      "description": "Get a webhook subscription by UUID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "resource",
+            "optional": false,
+            "type": "{ uri: string, callback_url: string, created_at: string, updated_at: string, retry_started_at?: string | null, state: active | disabled, events: string[], scope: string, organization: string, user?: string | null, creator: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "calendly.api.webhookSubscriptions.list",
+      "shortPath": "webhookSubscriptions.list",
+      "description": "List webhook subscriptions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "scope",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collection",
+            "optional": false,
+            "type": "{ uri: string, callback_url: string, created_at: string, updated_at: string, retry_started_at?: string | null, state: active | disabled, events: string[], scope: string, organization: string, user?: string | null, creator: string }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ count?: number, next_page?: string | null, previous_page?: string | null, next_page_token?: string | null, previous_page_token?: string | null }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "calendly.webhooks.eventTypes.updated",
+      "shortPath": "eventTypes.updated",
+      "description": "An event type was updated",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event",
+            "optional": false,
+            "type": "event_type.updated"
+          },
+          {
+            "key": "time",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "payload",
+            "optional": false,
+            "type": "{ uri: string, name?: string, active?: boolean, slug?: string, scheduling_url?: string, duration?: number, kind?: string, color?: string, updated_at?: string }"
+          }
+        ]
+      },
+      "responseType": "{ event: event_type.updated, time: string, payload: { uri: string, name?: string, active?: boolean, slug?: string, scheduling_url?: string, duration?: number, kind?: string, color?: string, updated_at?: string } }",
+      "usageExample": "calendly({\n    webhookHooks: {\n        eventTypes: {\n            updated: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "calendly.webhooks.invitees.canceled",
+      "shortPath": "invitees.canceled",
+      "description": "An invitee canceled a meeting",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event",
+            "optional": false,
+            "type": "invitee.canceled"
+          },
+          {
+            "key": "time",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "payload",
+            "optional": false,
+            "type": "{ uri: string, email: string, name: string, status?: active | canceled, event: string, timezone?: string, created_at: string, updated_at: string, cancel_url?: string, reschedule_url?: string, tracking?: {}, questions_and_answers?: {}[], payment?: {} | null, no_show?: { uri: string } | null, rescheduled?: boolean, old_invitee?: string | null, new_invitee?: string | null, routing_form_submission?: string | null, scheduled_event?: { uri: string, name?: string, status?: active | canceled, start_time: string, end_time: string, event_type: string, location?: { type: string, location?: string, join_url?: string }, invitees_counter?: { total: number, active: number, limit: number }, created_at?: string, updated_at?: string, event_memberships?: {}[], event_guests?: {}[] }, invitee_scheduled_by?: string | null, first_name?: string | null, last_name?: string | null, reconfirmation?: {} | null, scheduling_method?: string | null, text_reminder_number?: string | null, cancellation?: { canceled_by: string, reason?: string, canceler_type: string } | null }"
+          }
+        ]
+      },
+      "responseType": "{ event: invitee.canceled, time: string, payload: { uri: string, email: string, name: string, status?: active | canceled, event: string, timezone?: string, created_at: string, updated_at: string, cancel_url?: string, reschedule_url?: string, tracking?: {}, questions_and_answers?: {}[], payment?: {} | null, no_show?: { uri: string } | null, rescheduled?: boolean, old_invitee?: string | null, new_invitee?: string | null, routing_form_submission?: string | null, scheduled_event?: { uri: string, name?: string, status?: active | canceled, start_time: string, end_time: string, event_type: string, location?: { type: string, location?: string, join_url?: string }, invitees_counter?: { total: number, active: number, limit: number }, created_at?: string, updated_at?: string, event_memberships?: {}[], event_guests?: {}[] }, invitee_scheduled_by?: string | null, first_name?: string | null, last_name?: string | null, reconfirmation?: {} | null, scheduling_method?: string | null, text_reminder_number?: string | null, cancellation?: { canceled_by: string, reason?: string, canceler_type: string } | null } }",
+      "usageExample": "calendly({\n    webhookHooks: {\n        invitees: {\n            canceled: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "calendly.webhooks.invitees.created",
+      "shortPath": "invitees.created",
+      "description": "An invitee booked a meeting",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event",
+            "optional": false,
+            "type": "invitee.created"
+          },
+          {
+            "key": "time",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "payload",
+            "optional": false,
+            "type": "{ uri: string, email: string, name: string, status?: active | canceled, event: string, timezone?: string, created_at: string, updated_at: string, cancel_url?: string, reschedule_url?: string, tracking?: {}, questions_and_answers?: {}[], payment?: {} | null, no_show?: { uri: string } | null, rescheduled?: boolean, old_invitee?: string | null, new_invitee?: string | null, routing_form_submission?: string | null, scheduled_event?: { uri: string, name?: string, status?: active | canceled, start_time: string, end_time: string, event_type: string, location?: { type: string, location?: string, join_url?: string }, invitees_counter?: { total: number, active: number, limit: number }, created_at?: string, updated_at?: string, event_memberships?: {}[], event_guests?: {}[] }, invitee_scheduled_by?: string | null, first_name?: string | null, last_name?: string | null, reconfirmation?: {} | null, scheduling_method?: string | null, text_reminder_number?: string | null }"
+          }
+        ]
+      },
+      "responseType": "{ event: invitee.created, time: string, payload: { uri: string, email: string, name: string, status?: active | canceled, event: string, timezone?: string, created_at: string, updated_at: string, cancel_url?: string, reschedule_url?: string, tracking?: {}, questions_and_answers?: {}[], payment?: {} | null, no_show?: { uri: string } | null, rescheduled?: boolean, old_invitee?: string | null, new_invitee?: string | null, routing_form_submission?: string | null, scheduled_event?: { uri: string, name?: string, status?: active | canceled, start_time: string, end_time: string, event_type: string, location?: { type: string, location?: string, join_url?: string }, invitees_counter?: { total: number, active: number, limit: number }, created_at?: string, updated_at?: string, event_memberships?: {}[], event_guests?: {}[] }, invitee_scheduled_by?: string | null, first_name?: string | null, last_name?: string | null, reconfirmation?: {} | null, scheduling_method?: string | null, text_reminder_number?: string | null } }",
+      "usageExample": "calendly({\n    webhookHooks: {\n        invitees: {\n            created: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "calendly.webhooks.invitees.noShow",
+      "shortPath": "invitees.noShow",
+      "description": "An invitee was marked as a no-show",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event",
+            "optional": false,
+            "type": "invitee_no_show.created"
+          },
+          {
+            "key": "time",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "payload",
+            "optional": false,
+            "type": "{ uri: string, invitee: string, created_at: string, updated_at: string }"
+          }
+        ]
+      },
+      "responseType": "{ event: invitee_no_show.created, time: string, payload: { uri: string, invitee: string, created_at: string, updated_at: string } }",
+      "usageExample": "calendly({\n    webhookHooks: {\n        invitees: {\n            noShow: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "calendly.webhooks.routingForms.submission",
+      "shortPath": "routingForms.submission",
+      "description": "A routing form submission was created",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event",
+            "optional": false,
+            "type": "routing_form_submission.created"
+          },
+          {
+            "key": "time",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "payload",
+            "optional": false,
+            "type": "{ uri: string, routing_form: string, questions_and_answers?: {}[], tracking?: {}, result?: {}, created_at?: string, updated_at?: string }"
+          }
+        ]
+      },
+      "responseType": "{ event: routing_form_submission.created, time: string, payload: { uri: string, routing_form: string, questions_and_answers?: {}[], tracking?: {}, result?: {}, created_at?: string, updated_at?: string } }",
+      "usageExample": "calendly({\n    webhookHooks: {\n        routingForms: {\n            submission: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "calendly.webhooks.users.updated",
+      "shortPath": "users.updated",
+      "description": "A user was updated",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event",
+            "optional": false,
+            "type": "user.updated"
+          },
+          {
+            "key": "time",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "payload",
+            "optional": false,
+            "type": "{ uri: string, name?: string, email?: string, slug?: string, timezone?: string, scheduling_url?: string, updated_at?: string }"
+          }
+        ]
+      },
+      "responseType": "{ event: user.updated, time: string, payload: { uri: string, name?: string, email?: string, slug?: string, timezone?: string, scheduling_url?: string, updated_at?: string } }",
+      "usageExample": "calendly({\n    webhookHooks: {\n        users: {\n            updated: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": [
+    {
+      "path": "calendly.db.activityLogEntries.search",
+      "entityName": "activityLogEntries",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "uri",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "action",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "organization",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "occurred_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "namespace",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "calendly.db.eventTypes.search",
+      "entityName": "eventTypes",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "uri",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "active",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "slug",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "scheduling_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "duration",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "kind",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "color",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description_plain",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "updated_at",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "calendly.db.groups.search",
+      "entityName": "groups",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "uri",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "slug",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "organization",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "user_count",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "scheduling_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "updated_at",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "calendly.db.invitees.search",
+      "entityName": "invitees",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "uri",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "event",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "timezone",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "updated_at",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "calendly.db.orgInvitations.search",
+      "entityName": "orgInvitations",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "uri",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "organization",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "last_sent_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "user",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "updated_at",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "calendly.db.orgMemberships.search",
+      "entityName": "orgMemberships",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "uri",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "role",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "user_uri",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "user_email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "user_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "organization",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "updated_at",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "calendly.db.outgoingCommunications.search",
+      "entityName": "outgoingCommunications",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "uri",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "channel",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "sent_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "to",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "calendly.db.routingForms.search",
+      "entityName": "routingForms",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "uri",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "organization",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "updated_at",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "calendly.db.scheduledEvents.search",
+      "entityName": "scheduledEvents",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "uri",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "start_time",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "end_time",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "event_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "updated_at",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "calendly.db.users.search",
+      "entityName": "users",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "uri",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "slug",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "scheduling_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "timezone",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "avatar_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "updated_at",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "calendly.db.webhookSubscriptions.search",
+      "entityName": "webhookSubscriptions",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "uri",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "callback_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "scope",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "organization",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "user",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "updated_at",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

@@ -1,4 +1,4 @@
-export type HubEnvironmentSlug = 'development' | 'production';
+export type HubEnvironmentSlug = 'development' | 'production' | 'cloud';
 
 export type HubOAuthMode = 'byo' | 'managed';
 
@@ -6,16 +6,71 @@ export const DEFAULT_HUB_API_URL = 'https://auth.corsair.dev';
 
 export type HubConfigInput = {
 	projectApiKey: string;
-	signingSecret: string;
+	/** Required for dev/prod keys — validated by `resolveHubConfigInput`. Not used in cloud mode (`ck_cloud_`). */
+	signingSecret?: string;
 	apiUrl?: string;
+	/**
+	 * Corsair Cloud VM base URL (`ck_cloud_` keys only) — distinct from `apiUrl`,
+	 * which is the Hub API host. Falls back to `CORSAIR_CLOUD_URL` when omitted.
+	 */
+	baseUrl?: string;
+	/**
+	 * Which instance of the project this Corsair is, sent to Hub on every call.
+	 * A project key spans every instance, so Hub rejects a state-changing
+	 * callback it cannot pin to one. Omit outside a multi-instance host.
+	 */
+	instanceKey?: string;
 	oauthCallbackUrl?: string;
+	/** URL the connect/approve pages send the user back to when they're done. */
+	redirectURL?: string;
+	/**
+	 * Opt-in to executing Hub-delivered workflow code (`type: 'run'`). Off by
+	 * default because it dynamically evaluates code in-process. Sandbox before
+	 * enabling in production — see workflows/execute.ts.
+	 */
+	allowWorkflowExecution?: boolean;
+	/**
+	 * A `ck_dev_` key tunnels automatically so the Hub can reach your local
+	 * server — no config needed (the share host and per-key slug are internal).
+	 * Set `false` to opt out (or `CORSAIR_TUNNEL=0`). A {@link TunnelConfig}
+	 * object is an advanced escape hatch to override the tunnel URL zone.
+	 */
+	tunnel?: boolean | TunnelConfig;
+	/**
+	 * Set by Corsair Cloud's runtime only: signs its managed-pricing requests
+	 * to Hub. Leave unset elsewhere.
+	 */
+	runtimeProofKey?: string;
+};
+
+/**
+ * Overrides for Corsair's self-hosted frp auto-tunnel. The frpc binary ships
+ * with the SDK (override with `CORSAIR_FRP_BIN`); this only tunes the URL zone.
+ */
+export type TunnelConfig = {
+	/** DNS zone of the tunnel URL, e.g. `'corsair.run'` (the default). */
+	shareHost?: string;
 };
 
 export type HubConfig = {
 	apiUrl: string;
 	projectApiKey: string;
 	signingSecret: string;
+	/**
+	 * Which instance of the project this Corsair is. A project key spans every
+	 * instance, so Hub cannot resolve a state-changing callback from the key
+	 * alone and rejects it unpinned. Omit it outside a multi-instance host.
+	 */
+	instanceKey?: string;
 	oauthCallbackUrl?: string;
+	redirectURL?: string;
+	allowWorkflowExecution?: boolean;
+	tunnel?: boolean | TunnelConfig;
+	/**
+	 * Set by Corsair Cloud's runtime only: signs its managed-pricing requests
+	 * to Hub. Leave unset elsewhere.
+	 */
+	runtimeProofKey?: string;
 };
 
 export type HubConnectSessionInput = {
@@ -69,6 +124,12 @@ export type {
 export type { DeliveryTransport } from './contracts/environment';
 export type {
 	BrowserDeliveryMode,
+	ProbeResultPayload,
+	ProbeTunnelPayload,
+	RunResultPayload,
+	RunStepResult,
+	RunTriggerType,
+	RunTunnelPayload,
 	TunnelEnvelope,
 	TunnelType,
 } from './contracts/tunnel';

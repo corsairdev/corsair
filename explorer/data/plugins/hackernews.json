@@ -1,0 +1,798 @@
+{
+  "id": "hackernews",
+  "displayName": "Hacker News",
+  "description": "Tech news community API for stories, comments, jobs, and startup discussion content.",
+  "npmPackageName": "@corsair-dev/hackernews",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 16,
+    "webhooks": 0,
+    "db": 2
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "hackernews.api.items.get",
+      "shortPath": "items.get",
+      "description": "Get a HackerNews item by numeric ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "job | story | comment | poll | pollopt"
+          },
+          {
+            "key": "by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "score",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "descendants",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "parent",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "poll",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "kids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "parts",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "dead",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "deleted",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hackernews.api.items.getMaxId",
+      "shortPath": "items.getMaxId",
+      "description": "Get the current maximum item ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "print",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "max_item_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hackernews.api.items.getWithId",
+      "shortPath": "items.getWithId",
+      "description": "Get a HackerNews item with nested comments",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "max_depth",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_children",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "truncate_text",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "found",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "item",
+            "optional": true,
+            "type": "{ id: number, type?: string, author?: string, title?: string | null, url?: string | null, text?: string | null, points?: number | null, parent_id?: number | null, story_id?: number | null, created_at?: string, created_at_i?: number, options?: number[], children?: {}[], children_shown?: number, max_depth_reached?: boolean, children_truncated?: boolean, total_children_count?: number }"
+          },
+          {
+            "key": "error_message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hackernews.api.search.getFrontpage",
+      "shortPath": "search.getFrontpage",
+      "description": "Get current HackerNews frontpage posts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "min_points",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "posts",
+            "optional": false,
+            "type": "{ objectID?: string, title?: string, url?: string | null, author?: string, points?: number | null, story_id?: number | null, created_at?: string, num_comments?: number | null, story_text?: string | null }[]"
+          },
+          {
+            "key": "total_hits",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hackernews.api.search.getLatest",
+      "shortPath": "search.getLatest",
+      "description": "Get latest HackerNews posts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "hits",
+            "optional": false,
+            "type": "{ objectID?: string, title?: string, url?: string | null, author?: string, points?: number | null, story_id?: number | null, story_url?: string | null, story_title?: string | null, comment_text?: string | null, story_text?: string | null, created_at?: string, created_at_i?: number, num_comments?: number | null, _tags?: string[] }[]"
+          },
+          {
+            "key": "nbHits",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "nbPages",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "hitsPerPage",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hackernews.api.search.getTodays",
+      "shortPath": "search.getTodays",
+      "description": "Get today's HackerNews posts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "min_points",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "hits",
+            "optional": false,
+            "type": "{ objectID?: string, title?: string, url?: string | null, author?: string, points?: number | null, story_id?: number | null, created_at?: string, num_comments?: number | null }[]"
+          },
+          {
+            "key": "nbHits",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "nbPages",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "hitsPerPage",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hackernews.api.search.posts",
+      "shortPath": "search.posts",
+      "description": "Full-text search HackerNews posts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "hits",
+            "optional": false,
+            "type": "{ objectID?: string, title?: string, url?: string | null, author?: string, points?: number | null, story_id?: number | null, story_url?: string | null, story_title?: string | null, comment_text?: string | null, story_text?: string | null, created_at?: string, created_at_i?: number, num_comments?: number | null, _tags?: string[] }[]"
+          },
+          {
+            "key": "nbHits",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "nbPages",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "hitsPerPage",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hackernews.api.stories.getAsk",
+      "shortPath": "stories.getAsk",
+      "description": "Get Ask HN story IDs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "print",
+            "optional": true,
+            "type": "pretty"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "story_ids",
+            "optional": false,
+            "type": "number[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hackernews.api.stories.getBest",
+      "shortPath": "stories.getBest",
+      "description": "Get best HackerNews story IDs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "print",
+            "optional": true,
+            "type": "pretty"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "story_ids",
+            "optional": false,
+            "type": "number[]"
+          },
+          {
+            "key": "count",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hackernews.api.stories.getJobs",
+      "shortPath": "stories.getJobs",
+      "description": "Get HackerNews job story IDs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "print",
+            "optional": true,
+            "type": "pretty"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "job_story_ids",
+            "optional": false,
+            "type": "number[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hackernews.api.stories.getNew",
+      "shortPath": "stories.getNew",
+      "description": "Get newest HackerNews story IDs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "print",
+            "optional": true,
+            "type": "pretty"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "story_ids",
+            "optional": false,
+            "type": "number[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hackernews.api.stories.getShow",
+      "shortPath": "stories.getShow",
+      "description": "Get Show HN story IDs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "print",
+            "optional": true,
+            "type": "pretty"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "story_ids",
+            "optional": false,
+            "type": "number[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hackernews.api.stories.getTop",
+      "shortPath": "stories.getTop",
+      "description": "Get top HackerNews story IDs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "print",
+            "optional": true,
+            "type": "pretty"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "story_ids",
+            "optional": false,
+            "type": "number[]"
+          },
+          {
+            "key": "count",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hackernews.api.updates.get",
+      "shortPath": "updates.get",
+      "description": "Get recently changed HackerNews items and profiles",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "print",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "number[]"
+          },
+          {
+            "key": "profiles",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hackernews.api.users.get",
+      "shortPath": "users.get",
+      "description": "Get a HackerNews user profile via Algolia",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "karma",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "about",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hackernews.api.users.getByUsername",
+      "shortPath": "users.getByUsername",
+      "description": "Get a HackerNews user profile via Firebase",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "karma",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "created",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "about",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "submitted",
+            "optional": true,
+            "type": "number[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "hackernews.db.items.search",
+      "entityName": "items",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "by",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "text",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "score",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "time",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "descendants",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "parent",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "poll",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "dead",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "deleted",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "hackernews.db.users.search",
+      "entityName": "users",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "karma",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "about",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

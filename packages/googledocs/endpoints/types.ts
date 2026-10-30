@@ -2,9 +2,11 @@ import { z } from 'zod';
 import type {
 	BatchUpdateResponse,
 	Document,
+	DocumentTabSummary,
 	DriveFile,
 	DriveFileList,
 	SpreadsheetChartsResponse,
+	ValueRange,
 } from '../types';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -65,11 +67,24 @@ const CopyDocumentInputSchema = z.object({
 	parents: z.array(z.string()).optional(),
 });
 
+const TabSelectorFields = {
+	includeTabsContent: z.boolean().optional(),
+	tabId: z.string().optional(),
+	tabTitle: z.string().optional(),
+	tabIndex: z.number().int().nonnegative().optional(),
+};
+
 const GetDocumentInputSchema = z.object({
 	documentId: z.string(),
+	includeTabsContent: z.boolean().optional(),
 });
 
 const GetDocumentPlaintextInputSchema = z.object({
+	documentId: z.string(),
+	...TabSelectorFields,
+});
+
+const ListDocumentTabsInputSchema = z.object({
 	documentId: z.string(),
 });
 
@@ -113,6 +128,24 @@ const SearchDocumentsInputSchema = z.object({
 
 const ListSpreadsheetChartsInputSchema = z.object({
 	spreadsheetId: z.string(),
+});
+
+const ReadSpreadsheetValuesInputSchema = z.object({
+	spreadsheetId: z.string(),
+	sheetName: z.string().optional(),
+	range: z
+		.string()
+		.optional()
+		.describe(
+			'A1 notation range (e.g. "Sheet1!A1:D10"). When omitted, defaults to sheetName!A:Z or Sheet1!A:Z.',
+		),
+	valueRenderOption: z
+		.enum(['FORMATTED_VALUE', 'UNFORMATTED_VALUE', 'FORMULA'])
+		.optional(),
+	dateTimeRenderOption: z
+		.enum(['SERIAL_NUMBER', 'FORMATTED_STRING'])
+		.optional(),
+	majorDimension: z.enum(['ROWS', 'COLUMNS']).optional(),
 });
 
 const InsertTextInputSchema = z.object({
@@ -274,6 +307,7 @@ export const GoogleDocsEndpointInputSchemas = {
 	copyDocument: CopyDocumentInputSchema,
 	getDocument: GetDocumentInputSchema,
 	getDocumentPlaintext: GetDocumentPlaintextInputSchema,
+	listDocumentTabs: ListDocumentTabsInputSchema,
 	updateDocumentMarkdown: UpdateDocumentMarkdownInputSchema,
 	updateDocumentSectionMarkdown: UpdateDocumentSectionMarkdownInputSchema,
 	updateDocumentStyle: UpdateDocumentStyleInputSchema,
@@ -282,6 +316,7 @@ export const GoogleDocsEndpointInputSchemas = {
 	exportDocumentAsPdf: ExportDocumentAsPdfInputSchema,
 	searchDocuments: SearchDocumentsInputSchema,
 	listSpreadsheetCharts: ListSpreadsheetChartsInputSchema,
+	readValues: ReadSpreadsheetValuesInputSchema,
 	insertText: InsertTextInputSchema,
 	replaceAllText: ReplaceAllTextInputSchema,
 	deleteContentRange: DeleteContentRangeInputSchema,
@@ -332,6 +367,21 @@ const DocumentSchema = z.object({
 	lists: z.unknown().optional(),
 	documentStyle: z.unknown().optional(),
 	suggestionsViewMode: z.string().optional(),
+	tabs: z.unknown().optional(),
+});
+
+const DocumentTabSummarySchema = z.object({
+	tabId: z.string(),
+	title: z.string().optional(),
+	index: z.number().optional(),
+	parentTabId: z.string().optional(),
+	nestingLevel: z.number().optional(),
+});
+
+const ListDocumentTabsResultSchema = z.object({
+	documentId: z.string(),
+	title: z.string().optional(),
+	tabs: z.array(DocumentTabSummarySchema),
 });
 
 const BatchUpdateResponseSchema = z.object({
@@ -370,11 +420,23 @@ const SpreadsheetChartsResponseSchema = z.object({
 	sheets: z.array(z.unknown()).optional(),
 });
 
+const ValueRangeSchema = z.object({
+	range: z.string().optional(),
+	majorDimension: z
+		.enum(['ROWS', 'COLUMNS', 'DIMENSION_UNSPECIFIED'])
+		.optional(),
+	values: z
+		.array(z.array(z.union([z.string(), z.number(), z.boolean(), z.null()])))
+		.optional(),
+});
+
 const PlaintextResultSchema = z.object({
 	documentId: z.string(),
 	title: z.string().optional(),
 	text: z.string(),
 	wordCount: z.number(),
+	tabId: z.string().optional(),
+	tabTitle: z.string().optional(),
 });
 
 const ExportResultSchema = z.object({
@@ -390,6 +452,7 @@ export const GoogleDocsEndpointOutputSchemas = {
 	copyDocument: DriveFileSchema,
 	getDocument: DocumentSchema,
 	getDocumentPlaintext: PlaintextResultSchema,
+	listDocumentTabs: ListDocumentTabsResultSchema,
 	updateDocumentMarkdown: BatchUpdateResponseSchema,
 	updateDocumentSectionMarkdown: BatchUpdateResponseSchema,
 	updateDocumentStyle: BatchUpdateResponseSchema,
@@ -398,6 +461,7 @@ export const GoogleDocsEndpointOutputSchemas = {
 	exportDocumentAsPdf: ExportResultSchema,
 	searchDocuments: DriveFileListSchema,
 	listSpreadsheetCharts: SpreadsheetChartsResponseSchema,
+	readValues: ValueRangeSchema,
 	insertText: BatchUpdateResponseSchema,
 	replaceAllText: BatchUpdateResponseSchema,
 	deleteContentRange: BatchUpdateResponseSchema,
@@ -422,6 +486,11 @@ export const GoogleDocsEndpointOutputSchemas = {
 } as const;
 
 export type PlaintextResult = z.infer<typeof PlaintextResultSchema>;
+export type ListDocumentTabsResult = {
+	documentId: string;
+	title?: string;
+	tabs: DocumentTabSummary[];
+};
 export type ExportResult = z.infer<typeof ExportResultSchema>;
 
 export type GoogleDocsEndpointOutputs = {
@@ -431,6 +500,7 @@ export type GoogleDocsEndpointOutputs = {
 	copyDocument: DriveFile;
 	getDocument: Document;
 	getDocumentPlaintext: PlaintextResult;
+	listDocumentTabs: ListDocumentTabsResult;
 	updateDocumentMarkdown: BatchUpdateResponse;
 	updateDocumentSectionMarkdown: BatchUpdateResponse;
 	updateDocumentStyle: BatchUpdateResponse;
@@ -439,6 +509,7 @@ export type GoogleDocsEndpointOutputs = {
 	exportDocumentAsPdf: ExportResult;
 	searchDocuments: DriveFileList;
 	listSpreadsheetCharts: SpreadsheetChartsResponse;
+	readValues: ValueRange;
 	insertText: BatchUpdateResponse;
 	replaceAllText: BatchUpdateResponse;
 	deleteContentRange: BatchUpdateResponse;

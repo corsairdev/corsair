@@ -1,0 +1,131 @@
+---
+title: Overview
+description: "Design platform for creating graphics, presentations, and visual content collaboratively."
+---
+
+Use **Canva** through Corsair: one client, typed API calls, local DB sync.
+
+**What you get:**
+
+- 39 typed API operations
+- 4 synced entities (`assets`, `brandTemplates`, `designs`, `folders`) for fast `.search()` / `.list()`
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/canva
+```
+```bash yarn
+yarn add corsair @corsair-dev/canva
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/canva
+```
+```bash bun
+bun add corsair @corsair-dev/canva
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { canva } from '@corsair-dev/canva';
+
+export const corsair = createCorsair({
+	plugins: [
+		canva(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="OAuth 2.0 (Recommended)">
+
+Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your Canva OAuth app.
+
+```ts
+canva()
+```
+
+More: [OAuth 2.0](/concepts/oauth)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'canva',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`assets.get`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.canva.api.assets.get({});
+```
+
+
+**`assets.delete`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.canva.api.assets.delete({});
+```
+
+
+See the full list on the [API](/plugins/canva/api) page.
+
+## Query synced data
+
+Synced entities support `tenant.canva.db.<entity>.search()` and `.list()`: `assets`, `brandTemplates`, `designs`, `folders`.
+
+See [Database](/plugins/canva/database) for filters and operators.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/canva/api">
+    Every `canva.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/canva/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

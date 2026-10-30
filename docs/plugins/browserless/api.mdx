@@ -1,0 +1,520 @@
+---
+title: API
+description: "API reference for Browserless: every `browserless.api.*` operation with input and output types."
+---
+
+Every `browserless.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Content
+
+### get
+
+`content.get`
+
+POST /content — fully rendered HTML after JavaScript execution
+
+**Risk:** `read`
+
+```ts
+await corsair.browserless.api.content.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | No | — |
+| `html` | `string` | No | — |
+| `gotoOptions` | `object` | No | — |
+| `waitForTimeout` | `number` | No | — |
+| `waitForSelector` | `object` | No | — |
+| `bestAttempt` | `boolean` | No | — |
+| `stealth` | `boolean` | No | — |
+| `timeout` | `number` | No | — |
+| `proxy` | `string` | No | — |
+| `blockAds` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="gotoOptions full type">
+
+```ts
+{
+  waitUntil?: load | domcontentloaded | networkidle0 | networkidle2,
+  timeout?: number
+}
+```
+</Accordion>
+
+<Accordion title="waitForSelector full type">
+
+```ts
+{
+  selector: string,
+  timeout?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `html` | `string` | Yes | — |
+| `contentType` | `string` | Yes | — |
+
+
+
+---
+
+## Download
+
+### create
+
+`download.create`
+
+POST /download — return files Chrome downloaded during Puppeteer code
+
+**Risk:** `write`
+
+```ts
+await corsair.browserless.api.download.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string` | Yes | — |
+| `context` | `object` | No | — |
+| `stealth` | `boolean` | No | — |
+| `timeout` | `number` | No | — |
+| `proxy` | `string` | No | — |
+| `blockAds` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="context full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `base64` | `string` | Yes | — |
+| `contentType` | `string` | Yes | — |
+| `filename` | `string` | No | — |
+
+
+
+---
+
+## Function
+
+### run
+
+`function.run`
+
+POST /function — run custom Puppeteer code in one session
+
+**Risk:** `write`
+
+```ts
+await corsair.browserless.api.function.run({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string` | Yes | — |
+| `context` | `object` | No | — |
+| `stealth` | `boolean` | No | — |
+| `timeout` | `number` | No | — |
+| `proxy` | `string` | No | — |
+| `blockAds` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="context full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contentType` | `string` | Yes | — |
+| `data` | `any` | No | — |
+| `base64` | `string` | No | — |
+| `filename` | `string` | No | — |
+
+
+
+---
+
+## Pdf
+
+### create
+
+`pdf.create`
+
+POST /pdf — Chrome print-engine PDF of a page
+
+**Risk:** `read`
+
+```ts
+await corsair.browserless.api.pdf.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | No | — |
+| `html` | `string` | No | — |
+| `gotoOptions` | `object` | No | — |
+| `waitForTimeout` | `number` | No | — |
+| `waitForSelector` | `object` | No | — |
+| `bestAttempt` | `boolean` | No | — |
+| `stealth` | `boolean` | No | — |
+| `timeout` | `number` | No | — |
+| `proxy` | `string` | No | — |
+| `blockAds` | `boolean` | No | — |
+| `options` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="gotoOptions full type">
+
+```ts
+{
+  waitUntil?: load | domcontentloaded | networkidle0 | networkidle2,
+  timeout?: number
+}
+```
+</Accordion>
+
+<Accordion title="waitForSelector full type">
+
+```ts
+{
+  selector: string,
+  timeout?: number
+}
+```
+</Accordion>
+
+<Accordion title="options full type">
+
+```ts
+{
+  format?: Letter | Legal | Tabloid | Ledger | A0 | A1 | A2 | A3 | A4 | A5 | A6,
+  printBackground?: boolean,
+  displayHeaderFooter?: boolean,
+  tagged?: boolean,
+  pageRanges?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `base64` | `string` | Yes | — |
+| `contentType` | `string` | Yes | — |
+| `filename` | `string` | No | — |
+
+
+
+---
+
+## Scrape
+
+### create
+
+`scrape.create`
+
+POST /scrape — structured JSON via CSS selectors
+
+**Risk:** `read`
+
+```ts
+await corsair.browserless.api.scrape.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `elements` | `object[]` | Yes | — |
+| `gotoOptions` | `object` | No | — |
+| `waitForTimeout` | `number` | No | — |
+| `waitForSelector` | `object` | No | — |
+| `bestAttempt` | `boolean` | No | — |
+| `stealth` | `boolean` | No | — |
+| `timeout` | `number` | No | — |
+| `proxy` | `string` | No | — |
+| `blockAds` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="elements full type">
+
+```ts
+{
+  selector: string
+}[]
+```
+</Accordion>
+
+<Accordion title="gotoOptions full type">
+
+```ts
+{
+  waitUntil?: load | domcontentloaded | networkidle0 | networkidle2,
+  timeout?: number
+}
+```
+</Accordion>
+
+<Accordion title="waitForSelector full type">
+
+```ts
+{
+  selector: string,
+  timeout?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  selector: string,
+  results: {
+    attributes?: {
+      name: string,
+      value: string
+    }[],
+    height?: number,
+    html?: string,
+    left?: number,
+    text?: string,
+    top?: number,
+    width?: number
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Screenshot
+
+### create
+
+`screenshot.create`
+
+POST /screenshot — PNG, JPEG, or WebP of a page
+
+**Risk:** `read`
+
+```ts
+await corsair.browserless.api.screenshot.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | No | — |
+| `html` | `string` | No | — |
+| `gotoOptions` | `object` | No | — |
+| `waitForTimeout` | `number` | No | — |
+| `waitForSelector` | `object` | No | — |
+| `bestAttempt` | `boolean` | No | — |
+| `stealth` | `boolean` | No | — |
+| `timeout` | `number` | No | — |
+| `proxy` | `string` | No | — |
+| `blockAds` | `boolean` | No | — |
+| `options` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="gotoOptions full type">
+
+```ts
+{
+  waitUntil?: load | domcontentloaded | networkidle0 | networkidle2,
+  timeout?: number
+}
+```
+</Accordion>
+
+<Accordion title="waitForSelector full type">
+
+```ts
+{
+  selector: string,
+  timeout?: number
+}
+```
+</Accordion>
+
+<Accordion title="options full type">
+
+```ts
+{
+  fullPage?: boolean,
+  type?: png | jpeg | webp,
+  quality?: number,
+  clip?: {
+    x: number,
+    y: number,
+    width: number,
+    height: number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `base64` | `string` | Yes | — |
+| `contentType` | `string` | Yes | — |
+| `filename` | `string` | No | — |
+
+
+
+---
+
+## Unblock
+
+### create
+
+`unblock.create`
+
+POST /unblock — bypass bot detection and return content/cookies/screenshot
+
+**Risk:** `read`
+
+```ts
+await corsair.browserless.api.unblock.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `content` | `boolean` | No | — |
+| `cookies` | `boolean` | No | — |
+| `screenshot` | `boolean` | No | — |
+| `browserWSEndpoint` | `boolean` | No | — |
+| `ttl` | `number` | No | — |
+| `gotoOptions` | `object` | No | — |
+| `waitForTimeout` | `number` | No | — |
+| `waitForSelector` | `object` | No | — |
+| `bestAttempt` | `boolean` | No | — |
+| `stealth` | `boolean` | No | — |
+| `timeout` | `number` | No | — |
+| `proxy` | `string` | No | — |
+| `blockAds` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="gotoOptions full type">
+
+```ts
+{
+  waitUntil?: load | domcontentloaded | networkidle0 | networkidle2,
+  timeout?: number
+}
+```
+</Accordion>
+
+<Accordion title="waitForSelector full type">
+
+```ts
+{
+  selector: string,
+  timeout?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `content` | `string` | No | — |
+| `cookies` | `object[]` | No | — |
+| `screenshot` | `string` | No | — |
+| `browserWSEndpoint` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="cookies full type">
+
+```ts
+{
+  name: string,
+  value: string,
+  domain?: string,
+  path?: string,
+  secure?: boolean,
+  httpOnly?: boolean,
+  expires?: number,
+  sameSite?: Strict | Lax | None,
+  url?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

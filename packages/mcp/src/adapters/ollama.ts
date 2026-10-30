@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { shapeToJsonSchema } from '../core/json-schema.js';
 import { BaseProvider } from '../core/provider.js';
+import { callToolResultToText } from '../core/tool-result.js';
 import type { CorsairToolDef } from '../core/tools.js';
 
 export type CorsairOllamaTool = {
@@ -45,10 +46,7 @@ export class OllamaProvider extends BaseProvider<CorsairOllamaTool> {
 					) as Record<string, unknown>;
 					const validated = z.object(def.shape).parse(raw);
 					const result = await def.handler(validated);
-					return result.content
-						.filter((c) => c.type === 'text')
-						.map((c) => ('text' in c ? c.text : ''))
-						.join('\n');
+					return callToolResultToText(result);
 				} catch (err) {
 					const message = err instanceof Error ? err.message : String(err);
 					return `Error: ${message}`;

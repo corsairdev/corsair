@@ -1,16 +1,28 @@
 import type { CorsairDatabase } from '../../db/kysely/database';
 import type { HubConfig } from '../../hub';
+import {
+	createManagedPricingCredentialCache,
+	resolveManagedPricingApiKey,
+} from '../../hub/managed-pricing-auth';
 import { reportPluginConnectionStatusFromBinding } from '../../hub/report-connection-status';
-import { resolveAuthMissingEndpointResult } from '../auth/auth-missing-message';
+import { throwAuthMissingEndpointError } from '../auth/auth-missing-message';
 import { AuthMissingError } from '../auth/errors/auth-missing';
+import { ReconnectRequiredError } from '../auth/errors/reconnect-required';
 import type { EndpointManualConfig } from '../config/manual-connect';
+import { recordConnectRequestBestEffort } from '../connect-request/store';
 import type { CorsairErrorHandler } from '../errors';
 import { handleCorsairError } from '../errors/handler';
 import {
+	activeMode,
+	assertReadonlyAllowed,
 	enforcePermission,
+	evaluatePermission,
 	parseDurationMs,
 	resolveAsyncApprovalMessage,
+	stricterMode,
+	stricterPolicy,
 } from '../permissions';
+import { PermissionRequiredError } from '../permissions/errors/permission-required';
 import type {
 	CorsairKeyBuilderBase,
 	CorsairPermissionsOptions,
@@ -20,6 +32,18 @@ import type {
 	PermissionMode,
 	PermissionPolicy,
 } from '../plugins';
+import { getPluginAuthType } from '../utils/plugin-auth';
+
+const managedPricingCacheByPlugin = new Map<string, object>();
+
+function managedPricingCacheFor(pluginId: string): object {
+	let cache = managedPricingCacheByPlugin.get(pluginId);
+	if (!cache) {
+		cache = createManagedPricingCredentialCache();
+		managedPricingCacheByPlugin.set(pluginId, cache);
+	}
+	return cache;
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Endpoint Utilities
@@ -65,6 +89,8 @@ export function bindEndpointsRecursively({
 	plugin,
 	kek,
 	allPlugins,
+	multiTenancy,
+	encryptDataAtRest,
 }: {
 	endpoints: Record<string, unknown>;
 	hooks: Record<string, unknown> | undefined;
@@ -74,7 +100,7 @@ export function bindEndpointsRecursively({
 	errorHandlers: CorsairErrorHandler;
 	currentPath: string[];
 	keyBuilder?: CorsairKeyBuilderBase;
-	/** Permission mode + per-endpoint overrides from plugin options. When set, every call is gated. */
+	/** Permission mode + per-endpoint overrides from plugin options. Composed with the caller's mode, if any. */
 	permissionsConfig?: {
 		mode: PermissionMode;
 		overrides?: Record<string, PermissionPolicy>;
@@ -93,6 +119,8 @@ export function bindEndpointsRecursively({
 	plugin?: CorsairPlugin;
 	kek?: string;
 	allPlugins?: readonly CorsairPlugin[];
+	multiTenancy?: boolean;
+	encryptDataAtRest?: boolean;
 }): void {
 	for (const [key, value] of Object.entries(endpoints)) {
 		// we have to retype this now because it's nested webhooks
@@ -105,10 +133,43 @@ export function bindEndpointsRecursively({
 			const operationPath = [...currentPath, key].join('.');
 
 			const boundFn = async (args: unknown = {}) => {
+				const endpointMetaEntry = endpointMeta?.[operationPath];
+
+				// ── Readonly scope guard ──────────────────────────────────────────────────────────
+				// Enforced ahead of (and independent of) the developer's permission config: when the
+				// call runs inside a runReadonly() scope, any non-read endpoint throws immediately.
+				// Default to 'write' when no risk level is declared — conservative fallback.
+				assertReadonlyAllowed(
+					operationPath,
+					endpointMetaEntry?.riskLevel ?? 'write',
+				);
+
 				// ── Permission guard ────────────────────────────────────────────────────────────────
 				let onPermissionComplete: (() => Promise<void>) | undefined;
-				if (permissionsConfig) {
-					const meta = endpointMeta?.[operationPath];
+				// A mode only tightens, so a caller naming one cannot relax what the
+				// server configured.
+				const callerMode = activeMode();
+				const configMode = permissionsConfig?.mode;
+				const mode = stricterMode(callerMode, configMode);
+				if (mode) {
+					const meta = endpointMetaEntry;
+					const riskLevel = meta?.riskLevel ?? 'write';
+					const configured = permissionsConfig?.overrides?.[operationPath];
+					// An override is the plugin's exception to its own mode, so a
+					// caller that tightens past that mode overrules it. A caller that
+					// does not leaves it standing: judging it against `mode` instead
+					// would count the plugin's own mode twice and drop an exception
+					// nobody asked to withdraw.
+					const tightened =
+						callerMode !== undefined &&
+						callerMode !== configMode &&
+						mode === callerMode;
+					const override = tightened
+						? stricterPolicy(
+								configured,
+								evaluatePermission(riskLevel, callerMode),
+							)
+						: configured;
 					const {
 						result: permResult,
 						reason: permReason,
@@ -120,10 +181,9 @@ export function bindEndpointsRecursively({
 						pluginId,
 						endpointPath: operationPath,
 						args,
-						mode: permissionsConfig.mode,
-						override: permissionsConfig.overrides?.[operationPath],
-						// Default to 'write' when no meta declared — conservative fallback
-						riskLevel: meta?.riskLevel ?? 'write',
+						mode,
+						override,
+						riskLevel,
 						meta,
 						db: database,
 						timeoutMs: permissionsOptions
@@ -137,7 +197,10 @@ export function bindEndpointsRecursively({
 						if (permReason === 'denied') {
 							msg = `Action '${operationPath}' was denied by the user. Await further instructions before proceeding.`;
 						} else if (permReason === 'policy') {
-							msg = `Action '${operationPath}' is blocked by the permission policy. Update the corsair config to allow it.`;
+							// A scope has no config behind it to send the caller to.
+							msg = callerMode
+								? `Action '${operationPath}' is blocked by permission mode '${callerMode}'.`
+								: `Action '${operationPath}' is blocked by the permission policy. Update the corsair config to allow it.`;
 						} else if (permReason === 'timeout') {
 							msg = `Action '${operationPath}' timed out waiting for approval.`;
 						} else if (permToken && permId) {
@@ -164,7 +227,13 @@ export function bindEndpointsRecursively({
 						} else {
 							msg = `Action '${operationPath}' requires user approval before it can run.`;
 						}
-						throw new Error(msg);
+						const errReason =
+							permReason === 'denied' ||
+							permReason === 'policy' ||
+							permReason === 'timeout'
+								? permReason
+								: 'pending';
+						throw new PermissionRequiredError(msg, errReason);
 					}
 					onPermissionComplete = onComplete;
 				}
@@ -227,12 +296,7 @@ export function bindEndpointsRecursively({
 								}
 
 								await new Promise((resolve) => setTimeout(resolve, delayMs));
-								await call(newAttempt, callCtx, callArgs);
-
-								console.log(
-									`[corsair:${pluginId}:${operationPath}] Retry strategy:`,
-									retryStrategy,
-								);
+								return await call(newAttempt, callCtx, callArgs);
 							}
 						}
 						throw error;
@@ -240,9 +304,51 @@ export function bindEndpointsRecursively({
 				};
 
 				let key: string | undefined;
+				const endpointCtx = { ...ctx, meteredOperationId: operationPath };
+				const ctxTenantId =
+					typeof ctx.tenantId === 'string' ? ctx.tenantId : undefined;
+				const pluginAuthType = plugin ? getPluginAuthType(plugin) : undefined;
 				try {
-					key = keyBuilder ? await keyBuilder(ctx, 'endpoint') : undefined;
+					if (pluginAuthType === 'managed_pricing' && hubConfig) {
+						key = await resolveManagedPricingApiKey(
+							{
+								hub: hubConfig,
+								tenantId: ctxTenantId ?? tenantId,
+								meteredOperationId: operationPath,
+							},
+							{
+								plugin: pluginId,
+								cache: managedPricingCacheFor(pluginId),
+								operation: operationPath,
+							},
+						);
+					} else if (keyBuilder) {
+						key = await keyBuilder(endpointCtx, 'endpoint');
+					}
 				} catch (err) {
+					// Hub already minted a scoped connect link and put it on the typed
+					// error — report the connection unverified and rethrow it intact.
+					if (err instanceof ReconnectRequiredError) {
+						if (plugin && hubConfig) {
+							reportPluginConnectionStatusFromBinding({
+								hub: hubConfig,
+								database,
+								kek,
+								plugins: allPlugins ?? [],
+								plugin,
+								tenantId,
+								verified: false,
+							});
+						}
+						await recordConnectRequestBestEffort(database, {
+							tenantId: err.tenantId ?? tenantId,
+							plugin: err.plugin,
+							connectUrl: err.connectUrl,
+							encryptDataAtRest,
+							kek: encryptDataAtRest ? kek : undefined,
+						});
+						throw err;
+					}
 					if (err instanceof AuthMissingError) {
 						if (plugin && hubConfig) {
 							reportPluginConnectionStatusFromBinding({
@@ -255,16 +361,32 @@ export function bindEndpointsRecursively({
 								verified: false,
 							});
 						}
-						return resolveAuthMissingEndpointResult({
-							error: err,
-							manual: manualConfig,
-							hub: hubConfig,
-							plugin,
-							tenantId,
-							database,
-							kek,
-							plugins: allPlugins,
-						});
+						// throwAuthMissingEndpointError mints the scoped link and rethrows
+						// the enriched error; capture that link for the connect dialog.
+						try {
+							await throwAuthMissingEndpointError({
+								error: err,
+								manual: manualConfig,
+								hub: hubConfig,
+								plugin,
+								tenantId,
+								database,
+								kek,
+								plugins: allPlugins,
+								multiTenancy,
+							});
+						} catch (enriched) {
+							if (enriched instanceof AuthMissingError) {
+								await recordConnectRequestBestEffort(database, {
+									tenantId: enriched.tenantId ?? tenantId,
+									plugin: enriched.pluginId,
+									connectUrl: enriched.connectUrl,
+									encryptDataAtRest,
+									kek: encryptDataAtRest ? kek : undefined,
+								});
+							}
+							throw enriched;
+						}
 					}
 					throw err;
 				}
@@ -341,6 +463,8 @@ export function bindEndpointsRecursively({
 				plugin,
 				kek,
 				allPlugins,
+				multiTenancy,
+				encryptDataAtRest,
 			});
 
 			tree[key] = nestedTree;

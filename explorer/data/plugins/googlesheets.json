@@ -1,0 +1,782 @@
+{
+  "id": "googlesheets",
+  "displayName": "Google Sheets",
+  "description": "Web-based spreadsheets for managing, visualizing, and analyzing data collaboratively online.",
+  "npmPackageName": "@corsair-dev/googlesheets",
+  "authTypes": ["oauth_2"],
+  "defaultAuthType": "oauth_2",
+  "counts": {
+    "api": 12,
+    "webhooks": 1,
+    "db": 3
+  },
+  "auth": [
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature",
+        "spreadsheet_id"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "googlesheets.api.sheets.appendOrUpdateRow",
+      "shortPath": "sheets.appendOrUpdateRow",
+      "description": "Append a new row or update an existing one",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "spreadsheetId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sheetName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "keyColumn",
+            "optional": true,
+            "type": "string",
+            "description": "Column letter (e.g. \"A\"), not a header name (e.g. \"Company Name\")"
+          },
+          {
+            "key": "keyValue",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "values",
+            "optional": true,
+            "type": "(string | number | boolean | null)[]"
+          },
+          {
+            "key": "valueInputOption",
+            "optional": true,
+            "type": "RAW | USER_ENTERED"
+          },
+          {
+            "key": "insertDataOption",
+            "optional": true,
+            "type": "OVERWRITE | INSERT_ROWS"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "spreadsheetId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "totalUpdatedRows",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "totalUpdatedColumns",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "totalUpdatedCells",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "totalUpdatedSheets",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "responses",
+            "optional": true,
+            "type": "{ range?: string, majorDimension?: ROWS | COLUMNS | DIMENSION_UNSPECIFIED, values?: (string | number | boolean | null)[][] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlesheets.api.sheets.appendRow",
+      "shortPath": "sheets.appendRow",
+      "description": "Append a new row to a sheet",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "spreadsheetId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sheetName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "range",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "values",
+            "optional": true,
+            "type": "(string | number | boolean | null)[]"
+          },
+          {
+            "key": "valueInputOption",
+            "optional": true,
+            "type": "RAW | USER_ENTERED"
+          },
+          {
+            "key": "insertDataOption",
+            "optional": true,
+            "type": "OVERWRITE | INSERT_ROWS"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "spreadsheetId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "totalUpdatedRows",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "totalUpdatedColumns",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "totalUpdatedCells",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "totalUpdatedSheets",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "responses",
+            "optional": true,
+            "type": "{ range?: string, majorDimension?: ROWS | COLUMNS | DIMENSION_UNSPECIFIED, values?: (string | number | boolean | null)[][] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlesheets.api.sheets.clearSheet",
+      "shortPath": "sheets.clearSheet",
+      "description": "Clear all data from a sheet",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "spreadsheetId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sheetName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "range",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "spreadsheetId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "clearedRange",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlesheets.api.sheets.createSheet",
+      "shortPath": "sheets.createSheet",
+      "description": "Add a new sheet tab to a spreadsheet",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "spreadsheetId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "spreadsheetId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "replies",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "updatedSpreadsheet",
+            "optional": true,
+            "type": "{ spreadsheetId?: string, properties?: { title?: string, locale?: string, autoRecalc?: ON_CHANGE | ON_UPDATE | HOUR | MINUTE, timeZone?: string }, spreadsheetUrl?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlesheets.api.sheets.deleteRowsOrColumns",
+      "shortPath": "sheets.deleteRowsOrColumns",
+      "description": "Delete rows or columns from a sheet",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "spreadsheetId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sheetId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "dimension",
+            "optional": true,
+            "type": "ROWS | COLUMNS"
+          },
+          {
+            "key": "startIndex",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "endIndex",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "spreadsheetId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "replies",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "updatedSpreadsheet",
+            "optional": true,
+            "type": "{ spreadsheetId?: string, properties?: { title?: string, locale?: string, autoRecalc?: ON_CHANGE | ON_UPDATE | HOUR | MINUTE, timeZone?: string }, spreadsheetUrl?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlesheets.api.sheets.deleteSheet",
+      "shortPath": "sheets.deleteSheet",
+      "description": "Delete a sheet tab and all its data [DESTRUCTIVE · IRREVERSIBLE]",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "spreadsheetId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sheetId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "spreadsheetId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "replies",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "updatedSpreadsheet",
+            "optional": true,
+            "type": "{ spreadsheetId?: string, properties?: { title?: string, locale?: string, autoRecalc?: ON_CHANGE | ON_UPDATE | HOUR | MINUTE, timeZone?: string }, spreadsheetUrl?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlesheets.api.sheets.getRows",
+      "shortPath": "sheets.getRows",
+      "description": "Read rows from a sheet",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "spreadsheetId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sheetName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "range",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "valueRenderOption",
+            "optional": true,
+            "type": "FORMATTED_VALUE | UNFORMATTED_VALUE | FORMULA"
+          },
+          {
+            "key": "dateTimeRenderOption",
+            "optional": true,
+            "type": "SERIAL_NUMBER | FORMATTED_STRING"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "range",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "majorDimension",
+            "optional": true,
+            "type": "ROWS | COLUMNS | DIMENSION_UNSPECIFIED"
+          },
+          {
+            "key": "values",
+            "optional": true,
+            "type": "(string | number | boolean | null)[][]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlesheets.api.sheets.listSheetsInSpreadsheet",
+      "shortPath": "sheets.listSheetsInSpreadsheet",
+      "description": "List all sheet tabs in a spreadsheet",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "spreadsheetId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "spreadsheetId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sheets",
+            "optional": true,
+            "type": "{ sheetId?: number, title?: string, index?: number, sheetType?: GRID | OBJECT | DATA_SOURCE, hidden?: boolean }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlesheets.api.sheets.updateRow",
+      "shortPath": "sheets.updateRow",
+      "description": "Update an existing row in a sheet",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "spreadsheetId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sheetName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "range",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "rowIndex",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "values",
+            "optional": true,
+            "type": "(string | number | boolean | null)[]"
+          },
+          {
+            "key": "valueInputOption",
+            "optional": true,
+            "type": "RAW | USER_ENTERED"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "spreadsheetId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "totalUpdatedRows",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "totalUpdatedColumns",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "totalUpdatedCells",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "totalUpdatedSheets",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "responses",
+            "optional": true,
+            "type": "{ range?: string, majorDimension?: ROWS | COLUMNS | DIMENSION_UNSPECIFIED, values?: (string | number | boolean | null)[][] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlesheets.api.spreadsheets.create",
+      "shortPath": "spreadsheets.create",
+      "description": "Create a new spreadsheet",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{ title?: string, locale?: string, timeZone?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "spreadsheetId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{ title?: string, locale?: string, autoRecalc?: ON_CHANGE | ON_UPDATE | HOUR | MINUTE, timeZone?: string }"
+          },
+          {
+            "key": "spreadsheetUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlesheets.api.spreadsheets.delete",
+      "shortPath": "spreadsheets.delete",
+      "description": "Permanently delete a spreadsheet [DESTRUCTIVE · IRREVERSIBLE]",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "spreadsheetId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "googlesheets.api.spreadsheets.list",
+      "shortPath": "spreadsheets.list",
+      "description": "List all spreadsheets in Google Drive",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "files",
+            "optional": true,
+            "type": "{ id?: string, name?: string, createdTime?: string, modifiedTime?: string, webViewLink?: string }[]"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "googlesheets.webhooks.rangeUpdated",
+      "shortPath": "rangeUpdated",
+      "description": "A range of cells in a Google Sheet was updated",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "spreadsheetId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sheetName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "range",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "values",
+            "optional": true,
+            "type": "(string | number | boolean | null)[]"
+          },
+          {
+            "key": "eventType",
+            "optional": true,
+            "type": "rangeUpdated"
+          },
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "event",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      },
+      "responseType": "{ eventType: rangeUpdated, spreadsheetId: string, sheetName: string, range: string, values: (string | number | boolean | null)[], timestamp: string }",
+      "usageExample": "googlesheets({\n    webhookHooks: {\n        rangeUpdated: {\n            before(ctx, args) {\n                return { ctx, args };\n            },\n            after(ctx, response) {\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": [
+    {
+      "path": "googlesheets.db.rows.search",
+      "entityName": "rows",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "rowId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "spreadsheetId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "sheetName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "range",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "googlesheets.db.sheets.search",
+      "entityName": "sheets",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "sheetId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "spreadsheetId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "index",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "googlesheets.db.spreadsheets.search",
+      "entityName": "spreadsheets",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "spreadsheetId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "spreadsheetUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

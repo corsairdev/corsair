@@ -6,6 +6,7 @@ import type { AuthTypes } from '../core/constants';
 import { formatProviderDisplayName } from '../core/constants';
 import type { CorsairInternalConfig } from '../core/index';
 import type { CorsairPlugin } from '../core/plugins';
+import { ensureTenantProvisioned } from '../core/tenant-provision';
 import { getCorsairInternal } from '../core/utils/corsair-instance';
 import { getAccountFields, getPluginAuthType } from '../core/utils/plugin-auth';
 import type { CorsairDatabase } from '../db/kysely/database';
@@ -34,6 +35,9 @@ export type ConnectManifestContext = {
 	database: CorsairDatabase | undefined;
 	kek: string;
 	hub: HubConfig;
+	multiTenancy?: boolean;
+	/** Stable Corsair instance config for provisioning deduplication. */
+	internalConfig?: CorsairInternalConfig;
 };
 
 export type BuildConnectPluginManifestOptions = {
@@ -75,7 +79,20 @@ function toAuthStatusConfig(
 		plugins: context.plugins,
 		database: context.database,
 		kek: context.kek,
-		multiTenancy: false,
+		multiTenancy: context.multiTenancy ?? false,
+		encryptDataAtRest: false,
+	};
+}
+
+function toProvisionConfig(
+	context: ConnectManifestContext,
+): CorsairInternalConfig {
+	return {
+		plugins: context.plugins,
+		database: context.database,
+		kek: context.kek,
+		multiTenancy: context.multiTenancy ?? false,
+		encryptDataAtRest: false,
 	};
 }
 
@@ -141,10 +158,16 @@ export async function buildConnectPluginManifestFromContext(
 						});
 						entry.oauthUrl = oauth.url;
 					} catch (error) {
-						entry.setupError =
-							error instanceof Error
-								? error.message
-								: `Could not prepare OAuth for ${plugin.id}`;
+						// No local client_id → creds are Hub-side; leave the URL for the Hub (like managed).
+						const noLocalClientId =
+							error instanceof Error &&
+							/client_id not configured/i.test(error.message);
+						if (!noLocalClientId) {
+							entry.setupError =
+								error instanceof Error
+									? error.message
+									: `Could not prepare OAuth for ${plugin.id}`;
+						}
 					}
 				}
 			}
@@ -189,7 +212,10 @@ export async function ensureConnectAccountRowsFromContext(
 		);
 	}
 
-	await ensureCorsairProvisionedForTenant(toCorsairHandle(context), tenantId);
+	await ensureTenantProvisioned(
+		context.internalConfig ?? toProvisionConfig(context),
+		tenantId,
+	);
 }
 
 export async function ensureConnectAccountRows(

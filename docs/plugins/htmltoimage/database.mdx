@@ -1,0 +1,67 @@
+---
+title: Database
+description: "HTML to Image local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The HTML to Image plugin syncs data locally. Use `corsair.htmltoimage.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Accounts
+
+Path: `htmltoimage.db.accounts.search`
+
+```ts
+const rows = await corsair.htmltoimage.db.accounts.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `email` | `string` | equals, contains, startsWith, endsWith, in |
+| `plan` | `string` | equals, contains, startsWith, endsWith, in |
+| `plan_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `active` | `boolean` | equals |
+| `free_plan` | `boolean` | equals |
+| `credits_remaining` | `number` | equals, gt, gte, lt, lte, in |
+| `credits_reset_at` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Renders
+
+Path: `htmltoimage.db.renders.search`
+
+```ts
+const rows = await corsair.htmltoimage.db.renders.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `url` | `string` | equals, contains, startsWith, endsWith, in |
+| `credits_remaining` | `number` | equals, gt, gte, lt, lte, in |
+| `expires_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `message` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

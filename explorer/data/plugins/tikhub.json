@@ -1,0 +1,2264 @@
+{
+  "id": "tikhub",
+  "displayName": "TikHub",
+  "description": "Social media data API for public TikTok, Instagram, YouTube, X (Twitter) and Reddit profiles, posts, comments and search results.",
+  "npmPackageName": "@corsair-dev/tikhub",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 21,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "tikhub.api.account.getInfo",
+      "shortPath": "account.getInfo",
+      "description": "Get the TikHub account balance, free credit and API key status",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "router",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "api_key_data",
+            "optional": false,
+            "type": "{ api_key_name: string, api_key_scopes: string[], created_at: string, expires_at?: string | null, api_key_status: number }"
+          },
+          {
+            "key": "user_data",
+            "optional": false,
+            "type": "{ email: string, balance: number, free_credit: number, email_verified: boolean, account_disabled: boolean, is_active: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tikhub.api.instagram.getPostByUrl",
+      "shortPath": "instagram.getPostByUrl",
+      "description": "Get an Instagram post or reel with its media, likes and comments count from its URL",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "post_url",
+            "optional": false,
+            "type": "string",
+            "description": "Post or reel URL, e.g. https://www.instagram.com/p/DPwhVB-jo9k/"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message_zh",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "support",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time_stamp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "time_zone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "docs",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cache_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cache_message_zh",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cache_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "router",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "params",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | null, shortcode?: string | null, __typename?: string | null, is_video?: boolean | null, taken_at_timestamp?: number | null, display_url?: string | null, video_url?: string | null, video_view_count?: number | null, video_play_count?: number | null, accessibility_caption?: string | null, comments_disabled?: boolean | null, edge_media_preview_like?: { count?: number | null } | null, edge_media_to_parent_comment?: { count?: number | null } | null, edge_media_to_caption?: { edges?: { node: { text?: string | null } }[] | null } | null, owner?: { id?: string | null, username?: string | null, full_name?: string | null, is_verified?: boolean | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tikhub.api.instagram.getPostComments",
+      "shortPath": "instagram.getPostComments",
+      "description": "List comments on an Instagram post, recent or popular first",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code_or_url",
+            "optional": false,
+            "type": "string",
+            "description": "Post shortcode (code from instagram.getUserPosts) or post URL, e.g. \"DPwhVB-jo9k\""
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "recent | popular",
+            "description": "recent (default) or popular"
+          },
+          {
+            "key": "pagination_token",
+            "optional": true,
+            "type": "string",
+            "description": "Omit for the first page, then pagination_token from the previous response"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message_zh",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "support",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time_stamp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "time_zone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "docs",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cache_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cache_message_zh",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cache_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "router",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "params",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ data?: { count?: number | null, total?: number | null, items?: { pk?: number | string | null, id?: string | null, text?: string | null, created_at?: number | null, created_at_utc?: number | null, comment_like_count?: number | null, child_comment_count?: number | null, is_liked_by_media_owner?: boolean | null, user?: { pk?: number | string | null, id?: string | null, username?: string | null, full_name?: string | null, is_verified?: boolean | null, profile_pic_url?: string | null } | null }[] | null, additional_data?: { caption?: { text?: string | null } | null } | null } | null, pagination_token?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tikhub.api.instagram.getUserByUsername",
+      "shortPath": "instagram.getUserByUsername",
+      "description": "Get an Instagram profile (bio, follower and following counts, recent posts) by username",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string",
+            "description": "Instagram username, e.g. \"instagram\""
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message_zh",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "support",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time_stamp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "time_zone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "docs",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cache_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cache_message_zh",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cache_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "router",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "params",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ data?: { user?: { id?: string | null, pk?: number | string | null, username?: string | null, full_name?: string | null, biography?: string | null, external_url?: string | null, is_private?: boolean | null, is_verified?: boolean | null, is_business_account?: boolean | null, is_professional_account?: boolean | null, profile_pic_url?: string | null, profile_pic_url_hd?: string | null, highlight_reel_count?: number | null, bio_links?: { url?: string | null, title?: string | null }[] | null, edge_followed_by?: { count?: number | null } | null, edge_follow?: { count?: number | null } | null, edge_owner_to_timeline_media?: { count?: number | null } | null, category_name?: string | null } | null } | null, status?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tikhub.api.instagram.getUserPosts",
+      "shortPath": "instagram.getUserPosts",
+      "description": "List an Instagram user's posts by user ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "string",
+            "description": "Instagram user ID (data.data.user.id from instagram.getUserByUsername)"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number",
+            "description": "Posts per page (default 12, max 50)"
+          },
+          {
+            "key": "max_id",
+            "optional": true,
+            "type": "string",
+            "description": "Omit for the first page, then next_max_id from the previous response"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message_zh",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "support",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time_stamp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "time_zone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "docs",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cache_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cache_message_zh",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cache_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "router",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "params",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ items?: { id?: string | null, pk?: number | string | null, code?: string | null, media_type?: number | null, product_type?: string | null, taken_at?: number | null, like_count?: number | null, comment_count?: number | null, play_count?: number | null, view_count?: number | null, caption?: { text?: string | null } | null, user?: { pk?: number | string | null, id?: string | null, username?: string | null, full_name?: string | null, is_verified?: boolean | null, profile_pic_url?: string | null } | null }[] | null, more_available?: boolean | null, next_max_id?: string | null, num_results?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tikhub.api.instagram.getUserReels",
+      "shortPath": "instagram.getUserReels",
+      "description": "List an Instagram user's reels by user ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "string",
+            "description": "Instagram user ID (data.data.user.id from instagram.getUserByUsername)"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number",
+            "description": "Reels per page (default 12, max 50)"
+          },
+          {
+            "key": "max_id",
+            "optional": true,
+            "type": "string",
+            "description": "Omit for the first page, then paging_info.max_id from the previous response"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message_zh",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "support",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time_stamp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "time_zone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "docs",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cache_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cache_message_zh",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cache_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "router",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "params",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ items?: { media?: { id?: string | null, pk?: number | string | null, code?: string | null, media_type?: number | null, product_type?: string | null, taken_at?: number | null, like_count?: number | null, comment_count?: number | null, play_count?: number | null, view_count?: number | null, caption?: { text?: string | null } | null, user?: { pk?: number | string | null, id?: string | null, username?: string | null, full_name?: string | null, is_verified?: boolean | null, profile_pic_url?: string | null } | null } | null }[] | null, paging_info?: { max_id?: string | null, more_available?: boolean | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tikhub.api.reddit.search",
+      "shortPath": "reddit.search",
+      "description": "Search Reddit posts, communities, comments, media or users, with sort and time filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string",
+            "description": "Keywords; supports AND, OR, NOT, grouping and quoted phrases"
+          },
+          {
+            "key": "search_type",
+            "optional": true,
+            "type": "post | community | comment | media | people",
+            "description": "post (default), community, comment, media, or people"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "RELEVANCE | HOT | TOP | NEW | COMMENTS",
+            "description": "For post, comment and media searches; COMMENTS is post-only"
+          },
+          {
+            "key": "time_range",
+            "optional": true,
+            "type": "all | year | month | week | day | hour",
+            "description": "For post and media searches"
+          },
+          {
+            "key": "safe_search",
+            "optional": true,
+            "type": "unset | strict"
+          },
+          {
+            "key": "allow_nsfw",
+            "optional": true,
+            "type": "0 | 1"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string",
+            "description": "pageInfo.endCursor from the previous response"
+          },
+          {
+            "key": "need_format",
+            "optional": true,
+            "type": "boolean",
+            "description": "Defaults to true here: compact children + pageInfo. Pass false for the raw nested payload"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "IETF language tag (default en-US)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message_zh",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "support",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time_stamp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "time_zone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "docs",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cache_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cache_message_zh",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cache_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "router",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "params",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ children?: {}[] | null, pageInfo?: { endCursor?: string | null, startCursor?: string | null, hasNextPage?: boolean | null, hasPreviousPage?: boolean | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tikhub.api.tiktok.getHashtag",
+      "shortPath": "tiktok.getHashtag",
+      "description": "Get a TikTok hashtag by name, including its ID and video and view counts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tag_name",
+            "optional": false,
+            "type": "string",
+            "description": "Hashtag name without #, e.g. \"tiktok\""
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message_zh",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "support",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time_stamp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "time_zone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "docs",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cache_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cache_message_zh",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cache_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "router",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "params",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ statusCode?: number | null, challengeInfo?: { challenge?: { id?: string | null, title?: string | null, desc?: string | null, coverLarger?: string | null } | null, stats?: { videoCount?: number | null, viewCount?: number | null } | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tikhub.api.tiktok.getHashtagVideos",
+      "shortPath": "tiktok.getHashtagVideos",
+      "description": "List videos under a TikTok hashtag ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ch_id",
+            "optional": false,
+            "type": "string",
+            "description": "Hashtag ID (challengeInfo.challenge.id from tiktok.getHashtag)"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "number",
+            "description": "0 for the first page, then cursor from the previous response"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number",
+            "description": "Videos per page (default 10)"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 3166-1 alpha-2 region code, e.g. US, GB, JP"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message_zh",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "support",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time_stamp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "time_zone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "docs",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cache_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cache_message_zh",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cache_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "router",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "params",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ status_code?: number | null, status_msg?: string | null, aweme_list?: { aweme_id: string, desc?: string | null, create_time?: number | null, region?: string | null, share_url?: string | null, author?: { uid?: string | null, sec_uid?: string | null, unique_id?: string | null, nickname?: string | null, signature?: string | null, region?: string | null, follower_count?: number | null, following_count?: number | null, total_favorited?: number | string | null, aweme_count?: number | null, avatar_thumb?: { uri?: string | null, url_list?: string[] | null } | null } | null, statistics?: { play_count?: number | null, digg_count?: number | null, comment_count?: number | null, share_count?: number | null, collect_count?: number | null, download_count?: number | null } | null, video?: { duration?: number | null, width?: number | null, height?: number | null, cover?: { uri?: string | null, url_list?: string[] | null } | null, play_addr?: { uri?: string | null, url_list?: string[] | null } | null, download_addr?: { uri?: string | null, url_list?: string[] | null } | null } | null, music?: { id_str?: string | null, title?: string | null, author?: string | null, play_url?: { uri?: string | null, url_list?: string[] | null } | null } | null, text_extra?: { type?: number | null, hashtag_id?: string | null, hashtag_name?: string | null }[] | null }[] | null, has_more?: boolean | number | null, max_cursor?: number | string | null, min_cursor?: number | string | null, cursor?: number | string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tikhub.api.tiktok.getUserProfile",
+      "shortPath": "tiktok.getUserProfile",
+      "description": "Get a TikTok profile and follower, like and video counts by username or secUid",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uniqueId",
+            "optional": true,
+            "type": "string",
+            "description": "Username from the profile URL (preferred), e.g. \"tiktok\""
+          },
+          {
+            "key": "secUid",
+            "optional": true,
+            "type": "string",
+            "description": "The user secUid"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message_zh",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "support",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time_stamp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "time_zone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "docs",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cache_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cache_message_zh",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cache_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "router",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "params",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ statusCode?: number | null, userInfo?: { user?: { id?: string | null, uniqueId?: string | null, secUid?: string | null, nickname?: string | null, signature?: string | null, verified?: boolean | null, privateAccount?: boolean | null, createTime?: number | null, avatarLarger?: string | null, avatarThumb?: string | null, language?: string | null, bioLink?: { link?: string | null } | null } | null, stats?: { followerCount?: number | null, followingCount?: number | null, heart?: number | null, heartCount?: number | null, videoCount?: number | null, diggCount?: number | null, friendCount?: number | null } | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tikhub.api.tiktok.getUserVideos",
+      "shortPath": "tiktok.getUserVideos",
+      "description": "List a TikTok user's posted videos, newest or most popular first",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sec_user_id",
+            "optional": true,
+            "type": "string",
+            "description": "User sec_user_id (faster than unique_id)"
+          },
+          {
+            "key": "unique_id",
+            "optional": true,
+            "type": "string",
+            "description": "Username, used when sec_user_id is empty"
+          },
+          {
+            "key": "max_cursor",
+            "optional": true,
+            "type": "number",
+            "description": "0 for the first page, then max_cursor from the previous response"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number",
+            "description": "Videos per page (default 20)"
+          },
+          {
+            "key": "sort_type",
+            "optional": true,
+            "type": "0 | 1",
+            "description": "0 = latest (default), 1 = popular"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 3166-1 alpha-2 region code, e.g. US, GB, JP"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message_zh",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "support",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time_stamp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "time_zone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "docs",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cache_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cache_message_zh",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cache_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "router",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "params",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ status_code?: number | null, status_msg?: string | null, aweme_list?: { aweme_id: string, desc?: string | null, create_time?: number | null, region?: string | null, share_url?: string | null, author?: { uid?: string | null, sec_uid?: string | null, unique_id?: string | null, nickname?: string | null, signature?: string | null, region?: string | null, follower_count?: number | null, following_count?: number | null, total_favorited?: number | string | null, aweme_count?: number | null, avatar_thumb?: { uri?: string | null, url_list?: string[] | null } | null } | null, statistics?: { play_count?: number | null, digg_count?: number | null, comment_count?: number | null, share_count?: number | null, collect_count?: number | null, download_count?: number | null } | null, video?: { duration?: number | null, width?: number | null, height?: number | null, cover?: { uri?: string | null, url_list?: string[] | null } | null, play_addr?: { uri?: string | null, url_list?: string[] | null } | null, download_addr?: { uri?: string | null, url_list?: string[] | null } | null } | null, music?: { id_str?: string | null, title?: string | null, author?: string | null, play_url?: { uri?: string | null, url_list?: string[] | null } | null } | null, text_extra?: { type?: number | null, hashtag_id?: string | null, hashtag_name?: string | null }[] | null }[] | null, has_more?: boolean | number | null, max_cursor?: number | string | null, min_cursor?: number | string | null, cursor?: number | string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tikhub.api.tiktok.getVideo",
+      "shortPath": "tiktok.getVideo",
+      "description": "Get one TikTok video with its author, stats, music and media URLs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "aweme_id",
+            "optional": false,
+            "type": "string",
+            "description": "Video ID, e.g. 7350810998023949599"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message_zh",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "support",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time_stamp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "time_zone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "docs",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cache_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cache_message_zh",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cache_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "router",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "params",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ status_code?: number | null, status_msg?: string | null, aweme_detail?: { aweme_id: string, desc?: string | null, create_time?: number | null, region?: string | null, share_url?: string | null, author?: { uid?: string | null, sec_uid?: string | null, unique_id?: string | null, nickname?: string | null, signature?: string | null, region?: string | null, follower_count?: number | null, following_count?: number | null, total_favorited?: number | string | null, aweme_count?: number | null, avatar_thumb?: { uri?: string | null, url_list?: string[] | null } | null } | null, statistics?: { play_count?: number | null, digg_count?: number | null, comment_count?: number | null, share_count?: number | null, collect_count?: number | null, download_count?: number | null } | null, video?: { duration?: number | null, width?: number | null, height?: number | null, cover?: { uri?: string | null, url_list?: string[] | null } | null, play_addr?: { uri?: string | null, url_list?: string[] | null } | null, download_addr?: { uri?: string | null, url_list?: string[] | null } | null } | null, music?: { id_str?: string | null, title?: string | null, author?: string | null, play_url?: { uri?: string | null, url_list?: string[] | null } | null } | null, text_extra?: { type?: number | null, hashtag_id?: string | null, hashtag_name?: string | null }[] | null } | null, aweme_details?: { aweme_id: string, desc?: string | null, create_time?: number | null, region?: string | null, share_url?: string | null, author?: { uid?: string | null, sec_uid?: string | null, unique_id?: string | null, nickname?: string | null, signature?: string | null, region?: string | null, follower_count?: number | null, following_count?: number | null, total_favorited?: number | string | null, aweme_count?: number | null, avatar_thumb?: { uri?: string | null, url_list?: string[] | null } | null } | null, statistics?: { play_count?: number | null, digg_count?: number | null, comment_count?: number | null, share_count?: number | null, collect_count?: number | null, download_count?: number | null } | null, video?: { duration?: number | null, width?: number | null, height?: number | null, cover?: { uri?: string | null, url_list?: string[] | null } | null, play_addr?: { uri?: string | null, url_list?: string[] | null } | null, download_addr?: { uri?: string | null, url_list?: string[] | null } | null } | null, music?: { id_str?: string | null, title?: string | null, author?: string | null, play_url?: { uri?: string | null, url_list?: string[] | null } | null } | null, text_extra?: { type?: number | null, hashtag_id?: string | null, hashtag_name?: string | null }[] | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tikhub.api.tiktok.getVideoComments",
+      "shortPath": "tiktok.getVideoComments",
+      "description": "List comments on a TikTok video",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "aweme_id",
+            "optional": false,
+            "type": "string",
+            "description": "Video ID"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "number",
+            "description": "0 for the first page, then cursor from the previous response"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number",
+            "description": "Comments per page (default 20)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message_zh",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "support",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time_stamp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "time_zone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "docs",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cache_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cache_message_zh",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cache_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "router",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "params",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ status_code?: number | null, status_msg?: string | null, comments?: { cid?: string | null, aweme_id?: string | null, text?: string | null, create_time?: number | null, digg_count?: number | null, reply_comment_total?: number | null, user?: { uid?: string | null, sec_uid?: string | null, unique_id?: string | null, nickname?: string | null, signature?: string | null, region?: string | null, follower_count?: number | null, following_count?: number | null, total_favorited?: number | string | null, aweme_count?: number | null, avatar_thumb?: { uri?: string | null, url_list?: string[] | null } | null } | null }[] | null, cursor?: number | string | null, has_more?: boolean | number | null, total?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tikhub.api.tiktok.searchVideos",
+      "shortPath": "tiktok.searchVideos",
+      "description": "Search TikTok videos by keyword, with sort, publish-date and region filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "keyword",
+            "optional": false,
+            "type": "string",
+            "description": "Search keyword"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Result offset for paging (default 0)"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page (default 20)"
+          },
+          {
+            "key": "sort_type",
+            "optional": true,
+            "type": "0 | 1",
+            "description": "0 = relevance (default), 1 = most liked"
+          },
+          {
+            "key": "publish_time",
+            "optional": true,
+            "type": "0 | 1 | 7 | 30 | 90 | 180",
+            "description": "Published within N days: 0 (any, default), 1, 7, 30, 90, 180"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 3166-1 alpha-2 region code, e.g. US, GB, JP"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message_zh",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "support",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time_stamp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "time_zone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "docs",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cache_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cache_message_zh",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cache_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "router",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "params",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ status_code?: number | null, status_msg?: string | null, search_item_list?: { aweme_info?: { aweme_id: string, desc?: string | null, create_time?: number | null, region?: string | null, share_url?: string | null, author?: { uid?: string | null, sec_uid?: string | null, unique_id?: string | null, nickname?: string | null, signature?: string | null, region?: string | null, follower_count?: number | null, following_count?: number | null, total_favorited?: number | string | null, aweme_count?: number | null, avatar_thumb?: { uri?: string | null, url_list?: string[] | null } | null } | null, statistics?: { play_count?: number | null, digg_count?: number | null, comment_count?: number | null, share_count?: number | null, collect_count?: number | null, download_count?: number | null } | null, video?: { duration?: number | null, width?: number | null, height?: number | null, cover?: { uri?: string | null, url_list?: string[] | null } | null, play_addr?: { uri?: string | null, url_list?: string[] | null } | null, download_addr?: { uri?: string | null, url_list?: string[] | null } | null } | null, music?: { id_str?: string | null, title?: string | null, author?: string | null, play_url?: { uri?: string | null, url_list?: string[] | null } | null } | null, text_extra?: { type?: number | null, hashtag_id?: string | null, hashtag_name?: string | null }[] | null } | null }[] | null, aweme_list?: { aweme_id: string, desc?: string | null, create_time?: number | null, region?: string | null, share_url?: string | null, author?: { uid?: string | null, sec_uid?: string | null, unique_id?: string | null, nickname?: string | null, signature?: string | null, region?: string | null, follower_count?: number | null, following_count?: number | null, total_favorited?: number | string | null, aweme_count?: number | null, avatar_thumb?: { uri?: string | null, url_list?: string[] | null } | null } | null, statistics?: { play_count?: number | null, digg_count?: number | null, comment_count?: number | null, share_count?: number | null, collect_count?: number | null, download_count?: number | null } | null, video?: { duration?: number | null, width?: number | null, height?: number | null, cover?: { uri?: string | null, url_list?: string[] | null } | null, play_addr?: { uri?: string | null, url_list?: string[] | null } | null, download_addr?: { uri?: string | null, url_list?: string[] | null } | null } | null, music?: { id_str?: string | null, title?: string | null, author?: string | null, play_url?: { uri?: string | null, url_list?: string[] | null } | null } | null, text_extra?: { type?: number | null, hashtag_id?: string | null, hashtag_name?: string | null }[] | null }[] | null, cursor?: number | string | null, has_more?: boolean | number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tikhub.api.twitter.getTweet",
+      "shortPath": "twitter.getTweet",
+      "description": "Get one X (Twitter) post by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tweet_id",
+            "optional": false,
+            "type": "string",
+            "description": "Tweet ID from the status URL"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message_zh",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "support",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time_stamp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "time_zone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "docs",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cache_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cache_message_zh",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cache_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "router",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "params",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tikhub.api.twitter.getUserProfile",
+      "shortPath": "twitter.getUserProfile",
+      "description": "Get an X (Twitter) profile by handle or numeric user ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "screen_name",
+            "optional": true,
+            "type": "string",
+            "description": "Handle without @, e.g. \"elonmusk\""
+          },
+          {
+            "key": "rest_id",
+            "optional": true,
+            "type": "string",
+            "description": "Numeric user ID; wins over screen_name when both are set"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message_zh",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "support",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time_stamp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "time_zone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "docs",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cache_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cache_message_zh",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cache_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "router",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "params",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tikhub.api.twitter.getUserTweets",
+      "shortPath": "twitter.getUserTweets",
+      "description": "List an X (Twitter) user's posts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "screen_name",
+            "optional": true,
+            "type": "string",
+            "description": "Handle without @, e.g. \"elonmusk\""
+          },
+          {
+            "key": "rest_id",
+            "optional": true,
+            "type": "string",
+            "description": "Numeric user ID; wins over screen_name when both are set"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor from the previous response"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message_zh",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "support",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time_stamp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "time_zone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "docs",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cache_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cache_message_zh",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cache_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "router",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "params",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tikhub.api.twitter.searchTweets",
+      "shortPath": "twitter.searchTweets",
+      "description": "Search X (Twitter) posts, people or lists (Top, Latest, Media, People, Lists)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "keyword",
+            "optional": false,
+            "type": "string",
+            "description": "Search query"
+          },
+          {
+            "key": "search_type",
+            "optional": true,
+            "type": "Top | Latest | Media | People | Lists",
+            "description": "Top (default), Latest, Media, People, or Lists"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor from the previous response"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message_zh",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "support",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time_stamp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "time_zone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "docs",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cache_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cache_message_zh",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cache_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "router",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "params",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tikhub.api.youtube.getChannelVideos",
+      "shortPath": "youtube.getChannelVideos",
+      "description": "List a YouTube channel's videos, with channel details on the first page",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel_id",
+            "optional": false,
+            "type": "string",
+            "description": "Channel ID, usually starting with UC, e.g. UCJHBJ7F-nAIlMGolm0Hu4vg"
+          },
+          {
+            "key": "continuation_token",
+            "optional": true,
+            "type": "string",
+            "description": "continuation_token from the previous response"
+          },
+          {
+            "key": "language_code",
+            "optional": true,
+            "type": "string",
+            "description": "Language, e.g. en-US (default zh-CN)"
+          },
+          {
+            "key": "country_code",
+            "optional": true,
+            "type": "string",
+            "description": "Country, e.g. US (default US)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message_zh",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "support",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time_stamp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "time_zone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "docs",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cache_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cache_message_zh",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cache_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "router",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "params",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ channel?: { id?: string | null, name?: string | null, description?: string | null, handle_url?: string | null, avatar?: string | null, url?: string | null, rss_url?: string | null, keywords?: string | null, is_family_safe?: boolean | null, is_verified?: boolean | null } | null, videos?: { video_id?: string | null, title?: string | null, thumbnail?: string | null, duration?: string | null, view_count?: string | null, published_time?: string | null, is_live?: boolean | null, url?: string | null }[] | null, continuation_token?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tikhub.api.youtube.getVideo",
+      "shortPath": "youtube.getVideo",
+      "description": "Get a YouTube video with its channel, duration, view, like and comment counts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "video_id",
+            "optional": true,
+            "type": "string",
+            "description": "Video ID, e.g. dQw4w9WgXcQ"
+          },
+          {
+            "key": "video_url",
+            "optional": true,
+            "type": "string",
+            "description": "Full video URL; ignored when video_id is set"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message_zh",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "support",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time_stamp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "time_zone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "docs",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cache_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cache_message_zh",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cache_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "router",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "params",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ video_id?: string | null, video_url?: string | null, embed_url?: string | null, title?: string | null, description?: string | null, author?: string | null, channel_id?: string | null, channel_handle?: string | null, channel_url?: string | null, subscriber_count_text?: string | null, is_verified?: boolean | null, publish_date?: string | null, upload_date?: string | null, length_seconds?: number | string | null, view_count?: number | string | null, like_count?: number | string | null, comment_count?: number | string | null, keywords?: string[] | string | null, category?: string | null, is_live_content?: boolean | null, is_private?: boolean | null, is_unlisted?: boolean | null, is_family_safe?: boolean | null, playability_status?: string | null, thumbnail_url?: string | null, thumbnails?: { url?: string | null, width?: number | null, height?: number | null }[] | null, captions?: { language_code?: string | null, kind?: string | null }[] | null, chapters?: { title?: string | null, time_description?: string | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tikhub.api.youtube.search",
+      "shortPath": "youtube.search",
+      "description": "Search YouTube videos, Shorts, channels and playlists with date, type, duration and sort filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "keyword",
+            "optional": true,
+            "type": "string",
+            "description": "Search keyword (required for the first page)"
+          },
+          {
+            "key": "continuation_token",
+            "optional": true,
+            "type": "string",
+            "description": "continuation_token from the previous response"
+          },
+          {
+            "key": "upload_date",
+            "optional": true,
+            "type": "last_hour | today | this_week | this_month | this_year"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "video | channel | playlist | movie"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "short | medium | long",
+            "description": "short (<4 min), medium (4-20 min), long (>20 min)"
+          },
+          {
+            "key": "features",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated: live, 4k, hd, subtitles, creative_commons, 360, vr180, 3d, hdr"
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "relevance | upload_date | view_count | rating"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message_zh",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "support",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time_stamp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "time_zone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "docs",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cache_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cache_message_zh",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cache_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "router",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "params",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ videos?: { video_id?: string | null, title?: string | null, author?: string | null, channel_id?: string | null, duration?: string | null, view_count?: number | string | null, published_time?: string | null }[] | null, shorts?: { video_id?: string | null, title?: string | null, author?: string | null, channel_id?: string | null, duration?: string | null, view_count?: number | string | null, published_time?: string | null }[] | null, channels?: {}[] | null, playlists?: {}[] | null, continuation_token?: string | null }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

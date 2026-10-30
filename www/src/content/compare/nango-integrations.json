@@ -1,0 +1,6684 @@
+{
+  "generatedAt": "2026-09-03",
+  "stats": {
+    "total": 971,
+    "withOperations": 218,
+    "withoutOperations": 753,
+    "percentWithoutOperations": 78,
+    "overlap": {
+      "count": 72,
+      "corsairTotalOperations": 3606,
+      "nangoTotalOperations": 2729,
+      "corsairWins": 34,
+      "nangoWins": 36,
+      "ties": 2
+    }
+  },
+  "overlaps": [
+    {
+      "corsairId": "activecampaign",
+      "corsairName": "ActiveCampaign",
+      "nangoId": "active-campaign",
+      "nangoName": "active-campaign",
+      "corsairOperations": 304,
+      "nangoOperations": 67,
+      "corsairAdvantage": 237
+    },
+    {
+      "corsairId": "salesforce",
+      "corsairName": "Salesforce",
+      "nangoId": "salesforce",
+      "nangoName": "Salesforce",
+      "corsairOperations": 225,
+      "nangoOperations": 36,
+      "corsairAdvantage": 189
+    },
+    {
+      "corsairId": "canvas",
+      "corsairName": "Canvas",
+      "nangoId": "canva",
+      "nangoName": "canva",
+      "corsairOperations": 209,
+      "nangoOperations": 40,
+      "corsairAdvantage": 169
+    },
+    {
+      "corsairId": "databricks",
+      "corsairName": "Databricks",
+      "nangoId": "databricks-workspace",
+      "nangoName": "databricks-workspace",
+      "corsairOperations": 130,
+      "nangoOperations": 1,
+      "corsairAdvantage": 129
+    },
+    {
+      "corsairId": "algolia",
+      "corsairName": "Algolia",
+      "nangoId": "algolia",
+      "nangoName": "algolia",
+      "corsairOperations": 133,
+      "nangoOperations": 37,
+      "corsairAdvantage": 96
+    },
+    {
+      "corsairId": "openai",
+      "corsairName": "Openai",
+      "nangoId": "openai",
+      "nangoName": "openai",
+      "corsairOperations": 129,
+      "nangoOperations": 34,
+      "corsairAdvantage": 95
+    },
+    {
+      "corsairId": "supabase",
+      "corsairName": "Supabase",
+      "nangoId": "supabase",
+      "nangoName": "Supabase",
+      "corsairOperations": 121,
+      "nangoOperations": 31,
+      "corsairAdvantage": 90
+    },
+    {
+      "corsairId": "workday",
+      "corsairName": "Workday",
+      "nangoId": "workday",
+      "nangoName": "workday",
+      "corsairOperations": 85,
+      "nangoOperations": 17,
+      "corsairAdvantage": 68
+    },
+    {
+      "corsairId": "bitbucket",
+      "corsairName": "Bitbucket Cloud OAuth 2.0",
+      "nangoId": "bitbucket",
+      "nangoName": "bitbucket",
+      "corsairOperations": 104,
+      "nangoOperations": 42,
+      "corsairAdvantage": 62
+    },
+    {
+      "corsairId": "sapsuccessfactors",
+      "corsairName": "SAP SuccessFactors",
+      "nangoId": "sap-success-factors",
+      "nangoName": "sap-success-factors",
+      "corsairOperations": 64,
+      "nangoOperations": 4,
+      "corsairAdvantage": 60
+    },
+    {
+      "corsairId": "attio",
+      "corsairName": "Attio",
+      "nangoId": "attio",
+      "nangoName": "Attio",
+      "corsairOperations": 110,
+      "nangoOperations": 51,
+      "corsairAdvantage": 59
+    },
+    {
+      "corsairId": "googlebigquery",
+      "corsairName": "Google BigQuery",
+      "nangoId": "google",
+      "nangoName": "Google",
+      "corsairOperations": 62,
+      "nangoOperations": 3,
+      "corsairAdvantage": 59
+    },
+    {
+      "corsairId": "harvest",
+      "corsairName": "Harvest",
+      "nangoId": "harvest",
+      "nangoName": "harvest",
+      "corsairOperations": 57,
+      "nangoOperations": 3,
+      "corsairAdvantage": 54
+    },
+    {
+      "corsairId": "basecamp",
+      "corsairName": "Basecamp OAuth",
+      "nangoId": "basecamp",
+      "nangoName": "basecamp",
+      "corsairOperations": 161,
+      "nangoOperations": 113,
+      "corsairAdvantage": 48
+    },
+    {
+      "corsairId": "sendgrid",
+      "corsairName": "SendGrid v3",
+      "nangoId": "sendgrid",
+      "nangoName": "sendgrid",
+      "corsairOperations": 100,
+      "nangoOperations": 61,
+      "corsairAdvantage": 39
+    },
+    {
+      "corsairId": "onedrive",
+      "corsairName": "Onedrive",
+      "nangoId": "one-drive",
+      "nangoName": "OneDrive for Business",
+      "corsairOperations": 61,
+      "nangoOperations": 26,
+      "corsairAdvantage": 35
+    },
+    {
+      "corsairId": "asana",
+      "corsairName": "Asana",
+      "nangoId": "asana",
+      "nangoName": "Asana",
+      "corsairOperations": 84,
+      "nangoOperations": 50,
+      "corsairAdvantage": 34
+    },
+    {
+      "corsairId": "calendly",
+      "corsairName": "Calendly",
+      "nangoId": "calendly",
+      "nangoName": "Calendly",
+      "corsairOperations": 52,
+      "nangoOperations": 24,
+      "corsairAdvantage": 28
+    },
+    {
+      "corsairId": "googlecloudvision",
+      "corsairName": "Google Cloud Vision",
+      "nangoId": "google",
+      "nangoName": "Google",
+      "corsairOperations": 29,
+      "nangoOperations": 3,
+      "corsairAdvantage": 26
+    },
+    {
+      "corsairId": "youtube",
+      "corsairName": "Youtube",
+      "nangoId": "youtube",
+      "nangoName": "YouTube",
+      "corsairOperations": 51,
+      "nangoOperations": 27,
+      "corsairAdvantage": 24
+    },
+    {
+      "corsairId": "facebook",
+      "corsairName": "Facebook",
+      "nangoId": "facebook",
+      "nangoName": "Facebook",
+      "corsairOperations": 44,
+      "nangoOperations": 23,
+      "corsairAdvantage": 21
+    },
+    {
+      "corsairId": "dropboxsign",
+      "corsairName": "Dropbox Sign",
+      "nangoId": "dropbox",
+      "nangoName": "dropbox",
+      "corsairOperations": 56,
+      "nangoOperations": 36,
+      "corsairAdvantage": 20
+    },
+    {
+      "corsairId": "googlemaps",
+      "corsairName": "GoogleMaps",
+      "nangoId": "google",
+      "nangoName": "Google",
+      "corsairOperations": 22,
+      "nangoOperations": 3,
+      "corsairAdvantage": 19
+    },
+    {
+      "corsairId": "sharepoint",
+      "corsairName": "Sharepoint",
+      "nangoId": "sharepoint-online",
+      "nangoName": "SharePoint Online (v2)",
+      "corsairOperations": 86,
+      "nangoOperations": 68,
+      "corsairAdvantage": 18
+    },
+    {
+      "corsairId": "mailchimp",
+      "corsairName": "Mailchimp",
+      "nangoId": "mailchimp",
+      "nangoName": "mailchimp",
+      "corsairOperations": 56,
+      "nangoOperations": 39,
+      "corsairAdvantage": 17
+    },
+    {
+      "corsairId": "googlemeet",
+      "corsairName": "Google Meet",
+      "nangoId": "google",
+      "nangoName": "Google",
+      "corsairOperations": 18,
+      "nangoOperations": 3,
+      "corsairAdvantage": 15
+    },
+    {
+      "corsairId": "linkedin",
+      "corsairName": "LinkedIn",
+      "nangoId": "linkedin",
+      "nangoName": "LinkedIn",
+      "corsairOperations": 22,
+      "nangoOperations": 11,
+      "corsairAdvantage": 11
+    },
+    {
+      "corsairId": "exa",
+      "corsairName": "Exa",
+      "nangoId": "exa",
+      "nangoName": "exa",
+      "corsairOperations": 14,
+      "nangoOperations": 5,
+      "corsairAdvantage": 9
+    },
+    {
+      "corsairId": "gitlab",
+      "corsairName": "Gitlab",
+      "nangoId": "gitlab",
+      "nangoName": "gitlab",
+      "corsairOperations": 62,
+      "nangoOperations": 53,
+      "corsairAdvantage": 9
+    },
+    {
+      "corsairId": "anthropicadministrator",
+      "corsairName": "Anthropic Admin API",
+      "nangoId": "anthropic",
+      "nangoName": "anthropic",
+      "corsairOperations": 22,
+      "nangoOperations": 15,
+      "corsairAdvantage": 7
+    },
+    {
+      "corsairId": "figma",
+      "corsairName": "Figma",
+      "nangoId": "figma",
+      "nangoName": "figma",
+      "corsairOperations": 50,
+      "nangoOperations": 46,
+      "corsairAdvantage": 4
+    },
+    {
+      "corsairId": "outlook",
+      "corsairName": "Outlook",
+      "nangoId": "outlook",
+      "nangoName": "Outlook",
+      "corsairOperations": 37,
+      "nangoOperations": 34,
+      "corsairAdvantage": 3
+    },
+    {
+      "corsairId": "typeform",
+      "corsairName": "Typeform",
+      "nangoId": "typeform",
+      "nangoName": "typeform",
+      "corsairOperations": 35,
+      "nangoOperations": 32,
+      "corsairAdvantage": 3
+    },
+    {
+      "corsairId": "confluence",
+      "corsairName": "Confluence",
+      "nangoId": "confluence",
+      "nangoName": "Confluence",
+      "corsairOperations": 3,
+      "nangoOperations": 2,
+      "corsairAdvantage": 1
+    },
+    {
+      "corsairId": "basin",
+      "corsairName": "Basin",
+      "nangoId": "basin",
+      "nangoName": "Basin",
+      "corsairOperations": 26,
+      "nangoOperations": 26,
+      "corsairAdvantage": 0
+    },
+    {
+      "corsairId": "intercom",
+      "corsairName": "Intercom",
+      "nangoId": "intercom",
+      "nangoName": "Intercom",
+      "corsairOperations": 51,
+      "nangoOperations": 51,
+      "corsairAdvantage": 0
+    },
+    {
+      "corsairId": "canva",
+      "corsairName": "Canva",
+      "nangoId": "canva",
+      "nangoName": "canva",
+      "corsairOperations": 39,
+      "nangoOperations": 40,
+      "corsairAdvantage": -1
+    },
+    {
+      "corsairId": "googleaddressvalidation",
+      "corsairName": "Google Address Validation",
+      "nangoId": "google",
+      "nangoName": "Google",
+      "corsairOperations": 2,
+      "nangoOperations": 3,
+      "corsairAdvantage": -1
+    },
+    {
+      "corsairId": "github",
+      "corsairName": "Github",
+      "nangoId": "github",
+      "nangoName": "GitHub",
+      "corsairOperations": 52,
+      "nangoOperations": 54,
+      "corsairAdvantage": -2
+    },
+    {
+      "corsairId": "gemini",
+      "corsairName": "Gemini",
+      "nangoId": "gem",
+      "nangoName": "gem",
+      "corsairOperations": 8,
+      "nangoOperations": 11,
+      "corsairAdvantage": -3
+    },
+    {
+      "corsairId": "strava",
+      "corsairName": "Strava",
+      "nangoId": "strava-web",
+      "nangoName": "strava-web",
+      "corsairOperations": 27,
+      "nangoOperations": 33,
+      "corsairAdvantage": -6
+    },
+    {
+      "corsairId": "todoist",
+      "corsairName": "Todoist",
+      "nangoId": "todoist",
+      "nangoName": "todoist",
+      "corsairOperations": 36,
+      "nangoOperations": 42,
+      "corsairAdvantage": -6
+    },
+    {
+      "corsairId": "googledocs",
+      "corsairName": "Google Docs",
+      "nangoId": "google-docs",
+      "nangoName": "Google Docs",
+      "corsairOperations": 35,
+      "nangoOperations": 43,
+      "corsairAdvantage": -8
+    },
+    {
+      "corsairId": "googlesheets",
+      "corsairName": "Google sheets",
+      "nangoId": "google-sheet",
+      "nangoName": "GSheet",
+      "corsairOperations": 12,
+      "nangoOperations": 20,
+      "corsairAdvantage": -8
+    },
+    {
+      "corsairId": "slack",
+      "corsairName": "Slack",
+      "nangoId": "slack",
+      "nangoName": "Slack",
+      "corsairOperations": 45,
+      "nangoOperations": 54,
+      "corsairAdvantage": -9
+    },
+    {
+      "corsairId": "zoom",
+      "corsairName": "Zoom",
+      "nangoId": "zoom",
+      "nangoName": "Zoom",
+      "corsairOperations": 17,
+      "nangoOperations": 28,
+      "corsairAdvantage": -11
+    },
+    {
+      "corsairId": "zoominfo",
+      "corsairName": "ZoomInfo",
+      "nangoId": "zoom",
+      "nangoName": "Zoom",
+      "corsairOperations": 17,
+      "nangoOperations": 28,
+      "corsairAdvantage": -11
+    },
+    {
+      "corsairId": "googledrive",
+      "corsairName": "Google drive",
+      "nangoId": "google-drive",
+      "nangoName": "Google Drive",
+      "corsairOperations": 22,
+      "nangoOperations": 34,
+      "corsairAdvantage": -12
+    },
+    {
+      "corsairId": "jira",
+      "corsairName": "Jira",
+      "nangoId": "jira",
+      "nangoName": "Jira",
+      "corsairOperations": 32,
+      "nangoOperations": 47,
+      "corsairAdvantage": -15
+    },
+    {
+      "corsairId": "cal",
+      "corsairName": "Cal",
+      "nangoId": "calendly",
+      "nangoName": "Calendly",
+      "corsairOperations": 7,
+      "nangoOperations": 24,
+      "corsairAdvantage": -17
+    },
+    {
+      "corsairId": "monday",
+      "corsairName": "Monday",
+      "nangoId": "monday",
+      "nangoName": "Monday",
+      "corsairOperations": 30,
+      "nangoOperations": 47,
+      "corsairAdvantage": -17
+    },
+    {
+      "corsairId": "boxhero",
+      "corsairName": "BoxHero",
+      "nangoId": "box",
+      "nangoName": "Box",
+      "corsairOperations": 14,
+      "nangoOperations": 32,
+      "corsairAdvantage": -18
+    },
+    {
+      "corsairId": "box",
+      "corsairName": "Box",
+      "nangoId": "box",
+      "nangoName": "Box",
+      "corsairOperations": 13,
+      "nangoOperations": 32,
+      "corsairAdvantage": -19
+    },
+    {
+      "corsairId": "spotify",
+      "corsairName": "Spotify",
+      "nangoId": "spotify",
+      "nangoName": "spotify",
+      "corsairOperations": 30,
+      "nangoOperations": 50,
+      "corsairAdvantage": -20
+    },
+    {
+      "corsairId": "fireflies",
+      "corsairName": "Fireflies",
+      "nangoId": "fireflies",
+      "nangoName": "fireflies",
+      "corsairOperations": 15,
+      "nangoOperations": 37,
+      "corsairAdvantage": -22
+    },
+    {
+      "corsairId": "discord",
+      "corsairName": "Discord",
+      "nangoId": "discord",
+      "nangoName": "Discord",
+      "corsairOperations": 16,
+      "nangoOperations": 39,
+      "corsairAdvantage": -23
+    },
+    {
+      "corsairId": "hubspot",
+      "corsairName": "Hubspot",
+      "nangoId": "hubspot",
+      "nangoName": "Hubspot",
+      "corsairOperations": 35,
+      "nangoOperations": 58,
+      "corsairAdvantage": -23
+    },
+    {
+      "corsairId": "dropbox",
+      "corsairName": "Dropbox",
+      "nangoId": "dropbox",
+      "nangoName": "dropbox",
+      "corsairOperations": 12,
+      "nangoOperations": 36,
+      "corsairAdvantage": -24
+    },
+    {
+      "corsairId": "trello",
+      "corsairName": "Trello",
+      "nangoId": "trello",
+      "nangoName": "trello",
+      "corsairOperations": 25,
+      "nangoOperations": 52,
+      "corsairAdvantage": -27
+    },
+    {
+      "corsairId": "airtable",
+      "corsairName": "Airtable",
+      "nangoId": "airtable",
+      "nangoName": "Airtable",
+      "corsairOperations": 9,
+      "nangoOperations": 37,
+      "corsairAdvantage": -28
+    },
+    {
+      "corsairId": "zendesk",
+      "corsairName": "Zendesk",
+      "nangoId": "zendesk",
+      "nangoName": "Zendesk (Helpdesk)",
+      "corsairOperations": 11,
+      "nangoOperations": 39,
+      "corsairAdvantage": -28
+    },
+    {
+      "corsairId": "twitter",
+      "corsairName": "Twitter",
+      "nangoId": "twitter-v2",
+      "nangoName": "Twitter v2",
+      "corsairOperations": 2,
+      "nangoOperations": 31,
+      "corsairAdvantage": -29
+    },
+    {
+      "corsairId": "zohomail",
+      "corsairName": "Zoho Mail",
+      "nangoId": "zoho-mail",
+      "nangoName": "zoho-mail",
+      "corsairOperations": 12,
+      "nangoOperations": 41,
+      "corsairAdvantage": -29
+    },
+    {
+      "corsairId": "gmail",
+      "corsairName": "Gmail",
+      "nangoId": "google-mail",
+      "nangoName": "Gmail",
+      "corsairOperations": 25,
+      "nangoOperations": 59,
+      "corsairAdvantage": -34
+    },
+    {
+      "corsairId": "notion",
+      "corsairName": "Notion",
+      "nangoId": "notion",
+      "nangoName": "Notion",
+      "corsairOperations": 14,
+      "nangoOperations": 49,
+      "corsairAdvantage": -35
+    },
+    {
+      "corsairId": "linear",
+      "corsairName": "Linear",
+      "nangoId": "linear",
+      "nangoName": "Linear",
+      "corsairOperations": 18,
+      "nangoOperations": 55,
+      "corsairAdvantage": -37
+    },
+    {
+      "corsairId": "googlecalendar",
+      "corsairName": "Google calendar",
+      "nangoId": "google-calendar",
+      "nangoName": "Google Calendar",
+      "corsairOperations": 6,
+      "nangoOperations": 46,
+      "corsairAdvantage": -40
+    },
+    {
+      "corsairId": "amplitude",
+      "corsairName": "Amplitude",
+      "nangoId": "amplitude",
+      "nangoName": "Amplitude",
+      "corsairOperations": 17,
+      "nangoOperations": 59,
+      "corsairAdvantage": -42
+    },
+    {
+      "corsairId": "stripe",
+      "corsairName": "Stripe",
+      "nangoId": "stripe",
+      "nangoName": "Stripe Connect",
+      "corsairOperations": 20,
+      "nangoOperations": 71,
+      "corsairAdvantage": -51
+    },
+    {
+      "corsairId": "twilio",
+      "corsairName": "Twilio",
+      "nangoId": "twilio",
+      "nangoName": "twilio",
+      "corsairOperations": 6,
+      "nangoOperations": 66,
+      "corsairAdvantage": -60
+    },
+    {
+      "corsairId": "posthog",
+      "corsairName": "Posthog",
+      "nangoId": "posthog",
+      "nangoName": "PostHog",
+      "corsairOperations": 5,
+      "nangoOperations": 80,
+      "corsairAdvantage": -75
+    },
+    {
+      "corsairId": "datadog",
+      "corsairName": "Datadog",
+      "nangoId": "datadog",
+      "nangoName": "Datadog",
+      "corsairOperations": 45,
+      "nangoOperations": 135,
+      "corsairAdvantage": -90
+    }
+  ],
+  "integrations": [
+    {
+      "id": "active-campaign",
+      "name": "active-campaign",
+      "hasOperations": true,
+      "operationCount": 67,
+      "corsairId": "activecampaign",
+      "corsairName": "ActiveCampaign",
+      "corsairOperations": 304
+    },
+    {
+      "id": "salesforce",
+      "name": "Salesforce",
+      "hasOperations": true,
+      "operationCount": 36,
+      "corsairId": "salesforce",
+      "corsairName": "Salesforce",
+      "corsairOperations": 225
+    },
+    {
+      "id": "databricks-workspace",
+      "name": "databricks-workspace",
+      "hasOperations": true,
+      "operationCount": 1,
+      "corsairId": "databricks",
+      "corsairName": "Databricks",
+      "corsairOperations": 130
+    },
+    {
+      "id": "algolia",
+      "name": "algolia",
+      "hasOperations": true,
+      "operationCount": 37,
+      "corsairId": "algolia",
+      "corsairName": "Algolia",
+      "corsairOperations": 133
+    },
+    {
+      "id": "openai",
+      "name": "openai",
+      "hasOperations": true,
+      "operationCount": 34,
+      "corsairId": "openai",
+      "corsairName": "Openai",
+      "corsairOperations": 129
+    },
+    {
+      "id": "supabase",
+      "name": "Supabase",
+      "hasOperations": true,
+      "operationCount": 31,
+      "corsairId": "supabase",
+      "corsairName": "Supabase",
+      "corsairOperations": 121
+    },
+    {
+      "id": "workday",
+      "name": "workday",
+      "hasOperations": true,
+      "operationCount": 17,
+      "corsairId": "workday",
+      "corsairName": "Workday",
+      "corsairOperations": 85
+    },
+    {
+      "id": "bitbucket",
+      "name": "bitbucket",
+      "hasOperations": true,
+      "operationCount": 42,
+      "corsairId": "bitbucket",
+      "corsairName": "Bitbucket Cloud OAuth 2.0",
+      "corsairOperations": 104
+    },
+    {
+      "id": "sap-success-factors",
+      "name": "sap-success-factors",
+      "hasOperations": true,
+      "operationCount": 4,
+      "corsairId": "sapsuccessfactors",
+      "corsairName": "SAP SuccessFactors",
+      "corsairOperations": 64
+    },
+    {
+      "id": "attio",
+      "name": "Attio",
+      "hasOperations": true,
+      "operationCount": 51,
+      "corsairId": "attio",
+      "corsairName": "Attio",
+      "corsairOperations": 110
+    },
+    {
+      "id": "harvest",
+      "name": "harvest",
+      "hasOperations": true,
+      "operationCount": 3,
+      "corsairId": "harvest",
+      "corsairName": "Harvest",
+      "corsairOperations": 57
+    },
+    {
+      "id": "basecamp",
+      "name": "basecamp",
+      "hasOperations": true,
+      "operationCount": 113,
+      "corsairId": "basecamp",
+      "corsairName": "Basecamp OAuth",
+      "corsairOperations": 161
+    },
+    {
+      "id": "sendgrid",
+      "name": "sendgrid",
+      "hasOperations": true,
+      "operationCount": 61,
+      "corsairId": "sendgrid",
+      "corsairName": "SendGrid v3",
+      "corsairOperations": 100
+    },
+    {
+      "id": "one-drive",
+      "name": "OneDrive for Business",
+      "hasOperations": true,
+      "operationCount": 26,
+      "corsairId": "onedrive",
+      "corsairName": "Onedrive",
+      "corsairOperations": 61
+    },
+    {
+      "id": "asana",
+      "name": "Asana",
+      "hasOperations": true,
+      "operationCount": 50,
+      "corsairId": "asana",
+      "corsairName": "Asana",
+      "corsairOperations": 84
+    },
+    {
+      "id": "youtube",
+      "name": "YouTube",
+      "hasOperations": true,
+      "operationCount": 27,
+      "corsairId": "youtube",
+      "corsairName": "Youtube",
+      "corsairOperations": 51
+    },
+    {
+      "id": "facebook",
+      "name": "Facebook",
+      "hasOperations": true,
+      "operationCount": 23,
+      "corsairId": "facebook",
+      "corsairName": "Facebook",
+      "corsairOperations": 44
+    },
+    {
+      "id": "sharepoint-online",
+      "name": "SharePoint Online (v2)",
+      "hasOperations": true,
+      "operationCount": 68,
+      "corsairId": "sharepoint",
+      "corsairName": "Sharepoint",
+      "corsairOperations": 86
+    },
+    {
+      "id": "mailchimp",
+      "name": "mailchimp",
+      "hasOperations": true,
+      "operationCount": 39,
+      "corsairId": "mailchimp",
+      "corsairName": "Mailchimp",
+      "corsairOperations": 56
+    },
+    {
+      "id": "linkedin",
+      "name": "LinkedIn",
+      "hasOperations": true,
+      "operationCount": 11,
+      "corsairId": "linkedin",
+      "corsairName": "LinkedIn",
+      "corsairOperations": 22
+    },
+    {
+      "id": "exa",
+      "name": "exa",
+      "hasOperations": true,
+      "operationCount": 5,
+      "corsairId": "exa",
+      "corsairName": "Exa",
+      "corsairOperations": 14
+    },
+    {
+      "id": "gitlab",
+      "name": "gitlab",
+      "hasOperations": true,
+      "operationCount": 53,
+      "corsairId": "gitlab",
+      "corsairName": "Gitlab",
+      "corsairOperations": 62
+    },
+    {
+      "id": "anthropic",
+      "name": "anthropic",
+      "hasOperations": true,
+      "operationCount": 15,
+      "corsairId": "anthropicadministrator",
+      "corsairName": "Anthropic Admin API",
+      "corsairOperations": 22
+    },
+    {
+      "id": "figma",
+      "name": "figma",
+      "hasOperations": true,
+      "operationCount": 46,
+      "corsairId": "figma",
+      "corsairName": "Figma",
+      "corsairOperations": 50
+    },
+    {
+      "id": "outlook",
+      "name": "Outlook",
+      "hasOperations": true,
+      "operationCount": 34,
+      "corsairId": "outlook",
+      "corsairName": "Outlook",
+      "corsairOperations": 37
+    },
+    {
+      "id": "typeform",
+      "name": "typeform",
+      "hasOperations": true,
+      "operationCount": 32,
+      "corsairId": "typeform",
+      "corsairName": "Typeform",
+      "corsairOperations": 35
+    },
+    {
+      "id": "confluence",
+      "name": "Confluence",
+      "hasOperations": true,
+      "operationCount": 2,
+      "corsairId": "confluence",
+      "corsairName": "Confluence",
+      "corsairOperations": 3
+    },
+    {
+      "id": "basin",
+      "name": "Basin",
+      "hasOperations": true,
+      "operationCount": 26,
+      "corsairId": "basin",
+      "corsairName": "Basin",
+      "corsairOperations": 26
+    },
+    {
+      "id": "intercom",
+      "name": "Intercom",
+      "hasOperations": true,
+      "operationCount": 51,
+      "corsairId": "intercom",
+      "corsairName": "Intercom",
+      "corsairOperations": 51
+    },
+    {
+      "id": "canva",
+      "name": "canva",
+      "hasOperations": true,
+      "operationCount": 40,
+      "corsairId": "canva",
+      "corsairName": "Canva",
+      "corsairOperations": 39
+    },
+    {
+      "id": "google",
+      "name": "Google",
+      "hasOperations": true,
+      "operationCount": 3,
+      "corsairId": "googleaddressvalidation",
+      "corsairName": "Google Address Validation",
+      "corsairOperations": 2
+    },
+    {
+      "id": "github",
+      "name": "GitHub",
+      "hasOperations": true,
+      "operationCount": 54,
+      "corsairId": "github",
+      "corsairName": "Github",
+      "corsairOperations": 52
+    },
+    {
+      "id": "gem",
+      "name": "gem",
+      "hasOperations": true,
+      "operationCount": 11,
+      "corsairId": "gemini",
+      "corsairName": "Gemini",
+      "corsairOperations": 8
+    },
+    {
+      "id": "strava-web",
+      "name": "strava-web",
+      "hasOperations": true,
+      "operationCount": 33,
+      "corsairId": "strava",
+      "corsairName": "Strava",
+      "corsairOperations": 27
+    },
+    {
+      "id": "todoist",
+      "name": "todoist",
+      "hasOperations": true,
+      "operationCount": 42,
+      "corsairId": "todoist",
+      "corsairName": "Todoist",
+      "corsairOperations": 36
+    },
+    {
+      "id": "google-docs",
+      "name": "Google Docs",
+      "hasOperations": true,
+      "operationCount": 43,
+      "corsairId": "googledocs",
+      "corsairName": "Google Docs",
+      "corsairOperations": 35
+    },
+    {
+      "id": "google-sheet",
+      "name": "GSheet",
+      "hasOperations": true,
+      "operationCount": 20,
+      "corsairId": "googlesheets",
+      "corsairName": "Google sheets",
+      "corsairOperations": 12
+    },
+    {
+      "id": "slack",
+      "name": "Slack",
+      "hasOperations": true,
+      "operationCount": 54,
+      "corsairId": "slack",
+      "corsairName": "Slack",
+      "corsairOperations": 45
+    },
+    {
+      "id": "zoom",
+      "name": "Zoom",
+      "hasOperations": true,
+      "operationCount": 28,
+      "corsairId": "zoominfo",
+      "corsairName": "ZoomInfo",
+      "corsairOperations": 17
+    },
+    {
+      "id": "google-drive",
+      "name": "Google Drive",
+      "hasOperations": true,
+      "operationCount": 34,
+      "corsairId": "googledrive",
+      "corsairName": "Google drive",
+      "corsairOperations": 22
+    },
+    {
+      "id": "jira",
+      "name": "Jira",
+      "hasOperations": true,
+      "operationCount": 47,
+      "corsairId": "jira",
+      "corsairName": "Jira",
+      "corsairOperations": 32
+    },
+    {
+      "id": "calendly",
+      "name": "Calendly",
+      "hasOperations": true,
+      "operationCount": 24,
+      "corsairId": "cal",
+      "corsairName": "Cal",
+      "corsairOperations": 7
+    },
+    {
+      "id": "monday",
+      "name": "Monday",
+      "hasOperations": true,
+      "operationCount": 47,
+      "corsairId": "monday",
+      "corsairName": "Monday",
+      "corsairOperations": 30
+    },
+    {
+      "id": "box",
+      "name": "Box",
+      "hasOperations": true,
+      "operationCount": 32,
+      "corsairId": "box",
+      "corsairName": "Box",
+      "corsairOperations": 13
+    },
+    {
+      "id": "spotify",
+      "name": "spotify",
+      "hasOperations": true,
+      "operationCount": 50,
+      "corsairId": "spotify",
+      "corsairName": "Spotify",
+      "corsairOperations": 30
+    },
+    {
+      "id": "fireflies",
+      "name": "fireflies",
+      "hasOperations": true,
+      "operationCount": 37,
+      "corsairId": "fireflies",
+      "corsairName": "Fireflies",
+      "corsairOperations": 15
+    },
+    {
+      "id": "discord",
+      "name": "Discord",
+      "hasOperations": true,
+      "operationCount": 39,
+      "corsairId": "discord",
+      "corsairName": "Discord",
+      "corsairOperations": 16
+    },
+    {
+      "id": "hubspot",
+      "name": "Hubspot",
+      "hasOperations": true,
+      "operationCount": 58,
+      "corsairId": "hubspot",
+      "corsairName": "Hubspot",
+      "corsairOperations": 35
+    },
+    {
+      "id": "dropbox",
+      "name": "dropbox",
+      "hasOperations": true,
+      "operationCount": 36,
+      "corsairId": "dropbox",
+      "corsairName": "Dropbox",
+      "corsairOperations": 12
+    },
+    {
+      "id": "trello",
+      "name": "trello",
+      "hasOperations": true,
+      "operationCount": 52,
+      "corsairId": "trello",
+      "corsairName": "Trello",
+      "corsairOperations": 25
+    },
+    {
+      "id": "airtable",
+      "name": "Airtable",
+      "hasOperations": true,
+      "operationCount": 37,
+      "corsairId": "airtable",
+      "corsairName": "Airtable",
+      "corsairOperations": 9
+    },
+    {
+      "id": "zendesk",
+      "name": "Zendesk (Helpdesk)",
+      "hasOperations": true,
+      "operationCount": 39,
+      "corsairId": "zendesk",
+      "corsairName": "Zendesk",
+      "corsairOperations": 11
+    },
+    {
+      "id": "twitter-v2",
+      "name": "Twitter v2",
+      "hasOperations": true,
+      "operationCount": 31,
+      "corsairId": "twitter",
+      "corsairName": "Twitter",
+      "corsairOperations": 2
+    },
+    {
+      "id": "zoho-mail",
+      "name": "zoho-mail",
+      "hasOperations": true,
+      "operationCount": 41,
+      "corsairId": "zohomail",
+      "corsairName": "Zoho Mail",
+      "corsairOperations": 12
+    },
+    {
+      "id": "google-mail",
+      "name": "Gmail",
+      "hasOperations": true,
+      "operationCount": 59,
+      "corsairId": "gmail",
+      "corsairName": "Gmail",
+      "corsairOperations": 25
+    },
+    {
+      "id": "notion",
+      "name": "Notion",
+      "hasOperations": true,
+      "operationCount": 49,
+      "corsairId": "notion",
+      "corsairName": "Notion",
+      "corsairOperations": 14
+    },
+    {
+      "id": "linear",
+      "name": "Linear",
+      "hasOperations": true,
+      "operationCount": 55,
+      "corsairId": "linear",
+      "corsairName": "Linear",
+      "corsairOperations": 18
+    },
+    {
+      "id": "google-calendar",
+      "name": "Google Calendar",
+      "hasOperations": true,
+      "operationCount": 46,
+      "corsairId": "googlecalendar",
+      "corsairName": "Google calendar",
+      "corsairOperations": 6
+    },
+    {
+      "id": "amplitude",
+      "name": "Amplitude",
+      "hasOperations": true,
+      "operationCount": 59,
+      "corsairId": "amplitude",
+      "corsairName": "Amplitude",
+      "corsairOperations": 17
+    },
+    {
+      "id": "stripe",
+      "name": "Stripe Connect",
+      "hasOperations": true,
+      "operationCount": 71,
+      "corsairId": "stripe",
+      "corsairName": "Stripe",
+      "corsairOperations": 20
+    },
+    {
+      "id": "twilio",
+      "name": "twilio",
+      "hasOperations": true,
+      "operationCount": 66,
+      "corsairId": "twilio",
+      "corsairName": "Twilio",
+      "corsairOperations": 6
+    },
+    {
+      "id": "posthog",
+      "name": "PostHog",
+      "hasOperations": true,
+      "operationCount": 80,
+      "corsairId": "posthog",
+      "corsairName": "Posthog",
+      "corsairOperations": 5
+    },
+    {
+      "id": "datadog",
+      "name": "Datadog",
+      "hasOperations": true,
+      "operationCount": 135,
+      "corsairId": "datadog",
+      "corsairName": "Datadog",
+      "corsairOperations": 45
+    },
+    {
+      "id": "1password-scim",
+      "name": "1password-scim",
+      "hasOperations": true,
+      "operationCount": 17
+    },
+    {
+      "id": "acuity-scheduling",
+      "name": "acuity-scheduling",
+      "hasOperations": true,
+      "operationCount": 43
+    },
+    {
+      "id": "adp",
+      "name": "adp",
+      "hasOperations": true,
+      "operationCount": 1
+    },
+    {
+      "id": "agentcard",
+      "name": "Agentcard",
+      "hasOperations": true,
+      "operationCount": 16
+    },
+    {
+      "id": "aircall",
+      "name": "aircall",
+      "hasOperations": true,
+      "operationCount": 40
+    },
+    {
+      "id": "airtable-pat",
+      "name": "airtable-pat",
+      "hasOperations": true,
+      "operationCount": 37
+    },
+    {
+      "id": "anrok",
+      "name": "anrok",
+      "hasOperations": true,
+      "operationCount": 4
+    },
+    {
+      "id": "apollo",
+      "name": "Apollo",
+      "hasOperations": true,
+      "operationCount": 32
+    },
+    {
+      "id": "ashby",
+      "name": "ashby",
+      "hasOperations": true,
+      "operationCount": 31
+    },
+    {
+      "id": "attio-mcp",
+      "name": "Attio (MCP)",
+      "hasOperations": true,
+      "operationCount": 0
+    },
+    {
+      "id": "auth0-cc",
+      "name": "auth0-cc",
+      "hasOperations": true,
+      "operationCount": 83
+    },
+    {
+      "id": "avalara",
+      "name": "avalara",
+      "hasOperations": true,
+      "operationCount": 4
+    },
+    {
+      "id": "avalara-sandbox",
+      "name": "avalara-sandbox",
+      "hasOperations": true,
+      "operationCount": 4
+    },
+    {
+      "id": "aws-iam",
+      "name": "AWS IAM",
+      "hasOperations": true,
+      "operationCount": 3
+    },
+    {
+      "id": "azure-devops",
+      "name": "azure-devops",
+      "hasOperations": true,
+      "operationCount": 41
+    },
+    {
+      "id": "bamboohr-basic",
+      "name": "bamboohr-basic",
+      "hasOperations": true,
+      "operationCount": 65
+    },
+    {
+      "id": "baserow",
+      "name": "Baserow",
+      "hasOperations": true,
+      "operationCount": 17
+    },
+    {
+      "id": "bigcommerce",
+      "name": "BigCommerce",
+      "hasOperations": true,
+      "operationCount": 57
+    },
+    {
+      "id": "bill",
+      "name": "bill",
+      "hasOperations": true,
+      "operationCount": 3
+    },
+    {
+      "id": "bill-sandbox",
+      "name": "bill-sandbox",
+      "hasOperations": true,
+      "operationCount": 3
+    },
+    {
+      "id": "bitdefender",
+      "name": "bitdefender",
+      "hasOperations": true,
+      "operationCount": 1
+    },
+    {
+      "id": "brightcrowd",
+      "name": "brightcrowd",
+      "hasOperations": true,
+      "operationCount": 4
+    },
+    {
+      "id": "cal-com-v2",
+      "name": "Cal.com (v2)",
+      "hasOperations": true,
+      "operationCount": 34
+    },
+    {
+      "id": "chargebee",
+      "name": "chargebee",
+      "hasOperations": true,
+      "operationCount": 42
+    },
+    {
+      "id": "checkr-partner",
+      "name": "checkr-partner",
+      "hasOperations": true,
+      "operationCount": 5
+    },
+    {
+      "id": "checkr-partner-staging",
+      "name": "checkr-partner-staging",
+      "hasOperations": true,
+      "operationCount": 1
+    },
+    {
+      "id": "clari-copilot",
+      "name": "clari-copilot",
+      "hasOperations": true,
+      "operationCount": 1
+    },
+    {
+      "id": "clicksend",
+      "name": "clicksend",
+      "hasOperations": true,
+      "operationCount": 3
+    },
+    {
+      "id": "clickup",
+      "name": "ClickUp",
+      "hasOperations": true,
+      "operationCount": 44
+    },
+    {
+      "id": "close",
+      "name": "close",
+      "hasOperations": true,
+      "operationCount": 38
+    },
+    {
+      "id": "coda",
+      "name": "coda",
+      "hasOperations": true,
+      "operationCount": 38
+    },
+    {
+      "id": "connectsecure",
+      "name": "ConnectSecure",
+      "hasOperations": true,
+      "operationCount": 27
+    },
+    {
+      "id": "dialpad",
+      "name": "dialpad",
+      "hasOperations": true,
+      "operationCount": 3
+    },
+    {
+      "id": "dialpad-sandbox",
+      "name": "dialpad-sandbox",
+      "hasOperations": true,
+      "operationCount": 3
+    },
+    {
+      "id": "discourse",
+      "name": "discourse",
+      "hasOperations": true,
+      "operationCount": 5
+    },
+    {
+      "id": "docusign",
+      "name": "docusign",
+      "hasOperations": true,
+      "operationCount": 55
+    },
+    {
+      "id": "docusign-sandbox",
+      "name": "docusign-sandbox",
+      "hasOperations": true,
+      "operationCount": 55
+    },
+    {
+      "id": "dope-security",
+      "name": "dope.security",
+      "hasOperations": true,
+      "operationCount": 28
+    },
+    {
+      "id": "dynamic-mockups",
+      "name": "Dynamic Mockups",
+      "hasOperations": true,
+      "operationCount": 16
+    },
+    {
+      "id": "dynatrace",
+      "name": "Dynatrace",
+      "hasOperations": true,
+      "operationCount": 25
+    },
+    {
+      "id": "dynatrace-oauth",
+      "name": "Dynatrace (OAuth)",
+      "hasOperations": true,
+      "operationCount": 48
+    },
+    {
+      "id": "elevenlabs",
+      "name": "elevenlabs",
+      "hasOperations": true,
+      "operationCount": 34
+    },
+    {
+      "id": "evaluagent",
+      "name": "evaluagent",
+      "hasOperations": true,
+      "operationCount": 3
+    },
+    {
+      "id": "exact-online",
+      "name": "exact-online",
+      "hasOperations": true,
+      "operationCount": 50
+    },
+    {
+      "id": "expensify",
+      "name": "expensify",
+      "hasOperations": true,
+      "operationCount": 4
+    },
+    {
+      "id": "freshbooks",
+      "name": "freshbooks",
+      "hasOperations": true,
+      "operationCount": 42
+    },
+    {
+      "id": "freshdesk",
+      "name": "Freshdesk",
+      "hasOperations": true,
+      "operationCount": 96
+    },
+    {
+      "id": "front",
+      "name": "front",
+      "hasOperations": true,
+      "operationCount": 2
+    },
+    {
+      "id": "github-app",
+      "name": "GitHub App",
+      "hasOperations": true,
+      "operationCount": 3
+    },
+    {
+      "id": "github-app-oauth",
+      "name": "GitHub App OAuth",
+      "hasOperations": true,
+      "operationCount": 3
+    },
+    {
+      "id": "gong",
+      "name": "gong",
+      "hasOperations": true,
+      "operationCount": 74
+    },
+    {
+      "id": "gong-oauth",
+      "name": "gong-oauth",
+      "hasOperations": true,
+      "operationCount": 74
+    },
+    {
+      "id": "google-ads",
+      "name": "Google Ads",
+      "hasOperations": true,
+      "operationCount": 36
+    },
+    {
+      "id": "google-analytics",
+      "name": "Google Analytics",
+      "hasOperations": true,
+      "operationCount": 16
+    },
+    {
+      "id": "google-gemini",
+      "name": "Google Gemini",
+      "hasOperations": true,
+      "operationCount": 12
+    },
+    {
+      "id": "gorgias",
+      "name": "gorgias",
+      "hasOperations": true,
+      "operationCount": 97
+    },
+    {
+      "id": "gorgias-basic",
+      "name": "gorgias-basic",
+      "hasOperations": true,
+      "operationCount": 97
+    },
+    {
+      "id": "grammarly",
+      "name": "grammarly",
+      "hasOperations": true,
+      "operationCount": 2
+    },
+    {
+      "id": "granola",
+      "name": "Granola",
+      "hasOperations": true,
+      "operationCount": 6
+    },
+    {
+      "id": "greenhouse",
+      "name": "greenhouse",
+      "hasOperations": true,
+      "operationCount": 3
+    },
+    {
+      "id": "greenhouse-basic",
+      "name": "greenhouse-basic",
+      "hasOperations": true,
+      "operationCount": 3
+    },
+    {
+      "id": "gusto",
+      "name": "gusto",
+      "hasOperations": true,
+      "operationCount": 5
+    },
+    {
+      "id": "gusto-demo",
+      "name": "gusto-demo",
+      "hasOperations": true,
+      "operationCount": 5
+    },
+    {
+      "id": "hackerrank-work",
+      "name": "hackerrank-work",
+      "hasOperations": true,
+      "operationCount": 6
+    },
+    {
+      "id": "hibob-service-user",
+      "name": "hibob-service-user",
+      "hasOperations": true,
+      "operationCount": 2
+    },
+    {
+      "id": "highlevel",
+      "name": "HighLevel",
+      "hasOperations": true,
+      "operationCount": 62
+    },
+    {
+      "id": "hubstaff",
+      "name": "Hubstaff",
+      "hasOperations": true,
+      "operationCount": 25
+    },
+    {
+      "id": "ingenious-build",
+      "name": "INGENIOUS.BUILD",
+      "hasOperations": true,
+      "operationCount": 66
+    },
+    {
+      "id": "instantly",
+      "name": "instantly",
+      "hasOperations": true,
+      "operationCount": 87
+    },
+    {
+      "id": "ironclad",
+      "name": "ironclad",
+      "hasOperations": true,
+      "operationCount": 49
+    },
+    {
+      "id": "jira-basic",
+      "name": "jira-basic",
+      "hasOperations": true,
+      "operationCount": 4
+    },
+    {
+      "id": "judgeme-oauth",
+      "name": "Judge.me (OAuth)",
+      "hasOperations": true,
+      "operationCount": 21
+    },
+    {
+      "id": "keeper-scim",
+      "name": "keeper-scim",
+      "hasOperations": true,
+      "operationCount": 3
+    },
+    {
+      "id": "klaviyo",
+      "name": "klaviyo",
+      "hasOperations": true,
+      "operationCount": 85
+    },
+    {
+      "id": "kustomer",
+      "name": "kustomer",
+      "hasOperations": true,
+      "operationCount": 1
+    },
+    {
+      "id": "lastpass",
+      "name": "lastpass",
+      "hasOperations": true,
+      "operationCount": 3
+    },
+    {
+      "id": "lattice",
+      "name": "lattice",
+      "hasOperations": true,
+      "operationCount": 1
+    },
+    {
+      "id": "lever",
+      "name": "lever",
+      "hasOperations": true,
+      "operationCount": 30
+    },
+    {
+      "id": "lever-basic",
+      "name": "lever-basic",
+      "hasOperations": true,
+      "operationCount": 30
+    },
+    {
+      "id": "lever-basic-sandbox",
+      "name": "lever-basic-sandbox",
+      "hasOperations": true,
+      "operationCount": 30
+    },
+    {
+      "id": "lever-sandbox",
+      "name": "lever-sandbox",
+      "hasOperations": true,
+      "operationCount": 30
+    },
+    {
+      "id": "luma",
+      "name": "luma",
+      "hasOperations": true,
+      "operationCount": 1
+    },
+    {
+      "id": "make",
+      "name": "make",
+      "hasOperations": true,
+      "operationCount": 61
+    },
+    {
+      "id": "mandrill",
+      "name": "Mandrill",
+      "hasOperations": true,
+      "operationCount": 88
+    },
+    {
+      "id": "meilisearch",
+      "name": "Meilisearch",
+      "hasOperations": true,
+      "operationCount": 7
+    },
+    {
+      "id": "metabase",
+      "name": "Metabase",
+      "hasOperations": true,
+      "operationCount": 6
+    },
+    {
+      "id": "microsoft",
+      "name": "Microsoft",
+      "hasOperations": true,
+      "operationCount": 37
+    },
+    {
+      "id": "microsoft-dynamics-365-finance-and-operations-cc",
+      "name": "Microsoft Dynamics 365 Finance and Operations (Client Credentials)",
+      "hasOperations": true,
+      "operationCount": 69
+    },
+    {
+      "id": "microsoft-excel-oauth2-cc",
+      "name": "Microsoft Excel (Client Credentials)",
+      "hasOperations": true,
+      "operationCount": 29
+    },
+    {
+      "id": "microsoft-power-bi-oauth2-cc",
+      "name": "Microsoft Power BI (Client Credentials)",
+      "hasOperations": true,
+      "operationCount": 30
+    },
+    {
+      "id": "microsoft-powerpoint-oauth2-cc",
+      "name": "Microsoft PowerPoint (Client Credentials)",
+      "hasOperations": true,
+      "operationCount": 19
+    },
+    {
+      "id": "microsoft-teams",
+      "name": "Microsoft Teams",
+      "hasOperations": true,
+      "operationCount": 35
+    },
+    {
+      "id": "microsoft-word-oauth2-cc",
+      "name": "Microsoft Word (Client Credentials)",
+      "hasOperations": true,
+      "operationCount": 19
+    },
+    {
+      "id": "millionverifier",
+      "name": "MillionVerifier",
+      "hasOperations": true,
+      "operationCount": 8
+    },
+    {
+      "id": "mixpanel",
+      "name": "mixpanel",
+      "hasOperations": true,
+      "operationCount": 39
+    },
+    {
+      "id": "namely-pat",
+      "name": "namely-pat",
+      "hasOperations": true,
+      "operationCount": 1
+    },
+    {
+      "id": "netsuite-tba",
+      "name": "netsuite-tba",
+      "hasOperations": true,
+      "operationCount": 19
+    },
+    {
+      "id": "next-cloud-ocs",
+      "name": "next-cloud-ocs",
+      "hasOperations": true,
+      "operationCount": 1
+    },
+    {
+      "id": "ninety-io",
+      "name": "Ninety.io",
+      "hasOperations": true,
+      "operationCount": 30
+    },
+    {
+      "id": "odoo-api-key",
+      "name": "Odoo (API Key)",
+      "hasOperations": true,
+      "operationCount": 18
+    },
+    {
+      "id": "odoo-cc",
+      "name": "odoo-cc",
+      "hasOperations": true,
+      "operationCount": 11
+    },
+    {
+      "id": "okta",
+      "name": "okta",
+      "hasOperations": true,
+      "operationCount": 75
+    },
+    {
+      "id": "okta-cc",
+      "name": "okta-cc",
+      "hasOperations": true,
+      "operationCount": 75
+    },
+    {
+      "id": "okta-preview",
+      "name": "okta-preview",
+      "hasOperations": true,
+      "operationCount": 75
+    },
+    {
+      "id": "one-drive-personal",
+      "name": "one-drive-personal",
+      "hasOperations": true,
+      "operationCount": 20
+    },
+    {
+      "id": "oracle-hcm",
+      "name": "oracle-hcm",
+      "hasOperations": true,
+      "operationCount": 2
+    },
+    {
+      "id": "paycom",
+      "name": "paycom",
+      "hasOperations": true,
+      "operationCount": 1
+    },
+    {
+      "id": "paylocity",
+      "name": "Paylocity (Weblink)",
+      "hasOperations": true,
+      "operationCount": 1
+    },
+    {
+      "id": "paypal",
+      "name": "paypal",
+      "hasOperations": true,
+      "operationCount": 40
+    },
+    {
+      "id": "pennylane",
+      "name": "pennylane",
+      "hasOperations": true,
+      "operationCount": 152
+    },
+    {
+      "id": "perimeter81",
+      "name": "perimeter81",
+      "hasOperations": true,
+      "operationCount": 3
+    },
+    {
+      "id": "pinterest",
+      "name": "pinterest",
+      "hasOperations": true,
+      "operationCount": 127
+    },
+    {
+      "id": "pipedrive",
+      "name": "Pipedrive",
+      "hasOperations": true,
+      "operationCount": 57
+    },
+    {
+      "id": "pipelinecrm",
+      "name": "Pipeline CRM",
+      "hasOperations": true,
+      "operationCount": 86
+    },
+    {
+      "id": "quickbooks",
+      "name": "Quickbooks",
+      "hasOperations": true,
+      "operationCount": 64
+    },
+    {
+      "id": "quickbooks-sandbox",
+      "name": "Quickbooks Sandbox",
+      "hasOperations": true,
+      "operationCount": 64
+    },
+    {
+      "id": "ramp",
+      "name": "ramp",
+      "hasOperations": true,
+      "operationCount": 3
+    },
+    {
+      "id": "ramp-sandbox",
+      "name": "ramp-sandbox",
+      "hasOperations": true,
+      "operationCount": 3
+    },
+    {
+      "id": "recharge",
+      "name": "recharge",
+      "hasOperations": true,
+      "operationCount": 2
+    },
+    {
+      "id": "recruiterflow",
+      "name": "recruiterflow",
+      "hasOperations": true,
+      "operationCount": 15
+    },
+    {
+      "id": "ring-central",
+      "name": "ring-central",
+      "hasOperations": true,
+      "operationCount": 6
+    },
+    {
+      "id": "ring-central-sandbox",
+      "name": "ring-central-sandbox",
+      "hasOperations": true,
+      "operationCount": 6
+    },
+    {
+      "id": "sage-intacct-oauth",
+      "name": "sage-intacct-oauth",
+      "hasOperations": true,
+      "operationCount": 1
+    },
+    {
+      "id": "salesforce-sandbox",
+      "name": "Salesforce Sandbox",
+      "hasOperations": true,
+      "operationCount": 36
+    },
+    {
+      "id": "sanity-mcp",
+      "name": "Sanity (MCP)",
+      "hasOperations": true,
+      "operationCount": 0
+    },
+    {
+      "id": "servicenow",
+      "name": "ServiceNow",
+      "hasOperations": true,
+      "operationCount": 50
+    },
+    {
+      "id": "shopify",
+      "name": "Shopify (OAuth)",
+      "hasOperations": true,
+      "operationCount": 150
+    },
+    {
+      "id": "shopify-partner",
+      "name": "shopify-partner",
+      "hasOperations": true,
+      "operationCount": 8
+    },
+    {
+      "id": "shortcut",
+      "name": "shortcut",
+      "hasOperations": true,
+      "operationCount": 56
+    },
+    {
+      "id": "smartsheet",
+      "name": "Smartsheet",
+      "hasOperations": true,
+      "operationCount": 4
+    },
+    {
+      "id": "snowflake-jwt",
+      "name": "snowflake-jwt",
+      "hasOperations": true,
+      "operationCount": 23
+    },
+    {
+      "id": "splitwise",
+      "name": "splitwise",
+      "hasOperations": true,
+      "operationCount": 23
+    },
+    {
+      "id": "squareup",
+      "name": "Square",
+      "hasOperations": true,
+      "operationCount": 51
+    },
+    {
+      "id": "squareup-sandbox",
+      "name": "Square Sandbox",
+      "hasOperations": true,
+      "operationCount": 51
+    },
+    {
+      "id": "teamtailor",
+      "name": "teamtailor",
+      "hasOperations": true,
+      "operationCount": 1
+    },
+    {
+      "id": "tiktok-accounts",
+      "name": "tiktok-accounts",
+      "hasOperations": true,
+      "operationCount": 8
+    },
+    {
+      "id": "tiktok-ads",
+      "name": "tiktok-ads",
+      "hasOperations": true,
+      "operationCount": 67
+    },
+    {
+      "id": "tiktok-personal",
+      "name": "tiktok-personal",
+      "hasOperations": true,
+      "operationCount": 13
+    },
+    {
+      "id": "timetastic",
+      "name": "Timetastic",
+      "hasOperations": true,
+      "operationCount": 47
+    },
+    {
+      "id": "tripletex",
+      "name": "tripletex",
+      "hasOperations": true,
+      "operationCount": 54
+    },
+    {
+      "id": "ukg-pro",
+      "name": "ukg-pro",
+      "hasOperations": true,
+      "operationCount": 1
+    },
+    {
+      "id": "ukg-ready",
+      "name": "ukg-ready",
+      "hasOperations": true,
+      "operationCount": 1
+    },
+    {
+      "id": "unanet",
+      "name": "unanet",
+      "hasOperations": true,
+      "operationCount": 9
+    },
+    {
+      "id": "wildix-pbx",
+      "name": "wildix-pbx",
+      "hasOperations": true,
+      "operationCount": 1
+    },
+    {
+      "id": "woocommerce",
+      "name": "woocommerce",
+      "hasOperations": true,
+      "operationCount": 62
+    },
+    {
+      "id": "workable",
+      "name": "workable",
+      "hasOperations": true,
+      "operationCount": 93
+    },
+    {
+      "id": "workday-refresh-token",
+      "name": "Workday (Refresh Token)",
+      "hasOperations": true,
+      "operationCount": 17
+    },
+    {
+      "id": "xero",
+      "name": "Xero",
+      "hasOperations": true,
+      "operationCount": 43
+    },
+    {
+      "id": "youcanbook-me",
+      "name": "YouCanBookMe",
+      "hasOperations": true,
+      "operationCount": 9
+    },
+    {
+      "id": "youcanbook-me-public",
+      "name": "YouCanBookMe (Public)",
+      "hasOperations": true,
+      "operationCount": 5
+    },
+    {
+      "id": "zoho-crm",
+      "name": "Zoho CRM",
+      "hasOperations": true,
+      "operationCount": 60
+    },
+    {
+      "id": "zoho-books",
+      "name": "zoho-books",
+      "hasOperations": true,
+      "operationCount": 85
+    },
+    {
+      "id": "zoho-desk",
+      "name": "zoho-desk",
+      "hasOperations": true,
+      "operationCount": 20
+    },
+    {
+      "id": "zoho-people",
+      "name": "zoho-people",
+      "hasOperations": true,
+      "operationCount": 29
+    },
+    {
+      "id": "zoom-cc",
+      "name": "Zoom (Server-to-Server OAuth)",
+      "hasOperations": true,
+      "operationCount": 15
+    },
+    {
+      "id": "1password-events",
+      "name": "1Password (Events API)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "1password-users",
+      "name": "1Password (Users API)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "3cx",
+      "name": "3CX",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "8x8",
+      "name": "8x8",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "a-leads",
+      "name": "A-Leads",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "absorb-lms",
+      "name": "Absorb LMS",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "accelo",
+      "name": "Accelo",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "acumatica",
+      "name": "Acumatica",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "addepar",
+      "name": "addepar",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "addepar-basic",
+      "name": "addepar-basic",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "adobe",
+      "name": "adobe",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "adobe-commerce",
+      "name": "Adobe Commerce",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "adobe-umapi",
+      "name": "adobe-umapi",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "adobe-workfront",
+      "name": "adobe-workfront",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "adoxx-cc",
+      "name": "ADOXX (Client Credentials)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "adp-lyric",
+      "name": "adp-lyric",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "adp-run",
+      "name": "adp-run",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "adp-workforce-now",
+      "name": "adp-workforce-now",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "adp-workforce-now-next-gen",
+      "name": "adp-workforce-now-next-gen",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "adyen",
+      "name": "adyen",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "adyntel",
+      "name": "Adyntel",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "affinity",
+      "name": "affinity",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "affinity-v2",
+      "name": "affinity-v2",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "agencyzoom",
+      "name": "AgencyZoom",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "agentline",
+      "name": "AgentLine",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "agiloft",
+      "name": "Agiloft",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "agiloft-cc",
+      "name": "Agiloft (Client Credentials)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "ahrefs",
+      "name": "Ahrefs",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "aimfox",
+      "name": "aimfox",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "aimfox-oauth",
+      "name": "aimfox-oauth",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "aircall-basic",
+      "name": "aircall-basic",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "altrata",
+      "name": "Altrata",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "amazon",
+      "name": "Amazon",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "amazon-selling-partner",
+      "name": "Amazon Selling Partner",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "amazon-selling-partner-beta",
+      "name": "Amazon Selling Partner (Beta)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "anthropic-admin",
+      "name": "anthropic-admin",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "anvil",
+      "name": "Anvil",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "apaleo",
+      "name": "apaleo",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "apify",
+      "name": "apify",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "apollo-oauth",
+      "name": "apollo-oauth",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "apple-app-store",
+      "name": "Apple App Store",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "apple-business-manager",
+      "name": "Apple Business Manager",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "appstle-subscriptions",
+      "name": "appstle-subscriptions",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "asana-scim",
+      "name": "asana-scim",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "aspire",
+      "name": "Aspire",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "athenahealth",
+      "name": "athenahealth",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "atlas-so",
+      "name": "atlas-so",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "atlassian",
+      "name": "atlassian",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "atlassian-service-account-api-token",
+      "name": "Atlassian Service Account (API Token)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "atlassian-service-account-oauth2",
+      "name": "Atlassian Service Account (OAuth 2.0)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "atlassian-admin",
+      "name": "atlassian-admin",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "atlassian-government-cloud",
+      "name": "atlassian-government-cloud",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "attention",
+      "name": "Attention",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "auth0",
+      "name": "auth0",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "autodesk",
+      "name": "autodesk",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "autosana",
+      "name": "Autosana",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "autotask",
+      "name": "autotask",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "auvik",
+      "name": "auvik",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "availity",
+      "name": "Availity",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "avanan",
+      "name": "Avanan",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "avoma",
+      "name": "avoma",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "aws",
+      "name": "aws",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "aws-inspector2",
+      "name": "AWS Inspector2",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "aws-multi-service",
+      "name": "AWS Multi-Service",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "aws-scim",
+      "name": "aws-scim",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "aws-sigv4",
+      "name": "aws-sigv4",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "axiom",
+      "name": "Axiom",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "azure-blob-storage",
+      "name": "azure-blob-storage",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "back-market",
+      "name": "Back Market",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "bamboohr",
+      "name": "BambooHR (OAuth)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "battlenet",
+      "name": "battlenet",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "beehiiv",
+      "name": "beehiiv",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "bettercontact",
+      "name": "BetterContact",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "bigchange",
+      "name": "BigChange",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "bing-webmasters",
+      "name": "Bing Webmasters",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "bird",
+      "name": "Bird",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "bitly",
+      "name": "bitly",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "blackbaud",
+      "name": "blackbaud",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "blackbaud-basic",
+      "name": "blackbaud-basic",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "blandai",
+      "name": "blandai",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "bliro",
+      "name": "Bliro",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "boldsign",
+      "name": "boldsign",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "booking-com",
+      "name": "booking-com",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "boondmanager",
+      "name": "BoondManager",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "braintree",
+      "name": "braintree",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "braintree-sandbox",
+      "name": "braintree-sandbox",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "braze",
+      "name": "braze",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "breezy-hr",
+      "name": "breezy-hr",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "brevo-api-key",
+      "name": "brevo-api-key",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "brex-api-key",
+      "name": "Brex (API Key)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "brex",
+      "name": "Brex (OAuth)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "brex-staging",
+      "name": "Brex (Staging OAuth)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "buffer",
+      "name": "Buffer",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "builder-io-private",
+      "name": "Builder.io (Private)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "builder-io-public",
+      "name": "Builder.io (Public)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "buildium",
+      "name": "buildium",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "builtwith",
+      "name": "builtwith",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "bullhorn",
+      "name": "bullhorn",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "cal-com-v1",
+      "name": "cal-com-v1",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "cal-com-oauth",
+      "name": "Cal.com (OAuth)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "callrail",
+      "name": "callrail",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "candis",
+      "name": "Candis",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "canny",
+      "name": "canny",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "canva-scim",
+      "name": "canva-scim",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "canvas-lms",
+      "name": "Canvas LMS",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "cdw",
+      "name": "CDW",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "cerby",
+      "name": "Cerby",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "certn",
+      "name": "certn",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "certn-partner",
+      "name": "certn-partner",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "chartboost",
+      "name": "Chartboost",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "chatarmin",
+      "name": "Chatarmin",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "chatgpt-enterprise",
+      "name": "ChatGPT Enterprise (SCIM API)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "chattermill",
+      "name": "chattermill",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "check",
+      "name": "check",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "checkhq",
+      "name": "checkhq",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "checkout-com",
+      "name": "checkout-com",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "checkout-com-sandbox",
+      "name": "checkout-com-sandbox",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "chili-piper",
+      "name": "Chili Piper",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "chili-piper-mcp",
+      "name": "Chili Piper (MCP)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "chorus",
+      "name": "chorus",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "cin7-core",
+      "name": "Cin7 Core",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "circle-so",
+      "name": "circle-so",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "cisco-duo-admin",
+      "name": "Cisco Duo Admin API",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "clay",
+      "name": "Clay",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "clerk",
+      "name": "clerk",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "cleverreach",
+      "name": "CleverReach",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "clickhouse",
+      "name": "ClickHouse",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "clio",
+      "name": "Clio",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "cloudbeds",
+      "name": "Cloudbeds",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "cloudentity",
+      "name": "cloudentity",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "cloudflare",
+      "name": "Cloudflare",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "cloudtalk",
+      "name": "CloudTalk",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "clover",
+      "name": "Clover",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "codeclimate",
+      "name": "codeclimate",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "codegen",
+      "name": "codegen",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "commercetools",
+      "name": "commercetools",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "companycam",
+      "name": "companycam",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "conductorone",
+      "name": "ConductorOne",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "confluence-basic",
+      "name": "confluence-basic",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "confluence-data-center",
+      "name": "confluence-data-center",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "connectwise-psa",
+      "name": "ConnectWise PSA",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "connectwise-rmm",
+      "name": "ConnectWise RMM",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "connectwise-psa-staging",
+      "name": "connectwise-psa-staging",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "constant-contact",
+      "name": "Constant Contact",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "conta-azul",
+      "name": "Conta Azul",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "contactout",
+      "name": "contactout",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "contentful",
+      "name": "contentful",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "contentstack",
+      "name": "contentstack",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "copper",
+      "name": "copper",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "copper-api-key",
+      "name": "copper-api-key",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "coros",
+      "name": "coros",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "coros-sandbox",
+      "name": "coros-sandbox",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "coupa-compass",
+      "name": "coupa-compass",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "crisp",
+      "name": "crisp",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "crisp-plugin-install",
+      "name": "Crisp (Plugin Install)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "crowdstrike",
+      "name": "crowdstrike",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "crunchbase",
+      "name": "Crunchbase",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "cursor",
+      "name": "cursor",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "cursor-admin",
+      "name": "cursor-admin",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "customer-io",
+      "name": "Customer.io Pipelines",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "cyberimpact",
+      "name": "cyberimpact",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "databricks-account",
+      "name": "databricks-account",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "datacandy",
+      "name": "datacandy",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "datadog-oauth",
+      "name": "Datadog (OAuth)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "datev",
+      "name": "datev",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "datto-rmm",
+      "name": "datto-rmm",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "datto-rmm-password-grant",
+      "name": "datto-rmm-password-grant",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "dayforce",
+      "name": "Dayforce",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "deel",
+      "name": "deel",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "deel-sandbox",
+      "name": "deel-sandbox",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "demodesk",
+      "name": "DemoDesk",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "dentally",
+      "name": "Dentally",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "devin",
+      "name": "devin",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "dialpad-wfm",
+      "name": "Dialpad WFM",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "diffbot",
+      "name": "Diffbot",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "digitalocean",
+      "name": "digitalocean",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "digits",
+      "name": "Digits",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "discolike",
+      "name": "DiscoLike",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "dixa",
+      "name": "dixa",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "document360",
+      "name": "document360",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "docuware",
+      "name": "docuware",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "domo",
+      "name": "Domo",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "drata",
+      "name": "Drata",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "drchrono",
+      "name": "drchrono",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "dropbox-sign",
+      "name": "dropbox-sign",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "drupal",
+      "name": "drupal",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "dualentry-mcp",
+      "name": "Dualentry (MCP)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "e-conomic",
+      "name": "e-conomic",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "easypost",
+      "name": "EasyPost",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "ebay",
+      "name": "ebay",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "ebay-sandbox",
+      "name": "ebay-sandbox",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "ecu360-production",
+      "name": "ECU360 (Production)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "ecu360",
+      "name": "ECU360 (Test)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "egnyte",
+      "name": "egnyte",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "elevio",
+      "name": "elevio",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "emarsys",
+      "name": "emarsys",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "emarsys-oauth",
+      "name": "emarsys-oauth",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "embat",
+      "name": "Embat",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "employment-hero",
+      "name": "employment-hero",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "epc-gov-uk",
+      "name": "Energy Performance Certificates (Gov.UK)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "entrata",
+      "name": "entrata",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "envoy",
+      "name": "envoy",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "epic",
+      "name": "Epic (FHIR)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "epic-games",
+      "name": "epic-games",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "epost-klara",
+      "name": "ePost (KLARA)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "ergo",
+      "name": "Ergo",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "etsy",
+      "name": "Etsy",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "eventbrite",
+      "name": "eventbrite",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "everflow",
+      "name": "Everflow",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "exist",
+      "name": "exist",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "facebook-system-user",
+      "name": "Facebook (System User Token)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "factorial",
+      "name": "factorial",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "factorial-api-key",
+      "name": "Factorial (API Key)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "fairing",
+      "name": "fairing",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "falai",
+      "name": "falai",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "fanvue",
+      "name": "Fanvue",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "fathom",
+      "name": "fathom",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "fathom-oauth",
+      "name": "Fathom (OAuth)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "fellow",
+      "name": "Fellow",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "fern",
+      "name": "Fern (Public API)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "fiber-ai",
+      "name": "Fiber AI",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "figjam",
+      "name": "figjam",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "figma-scim",
+      "name": "figma-scim",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "fillout",
+      "name": "fillout",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "fillout-api-key",
+      "name": "fillout-api-key",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "findymail",
+      "name": "findymail",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "finta",
+      "name": "Finta",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "firefish",
+      "name": "firefish",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "firstbase",
+      "name": "Firstbase",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "fiserv",
+      "name": "fiserv",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "fiserv-api-key",
+      "name": "fiserv-api-key",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "fitbit",
+      "name": "fitbit",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "float",
+      "name": "float",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "folk",
+      "name": "Folk",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "followupboss",
+      "name": "Follow Up Boss",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "fortnox",
+      "name": "fortnox",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "freeagent",
+      "name": "FreeAgent",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "freeagent-sandbox",
+      "name": "FreeAgent (Sandbox)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "freepik",
+      "name": "Freepik",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "freshsales",
+      "name": "Freshsales",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "freshservice",
+      "name": "freshservice",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "freshteam",
+      "name": "freshteam",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "freshworks",
+      "name": "Freshworks",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "front-api-key",
+      "name": "Front (API Key)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "fullenrich",
+      "name": "FullEnrich",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "gainsight-cc",
+      "name": "gainsight-cc",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "gamma",
+      "name": "Gamma",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "garmin",
+      "name": "garmin",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "garmin-oauth2",
+      "name": "Garmin (OAuth2)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "gebruder-weiss",
+      "name": "gebruder-weiss",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "gemini",
+      "name": "gemini",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "gerrit",
+      "name": "gerrit",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "getty-images",
+      "name": "Getty Images",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "ghost-admin",
+      "name": "ghost-admin",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "ghost-content",
+      "name": "ghost-content",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "github-pat",
+      "name": "github-pat",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "gitlab-group-token",
+      "name": "GitLab (Group Access Token)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "gitlab-pat",
+      "name": "gitlab-pat",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "glean",
+      "name": "Glean",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "glean-oauth",
+      "name": "Glean (OAuth)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "glyphic",
+      "name": "Glyphic",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "google-bigquery",
+      "name": "Google BigQuery",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "google-chat",
+      "name": "Google Chat",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "google-cloud-storage",
+      "name": "Google Cloud Storage",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "google-contacts",
+      "name": "Google Contacts",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "google-forms",
+      "name": "Google Forms",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "google-health",
+      "name": "Google Health",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "google-maps",
+      "name": "Google Maps",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "google-meet",
+      "name": "Google Meet",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "google-search-console",
+      "name": "Google Search Console",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "google-slides",
+      "name": "Google Slides",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "google-tasks",
+      "name": "Google Tasks",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "google-workspace-admin",
+      "name": "Google Workspace Admin",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "google-play",
+      "name": "google-play",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "google-service-account",
+      "name": "google-service-account",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "grafana",
+      "name": "grafana",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "grain",
+      "name": "grain",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "grain-api-key",
+      "name": "grain-api-key",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "grammarly-scim",
+      "name": "grammarly-scim",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "greenhouse-harvest-oauth2-cc",
+      "name": "Greenhouse (Client Credentials)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "greenhouse-harvest-partner",
+      "name": "Greenhouse Harvest Partner",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "greenhouse-assessment",
+      "name": "greenhouse-assessment",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "greenhouse-harvest",
+      "name": "greenhouse-harvest",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "greenhouse-ingestion",
+      "name": "greenhouse-ingestion",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "greenhouse-job-board",
+      "name": "greenhouse-job-board",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "greenhouse-onboarding",
+      "name": "greenhouse-onboarding",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "grist",
+      "name": "Grist",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "gumroad",
+      "name": "gumroad",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "guru",
+      "name": "guru",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "guru-scim",
+      "name": "guru-scim",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "hail",
+      "name": "Hail",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "haileyhr",
+      "name": "Hailey HR",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "halo-psa",
+      "name": "Halo PSA",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "health-gorilla",
+      "name": "health-gorilla",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "heap",
+      "name": "heap",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "helpscout-docs",
+      "name": "helpscout-docs",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "helpscout-mailbox",
+      "name": "helpscout-mailbox",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "hex",
+      "name": "Hex",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "heygen",
+      "name": "HeyGen",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "heymarket",
+      "name": "Heymarket",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "heyreach",
+      "name": "heyreach",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "hibob-oauth",
+      "name": "HiBob (OAuth)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "highlevel-white-label",
+      "name": "HighLevel (LeadConnector)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "holded",
+      "name": "holded",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "holded-v2",
+      "name": "Holded (v2)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "hover",
+      "name": "hover",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "humaans-io",
+      "name": "Humaans.io",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "huntress",
+      "name": "Huntress",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "icypeas",
+      "name": "icypeas",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "ids-fulfillment",
+      "name": "IDS Fulfillment",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "immybot",
+      "name": "ImmyBot",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "incident-io",
+      "name": "incident-io",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "ingenious-build-pat",
+      "name": "INGENIOUS.BUILD (Personal Access Token)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "insightly",
+      "name": "insightly",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "instagram",
+      "name": "Instagram",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "intuit",
+      "name": "intuit",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "ironclad-cc",
+      "name": "Ironclad (Client Credentials)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "itglue",
+      "name": "itglue",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "jamf",
+      "name": "jamf",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "jamf-basic",
+      "name": "jamf-basic",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "jamie",
+      "name": "Jamie",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "jazzhr",
+      "name": "jazzhr",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "jiminny",
+      "name": "Jiminny",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "jira-data-center",
+      "name": "jira-data-center",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "jira-data-center-api-key",
+      "name": "jira-data-center-api-key",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "jira-data-center-basic",
+      "name": "jira-data-center-basic",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "jobadder",
+      "name": "jobadder",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "jobber",
+      "name": "Jobber",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "jobdiva",
+      "name": "jobdiva",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "jobvite",
+      "name": "jobvite",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "jotform",
+      "name": "jotform",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "judgeme",
+      "name": "Judge.me (API Key)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "jumpcloud",
+      "name": "jumpcloud",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "juniper-mist",
+      "name": "Juniper Mist",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "justworks",
+      "name": "Justworks",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "kandji",
+      "name": "kandji",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "keap",
+      "name": "keap",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "kintone",
+      "name": "kintone",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "kintone-user-api",
+      "name": "kintone-user-api",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "klaviyo-oauth",
+      "name": "klaviyo-oauth",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "klicktipp",
+      "name": "KlickTipp",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "klipfolio",
+      "name": "klipfolio",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "kno-commerce",
+      "name": "Kno Commerce",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "knowbe4",
+      "name": "KnowBe4",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "konnektive",
+      "name": "Konnektive",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "lagrowthmachine",
+      "name": "lagrowthmachine",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "leadfeeder",
+      "name": "Leadfeeder",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "leadmagic",
+      "name": "leadmagic",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "leapsome",
+      "name": "Leapsome",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "lemlist",
+      "name": "lemlist",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "lessonly",
+      "name": "lessonly",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "lightfield",
+      "name": "Lightfield",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "lightspeed-retail",
+      "name": "Lightspeed Retail (X-Series)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "linkhut",
+      "name": "linkhut",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "listmonk",
+      "name": "listmonk",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "listrak",
+      "name": "Listrak",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "livetennisapi",
+      "name": "Live Tennis API",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "lob",
+      "name": "Lob",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "lokalise",
+      "name": "Lokalise",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "looker",
+      "name": "Looker",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "looker-oauth",
+      "name": "Looker (OAuth)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "loom-scim",
+      "name": "loom-scim",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "loop-returns",
+      "name": "loop-returns",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "loops-so",
+      "name": "loops-so",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "lucid-scim",
+      "name": "lucid-scim",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "luma-v2",
+      "name": "Luma (v2)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "lumos",
+      "name": "Lumos",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "mailgun",
+      "name": "mailgun",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "mailjet",
+      "name": "Mailjet",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "malwarebytes",
+      "name": "malwarebytes",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "manatal",
+      "name": "manatal",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "marketo",
+      "name": "marketo",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "mattermost",
+      "name": "Mattermost",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "maximizer",
+      "name": "Maximizer (Cloud)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "maximizer-on-premise",
+      "name": "Maximizer (On-Premise)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "maxio",
+      "name": "Maxio",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "medallia",
+      "name": "medallia",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "greenfield-meditech",
+      "name": "MEDITECH Greenfield",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "mercury",
+      "name": "Mercury",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "meta-marketing-api",
+      "name": "Meta Marketing API",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "microsoft-oauth2-cc-cert",
+      "name": "Microsoft (Client Credentials - Certificate)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "microsoft-oauth2-cc",
+      "name": "Microsoft (Client Credentials)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "microsoft-dynamics-365-finance-and-operations",
+      "name": "Microsoft Dynamics 365 Finance and Operations",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "microsoft-intune",
+      "name": "Microsoft Intune",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "microsoft-people",
+      "name": "Microsoft People",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "microsoft-planner",
+      "name": "Microsoft Planner",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "microsoft-powerpoint",
+      "name": "Microsoft PowerPoint",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "microsoft-teams-bot",
+      "name": "Microsoft Teams Bot",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "microsoft-word",
+      "name": "Microsoft Word",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "microsoft-admin",
+      "name": "microsoft-admin",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "microsoft-ads",
+      "name": "microsoft-ads",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "microsoft-business-central",
+      "name": "microsoft-business-central",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "microsoft-entra-id",
+      "name": "microsoft-entra-id",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "microsoft-excel",
+      "name": "microsoft-excel",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "microsoft-power-bi",
+      "name": "microsoft-power-bi",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "microsoft-tenant-specific",
+      "name": "microsoft-tenant-specific",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "mimecast",
+      "name": "mimecast",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "mindbody",
+      "name": "mindbody",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "minimax",
+      "name": "minimax",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "mip",
+      "name": "mip",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "mip-cloud",
+      "name": "mip-cloud",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "mip-on-premise",
+      "name": "mip-on-premise",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "mip-on-premises",
+      "name": "mip-on-premises",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "miro",
+      "name": "miro",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "miro-scim",
+      "name": "miro-scim",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "missive",
+      "name": "missive",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "modjo-ai",
+      "name": "Modjo AI",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "modmed",
+      "name": "ModMed",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "mollie",
+      "name": "Mollie",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "momentum-io",
+      "name": "momentum-io",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "mural",
+      "name": "mural",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "myob",
+      "name": "MYOB",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "nable-ncentral",
+      "name": "N-able N-central",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "n8n",
+      "name": "n8n",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "namely",
+      "name": "namely",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "nationbuilder",
+      "name": "nationbuilder",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "neon",
+      "name": "Neon",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "nerdio",
+      "name": "Nerdio",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "netsuite",
+      "name": "netsuite",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "netsuite-client-credentials",
+      "name": "NetSuite (Client Credentials)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "nexthink",
+      "name": "Nexthink",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "ninjaone-rmm-oauth2",
+      "name": "NinjaOne RMM (OAuth2)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "ninjaone-saas-backup",
+      "name": "NinjaOne SaaS Backup",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "ninjaone-rmm",
+      "name": "ninjaone-rmm",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "nocrm",
+      "name": "nocrm.io",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "nooks-api-key",
+      "name": "Nooks (API Key)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "nooks",
+      "name": "Nooks (OAuth)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "northbeam",
+      "name": "Northbeam",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "notion-scim",
+      "name": "notion-scim",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "nyne-ai",
+      "name": "Nyne AI",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "ocean-io",
+      "name": "Ocean.io",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "odoo",
+      "name": "odoo",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "okta-api-key",
+      "name": "Okta (API Token)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "omni",
+      "name": "Omni Analytics",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "one-note",
+      "name": "one-note",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "onelogin",
+      "name": "onelogin",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "onlogist",
+      "name": "OnLogist",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "onshape",
+      "name": "Onshape",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "oomnitza",
+      "name": "Oomnitza",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "open-hands",
+      "name": "open-hands",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "openai-admin",
+      "name": "openai-admin",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "optum-real",
+      "name": "Optum Real",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "oracle-cloud-identity",
+      "name": "Oracle Cloud Identity",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "orange-logic",
+      "name": "Orange Logic",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "ordinal",
+      "name": "Ordinal",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "ory",
+      "name": "ory",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "osu",
+      "name": "osu",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "oura",
+      "name": "oura",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "outreach",
+      "name": "outreach",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "paddle",
+      "name": "Paddle",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "pagerduty",
+      "name": "pagerduty",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "paligo",
+      "name": "Paligo",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "pandadoc",
+      "name": "pandadoc",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "pandadoc-api-key",
+      "name": "pandadoc-api-key",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "passportal",
+      "name": "passportal",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "pave",
+      "name": "Pave",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "pax8",
+      "name": "pax8",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "paychex",
+      "name": "paychex",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "paycor",
+      "name": "paycor",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "paycor-sandbox",
+      "name": "paycor-sandbox",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "payfit",
+      "name": "payfit",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "paylocity-nextgen",
+      "name": "Paylocity (NextGen)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "paypal-sandbox",
+      "name": "paypal-sandbox",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "pendo",
+      "name": "pendo",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "pendo-oauth",
+      "name": "Pendo (OAuth)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "pennylane-company-api",
+      "name": "pennylane-company-api",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "peopledatalabs",
+      "name": "peopledatalabs",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "perdoo",
+      "name": "Perdoo",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "perk",
+      "name": "Perk",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "perplexity",
+      "name": "perplexity",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "personio",
+      "name": "personio",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "personio-recruiting",
+      "name": "personio-recruiting",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "personio-v2",
+      "name": "personio-v2",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "phrase",
+      "name": "Phrase",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "pingboard",
+      "name": "pingboard",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "pingone",
+      "name": "pingone",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "pingone-cc",
+      "name": "pingone-cc",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "pipedream",
+      "name": "pipedream",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "pipedream-oauth2-cc",
+      "name": "pipedream-oauth2-cc",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "pivotaltracker",
+      "name": "pivotaltracker",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "plain",
+      "name": "plain",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "planning-center-online-pat",
+      "name": "Planning Center Online (Personal Access Token)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "planning-center-online",
+      "name": "planning-center-online",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "pleo",
+      "name": "Pleo",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "podium",
+      "name": "podium",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "podscribe",
+      "name": "Podscribe",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "posthog-oauth",
+      "name": "PostHog (OAuth)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "postscript",
+      "name": "Postscript",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "practicefusion",
+      "name": "PracticeFusion",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "precisefp",
+      "name": "precisefp",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "printful",
+      "name": "Printful",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "private-api-basic",
+      "name": "private-api-basic",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "private-api-bearer",
+      "name": "private-api-bearer",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "private-api-generic",
+      "name": "private-api-generic",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "prive",
+      "name": "prive",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "procore",
+      "name": "Procore",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "productboard",
+      "name": "productboard",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "prospeo",
+      "name": "Prospeo",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "provenexpert",
+      "name": "ProvenExpert",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "prtg-classic",
+      "name": "PRTG Classic",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "pushpay-chms-v1",
+      "name": "Pushpay ChMS (v1)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "pushpay-chms-v2",
+      "name": "Pushpay ChMS (v2)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "pverify",
+      "name": "pVerify",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "pylon",
+      "name": "Pylon",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "qualia",
+      "name": "Qualia",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "qualtrics",
+      "name": "qualtrics",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "quentn",
+      "name": "Quentn",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "quickbase",
+      "name": "quickbase",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "quipteams",
+      "name": "Quipteams",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "ragieai",
+      "name": "ragieai",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "rapidapi",
+      "name": "rapidapi",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "razorpay",
+      "name": "razorpay",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "read-ai",
+      "name": "Read.ai",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "readwise",
+      "name": "readwise",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "readwise-reader",
+      "name": "readwise-reader",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "reapit",
+      "name": "Reapit Connect",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "recall-ai",
+      "name": "Recall.ai",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "recruitcrm",
+      "name": "recruitcrm",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "recruitee",
+      "name": "recruitee",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "reddit",
+      "name": "reddit",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "redo",
+      "name": "Redo",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "redtail-crm-sandbox",
+      "name": "redtail-crm-sandbox",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "refiner",
+      "name": "refiner",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "render-mcp",
+      "name": "Render (MCP)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "replicate",
+      "name": "replicate",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "reply-io",
+      "name": "Reply.io",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "researchdesk",
+      "name": "ResearchDesk",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "resend",
+      "name": "Resend",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "resova",
+      "name": "Resova",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "retell-ai",
+      "name": "retell-ai",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "revivn",
+      "name": "Revivn",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "revolut-business",
+      "name": "Revolut Business",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "ringover",
+      "name": "Ringover",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "rippling",
+      "name": "rippling",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "rippling-shop-app",
+      "name": "rippling-shop-app",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "roam-scim",
+      "name": "roam-scim",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "rock-gym-pro",
+      "name": "rock-gym-pro",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "rocketlane",
+      "name": "rocketlane",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "rocketreach",
+      "name": "RocketReach",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "roller",
+      "name": "roller",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "rootly",
+      "name": "Rootly",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "rydership",
+      "name": "RyderShip",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "rydoo",
+      "name": "Rydoo",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "sage",
+      "name": "sage",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "sage-200",
+      "name": "Sage 200",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "sage-300-cre",
+      "name": "Sage 300 Construction and Real Estate",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "sage-intacct-cc",
+      "name": "Sage Intacct (Client Credentials)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "sage-member",
+      "name": "SAGE Member",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "sage-hr",
+      "name": "sage-hr",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "sage-intacct",
+      "name": "sage-intacct",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "sage-people",
+      "name": "sage-people",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "salesforce-cc",
+      "name": "Salesforce (Client Credentials)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "salesforce-jwt",
+      "name": "Salesforce JWT",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "salesforce-cdp",
+      "name": "salesforce-cdp",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "salesforce-experience-cloud",
+      "name": "salesforce-experience-cloud",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "salesloft",
+      "name": "salesloft",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "salesmsg",
+      "name": "Salesmsg",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "salesmsg-oauth2",
+      "name": "Salesmsg (OAuth2)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "sap-ariba",
+      "name": "SAP Ariba",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "sap-odata-basic",
+      "name": "SAP S/4HANA Cloud (Basic Auth)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "sap-odata-oauth2-cc",
+      "name": "SAP S/4HANA Cloud (Client Credentials)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "sap-business-one",
+      "name": "sap-business-one",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "sap-concur",
+      "name": "sap-concur",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "sap-concur-password",
+      "name": "sap-concur-password",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "sap-fieldglass",
+      "name": "sap-fieldglass",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "schwab",
+      "name": "Schwab",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "scrapedo",
+      "name": "scrapedo",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "sedna",
+      "name": "sedna",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "sedna-basic",
+      "name": "sedna-basic",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "segment",
+      "name": "segment",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "sellercloud",
+      "name": "Sellercloud",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "sellsy",
+      "name": "sellsy",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "sellsy-oauth2-cc",
+      "name": "sellsy-oauth2-cc",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "semble",
+      "name": "Semble",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "semrush",
+      "name": "semrush",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "sentinelone",
+      "name": "SentinelOne (API Token)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "sentry",
+      "name": "sentry",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "sentry-oauth",
+      "name": "sentry-oauth",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "servicem8",
+      "name": "servicem8",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "servicenow-oauth2-cc",
+      "name": "ServiceNow (Client Credentials)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "servicenow-jwt",
+      "name": "ServiceNow (JWT)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "setmore",
+      "name": "setmore",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "sharepoint-online-oauth2-cc",
+      "name": "sharepoint-online-oauth2-cc",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "sharepoint-online-v1",
+      "name": "sharepoint-online-v1",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "shipbob-pat",
+      "name": "ShipBob (Personal Access Token)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "shippo",
+      "name": "Shippo",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "shipstation",
+      "name": "shipstation",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "shipstation-v2",
+      "name": "shipstation-v2",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "shopify-cc",
+      "name": "Shopify (Client Credentials)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "shopify-api-key",
+      "name": "shopify-api-key",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "shopify-scim",
+      "name": "shopify-scim",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "shopline",
+      "name": "SHOPLINE",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "shopline-oauth",
+      "name": "SHOPLINE (OAuth)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "shopvox",
+      "name": "ShopVox",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "shopware",
+      "name": "Shopware (Admin API)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "shopworks",
+      "name": "ShopWorks",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "signnow",
+      "name": "signnow",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "signnow-sandbox",
+      "name": "signnow-sandbox",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "simpro",
+      "name": "Simpro",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "skio",
+      "name": "skio",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "slab",
+      "name": "Slab",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "smartlead-ai",
+      "name": "smartlead-ai",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "smartrecruiters-api-key",
+      "name": "smartrecruiters-api-key",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "smugmug",
+      "name": "smugmug",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "snapchat",
+      "name": "snapchat",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "snipe-it",
+      "name": "snipe-it",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "snowflake",
+      "name": "Snowflake",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "sophos-central",
+      "name": "Sophos Central",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "spendesk",
+      "name": "Spendesk",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "splunk",
+      "name": "Splunk",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "spotify-oauth-cc",
+      "name": "spotify-oauth-cc",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "spotify-oauth2-cc",
+      "name": "spotify-oauth2-cc",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "squarespace",
+      "name": "squarespace",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "stackexchange",
+      "name": "stackexchange",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "statamic",
+      "name": "Statamic",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "statista",
+      "name": "statista",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "statsig",
+      "name": "Statsig",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "stay-ai",
+      "name": "Stay AI",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "stedi",
+      "name": "Stedi (Healthcare)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "store-leads",
+      "name": "Store Leads",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "store-census",
+      "name": "StoreCensus",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "strava",
+      "name": "strava",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "streak",
+      "name": "Streak",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "streamline-ai",
+      "name": "Streamline AI",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "stripe-api-key",
+      "name": "Stripe (API Key)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "stripe-app",
+      "name": "stripe-app",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "stripe-app-sandbox",
+      "name": "stripe-app-sandbox",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "stripe-express",
+      "name": "stripe-express",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "surecontact",
+      "name": "SureContact",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "survey-monkey",
+      "name": "survey-monkey",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "swoogo",
+      "name": "Swoogo",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "syncore",
+      "name": "Syncore",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "tableau",
+      "name": "tableau",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "tailscale",
+      "name": "tailscale",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "tailscale-api-key",
+      "name": "tailscale-api-key",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "talentlms",
+      "name": "TalentLMS",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "tally",
+      "name": "Tally",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "tanium",
+      "name": "Tanium",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "tapclicks",
+      "name": "tapclicks",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "teamleader",
+      "name": "teamleader",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "teamwork",
+      "name": "teamwork",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "telegram",
+      "name": "Telegram",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "tempo",
+      "name": "Tempo",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "terraform",
+      "name": "terraform",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "the-swarm",
+      "name": "the-swarm",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "theirstack",
+      "name": "TheirStack",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "thomson-reuters-legal-tracker-tr-account",
+      "name": "Thomson Reuters (TR Account)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "thomson-reuters-legal-tracker",
+      "name": "Thomson Reuters Legal Tracker",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "threads",
+      "name": "Threads",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "thrivecart-api-key",
+      "name": "thrivecart-api-key",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "thrivecart-oauth",
+      "name": "thrivecart-oauth",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "ticktick",
+      "name": "ticktick",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "tiktok",
+      "name": "tiktok",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "timely",
+      "name": "timely",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "timify",
+      "name": "Timify",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "tldv",
+      "name": "tldv",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "toast",
+      "name": "Toast",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "toggl",
+      "name": "Toggl Track",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "torii",
+      "name": "Torii",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "totango",
+      "name": "totango",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "trading-economics",
+      "name": "Trading Economics",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "trafft",
+      "name": "trafft",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "trakstar-hire",
+      "name": "trakstar-hire",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "transporeon-oauth2-cc",
+      "name": "Transporeon Appointment Scheduling (Client Credentials)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "transporeon-carrier-basic",
+      "name": "Transporeon Carrier Interface (Basic Auth)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "transporeon-carrier-oauth2-cc",
+      "name": "Transporeon Carrier Interface (Client Credentials)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "trello-scim",
+      "name": "trello-scim",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "tremendous",
+      "name": "tremendous",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "tremendous-sandbox",
+      "name": "tremendous-sandbox",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "trigger-dev",
+      "name": "Trigger.dev",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "triple-whale",
+      "name": "Triple Whale",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "trustpilot",
+      "name": "Trustpilot",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "trustpilot-cc",
+      "name": "Trustpilot (Client Credentials)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "tsheetsteam",
+      "name": "tsheetsteam",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "tumblr",
+      "name": "tumblr",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "twenty-crm",
+      "name": "twenty-crm",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "twenty-crm-self-hosted",
+      "name": "twenty-crm-self-hosted",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "twinfield",
+      "name": "twinfield",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "twitch",
+      "name": "twitch",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "twitter",
+      "name": "twitter",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "twitter-oauth2-cc",
+      "name": "twitter-oauth2-cc",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "typefully",
+      "name": "typefully",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "typefully-v2",
+      "name": "Typefully (API v2)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "uber",
+      "name": "uber",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "ukg-pro-wfm-ropc",
+      "name": "UKG Pro (Workforce Management ROPC)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "ukg-pro-cc",
+      "name": "UKG Pro HCM (Client Credentials)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "ukg-pro-wfm",
+      "name": "ukg-pro-wfm",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "unauthenticated",
+      "name": "unauthenticated",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "unipile",
+      "name": "unipile",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "upsales",
+      "name": "Upsales",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "valley",
+      "name": "valley",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "valley-api-key",
+      "name": "valley-api-key",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "vanta",
+      "name": "Vanta",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "vantage-apparel",
+      "name": "Vantage Apparel",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "veed",
+      "name": "VEED (via fal.ai)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "veeva-vault",
+      "name": "Veeva Vault",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "veeva-vault-oauth",
+      "name": "Veeva Vault (OAuth 2.0 / OIDC)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "vercel",
+      "name": "Vercel",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "videoask",
+      "name": "VideoAsk",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "viewpoint-vista",
+      "name": "Viewpoint Vista",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "vimeo",
+      "name": "vimeo",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "vimeo-basic",
+      "name": "vimeo-basic",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "vincere",
+      "name": "Vincere",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "vtex",
+      "name": "VTEX",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "wakatime",
+      "name": "wakatime",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "walmart",
+      "name": "Walmart Marketplace",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "wappalyzer",
+      "name": "Wappalyzer",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "wave-accounting",
+      "name": "wave-accounting",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "wealthbox",
+      "name": "wealthbox",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "webex",
+      "name": "webex",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "webflow",
+      "name": "webflow",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "webinarjam",
+      "name": "WebinarJam",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "wejam",
+      "name": "WeJam AI",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "whatsapp-business",
+      "name": "WhatsApp Business",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "whoop",
+      "name": "whoop",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "wise-api-key",
+      "name": "Wise (API Key)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "wiseagent",
+      "name": "Wiseagent",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "wiza",
+      "name": "wiza",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "wordpress",
+      "name": "wordpress",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "wordpress-mcp",
+      "name": "WordPress.com (MCP)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "workable-oauth",
+      "name": "workable-oauth",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "workato",
+      "name": "Workato",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "workday-cc",
+      "name": "Workday (Client Credentials)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "workday-oauth",
+      "name": "Workday (OAuth)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "workday-adaptive-planning",
+      "name": "Workday Adaptive Planning",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "workday-adaptive-planning-basic",
+      "name": "Workday Adaptive Planning (Basic Auth) (Basic Auth)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "workos",
+      "name": "WorkOS",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "workpath",
+      "name": "Workpath",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "workramp",
+      "name": "WorkRamp",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "wrike",
+      "name": "wrike",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "xai",
+      "name": "xai",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "xero-oauth2-cc",
+      "name": "xero-oauth2-cc",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "yahoo",
+      "name": "yahoo",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "yandex",
+      "name": "yandex",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "yokoy",
+      "name": "Yokoy",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "yotpo",
+      "name": "yotpo",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "zapier",
+      "name": "Zapier",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "zapier-nla",
+      "name": "zapier-nla",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "zapier-scim",
+      "name": "zapier-scim",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "zendesk-api-key",
+      "name": "Zendesk (API token)",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "zendesk-sell",
+      "name": "zendesk-sell",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "zenefits",
+      "name": "zenefits",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "zero",
+      "name": "Zero",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "zigpoll",
+      "name": "Zigpoll",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "zoho",
+      "name": "zoho",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "zoho-bigin",
+      "name": "zoho-bigin",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "zoho-calendar",
+      "name": "zoho-calendar",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "zoho-inventory",
+      "name": "zoho-inventory",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "zoho-invoice",
+      "name": "zoho-invoice",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "zoho-recruit",
+      "name": "zoho-recruit",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "zoominfo",
+      "name": "zoominfo",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "zorus",
+      "name": "Zorus",
+      "hasOperations": false,
+      "operationCount": 0
+    },
+    {
+      "id": "zuora",
+      "name": "zuora",
+      "hasOperations": false,
+      "operationCount": 0
+    }
+  ]
+}

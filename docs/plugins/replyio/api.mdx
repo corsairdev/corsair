@@ -1,0 +1,1839 @@
+---
+title: API
+description: "API reference for Reply.io: every `replyio.api.*` operation with input and output types."
+---
+
+Every `replyio.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Contact Lists
+
+### list
+
+`contactLists.list`
+
+List contact lists with pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.replyio.api.contactLists.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `top` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `search` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `hasMore` | `boolean` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  isShared: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Contacts
+
+### clearStatus
+
+`contacts.clearStatus`
+
+Clear clearable contact statuses (opt-out, replied, bounced)
+
+**Risk:** `write`
+
+```ts
+await corsair.replyio.api.contacts.clearStatus({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contactIds` | `number[]` | Yes | — |
+| `statuses` | `optedOut \| replied \| bounced[]` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### create
+
+`contacts.create`
+
+Create a new contact in Reply.io
+
+**Risk:** `write`
+
+```ts
+await corsair.replyio.api.contacts.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | No | — |
+| `firstName` | `string` | No | — |
+| `lastName` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `phone2` | `string` | No | — |
+| `title` | `string` | No | — |
+| `company` | `string` | No | — |
+| `companySize` | `Empty \| SelfEmployed \| Ten \| Fifty \| TwoHundred \| FiveHundred \| OneThousand \| FiveThousand \| TenThousand \| OverTenThousand` | No | — |
+| `industry` | `string` | No | — |
+| `city` | `string` | No | — |
+| `state` | `string` | No | — |
+| `country` | `string` | No | — |
+| `timeZoneId` | `string` | No | — |
+| `linkedInUrl` | `string` | No | — |
+| `linkedInSalesNavigatorUrl` | `string` | No | — |
+| `linkedInRecruiterUrl` | `string` | No | — |
+| `notes` | `string` | No | — |
+| `accountId` | `number` | No | — |
+| `customFields` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="customFields full type">
+
+```ts
+{
+  key: string,
+  value?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `email` | `string` | No | — |
+| `domain` | `string` | No | — |
+| `firstName` | `string` | No | — |
+| `lastName` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `title` | `string` | No | — |
+| `company` | `string` | No | — |
+| `companySize` | `string` | No | — |
+| `industry` | `string` | No | — |
+| `city` | `string` | No | — |
+| `state` | `string` | No | — |
+| `country` | `string` | No | — |
+| `timeZoneId` | `string` | No | — |
+| `linkedInUrl` | `string` | No | — |
+| `linkedInSalesNavigatorUrl` | `string` | No | — |
+| `linkedInRecruiterUrl` | `string` | No | — |
+| `phoneStatus` | `pending \| invalid \| valid \| validationFailed \| notValidated` | No | — |
+| `notes` | `string` | No | — |
+| `ownerUserId` | `number` | No | — |
+| `accountId` | `number` | No | — |
+| `isOptedOut` | `boolean` | No | — |
+| `callStatus` | `none \| toCall \| called` | No | — |
+| `meetingStatus` | `none \| meetingBooked` | No | — |
+| `addingDate` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `lastModifiedAt` | `string` | No | — |
+| `customFields` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="customFields full type">
+
+```ts
+{
+  key: string,
+  value?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`contacts.delete`
+
+Delete a contact [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.replyio.api.contacts.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`contacts.get`
+
+Get a contact by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.replyio.api.contacts.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `email` | `string` | No | — |
+| `domain` | `string` | No | — |
+| `firstName` | `string` | No | — |
+| `lastName` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `title` | `string` | No | — |
+| `company` | `string` | No | — |
+| `companySize` | `string` | No | — |
+| `industry` | `string` | No | — |
+| `city` | `string` | No | — |
+| `state` | `string` | No | — |
+| `country` | `string` | No | — |
+| `timeZoneId` | `string` | No | — |
+| `linkedInUrl` | `string` | No | — |
+| `linkedInSalesNavigatorUrl` | `string` | No | — |
+| `linkedInRecruiterUrl` | `string` | No | — |
+| `phoneStatus` | `pending \| invalid \| valid \| validationFailed \| notValidated` | No | — |
+| `notes` | `string` | No | — |
+| `ownerUserId` | `number` | No | — |
+| `accountId` | `number` | No | — |
+| `isOptedOut` | `boolean` | No | — |
+| `callStatus` | `none \| toCall \| called` | No | — |
+| `meetingStatus` | `none \| meetingBooked` | No | — |
+| `addingDate` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `lastModifiedAt` | `string` | No | — |
+| `customFields` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="customFields full type">
+
+```ts
+{
+  key: string,
+  value?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getStatus
+
+`contacts.getStatus`
+
+Get a contact's statuses across sequences
+
+**Risk:** `read`
+
+```ts
+await corsair.replyio.api.contacts.getStatus({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contactId` | `number` | Yes | — |
+| `isOptedOut` | `boolean` | Yes | — |
+| `callStatus` | `none \| toCall \| called` | Yes | — |
+| `meetingStatus` | `none \| meetingBooked` | Yes | — |
+| `sequences` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="sequences full type">
+
+```ts
+{
+  sequenceId: number,
+  sequenceName: string,
+  statusInSequence: active | paused | inactive | invalidEmail | outOfOffice | finished | contacted | opened | clicked | autoReplied | bounced | replied,
+  emailDisposition: {
+    isReplied: boolean,
+    isBounced: boolean
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`contacts.list`
+
+List contacts with pagination and optional filters
+
+**Risk:** `read`
+
+```ts
+await corsair.replyio.api.contacts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `top` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `email` | `string` | No | — |
+| `linkedIn` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `hasMore` | `boolean` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: number,
+  email?: string | null,
+  domain?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  phone?: string | null,
+  title?: string | null,
+  company?: string | null,
+  companySize?: string | null,
+  industry?: string | null,
+  city?: string | null,
+  state?: string | null,
+  country?: string | null,
+  timeZoneId?: string | null,
+  linkedInUrl?: string | null,
+  linkedInSalesNavigatorUrl?: string | null,
+  linkedInRecruiterUrl?: string | null,
+  phoneStatus?: pending | invalid | valid | validationFailed | notValidated | null,
+  notes?: string | null,
+  ownerUserId?: number | null,
+  accountId?: number | null,
+  isOptedOut?: boolean,
+  callStatus?: none | toCall | called | null,
+  meetingStatus?: none | meetingBooked | null,
+  addingDate?: string | null,
+  createdAt?: string | null,
+  lastModifiedAt?: string | null,
+  customFields?: {
+    key: string,
+    value?: string | null
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### searchByEmail
+
+`contacts.searchByEmail`
+
+Search contacts by exact email address
+
+**Risk:** `read`
+
+```ts
+await corsair.replyio.api.contacts.searchByEmail({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+| `top` | `number` | No | — |
+| `skip` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `hasMore` | `boolean` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: number,
+  email?: string | null,
+  domain?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  phone?: string | null,
+  title?: string | null,
+  company?: string | null,
+  companySize?: string | null,
+  industry?: string | null,
+  city?: string | null,
+  state?: string | null,
+  country?: string | null,
+  timeZoneId?: string | null,
+  linkedInUrl?: string | null,
+  linkedInSalesNavigatorUrl?: string | null,
+  linkedInRecruiterUrl?: string | null,
+  phoneStatus?: pending | invalid | valid | validationFailed | notValidated | null,
+  notes?: string | null,
+  ownerUserId?: number | null,
+  accountId?: number | null,
+  isOptedOut?: boolean,
+  callStatus?: none | toCall | called | null,
+  meetingStatus?: none | meetingBooked | null,
+  addingDate?: string | null,
+  createdAt?: string | null,
+  lastModifiedAt?: string | null,
+  customFields?: {
+    key: string,
+    value?: string | null
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### setStatus
+
+`contacts.setStatus`
+
+Set contacts' in-sequence status in bulk
+
+**Risk:** `write`
+
+```ts
+await corsair.replyio.api.contacts.setStatus({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sequenceId` | `number` | Yes | — |
+| `contactIds` | `number[]` | Yes | — |
+| `statusInSequence` | `active \| paused \| finished \| outOfOffice` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`contacts.update`
+
+Update an existing contact
+
+**Risk:** `write`
+
+```ts
+await corsair.replyio.api.contacts.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `email` | `string` | No | — |
+| `firstName` | `string` | No | — |
+| `lastName` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `phone2` | `string` | No | — |
+| `title` | `string` | No | — |
+| `company` | `string` | No | — |
+| `companySize` | `Empty \| SelfEmployed \| Ten \| Fifty \| TwoHundred \| FiveHundred \| OneThousand \| FiveThousand \| TenThousand \| OverTenThousand` | No | — |
+| `industry` | `string` | No | — |
+| `city` | `string` | No | — |
+| `state` | `string` | No | — |
+| `country` | `string` | No | — |
+| `timeZoneId` | `string` | No | — |
+| `linkedInUrl` | `string` | No | — |
+| `linkedInSalesNavigatorUrl` | `string` | No | — |
+| `linkedInRecruiterUrl` | `string` | No | — |
+| `notes` | `string` | No | — |
+| `accountId` | `number` | No | — |
+| `isOptedOut` | `boolean` | No | — |
+| `callStatus` | `none \| toCall \| called` | No | — |
+| `meetingStatus` | `none \| meetingBooked` | No | — |
+| `ownerUserId` | `number` | No | — |
+| `customFields` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="customFields full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  value?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `email` | `string` | No | — |
+| `domain` | `string` | No | — |
+| `firstName` | `string` | No | — |
+| `lastName` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `title` | `string` | No | — |
+| `company` | `string` | No | — |
+| `companySize` | `string` | No | — |
+| `industry` | `string` | No | — |
+| `city` | `string` | No | — |
+| `state` | `string` | No | — |
+| `country` | `string` | No | — |
+| `timeZoneId` | `string` | No | — |
+| `linkedInUrl` | `string` | No | — |
+| `linkedInSalesNavigatorUrl` | `string` | No | — |
+| `linkedInRecruiterUrl` | `string` | No | — |
+| `phoneStatus` | `pending \| invalid \| valid \| validationFailed \| notValidated` | No | — |
+| `notes` | `string` | No | — |
+| `ownerUserId` | `number` | No | — |
+| `accountId` | `number` | No | — |
+| `isOptedOut` | `boolean` | No | — |
+| `callStatus` | `none \| toCall \| called` | No | — |
+| `meetingStatus` | `none \| meetingBooked` | No | — |
+| `addingDate` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `lastModifiedAt` | `string` | No | — |
+| `customFields` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="customFields full type">
+
+```ts
+{
+  key: string,
+  value?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Email Accounts
+
+### connectGmail
+
+`emailAccounts.connectGmail`
+
+Get the Gmail OAuth connect URL for the user to open
+
+**Risk:** `write`
+
+```ts
+await corsair.replyio.api.emailAccounts.connectGmail({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `provider` | `gmail` | Yes | — |
+
+
+
+---
+
+### connectOffice365
+
+`emailAccounts.connectOffice365`
+
+Get the Microsoft 365 OAuth connect URL for the user to open
+
+**Risk:** `write`
+
+```ts
+await corsair.replyio.api.emailAccounts.connectOffice365({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `provider` | `office-365` | Yes | — |
+
+
+
+---
+
+### delete
+
+`emailAccounts.delete`
+
+Delete an email account [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.replyio.api.emailAccounts.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### list
+
+`emailAccounts.list`
+
+List email accounts with pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.replyio.api.emailAccounts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `top` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `my` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `hasMore` | `boolean` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: number,
+  ownerUserId?: number | null,
+  email: string,
+  senderName?: string | null,
+  emailAccountType: custom | gmail | outlook | exchange | exchangeOnPremise,
+  isDefault?: boolean,
+  dailyLimit?: number | null,
+  connectionStatus: unknown | connected | disconnected,
+  tags?: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listDisconnected
+
+`emailAccounts.listDisconnected`
+
+List email accounts disconnected by auth or connection errors
+
+**Risk:** `read`
+
+```ts
+await corsair.replyio.api.emailAccounts.listDisconnected({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `top` | `number` | No | — |
+| `skip` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `hasMore` | `boolean` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: number,
+  ownerUserId?: number | null,
+  email: string,
+  senderName?: string | null,
+  emailAccountType: custom | gmail | outlook | exchange | exchangeOnPremise,
+  isDefault?: boolean,
+  dailyLimit?: number | null,
+  connectionStatus: unknown | connected | disconnected,
+  tags?: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`emailAccounts.update`
+
+Update an email account with custom SMTP/IMAP settings
+
+**Risk:** `write`
+
+```ts
+await corsair.replyio.api.emailAccounts.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `connection` | `object` | No | — |
+| `safety` | `object` | No | — |
+| `signature` | `object` | No | — |
+| `optOut` | `object` | No | — |
+| `rampUp` | `object` | No | — |
+| `tags` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="connection full type">
+
+```ts
+{
+  email?: string,
+  senderName?: string,
+  smtpHost?: string,
+  smtpPort?: number,
+  smtpPassword?: string,
+  smtpSsl?: boolean,
+  imapHost?: string,
+  imapPort?: number,
+  imapPassword?: string,
+  imapSsl?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="safety full type">
+
+```ts
+{
+  dailyLimit?: number,
+  isEmailsThrottlingEnabled?: boolean,
+  emailsPerInterval?: number,
+  emailsThrottlingSecondsInterval?: number,
+  isSendingDelayEnabled?: boolean,
+  maxSendingDelaySeconds?: number,
+  minSendingDelaySeconds?: number
+}
+```
+</Accordion>
+
+<Accordion title="signature full type">
+
+```ts
+{
+  signature?: string
+}
+```
+</Accordion>
+
+<Accordion title="optOut full type">
+
+```ts
+{
+  message?: string,
+  emailFooter?: string,
+  isOptOutLinkEnabled?: boolean,
+  optOutTextBlock?: string
+}
+```
+</Accordion>
+
+<Accordion title="rampUp full type">
+
+```ts
+{
+  enabled?: boolean,
+  startValue?: number,
+  incrementValue?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `ownerUserId` | `number` | No | — |
+| `email` | `string` | Yes | — |
+| `senderName` | `string` | No | — |
+| `emailAccountType` | `custom \| gmail \| outlook \| exchange \| exchangeOnPremise` | Yes | — |
+| `isDefault` | `boolean` | No | — |
+| `dailyLimit` | `number` | No | — |
+| `connectionStatus` | `unknown \| connected \| disconnected` | Yes | — |
+| `tags` | `string[]` | No | — |
+| `isInUse` | `boolean` | No | — |
+| `sendingConnectivityError` | `string` | No | — |
+| `receivingConnectivityError` | `string` | No | — |
+| `sendingLockedByProvider` | `boolean` | No | — |
+| `updatedAt` | `string` | No | — |
+
+
+
+---
+
+## Schedules
+
+### delete
+
+`schedules.delete`
+
+Delete a sending schedule [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.replyio.api.schedules.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+## Sequence Contacts
+
+### add
+
+`sequenceContacts.add`
+
+Add contacts to a sequence in bulk
+
+**Risk:** `write`
+
+```ts
+await corsair.replyio.api.sequenceContacts.add({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sequenceId` | `number` | Yes | — |
+| `contactIds` | `number[]` | Yes | — |
+| `removeFromExisting` | `boolean` | No | — |
+| `startStepId` | `number` | No | — |
+| `ignoreStepDelay` | `boolean` | No | — |
+| `startFrom` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `added` | `number[]` | Yes | — |
+| `notProcessed` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="notProcessed full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### bulkRemove
+
+`sequenceContacts.bulkRemove`
+
+Remove multiple contacts from a sequence at once
+
+**Risk:** `write`
+
+```ts
+await corsair.replyio.api.sequenceContacts.bulkRemove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sequenceId` | `number` | Yes | — |
+| `contactIds` | `number[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requested` | `number` | Yes | — |
+| `removed` | `number` | Yes | — |
+| `notFound` | `number` | Yes | — |
+| `notInSequence` | `number` | Yes | — |
+| `removedIds` | `number[]` | Yes | — |
+
+
+
+---
+
+### listExtended
+
+`sequenceContacts.listExtended`
+
+List sequence contacts with extended engagement state
+
+**Risk:** `read`
+
+```ts
+await corsair.replyio.api.sequenceContacts.listExtended({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sequenceId` | `number` | Yes | — |
+| `top` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `additionalColumns` | `CurrentStep \| LastStepCompletedAt \| Status[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `hasMore` | `boolean` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  contactId: number,
+  email?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  title?: string | null,
+  addedAt?: string | null,
+  currentStep?: {
+    stepId: number,
+    displayStepNumber?: string | null,
+    stepNumber?: number | null
+  } | null,
+  lastStepCompletedAt?: string | null,
+  status?: {
+    status: string,
+    replied?: boolean,
+    delivered?: boolean,
+    bounced?: boolean,
+    opened?: boolean,
+    clicked?: boolean
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`sequenceContacts.remove`
+
+Remove a contact from a sequence
+
+**Risk:** `write`
+
+```ts
+await corsair.replyio.api.sequenceContacts.remove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sequenceId` | `number` | Yes | — |
+| `contactId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### setStatus
+
+`sequenceContacts.setStatus`
+
+Set contacts' status for enrollments in a specific sequence
+
+**Risk:** `write`
+
+```ts
+await corsair.replyio.api.sequenceContacts.setStatus({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sequenceId` | `number` | Yes | — |
+| `contactIds` | `number[]` | Yes | — |
+| `statusInSequence` | `active \| paused \| finished \| outOfOffice` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Sequences
+
+### archive
+
+`sequences.archive`
+
+Archive a sequence and remove its contacts
+
+**Risk:** `write`
+
+```ts
+await corsair.replyio.api.sequences.archive({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sequenceId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `ownerUserId` | `number` | No | — |
+| `name` | `string` | Yes | — |
+| `created` | `string` | No | — |
+| `status` | `new \| active \| paused` | Yes | — |
+| `isArchived` | `boolean` | Yes | — |
+| `health` | `healthy \| stalled \| degraded \| blocked` | No | — |
+| `scheduleId` | `number` | No | — |
+| `emailAccounts` | `object[]` | No | — |
+| `linkedInAccounts` | `object[]` | No | — |
+| `settings` | `object` | No | — |
+| `steps` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="emailAccounts full type">
+
+```ts
+{
+  id: number,
+  email: string
+}[]
+```
+</Accordion>
+
+<Accordion title="linkedInAccounts full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  profileUrl?: string | null,
+  status?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="settings full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="steps full type">
+
+```ts
+{
+  id?: number,
+  type?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`sequences.delete`
+
+Delete a sequence [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.replyio.api.sequences.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sequenceId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`sequences.get`
+
+Get a sequence by ID with settings and steps
+
+**Risk:** `read`
+
+```ts
+await corsair.replyio.api.sequences.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sequenceId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `ownerUserId` | `number` | No | — |
+| `name` | `string` | Yes | — |
+| `created` | `string` | No | — |
+| `status` | `new \| active \| paused` | Yes | — |
+| `isArchived` | `boolean` | Yes | — |
+| `health` | `healthy \| stalled \| degraded \| blocked` | No | — |
+| `scheduleId` | `number` | No | — |
+| `emailAccounts` | `object[]` | No | — |
+| `linkedInAccounts` | `object[]` | No | — |
+| `settings` | `object` | No | — |
+| `steps` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="emailAccounts full type">
+
+```ts
+{
+  id: number,
+  email: string
+}[]
+```
+</Accordion>
+
+<Accordion title="linkedInAccounts full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  profileUrl?: string | null,
+  status?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="settings full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="steps full type">
+
+```ts
+{
+  id?: number,
+  type?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`sequences.list`
+
+List sequences with pagination and optional filters
+
+**Risk:** `read`
+
+```ts
+await corsair.replyio.api.sequences.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `top` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `status` | `active \| paused \| new` | No | — |
+| `ownerUserId` | `number` | No | — |
+| `folderId` | `string` | No | — |
+| `isArchived` | `boolean` | No | — |
+| `name` | `string` | No | — |
+| `createdAfter` | `string` | No | — |
+| `sortBy` | `created \| name \| status` | No | — |
+| `sortDirection` | `asc \| desc` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `hasMore` | `boolean` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: number,
+  ownerUserId?: number | null,
+  name: string,
+  created?: string | null,
+  status: new | active | paused,
+  isArchived: boolean,
+  health?: healthy | stalled | degraded | blocked | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### pause
+
+`sequences.pause`
+
+Pause a running sequence
+
+**Risk:** `write`
+
+```ts
+await corsair.replyio.api.sequences.pause({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sequenceId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `ownerUserId` | `number` | No | — |
+| `name` | `string` | Yes | — |
+| `created` | `string` | No | — |
+| `status` | `new \| active \| paused` | Yes | — |
+| `isArchived` | `boolean` | Yes | — |
+| `health` | `healthy \| stalled \| degraded \| blocked` | No | — |
+| `scheduleId` | `number` | No | — |
+| `emailAccounts` | `object[]` | No | — |
+| `linkedInAccounts` | `object[]` | No | — |
+| `settings` | `object` | No | — |
+| `steps` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="emailAccounts full type">
+
+```ts
+{
+  id: number,
+  email: string
+}[]
+```
+</Accordion>
+
+<Accordion title="linkedInAccounts full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  profileUrl?: string | null,
+  status?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="settings full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="steps full type">
+
+```ts
+{
+  id?: number,
+  type?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### start
+
+`sequences.start`
+
+Start a sequence in New or Paused status
+
+**Risk:** `write`
+
+```ts
+await corsair.replyio.api.sequences.start({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sequenceId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `ownerUserId` | `number` | No | — |
+| `name` | `string` | Yes | — |
+| `created` | `string` | No | — |
+| `status` | `new \| active \| paused` | Yes | — |
+| `isArchived` | `boolean` | Yes | — |
+| `health` | `healthy \| stalled \| degraded \| blocked` | No | — |
+| `scheduleId` | `number` | No | — |
+| `emailAccounts` | `object[]` | No | — |
+| `linkedInAccounts` | `object[]` | No | — |
+| `settings` | `object` | No | — |
+| `steps` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="emailAccounts full type">
+
+```ts
+{
+  id: number,
+  email: string
+}[]
+```
+</Accordion>
+
+<Accordion title="linkedInAccounts full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  profileUrl?: string | null,
+  status?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="settings full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="steps full type">
+
+```ts
+{
+  id?: number,
+  type?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Steps
+
+### create
+
+`steps.create`
+
+Add a new step to a sequence
+
+**Risk:** `write`
+
+```ts
+await corsair.replyio.api.steps.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sequenceId` | `number` | Yes | — |
+| `step` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="step full type">
+
+```ts
+{
+  type: email,
+  delayInMinutes: number,
+  executionMode: automatic | manual,
+  variants: {
+    subject?: string,
+    message?: string,
+    attachmentIds?: number[]
+  }[]
+} | {
+  type: linkedIn,
+  actionType: message | connect | inMail | viewProfile | endorseSkills | voiceMessage | likeRecentPosts | followProfile | commentOnRecentPost,
+  delayInMinutes: number
+} | {
+  type: call,
+  delayInMinutes: number
+} | {
+  type: sms,
+  delayInMinutes: number,
+  executionMode: automatic | manual,
+  message: string
+} | {
+  type: whatsApp,
+  delayInMinutes: number,
+  message: string
+} | {
+  type: zapier,
+  delayInMinutes: number,
+  name: string,
+  action: immediately | wait
+} | {
+  type: task,
+  delayInMinutes: number,
+  actionType: toDo | meeting,
+  description: string
+} | {
+  type: condition,
+  delayInMinutes: number,
+  waitInMinutes: number,
+  conditions: {
+    property: string,
+    rules: {
+      operator: string,
+      value: string
+    }[]
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `type` | `email \| linkedIn \| call \| sms \| whatsApp \| zapier \| task \| condition` | Yes | — |
+| `parentId` | `number` | No | — |
+| `ifConditionPositive` | `boolean` | No | — |
+| `delayInMinutes` | `number` | No | — |
+
+
+
+---
+
+### get
+
+`steps.get`
+
+Get a sequence step by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.replyio.api.steps.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sequenceId` | `number` | Yes | — |
+| `stepId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `type` | `email \| linkedIn \| call \| sms \| whatsApp \| zapier \| task \| condition` | Yes | — |
+| `parentId` | `number` | No | — |
+| `ifConditionPositive` | `boolean` | No | — |
+| `delayInMinutes` | `number` | No | — |
+
+
+
+---
+
+### list
+
+`steps.list`
+
+List all steps in a sequence
+
+**Risk:** `read`
+
+```ts
+await corsair.replyio.api.steps.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sequenceId` | `number` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  type: email | linkedIn | call | sms | whatsApp | zapier | task | condition,
+  parentId?: number | null,
+  ifConditionPositive?: boolean | null,
+  delayInMinutes?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Users
+
+### getCurrent
+
+`users.getCurrent`
+
+Get the current authenticated user and verify the API key
+
+**Risk:** `read`
+
+```ts
+await corsair.replyio.api.users.getCurrent({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `number` | Yes | — |
+| `username` | `string` | Yes | — |
+| `teamId` | `number` | Yes | — |
+
+
+
+---
+
+### listTeam
+
+`users.listTeam`
+
+List users on the current team
+
+**Risk:** `read`
+
+```ts
+await corsair.replyio.api.users.listTeam({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  teamId: number,
+  teamName: string,
+  userId: number,
+  userName: string,
+  userEmail: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+

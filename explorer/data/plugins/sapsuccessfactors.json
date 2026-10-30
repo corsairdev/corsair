@@ -1,0 +1,3208 @@
+{
+  "id": "sapsuccessfactors",
+  "displayName": "SAP SuccessFactors",
+  "description": "Cloud HR suite for employee records, recruiting, performance, and workforce management.",
+  "npmPackageName": "@corsair-dev/sapsuccessfactors",
+  "authTypes": ["api_key", "oauth_2"],
+  "defaultAuthType": "oauth_2",
+  "counts": {
+    "api": 64,
+    "webhooks": 0,
+    "db": 12
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "host", "company_id"]
+    },
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature",
+        "host",
+        "company_id"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "sapsuccessfactors.api.a.createAFeedbackRequest",
+      "shortPath": "a.createAFeedbackRequest",
+      "description": "Create a continuous feedback request",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "questions",
+            "optional": true,
+            "type": "{ question: string, answer?: string }[]"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined | null | {} | { d: { id: string | number } } | { @odata.context: string } & { id: string | number }"
+      }
+    },
+    {
+      "path": "sapsuccessfactors.api.application.getApplicationInterview",
+      "shortPath": "application.getApplicationInterview",
+      "description": "Retrieve interview information for job applications",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "applicationId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "orderby",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ d: { results: { applicationId: string | number }[] } } | { value: { applicationId: string | number }[] }"
+      }
+    },
+    {
+      "path": "sapsuccessfactors.api.approve.approveCalibrationSession",
+      "shortPath": "approve.approveCalibrationSession",
+      "description": "Finalize a calibration session that is In Progress or Approving",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "session_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined | null | {} | { d: { sessionId: string } } | { @odata.context: string } & { sessionId: string }"
+      }
+    },
+    {
+      "path": "sapsuccessfactors.api.background.getBackgroundEducation",
+      "shortPath": "background.getBackgroundEducation",
+      "description": "Retrieve Background_Education records",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "orderby",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ d: { results: { userId: string }[] } } | { value: { userId: string }[] }"
+      }
+    },
+    {
+      "path": "sapsuccessfactors.api.background.getBackgroundMobility",
+      "shortPath": "background.getBackgroundMobility",
+      "description": "Retrieve Background_Mobility records",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "orderby",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ d: { results: { userId: string }[] } } | { value: { userId: string }[] }"
+      }
+    },
+    {
+      "path": "sapsuccessfactors.api.calibration.getCalibrationSessionById",
+      "shortPath": "calibration.getCalibrationSessionById",
+      "description": "Get a specific calibration session by session ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "session_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ d: { sessionId: string } } | { @odata.context: string } & { sessionId: string }"
+      }
+    },
+    {
+      "path": "sapsuccessfactors.api.calibration.getCalibrationSessions",
+      "shortPath": "calibration.getCalibrationSessions",
+      "description": "Query all calibration sessions the current user can access",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "orderby",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ d: { results: { sessionId: string }[] } } | { value: { sessionId: string }[] }"
+      }
+    },
+    {
+      "path": "sapsuccessfactors.api.calibration.getCalibrationSubjectById",
+      "shortPath": "calibration.getCalibrationSubjectById",
+      "description": "Query a subject's competency ratings within a calibration session",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subject_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ d: { subjectId: string } } | { @odata.context: string } & { subjectId: string }"
+      }
+    },
+    {
+      "path": "sapsuccessfactors.api.calibration.getCalibrationSubjectRatings",
+      "shortPath": "calibration.getCalibrationSubjectRatings",
+      "description": "Query a subject's ratings by session ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "orderby",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "session_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ d: { results: { subjectId: string }[] } } | { value: { subjectId: string }[] }"
+      }
+    },
+    {
+      "path": "sapsuccessfactors.api.calibration.updateCalibrationSubjectRatings",
+      "shortPath": "calibration.updateCalibrationSubjectRatings",
+      "description": "Update a subject's competency ratings in a calibration session",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subject_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined | null | {} | { d: { subjectId: string } } | { @odata.context: string } & { subjectId: string }"
+      }
+    },
+    {
+      "path": "sapsuccessfactors.api.candidates.listCandidates",
+      "shortPath": "candidates.listCandidates",
+      "description": "Retrieve candidates",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "orderby",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ d: { results: { __metadata?: { uri?: string, type?: string }, candidateId: string | number, firstName?: string | null, lastName?: string | null, primaryEmail?: string | null, contactEmail?: string | null, cellPhone?: string | null, city?: string | null, country?: string | null, currentTitle?: string | null, lastModifiedDateTime?: string | null }[] } } | { value: { __metadata?: { uri?: string, type?: string }, candidateId: string | number, firstName?: string | null, lastName?: string | null, primaryEmail?: string | null, contactEmail?: string | null, cellPhone?: string | null, city?: string | null, country?: string | null, currentTitle?: string | null, lastModifiedDateTime?: string | null }[] }"
+      }
+    },
+    {
+      "path": "sapsuccessfactors.api.cdp.getCdpLearningMetadata",
+      "shortPath": "cdp.getCdpLearningMetadata",
+      "description": "Get metadata for Career Development Planning Learning",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string | { d: { results: { message?: string }[] } } | { value: { message?: string }[] } | { d: { message?: string } } | { @odata.context: string } & { message?: string }"
+      }
+    },
+    {
+      "path": "sapsuccessfactors.api.cdp.refreshCdpLearningMetadata",
+      "shortPath": "cdp.refreshCdpLearningMetadata",
+      "description": "Refresh CDP Learning metadata",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined | null | {} | { d: { message?: string } } | { @odata.context: string } & { message?: string }"
+      }
+    },
+    {
+      "path": "sapsuccessfactors.api.current.getCurrentUser",
+      "shortPath": "current.getCurrentUser",
+      "description": "Retrieve the currently authenticated user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "orderby",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ d: { results: { __metadata?: { uri?: string, type?: string }, userId: string, username?: string | null, defaultFullName?: string | null, firstName?: string | null, mi?: string | null, lastName?: string | null, email?: string | null, status?: string | null, department?: string | null, division?: string | null, location?: string | null, title?: string | null, managerId?: string | null, hrId?: string | null, hireDate?: string | null, lastModifiedDateTime?: string | null, lastModified?: string | null, timeZone?: string | null, country?: string | null, state?: string | null, city?: string | null, zipCode?: string | null, addressLine1?: string | null, businessPhone?: string | null, cellPhone?: string | null, empId?: string | null, totalTeamSize?: number | null, directReports?: { __deferred?: { uri?: string } }, manager?: { __deferred?: { uri?: string } }, hr?: { __deferred?: { uri?: string } } }[] } } | { value: { __metadata?: { uri?: string, type?: string }, userId: string, username?: string | null, defaultFullName?: string | null, firstName?: string | null, mi?: string | null, lastName?: string | null, email?: string | null, status?: string | null, department?: string | null, division?: string | null, location?: string | null, title?: string | null, managerId?: string | null, hrId?: string | null, hireDate?: string | null, lastModifiedDateTime?: string | null, lastModified?: string | null, timeZone?: string | null, country?: string | null, state?: string | null, city?: string | null, zipCode?: string | null, addressLine1?: string | null, businessPhone?: string | null, cellPhone?: string | null, empId?: string | null, totalTeamSize?: number | null, directReports?: { __deferred?: { uri?: string } }, manager?: { __deferred?: { uri?: string } }, hr?: { __deferred?: { uri?: string } } }[] }"
+      }
+    },
+    {
+      "path": "sapsuccessfactors.api.custom.getCustomMdfObject",
+      "shortPath": "custom.getCustomMdfObject",
+      "description": "Retrieve custom MDF objects (cust_* entities)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "orderby",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "custom_object",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ d: { results: { externalCode?: string }[] } } | { value: { externalCode?: string }[] }"
+      }
+    },
+    {
+      "path": "sapsuccessfactors.api.emp.getEmpEmploymentTermination",
+      "shortPath": "emp.getEmpEmploymentTermination",
+      "description": "Retrieve EmpEmploymentTermination records",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "orderby",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ d: { results: { userId: string }[] } } | { value: { userId: string }[] }"
+      }
+    },
+    {
+      "path": "sapsuccessfactors.api.emp.getEmpPayCompNonRecurring",
+      "shortPath": "emp.getEmpPayCompNonRecurring",
+      "description": "Retrieve EmpPayCompNonRecurring records",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "orderby",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ d: { results: { userId: string }[] } } | { value: { userId: string }[] }"
+      }
+    },
+    {
+      "path": "sapsuccessfactors.api.emp.getEmpPayCompRecurring",
+      "shortPath": "emp.getEmpPayCompRecurring",
+      "description": "Retrieve EmpPayCompRecurring records",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "orderby",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ d: { results: { userId: string }[] } } | { value: { userId: string }[] }"
+      }
+    },
+    {
+      "path": "sapsuccessfactors.api.emp.listEmpEmployment",
+      "shortPath": "emp.listEmpEmployment",
+      "description": "List EmpEmployment records",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "orderby",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ d: { results: { __metadata?: { uri?: string, type?: string }, userId: string, personIdExternal?: string | null, startDate?: string | null, endDate?: string | null, originalStartDate?: string | null, seniorityDate?: string | null, assignmentClass?: string | null, employmentType?: string | null, isContingentWorker?: boolean | null, lastModifiedDateTime?: string | null, jobInfoNav?: { __deferred?: { uri?: string } }, compInfoNav?: { __deferred?: { uri?: string } } }[] } } | { value: { __metadata?: { uri?: string, type?: string }, userId: string, personIdExternal?: string | null, startDate?: string | null, endDate?: string | null, originalStartDate?: string | null, seniorityDate?: string | null, assignmentClass?: string | null, employmentType?: string | null, isContingentWorker?: boolean | null, lastModifiedDateTime?: string | null, jobInfoNav?: { __deferred?: { uri?: string } }, compInfoNav?: { __deferred?: { uri?: string } } }[] }"
+      }
+    },
+    {
+      "path": "sapsuccessfactors.api.employee.getEmployeeTime",
+      "shortPath": "employee.getEmployeeTime",
+      "description": "Retrieve EmployeeTime records",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "orderby",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ d: { results: { userId: string }[] } } | { value: { userId: string }[] }"
+      }
+    },
+    {
+      "path": "sapsuccessfactors.api.employee.getEmployeeTimesheet",
+      "shortPath": "employee.getEmployeeTimesheet",
+      "description": "Retrieve EmployeeTimeSheet records",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "orderby",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ d: { results: { userId: string }[] } } | { value: { userId: string }[] }"
+      }
+    },
+    {
+      "path": "sapsuccessfactors.api.feedback.getFeedbackRecordsServiceAvailable",
+      "shortPath": "feedback.getFeedbackRecordsServiceAvailable",
+      "description": "Retrieve continuous feedback records (OData V4)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "orderby",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ d: { results: { id: string | number }[] } } | { value: { id: string | number }[] }"
+      }
+    },
+    {
+      "path": "sapsuccessfactors.api.fo.getFoBusinessUnit",
+      "shortPath": "fo.getFoBusinessUnit",
+      "description": "Retrieve FOBusinessUnit records",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "orderby",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ d: { results: { externalCode: string }[] } } | { value: { externalCode: string }[] }"
+      }
+    },
+    {
+      "path": "sapsuccessfactors.api.fo.getFoCompany",
+      "shortPath": "fo.getFoCompany",
+      "description": "Retrieve FOCompany records",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "orderby",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ d: { results: { externalCode: string }[] } } | { value: { externalCode: string }[] }"
+      }
+    },
+    {
+      "path": "sapsuccessfactors.api.fo.getFoCostCenter",
+      "shortPath": "fo.getFoCostCenter",
+      "description": "Retrieve FOCostCenter records",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "orderby",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ d: { results: { externalCode: string }[] } } | { value: { externalCode: string }[] }"
+      }
+    },
+    {
+      "path": "sapsuccessfactors.api.fo.getFoDepartment",
+      "shortPath": "fo.getFoDepartment",
+      "description": "Retrieve FODepartment records",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "orderby",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ d: { results: { externalCode: string }[] } } | { value: { externalCode: string }[] }"
+      }
+    },
+    {
+      "path": "sapsuccessfactors.api.fo.getFoJobCode",
+      "shortPath": "fo.getFoJobCode",
+      "description": "Retrieve FOJobCode records",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "orderby",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ d: { results: { externalCode: string }[] } } | { value: { externalCode: string }[] }"
+      }
+    },
+    {
+      "path": "sapsuccessfactors.api.fo.getFoJobFunction",
+      "shortPath": "fo.getFoJobFunction",
+      "description": "Retrieve FOJobFunction records",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "orderby",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ d: { results: { externalCode: string }[] } } | { value: { externalCode: string }[] }"
+      }
+    },
+    {
+      "path": "sapsuccessfactors.api.fo.getFoLocation",
+      "shortPath": "fo.getFoLocation",
+      "description": "Retrieve FOLocation records",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "orderby",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ d: { results: { externalCode: string }[] } } | { value: { externalCode: string }[] }"
+      }
+    },
+    {
+      "path": "sapsuccessfactors.api.fo.getFoPayGroup",
+      "shortPath": "fo.getFoPayGroup",
+      "description": "Retrieve FOPayGroup records",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "orderby",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ d: { results: { externalCode: string }[] } } | { value: { externalCode: string }[] }"
+      }
+    },
+    {
+      "path": "sapsuccessfactors.api.form.getFormContent",
+      "shortPath": "form.getFormContent",
+      "description": "Retrieve performance form content",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "orderby",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ d: { results: { formContentId: string | number }[] } } | { value: { formContentId: string | number }[] }"
+      }
+    },
+    {
+      "path": "sapsuccessfactors.api.give.giveFeedbackOrRespondToAFeedbackRequest",
+      "shortPath": "give.giveFeedbackOrRespondToAFeedbackRequest",
+      "description": "Give feedback or respond to a feedback request",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "questions",
+            "optional": true,
+            "type": "{ question: string, answer?: string }[]"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined | null | {} | { d: { id: string | number } } | { @odata.context: string } & { id: string | number }"
+      }
+    },
+    {
+      "path": "sapsuccessfactors.api.goal.getGoalPlanTemplate",
+      "shortPath": "goal.getGoalPlanTemplate",
+      "description": "Retrieve goal plan template records",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "orderby",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ d: { results: { id: string | number }[] } } | { value: { id: string | number }[] }"
+      }
+    },
+    {
+      "path": "sapsuccessfactors.api.goals.getGoalsByPlan",
+      "shortPath": "goals.getGoalsByPlan",
+      "description": "Retrieve goals for a Goal_<planId> entity",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "orderby",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "goal_plan_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ d: { results: { id: string | number }[] } } | { value: { id: string | number }[] }"
+      }
+    },
+    {
+      "path": "sapsuccessfactors.api.internal.updateInternalUsernameNewHiresAfter",
+      "shortPath": "internal.updateInternalUsernameNewHiresAfter",
+      "description": "Update internal username of new hires after MPH submit",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "newUsername",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "new_username",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined | null | {} | { d: { __metadata?: { uri?: string, type?: string }, userId: string, username?: string | null, defaultFullName?: string | null, firstName?: string | null, mi?: string | null, lastName?: string | null, email?: string | null, status?: string | null, department?: string | null, division?: string | null, location?: string | null, title?: string | null, managerId?: string | null, hrId?: string | null, hireDate?: string | null, lastModifiedDateTime?: string | null, lastModified?: string | null, timeZone?: string | null, country?: string | null, state?: string | null, city?: string | null, zipCode?: string | null, addressLine1?: string | null, businessPhone?: string | null, cellPhone?: string | null, empId?: string | null, totalTeamSize?: number | null, directReports?: { __deferred?: { uri?: string } }, manager?: { __deferred?: { uri?: string } }, hr?: { __deferred?: { uri?: string } } } } | { @odata.context: string } & { __metadata?: { uri?: string, type?: string }, userId: string, username?: string | null, defaultFullName?: string | null, firstName?: string | null, mi?: string | null, lastName?: string | null, email?: string | null, status?: string | null, department?: string | null, division?: string | null, location?: string | null, title?: string | null, managerId?: string | null, hrId?: string | null, hireDate?: string | null, lastModifiedDateTime?: string | null, lastModified?: string | null, timeZone?: string | null, country?: string | null, state?: string | null, city?: string | null, zipCode?: string | null, addressLine1?: string | null, businessPhone?: string | null, cellPhone?: string | null, empId?: string | null, totalTeamSize?: number | null, directReports?: { __deferred?: { uri?: string } }, manager?: { __deferred?: { uri?: string } }, hr?: { __deferred?: { uri?: string } } }"
+      }
+    },
+    {
+      "path": "sapsuccessfactors.api.interview.getInterviewOverallAssessment",
+      "shortPath": "interview.getInterviewOverallAssessment",
+      "description": "Retrieve overall interview ratings",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "orderby",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ d: { results: { applicationId: string | number }[] } } | { value: { applicationId: string | number }[] }"
+      }
+    },
+    {
+      "path": "sapsuccessfactors.api.job.getJobApplication",
+      "shortPath": "job.getJobApplication",
+      "description": "Retrieve job application records",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "orderby",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ d: { results: { __metadata?: { uri?: string, type?: string }, applicationId: string | number, jobReqId?: string | number | null, candidateId?: string | number | null, status?: string | null, appStatusSetId?: string | null, applicationDate?: string | null, lastModifiedDateTime?: string | null }[] } } | { value: { __metadata?: { uri?: string, type?: string }, applicationId: string | number, jobReqId?: string | number | null, candidateId?: string | number | null, status?: string | null, appStatusSetId?: string | null, applicationDate?: string | null, lastModifiedDateTime?: string | null }[] }"
+      }
+    },
+    {
+      "path": "sapsuccessfactors.api.job.getJobReqScreeningQuestion",
+      "shortPath": "job.getJobReqScreeningQuestion",
+      "description": "Retrieve screening questions for job requisitions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "orderby",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ d: { results: { jobReqId: string | number }[] } } | { value: { jobReqId: string | number }[] }"
+      }
+    },
+    {
+      "path": "sapsuccessfactors.api.job.getJobRequisition",
+      "shortPath": "job.getJobRequisition",
+      "description": "Retrieve job requisition records",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "orderby",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ d: { results: { __metadata?: { uri?: string, type?: string }, jobReqId: string | number, internalStatus?: string | null, jobTitle?: string | null, jobCode?: string | null, department?: string | null, division?: string | null, location?: string | null, country?: string | null, statusSetId?: string | null, appStatusSetId?: string | null, lastModifiedDateTime?: string | null }[] } } | { value: { __metadata?: { uri?: string, type?: string }, jobReqId: string | number, internalStatus?: string | null, jobTitle?: string | null, jobCode?: string | null, department?: string | null, division?: string | null, location?: string | null, country?: string | null, statusSetId?: string | null, appStatusSetId?: string | null, lastModifiedDateTime?: string | null }[] }"
+      }
+    },
+    {
+      "path": "sapsuccessfactors.api.learning.createLearningActivitiesBulk",
+      "shortPath": "learning.createLearningActivitiesBulk",
+      "description": "Create learning activities in bulk",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined | null | {} | { d: { userId: string } } | { @odata.context: string } & { userId: string }"
+      }
+    },
+    {
+      "path": "sapsuccessfactors.api.metadata.refreshMetadataContFeedbackService",
+      "shortPath": "metadata.refreshMetadataContFeedbackService",
+      "description": "Refresh metadata cache for Continuous Feedback",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined | null | {} | { d: { message?: string } } | { @odata.context: string } & { message?: string }"
+      }
+    },
+    {
+      "path": "sapsuccessfactors.api.nomination.deleteNominationPositionTalentPool",
+      "shortPath": "nomination.deleteNominationPositionTalentPool",
+      "description": "Delete a nomination for a position or talent pool",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "nominationTargetId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "userId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "isPoolNomination",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined | null | {} | { d: { nominationTargetId: string } } | { @odata.context: string } & { nominationTargetId: string }"
+      }
+    },
+    {
+      "path": "sapsuccessfactors.api.odata.getOdataMetadataCalibSessionService",
+      "shortPath": "odata.getOdataMetadataCalibSessionService",
+      "description": "Get OData metadata for Calibration Session service",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string | { d: { results: { message?: string }[] } } | { value: { message?: string }[] } | { d: { message?: string } } | { @odata.context: string } & { message?: string }"
+      }
+    },
+    {
+      "path": "sapsuccessfactors.api.odata.getOdataMetadataClockInclockOut",
+      "shortPath": "odata.getOdataMetadataClockInclockOut",
+      "description": "Get OData metadata for Clock In/Clock Out Integration",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string | { d: { results: { message?: string }[] } } | { value: { message?: string }[] } | { d: { message?: string } } | { @odata.context: string } & { message?: string }"
+      }
+    },
+    {
+      "path": "sapsuccessfactors.api.odata.getOdataMetadataForNominationService",
+      "shortPath": "odata.getOdataMetadataForNominationService",
+      "description": "Get OData metadata for Nomination service",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string | { d: { results: { message?: string }[] } } | { value: { message?: string }[] } | { d: { message?: string } } | { @odata.context: string } & { message?: string }"
+      }
+    },
+    {
+      "path": "sapsuccessfactors.api.odata.getOdataMetadataOnboardingAddl",
+      "shortPath": "odata.getOdataMetadataOnboardingAddl",
+      "description": "Get OData metadata for Onboarding Additional Services",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string | { d: { results: { message?: string }[] } } | { value: { message?: string }[] } | { d: { message?: string } } | { @odata.context: string } & { message?: string }"
+      }
+    },
+    {
+      "path": "sapsuccessfactors.api.odata.getOdataUserMetadata",
+      "shortPath": "odata.getOdataUserMetadata",
+      "description": "Get OData metadata for the User entity",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string | { d: { results: { message?: string }[] } } | { value: { message?: string }[] } | { d: { message?: string } } | { @odata.context: string } & { message?: string }"
+      }
+    },
+    {
+      "path": "sapsuccessfactors.api.onb2.getOnb2Process",
+      "shortPath": "onb2.getOnb2Process",
+      "description": "Retrieve Onboarding 2.0 process records",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "orderby",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ d: { results: { userId: string }[] } } | { value: { userId: string }[] }"
+      }
+    },
+    {
+      "path": "sapsuccessfactors.api.onboardee.createOnboardee",
+      "shortPath": "onboardee.createOnboardee",
+      "description": "Create a new onboardee (User) for Onboarding 2.0",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined | null | {} | { d: { __metadata?: { uri?: string, type?: string }, userId: string, username?: string | null, defaultFullName?: string | null, firstName?: string | null, mi?: string | null, lastName?: string | null, email?: string | null, status?: string | null, department?: string | null, division?: string | null, location?: string | null, title?: string | null, managerId?: string | null, hrId?: string | null, hireDate?: string | null, lastModifiedDateTime?: string | null, lastModified?: string | null, timeZone?: string | null, country?: string | null, state?: string | null, city?: string | null, zipCode?: string | null, addressLine1?: string | null, businessPhone?: string | null, cellPhone?: string | null, empId?: string | null, totalTeamSize?: number | null, directReports?: { __deferred?: { uri?: string } }, manager?: { __deferred?: { uri?: string } }, hr?: { __deferred?: { uri?: string } } } } | { @odata.context: string } & { __metadata?: { uri?: string, type?: string }, userId: string, username?: string | null, defaultFullName?: string | null, firstName?: string | null, mi?: string | null, lastName?: string | null, email?: string | null, status?: string | null, department?: string | null, division?: string | null, location?: string | null, title?: string | null, managerId?: string | null, hrId?: string | null, hireDate?: string | null, lastModifiedDateTime?: string | null, lastModified?: string | null, timeZone?: string | null, country?: string | null, state?: string | null, city?: string | null, zipCode?: string | null, addressLine1?: string | null, businessPhone?: string | null, cellPhone?: string | null, empId?: string | null, totalTeamSize?: number | null, directReports?: { __deferred?: { uri?: string } }, manager?: { __deferred?: { uri?: string } }, hr?: { __deferred?: { uri?: string } } }"
+      }
+    },
+    {
+      "path": "sapsuccessfactors.api.pending.getPendingFeedbackRequestsFeedback",
+      "shortPath": "pending.getPendingFeedbackRequestsFeedback",
+      "description": "Retrieve pending feedback requests",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "orderby",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ d: { results: { id: string | number }[] } } | { value: { id: string | number }[] }"
+      }
+    },
+    {
+      "path": "sapsuccessfactors.api.per.getPerPersonal",
+      "shortPath": "per.getPerPersonal",
+      "description": "Retrieve PerPersonal biographical records",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "orderby",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ d: { results: { __metadata?: { uri?: string, type?: string }, personIdExternal: string, startDate?: string | null, endDate?: string | null, firstName?: string | null, lastName?: string | null, middleName?: string | null, formalName?: string | null, birthName?: string | null, gender?: string | null, maritalStatus?: string | null, nationality?: string | null, preferredName?: string | null, salutation?: string | null, lastModifiedDateTime?: string | null }[] } } | { value: { __metadata?: { uri?: string, type?: string }, personIdExternal: string, startDate?: string | null, endDate?: string | null, firstName?: string | null, lastName?: string | null, middleName?: string | null, formalName?: string | null, birthName?: string | null, gender?: string | null, maritalStatus?: string | null, nationality?: string | null, preferredName?: string | null, salutation?: string | null, lastModifiedDateTime?: string | null }[] }"
+      }
+    },
+    {
+      "path": "sapsuccessfactors.api.per.getPerPersonById",
+      "shortPath": "per.getPerPersonById",
+      "description": "Retrieve PerPerson by personIdExternal",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "person_id_external",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ d: { __metadata?: { uri?: string, type?: string }, personIdExternal: string, personId?: string | null, dateOfBirth?: string | null, countryOfBirth?: string | null, regionOfBirth?: string | null, placeOfBirth?: string | null, perPersonUuid?: string | null, lastModifiedDateTime?: string | null, personalInfoNav?: { __deferred?: { uri?: string } }, employmentNav?: { __deferred?: { uri?: string } }, emailNav?: { __deferred?: { uri?: string } }, phoneNav?: { __deferred?: { uri?: string } } } } | { @odata.context: string } & { __metadata?: { uri?: string, type?: string }, personIdExternal: string, personId?: string | null, dateOfBirth?: string | null, countryOfBirth?: string | null, regionOfBirth?: string | null, placeOfBirth?: string | null, perPersonUuid?: string | null, lastModifiedDateTime?: string | null, personalInfoNav?: { __deferred?: { uri?: string } }, employmentNav?: { __deferred?: { uri?: string } }, emailNav?: { __deferred?: { uri?: string } }, phoneNav?: { __deferred?: { uri?: string } } }"
+      }
+    },
+    {
+      "path": "sapsuccessfactors.api.per.listPerPerson",
+      "shortPath": "per.listPerPerson",
+      "description": "List PerPerson records",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "orderby",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ d: { results: { __metadata?: { uri?: string, type?: string }, personIdExternal: string, personId?: string | null, dateOfBirth?: string | null, countryOfBirth?: string | null, regionOfBirth?: string | null, placeOfBirth?: string | null, perPersonUuid?: string | null, lastModifiedDateTime?: string | null, personalInfoNav?: { __deferred?: { uri?: string } }, employmentNav?: { __deferred?: { uri?: string } }, emailNav?: { __deferred?: { uri?: string } }, phoneNav?: { __deferred?: { uri?: string } } }[] } } | { value: { __metadata?: { uri?: string, type?: string }, personIdExternal: string, personId?: string | null, dateOfBirth?: string | null, countryOfBirth?: string | null, regionOfBirth?: string | null, placeOfBirth?: string | null, perPersonUuid?: string | null, lastModifiedDateTime?: string | null, personalInfoNav?: { __deferred?: { uri?: string } }, employmentNav?: { __deferred?: { uri?: string } }, emailNav?: { __deferred?: { uri?: string } }, phoneNav?: { __deferred?: { uri?: string } } }[] }"
+      }
+    },
+    {
+      "path": "sapsuccessfactors.api.picklist.getPicklist",
+      "shortPath": "picklist.getPicklist",
+      "description": "Retrieve picklist definitions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "orderby",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ d: { results: { picklistId: string | number }[] } } | { value: { picklistId: string | number }[] }"
+      }
+    },
+    {
+      "path": "sapsuccessfactors.api.picklist.getPicklistOption",
+      "shortPath": "picklist.getPicklistOption",
+      "description": "Retrieve picklist option values",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "orderby",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ d: { results: { id: string | number }[] } } | { value: { id: string | number }[] }"
+      }
+    },
+    {
+      "path": "sapsuccessfactors.api.position.getPosition",
+      "shortPath": "position.getPosition",
+      "description": "Retrieve position management records",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "orderby",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ d: { results: { __metadata?: { uri?: string, type?: string }, code: string, effectiveStartDate?: string | null, effectiveEndDate?: string | null, effectiveStatus?: string | null, externalName_defaultValue?: string | null, jobCode?: string | null, department?: string | null, division?: string | null, company?: string | null, location?: string | null, payGrade?: string | null, lastModifiedDateTime?: string | null }[] } } | { value: { __metadata?: { uri?: string, type?: string }, code: string, effectiveStartDate?: string | null, effectiveEndDate?: string | null, effectiveStatus?: string | null, externalName_defaultValue?: string | null, jobCode?: string | null, department?: string | null, division?: string | null, company?: string | null, location?: string | null, payGrade?: string | null, lastModifiedDateTime?: string | null }[] }"
+      }
+    },
+    {
+      "path": "sapsuccessfactors.api.query.queryAllAvailableClockClockOut",
+      "shortPath": "query.queryAllAvailableClockClockOut",
+      "description": "Query all clock in/out groups",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "orderby",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ d: { results: { code: string }[] } } | { value: { code: string }[] }"
+      }
+    },
+    {
+      "path": "sapsuccessfactors.api.query.queryClockClockOutGroupCodeTime",
+      "shortPath": "query.queryClockClockOutGroupCodeTime",
+      "description": "Query a clock in/out group by code",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ d: { code: string } } | { @odata.context: string } & { code: string }"
+      }
+    },
+    {
+      "path": "sapsuccessfactors.api.successor.createUpdateSuccessorNomination",
+      "shortPath": "successor.createUpdateSuccessorNomination",
+      "description": "Create or update a successor nomination",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "positionCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isPoolNomination",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined | null | {} | { d: { nominationTargetId: string } } | { @odata.context: string } & { nominationTargetId: string }"
+      }
+    },
+    {
+      "path": "sapsuccessfactors.api.talent.getTalentPool",
+      "shortPath": "talent.getTalentPool",
+      "description": "Retrieve talent pool records",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "orderby",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ d: { results: { id: string | number }[] } } | { value: { id: string | number }[] }"
+      }
+    },
+    {
+      "path": "sapsuccessfactors.api.temporary.getTemporaryTimeInformation",
+      "shortPath": "temporary.getTemporaryTimeInformation",
+      "description": "Retrieve TemporaryTimeInformation records",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "orderby",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ d: { results: { userId: string }[] } } | { value: { userId: string }[] }"
+      }
+    },
+    {
+      "path": "sapsuccessfactors.api.time.getTimeAccountSnapshot",
+      "shortPath": "time.getTimeAccountSnapshot",
+      "description": "Retrieve TimeAccountSnapshot records",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "orderby",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ d: { results: { userId: string }[] } } | { value: { userId: string }[] }"
+      }
+    },
+    {
+      "path": "sapsuccessfactors.api.users.listUsers",
+      "shortPath": "users.listUsers",
+      "description": "List User entity records",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "orderby",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ d: { results: { __metadata?: { uri?: string, type?: string }, userId: string, username?: string | null, defaultFullName?: string | null, firstName?: string | null, mi?: string | null, lastName?: string | null, email?: string | null, status?: string | null, department?: string | null, division?: string | null, location?: string | null, title?: string | null, managerId?: string | null, hrId?: string | null, hireDate?: string | null, lastModifiedDateTime?: string | null, lastModified?: string | null, timeZone?: string | null, country?: string | null, state?: string | null, city?: string | null, zipCode?: string | null, addressLine1?: string | null, businessPhone?: string | null, cellPhone?: string | null, empId?: string | null, totalTeamSize?: number | null, directReports?: { __deferred?: { uri?: string } }, manager?: { __deferred?: { uri?: string } }, hr?: { __deferred?: { uri?: string } } }[] } } | { value: { __metadata?: { uri?: string, type?: string }, userId: string, username?: string | null, defaultFullName?: string | null, firstName?: string | null, mi?: string | null, lastName?: string | null, email?: string | null, status?: string | null, department?: string | null, division?: string | null, location?: string | null, title?: string | null, managerId?: string | null, hrId?: string | null, hireDate?: string | null, lastModifiedDateTime?: string | null, lastModified?: string | null, timeZone?: string | null, country?: string | null, state?: string | null, city?: string | null, zipCode?: string | null, addressLine1?: string | null, businessPhone?: string | null, cellPhone?: string | null, empId?: string | null, totalTeamSize?: number | null, directReports?: { __deferred?: { uri?: string } }, manager?: { __deferred?: { uri?: string } }, hr?: { __deferred?: { uri?: string } } }[] }"
+      }
+    },
+    {
+      "path": "sapsuccessfactors.api.work.getWorkOrder",
+      "shortPath": "work.getWorkOrder",
+      "description": "Retrieve WorkOrder records for contingent workers",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "orderby",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ d: { results: { userId: string }[] } } | { value: { userId: string }[] }"
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "sapsuccessfactors.db.calibrationSession.search",
+      "entityName": "calibrationSession",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "sessionId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "sessionName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "sessionOwnerId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "sessionType",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "startDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "endDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "sapsuccessfactors.db.candidate.search",
+      "entityName": "candidate",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "firstName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lastName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "primaryEmail",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "contactEmail",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "cellPhone",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "city",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "country",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "currentTitle",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lastModifiedDateTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "sapsuccessfactors.db.company.search",
+      "entityName": "company",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "externalCode",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "startDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name_defaultValue",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "country",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "currency",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "entityOID",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "sapsuccessfactors.db.employment.search",
+      "entityName": "employment",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "userId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "personIdExternal",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "startDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "endDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "originalStartDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "seniorityDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "assignmentClass",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "employmentType",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "isContingentWorker",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "lastModifiedDateTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "sapsuccessfactors.db.goal.search",
+      "entityName": "goal",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "userId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "flag",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "state",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "metric",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "done",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "start",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "due",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "sapsuccessfactors.db.goalPlan.search",
+      "entityName": "goalPlan",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "dueDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "sapsuccessfactors.db.jobApplication.search",
+      "entityName": "jobApplication",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "appStatusSetId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "applicationDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lastModifiedDateTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "sapsuccessfactors.db.jobRequisition.search",
+      "entityName": "jobRequisition",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "internalStatus",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "jobTitle",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "jobCode",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "department",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "division",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "location",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "country",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "statusSetId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "appStatusSetId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lastModifiedDateTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "sapsuccessfactors.db.person.search",
+      "entityName": "person",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "personIdExternal",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "personId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "dateOfBirth",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "countryOfBirth",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "regionOfBirth",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "placeOfBirth",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "perPersonUuid",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lastModifiedDateTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "sapsuccessfactors.db.personal.search",
+      "entityName": "personal",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "personIdExternal",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "startDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "endDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "firstName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lastName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "middleName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "formalName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "birthName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "gender",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "maritalStatus",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "nationality",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "preferredName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "salutation",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lastModifiedDateTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "sapsuccessfactors.db.position.search",
+      "entityName": "position",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "code",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "effectiveStartDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "effectiveEndDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "effectiveStatus",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "externalName_defaultValue",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "jobCode",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "department",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "division",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "company",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "location",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "payGrade",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lastModifiedDateTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "sapsuccessfactors.db.user.search",
+      "entityName": "user",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "userId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "username",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "defaultFullName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "firstName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "mi",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lastName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "department",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "division",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "location",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "managerId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "hrId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "hireDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lastModifiedDateTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lastModified",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "timeZone",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "country",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "state",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "city",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "zipCode",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "addressLine1",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "businessPhone",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "cellPhone",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "empId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "totalTeamSize",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,396 @@
+---
+title: API
+description: "API reference for Wiza: every `wiza.api.*` operation with input and output types."
+---
+
+Every `wiza.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Credits
+
+### get
+
+`credits.get`
+
+Get the number of remaining API credits (emails, phones, exports) in your Wiza account
+
+**Risk:** `read`
+
+```ts
+await corsair.wiza.api.credits.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `credits` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="credits full type">
+
+```ts
+{
+  email_credits: number | unlimited,
+  phone_credits: number | unlimited,
+  export_credits?: number,
+  api_credits?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Individual Reveals
+
+### get
+
+`individualReveals.get`
+
+Get the status and enriched results of an individual reveal by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.wiza.api.individualReveals.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `object` | Yes | — |
+| `type` | `string` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="status full type">
+
+```ts
+{
+  code: number,
+  message?: string
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  status: queued | resolving | finished | failed,
+  is_complete: boolean,
+  name?: string | null,
+  company?: string | null,
+  enrichment_level?: string,
+  linkedin_profile_url?: string | null,
+  title?: string | null,
+  location?: string | null,
+  email?: string | null,
+  email_type?: string | null,
+  email_status?: string | null,
+  emails?: {
+    email: string,
+    email_type?: string,
+    email_status?: string
+  }[],
+  mobile_phone?: string | null,
+  phone_number?: string | null,
+  phone_status?: string | null,
+  phones?: {
+    number: string,
+    pretty_number?: string,
+    type?: string
+  }[],
+  company_domain?: string | null,
+  company_industry?: string | null,
+  company_size?: number | null,
+  company_size_range?: string | null,
+  company_linkedin?: string | null,
+  company_location?: string | null,
+  credits?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### start
+
+`individualReveals.start`
+
+Start an individual reveal to enrich a single contact in real time (consumes credits)
+
+**Risk:** `write`
+
+```ts
+await corsair.wiza.api.individualReveals.start({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `individual_reveal` | `object` | Yes | — |
+| `enrichment_level` | `none \| partial \| phone \| full` | Yes | — |
+| `email_options` | `object` | No | — |
+| `callback_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="individual_reveal full type">
+
+```ts
+{
+  profile_url?: string,
+  full_name?: string,
+  company?: string,
+  domain?: string,
+  email?: string
+}
+```
+</Accordion>
+
+<Accordion title="email_options full type">
+
+```ts
+{
+  accept_work?: boolean,
+  accept_personal?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `object` | Yes | — |
+| `type` | `string` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="status full type">
+
+```ts
+{
+  code: number,
+  message?: string
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  status: queued | resolving | finished | failed,
+  is_complete: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Lists
+
+### get
+
+`lists.get`
+
+Get the processing status and details of a list by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.wiza.api.lists.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `object` | Yes | — |
+| `type` | `string` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="status full type">
+
+```ts
+{
+  code: number,
+  message?: string
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  name?: string,
+  status: string,
+  stats?: any,
+  finished_at?: string | null,
+  created_at?: string,
+  enrichment_level?: string,
+  email_options?: any,
+  report_type?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Prospects
+
+### search
+
+`prospects.search`
+
+Search for prospects matching filters (job title, location, company, industry)
+
+**Risk:** `read`
+
+```ts
+await corsair.wiza.api.prospects.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `size` | `number` | No | — |
+| `filters` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+  first_name?: string[],
+  last_name?: string[],
+  job_title?: {
+    v: string,
+    s?: i | e,
+    b?: city | state | country
+  }[],
+  job_title_level?: string[],
+  job_role?: string[],
+  location?: {
+    v: string,
+    s?: i | e,
+    b?: city | state | country
+  }[],
+  skill?: string[],
+  job_company?: {
+    v: string,
+    s?: i | e,
+    b?: city | state | country
+  }[],
+  past_company?: {
+    v: string,
+    s?: i | e,
+    b?: city | state | country
+  }[],
+  company_location?: {
+    v: string,
+    s?: i | e,
+    b?: city | state | country
+  }[],
+  company_industry?: {
+    v: string,
+    s?: i | e,
+    b?: city | state | country
+  }[],
+  company_size?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `object` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="status full type">
+
+```ts
+{
+  code: number,
+  message?: string
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  total: number,
+  profiles?: {
+    full_name?: string | null,
+    linkedin_url?: string | null,
+    industry?: string | null,
+    job_title?: string | null,
+    job_title_role?: string | null,
+    job_title_sub_role?: string | null,
+    job_company_name?: string | null,
+    job_company_website?: string | null,
+    location_name?: string | null
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

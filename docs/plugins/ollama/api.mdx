@@ -1,0 +1,518 @@
+---
+title: API
+description: "API reference for Ollama: every `ollama.api.*` operation with input and output types."
+---
+
+Every `ollama.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Chat
+
+### chat
+
+`chat.chat`
+
+Tool to send a chat message with conversation history to Ollama. Use when you need to have a multi-turn conversation with an LLM model.
+
+**Risk:** `write`
+
+```ts
+await corsair.ollama.api.chat.chat({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `string` | Yes | Name of the model to use for chat |
+| `messages` | `object[]` | Yes | Conversation history |
+| `tools` | `any[]` | No | List of tools/functions available to the model |
+| `format` | `object` | No | Output format, e.g. "json" or a JSON schema |
+| `options` | `object` | No | Model configuration options (temperature, top_p, etc.) |
+| `stream` | `boolean` | No | Whether to stream responses (default false) |
+| `keep_alive` | `string \| number` | No | Duration to keep the model loaded in memory |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+  role: string,
+  content: string,
+  images?: string[],
+  tool_calls?: any[]
+}[]
+```
+</Accordion>
+
+<Accordion title="format full type">
+
+```ts
+string | {
+}
+```
+</Accordion>
+
+<Accordion title="options full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `string` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `message` | `object` | Yes | — |
+| `done` | `boolean` | Yes | — |
+| `total_duration` | `number` | No | — |
+| `load_duration` | `number` | No | — |
+| `prompt_eval_count` | `number` | No | — |
+| `prompt_eval_duration` | `number` | No | — |
+| `eval_count` | `number` | No | — |
+| `eval_duration` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="message full type">
+
+```ts
+{
+  role: string,
+  content: string,
+  images?: string[],
+  tool_calls?: any[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### generate
+
+`chat.generate`
+
+Tool to generate text responses from Ollama models with optional raw mode. Use raw=true to bypass prompt templating when you need full control over the prompt for debugging or custom processing. Note that raw mode will not return a context.
+
+**Risk:** `write`
+
+```ts
+await corsair.ollama.api.chat.generate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `string` | Yes | Name of the model to generate text with |
+| `prompt` | `string` | No | The prompt to generate a response for |
+| `suffix` | `string` | No | Text after the insertion point |
+| `images` | `string[]` | No | Base64-encoded images for multimodal models |
+| `format` | `object` | No | Format of the response |
+| `options` | `object` | No | Model configuration options |
+| `system` | `string` | No | System message to override model default |
+| `template` | `string` | No | Prompt template to override model default |
+| `stream` | `boolean` | No | Whether to stream response |
+| `raw` | `boolean` | No | Bypass prompt template when true |
+| `keep_alive` | `string \| number` | No | Duration to keep the model loaded |
+
+<AccordionGroup>
+<Accordion title="format full type">
+
+```ts
+string | {
+}
+```
+</Accordion>
+
+<Accordion title="options full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `string` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `response` | `string` | Yes | — |
+| `done` | `boolean` | Yes | — |
+| `context` | `number[]` | No | — |
+| `total_duration` | `number` | No | — |
+| `load_duration` | `number` | No | — |
+| `prompt_eval_count` | `number` | No | — |
+| `prompt_eval_duration` | `number` | No | — |
+| `eval_count` | `number` | No | — |
+| `eval_duration` | `number` | No | — |
+
+
+
+---
+
+## Models
+
+### listModels
+
+`models.listModels`
+
+Tool to list all available Ollama models and their details. Use when you need to fetch installed models with metadata including name, size, last modified timestamp, digest, and format information.
+
+**Risk:** `read`
+
+```ts
+await corsair.ollama.api.models.listModels({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `models` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="models full type">
+
+```ts
+{
+  name: string,
+  model?: string,
+  modified_at?: string,
+  size?: number,
+  digest?: string,
+  details?: {
+    parent_model?: string,
+    format?: string,
+    family?: string,
+    families?: string[],
+    parameter_size?: string,
+    quantization_level?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### showModel
+
+`models.showModel`
+
+Tool to show comprehensive information about an Ollama model. Use when you need to retrieve model details, parameters, template, license, or system prompt.
+
+**Risk:** `read`
+
+```ts
+await corsair.ollama.api.models.showModel({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `string` | Yes | Name of the model to show information for |
+| `system` | `string` | No | System prompt override |
+| `template` | `string` | No | Template override |
+| `options` | `object` | No | Options override |
+
+<AccordionGroup>
+<Accordion title="options full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `modelfile` | `string` | No | — |
+| `parameters` | `string` | No | — |
+| `template` | `string` | No | — |
+| `details` | `object` | No | — |
+| `model_info` | `object` | No | — |
+| `modified_at` | `string` | No | — |
+| `license` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="details full type">
+
+```ts
+{
+  parent_model?: string,
+  format?: string,
+  family?: string,
+  families?: string[],
+  parameter_size?: string,
+  quantization_level?: string
+}
+```
+</Accordion>
+
+<Accordion title="model_info full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### version
+
+`models.version`
+
+Tool to get the version of Ollama running locally. Use to check which version of Ollama is currently installed.
+
+**Risk:** `read`
+
+```ts
+await corsair.ollama.api.models.version({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `version` | `string` | Yes | — |
+
+
+
+---
+
+## Openai
+
+### createOpenAiChatCompletion
+
+`openai.createOpenAiChatCompletion`
+
+Tool to create OpenAI-compatible chat completions using Ollama models. Use when you need conversational AI responses with OpenAI API format compatibility.
+
+**Risk:** `write`
+
+```ts
+await corsair.ollama.api.openai.createOpenAiChatCompletion({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `string` | Yes | ID of the model to use |
+| `messages` | `object[]` | Yes | Messages in the conversation |
+| `temperature` | `number` | No | Sampling temperature |
+| `top_p` | `number` | No | Nucleus sampling probability |
+| `n` | `number` | No | Number of completions to generate |
+| `stream` | `boolean` | No | Whether to stream responses |
+| `stop` | `string \| string[]` | No | Stop sequences |
+| `max_tokens` | `number` | No | Maximum tokens to generate |
+| `presence_penalty` | `number` | No | Presence penalty |
+| `frequency_penalty` | `number` | No | Frequency penalty |
+| `user` | `string` | No | Unique identifier representing end-user |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+  role: string,
+  content: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `string` | Yes | — |
+| `created` | `number` | Yes | — |
+| `model` | `string` | Yes | — |
+| `choices` | `object[]` | Yes | — |
+| `usage` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="choices full type">
+
+```ts
+{
+  index: number,
+  message: {
+    role: string,
+    content: string
+  },
+  finish_reason?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="usage full type">
+
+```ts
+{
+  prompt_tokens: number,
+  completion_tokens: number,
+  total_tokens: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createOpenAiCompletion
+
+`openai.createOpenAiCompletion`
+
+Tool to create OpenAI-compatible text completions using Ollama models. Use when you need text generation with OpenAI API format compatibility beyond chat-based interactions.
+
+**Risk:** `write`
+
+```ts
+await corsair.ollama.api.openai.createOpenAiCompletion({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `string` | Yes | ID of the model to use |
+| `prompt` | `string \| string[]` | Yes | Prompt text to complete |
+| `suffix` | `string` | No | Suffix to insert |
+| `max_tokens` | `number` | No | Maximum tokens to generate |
+| `temperature` | `number` | No | Sampling temperature |
+| `top_p` | `number` | No | Nucleus sampling probability |
+| `n` | `number` | No | Number of completions to generate |
+| `stream` | `boolean` | No | Whether to stream responses |
+| `logprobs` | `number` | No | Include log probabilities |
+| `echo` | `boolean` | No | Echo prompt in completion |
+| `stop` | `string \| string[]` | No | Stop sequences |
+| `presence_penalty` | `number` | No | Presence penalty |
+| `frequency_penalty` | `number` | No | Frequency penalty |
+| `best_of` | `number` | No | Generates best_of completions server-side |
+| `user` | `string` | No | Unique identifier representing end-user |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `string` | Yes | — |
+| `created` | `number` | Yes | — |
+| `model` | `string` | Yes | — |
+| `choices` | `object[]` | Yes | — |
+| `usage` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="choices full type">
+
+```ts
+{
+  index: number,
+  text: string,
+  logprobs?: any | null,
+  finish_reason?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="usage full type">
+
+```ts
+{
+  prompt_tokens: number,
+  completion_tokens: number,
+  total_tokens: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listOpenAiModels
+
+`openai.listOpenAiModels`
+
+Tool to list available models using OpenAI-compatible API format. Use when you need to retrieve locally available Ollama models with metadata following OpenAI's model list format.
+
+**Risk:** `read`
+
+```ts
+await corsair.ollama.api.openai.listOpenAiModels({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `string` | Yes | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  object: string,
+  created?: number,
+  owned_by?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

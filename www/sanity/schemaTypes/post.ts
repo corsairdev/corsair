@@ -21,7 +21,7 @@ export const postType = defineType({
 			title: 'Slug',
 			type: 'slug',
 			group: 'content',
-			description: 'URL becomes /resources/blog/<slug>',
+			description: 'URL becomes /blog/<slug>',
 			options: {
 				source: 'title',
 				maxLength: 96,
@@ -129,6 +129,52 @@ export const postType = defineType({
 						}),
 					],
 				}),
+				defineArrayMember({
+					type: 'object',
+					name: 'codeBlock',
+					title: 'Code block',
+					fields: [
+						defineField({
+							name: 'filename',
+							title: 'File name',
+							type: 'string',
+							description:
+								'Optional. Shown above the code, e.g. ~/.codex/config.toml.',
+						}),
+						defineField({
+							name: 'language',
+							title: 'Language',
+							type: 'string',
+							options: {
+								list: [
+									'bash',
+									'toml',
+									'json',
+									'yaml',
+									'typescript',
+									'javascript',
+									'python',
+									'text',
+								],
+							},
+							initialValue: 'bash',
+						}),
+						defineField({
+							name: 'code',
+							title: 'Code',
+							type: 'text',
+							rows: 8,
+							validation: (rule) => rule.required(),
+						}),
+					],
+					preview: {
+						select: { title: 'filename', subtitle: 'language' },
+						prepare: ({ title, subtitle }) => ({
+							title: title || 'Code block',
+							subtitle,
+						}),
+					},
+				}),
 			],
 			validation: (rule) => rule.required(),
 		}),
@@ -203,7 +249,7 @@ export const postType = defineType({
 			rows: 8,
 			group: 'seo',
 			description:
-				'Raw JSON-LD injected into the page <head>. One object or an array of objects (e.g. Article + FAQPage). Must be valid JSON.',
+				'Not injected as-is: the page builds Article, breadcrumb and FAQ JSON-LD from the fields above. If the FAQs field is empty, an FAQPage here supplies the FAQ instead. FAQ questions are only marked up when they also appear in the body.',
 		}),
 	],
 	preview: {

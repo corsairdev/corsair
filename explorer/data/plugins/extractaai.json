@@ -1,0 +1,467 @@
+{
+  "id": "extractaai",
+  "displayName": "Extractaai",
+  "description": "Extractaai plugin for Corsair",
+  "npmPackageName": "@corsair-dev/extractaai",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 10,
+    "webhooks": 0,
+    "db": 2
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "extractaai.api.classification.create",
+      "shortPath": "classification.create",
+      "description": "Create a document classification (EXTRACTA_AI_CREATE_CLASSIFICATION)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "classificationDetails",
+            "optional": false,
+            "type": "{ name: string, description?: string, documentTypes: { name: string, description: string, uniqueWords: string[], extractionId?: string }[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "created"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "classificationId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "extractaai.api.classification.delete",
+      "shortPath": "classification.delete",
+      "description": "Delete a document classification (EXTRACTA_AI_DELETE_CLASSIFICATION) [DESTRUCTIVE · IRREVERSIBLE]",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "classificationId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "success"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "extractaai.api.classification.update",
+      "shortPath": "classification.update",
+      "description": "Update a document classification (EXTRACTA_AI_UPDATE_CLASSIFICATION)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "classificationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "classificationDetails",
+            "optional": false,
+            "type": "{ name: string, description: string, documentTypes: { name: string, description: string, uniqueWords: string[], extractionId?: string }[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "updated"
+          },
+          {
+            "key": "updatedAt",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "classificationId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "extractaai.api.classification.view",
+      "shortPath": "classification.view",
+      "description": "View a document classification configuration (EXTRACTA_AI_VIEW_CLASSIFICATION)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "classificationId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "success"
+          },
+          {
+            "key": "classificationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "classificationDetails",
+            "optional": false,
+            "type": "{ createdAt?: number, name: string, description?: string, documentTypes: { name: string, description: string, uniqueWords: string[], extractionId?: string }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "extractaai.api.credits.get",
+      "shortPath": "credits.get",
+      "description": "Get the account credit balance (EXTRACTA_AI_GET_CREDITS)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "ok"
+          },
+          {
+            "key": "credits",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "extractaai.api.extraction.create",
+      "shortPath": "extraction.create",
+      "description": "Create a document extraction template (EXTRACTA_AI_CREATE_EXTRACTION)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "extractionDetails",
+            "optional": false,
+            "type": "{ name: string, description?: string, language: string, options?: { hasTable?: boolean, hasVisuals?: boolean, handwrittenTextRecognition?: boolean, checkboxRecognition?: boolean, longDocument?: boolean, splitPdfPages?: boolean, specificPageProcessing?: boolean, specificPageProcessingOptions?: { from: number, to: number } }, fields: { key: string, description?: string, example?: string, type?: string | object | array, properties?: lazy[], items?: { type: string | object, example?: string, properties?: lazy[] } }[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "created"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "extractionId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "extractaai.api.extraction.delete",
+      "shortPath": "extraction.delete",
+      "description": "Delete an extraction, batch, or file (EXTRACTA_AI_DELETE_EXTRACTION) [DESTRUCTIVE · IRREVERSIBLE]",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "extractionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "batchId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fileId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "deleted"
+          },
+          {
+            "key": "deletedAt",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "extractaai.api.extraction.getBatchResults",
+      "shortPath": "extraction.getBatchResults",
+      "description": "Get extraction results for a batch (EXTRACTA_AI_GET_BATCH_RESULTS)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "extractionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "batchId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fileId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ status: waiting, extractionId?: string, batchId?: string, fileId?: string } | { extractionId: string, batchId: string, fileId?: string, files: { fileId?: string, fileName?: string, status: string, result?: lazy, url?: string }[] }"
+      }
+    },
+    {
+      "path": "extractaai.api.extraction.update",
+      "shortPath": "extraction.update",
+      "description": "Update a document extraction configuration (EXTRACTA_AI_UPDATE_EXTRACTION)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "extractionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "extractionDetails",
+            "optional": false,
+            "type": "{ name?: string, description?: string, language?: string, options?: { hasTable?: boolean, hasVisuals?: boolean, handwrittenTextRecognition?: boolean, checkboxRecognition?: boolean, longDocument?: boolean, splitPdfPages?: boolean, specificPageProcessing?: boolean, specificPageProcessingOptions?: { from: number, to: number } }, fields?: { key: string, description?: string, example?: string, type?: string | object | array, properties?: lazy[], items?: { type: string | object, example?: string, properties?: lazy[] } }[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "updated"
+          },
+          {
+            "key": "updatedAt",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "extractionId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "extractaai.api.extraction.view",
+      "shortPath": "extraction.view",
+      "description": "View a document extraction configuration (EXTRACTA_AI_VIEW_EXTRACTION)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "extractionId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "extractionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "extractionDetails",
+            "optional": false,
+            "type": "{ name: string, description?: string, language: string, options?: { hasTable?: boolean, hasVisuals?: boolean, handwrittenTextRecognition?: boolean, checkboxRecognition?: boolean, longDocument?: boolean, splitPdfPages?: boolean, specificPageProcessing?: boolean, specificPageProcessingOptions?: { from: number, to: number } }, fields: { key: string, description?: string, example?: string, type?: string | object | array, properties?: lazy[], items?: { type: string | object, example?: string, properties?: lazy[] } }[], status?: string, batches?: {} }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "extractaai.db.classifications.search",
+      "entityName": "classifications",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "classificationId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "extractaai.db.extractions.search",
+      "entityName": "extractions",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "extractionId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "language",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    }
+  ]
+}

@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeGithubRequest } from '../client';
 import type { GithubEndpoints } from '../index';
+import { commentRecordFromApi } from '../persistence';
 import type {
 	CommentGetResponse,
 	CommentsListResponse,
@@ -10,19 +11,13 @@ import type {
 async function upsertComment(
 	db: Parameters<GithubEndpoints['commentsGet']>[0]['db'],
 	comment: CommentGetResponse,
+	extras?: { deletedAt?: Date | null },
 ) {
 	if (!db.comments) return;
-	await db.comments.upsertByEntityId(comment.id.toString(), {
-		id: comment.id,
-		nodeId: comment.nodeId,
-		url: comment.url,
-		htmlUrl: comment.htmlUrl,
-		issueUrl: comment.issueUrl,
-		body: comment.body,
-		authorAssociation: comment.authorAssociation,
-		createdAt: comment.createdAt ? new Date(comment.createdAt) : null,
-		updatedAt: comment.updatedAt ? new Date(comment.updatedAt) : null,
-	});
+	await db.comments.upsertByEntityId(
+		comment.id.toString(),
+		commentRecordFromApi(comment, extras),
+	);
 }
 
 export const list: GithubEndpoints['commentsList'] = async (ctx, input) => {
@@ -149,20 +144,12 @@ export const deleteComment: GithubEndpoints['commentsDelete'] = async (
 
 	if (ctx.db.comments) {
 		try {
-			await ctx.db.comments.upsertByEntityId(commentId.toString(), {
-				id: commentId,
-				...(existing && {
-					nodeId: existing.nodeId,
-					url: existing.url,
-					htmlUrl: existing.htmlUrl,
-					issueUrl: existing.issueUrl,
-					body: existing.body,
-					authorAssociation: existing.authorAssociation,
-					createdAt: existing.createdAt ? new Date(existing.createdAt) : null,
-					updatedAt: existing.updatedAt ? new Date(existing.updatedAt) : null,
-				}),
-				deletedAt: new Date(),
-			});
+			await ctx.db.comments.upsertByEntityId(
+				commentId.toString(),
+				existing
+					? commentRecordFromApi(existing, { deletedAt: new Date() })
+					: { id: commentId, deletedAt: new Date() },
+			);
 		} catch (error) {
 			console.warn('Failed to mark comment as deleted in database:', error);
 		}

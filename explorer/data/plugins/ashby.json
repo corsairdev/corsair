@@ -1,0 +1,2907 @@
+{
+  "id": "ashby",
+  "displayName": "Ashby",
+  "description": "Ashby plugin for Corsair",
+  "npmPackageName": "@corsair-dev/ashby",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 52,
+    "webhooks": 10,
+    "db": 8
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "ashby.api.apiKey.info",
+      "shortPath": "apiKey.info",
+      "description": "Retrieve information and permission scopes for the current API key",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id?: string, name?: string, scopes?: string[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ashby.api.application.changeStage",
+      "shortPath": "application.changeStage",
+      "description": "Move an application to a different interview stage",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "applicationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interviewStageId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "archiveReasonId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, candidateId: string, jobId: string, status?: string, currentInterviewStageId?: string | null, archiveReasonId?: string | null, customFields?: { value: any, customFieldDefinitionId: string, title?: string }[], hiringTeam?: { userId: string, role: string, firstName?: string, lastName?: string, email?: string }[], createdAt?: string, updatedAt?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ashby.api.application.create",
+      "shortPath": "application.create",
+      "description": "Create an application linking a candidate to a job",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "candidateId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "jobId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interviewStageId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sourceId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "{ value: any, customFieldDefinitionId: string, title?: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, candidateId: string, jobId: string, status?: string, currentInterviewStageId?: string | null, archiveReasonId?: string | null, customFields?: { value: any, customFieldDefinitionId: string, title?: string }[], hiringTeam?: { userId: string, role: string, firstName?: string, lastName?: string, email?: string }[], createdAt?: string, updatedAt?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ashby.api.application.info",
+      "shortPath": "application.info",
+      "description": "Retrieve details for a specific application",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "applicationId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, candidateId: string, jobId: string, status?: string, currentInterviewStageId?: string | null, archiveReasonId?: string | null, customFields?: { value: any, customFieldDefinitionId: string, title?: string }[], hiringTeam?: { userId: string, role: string, firstName?: string, lastName?: string, email?: string }[], createdAt?: string, updatedAt?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ashby.api.application.list",
+      "shortPath": "application.list",
+      "description": "List applications filtered by candidate, job, or status",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "syncToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "candidateId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jobId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, candidateId: string, jobId: string, status?: string, currentInterviewStageId?: string | null, archiveReasonId?: string | null, customFields?: { value: any, customFieldDefinitionId: string, title?: string }[], hiringTeam?: { userId: string, role: string, firstName?: string, lastName?: string, email?: string }[], createdAt?: string, updatedAt?: string }[]"
+          },
+          {
+            "key": "moreDataAvailable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "nextCursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "syncToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ashby.api.application.transfer",
+      "shortPath": "application.transfer",
+      "description": "Transfer an application to another job",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "applicationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "jobId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interviewStageId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, candidateId: string, jobId: string, status?: string, currentInterviewStageId?: string | null, archiveReasonId?: string | null, customFields?: { value: any, customFieldDefinitionId: string, title?: string }[], hiringTeam?: { userId: string, role: string, firstName?: string, lastName?: string, email?: string }[], createdAt?: string, updatedAt?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ashby.api.application.update",
+      "shortPath": "application.update",
+      "description": "Update application metadata or archive status",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "applicationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "archiveReasonId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "{ value: any, customFieldDefinitionId: string, title?: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, candidateId: string, jobId: string, status?: string, currentInterviewStageId?: string | null, archiveReasonId?: string | null, customFields?: { value: any, customFieldDefinitionId: string, title?: string }[], hiringTeam?: { userId: string, role: string, firstName?: string, lastName?: string, email?: string }[], createdAt?: string, updatedAt?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ashby.api.candidate.addTag",
+      "shortPath": "candidate.addTag",
+      "description": "Add a tag to a candidate",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "candidateId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tag",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, name: string, primaryEmailAddress?: { value: string, type?: string, isPrimary?: boolean } | null, emailAddresses?: { value: string, type?: string, isPrimary?: boolean }[], primaryPhoneNumber?: { value: string, type?: string, isPrimary?: boolean } | null, phoneNumbers?: { value: string, type?: string, isPrimary?: boolean }[], socialLinks?: { url: string, type?: string }[], tags?: string[], customFields?: { value: any, customFieldDefinitionId: string, title?: string }[], applicationIds?: string[], fileIds?: string[], createdAt?: string, updatedAt?: string, anonymizedAt?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ashby.api.candidate.anonymize",
+      "shortPath": "candidate.anonymize",
+      "description": "Anonymize candidate personally identifiable data for GDPR compliance",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "candidateId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ candidateId: string, anonymizedAt?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ashby.api.candidate.create",
+      "shortPath": "candidate.create",
+      "description": "Create a new candidate in Ashby",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phoneNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "socialLinks",
+            "optional": true,
+            "type": "{ url: string, type?: string }[]"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "{ value: any, customFieldDefinitionId: string, title?: string }[]"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, name: string, primaryEmailAddress?: { value: string, type?: string, isPrimary?: boolean } | null, emailAddresses?: { value: string, type?: string, isPrimary?: boolean }[], primaryPhoneNumber?: { value: string, type?: string, isPrimary?: boolean } | null, phoneNumbers?: { value: string, type?: string, isPrimary?: boolean }[], socialLinks?: { url: string, type?: string }[], tags?: string[], customFields?: { value: any, customFieldDefinitionId: string, title?: string }[], applicationIds?: string[], fileIds?: string[], createdAt?: string, updatedAt?: string, anonymizedAt?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ashby.api.candidate.createNote",
+      "shortPath": "candidate.createNote",
+      "description": "Create a note on a candidate record",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "candidateId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "note",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, candidateId: string, note: string, authorUserId?: string, createdAt?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ashby.api.candidate.info",
+      "shortPath": "candidate.info",
+      "description": "Retrieve detailed candidate information by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "candidateId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, name: string, primaryEmailAddress?: { value: string, type?: string, isPrimary?: boolean } | null, emailAddresses?: { value: string, type?: string, isPrimary?: boolean }[], primaryPhoneNumber?: { value: string, type?: string, isPrimary?: boolean } | null, phoneNumbers?: { value: string, type?: string, isPrimary?: boolean }[], socialLinks?: { url: string, type?: string }[], tags?: string[], customFields?: { value: any, customFieldDefinitionId: string, title?: string }[], applicationIds?: string[], fileIds?: string[], createdAt?: string, updatedAt?: string, anonymizedAt?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ashby.api.candidate.list",
+      "shortPath": "candidate.list",
+      "description": "List candidates with cursor-based pagination and time filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "syncToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAfter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAfter",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, name: string, primaryEmailAddress?: { value: string, type?: string, isPrimary?: boolean } | null, emailAddresses?: { value: string, type?: string, isPrimary?: boolean }[], primaryPhoneNumber?: { value: string, type?: string, isPrimary?: boolean } | null, phoneNumbers?: { value: string, type?: string, isPrimary?: boolean }[], socialLinks?: { url: string, type?: string }[], tags?: string[], customFields?: { value: any, customFieldDefinitionId: string, title?: string }[], applicationIds?: string[], fileIds?: string[], createdAt?: string, updatedAt?: string, anonymizedAt?: string | null }[]"
+          },
+          {
+            "key": "moreDataAvailable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "nextCursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "syncToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ashby.api.candidate.listNotes",
+      "shortPath": "candidate.listNotes",
+      "description": "List all notes for a specific candidate",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "candidateId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, candidateId: string, note: string, authorUserId?: string, createdAt?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ashby.api.candidate.removeTag",
+      "shortPath": "candidate.removeTag",
+      "description": "Remove a tag from a candidate",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "candidateId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tag",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, name: string, primaryEmailAddress?: { value: string, type?: string, isPrimary?: boolean } | null, emailAddresses?: { value: string, type?: string, isPrimary?: boolean }[], primaryPhoneNumber?: { value: string, type?: string, isPrimary?: boolean } | null, phoneNumbers?: { value: string, type?: string, isPrimary?: boolean }[], socialLinks?: { url: string, type?: string }[], tags?: string[], customFields?: { value: any, customFieldDefinitionId: string, title?: string }[], applicationIds?: string[], fileIds?: string[], createdAt?: string, updatedAt?: string, anonymizedAt?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ashby.api.candidate.search",
+      "shortPath": "candidate.search",
+      "description": "Search candidates by name, email address, or phone number",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, name: string, primaryEmailAddress?: { value: string, type?: string, isPrimary?: boolean } | null, emailAddresses?: { value: string, type?: string, isPrimary?: boolean }[], primaryPhoneNumber?: { value: string, type?: string, isPrimary?: boolean } | null, phoneNumbers?: { value: string, type?: string, isPrimary?: boolean }[], socialLinks?: { url: string, type?: string }[], tags?: string[], customFields?: { value: any, customFieldDefinitionId: string, title?: string }[], applicationIds?: string[], fileIds?: string[], createdAt?: string, updatedAt?: string, anonymizedAt?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ashby.api.candidate.update",
+      "shortPath": "candidate.update",
+      "description": "Update candidate profile information and custom fields",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "candidateId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "primaryEmailAddress",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "primaryPhoneNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "{ value: any, customFieldDefinitionId: string, title?: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, name: string, primaryEmailAddress?: { value: string, type?: string, isPrimary?: boolean } | null, emailAddresses?: { value: string, type?: string, isPrimary?: boolean }[], primaryPhoneNumber?: { value: string, type?: string, isPrimary?: boolean } | null, phoneNumbers?: { value: string, type?: string, isPrimary?: boolean }[], socialLinks?: { url: string, type?: string }[], tags?: string[], customFields?: { value: any, customFieldDefinitionId: string, title?: string }[], applicationIds?: string[], fileIds?: string[], createdAt?: string, updatedAt?: string, anonymizedAt?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ashby.api.customField.info",
+      "shortPath": "customField.info",
+      "description": "Retrieve custom field definition details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customFieldDefinitionId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, title: string, objectType: string, fieldType: string, isArchived?: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ashby.api.customField.list",
+      "shortPath": "customField.list",
+      "description": "List custom field definitions filtered by object type",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "syncToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "objectType",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, title: string, objectType: string, fieldType: string, isArchived?: boolean }[]"
+          },
+          {
+            "key": "moreDataAvailable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "nextCursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "syncToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ashby.api.customField.setValue",
+      "shortPath": "customField.setValue",
+      "description": "Set a custom field value on a candidate, application, job, or offer",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "objectType",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "objectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "customFieldDefinitionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ashby.api.department.archive",
+      "shortPath": "department.archive",
+      "description": "Archive a department",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "departmentId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, name: string, parentId?: string | null, isArchived?: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ashby.api.department.create",
+      "shortPath": "department.create",
+      "description": "Create a new department",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "parentId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, name: string, parentId?: string | null, isArchived?: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ashby.api.department.info",
+      "shortPath": "department.info",
+      "description": "Retrieve department details by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "departmentId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, name: string, parentId?: string | null, isArchived?: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ashby.api.department.list",
+      "shortPath": "department.list",
+      "description": "List all departments in the organization",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "syncToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "includeArchived",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, name: string, parentId?: string | null, isArchived?: boolean }[]"
+          },
+          {
+            "key": "moreDataAvailable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "nextCursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "syncToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ashby.api.department.update",
+      "shortPath": "department.update",
+      "description": "Update department name or parent department",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "departmentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parentId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, name: string, parentId?: string | null, isArchived?: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ashby.api.interview.info",
+      "shortPath": "interview.info",
+      "description": "Retrieve interview details by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "interviewId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, title: string, interviewStageId?: string, interviewPlanId?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ashby.api.interview.list",
+      "shortPath": "interview.list",
+      "description": "List interviews for an interview plan",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "syncToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "interviewPlanId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, title: string, interviewStageId?: string, interviewPlanId?: string }[]"
+          },
+          {
+            "key": "moreDataAvailable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "nextCursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "syncToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ashby.api.interview.scheduleInfo",
+      "shortPath": "interview.scheduleInfo",
+      "description": "Retrieve details of an interview schedule",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "interviewScheduleId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, applicationId: string, interviewStageId?: string, scheduledStartTime?: string | null, scheduledEndTime?: string | null, status?: string, interviewers?: { userId: string }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ashby.api.interview.scheduleList",
+      "shortPath": "interview.scheduleList",
+      "description": "List scheduled interviews for an application",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "syncToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "applicationId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, applicationId: string, interviewStageId?: string, scheduledStartTime?: string | null, scheduledEndTime?: string | null, status?: string, interviewers?: { userId: string }[] }[]"
+          },
+          {
+            "key": "moreDataAvailable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "nextCursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "syncToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ashby.api.interview.stageList",
+      "shortPath": "interview.stageList",
+      "description": "List interview stages for a job or interview plan",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jobId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "interviewPlanId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, title: string, type?: string, orderInJob?: number, jobId?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ashby.api.job.create",
+      "shortPath": "job.create",
+      "description": "Create a new job in Ashby",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "departmentId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "locationId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "{ value: any, customFieldDefinitionId: string, title?: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, title: string, status?: string, departmentId?: string | null, locationId?: string | null, hiringTeam?: { userId: string, role: string, firstName?: string, lastName?: string, email?: string }[], customFields?: { value: any, customFieldDefinitionId: string, title?: string }[], openings?: { id: string, identifier?: string, isArchived?: boolean, targetStartDate?: string | null }[], createdAt?: string, updatedAt?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ashby.api.job.info",
+      "shortPath": "job.info",
+      "description": "Retrieve job details by job ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jobId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, title: string, status?: string, departmentId?: string | null, locationId?: string | null, hiringTeam?: { userId: string, role: string, firstName?: string, lastName?: string, email?: string }[], customFields?: { value: any, customFieldDefinitionId: string, title?: string }[], openings?: { id: string, identifier?: string, isArchived?: boolean, targetStartDate?: string | null }[], createdAt?: string, updatedAt?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ashby.api.job.list",
+      "shortPath": "job.list",
+      "description": "List jobs with status, department, and location filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "syncToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "departmentId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "locationId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, title: string, status?: string, departmentId?: string | null, locationId?: string | null, hiringTeam?: { userId: string, role: string, firstName?: string, lastName?: string, email?: string }[], customFields?: { value: any, customFieldDefinitionId: string, title?: string }[], openings?: { id: string, identifier?: string, isArchived?: boolean, targetStartDate?: string | null }[], createdAt?: string, updatedAt?: string }[]"
+          },
+          {
+            "key": "moreDataAvailable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "nextCursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "syncToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ashby.api.job.search",
+      "shortPath": "job.search",
+      "description": "Search jobs by title or status",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, title: string, status?: string, departmentId?: string | null, locationId?: string | null, hiringTeam?: { userId: string, role: string, firstName?: string, lastName?: string, email?: string }[], customFields?: { value: any, customFieldDefinitionId: string, title?: string }[], openings?: { id: string, identifier?: string, isArchived?: boolean, targetStartDate?: string | null }[], createdAt?: string, updatedAt?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ashby.api.job.update",
+      "shortPath": "job.update",
+      "description": "Update job details, department, or status",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jobId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "departmentId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "locationId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "{ value: any, customFieldDefinitionId: string, title?: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, title: string, status?: string, departmentId?: string | null, locationId?: string | null, hiringTeam?: { userId: string, role: string, firstName?: string, lastName?: string, email?: string }[], customFields?: { value: any, customFieldDefinitionId: string, title?: string }[], openings?: { id: string, identifier?: string, isArchived?: boolean, targetStartDate?: string | null }[], createdAt?: string, updatedAt?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ashby.api.jobPosting.info",
+      "shortPath": "jobPosting.info",
+      "description": "Retrieve job posting information by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jobPostingId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, title: string, jobId: string, departmentId?: string | null, locationId?: string | null, secondaryLocationIds?: string[], isListed?: boolean, publishedDate?: string | null, teamNameHierarchy?: string[], descriptionHtml?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ashby.api.jobPosting.list",
+      "shortPath": "jobPosting.list",
+      "description": "List published and unpublished job postings",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "syncToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jobId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "departmentId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "locationId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "listedOnly",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, title: string, jobId: string, departmentId?: string | null, locationId?: string | null, secondaryLocationIds?: string[], isListed?: boolean, publishedDate?: string | null, teamNameHierarchy?: string[], descriptionHtml?: string }[]"
+          },
+          {
+            "key": "moreDataAvailable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "nextCursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "syncToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ashby.api.location.archive",
+      "shortPath": "location.archive",
+      "description": "Archive a location",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "locationId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, name: string, parentId?: string | null, isArchived?: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ashby.api.location.create",
+      "shortPath": "location.create",
+      "description": "Create a new location",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "parentId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, name: string, parentId?: string | null, isArchived?: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ashby.api.location.info",
+      "shortPath": "location.info",
+      "description": "Retrieve location details by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "locationId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, name: string, parentId?: string | null, isArchived?: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ashby.api.location.list",
+      "shortPath": "location.list",
+      "description": "List all locations in the organization",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "syncToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "includeArchived",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, name: string, parentId?: string | null, isArchived?: boolean }[]"
+          },
+          {
+            "key": "moreDataAvailable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "nextCursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "syncToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ashby.api.location.update",
+      "shortPath": "location.update",
+      "description": "Update location name or hierarchy",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "locationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parentId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, name: string, parentId?: string | null, isArchived?: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ashby.api.offer.create",
+      "shortPath": "offer.create",
+      "description": "Create a new job offer for an application",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "applicationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "salary",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "{ value: any, customFieldDefinitionId: string, title?: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, applicationId: string, status?: string, salary?: number | null, currency?: string | null, startDate?: string | null, customFields?: { value: any, customFieldDefinitionId: string, title?: string }[], createdAt?: string, updatedAt?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ashby.api.offer.info",
+      "shortPath": "offer.info",
+      "description": "Retrieve details for a specific offer",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "offerId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, applicationId: string, status?: string, salary?: number | null, currency?: string | null, startDate?: string | null, customFields?: { value: any, customFieldDefinitionId: string, title?: string }[], createdAt?: string, updatedAt?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ashby.api.offer.list",
+      "shortPath": "offer.list",
+      "description": "List offers filtered by application or status",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "syncToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "applicationId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, applicationId: string, status?: string, salary?: number | null, currency?: string | null, startDate?: string | null, customFields?: { value: any, customFieldDefinitionId: string, title?: string }[], createdAt?: string, updatedAt?: string }[]"
+          },
+          {
+            "key": "moreDataAvailable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "nextCursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "syncToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ashby.api.offer.update",
+      "shortPath": "offer.update",
+      "description": "Update job offer details or status",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "offerId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "salary",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "{ value: any, customFieldDefinitionId: string, title?: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, applicationId: string, status?: string, salary?: number | null, currency?: string | null, startDate?: string | null, customFields?: { value: any, customFieldDefinitionId: string, title?: string }[], createdAt?: string, updatedAt?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ashby.api.user.info",
+      "shortPath": "user.info",
+      "description": "Retrieve organization user details by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, name: string, email: string, globalRole?: string, isEnabled?: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ashby.api.user.list",
+      "shortPath": "user.list",
+      "description": "List users in the organization",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "syncToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isEnabled",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, name: string, email: string, globalRole?: string, isEnabled?: boolean }[]"
+          },
+          {
+            "key": "moreDataAvailable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "nextCursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "syncToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ashby.api.user.search",
+      "shortPath": "user.search",
+      "description": "Search users by name or email address",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, name: string, email: string, globalRole?: string, isEnabled?: boolean }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ashby.api.webhook.create",
+      "shortPath": "webhook.create",
+      "description": "Register a new webhook subscription in Ashby",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "requestActionNames",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "secretToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, url: string, description?: string, requestActionNames?: string[], isEnabled?: boolean, secretToken?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ashby.api.webhook.delete",
+      "shortPath": "webhook.delete",
+      "description": "Delete a webhook subscription",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhookId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ashby.api.webhook.info",
+      "shortPath": "webhook.info",
+      "description": "Retrieve webhook configuration details by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhookId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, url: string, description?: string, requestActionNames?: string[], isEnabled?: boolean, secretToken?: string }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "ashby.webhooks.application.submit",
+      "shortPath": "application.submit",
+      "description": "Triggered when a candidate application is submitted",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhookActionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "action",
+            "optional": false,
+            "type": "applicationSubmit"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ applicationId?: string, candidateId?: string, jobId?: string }"
+          }
+        ]
+      },
+      "responseType": "{ webhookActionId: string, action: applicationSubmit, data: { applicationId?: string, candidateId?: string, jobId?: string } }",
+      "usageExample": "ashby({\n    webhookHooks: {\n        application: {\n            submit: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "ashby.webhooks.application.update",
+      "shortPath": "application.update",
+      "description": "Triggered when an application is updated",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhookActionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "action",
+            "optional": false,
+            "type": "applicationUpdate"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ applicationId?: string, candidateId?: string, jobId?: string, status?: string }"
+          }
+        ]
+      },
+      "responseType": "{ webhookActionId: string, action: applicationUpdate, data: { applicationId?: string, candidateId?: string, jobId?: string, status?: string } }",
+      "usageExample": "ashby({\n    webhookHooks: {\n        application: {\n            update: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "ashby.webhooks.candidate.hire",
+      "shortPath": "candidate.hire",
+      "description": "Triggered when a candidate is hired",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhookActionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "action",
+            "optional": false,
+            "type": "candidateHire"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ candidateId?: string, applicationId?: string, offerId?: string }"
+          }
+        ]
+      },
+      "responseType": "{ webhookActionId: string, action: candidateHire, data: { candidateId?: string, applicationId?: string, offerId?: string } }",
+      "usageExample": "ashby({\n    webhookHooks: {\n        candidate: {\n            hire: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "ashby.webhooks.candidate.stageChange",
+      "shortPath": "candidate.stageChange",
+      "description": "Triggered when a candidate moves to a different interview stage",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhookActionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "action",
+            "optional": false,
+            "type": "candidateStageChange"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ candidateId?: string, applicationId?: string, jobId?: string, previousInterviewStageId?: string | null, currentInterviewStageId?: string }"
+          }
+        ]
+      },
+      "responseType": "{ webhookActionId: string, action: candidateStageChange, data: { candidateId?: string, applicationId?: string, jobId?: string, previousInterviewStageId?: string | null, currentInterviewStageId?: string } }",
+      "usageExample": "ashby({\n    webhookHooks: {\n        candidate: {\n            stageChange: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "ashby.webhooks.interview.planTransition",
+      "shortPath": "interview.planTransition",
+      "description": "Triggered during interview plan transitions",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhookActionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "action",
+            "optional": false,
+            "type": "interviewPlanTransition"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ applicationId?: string, interviewPlanId?: string }"
+          }
+        ]
+      },
+      "responseType": "{ webhookActionId: string, action: interviewPlanTransition, data: { applicationId?: string, interviewPlanId?: string } }",
+      "usageExample": "ashby({\n    webhookHooks: {\n        interview: {\n            planTransition: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "ashby.webhooks.interview.scheduleCreate",
+      "shortPath": "interview.scheduleCreate",
+      "description": "Triggered when an interview schedule is created",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhookActionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "action",
+            "optional": false,
+            "type": "interviewScheduleCreate"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ interviewScheduleId?: string, applicationId?: string }"
+          }
+        ]
+      },
+      "responseType": "{ webhookActionId: string, action: interviewScheduleCreate, data: { interviewScheduleId?: string, applicationId?: string } }",
+      "usageExample": "ashby({\n    webhookHooks: {\n        interview: {\n            scheduleCreate: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "ashby.webhooks.interview.scheduleUpdate",
+      "shortPath": "interview.scheduleUpdate",
+      "description": "Triggered when an interview schedule is updated",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhookActionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "action",
+            "optional": false,
+            "type": "interviewScheduleUpdate"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ interviewScheduleId?: string, applicationId?: string, status?: string }"
+          }
+        ]
+      },
+      "responseType": "{ webhookActionId: string, action: interviewScheduleUpdate, data: { interviewScheduleId?: string, applicationId?: string, status?: string } }",
+      "usageExample": "ashby({\n    webhookHooks: {\n        interview: {\n            scheduleUpdate: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "ashby.webhooks.offer.create",
+      "shortPath": "offer.create",
+      "description": "Triggered when a job offer is created",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhookActionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "action",
+            "optional": false,
+            "type": "offerCreate"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ offerId?: string, applicationId?: string }"
+          }
+        ]
+      },
+      "responseType": "{ webhookActionId: string, action: offerCreate, data: { offerId?: string, applicationId?: string } }",
+      "usageExample": "ashby({\n    webhookHooks: {\n        offer: {\n            create: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "ashby.webhooks.offer.delete",
+      "shortPath": "offer.delete",
+      "description": "Triggered when a job offer is deleted",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhookActionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "action",
+            "optional": false,
+            "type": "offerDelete"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ offerId?: string, applicationId?: string }"
+          }
+        ]
+      },
+      "responseType": "{ webhookActionId: string, action: offerDelete, data: { offerId?: string, applicationId?: string } }",
+      "usageExample": "ashby({\n    webhookHooks: {\n        offer: {\n            delete: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "ashby.webhooks.offer.update",
+      "shortPath": "offer.update",
+      "description": "Triggered when a job offer is updated",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhookActionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "action",
+            "optional": false,
+            "type": "offerUpdate"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ offerId?: string, applicationId?: string, status?: string }"
+          }
+        ]
+      },
+      "responseType": "{ webhookActionId: string, action: offerUpdate, data: { offerId?: string, applicationId?: string, status?: string } }",
+      "usageExample": "ashby({\n    webhookHooks: {\n        offer: {\n            update: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": [
+    {
+      "path": "ashby.db.applications.search",
+      "entityName": "applications",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "candidate_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "job_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "current_interview_stage_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "archive_reason_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "updated_at",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "ashby.db.candidates.search",
+      "entityName": "candidates",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "primary_email_address",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "primary_phone_number",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "updated_at",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "ashby.db.departments.search",
+      "entityName": "departments",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "parent_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "is_archived",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    },
+    {
+      "path": "ashby.db.jobPostings.search",
+      "entityName": "jobPostings",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "job_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "department_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "location_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "is_listed",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "published_date",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "ashby.db.jobs.search",
+      "entityName": "jobs",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "department_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "location_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "updated_at",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "ashby.db.locations.search",
+      "entityName": "locations",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "parent_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "is_archived",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    },
+    {
+      "path": "ashby.db.offers.search",
+      "entityName": "offers",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "application_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "salary",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "currency",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "start_date",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "created_at",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "updated_at",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "ashby.db.users.search",
+      "entityName": "users",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "global_role",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "is_enabled",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    }
+  ]
+}

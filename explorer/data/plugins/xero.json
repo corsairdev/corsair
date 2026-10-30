@@ -1,0 +1,2582 @@
+{
+  "id": "xero",
+  "displayName": "Xero",
+  "description": "Xero plugin for Corsair",
+  "npmPackageName": "@corsair-dev/xero",
+  "authTypes": ["api_key", "oauth_2"],
+  "defaultAuthType": "oauth_2",
+  "counts": {
+    "api": 39,
+    "webhooks": 0,
+    "db": 9
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    },
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature",
+        "tenant_external_id"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "xero.api.accounts.get",
+      "shortPath": "accounts.get",
+      "description": "Retrieve a specific account from Xero chart of accounts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tenantId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "accountId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Accounts",
+            "optional": false,
+            "type": "{ AccountID: string, Code?: string, Name: string, Type: string, Status?: string, Description?: string, TaxType?: string, Class?: string, BankAccountNumber?: string, CurrencyCode?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "xero.api.accounts.list",
+      "shortPath": "accounts.list",
+      "description": "Retrieve chart of accounts from Xero",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "where",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tenantId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Accounts",
+            "optional": false,
+            "type": "{ AccountID: string, Code?: string, Name: string, Type: string, Status?: string, Description?: string, TaxType?: string, Class?: string, BankAccountNumber?: string, CurrencyCode?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "xero.api.assets.get",
+      "shortPath": "assets.get",
+      "description": "Retrieve a specific asset by ID from Xero",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tenantId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assetId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "assetId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assetName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assetNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "purchaseDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "purchasePrice",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "assetStatus",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "bookValue",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "xero.api.assets.list",
+      "shortPath": "assets.list",
+      "description": "Retrieve fixed assets from Xero",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "where",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tenantId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{}[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "xero.api.attachments.list",
+      "shortPath": "attachments.list",
+      "description": "List all attachments for a specific entity in Xero",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tenantId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endpoint",
+            "optional": false,
+            "type": "Invoices | Contacts | ManualJournals | PurchaseOrders | BankTransactions"
+          },
+          {
+            "key": "entityId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Attachments",
+            "optional": false,
+            "type": "{ AttachmentID: string, FileName: string, Url?: string, MimeType?: string, ContentLength?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "xero.api.attachments.upload",
+      "shortPath": "attachments.upload",
+      "description": "Upload a file attachment to a Xero entity",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tenantId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endpoint",
+            "optional": false,
+            "type": "Invoices | Contacts | ManualJournals | PurchaseOrders | BankTransactions"
+          },
+          {
+            "key": "entityId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fileName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "mimeType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fileContent",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Attachments",
+            "optional": false,
+            "type": "{ AttachmentID: string, FileName: string, Url?: string, MimeType?: string, ContentLength?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "xero.api.bankTransactions.create",
+      "shortPath": "bankTransactions.create",
+      "description": "Create a bank transaction in Xero (SPEND or RECEIVE)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tenantId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Type",
+            "optional": false,
+            "type": "SPEND | RECEIVE | RECEIVE-TRANSFER | SPEND-TRANSFER | RECEIVE-OVERPAYMENT | RECEIVE-PREPAYMENT | SPEND-OVERPAYMENT | SPEND-PREPAYMENT"
+          },
+          {
+            "key": "Contact",
+            "optional": false,
+            "type": "{ ContactID?: string, Name?: string }"
+          },
+          {
+            "key": "BankAccount",
+            "optional": false,
+            "type": "{ AccountID?: string, Code?: string }"
+          },
+          {
+            "key": "LineItems",
+            "optional": false,
+            "type": "{ Description: string, Quantity?: number, UnitAmount: number, AccountCode?: string, TaxType?: string }[]"
+          },
+          {
+            "key": "Date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Reference",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "BankTransactions",
+            "optional": false,
+            "type": "{ BankTransactionID: string, Type: SPEND | RECEIVE | RECEIVE-TRANSFER | SPEND-TRANSFER | RECEIVE-OVERPAYMENT | RECEIVE-PREPAYMENT | SPEND-OVERPAYMENT | SPEND-PREPAYMENT, Contact?: { ContactID?: string, Name?: string }, BankAccount: { AccountID: string, Code?: string, Name?: string }, Date?: string, Status?: string, LineAmountTypes?: string, SubTotal?: number, TotalTax?: number, Total?: number, UpdatedDateUTC?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "xero.api.bankTransactions.list",
+      "shortPath": "bankTransactions.list",
+      "description": "Retrieve bank transactions from Xero",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "where",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tenantId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "bankAccountID",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "since",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "BankTransactions",
+            "optional": false,
+            "type": "{ BankTransactionID: string, Type: SPEND | RECEIVE | RECEIVE-TRANSFER | SPEND-TRANSFER | RECEIVE-OVERPAYMENT | RECEIVE-PREPAYMENT | SPEND-OVERPAYMENT | SPEND-PREPAYMENT, Contact?: { ContactID?: string, Name?: string }, BankAccount: { AccountID: string, Code?: string, Name?: string }, Date?: string, Status?: string, LineAmountTypes?: string, SubTotal?: number, TotalTax?: number, Total?: number, UpdatedDateUTC?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "xero.api.budgets.get",
+      "shortPath": "budgets.get",
+      "description": "Retrieve a budget from Xero",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tenantId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "budgetId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dateFrom",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dateTo",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Budgets",
+            "optional": false,
+            "type": "{ BudgetID?: string, Type?: string, Description?: string, UpdatedDateUTC?: string, BudgetLines?: {}[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "xero.api.connections.get",
+      "shortPath": "connections.get",
+      "description": "List active Xero tenant connections",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, tenantId: string, tenantType: string, tenantName?: string, createdDateUtc?: string, updatedDateUtc?: string }[]"
+      }
+    },
+    {
+      "path": "xero.api.contacts.create",
+      "shortPath": "contacts.create",
+      "description": "Create a new contact in Xero",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tenantId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "FirstName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "LastName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "EmailAddress",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "AccountNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ContactNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "TaxNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "BankAccountDetails",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "IsSupplier",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "IsCustomer",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Contacts",
+            "optional": false,
+            "type": "{ ContactID: string, ContactNumber?: string, AccountNumber?: string, ContactStatus?: string, Name: string, FirstName?: string, LastName?: string, EmailAddress?: string, BankAccountDetails?: string, TaxNumber?: string, IsSupplier?: boolean, IsCustomer?: boolean, UpdatedDateUTC?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "xero.api.contacts.list",
+      "shortPath": "contacts.list",
+      "description": "Retrieve a list of contacts from Xero",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "where",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tenantId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "searchTerm",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "includeArchived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "summaryOnly",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Contacts",
+            "optional": false,
+            "type": "{ ContactID: string, ContactNumber?: string, AccountNumber?: string, ContactStatus?: string, Name: string, FirstName?: string, LastName?: string, EmailAddress?: string, BankAccountDetails?: string, TaxNumber?: string, IsSupplier?: boolean, IsCustomer?: boolean, UpdatedDateUTC?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "xero.api.contacts.update",
+      "shortPath": "contacts.update",
+      "description": "Update an existing contact in Xero",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tenantId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contactId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "Name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "FirstName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "LastName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "EmailAddress",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "AccountNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ContactNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "TaxNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "BankAccountDetails",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "IsSupplier",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "IsCustomer",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "ContactStatus",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Contacts",
+            "optional": false,
+            "type": "{ ContactID: string, ContactNumber?: string, AccountNumber?: string, ContactStatus?: string, Name: string, FirstName?: string, LastName?: string, EmailAddress?: string, BankAccountDetails?: string, TaxNumber?: string, IsSupplier?: boolean, IsCustomer?: boolean, UpdatedDateUTC?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "xero.api.creditNotes.list",
+      "shortPath": "creditNotes.list",
+      "description": "Retrieve list of credit notes from Xero",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "where",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tenantId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "CreditNotes",
+            "optional": false,
+            "type": "{ CreditNoteID: string, CreditNoteNumber?: string, Type?: string, Status?: string, Total?: number, RemainingCredit?: number, Contact?: { ContactID: string, Name?: string }, UpdatedDateUTC?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "xero.api.files.list",
+      "shortPath": "files.list",
+      "description": "Retrieve files from Xero Files",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "where",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tenantId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Items",
+            "optional": false,
+            "type": "{ Id: string, Name: string, Size?: number, MimeType?: string, CreatedDateUtc?: string }[]"
+          },
+          {
+            "key": "TotalCount",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "xero.api.files.listFolders",
+      "shortPath": "files.listFolders",
+      "description": "Retrieve folders from Xero Files",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tenantId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ Id: string, Name: string, FileCount?: number, IsInbox?: boolean }[]"
+      }
+    },
+    {
+      "path": "xero.api.invoices.create",
+      "shortPath": "invoices.create",
+      "description": "Create a new invoice in Xero (sales invoice or bill)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tenantId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Type",
+            "optional": false,
+            "type": "ACCREC | ACCPAY"
+          },
+          {
+            "key": "Contact",
+            "optional": false,
+            "type": "{ ContactID?: string, Name?: string, ContactNumber?: string }"
+          },
+          {
+            "key": "LineItems",
+            "optional": false,
+            "type": "{ Description?: string, Quantity?: number, UnitAmount?: number, ItemCode?: string, AccountCode?: string, TaxType?: string, DiscountRate?: number }[]"
+          },
+          {
+            "key": "Date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "DueDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "InvoiceNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Reference",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Status",
+            "optional": true,
+            "type": "DRAFT | SUBMITTED | AUTHORISED"
+          },
+          {
+            "key": "CurrencyCode",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Invoices",
+            "optional": false,
+            "type": "{ InvoiceID: string, Type: string, InvoiceNumber?: string, Reference?: string, Status?: string, Date?: string, DueDate?: string, CurrencyCode?: string, CurrencyRate?: number, SubTotal?: number, TotalTax?: number, Total?: number, AmountDue?: number, AmountPaid?: number, Contact?: { ContactID: string, Name?: string }, LineItems?: {}[], UpdatedDateUTC?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "xero.api.invoices.get",
+      "shortPath": "invoices.get",
+      "description": "Retrieve a specific invoice by ID from Xero",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tenantId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "invoiceId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Invoices",
+            "optional": false,
+            "type": "{ InvoiceID: string, Type: string, InvoiceNumber?: string, Reference?: string, Status?: string, Date?: string, DueDate?: string, CurrencyCode?: string, CurrencyRate?: number, SubTotal?: number, TotalTax?: number, Total?: number, AmountDue?: number, AmountPaid?: number, Contact?: { ContactID: string, Name?: string }, LineItems?: {}[], UpdatedDateUTC?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "xero.api.invoices.list",
+      "shortPath": "invoices.list",
+      "description": "Retrieve a list of invoices from Xero",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "where",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tenantId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "InvoiceNumbers",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "ContactIDs",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "Statuses",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "summaryOnly",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Invoices",
+            "optional": false,
+            "type": "{ InvoiceID: string, Type: string, InvoiceNumber?: string, Reference?: string, Status?: string, Date?: string, DueDate?: string, CurrencyCode?: string, CurrencyRate?: number, SubTotal?: number, TotalTax?: number, Total?: number, AmountDue?: number, AmountPaid?: number, Contact?: { ContactID: string, Name?: string }, LineItems?: {}[], UpdatedDateUTC?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "xero.api.invoices.update",
+      "shortPath": "invoices.update",
+      "description": "Update an existing invoice in Xero",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tenantId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "invoiceId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "Contact",
+            "optional": true,
+            "type": "{ ContactID?: string, Name?: string }"
+          },
+          {
+            "key": "LineItems",
+            "optional": true,
+            "type": "{ Description?: string, Quantity?: number, UnitAmount?: number, ItemCode?: string, AccountCode?: string, TaxType?: string }[]"
+          },
+          {
+            "key": "Status",
+            "optional": true,
+            "type": "DRAFT | SUBMITTED | AUTHORISED | VOIDED"
+          },
+          {
+            "key": "DueDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Reference",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Invoices",
+            "optional": false,
+            "type": "{ InvoiceID: string, Type: string, InvoiceNumber?: string, Reference?: string, Status?: string, Date?: string, DueDate?: string, CurrencyCode?: string, CurrencyRate?: number, SubTotal?: number, TotalTax?: number, Total?: number, AmountDue?: number, AmountPaid?: number, Contact?: { ContactID: string, Name?: string }, LineItems?: {}[], UpdatedDateUTC?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "xero.api.items.create",
+      "shortPath": "items.create",
+      "description": "Create an inventory item in Xero",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tenantId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "Name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "PurchaseDescription",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "PurchaseDetails",
+            "optional": true,
+            "type": "{ UnitPrice?: number, AccountCode?: string, TaxType?: string }"
+          },
+          {
+            "key": "SalesDetails",
+            "optional": true,
+            "type": "{ UnitPrice?: number, AccountCode?: string, TaxType?: string }"
+          },
+          {
+            "key": "IsTrackedAsInventory",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "InventoryAssetAccountCode",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Items",
+            "optional": false,
+            "type": "{ ItemID: string, Code: string, Name?: string, Description?: string, PurchaseDescription?: string, PurchaseDetails?: {}, SalesDetails?: {}, IsSold?: boolean, IsPurchased?: boolean, IsTrackedAsInventory?: boolean, TotalCostPool?: number, QuantityOnHand?: number, UpdatedDateUTC?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "xero.api.items.get",
+      "shortPath": "items.get",
+      "description": "Retrieve a specific item by ID from Xero",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tenantId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Items",
+            "optional": false,
+            "type": "{ ItemID: string, Code: string, Name?: string, Description?: string, PurchaseDescription?: string, PurchaseDetails?: {}, SalesDetails?: {}, IsSold?: boolean, IsPurchased?: boolean, IsTrackedAsInventory?: boolean, TotalCostPool?: number, QuantityOnHand?: number, UpdatedDateUTC?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "xero.api.items.list",
+      "shortPath": "items.list",
+      "description": "Retrieve items (inventory/products) from Xero",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "where",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tenantId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Items",
+            "optional": false,
+            "type": "{ ItemID: string, Code: string, Name?: string, Description?: string, PurchaseDescription?: string, PurchaseDetails?: {}, SalesDetails?: {}, IsSold?: boolean, IsPurchased?: boolean, IsTrackedAsInventory?: boolean, TotalCostPool?: number, QuantityOnHand?: number, UpdatedDateUTC?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "xero.api.journals.list",
+      "shortPath": "journals.list",
+      "description": "Retrieve journals from Xero",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "where",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tenantId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paymentsOnly",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Journals",
+            "optional": false,
+            "type": "{ JournalID: string, JournalDate: string, JournalNumber: number, CreatedDateUTC: string, JournalLines?: {}[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "xero.api.manualJournals.get",
+      "shortPath": "manualJournals.get",
+      "description": "Retrieve a specific manual journal by ID from Xero",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tenantId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "manualJournalId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ManualJournals",
+            "optional": false,
+            "type": "{ ManualJournalID: string, Narration: string, Date?: string, Status?: string, Lines?: {}[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "xero.api.manualJournals.list",
+      "shortPath": "manualJournals.list",
+      "description": "Retrieve manual journals from Xero",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "where",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tenantId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ManualJournals",
+            "optional": false,
+            "type": "{ ManualJournalID: string, Narration: string, Date?: string, Status?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "xero.api.organisations.get",
+      "shortPath": "organisations.get",
+      "description": "Retrieve organisation details from Xero",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tenantId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Organisations",
+            "optional": false,
+            "type": "{ OrganisationID?: string, Name: string, LegalName?: string, PaysTax?: boolean, Version?: string, OrganisationType?: string, BaseCurrency?: string, CountryCode?: string, Timezone?: string, SalesTaxBasis?: string, SalesTaxPeriod?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "xero.api.payments.create",
+      "shortPath": "payments.create",
+      "description": "Create a payment linking invoice and bank account in Xero",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tenantId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Invoice",
+            "optional": false,
+            "type": "{ InvoiceID?: string, InvoiceNumber?: string }"
+          },
+          {
+            "key": "Account",
+            "optional": false,
+            "type": "{ AccountID?: string, Code?: string }"
+          },
+          {
+            "key": "Amount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "Date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Reference",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Payments",
+            "optional": false,
+            "type": "{ PaymentID: string, Date?: string, Amount?: number, Reference?: string, CurrencyRate?: number, PaymentType?: string, Status?: string, UpdatedDateUTC?: string, Invoice?: { InvoiceID: string, InvoiceNumber?: string }, Account?: { AccountID: string, Code?: string } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "xero.api.payments.list",
+      "shortPath": "payments.list",
+      "description": "Retrieve list of payments from Xero",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "where",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tenantId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Payments",
+            "optional": false,
+            "type": "{ PaymentID: string, Date?: string, Amount?: number, Reference?: string, CurrencyRate?: number, PaymentType?: string, Status?: string, UpdatedDateUTC?: string, Invoice?: { InvoiceID: string, InvoiceNumber?: string }, Account?: { AccountID: string, Code?: string } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "xero.api.projects.get",
+      "shortPath": "projects.get",
+      "description": "Retrieve a specific project by ID from Xero",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tenantId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "contactId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "currencyCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "deadlineUtc",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "totalTaskAmount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "totalExpenseAmount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "estimateAmount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "xero.api.projects.list",
+      "shortPath": "projects.list",
+      "description": "Retrieve projects from Xero",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "where",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tenantId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contactId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "states",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ projectId: string, name: string, contactId?: string, status?: string }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "xero.api.purchaseOrders.create",
+      "shortPath": "purchaseOrders.create",
+      "description": "Create a purchase order in Xero",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tenantId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Contact",
+            "optional": false,
+            "type": "{ ContactID?: string, Name?: string }"
+          },
+          {
+            "key": "LineItems",
+            "optional": false,
+            "type": "{ Description?: string, Quantity?: number, UnitAmount?: number, ItemCode?: string, AccountCode?: string, TaxType?: string }[]"
+          },
+          {
+            "key": "Date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "DeliveryDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Reference",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Status",
+            "optional": true,
+            "type": "DRAFT | SUBMITTED | AUTHORISED | BILLED"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "PurchaseOrders",
+            "optional": false,
+            "type": "{ PurchaseOrderID: string, PurchaseOrderNumber?: string, Date?: string, DeliveryDate?: string, Reference?: string, Status?: string, Total?: number, SubTotal?: number, TotalTax?: number, Contact?: { ContactID: string, Name?: string }, UpdatedDateUTC?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "xero.api.purchaseOrders.get",
+      "shortPath": "purchaseOrders.get",
+      "description": "Retrieve a specific purchase order by ID from Xero",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tenantId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "purchaseOrderId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "PurchaseOrders",
+            "optional": false,
+            "type": "{ PurchaseOrderID: string, PurchaseOrderNumber?: string, Date?: string, DeliveryDate?: string, Reference?: string, Status?: string, Total?: number, SubTotal?: number, TotalTax?: number, Contact?: { ContactID: string, Name?: string }, UpdatedDateUTC?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "xero.api.purchaseOrders.list",
+      "shortPath": "purchaseOrders.list",
+      "description": "Retrieve list of purchase orders from Xero",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "where",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tenantId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dateFrom",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dateTo",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "PurchaseOrders",
+            "optional": false,
+            "type": "{ PurchaseOrderID: string, PurchaseOrderNumber?: string, Date?: string, DeliveryDate?: string, Reference?: string, Status?: string, Total?: number, SubTotal?: number, TotalTax?: number, Contact?: { ContactID: string, Name?: string }, UpdatedDateUTC?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "xero.api.quotes.list",
+      "shortPath": "quotes.list",
+      "description": "Retrieve a list of quotes from Xero",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "where",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tenantId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dateFrom",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dateTo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expiryDateFrom",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expiryDateTo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contactID",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Quotes",
+            "optional": false,
+            "type": "{ QuoteID: string, QuoteNumber?: string, Reference?: string, Status?: string, Total?: number, SubTotal?: number, TotalTax?: number, Date?: string, ExpiryDate?: string, Contact?: { ContactID: string, Name?: string }, UpdatedDateUTC?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "xero.api.reports.getBalanceSheet",
+      "shortPath": "reports.getBalanceSheet",
+      "description": "Retrieve Balance Sheet report from Xero",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tenantId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "periods",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "timeframe",
+            "optional": true,
+            "type": "MONTH | QUARTER | YEAR"
+          },
+          {
+            "key": "trackingCategoryID",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "trackingOptionID",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "paymentsOnly",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Reports",
+            "optional": false,
+            "type": "{ ReportID?: string, ReportName?: string, ReportType?: string, ReportDate?: string, Rows?: {}[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "xero.api.reports.getProfitLoss",
+      "shortPath": "reports.getProfitLoss",
+      "description": "Retrieve Profit & Loss report from Xero",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tenantId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fromDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "toDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "periods",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "timeframe",
+            "optional": true,
+            "type": "MONTH | QUARTER | YEAR"
+          },
+          {
+            "key": "trackingCategoryID",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "trackingOptionID",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "paymentsOnly",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Reports",
+            "optional": false,
+            "type": "{ ReportID?: string, ReportName?: string, ReportType?: string, ReportDate?: string, Rows?: {}[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "xero.api.taxRates.list",
+      "shortPath": "taxRates.list",
+      "description": "Retrieve tax rates from Xero",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "where",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tenantId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "TaxRates",
+            "optional": false,
+            "type": "{ Name: string, TaxType: string, Status?: string, EffectiveRate?: number, CanApplyToAssets?: boolean, CanApplyToEquity?: boolean, CanApplyToExpenses?: boolean, CanApplyToLiabilities?: boolean, CanApplyToRevenue?: boolean }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "xero.api.trackingCategories.list",
+      "shortPath": "trackingCategories.list",
+      "description": "Retrieve tracking categories from Xero",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "where",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tenantId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "includeArchived",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "TrackingCategories",
+            "optional": false,
+            "type": "{ TrackingCategoryID: string, Name: string, Status?: string, Options?: { TrackingOptionID?: string, Name: string, Status?: string }[] }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "xero.db.accounts.search",
+      "entityName": "accounts",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "AccountID",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "Code",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "Name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "Type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "Status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "Description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "TaxType",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "Class",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "BankAccountNumber",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "CurrencyCode",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "xero.db.bankTransactions.search",
+      "entityName": "bankTransactions",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "BankTransactionID",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "Date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "Status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "LineAmountTypes",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "SubTotal",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "TotalTax",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "Total",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "UpdatedDateUTC",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "xero.db.contacts.search",
+      "entityName": "contacts",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "ContactID",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "ContactNumber",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "AccountNumber",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "ContactStatus",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "Name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "FirstName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "LastName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "EmailAddress",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "BankAccountDetails",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "TaxNumber",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "IsSupplier",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "IsCustomer",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "UpdatedDateUTC",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "xero.db.creditNotes.search",
+      "entityName": "creditNotes",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "CreditNoteID",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "CreditNoteNumber",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "Type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "Status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "Total",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "RemainingCredit",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "UpdatedDateUTC",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "xero.db.invoices.search",
+      "entityName": "invoices",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "InvoiceID",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "Type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "InvoiceNumber",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "Reference",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "Status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "Date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "DueDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "CurrencyCode",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "CurrencyRate",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "SubTotal",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "TotalTax",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "Total",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "AmountDue",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "AmountPaid",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "UpdatedDateUTC",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "xero.db.items.search",
+      "entityName": "items",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "ItemID",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "Code",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "Name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "Description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "PurchaseDescription",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "IsSold",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "IsPurchased",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "IsTrackedAsInventory",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "TotalCostPool",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "QuantityOnHand",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "UpdatedDateUTC",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "xero.db.payments.search",
+      "entityName": "payments",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "PaymentID",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "Date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "Amount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "Reference",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "CurrencyRate",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "PaymentType",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "Status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "UpdatedDateUTC",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "xero.db.purchaseOrders.search",
+      "entityName": "purchaseOrders",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "PurchaseOrderID",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "PurchaseOrderNumber",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "Date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "DeliveryDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "Reference",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "Status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "Total",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "SubTotal",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "TotalTax",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "UpdatedDateUTC",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "xero.db.quotes.search",
+      "entityName": "quotes",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "QuoteID",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "QuoteNumber",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "Reference",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "Status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "Total",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "SubTotal",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "TotalTax",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "Date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "ExpiryDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "UpdatedDateUTC",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

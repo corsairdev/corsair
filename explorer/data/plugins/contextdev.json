@@ -1,0 +1,1598 @@
+{
+  "id": "contextdev",
+  "displayName": "ContextDev",
+  "description": "ContextDev plugin for Corsair",
+  "npmPackageName": "@corsair-dev/contextdev",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 16,
+    "webhooks": 0,
+    "db": 2
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "contextdev.api.account.usage",
+      "shortPath": "account.usage",
+      "description": "Get the credit balance, current-period usage, and next refill",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "credits_remaining",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "period",
+            "optional": true,
+            "type": "{ start: string, credits_used: number }"
+          },
+          {
+            "key": "next_refill",
+            "optional": true,
+            "type": "{ at: string, credits: number }"
+          },
+          {
+            "key": "auto_topup",
+            "optional": false,
+            "type": "{ enabled: boolean, credits_used_this_period: number, monthly_budget_credits?: number | null }"
+          },
+          {
+            "key": "key_metadata",
+            "optional": true,
+            "type": "{ credits_consumed: number, credits_remaining: number }"
+          },
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "contextdev.api.brand.fonts",
+      "shortPath": "brand.fonts",
+      "description": "List the fonts a website uses and how much of the page each covers",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "directUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "maxAgeMs",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "timeoutOpts",
+            "optional": true,
+            "type": "{ milliseconds: number, behavior?: fail | return-partial }"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "finalDOMState",
+            "optional": true,
+            "type": "loaded | still-loading"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fonts",
+            "optional": false,
+            "type": "{ font: string, uses: string[], fallbacks: string[], num_elements: number, num_words: number, percent_words: number, percent_elements: number }[]"
+          },
+          {
+            "key": "fontLinks",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "cache_metadata",
+            "optional": false,
+            "type": "{ status: hit | miss | zdr, age_ms: number }"
+          },
+          {
+            "key": "key_metadata",
+            "optional": true,
+            "type": "{ credits_consumed: number, credits_remaining: number }"
+          },
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "contextdev.api.brand.naics",
+      "shortPath": "brand.naics",
+      "description": "Classify a brand or business description into NAICS codes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "input",
+            "optional": false,
+            "type": "string",
+            "description": "Brand domain, title, or a description of the business"
+          },
+          {
+            "key": "minResults",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "maxResults",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "timeoutOpts",
+            "optional": true,
+            "type": "{ milliseconds: number, behavior?: fail | return-partial }"
+          },
+          {
+            "key": "zdr",
+            "optional": true,
+            "type": "enabled | disabled"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "partial",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "key_metadata",
+            "optional": true,
+            "type": "{ credits_consumed: number, credits_remaining: number }"
+          },
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "codes",
+            "optional": true,
+            "type": "{ code: string, name: string, confidence: high | medium | low }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "contextdev.api.brand.prefetch",
+      "shortPath": "brand.prefetch",
+      "description": "Queue brand or styleguide data so a later lookup returns sooner",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "brand | styleguide"
+          },
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "{ domain: string } | { email: string }"
+          },
+          {
+            "key": "timeoutOpts",
+            "optional": true,
+            "type": "{ milliseconds: number, behavior?: fail }"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "brand | styleguide"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "key_metadata",
+            "optional": true,
+            "type": "{ credits_consumed: number, credits_remaining: number }"
+          },
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "contextdev.api.brand.retrieve",
+      "shortPath": "brand.retrieve",
+      "description": "Get a brand profile (logos, colors, socials, address, industry) by domain, name, email, ticker, URL, or card transaction",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{ type: by_domain, domain: string, force_language?: string | null, maxSpeed?: boolean, maxAgeMs?: number, timeoutOpts?: { milliseconds: number, behavior?: fail | return-partial }, tags?: string[] } | { type: by_name, name: string, country_gl?: string, force_language?: string | null, maxSpeed?: boolean, maxAgeMs?: number, timeoutOpts?: { milliseconds: number, behavior?: fail | return-partial }, tags?: string[] } | { type: by_email, email: string, force_language?: string | null, maxSpeed?: boolean, maxAgeMs?: number, timeoutOpts?: { milliseconds: number, behavior?: fail | return-partial }, tags?: string[] } | { type: by_ticker, ticker: string, ticker_exchange?: string, force_language?: string | null, maxSpeed?: boolean, maxAgeMs?: number, timeoutOpts?: { milliseconds: number, behavior?: fail | return-partial }, tags?: string[] } | { type: by_direct_url, direct_url: string, timeoutOpts?: { milliseconds: number, behavior?: fail | return-partial }, tags?: string[] } | { type: by_transaction, transaction_info: string, country_gl?: string, city?: string, mcc?: string | number, phone?: string | number, high_confidence_only?: boolean, force_language?: string | null, maxSpeed?: boolean, maxAgeMs?: number, timeoutOpts?: { milliseconds: number, behavior?: fail | return-partial }, tags?: string[] }"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "partial",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "brand",
+            "optional": false,
+            "type": "{ domain?: string, title?: string, description?: string, slogan?: string, colors?: { hex?: string, name?: string, source?: site | logo }[], logos?: { url?: string, mode?: light | dark | has_opaque_background, colors?: { hex?: string, name?: string }[], resolution?: { width?: number, height?: number, aspect_ratio?: number }, type?: icon | logo }[], backdrops?: { url?: string, colors?: { hex?: string, name?: string }[], resolution?: { width?: number, height?: number, aspect_ratio?: number } }[], socials?: { type?: string, url?: string }[], address?: { street?: string, city?: string, country?: string, country_code?: string, state_province?: string, state_code?: string, postal_code?: string }, stock?: { ticker?: string, exchange?: string }, employees?: { range?: string, exact?: number }, is_nsfw?: boolean, email?: string, phone?: string, industries?: { eic?: { industry: string, subindustry: string }[] }, links?: { careers?: string | null, privacy?: string | null, terms?: string | null, contact?: string | null, blog?: string | null, pricing?: string | null }, primary_language?: string | null }"
+          },
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "cache_metadata",
+            "optional": false,
+            "type": "{ status: hit | miss | zdr, age_ms: number }"
+          },
+          {
+            "key": "key_metadata",
+            "optional": true,
+            "type": "{ credits_consumed: number, credits_remaining: number }"
+          },
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "contextdev.api.brand.search",
+      "shortPath": "brand.search",
+      "description": "Find up to 10 brands by name or domain",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "autocomplete",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "queryBy",
+            "optional": true,
+            "type": "name | domain[]"
+          },
+          {
+            "key": "typoTolerance",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ domain: string, name: string, logo: string }[]"
+          },
+          {
+            "key": "key_metadata",
+            "optional": true,
+            "type": "{ credits_consumed: number, credits_remaining: number }"
+          },
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "contextdev.api.brand.sic",
+      "shortPath": "brand.sic",
+      "description": "Classify a brand or business description into SIC codes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "input",
+            "optional": false,
+            "type": "string",
+            "description": "Brand domain, title, or a description of the business"
+          },
+          {
+            "key": "minResults",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "maxResults",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "timeoutOpts",
+            "optional": true,
+            "type": "{ milliseconds: number, behavior?: fail | return-partial }"
+          },
+          {
+            "key": "zdr",
+            "optional": true,
+            "type": "enabled | disabled"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "original_sic | latest_sec"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "partial",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "key_metadata",
+            "optional": true,
+            "type": "{ credits_consumed: number, credits_remaining: number }"
+          },
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "classification",
+            "optional": true,
+            "type": "original_sic | latest_sec"
+          },
+          {
+            "key": "codes",
+            "optional": true,
+            "type": "{ code: string, name: string, confidence: high | medium | low, majorGroup?: string, majorGroupName?: string, office?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "contextdev.api.brand.styleguide",
+      "shortPath": "brand.styleguide",
+      "description": "Extract a website's colors, typography, spacing, shadows, and button styles",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "directUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "maxAgeMs",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "timeoutOpts",
+            "optional": true,
+            "type": "{ milliseconds: number, behavior?: fail | return-partial }"
+          },
+          {
+            "key": "colorScheme",
+            "optional": true,
+            "type": "light | dark"
+          },
+          {
+            "key": "zdr",
+            "optional": true,
+            "type": "enabled | disabled"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "finalDOMState",
+            "optional": true,
+            "type": "loaded | still-loading"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "styleguide",
+            "optional": true,
+            "type": "{ mode: light | dark, colors: { accent: string, background: string, text: string }, typography: { headings: { h1?: { fontFamily: string, fontFallbacks: string[], fontSize: string, fontWeight: number, lineHeight: string, letterSpacing: string }, h2?: { fontFamily: string, fontFallbacks: string[], fontSize: string, fontWeight: number, lineHeight: string, letterSpacing: string }, h3?: { fontFamily: string, fontFallbacks: string[], fontSize: string, fontWeight: number, lineHeight: string, letterSpacing: string }, h4?: { fontFamily: string, fontFallbacks: string[], fontSize: string, fontWeight: number, lineHeight: string, letterSpacing: string } }, p?: { fontFamily: string, fontFallbacks: string[], fontSize: string, fontWeight: number, lineHeight: string, letterSpacing: string } }, elementSpacing: { xs: string, sm: string, md: string, lg: string, xl: string }, shadows: { sm: string, md: string, lg: string, xl: string, inner: string }, fontLinks: {}, components: { button: { primary?: { backgroundColor: string, color: string, borderColor: string, borderRadius: string, borderWidth: string, borderStyle: string, padding: string, minWidth: string, minHeight: string, fontSize: string, fontWeight: number, fontFamily?: string, fontFallbacks?: string[], textDecoration: string, textDecorationColor?: string, boxShadow: string, css: string }, secondary?: { backgroundColor: string, color: string, borderColor: string, borderRadius: string, borderWidth: string, borderStyle: string, padding: string, minWidth: string, minHeight: string, fontSize: string, fontWeight: number, fontFamily?: string, fontFallbacks?: string[], textDecoration: string, textDecorationColor?: string, boxShadow: string, css: string }, link?: { backgroundColor: string, color: string, borderColor: string, borderRadius: string, borderWidth: string, borderStyle: string, padding: string, minWidth: string, minHeight: string, fontSize: string, fontWeight: number, fontFamily?: string, fontFallbacks?: string[], textDecoration: string, textDecorationColor?: string, boxShadow: string, css: string } }, card?: { backgroundColor: string, borderColor: string, borderRadius: string, borderWidth: string, borderStyle: string, padding: string, boxShadow: string, textColor: string, css: string } } }"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cache_metadata",
+            "optional": false,
+            "type": "{ status: hit | miss | zdr, age_ms: number }"
+          },
+          {
+            "key": "key_metadata",
+            "optional": true,
+            "type": "{ credits_consumed: number, credits_remaining: number }"
+          },
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "contextdev.api.news.search",
+      "shortPath": "news.search",
+      "description": "Search company news by name, domain, ticker, or ISIN, paginated by cursor",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "searchBy",
+            "optional": false,
+            "type": "{ type: entity, entity: { type: name, name: string } | { type: domain, domain: string } | { type: ticker, ticker: string, exchange?: string } | { type: isin, isin: string } }"
+          },
+          {
+            "key": "filterBy",
+            "optional": true,
+            "type": "{ sourceDomain?: string[], sourceCountry?: string[], articleLanguage?: string[], articleType?: editorial | press_release | regulatory_filing | advisory[], date?: { from?: number, to?: number } }"
+          },
+          {
+            "key": "sortBy",
+            "optional": true,
+            "type": "{ type: relevance | newest }"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, story_id: string, url: string, title: string, description?: string | null, language?: string | null, authors: string[], image_url?: string | null, published_at?: string | null, type: editorial | press_release | regulatory_filing | advisory, source: { name: string, domain: string, direct: boolean }, match: { level: primary | secondary, confidence?: number | null } }[]"
+          },
+          {
+            "key": "has_more",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "next_cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ count: number }"
+          },
+          {
+            "key": "key_metadata",
+            "optional": true,
+            "type": "{ credits_consumed: number, credits_remaining: number }"
+          },
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "contextdev.api.people.enrich",
+      "shortPath": "people.enrich",
+      "description": "Find a person from an email, profile URLs, or name and return their profile with a match score",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "social_urls",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "{ first?: string, last?: string }"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "{ name?: string, domain?: string }"
+          },
+          {
+            "key": "education",
+            "optional": true,
+            "type": "{ institution?: { name?: string, domain?: string }, degree?: string, field_of_study?: string, graduation_year?: number }[]"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "{ city?: string, region?: string, country?: string }"
+          },
+          {
+            "key": "timeoutOpts",
+            "optional": true,
+            "type": "{ milliseconds: number, behavior?: fail | return-partial }"
+          },
+          {
+            "key": "zdr",
+            "optional": true,
+            "type": "enabled | disabled"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "partial",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "match",
+            "optional": false,
+            "type": "{ status: candidate, score: number, person: { name?: { full?: string, first?: string, last?: string }, email?: string, avatar_url?: string, bio?: string, location?: { display?: string, city?: string, region?: string, country?: string, country_code?: string }, social_urls: string[], website_urls: string[], current_role?: { title: string, organization: { name: string, domain?: string }, location?: string, description?: string, start_date?: { year: number, month?: number, day?: number }, end_date?: { year: number, month?: number, day?: number }, is_current?: boolean }, current_role_status: present | none | unknown, experience: { title: string, organization: { name: string, domain?: string }, location?: string, description?: string, start_date?: { year: number, month?: number, day?: number }, end_date?: { year: number, month?: number, day?: number }, is_current?: boolean }[], education: { institution: { name: string, domain?: string }, degree?: string, field_of_study?: string, description?: string, start_date?: { year: number, month?: number, day?: number }, end_date?: { year: number, month?: number, day?: number } }[], skills: string[], last_updated?: string, checked_at?: string } } | { status: not_found, score: null, person: null }"
+          },
+          {
+            "key": "key_metadata",
+            "optional": true,
+            "type": "{ credits_consumed: number, credits_remaining: number }"
+          },
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "contextdev.api.web.answers",
+      "shortPath": "web.answers",
+      "description": "Research a task on the web and return a sourced answer in a requested JSON shape",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "mode",
+            "optional": true,
+            "type": "fast | ultra"
+          },
+          {
+            "key": "json_format",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "timeoutOpts",
+            "optional": true,
+            "type": "{ milliseconds: number, behavior?: fail | return-partial }"
+          },
+          {
+            "key": "zdr",
+            "optional": true,
+            "type": "enabled | disabled"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "partial",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "json_content",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "sources",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "key_metadata",
+            "optional": true,
+            "type": "{ credits_consumed: number, credits_remaining: number }"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "contextdev.api.web.crawl",
+      "shortPath": "web.crawl",
+      "description": "Crawl a website (up to 500 pages) and return each page as Markdown",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "maxPages",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "urlRegex",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "includeLinks",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "includeImages",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "shortenBase64Images",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "useMainContentOnly",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "pdf",
+            "optional": true,
+            "type": "{ shouldParse?: boolean, start?: number, end?: number, ocr?: boolean }"
+          },
+          {
+            "key": "includeSelectors",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "excludeSelectors",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "maxDepth",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "followSubdomains",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "includeFrames",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "maxAgeMs",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "waitForMs",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "settleAnimations",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "stopAfterMs",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "timeoutOpts",
+            "optional": true,
+            "type": "{ milliseconds: number, behavior?: fail | return-partial }"
+          },
+          {
+            "key": "zdr",
+            "optional": true,
+            "type": "enabled | disabled"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "partial",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ markdown: string, metadata: { title: string, description?: string, language?: string, keywords?: string[], canonicalUrl?: string, author?: string, siteName?: string, image?: string, favicon?: string, publishedTime?: string, modifiedTime?: string, robots?: string, openGraph?: {}, twitter?: {}, alternates?: { href: string, hreflang?: string, type?: string, title?: string }[], headings?: { level: number, text: string }[], jsonLd?: {}[], additionalMeta?: {}, sourceUrl: string, finalUrl: string, url: string, crawlDepth: number, statusCode: number, success: boolean } }[]"
+          },
+          {
+            "key": "metadata",
+            "optional": false,
+            "type": "{ numUrls: number, maxCrawlDepth: number, numSucceeded: number, numFailed: number, numSkipped: number }"
+          },
+          {
+            "key": "cache_metadata",
+            "optional": false,
+            "type": "{ status: hit | miss | zdr, age_ms: number }"
+          },
+          {
+            "key": "key_metadata",
+            "optional": true,
+            "type": "{ credits_consumed: number, credits_remaining: number }"
+          },
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "contextdev.api.web.extract",
+      "shortPath": "web.extract",
+      "description": "Extract structured data from a website using a JSON Schema",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "schema",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "instructions",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "factCheck",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "maxPages",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pdf",
+            "optional": true,
+            "type": "{ shouldParse?: boolean, start?: number, end?: number }"
+          },
+          {
+            "key": "actions",
+            "optional": true,
+            "type": "({ do: wait, timeMs: number } | { do: perform, action: string } | { do: scroll, direction?: up | down | left | right, amount?: number | viewport | max, container?: string, maxScrolls?: number })[]"
+          },
+          {
+            "key": "maxDepth",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "followSubdomains",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "includeFrames",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "maxAgeMs",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "waitForMs",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "settleAnimations",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "stopAfterMs",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "timeoutOpts",
+            "optional": true,
+            "type": "{ milliseconds: number, behavior?: fail | return-partial }"
+          },
+          {
+            "key": "zdr",
+            "optional": true,
+            "type": "enabled | disabled"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "partial",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "urls_analyzed",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "metadata",
+            "optional": false,
+            "type": "{ numUrls: number, maxCrawlDepth: number, numSucceeded: number, numFailed: number, numSkipped: number, numBlocked: number, actionsApplied?: { instruction: string, status: applied | failed | skipped, method?: string, targetDescription?: string, completionEvidence?: string, error?: string, durationMs?: number }[] }"
+          },
+          {
+            "key": "cache_metadata",
+            "optional": false,
+            "type": "{ status: hit | miss | zdr, age_ms: number }"
+          },
+          {
+            "key": "key_metadata",
+            "optional": true,
+            "type": "{ credits_consumed: number, credits_remaining: number }"
+          },
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "contextdev.api.web.scrape",
+      "shortPath": "web.scrape",
+      "description": "Scrape a URL as HTML, Markdown, screenshot, images, highlights, or schema-driven JSON",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "formats",
+            "optional": false,
+            "type": "{ html?: boolean, markdown?: boolean, screenshot?: boolean, images?: boolean, bytes?: boolean, parse?: boolean, highlights?: boolean, json?: boolean, product?: boolean }"
+          },
+          {
+            "key": "markdownParams",
+            "optional": true,
+            "type": "{ includeLinks?: boolean, includeImages?: boolean, inlineImages?: placeholder | preserve }"
+          },
+          {
+            "key": "screenshotParams",
+            "optional": true,
+            "type": "{ area?: viewport | fullPage | { selector: string } | { x: number, y: number, width: number, height: number }, format?: png | jpeg | webp }"
+          },
+          {
+            "key": "imageParams",
+            "optional": true,
+            "type": "{ enrich?: dimensions | classification | file[], dedupe?: none | visual }"
+          },
+          {
+            "key": "highlightsParams",
+            "optional": true,
+            "type": "{ query: string, maxCharacters?: number }"
+          },
+          {
+            "key": "jsonParams",
+            "optional": true,
+            "type": "{ schema: {}, instructions?: string }"
+          },
+          {
+            "key": "parseParams",
+            "optional": true,
+            "type": "{ type?: custom, rules: lazy } | { type: prebuilt, parser: google-maps | google-play | google-play-reviews | app-store | app-store-reviews | emails | phone-numbers | links }"
+          },
+          {
+            "key": "productParams",
+            "optional": true,
+            "type": "{ dedupeImages?: boolean }"
+          },
+          {
+            "key": "sharedParams",
+            "optional": true,
+            "type": "{ country?: string, headers?: {}, viewport?: { width?: number, height?: number }, theme?: light | dark, dismissCookies?: boolean, dismissPopups?: boolean, actions?: ({ type: perform, action: string } | { type: scroll, direction?: down | up | left | right, amount?: number | viewport | max, selector?: string, maxScrolls?: number } | { type: wait, milliseconds: number } | { type: waitFor, selector: string })[], waitFor?: number | string, settleAnimations?: boolean, mainContentOnly?: boolean, includeSelectors?: string[], excludeSelectors?: string[], includeFrames?: boolean, parsers?: { pdf?: { startPage?: number, endPage?: number, ocr?: off | auto } }, profile?: { type: existing, profileId: string } | { type: new, identifier: string, password: string } }"
+          },
+          {
+            "key": "maxAgeMs",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "timeoutOpts",
+            "optional": true,
+            "type": "{ milliseconds: number, behavior?: fail | return-partial }"
+          },
+          {
+            "key": "zdr",
+            "optional": true,
+            "type": "enabled | disabled"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "html",
+            "optional": false,
+            "type": "{ requested: boolean, success?: boolean | null, data?: string | null, error_code?: string, message?: string }"
+          },
+          {
+            "key": "markdown",
+            "optional": false,
+            "type": "{ requested: boolean, success?: boolean | null, data?: string | null, error_code?: string, message?: string }"
+          },
+          {
+            "key": "screenshot",
+            "optional": false,
+            "type": "{ requested: boolean, success?: boolean | null, data?: string | null, error_code?: string, message?: string }"
+          },
+          {
+            "key": "images",
+            "optional": false,
+            "type": "{ requested: boolean, success?: boolean | null, data?: { url: string, alt?: string | null, width?: number, height?: number, classification?: photography | illustration | logo | wordmark | icon | pattern | graphic | other, fileUrl?: string }[] | null, error_code?: string, message?: string }"
+          },
+          {
+            "key": "bytes",
+            "optional": false,
+            "type": "{ requested: boolean, success?: boolean | null, data?: { contentType: string, base64: string } | null, error_code?: string, message?: string }"
+          },
+          {
+            "key": "parsed",
+            "optional": false,
+            "type": "{ requested: boolean, success?: boolean | null, data?: {} | null, error_code?: string, message?: string, type: google-maps | google-play | google-play-reviews | app-store | app-store-reviews | emails | phone-numbers | links | custom }"
+          },
+          {
+            "key": "highlights",
+            "optional": false,
+            "type": "{ requested: boolean, success?: boolean | null, data?: string[] | null, error_code?: string, message?: string }"
+          },
+          {
+            "key": "json",
+            "optional": false,
+            "type": "{ requested: boolean, success?: boolean | null, data?: {} | null, error_code?: string, message?: string, isTruncated?: true }"
+          },
+          {
+            "key": "product",
+            "optional": false,
+            "type": "{ requested: boolean, success?: boolean | null, data?: { isProductPage: boolean, product?: { name: string, description?: string | null, brand?: string | null, sku?: string | null, price?: number | null, regularPrice?: number | null, currency?: string | null, availability?: in_stock | out_of_stock | limited_availability | preorder | backorder | made_to_order | discontinued | null, category?: string | null, imageUrl?: string | null, images: string[], dimensions: string[], features: string[], targetAudience: string[], tags: string[], variants: { sku?: string | null, attributes: {}, url?: string | null, images: string[] }[] } | null } | null, error_code?: string, message?: string }"
+          },
+          {
+            "key": "profile",
+            "optional": true,
+            "type": "{ id: string }"
+          },
+          {
+            "key": "isPartial",
+            "optional": true,
+            "type": "true"
+          },
+          {
+            "key": "metadata",
+            "optional": false,
+            "type": "{ title?: string, description?: string, language?: string, keywords?: string[], canonicalUrl?: string, author?: string, siteName?: string, image?: string, favicon?: string, publishedTime?: string, modifiedTime?: string, robots?: string, openGraph?: {}, twitter?: {}, alternates?: { href: string, hreflang?: string, type?: string, title?: string }[], headings?: { level: number, text: string }[], jsonLd?: {}[], additionalMeta?: {} }"
+          },
+          {
+            "key": "cache_metadata",
+            "optional": false,
+            "type": "{ status: hit | miss | zdr, age_ms: number }"
+          },
+          {
+            "key": "key_metadata",
+            "optional": true,
+            "type": "{ credits_consumed: number, credits_remaining: number }"
+          },
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "contextdev.api.web.search",
+      "shortPath": "web.search",
+      "description": "Search the web, optionally with page Markdown or highlights per result",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "numResults",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "includeDomains",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "excludeDomains",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "freshness",
+            "optional": true,
+            "type": "last_24_hours | last_week | last_month | last_year"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "queryFanout",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "markdownOptions",
+            "optional": true,
+            "type": "{ enabled?: boolean, includeLinks?: boolean, includeImages?: boolean, shortenBase64Images?: boolean, useMainContentOnly?: boolean, pdf?: { shouldParse?: boolean, start?: number, end?: number }, includeFrames?: boolean, maxAgeMs?: number | null, waitForMs?: number | null, timeoutOpts?: { milliseconds: number, behavior?: fail | return-partial } }"
+          },
+          {
+            "key": "highlightsOptions",
+            "optional": true,
+            "type": "{ enabled?: boolean, maxCharacters?: number }"
+          },
+          {
+            "key": "descriptionMaxCharacters",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "timeoutOpts",
+            "optional": true,
+            "type": "{ milliseconds: number, behavior?: fail | return-partial }"
+          },
+          {
+            "key": "zdr",
+            "optional": true,
+            "type": "enabled | disabled"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "partial",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ url: string, title: string, description: string, relevance: high | medium | low, markdown: { finalDOMState?: loaded | still-loading, markdown?: string | null, code: SUCCESS | NOT_REQUESTED | TIMEOUT | CONTENT_TOO_LARGE | WEBSITE_ACCESS_ERROR | WEBSITE_BLOCKED | ERROR }, highlights: { highlights?: string[] | null, code: SUCCESS | NOT_REQUESTED | TIMEOUT | CONTENT_TOO_LARGE | WEBSITE_ACCESS_ERROR | WEBSITE_BLOCKED | ERROR } }[]"
+          },
+          {
+            "key": "cache_metadata",
+            "optional": false,
+            "type": "{ status: hit | miss | zdr, age_ms: number }"
+          },
+          {
+            "key": "key_metadata",
+            "optional": true,
+            "type": "{ credits_consumed: number, credits_remaining: number }"
+          },
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "contextdev.api.web.urls",
+      "shortPath": "web.urls",
+      "description": "Map a domain's URLs with titles and descriptions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "includeSubdomains",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "maxLinks",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sitemapUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "urlRegex",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timeoutOpts",
+            "optional": true,
+            "type": "{ milliseconds: number, behavior?: fail | return-partial }"
+          },
+          {
+            "key": "zdr",
+            "optional": true,
+            "type": "enabled | disabled"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "urls",
+            "optional": false,
+            "type": "{ url: string, title?: string, description?: string, keywords?: string[], language?: string }[]"
+          },
+          {
+            "key": "partial",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "key_metadata",
+            "optional": true,
+            "type": "{ credits_consumed: number, credits_remaining: number }"
+          },
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "contextdev.db.brands.search",
+      "entityName": "brands",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "domain",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "logoUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "primaryColor",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "industry",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "employeeRange",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "country",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "fetchedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "contextdev.db.newsArticles.search",
+      "entityName": "newsArticles",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "storyId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "sourceDomain",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "publishedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

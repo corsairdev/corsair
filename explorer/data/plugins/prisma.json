@@ -1,0 +1,2492 @@
+{
+  "id": "prisma",
+  "displayName": "Prisma",
+  "description": "Prisma plugin for Corsair",
+  "npmPackageName": "@corsair-dev/prisma",
+  "authTypes": ["api_key", "oauth_2"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 23,
+    "webhooks": 0,
+    "db": 7
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    },
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature",
+        "tenant_external_id"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "prisma.api.backups.list",
+      "shortPath": "backups.list",
+      "description": "List backups for a database",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "databaseId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "connectionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "targetDatabaseId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "backupId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "regionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "baseUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "undefined"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, databaseId?: string, status?: string, createdAt?: string } | { id: string, databaseId?: string, status?: string, createdAt?: string }[] | { items: { id: string, databaseId?: string, status?: string, createdAt?: string }[] } | { data: { id: string, databaseId?: string, status?: string, createdAt?: string } | { id: string, databaseId?: string, status?: string, createdAt?: string }[] }"
+      }
+    },
+    {
+      "path": "prisma.api.backups.restore",
+      "shortPath": "backups.restore",
+      "description": "Restore a backup onto the target database (async, overwrites current data)",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "databaseId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "connectionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "targetDatabaseId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "backupId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "regionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "baseUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{ backupId: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined | null | {}"
+      }
+    },
+    {
+      "path": "prisma.api.connections.create",
+      "shortPath": "connections.create",
+      "description": "Create a connection (returns a ready-to-use connection string)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "databaseId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "connectionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "targetDatabaseId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "backupId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "regionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "baseUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{ name: string, databaseId: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name?: string, databaseId?: string, connectionString?: string, type?: string, createdAt?: string } | { data: { id: string, name?: string, databaseId?: string, connectionString?: string, type?: string, createdAt?: string } } | { project: { id: string, name?: string, databaseId?: string, connectionString?: string, type?: string, createdAt?: string } } | { database: { id: string, name?: string, databaseId?: string, connectionString?: string, type?: string, createdAt?: string } } | { connection: { id: string, name?: string, databaseId?: string, connectionString?: string, type?: string, createdAt?: string } }"
+      }
+    },
+    {
+      "path": "prisma.api.connections.delete",
+      "shortPath": "connections.delete",
+      "description": "Delete/revoke a connection and access for anything using it",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "databaseId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "connectionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "targetDatabaseId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "backupId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "regionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "baseUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "undefined"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined | null | {}"
+      }
+    },
+    {
+      "path": "prisma.api.connections.list",
+      "shortPath": "connections.list",
+      "description": "List connections",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "databaseId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "connectionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "targetDatabaseId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "backupId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "regionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "baseUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "undefined"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name?: string, databaseId?: string, connectionString?: string, type?: string, createdAt?: string } | { id: string, name?: string, databaseId?: string, connectionString?: string, type?: string, createdAt?: string }[] | { items: { id: string, name?: string, databaseId?: string, connectionString?: string, type?: string, createdAt?: string }[] } | { data: { id: string, name?: string, databaseId?: string, connectionString?: string, type?: string, createdAt?: string } | { id: string, name?: string, databaseId?: string, connectionString?: string, type?: string, createdAt?: string }[] }"
+      }
+    },
+    {
+      "path": "prisma.api.databases.create",
+      "shortPath": "databases.create",
+      "description": "Create a database in a project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "databaseId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "connectionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "targetDatabaseId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "backupId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "regionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "baseUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{ name: string, region: string, isDefault?: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, createdAt?: string, name?: string, connectionString?: string, region?: string, status?: string, isDefault?: boolean, apiKeys?: { id: string, createdAt?: string, apiKey?: string, connectionString?: string, ppgDirectConnection?: { host?: string, user?: string, pass?: string } }[] } | { data: { id: string, createdAt?: string, name?: string, connectionString?: string, region?: string, status?: string, isDefault?: boolean, apiKeys?: { id: string, createdAt?: string, apiKey?: string, connectionString?: string, ppgDirectConnection?: { host?: string, user?: string, pass?: string } }[] } } | { project: { id: string, createdAt?: string, name?: string, connectionString?: string, region?: string, status?: string, isDefault?: boolean, apiKeys?: { id: string, createdAt?: string, apiKey?: string, connectionString?: string, ppgDirectConnection?: { host?: string, user?: string, pass?: string } }[] } } | { database: { id: string, createdAt?: string, name?: string, connectionString?: string, region?: string, status?: string, isDefault?: boolean, apiKeys?: { id: string, createdAt?: string, apiKey?: string, connectionString?: string, ppgDirectConnection?: { host?: string, user?: string, pass?: string } }[] } } | { connection: { id: string, createdAt?: string, name?: string, connectionString?: string, region?: string, status?: string, isDefault?: boolean, apiKeys?: { id: string, createdAt?: string, apiKey?: string, connectionString?: string, ppgDirectConnection?: { host?: string, user?: string, pass?: string } }[] } }"
+      }
+    },
+    {
+      "path": "prisma.api.databases.delete",
+      "shortPath": "databases.delete",
+      "description": "Delete a database and all of its data",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "databaseId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "connectionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "targetDatabaseId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "backupId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "regionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "baseUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "undefined"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined | null | {}"
+      }
+    },
+    {
+      "path": "prisma.api.databases.get",
+      "shortPath": "databases.get",
+      "description": "Retrieve database details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "databaseId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "connectionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "targetDatabaseId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "backupId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "regionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "baseUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "undefined"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, createdAt?: string, name?: string, connectionString?: string, region?: string, status?: string, isDefault?: boolean, apiKeys?: { id: string, createdAt?: string, apiKey?: string, connectionString?: string, ppgDirectConnection?: { host?: string, user?: string, pass?: string } }[] } | { data: { id: string, createdAt?: string, name?: string, connectionString?: string, region?: string, status?: string, isDefault?: boolean, apiKeys?: { id: string, createdAt?: string, apiKey?: string, connectionString?: string, ppgDirectConnection?: { host?: string, user?: string, pass?: string } }[] } } | { project: { id: string, createdAt?: string, name?: string, connectionString?: string, region?: string, status?: string, isDefault?: boolean, apiKeys?: { id: string, createdAt?: string, apiKey?: string, connectionString?: string, ppgDirectConnection?: { host?: string, user?: string, pass?: string } }[] } } | { database: { id: string, createdAt?: string, name?: string, connectionString?: string, region?: string, status?: string, isDefault?: boolean, apiKeys?: { id: string, createdAt?: string, apiKey?: string, connectionString?: string, ppgDirectConnection?: { host?: string, user?: string, pass?: string } }[] } } | { connection: { id: string, createdAt?: string, name?: string, connectionString?: string, region?: string, status?: string, isDefault?: boolean, apiKeys?: { id: string, createdAt?: string, apiKey?: string, connectionString?: string, ppgDirectConnection?: { host?: string, user?: string, pass?: string } }[] } }"
+      }
+    },
+    {
+      "path": "prisma.api.databases.getUsage",
+      "shortPath": "databases.getUsage",
+      "description": "Retrieve database usage metrics for a time period",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "databaseId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "connectionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "targetDatabaseId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "backupId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "regionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "baseUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "undefined"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ databaseId?: string, id?: string, startDate?: string, endDate?: string, storage?: number | { reads?: number, writes?: number, total?: number, bytes?: number, history?: { timestamp?: string, value?: number }[] }, operations?: number | { reads?: number, writes?: number, total?: number, bytes?: number, history?: { timestamp?: string, value?: number }[] }, reads?: number | { reads?: number, writes?: number, total?: number, bytes?: number, history?: { timestamp?: string, value?: number }[] }, writes?: number | { reads?: number, writes?: number, total?: number, bytes?: number, history?: { timestamp?: string, value?: number }[] }, totalOperations?: number, metrics?: { timestamp?: string, value?: number }[] | {} } | { data: { databaseId?: string, id?: string, startDate?: string, endDate?: string, storage?: number | { reads?: number, writes?: number, total?: number, bytes?: number, history?: { timestamp?: string, value?: number }[] }, operations?: number | { reads?: number, writes?: number, total?: number, bytes?: number, history?: { timestamp?: string, value?: number }[] }, reads?: number | { reads?: number, writes?: number, total?: number, bytes?: number, history?: { timestamp?: string, value?: number }[] }, writes?: number | { reads?: number, writes?: number, total?: number, bytes?: number, history?: { timestamp?: string, value?: number }[] }, totalOperations?: number, metrics?: { timestamp?: string, value?: number }[] | {} } } | { usage: { databaseId?: string, id?: string, startDate?: string, endDate?: string, storage?: number | { reads?: number, writes?: number, total?: number, bytes?: number, history?: { timestamp?: string, value?: number }[] }, operations?: number | { reads?: number, writes?: number, total?: number, bytes?: number, history?: { timestamp?: string, value?: number }[] }, reads?: number | { reads?: number, writes?: number, total?: number, bytes?: number, history?: { timestamp?: string, value?: number }[] }, writes?: number | { reads?: number, writes?: number, total?: number, bytes?: number, history?: { timestamp?: string, value?: number }[] }, totalOperations?: number, metrics?: { timestamp?: string, value?: number }[] | {} } } | { timestamp?: string, value?: number }[] | { data: { timestamp?: string, value?: number }[] }"
+      }
+    },
+    {
+      "path": "prisma.api.databases.inspectSchema",
+      "shortPath": "databases.inspectSchema",
+      "description": "Inspect a database schema (tables, columns, types, constraints)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "databaseId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "connectionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "targetDatabaseId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "backupId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "regionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "baseUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "port",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "user",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "password",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "database",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sslRejectUnauthorized",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tables",
+            "optional": false,
+            "type": "{ schema: string, name: string, columns: { name: string, type: string, nullable: boolean, default?: string | null }[], foreignKeys: { column: string, foreignTable: string, foreignColumn: string }[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "prisma.api.databases.list",
+      "shortPath": "databases.list",
+      "description": "List databases for a project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "databaseId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "connectionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "targetDatabaseId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "backupId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "regionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "baseUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "undefined"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, createdAt?: string, name?: string, connectionString?: string, region?: string, status?: string, isDefault?: boolean, apiKeys?: { id: string, createdAt?: string, apiKey?: string, connectionString?: string, ppgDirectConnection?: { host?: string, user?: string, pass?: string } }[] } | { id: string, createdAt?: string, name?: string, connectionString?: string, region?: string, status?: string, isDefault?: boolean, apiKeys?: { id: string, createdAt?: string, apiKey?: string, connectionString?: string, ppgDirectConnection?: { host?: string, user?: string, pass?: string } }[] }[] | { items: { id: string, createdAt?: string, name?: string, connectionString?: string, region?: string, status?: string, isDefault?: boolean, apiKeys?: { id: string, createdAt?: string, apiKey?: string, connectionString?: string, ppgDirectConnection?: { host?: string, user?: string, pass?: string } }[] }[] } | { data: { id: string, createdAt?: string, name?: string, connectionString?: string, region?: string, status?: string, isDefault?: boolean, apiKeys?: { id: string, createdAt?: string, apiKey?: string, connectionString?: string, ppgDirectConnection?: { host?: string, user?: string, pass?: string } }[] } | { id: string, createdAt?: string, name?: string, connectionString?: string, region?: string, status?: string, isDefault?: boolean, apiKeys?: { id: string, createdAt?: string, apiKey?: string, connectionString?: string, ppgDirectConnection?: { host?: string, user?: string, pass?: string } }[] }[] }"
+      }
+    },
+    {
+      "path": "prisma.api.integrations.list",
+      "shortPath": "integrations.list",
+      "description": "List integrations (OAuth clients, granted scopes) for a workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "databaseId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "connectionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "targetDatabaseId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "backupId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "regionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "baseUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "undefined"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name?: string, workspaceId?: string, type?: string } | { id: string, name?: string, workspaceId?: string, type?: string }[] | { items: { id: string, name?: string, workspaceId?: string, type?: string }[] } | { data: { id: string, name?: string, workspaceId?: string, type?: string } | { id: string, name?: string, workspaceId?: string, type?: string }[] }"
+      }
+    },
+    {
+      "path": "prisma.api.projects.create",
+      "shortPath": "projects.create",
+      "description": "Create a project and its default/database environment",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "databaseId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "connectionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "targetDatabaseId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "backupId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "regionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "baseUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{ name: string, displayName?: string, region: string, createDatabase?: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, createdAt?: string, name?: string, displayName?: string | null, workspaceId?: string, region?: string, logicalId?: string, databases?: { id: string, createdAt?: string, name?: string, connectionString?: string, region?: string, status?: string, isDefault?: boolean, apiKeys?: { id: string, createdAt?: string, apiKey?: string, connectionString?: string, ppgDirectConnection?: { host?: string, user?: string, pass?: string } }[] }[] } | { data: { id: string, createdAt?: string, name?: string, displayName?: string | null, workspaceId?: string, region?: string, logicalId?: string, databases?: { id: string, createdAt?: string, name?: string, connectionString?: string, region?: string, status?: string, isDefault?: boolean, apiKeys?: { id: string, createdAt?: string, apiKey?: string, connectionString?: string, ppgDirectConnection?: { host?: string, user?: string, pass?: string } }[] }[] } } | { project: { id: string, createdAt?: string, name?: string, displayName?: string | null, workspaceId?: string, region?: string, logicalId?: string, databases?: { id: string, createdAt?: string, name?: string, connectionString?: string, region?: string, status?: string, isDefault?: boolean, apiKeys?: { id: string, createdAt?: string, apiKey?: string, connectionString?: string, ppgDirectConnection?: { host?: string, user?: string, pass?: string } }[] }[] } } | { database: { id: string, createdAt?: string, name?: string, displayName?: string | null, workspaceId?: string, region?: string, logicalId?: string, databases?: { id: string, createdAt?: string, name?: string, connectionString?: string, region?: string, status?: string, isDefault?: boolean, apiKeys?: { id: string, createdAt?: string, apiKey?: string, connectionString?: string, ppgDirectConnection?: { host?: string, user?: string, pass?: string } }[] }[] } } | { connection: { id: string, createdAt?: string, name?: string, displayName?: string | null, workspaceId?: string, region?: string, logicalId?: string, databases?: { id: string, createdAt?: string, name?: string, connectionString?: string, region?: string, status?: string, isDefault?: boolean, apiKeys?: { id: string, createdAt?: string, apiKey?: string, connectionString?: string, ppgDirectConnection?: { host?: string, user?: string, pass?: string } }[] }[] } }"
+      }
+    },
+    {
+      "path": "prisma.api.projects.delete",
+      "shortPath": "projects.delete",
+      "description": "Delete a project and all of its data",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "databaseId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "connectionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "targetDatabaseId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "backupId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "regionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "baseUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "undefined"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined | null | {}"
+      }
+    },
+    {
+      "path": "prisma.api.projects.get",
+      "shortPath": "projects.get",
+      "description": "Retrieve project details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "databaseId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "connectionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "targetDatabaseId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "backupId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "regionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "baseUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "undefined"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, createdAt?: string, name?: string, displayName?: string | null, workspaceId?: string, region?: string, logicalId?: string, databases?: { id: string, createdAt?: string, name?: string, connectionString?: string, region?: string, status?: string, isDefault?: boolean, apiKeys?: { id: string, createdAt?: string, apiKey?: string, connectionString?: string, ppgDirectConnection?: { host?: string, user?: string, pass?: string } }[] }[] } | { data: { id: string, createdAt?: string, name?: string, displayName?: string | null, workspaceId?: string, region?: string, logicalId?: string, databases?: { id: string, createdAt?: string, name?: string, connectionString?: string, region?: string, status?: string, isDefault?: boolean, apiKeys?: { id: string, createdAt?: string, apiKey?: string, connectionString?: string, ppgDirectConnection?: { host?: string, user?: string, pass?: string } }[] }[] } } | { project: { id: string, createdAt?: string, name?: string, displayName?: string | null, workspaceId?: string, region?: string, logicalId?: string, databases?: { id: string, createdAt?: string, name?: string, connectionString?: string, region?: string, status?: string, isDefault?: boolean, apiKeys?: { id: string, createdAt?: string, apiKey?: string, connectionString?: string, ppgDirectConnection?: { host?: string, user?: string, pass?: string } }[] }[] } } | { database: { id: string, createdAt?: string, name?: string, displayName?: string | null, workspaceId?: string, region?: string, logicalId?: string, databases?: { id: string, createdAt?: string, name?: string, connectionString?: string, region?: string, status?: string, isDefault?: boolean, apiKeys?: { id: string, createdAt?: string, apiKey?: string, connectionString?: string, ppgDirectConnection?: { host?: string, user?: string, pass?: string } }[] }[] } } | { connection: { id: string, createdAt?: string, name?: string, displayName?: string | null, workspaceId?: string, region?: string, logicalId?: string, databases?: { id: string, createdAt?: string, name?: string, connectionString?: string, region?: string, status?: string, isDefault?: boolean, apiKeys?: { id: string, createdAt?: string, apiKey?: string, connectionString?: string, ppgDirectConnection?: { host?: string, user?: string, pass?: string } }[] }[] } }"
+      }
+    },
+    {
+      "path": "prisma.api.projects.list",
+      "shortPath": "projects.list",
+      "description": "List projects the token has access to",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "databaseId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "connectionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "targetDatabaseId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "backupId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "regionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "baseUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "undefined"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, createdAt?: string, name?: string, displayName?: string | null, workspaceId?: string, region?: string, logicalId?: string, databases?: { id: string, createdAt?: string, name?: string, connectionString?: string, region?: string, status?: string, isDefault?: boolean, apiKeys?: { id: string, createdAt?: string, apiKey?: string, connectionString?: string, ppgDirectConnection?: { host?: string, user?: string, pass?: string } }[] }[] } | { id: string, createdAt?: string, name?: string, displayName?: string | null, workspaceId?: string, region?: string, logicalId?: string, databases?: { id: string, createdAt?: string, name?: string, connectionString?: string, region?: string, status?: string, isDefault?: boolean, apiKeys?: { id: string, createdAt?: string, apiKey?: string, connectionString?: string, ppgDirectConnection?: { host?: string, user?: string, pass?: string } }[] }[] }[] | { items: { id: string, createdAt?: string, name?: string, displayName?: string | null, workspaceId?: string, region?: string, logicalId?: string, databases?: { id: string, createdAt?: string, name?: string, connectionString?: string, region?: string, status?: string, isDefault?: boolean, apiKeys?: { id: string, createdAt?: string, apiKey?: string, connectionString?: string, ppgDirectConnection?: { host?: string, user?: string, pass?: string } }[] }[] }[] } | { data: { id: string, createdAt?: string, name?: string, displayName?: string | null, workspaceId?: string, region?: string, logicalId?: string, databases?: { id: string, createdAt?: string, name?: string, connectionString?: string, region?: string, status?: string, isDefault?: boolean, apiKeys?: { id: string, createdAt?: string, apiKey?: string, connectionString?: string, ppgDirectConnection?: { host?: string, user?: string, pass?: string } }[] }[] } | { id: string, createdAt?: string, name?: string, displayName?: string | null, workspaceId?: string, region?: string, logicalId?: string, databases?: { id: string, createdAt?: string, name?: string, connectionString?: string, region?: string, status?: string, isDefault?: boolean, apiKeys?: { id: string, createdAt?: string, apiKey?: string, connectionString?: string, ppgDirectConnection?: { host?: string, user?: string, pass?: string } }[] }[] }[] }"
+      }
+    },
+    {
+      "path": "prisma.api.projects.transfer",
+      "shortPath": "projects.transfer",
+      "description": "Transfer a project to another workspace",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "databaseId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "connectionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "targetDatabaseId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "backupId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "regionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "baseUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{ recipientAccessToken: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, createdAt?: string, name?: string, displayName?: string | null, workspaceId?: string, region?: string, logicalId?: string, databases?: { id: string, createdAt?: string, name?: string, connectionString?: string, region?: string, status?: string, isDefault?: boolean, apiKeys?: { id: string, createdAt?: string, apiKey?: string, connectionString?: string, ppgDirectConnection?: { host?: string, user?: string, pass?: string } }[] }[] } | { data: { id: string, createdAt?: string, name?: string, displayName?: string | null, workspaceId?: string, region?: string, logicalId?: string, databases?: { id: string, createdAt?: string, name?: string, connectionString?: string, region?: string, status?: string, isDefault?: boolean, apiKeys?: { id: string, createdAt?: string, apiKey?: string, connectionString?: string, ppgDirectConnection?: { host?: string, user?: string, pass?: string } }[] }[] } } | { project: { id: string, createdAt?: string, name?: string, displayName?: string | null, workspaceId?: string, region?: string, logicalId?: string, databases?: { id: string, createdAt?: string, name?: string, connectionString?: string, region?: string, status?: string, isDefault?: boolean, apiKeys?: { id: string, createdAt?: string, apiKey?: string, connectionString?: string, ppgDirectConnection?: { host?: string, user?: string, pass?: string } }[] }[] } } | { database: { id: string, createdAt?: string, name?: string, displayName?: string | null, workspaceId?: string, region?: string, logicalId?: string, databases?: { id: string, createdAt?: string, name?: string, connectionString?: string, region?: string, status?: string, isDefault?: boolean, apiKeys?: { id: string, createdAt?: string, apiKey?: string, connectionString?: string, ppgDirectConnection?: { host?: string, user?: string, pass?: string } }[] }[] } } | { connection: { id: string, createdAt?: string, name?: string, displayName?: string | null, workspaceId?: string, region?: string, logicalId?: string, databases?: { id: string, createdAt?: string, name?: string, connectionString?: string, region?: string, status?: string, isDefault?: boolean, apiKeys?: { id: string, createdAt?: string, apiKey?: string, connectionString?: string, ppgDirectConnection?: { host?: string, user?: string, pass?: string } }[] }[] } }"
+      }
+    },
+    {
+      "path": "prisma.api.regions.list",
+      "shortPath": "regions.list",
+      "description": "List all available regions across products (optionally by product)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "databaseId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "connectionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "targetDatabaseId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "backupId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "regionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "baseUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "undefined"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, region?: string, name?: string, displayName?: string, available?: boolean, status?: string, product?: string } | { id: string, region?: string, name?: string, displayName?: string, available?: boolean, status?: string, product?: string }[] | { items: { id: string, region?: string, name?: string, displayName?: string, available?: boolean, status?: string, product?: string }[] } | { data: { id: string, region?: string, name?: string, displayName?: string, available?: boolean, status?: string, product?: string } | { id: string, region?: string, name?: string, displayName?: string, available?: boolean, status?: string, product?: string }[] }"
+      }
+    },
+    {
+      "path": "prisma.api.regions.listAccelerate",
+      "shortPath": "regions.listAccelerate",
+      "description": "List all available Prisma Accelerate regions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "databaseId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "connectionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "targetDatabaseId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "backupId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "regionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "baseUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "undefined"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, region?: string, name?: string, displayName?: string, available?: boolean, status?: string, product?: string } | { id: string, region?: string, name?: string, displayName?: string, available?: boolean, status?: string, product?: string }[] | { items: { id: string, region?: string, name?: string, displayName?: string, available?: boolean, status?: string, product?: string }[] } | { data: { id: string, region?: string, name?: string, displayName?: string, available?: boolean, status?: string, product?: string } | { id: string, region?: string, name?: string, displayName?: string, available?: boolean, status?: string, product?: string }[] }"
+      }
+    },
+    {
+      "path": "prisma.api.regions.listPostgres",
+      "shortPath": "regions.listPostgres",
+      "description": "List all available Prisma Postgres regions with availability",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "databaseId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "connectionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "targetDatabaseId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "backupId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "regionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "baseUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "undefined"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, region?: string, name?: string, displayName?: string, available?: boolean, status?: string, product?: string } | { id: string, region?: string, name?: string, displayName?: string, available?: boolean, status?: string, product?: string }[] | { items: { id: string, region?: string, name?: string, displayName?: string, available?: boolean, status?: string, product?: string }[] } | { data: { id: string, region?: string, name?: string, displayName?: string, available?: boolean, status?: string, product?: string } | { id: string, region?: string, name?: string, displayName?: string, available?: boolean, status?: string, product?: string }[] }"
+      }
+    },
+    {
+      "path": "prisma.api.sql.execute",
+      "shortPath": "sql.execute",
+      "description": "Execute a SQL command (INSERT/UPDATE/DELETE/DDL) over the Postgres connection",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "databaseId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "connectionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "targetDatabaseId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "backupId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "regionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "baseUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "port",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "user",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "password",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "database",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sslRejectUnauthorized",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "sql",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "params",
+            "optional": true,
+            "type": "any[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "rows",
+            "optional": false,
+            "type": "{}[]"
+          },
+          {
+            "key": "rowCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "command",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "prisma.api.sql.query",
+      "shortPath": "sql.query",
+      "description": "Execute a read-only SQL query (SELECT) over the Postgres connection",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "databaseId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "connectionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "targetDatabaseId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "backupId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "regionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "baseUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "port",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "user",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "password",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "database",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sslRejectUnauthorized",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "sql",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "params",
+            "optional": true,
+            "type": "any[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "rows",
+            "optional": false,
+            "type": "{}[]"
+          },
+          {
+            "key": "rowCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "command",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "prisma.api.workspaces.list",
+      "shortPath": "workspaces.list",
+      "description": "List workspaces the token can access",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "databaseId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "connectionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "targetDatabaseId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "backupId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "regionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "baseUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "undefined"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name?: string } | { id: string, name?: string }[] | { items: { id: string, name?: string }[] } | { data: { id: string, name?: string } | { id: string, name?: string }[] }"
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "prisma.db.backups.search",
+      "entityName": "backups",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "databaseId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "prisma.db.connections.search",
+      "entityName": "connections",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "databaseId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "prisma.db.databases.search",
+      "entityName": "databases",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "projectId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "region",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "isDefault",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "prisma.db.integrations.search",
+      "entityName": "integrations",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "workspaceId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "prisma.db.projects.search",
+      "entityName": "projects",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "displayName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "workspaceId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "region",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "logicalId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "prisma.db.regions.search",
+      "entityName": "regions",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "region",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "displayName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "available",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "product",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "prisma.db.workspaces.search",
+      "entityName": "workspaces",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

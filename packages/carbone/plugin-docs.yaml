@@ -1,0 +1,72 @@
+displayName: Carbone
+description: Document generation and template rendering API for creating files from data-driven templates.
+
+examples:
+  read:
+    path: templates.list
+    title: List templates
+    args:
+      id: tmpl_1234567890abcdef
+      cursor: 0
+  write:
+    path: render.generateReport
+    title: Generate report from template
+    args:
+      templateId: tmpl_1234567890abcdef
+      data:
+        customer: Acme Corp
+        amount: 1250
+      convertTo: pdf
+
+dbExample:
+  entity: templates
+  note: Search synced templates without calling Carbone.
+  data:
+    category: Finance
+  limit: 50
+
+apiExamples:
+  status.get:
+    args: {}
+  templates.upload:
+    args:
+      template: UEsDBBQAAAAIAAAAIQAAAAAAAAAAAAAAAAAJAAAAdGVtcGxhdGUuZG9jeA==
+  templates.list:
+    args:
+      id: tmpl_1234567890abcdef
+      cursor: 0
+  templates.download:
+    args:
+      templateId: tmpl_1234567890abcdef
+  templates.update:
+    args:
+      templateId: tmpl_1234567890abcdef
+      name: Updated invoice template
+      category: Finance
+      tags:
+        - invoices
+        - v2
+  templates.delete:
+    args:
+      templateId: tmpl_1234567890abcdef
+  templates.listCategories:
+    args: {}
+  templates.listTags:
+    args: {}
+  render.generateReport:
+    args:
+      templateId: tmpl_1234567890abcdef
+      data:
+        customer: Acme Corp
+        amount: 1250
+      convertTo: pdf
+  render.renderDirect:
+    args:
+      template: UEsDBBQAAAAIAAAAIQAAAAAAAAAAAAAAAAAJAAAAdGVtcGxhdGUuZG9jeA==
+      data:
+        customer: Acme Corp
+        amount: 1250
+      convertTo: pdf
+  version.set:
+    args:
+      version: '5'

@@ -1,0 +1,2249 @@
+---
+title: API
+description: "API reference for Mailchimp: every `mailchimp.api.*` operation with input and output types."
+---
+
+Every `mailchimp.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### ping
+
+`account.ping`
+
+Health-check the API.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailchimp.api.account.ping({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `health_status` | `string` | Yes | — |
+
+
+
+---
+
+### root
+
+`account.root`
+
+Get account and API root information.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailchimp.api.account.root({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fields` | `string[]` | No | — |
+| `exclude_fields` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | Yes | — |
+
+
+
+---
+
+## Campaigns
+
+### create
+
+`campaigns.create`
+
+Create a campaign.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailchimp.api.campaigns.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `regular \| plaintext \| absplit \| rss \| variate` | Yes | — |
+| `recipients` | `object` | No | — |
+| `settings` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="recipients full type">
+
+```ts
+{
+  list_id: string,
+  segment_opts?: {
+  }
+}
+```
+</Accordion>
+
+<Accordion title="settings full type">
+
+```ts
+{
+  subject_line?: string,
+  preview_text?: string,
+  title?: string,
+  from_name?: string,
+  reply_to?: string,
+  to_name?: string,
+  folder_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`campaigns.get`
+
+Get a campaign.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailchimp.api.campaigns.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### getContent
+
+`campaigns.getContent`
+
+Get campaign content.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailchimp.api.campaigns.getContent({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `plain_text` | `string` | No | — |
+| `html` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`campaigns.list`
+
+List campaigns.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailchimp.api.campaigns.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `regular \| plaintext \| absplit \| rss \| variate` | No | — |
+| `status` | `save \| paused \| schedule \| sending \| sent` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `fields` | `string[]` | No | — |
+| `exclude_fields` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaigns` | `object[]` | Yes | — |
+| `total_items` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="campaigns full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`campaigns.remove`
+
+Delete a campaign.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailchimp.api.campaigns.remove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign_id` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### schedule
+
+`campaigns.schedule`
+
+Schedule a campaign.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailchimp.api.campaigns.schedule({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign_id` | `string` | Yes | — |
+| `schedule_time` | `string` | Yes | — |
+| `timewarp` | `boolean` | No | — |
+| `batch_delivery` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="batch_delivery full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### send
+
+`campaigns.send`
+
+Send a campaign to its audience.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailchimp.api.campaigns.send({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign_id` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### sendTest
+
+`campaigns.sendTest`
+
+Send a test email.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailchimp.api.campaigns.sendTest({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign_id` | `string` | Yes | — |
+| `test_emails` | `string[]` | Yes | — |
+| `send_type` | `html \| plaintext` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### setContent
+
+`campaigns.setContent`
+
+Set campaign content.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailchimp.api.campaigns.setContent({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign_id` | `string` | Yes | — |
+| `html` | `string` | No | — |
+| `plain_text` | `string` | No | — |
+| `template` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="template full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `plain_text` | `string` | No | — |
+| `html` | `string` | No | — |
+
+
+
+---
+
+### unschedule
+
+`campaigns.unschedule`
+
+Unschedule a campaign.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailchimp.api.campaigns.unschedule({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign_id` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### update
+
+`campaigns.update`
+
+Update campaign settings.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailchimp.api.campaigns.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign_id` | `string` | Yes | — |
+| `recipients` | `object` | No | — |
+| `settings` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="recipients full type">
+
+```ts
+{
+  list_id: string,
+  segment_opts?: {
+  }
+}
+```
+</Accordion>
+
+<Accordion title="settings full type">
+
+```ts
+{
+  subject_line?: string,
+  preview_text?: string,
+  title?: string,
+  from_name?: string,
+  reply_to?: string,
+  to_name?: string,
+  folder_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+## Interest Categories
+
+### create
+
+`interestCategories.create`
+
+Create an interest category.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailchimp.api.interestCategories.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `title` | `string` | Yes | — |
+| `type` | `checkboxes \| dropdown \| radio \| hidden` | Yes | — |
+| `display_order` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `title` | `string` | Yes | — |
+| `list_id` | `string` | No | — |
+
+
+
+---
+
+### get
+
+`interestCategories.get`
+
+Get an interest category.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailchimp.api.interestCategories.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `interest_category_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `title` | `string` | Yes | — |
+| `list_id` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`interestCategories.list`
+
+List interest categories (groups).
+
+**Risk:** `read`
+
+```ts
+await corsair.mailchimp.api.interestCategories.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `categories` | `object[]` | Yes | — |
+| `total_items` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="categories full type">
+
+```ts
+{
+  id: string,
+  title: string,
+  list_id?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`interestCategories.remove`
+
+Delete an interest category.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailchimp.api.interestCategories.remove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `interest_category_id` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### update
+
+`interestCategories.update`
+
+Update an interest category.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailchimp.api.interestCategories.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `interest_category_id` | `string` | Yes | — |
+| `title` | `string` | No | — |
+| `type` | `checkboxes \| dropdown \| radio \| hidden` | No | — |
+| `display_order` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `title` | `string` | Yes | — |
+| `list_id` | `string` | No | — |
+
+
+
+---
+
+## Interests
+
+### create
+
+`interests.create`
+
+Create an interest.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailchimp.api.interests.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `interest_category_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `display_order` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `list_id` | `string` | No | — |
+
+
+
+---
+
+### get
+
+`interests.get`
+
+Get an interest.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailchimp.api.interests.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `interest_category_id` | `string` | Yes | — |
+| `interest_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `list_id` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`interests.list`
+
+List interests in a category.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailchimp.api.interests.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `interest_category_id` | `string` | Yes | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `interests` | `object[]` | Yes | — |
+| `total_items` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="interests full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  list_id?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`interests.remove`
+
+Delete an interest.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailchimp.api.interests.remove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `interest_category_id` | `string` | Yes | — |
+| `interest_id` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### update
+
+`interests.update`
+
+Update an interest.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailchimp.api.interests.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `interest_category_id` | `string` | Yes | — |
+| `interest_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `display_order` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `list_id` | `string` | No | — |
+
+
+
+---
+
+## Lists
+
+### create
+
+`lists.create`
+
+Create an audience.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailchimp.api.lists.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `contact` | `object` | Yes | — |
+| `permission_reminder` | `string` | Yes | — |
+| `campaign_defaults` | `object` | Yes | — |
+| `email_type_option` | `boolean` | Yes | — |
+| `use_archive_bar` | `boolean` | No | — |
+| `double_optin` | `boolean` | No | — |
+| `marketing_permissions` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="contact full type">
+
+```ts
+{
+  company: string,
+  address1: string,
+  address2?: string,
+  city: string,
+  state: string,
+  zip: string,
+  country: string,
+  phone?: string
+}
+```
+</Accordion>
+
+<Accordion title="campaign_defaults full type">
+
+```ts
+{
+  from_name: string,
+  from_email: string,
+  subject: string,
+  language: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `web_id` | `number` | No | — |
+
+
+
+---
+
+### get
+
+`lists.get`
+
+Get an audience by id.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailchimp.api.lists.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `fields` | `string[]` | No | — |
+| `exclude_fields` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `web_id` | `number` | No | — |
+
+
+
+---
+
+### list
+
+`lists.list`
+
+List all audiences.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailchimp.api.lists.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `fields` | `string[]` | No | — |
+| `exclude_fields` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lists` | `object[]` | Yes | — |
+| `total_items` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="lists full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  web_id?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`lists.remove`
+
+Delete an audience.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailchimp.api.lists.remove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### update
+
+`lists.update`
+
+Update audience settings.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailchimp.api.lists.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `contact` | `object` | No | — |
+| `permission_reminder` | `string` | No | — |
+| `campaign_defaults` | `object` | No | — |
+| `email_type_option` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="contact full type">
+
+```ts
+{
+  company: string,
+  address1: string,
+  address2?: string,
+  city: string,
+  state: string,
+  zip: string,
+  country: string,
+  phone?: string
+}
+```
+</Accordion>
+
+<Accordion title="campaign_defaults full type">
+
+```ts
+{
+  from_name: string,
+  from_email: string,
+  subject: string,
+  language: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `web_id` | `number` | No | — |
+
+
+
+---
+
+## Members
+
+### add
+
+`members.add`
+
+Add a new member.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailchimp.api.members.add({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `email_address` | `string` | Yes | — |
+| `status` | `subscribed \| unsubscribed \| cleaned \| pending \| transactional` | Yes | — |
+| `email_type` | `html \| text` | No | — |
+| `merge_fields` | `object` | No | — |
+| `interests` | `object` | No | — |
+| `tags` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="merge_fields full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="interests full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `email_address` | `string` | Yes | — |
+| `status` | `string` | Yes | — |
+| `list_id` | `string` | No | — |
+
+
+
+---
+
+### archive
+
+`members.archive`
+
+Archive a member.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailchimp.api.members.archive({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `subscriber_hash` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### get
+
+`members.get`
+
+Get a member.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailchimp.api.members.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `subscriber_hash` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `email_address` | `string` | Yes | — |
+| `status` | `string` | Yes | — |
+| `list_id` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`members.list`
+
+List members of an audience.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailchimp.api.members.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `status` | `subscribed \| unsubscribed \| cleaned \| pending \| transactional` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `fields` | `string[]` | No | — |
+| `exclude_fields` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `members` | `object[]` | Yes | — |
+| `total_items` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="members full type">
+
+```ts
+{
+  id: string,
+  email_address: string,
+  status: string,
+  list_id?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listTags
+
+`members.listTags`
+
+List a member's tags.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailchimp.api.members.listTags({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `subscriber_hash` | `string` | Yes | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tags` | `object[]` | Yes | — |
+| `total_items` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="tags full type">
+
+```ts
+{
+  name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`members.remove`
+
+Permanently delete a member.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailchimp.api.members.remove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `subscriber_hash` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### search
+
+`members.search`
+
+Search members.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailchimp.api.members.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `list_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `exact_matches` | `any` | Yes | — |
+| `full_search` | `any` | Yes | — |
+
+
+
+---
+
+### update
+
+`members.update`
+
+Update a member.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailchimp.api.members.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `subscriber_hash` | `string` | Yes | — |
+| `email_address` | `string` | No | — |
+| `status` | `subscribed \| unsubscribed \| cleaned \| pending \| transactional` | No | — |
+| `merge_fields` | `object` | No | — |
+| `interests` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="merge_fields full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="interests full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `email_address` | `string` | Yes | — |
+| `status` | `string` | Yes | — |
+| `list_id` | `string` | No | — |
+
+
+
+---
+
+### updateTags
+
+`members.updateTags`
+
+Add or remove a member's tags.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailchimp.api.members.updateTags({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `subscriber_hash` | `string` | Yes | — |
+| `tags` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="tags full type">
+
+```ts
+{
+  name: string,
+  status: active | inactive
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### upsert
+
+`members.upsert`
+
+Add or update a member (idempotent).
+
+**Risk:** `write`
+
+```ts
+await corsair.mailchimp.api.members.upsert({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `email_address` | `string` | Yes | — |
+| `status_if_new` | `subscribed \| unsubscribed \| cleaned \| pending \| transactional` | No | — |
+| `status` | `subscribed \| unsubscribed \| cleaned \| pending \| transactional` | No | — |
+| `email_type` | `html \| text` | No | — |
+| `merge_fields` | `object` | No | — |
+| `interests` | `object` | No | — |
+| `tags` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="merge_fields full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="interests full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `email_address` | `string` | Yes | — |
+| `status` | `string` | Yes | — |
+| `list_id` | `string` | No | — |
+
+
+
+---
+
+## Merge Fields
+
+### create
+
+`mergeFields.create`
+
+Create a merge field.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailchimp.api.mergeFields.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `type` | `text \| number \| address \| phone \| date \| url \| imageurl \| radio \| dropdown \| birthday \| zip` | Yes | — |
+| `tag` | `string` | No | — |
+| `required` | `boolean` | No | — |
+| `default_value` | `string` | No | — |
+| `public` | `boolean` | No | — |
+| `options` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="options full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `merge_id` | `number` | Yes | — |
+| `tag` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`mergeFields.get`
+
+Get a merge field.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailchimp.api.mergeFields.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `merge_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `merge_id` | `number` | Yes | — |
+| `tag` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+---
+
+### list
+
+`mergeFields.list`
+
+List merge fields.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailchimp.api.mergeFields.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `merge_fields` | `object[]` | Yes | — |
+| `total_items` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="merge_fields full type">
+
+```ts
+{
+  merge_id: number,
+  tag: string,
+  name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`mergeFields.remove`
+
+Delete a merge field.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailchimp.api.mergeFields.remove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `merge_id` | `number` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### update
+
+`mergeFields.update`
+
+Update a merge field.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailchimp.api.mergeFields.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `merge_id` | `number` | Yes | — |
+| `name` | `string` | No | — |
+| `required` | `boolean` | No | — |
+| `default_value` | `string` | No | — |
+| `public` | `boolean` | No | — |
+| `options` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="options full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `merge_id` | `number` | Yes | — |
+| `tag` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+---
+
+## Segments
+
+### addMember
+
+`segments.addMember`
+
+Add a member to a segment.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailchimp.api.segments.addMember({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `segment_id` | `number` | Yes | — |
+| `email_address` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `email_address` | `string` | Yes | — |
+| `status` | `string` | Yes | — |
+| `list_id` | `string` | No | — |
+
+
+
+---
+
+### create
+
+`segments.create`
+
+Create a segment.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailchimp.api.segments.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `static_segment` | `string[]` | No | — |
+| `options` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="options full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `list_id` | `string` | No | — |
+
+
+
+---
+
+### get
+
+`segments.get`
+
+Get a segment.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailchimp.api.segments.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `segment_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `list_id` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`segments.list`
+
+List segments.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailchimp.api.segments.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `segments` | `object[]` | Yes | — |
+| `total_items` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="segments full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  list_id?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listMembers
+
+`segments.listMembers`
+
+List members in a segment.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailchimp.api.segments.listMembers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `segment_id` | `number` | Yes | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `members` | `object[]` | Yes | — |
+| `total_items` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="members full type">
+
+```ts
+{
+  id: string,
+  email_address: string,
+  status: string,
+  list_id?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`segments.remove`
+
+Delete a segment.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailchimp.api.segments.remove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `segment_id` | `number` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### removeMember
+
+`segments.removeMember`
+
+Remove a member from a segment.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailchimp.api.segments.removeMember({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `segment_id` | `number` | Yes | — |
+| `subscriber_hash` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### update
+
+`segments.update`
+
+Update a segment.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailchimp.api.segments.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `segment_id` | `number` | Yes | — |
+| `name` | `string` | No | — |
+| `static_segment` | `string[]` | No | — |
+| `options` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="options full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `list_id` | `string` | No | — |
+
+
+
+---
+
+## Webhooks
+
+### create
+
+`webhooks.create`
+
+Create a webhook.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailchimp.api.webhooks.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `url` | `string` | Yes | — |
+| `events` | `object` | No | — |
+| `sources` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="events full type">
+
+```ts
+{
+  subscribe?: boolean,
+  unsubscribe?: boolean,
+  profile?: boolean,
+  cleaned?: boolean,
+  upemail?: boolean,
+  campaign?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="sources full type">
+
+```ts
+{
+  user?: boolean,
+  admin?: boolean,
+  api?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `url` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`webhooks.get`
+
+Get a webhook.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailchimp.api.webhooks.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `webhook_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `url` | `string` | Yes | — |
+
+
+
+---
+
+### list
+
+`webhooks.list`
+
+List list webhooks.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailchimp.api.webhooks.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhooks` | `object[]` | Yes | — |
+| `total_items` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="webhooks full type">
+
+```ts
+{
+  id: string,
+  url: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`webhooks.remove`
+
+Delete a webhook.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailchimp.api.webhooks.remove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `webhook_id` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### update
+
+`webhooks.update`
+
+Update a webhook.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailchimp.api.webhooks.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `webhook_id` | `string` | Yes | — |
+| `url` | `string` | No | — |
+| `events` | `object` | No | — |
+| `sources` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="events full type">
+
+```ts
+{
+  subscribe?: boolean,
+  unsubscribe?: boolean,
+  profile?: boolean,
+  cleaned?: boolean,
+  upemail?: boolean,
+  campaign?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="sources full type">
+
+```ts
+{
+  user?: boolean,
+  admin?: boolean,
+  api?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `url` | `string` | Yes | — |
+
+
+
+---
+

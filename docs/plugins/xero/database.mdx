@@ -1,0 +1,301 @@
+---
+title: Database
+description: "Xero local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Xero plugin syncs data locally. Use `corsair.xero.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Accounts
+
+Path: `xero.db.accounts.search`
+
+```ts
+const rows = await corsair.xero.db.accounts.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `AccountID` | `string` | equals, contains, startsWith, endsWith, in |
+| `Code` | `string` | equals, contains, startsWith, endsWith, in |
+| `Name` | `string` | equals, contains, startsWith, endsWith, in |
+| `Type` | `string` | equals, contains, startsWith, endsWith, in |
+| `Status` | `string` | equals, contains, startsWith, endsWith, in |
+| `Description` | `string` | equals, contains, startsWith, endsWith, in |
+| `TaxType` | `string` | equals, contains, startsWith, endsWith, in |
+| `Class` | `string` | equals, contains, startsWith, endsWith, in |
+| `BankAccountNumber` | `string` | equals, contains, startsWith, endsWith, in |
+| `CurrencyCode` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Bank Transactions
+
+Path: `xero.db.bankTransactions.search`
+
+```ts
+const rows = await corsair.xero.db.bankTransactions.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `BankTransactionID` | `string` | equals, contains, startsWith, endsWith, in |
+| `Date` | `string` | equals, contains, startsWith, endsWith, in |
+| `Status` | `string` | equals, contains, startsWith, endsWith, in |
+| `LineAmountTypes` | `string` | equals, contains, startsWith, endsWith, in |
+| `SubTotal` | `number` | equals, gt, gte, lt, lte, in |
+| `TotalTax` | `number` | equals, gt, gte, lt, lte, in |
+| `Total` | `number` | equals, gt, gte, lt, lte, in |
+| `UpdatedDateUTC` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Contacts
+
+Path: `xero.db.contacts.search`
+
+```ts
+const rows = await corsair.xero.db.contacts.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `ContactID` | `string` | equals, contains, startsWith, endsWith, in |
+| `ContactNumber` | `string` | equals, contains, startsWith, endsWith, in |
+| `AccountNumber` | `string` | equals, contains, startsWith, endsWith, in |
+| `ContactStatus` | `string` | equals, contains, startsWith, endsWith, in |
+| `Name` | `string` | equals, contains, startsWith, endsWith, in |
+| `FirstName` | `string` | equals, contains, startsWith, endsWith, in |
+| `LastName` | `string` | equals, contains, startsWith, endsWith, in |
+| `EmailAddress` | `string` | equals, contains, startsWith, endsWith, in |
+| `BankAccountDetails` | `string` | equals, contains, startsWith, endsWith, in |
+| `TaxNumber` | `string` | equals, contains, startsWith, endsWith, in |
+| `IsSupplier` | `boolean` | equals |
+| `IsCustomer` | `boolean` | equals |
+| `UpdatedDateUTC` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Credit Notes
+
+Path: `xero.db.creditNotes.search`
+
+```ts
+const rows = await corsair.xero.db.creditNotes.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `CreditNoteID` | `string` | equals, contains, startsWith, endsWith, in |
+| `CreditNoteNumber` | `string` | equals, contains, startsWith, endsWith, in |
+| `Type` | `string` | equals, contains, startsWith, endsWith, in |
+| `Status` | `string` | equals, contains, startsWith, endsWith, in |
+| `Total` | `number` | equals, gt, gte, lt, lte, in |
+| `RemainingCredit` | `number` | equals, gt, gte, lt, lte, in |
+| `UpdatedDateUTC` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Invoices
+
+Path: `xero.db.invoices.search`
+
+```ts
+const rows = await corsair.xero.db.invoices.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `InvoiceID` | `string` | equals, contains, startsWith, endsWith, in |
+| `Type` | `string` | equals, contains, startsWith, endsWith, in |
+| `InvoiceNumber` | `string` | equals, contains, startsWith, endsWith, in |
+| `Reference` | `string` | equals, contains, startsWith, endsWith, in |
+| `Status` | `string` | equals, contains, startsWith, endsWith, in |
+| `Date` | `string` | equals, contains, startsWith, endsWith, in |
+| `DueDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `CurrencyCode` | `string` | equals, contains, startsWith, endsWith, in |
+| `CurrencyRate` | `number` | equals, gt, gte, lt, lte, in |
+| `SubTotal` | `number` | equals, gt, gte, lt, lte, in |
+| `TotalTax` | `number` | equals, gt, gte, lt, lte, in |
+| `Total` | `number` | equals, gt, gte, lt, lte, in |
+| `AmountDue` | `number` | equals, gt, gte, lt, lte, in |
+| `AmountPaid` | `number` | equals, gt, gte, lt, lte, in |
+| `UpdatedDateUTC` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Items
+
+Path: `xero.db.items.search`
+
+```ts
+const rows = await corsair.xero.db.items.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `ItemID` | `string` | equals, contains, startsWith, endsWith, in |
+| `Code` | `string` | equals, contains, startsWith, endsWith, in |
+| `Name` | `string` | equals, contains, startsWith, endsWith, in |
+| `Description` | `string` | equals, contains, startsWith, endsWith, in |
+| `PurchaseDescription` | `string` | equals, contains, startsWith, endsWith, in |
+| `IsSold` | `boolean` | equals |
+| `IsPurchased` | `boolean` | equals |
+| `IsTrackedAsInventory` | `boolean` | equals |
+| `TotalCostPool` | `number` | equals, gt, gte, lt, lte, in |
+| `QuantityOnHand` | `number` | equals, gt, gte, lt, lte, in |
+| `UpdatedDateUTC` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Payments
+
+Path: `xero.db.payments.search`
+
+```ts
+const rows = await corsair.xero.db.payments.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `PaymentID` | `string` | equals, contains, startsWith, endsWith, in |
+| `Date` | `string` | equals, contains, startsWith, endsWith, in |
+| `Amount` | `number` | equals, gt, gte, lt, lte, in |
+| `Reference` | `string` | equals, contains, startsWith, endsWith, in |
+| `CurrencyRate` | `number` | equals, gt, gte, lt, lte, in |
+| `PaymentType` | `string` | equals, contains, startsWith, endsWith, in |
+| `Status` | `string` | equals, contains, startsWith, endsWith, in |
+| `UpdatedDateUTC` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Purchase Orders
+
+Path: `xero.db.purchaseOrders.search`
+
+```ts
+const rows = await corsair.xero.db.purchaseOrders.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `PurchaseOrderID` | `string` | equals, contains, startsWith, endsWith, in |
+| `PurchaseOrderNumber` | `string` | equals, contains, startsWith, endsWith, in |
+| `Date` | `string` | equals, contains, startsWith, endsWith, in |
+| `DeliveryDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `Reference` | `string` | equals, contains, startsWith, endsWith, in |
+| `Status` | `string` | equals, contains, startsWith, endsWith, in |
+| `Total` | `number` | equals, gt, gte, lt, lte, in |
+| `SubTotal` | `number` | equals, gt, gte, lt, lte, in |
+| `TotalTax` | `number` | equals, gt, gte, lt, lte, in |
+| `UpdatedDateUTC` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Quotes
+
+Path: `xero.db.quotes.search`
+
+```ts
+const rows = await corsair.xero.db.quotes.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `QuoteID` | `string` | equals, contains, startsWith, endsWith, in |
+| `QuoteNumber` | `string` | equals, contains, startsWith, endsWith, in |
+| `Reference` | `string` | equals, contains, startsWith, endsWith, in |
+| `Status` | `string` | equals, contains, startsWith, endsWith, in |
+| `Total` | `number` | equals, gt, gte, lt, lte, in |
+| `SubTotal` | `number` | equals, gt, gte, lt, lte, in |
+| `TotalTax` | `number` | equals, gt, gte, lt, lte, in |
+| `Date` | `string` | equals, contains, startsWith, endsWith, in |
+| `ExpiryDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `UpdatedDateUTC` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

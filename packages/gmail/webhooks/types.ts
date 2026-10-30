@@ -26,7 +26,9 @@ export type PubSubNotification<TEvent = unknown> = Omit<
 
 export const GmailPushNotificationSchema = z.object({
 	emailAddress: z.string().optional(),
-	historyId: z.string().optional(),
+	// Gmail's Pub/Sub payload carries historyId as a JSON number; coerce so
+	// downstream code can rely on the declared string type.
+	historyId: z.coerce.string().optional(),
 });
 export type GmailPushNotification = z.infer<typeof GmailPushNotificationSchema>;
 
@@ -90,7 +92,7 @@ export type GmailWebhookOutputs = {
 
 export function decodePubSubMessage(data: string): GmailPushNotification {
 	const decodedData = Buffer.from(data, 'base64').toString('utf-8');
-	return JSON.parse(decodedData);
+	return GmailPushNotificationSchema.parse(JSON.parse(decodedData));
 }
 
 export function createGmailWebhookMatcher(

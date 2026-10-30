@@ -2,6 +2,7 @@ import type { tool as AgentsTool, Tool } from '@openai/agents';
 import { z } from 'zod';
 import type { BaseMcpOptions } from '../core/adapters.js';
 import { shapeToJsonSchema } from '../core/json-schema.js';
+import { callToolResultToText } from '../core/tool-result.js';
 import { buildCorsairToolDefs } from '../core/tools.js';
 
 export type OpenAIAgentsProviderOptions = BaseMcpOptions & {
@@ -41,10 +42,7 @@ export class OpenAIAgentsProvider {
 
 						const args = z.object(def.shape).parse(raw);
 						const result = await def.handler(args);
-						return result.content
-							.filter((c) => c.type === 'text')
-							.map((c) => ('text' in c ? c.text : ''))
-							.join('\n');
+						return callToolResultToText(result);
 					} catch (err) {
 						const message = err instanceof Error ? err.message : String(err);
 						return `Error: ${message}`;

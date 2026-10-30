@@ -12,8 +12,8 @@ Each plugin lives under `docs/plugins/<plugin>/`:
 
 ```text
 docs/plugins/<plugin>/
-├── main.mdx              # Hub: overview, setup, auth, quickstarts, links to reference
-├── api-endpoints.mdx     # Deterministic reference: all API operations, inputs, outputs
+├── overview.mdx          # Hub: overview, setup, auth, quickstarts, links to reference
+├── api.mdx               # Deterministic reference: all API operations, inputs, outputs
 ├── webhooks.mdx          # Deterministic reference: events, payloads, handler I/O
 └── database.mdx          # Deterministic reference: synced entities, schema, DB API
 ```
@@ -24,7 +24,7 @@ Some integrations need extra narrative depth. These are **optional** and sit bes
 
 | File | When to add |
 |------|-------------|
-| `get-credentials.mdx` | Long provider-dashboard walkthroughs (scopes, redirect URLs, screenshots) that would clutter `main.mdx`. |
+| `get-credentials.mdx` | Long provider-dashboard walkthroughs (scopes, redirect URLs, screenshots) that would clutter `overview.mdx`. |
 
 The Slack docs use `get-credentials` where helpful; the **four-page skeleton** still applies—treat optional files as supplements.
 
@@ -34,23 +34,24 @@ The Slack docs use `get-credentials` where helpful; the **four-page skeleton** s
 
 Corsair’s core supports these `authType` values (see `AuthTypes` in `packages/corsair/core/constants.ts`):
 
-| `authType` | Typical use | Credential model |
-|------------|-------------|-------------------|
-| `api_key` | Single secret or key for server-to-server calls (REST APIs, vendor “API keys”) | Usually one or more static strings stored via `corsair setup --<plugin> …` |
-| `bot_token` | Token issued for a **bot** or **app user** (chat platforms, messaging APIs) | Often one long-lived token; same storage pattern as `api_key`, semantically distinct in docs |
-| `oauth_2` | Per-user or per-tenant access; refresh tokens; multi-workspace / multi-account products | Client ID + secret in DB; user completes browser flow via `corsair auth --plugin=<plugin>` |
+| `authType` | Typical use | Credential setup |
+|------------|-------------|------------------|
+| `managed` | Corsair-hosted OAuth app (Hub) | Nothing — tenants connect through Hub |
+| `oauth_2` | Bring-your-own OAuth app | Enter client ID + secret in [hub.corsair.dev](https://hub.corsair.dev/dashboard) |
+| `api_key` | Single secret or key for server-to-server calls | Nothing upfront — prompted on first tenant request |
+| `bot_token` | Token issued for a **bot** or **app user** | Nothing upfront — prompted on first tenant request |
 
 **Scenarios to document (where relevant):**
 
-- **Single-tenant / your keys only** — `api_key` or `bot_token`; no end-user OAuth.
-- **Multi-tenant SaaS** — `oauth_2`; redirect URLs, `corsair auth`, tokens per tenant; link to [Multi-Tenancy](/concepts/multi-tenancy).
-- **Optional env overrides** — Some plugins allow passing secrets in plugin options for dev; production should use encrypted DB storage (same pattern as Slack’s `key` / `signingSecret` options).
+- **Multi-tenant SaaS (default)** — omit `multiTenancy` in `createCorsair`; scope calls with `withTenant()`. Link to [Multi-Tenancy](/concepts/multi-tenancy).
+- **Managed OAuth** — `authType: 'managed'`; list first in credential tabs when supported.
+- **Optional env overrides** — Some plugins allow passing secrets in plugin options for dev; production should use encrypted DB storage.
 
 Plugins **subset** these types; only document modes the plugin actually implements.
 
 ---
 
-## Page 1: `main.mdx` (hub)
+## Page 1: `overview.mdx` (hub)
 
 **Purpose:** Onboarding and orientation—not a full endpoint list.
 
@@ -61,26 +62,18 @@ Plugins **subset** these types; only document modes the plugin actually implemen
 
 **Suggested sections:**
 
-1. **Intro** — What the integration does; bullet list of capabilities (send/receive, cache, webhooks, verification).
-2. **Setup** (`<Steps>` / `<Step>`) — Install package (`@corsair-dev/<plugin>`), register plugin in `createCorsair({ plugins: [<plugin>()], … })`, point to credentials (inline or `get-credentials`).
-3. **Authentication** (`<Tabs>`) — One tab per supported `authType`:
-   - **Snippet:** `plugin({ authType: '…' })`.
-   - **Credential setup:**
-     - **`api_key` / `bot_token`:** `pnpm corsair setup --<plugin> <key_name>=…` (use the plugin’s real CLI key names); `pnpm corsair auth --plugin=<plugin> --credentials` to verify.
-     - **`oauth_2`:** `pnpm corsair setup --<plugin> client_id=… client_secret=…` (and any plugin-specific fields), then `pnpm corsair auth --plugin=<plugin>`; note redirect URL requirements and multi-tenancy.
-   - Link to concepts: [Authentication](/concepts/auth), [Multi-Tenancy](/concepts/multi-tenancy) when OAuth is used.
-4. **Minimal API example** — One `corsair.<plugin>.api.…` call readers can copy.
-5. **Query data** (`<Tabs>`: Live API vs cached DB) — Short examples for `api` vs `db`; link to `database.mdx`.
-6. **Webhooks (high level)** — Route handler using `processWebhook`, tiny `webhookHooks` sample, table of **event keys** (names only); link to `webhooks.mdx` for payloads.
-7. **Plugin options** — Code block + table: option name, TypeScript type, description (`authType`, hooks, webhookHooks, errorHandlers, optional inline secrets, etc.).
-8. **Multi-tenancy** (if applicable) — `withTenant`, webhook URL query params.
-9. **What’s next** (`<Cards>`) — Links to `api-endpoints`, `webhooks`, `database`, and optional `get-credentials`.
+1. **Intro** — Generic “Use **Title** through Corsair…” + capability bullets (API / DB entities / webhooks counts).
+2. **Setup** (`<Steps>`) — Install (`CodeGroup`), full Hub-shaped `createCorsair` (database, kek, hub), choose auth (tabs), connect a tenant (`createLink`).
+3. **Example API calls** — Preferred read + write from `plugin-docs.yaml`, scoped with `withTenant`.
+4. **Query synced data** — Optional `dbExample` from yaml; else entity list + link to `database.mdx`.
+5. **Webhooks** — Optional `exampleWebhook` hook snippet; link to `webhooks.mdx` + concepts.
+6. **What's next** (`<CardGroup>`) — API, Database, Webhooks, Connect, Agents, optional get-credentials.
 
 **Tone:** Task-focused, like the Slack hub—not a parameter-by-parameter dump (that belongs on reference pages).
 
 ---
 
-## Page 2: `api-endpoints.mdx`
+## Page 2: `api.mdx`
 
 **Purpose:** Complete, **deterministic** reference for HTTP-backed operations exposed as `corsair.<plugin>.api.<group>.<method>(…)`.
 
@@ -161,15 +154,15 @@ If the plugin exposes **generated** or **Zod** types for `data`, reference them 
 
 Below is a **minimal outline** you can copy when adding a new plugin. Replace `<Plugin>`, `<plugin>`, and examples with real values.
 
-### `main.mdx` (outline)
+### `overview.mdx` (outline)
 
 - Frontmatter: title `<Plugin>`, description.
 - Intro bullets: what users get.
-- Setup: install, `createCorsair`, credentials overview.
-- Tabs: `api_key` (or `bot_token`) vs `oauth_2` setup commands.
+- Setup: install, `createCorsair`, configure credentials (tabs per auth type; `managed` first when supported).
+- Tabs: `managed` / `oauth_2` / `api_key` (or `bot_token`) with auth-specific setup instructions.
 - One API example; Tabs for API vs DB; short webhook section + event table; plugin options table; Cards to other pages.
 
-### `api-endpoints.mdx` (outline)
+### `api.mdx` (outline)
 
 - Intro callouts.
 - For each `resource.method`: heading, id, example, **Input** table, **Output** type/shape.
@@ -186,8 +179,46 @@ Below is a **minimal outline** you can copy when adding a new plugin. Replace `<
 
 ## Relationship to automation
 
-- **`api-endpoints.mdx`**, **`webhooks.mdx`**, and **`database.mdx`** should be treated as **machine-generated or machine-verifiable** from plugin metadata (schemas, operation lists, entity definitions).
-- **`main.mdx`** stays **human-first** (or templated with small manifest data): positioning, setup narrative, and cross-links.
+- **`api.mdx`**, **`webhooks.mdx`**, and **`database.mdx`** should be treated as **machine-generated or machine-verifiable** from plugin metadata (schemas, operation lists, entity definitions).
+- **`overview.mdx`** stays **human-first** (or templated with small manifest data): positioning, setup narrative, and cross-links.
+- Optional **`packages/<plugin>/plugin-docs.yaml`** feeds the generator with plugin-specific copy. The script owns Hub-shaped wiring (install tabs, `createCorsair`, connect, `withTenant`, cards):
+
+```yaml
+displayName: Slack
+description: "…"                 # Mintlify frontmatter
+domain: slack.com                # Optional brand hostname for plugin icons
+overviewNote: |                  # Optional markdown after the intro
+  …
+recommendedAuth: managed         # Tab labeled Recommended; used in setup snippet
+factory:                         # Optional construct-time options + note
+  note: "…"                      # Shown above the factory snippet in auth tabs
+  options:                       # Merged into plugin({ ... }) in setup + auth
+    host: example.example.com
+examples:
+  read:
+    path: channels.list          # shortPath under plugin.api
+    title: List channels         # optional heading
+  write:
+    path: messages.post
+    title: Post a message
+    args:                        # optional; defaults to {}
+      channel: C01234567
+      text: Hello from Corsair
+dbExample:
+  entity: channels               # must match a synced entity
+  note: "…"
+  data: { is_archived: false }
+  limit: 50
+exampleWebhook:
+  path: messages.message         # shortPath under plugin.webhooks
+  note: "…"
+  after: |                       # body of after: async (ctx, result) => { … }
+    console.log(result.data);
+```
+
+Credential walkthroughs stay on optional `get-credentials.mdx` (linked from auth tabs when present). Connect copy is shared across all plugins. `factory.options` is also passed when constructing the plugin for introspection (for plugins that cannot be called with `()`).
+
+Generation **validates** yaml overrides against the plugin: `examples.*.path` must exist, `args` keys/types must match the endpoint input schema, `dbExample.entity` / `data` fields must match synced filters (including types), and `exampleWebhook.path` must exist. Invalid overrides fail the generate run.
 
 Keeping this split makes it possible to regenerate reference pages on every plugin change without rewriting the hub.
 
@@ -199,10 +230,10 @@ The Slack plugin illustrates the four-page model plus optional depth:
 
 | Standard file | Slack example |
 |---------------|-----------------|
-| Hub | [`slack/main.mdx`](./slack/main.mdx) |
-| API | [`slack/api-endpoints.mdx`](./slack/api-endpoints.mdx) |
+| Hub | [`slack/overview.mdx`](./slack/overview.mdx) |
+| API | [`slack/api.mdx`](./slack/api.mdx) |
 | Webhooks | [`slack/webhooks.mdx`](./slack/webhooks.mdx) |
 | Database | [`slack/database.mdx`](./slack/database.mdx) |
 | Optional | [`slack/get-credentials.mdx`](./slack/get-credentials.mdx) |
 
-New plugins should implement at least the **four standard files**; add optional pages when onboarding would otherwise be too long for `main.mdx`.
+New plugins should implement at least the **four standard files**; add optional pages when onboarding would otherwise be too long for `overview.mdx`.

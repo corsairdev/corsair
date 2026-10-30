@@ -1,0 +1,150 @@
+---
+title: Dashboard
+description: Render synced integration data from your own database, and act on it with live API calls.
+---
+
+A dashboard reads from `.db` and writes through `.api`. Page loads never touch the third-party service, so they're fast and can't be rate limited. A button that creates an issue or sends a message goes straight to the live API.
+
+This is the most common shape, and the one to reach for whenever the ask sounds like "show me my…".
+
+**Pattern:** read `.db` to render, `.api` to mutate or refresh, then read `.db` again.
+
+## The read path
+
+Query the plugin's entity types directly. Nothing here makes a network call:
+
+```ts src/server/feed.ts
+import { corsair } from './corsair';
+
+const tenant = corsair.withTenant('acme');
+
+export async function getFeed() {
+    const [issues, pullRequests] = await Promise.all([
+        tenant.github.db.issues.search({
+            data: { state: 'open' },
+            limit: 50,
+        }),
+        tenant.github.db.pullRequests.search({
+            data: { state: 'open' },
+            limit: 50,
+        }),
+    ]);
+
+    return { issues, pullRequests };
+}
+```
+
+Entity data lives on `.data` in camelCase, typed from the plugin's schema:
+
+```ts
+issues[0]?.data.title;
+issues[0]?.data.user?.login;
+```
+
+`search` accepts `entity_id`, a `data` object for top-level JSON fields, plus `limit` and `offset`. All filters combine with AND. String fields support `contains`, `startsWith`, `endsWith`, and `in`; numbers and dates support ranges. Each plugin's filterable fields are listed in its database reference, such as [GitHub](/plugins/github/database).
+
+<Note>
+`search` has no sort option. Order results in your own code after reading, or query `corsair_entities` directly with your ORM if you need SQL-level sorting and pagination.
+</Note>
+
+## The write path
+
+Mutations and refreshes use `.api`. Corsair upserts the response into your database as part of the call, so the next `.db` read already reflects it:
+
+```ts src/server/actions.ts
+export async function closeIssue(issueNumber: number) {
+    await tenant.github.api.issues.update({
+        owner: 'acme',
+        repo: 'app',
+        issueNumber,
+        state: 'closed',
+    });
+
+    // already current — no manual cache invalidation
+    return tenant.github.db.issues.search({ data: { state: 'open' } });
+}
+```
+
+## Refresh buttons
+
+A refresh is just a list call against `.api`. Because every response is upserted, you don't wire up any sync logic. You call the endpoint and re-read:
+
+```ts src/server/refresh.ts
+export async function refresh() {
+    await Promise.all([
+        tenant.github.api.issues.list({
+            owner: 'acme',
+            repo: 'app',
+            state: 'open',
+            sort: 'updated',
+            direction: 'desc',
+            perPage: 50,
+        }),
+        tenant.github.api.pullRequests.list({
+            owner: 'acme',
+            repo: 'app',
+            state: 'open',
+            perPage: 50,
+        }),
+    ]);
+
+    return getFeed();
+}
+```
+
+To show "last synced 4 minutes ago", keep that timestamp in one of your own tables. It's app state, not integration data, so it doesn't belong in `corsair_entities`:
+
+```ts
+await db
+    .insert(syncState)
+    .values({ key: 'acme/app', lastSyncedAt: new Date() })
+    .onConflictDoUpdate({
+        target: syncState.key,
+        set: { lastSyncedAt: new Date() },
+    });
+```
+
+<Tip>
+Prefer webhooks over a refresh button where the plugin supports them. Rows update the moment something changes upstream and the page is current with no user action. See [Webhooks](/concepts/webhooks).
+</Tip>
+
+## Adding your own columns
+
+Integration data is rarely enough on its own. To attach private notes, tags, or review state, put them in your own table and reference `corsair_entities.id`:
+
+```sql
+CREATE TABLE issue_notes (
+    id UUID PRIMARY KEY,
+    entity_id TEXT NOT NULL REFERENCES corsair_entities(id),
+    body TEXT NOT NULL
+);
+```
+
+Your notes stay yours; the integration side of the join keeps updating itself. Full example in [Database](/concepts/database#join-to-your-own-tables).
+
+## Checklist
+
+A dashboard is wired correctly when:
+
+- Page loads and lists read from `.db` only, with no `.api` call on render.
+- Creates, updates, and deletes go through `.api`.
+- Refresh calls `.api`, then re-reads `.db`, rather than merging responses into UI state by hand.
+- App-specific fields live in your tables, keyed to `corsair_entities.id`.
+- Every read and write is scoped with `withTenant()`.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="Vibe code a dashboard" href="/guides/dashboard">
+    Scaffold a T3 app and have an agent build the whole UI from one prompt.
+  </Card>
+  <Card title="Add a chat command bar" href="/use-cases/agents">
+    Let people type "close #458 as duplicate" instead of clicking.
+  </Card>
+  <Card title="Keep it live with webhooks" href="/concepts/webhooks">
+    Update rows on upstream changes instead of polling.
+  </Card>
+  <Card title="React client" href="/adapters/react">
+    Connection status and connect links as hooks.
+  </Card>
+</CardGroup>

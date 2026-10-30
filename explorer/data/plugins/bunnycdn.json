@@ -1,0 +1,3068 @@
+{
+  "id": "bunnycdn",
+  "displayName": "Bunnycdn",
+  "description": "Bunnycdn plugin for Corsair",
+  "npmPackageName": "@corsair-dev/bunnycdn",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 96,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "bunnycdn.api.apiKeys.list",
+      "shortPath": "apiKeys.list",
+      "description": "List API keys on the account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "perPage",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ Id?: string, Key?: string, DateCreated?: string }[] | {}"
+      }
+    },
+    {
+      "path": "bunnycdn.api.billing.summary",
+      "shortPath": "billing.summary",
+      "description": "Retrieve the billing summary for the account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ PullZoneId?: number, MonthlyUsage?: number, MonthlyBandwidthUsed?: number }[]"
+      }
+    },
+    {
+      "path": "bunnycdn.api.containers.applicationsList",
+      "shortPath": "containers.applicationsList",
+      "description": "List Magic Container applications",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "nextCursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "bunnycdn.api.containers.configSuggestions",
+      "shortPath": "containers.configSuggestions",
+      "description": "Get deployment configuration suggestions for a container image",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "registryId",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "imageName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "imageNamespace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tag",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "bunnycdn.api.containers.imageDigest",
+      "shortPath": "containers.imageDigest",
+      "description": "Get the digest of a container image",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "registryId",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "imageName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "imageNamespace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tag",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "bunnycdn.api.containers.imageTags",
+      "shortPath": "containers.imageTags",
+      "description": "List tags for a container image",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "registryId",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "imageName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "imageNamespace",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "bunnycdn.api.containers.nodesList",
+      "shortPath": "containers.nodesList",
+      "description": "List Magic Container nodes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "nextCursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "bunnycdn.api.containers.optimalBaseRegion",
+      "shortPath": "containers.optimalBaseRegion",
+      "description": "Get the optimal base region for Magic Containers",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cdnServerToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "bunnycdn.api.containers.publicImagesSearch",
+      "shortPath": "containers.publicImagesSearch",
+      "description": "Search public container images by prefix",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "registryId",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "prefix",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "bunnycdn.api.containers.regionsList",
+      "shortPath": "containers.regionsList",
+      "description": "List Magic Container regions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "nextCursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "bunnycdn.api.containers.registriesList",
+      "shortPath": "containers.registriesList",
+      "description": "List container registries",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "bunnycdn.api.containers.registryDelete",
+      "shortPath": "containers.registryDelete",
+      "description": "Delete a container registry",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "registryId",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "bunnycdn.api.containers.userLimits",
+      "shortPath": "containers.userLimits",
+      "description": "Get Magic Container limits for the account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "bunnycdn.api.containers.volumesList",
+      "shortPath": "containers.volumesList",
+      "description": "List volumes for a Magic Container application",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "appId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "bunnycdn.api.dnsZone.checkAvailability",
+      "shortPath": "dnsZone.checkAvailability",
+      "description": "Check whether a DNS zone name is available",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Available",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bunnycdn.api.dnsZone.createRecord",
+      "shortPath": "dnsZone.createRecord",
+      "description": "Create a new DNS record in a DNS zone",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "zoneId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "record",
+            "optional": false,
+            "type": "{ Type?: number, Ttl?: number, Value?: string, Name?: string, Weight?: number, Priority?: number, Flags?: number, Tag?: string, Port?: number, PullZoneId?: number, ScriptId?: number, Accelerated?: boolean, MonitorType?: number, GeolocationLatitude?: number, GeolocationLongitude?: number, LatencyZone?: string, SmartRoutingType?: number, Disabled?: boolean, EnviromentalVariables?: any[], Comment?: string, AutoSslIssuance?: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "Type",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "Value",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Ttl",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bunnycdn.api.dnsZone.deleteRecord",
+      "shortPath": "dnsZone.deleteRecord",
+      "description": "Delete a DNS record",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "zoneId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bunnycdn.api.dnsZone.get",
+      "shortPath": "dnsZone.get",
+      "description": "Get details of a specific DNS zone",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "Domain",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bunnycdn.api.dnsZone.list",
+      "shortPath": "dnsZone.list",
+      "description": "List all DNS zones",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "perPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ Id: number, Domain?: string }[] | {}"
+      }
+    },
+    {
+      "path": "bunnycdn.api.dnsZone.updateRecord",
+      "shortPath": "dnsZone.updateRecord",
+      "description": "Update an existing DNS record",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "zoneId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "record",
+            "optional": false,
+            "type": "{ Type?: number, Ttl?: number, Value?: string, Name?: string, Weight?: number, Priority?: number, Flags?: number, Tag?: string, Port?: number, PullZoneId?: number, ScriptId?: number, Accelerated?: boolean, MonitorType?: number, GeolocationLatitude?: number, GeolocationLongitude?: number, LatencyZone?: string, SmartRoutingType?: number, Disabled?: boolean, EnviromentalVariables?: any[], Comment?: string, AutoSslIssuance?: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bunnycdn.api.edgeScripts.list",
+      "shortPath": "edgeScripts.list",
+      "description": "List all edge scripts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "perPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "includeLinkedPullzones",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "integrationId",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}[] | {}"
+      }
+    },
+    {
+      "path": "bunnycdn.api.pullZone.addAllowedReferrer",
+      "shortPath": "pullZone.addAllowedReferrer",
+      "description": "Add a hostname to the allowed referer list",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "hostname",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bunnycdn.api.pullZone.addBlockedIp",
+      "shortPath": "pullZone.addBlockedIp",
+      "description": "Add an IP address to the blocked list",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "blockedIp",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bunnycdn.api.pullZone.addBlockedReferrer",
+      "shortPath": "pullZone.addBlockedReferrer",
+      "description": "Add a blocked referer to a pull zone",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "hostname",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bunnycdn.api.pullZone.checkAvailability",
+      "shortPath": "pullZone.checkAvailability",
+      "description": "Check whether a pull zone name is available",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Available",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bunnycdn.api.pullZone.create",
+      "shortPath": "pullZone.create",
+      "description": "Create a new pull zone",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "originUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "settings",
+            "optional": true,
+            "type": "{ OriginUrl?: string, AllowedReferrers?: any[], BlockedReferrers?: any[], BlockNoneReferrer?: boolean, BlockedIps?: any[], EnableGeoZoneUS?: boolean, EnableGeoZoneEU?: boolean, EnableGeoZoneASIA?: boolean, EnableGeoZoneSA?: boolean, EnableGeoZoneAF?: boolean, IpFamilyPolicy?: number, BlockRootPathAccess?: boolean, BlockPostRequests?: boolean, EnableQueryStringOrdering?: boolean, EnableWebpVary?: boolean, EnableAvifVary?: boolean, EnableMobileVary?: boolean, EnableCountryCodeVary?: boolean, EnableCountryStateCodeVary?: boolean, EnableHostnameVary?: boolean, EnableCacheSlice?: boolean, ZoneSecurityEnabled?: boolean, ZoneSecurityIncludeHashRemoteIP?: boolean, IgnoreQueryStrings?: boolean, MonthlyBandwidthLimit?: number, AccessControlOriginHeaderExtensions?: any[], EnableAccessControlOriginHeader?: boolean, DisableCookies?: boolean, BudgetRedirectedCountries?: any[], BlockedCountries?: any[], CacheControlMaxAgeOverride?: number, CacheControlPublicMaxAgeOverride?: number, CacheControlBrowserMaxAgeOverride?: number, AddHostHeader?: boolean, AddCanonicalHeader?: boolean, EnableLogging?: boolean, LoggingIPAnonymizationEnabled?: boolean, PermaCacheStorageZoneId?: number, PermaCacheType?: number, AWSSigningEnabled?: boolean, AWSSigningKey?: string, AWSSigningRegionName?: string, AWSSigningSecret?: string, EnableOriginShield?: boolean, OriginShieldZoneCode?: string, EnableTLS1?: boolean, EnableTLS1_1?: boolean, TlsSecurityLevel?: number, CacheErrorResponses?: boolean, VerifyOriginSSL?: boolean, LogForwardingEnabled?: boolean, LogForwardingHostname?: string, LogForwardingPort?: number, LogForwardingToken?: string, LogForwardingProtocol?: number, LoggingSaveToStorage?: boolean, LoggingStorageZoneId?: number, FollowRedirects?: boolean, ConnectionLimitPerIPCount?: number, RequestLimit?: number, LimitRateAfter?: number, LimitRatePerSecond?: number, BurstSize?: number, ErrorPageEnableCustomCode?: boolean, ErrorPageCustomCode?: string, ErrorPageEnableStatuspageWidget?: boolean, ErrorPageStatuspageCode?: string, ErrorPageWhitelabel?: boolean, OptimizerEnabled?: boolean, OptimizerTunnelEnabled?: boolean, OptimizerDesktopMaxWidth?: number, OptimizerMobileMaxWidth?: number, OptimizerImageQuality?: number, OptimizerMobileImageQuality?: number, OptimizerEnableWebP?: boolean, OptimizerPrerenderHtml?: boolean, OptimizerHtmlToMarkdown?: number, OptimizerLlmsTxt?: boolean, OptimizerEnableManipulationEngine?: boolean, OptimizerMinifyCSS?: boolean, OptimizerMinifyJavaScript?: boolean, OptimizerWatermarkEnabled?: boolean, OptimizerWatermarkUrl?: string, OptimizerWatermarkPosition?: number, OptimizerWatermarkOffset?: number, OptimizerWatermarkMinImageSize?: number, OptimizerAutomaticOptimizationEnabled?: boolean, OptimizerClasses?: any[], OptimizerForceClasses?: boolean, OptimizerStaticHtmlEnabled?: boolean, OptimizerStaticHtmlWordPressPath?: string, OptimizerStaticHtmlWordPressBypassCookie?: string, Type?: number, OriginRetries?: number, OriginConnectTimeout?: number, OriginResponseTimeout?: number, UseStaleWhileUpdating?: boolean, UseStaleWhileOffline?: boolean, OriginRetry5XXResponses?: boolean, OriginRetryConnectionTimeout?: boolean, OriginRetryResponseTimeout?: boolean, OriginRetryDelay?: number, DnsOriginPort?: number, DnsOriginScheme?: string, QueryStringVaryParameters?: any[], OriginShieldEnableConcurrencyLimit?: boolean, OriginShieldMaxConcurrentRequests?: number, EnableCookieVary?: boolean, CookieVaryParameters?: any[], EnableSafeHop?: boolean, OriginShieldQueueMaxWaitTime?: number, OriginShieldMaxQueuedRequests?: number, UseBackgroundUpdate?: boolean, EnableAutoSSL?: boolean, LogAnonymizationType?: number, StorageZoneId?: number, EdgeScriptId?: number, MiddlewareScriptId?: number, EdgeScriptExecutionPhase?: number, OriginType?: number, MagicContainersAppId?: string, MagicContainersEndpointId?: string, LogFormat?: number, LogForwardingFormat?: number, ShieldDDosProtectionType?: number, ShieldDDosProtectionEnabled?: boolean, OriginHostHeader?: string, EnableSmartCache?: boolean, EnableRequestCoalescing?: boolean, RequestCoalescingTimeout?: number, DisableLetsEncrypt?: boolean, EnableBunnyImageAi?: boolean, BunnyAiImageBlueprints?: any[], PreloadingScreenEnabled?: boolean, PreloadingScreenCode?: string, PreloadingScreenLogoUrl?: string, PreloadingScreenShowOnFirstVisit?: boolean, PreloadingScreenTheme?: number, PreloadingScreenCodeEnabled?: boolean, PreloadingScreenDelay?: number, RoutingFilters?: any[], StickySessionType?: number, StickySessionCookieName?: string, StickySessionClientHeaders?: string, OptimizerEnableUpscaling?: boolean, EnableWebSockets?: boolean, MaxWebSocketConnections?: number, CacheKeyHeaders?: string, LoadBalancerId?: number, Name: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "Name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "OriginUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "Suspended",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "Hostnames",
+            "optional": true,
+            "type": "{ Id?: number, Value?: string | null, ForceSSL?: boolean, HasCertificate?: boolean }[]"
+          },
+          {
+            "key": "StorageZoneId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "MonthlyBandwidthUsed",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "MonthlyCharges",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bunnycdn.api.pullZone.edgeRuleDelete",
+      "shortPath": "pullZone.edgeRuleDelete",
+      "description": "Delete an edge rule from a pull zone",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pullZoneId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "edgeRuleId",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bunnycdn.api.pullZone.edgeRuleSetEnabled",
+      "shortPath": "pullZone.edgeRuleSetEnabled",
+      "description": "Enable or disable an edge rule without deleting it",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pullZoneId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "edgeRuleId",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bunnycdn.api.pullZone.edgeRuleUpsert",
+      "shortPath": "pullZone.edgeRuleUpsert",
+      "description": "Add or update an edge rule on a pull zone",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pullZoneId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "rule",
+            "optional": false,
+            "type": "{ Guid?: string, ActionType?: number, ActionParameter1?: string, ActionParameter2?: string, Description?: string, Enabled?: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Guid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ActionType",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "ActionParameter1",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ActionParameter2",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Enabled",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bunnycdn.api.pullZone.get",
+      "shortPath": "pullZone.get",
+      "description": "Get details of a specific pull zone by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "includeCertificate",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "Name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "OriginUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "Suspended",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "Hostnames",
+            "optional": true,
+            "type": "{ Id?: number, Value?: string | null, ForceSSL?: boolean, HasCertificate?: boolean }[]"
+          },
+          {
+            "key": "StorageZoneId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "MonthlyBandwidthUsed",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "MonthlyCharges",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bunnycdn.api.pullZone.list",
+      "shortPath": "pullZone.list",
+      "description": "List pull zones with pagination and search",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "perPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "includeCertificate",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ Id: number, Name?: string | null, OriginUrl?: string | null, Enabled?: boolean, Suspended?: boolean, Hostnames?: { Id?: number, Value?: string | null, ForceSSL?: boolean, HasCertificate?: boolean }[] | null, StorageZoneId?: number, MonthlyBandwidthUsed?: number, MonthlyCharges?: number }[] | { Items: { Id: number, Name?: string | null, OriginUrl?: string | null, Enabled?: boolean, Suspended?: boolean, Hostnames?: { Id?: number, Value?: string | null, ForceSSL?: boolean, HasCertificate?: boolean }[] | null, StorageZoneId?: number, MonthlyBandwidthUsed?: number, MonthlyCharges?: number }[], CurrentPage?: number, TotalItems?: number, HasMoreItems?: boolean }"
+      }
+    },
+    {
+      "path": "bunnycdn.api.pullZone.optimizerStatistics",
+      "shortPath": "pullZone.optimizerStatistics",
+      "description": "Retrieve optimizer statistics for a pull zone",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pullZoneId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "dateFrom",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dateTo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hourly",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "bunnycdn.api.pullZone.originShieldQueueStatistics",
+      "shortPath": "pullZone.originShieldQueueStatistics",
+      "description": "Retrieve origin shield queue statistics for a pull zone",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pullZoneId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "dateFrom",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dateTo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hourly",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "bunnycdn.api.pullZone.purgeCache",
+      "shortPath": "pullZone.purgeCache",
+      "description": "Purge cached content for a pull zone, optionally by cache tag",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "cacheTag",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bunnycdn.api.pullZone.remove",
+      "shortPath": "pullZone.remove",
+      "description": "Delete a specific pull zone by ID",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bunnycdn.api.pullZone.removeAllowedReferrer",
+      "shortPath": "pullZone.removeAllowedReferrer",
+      "description": "Remove a hostname from the allowed referer list",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "hostname",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bunnycdn.api.pullZone.removeBlockedIp",
+      "shortPath": "pullZone.removeBlockedIp",
+      "description": "Remove an IP address from the blocked list",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "blockedIp",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bunnycdn.api.pullZone.removeBlockedReferrer",
+      "shortPath": "pullZone.removeBlockedReferrer",
+      "description": "Remove a blocked referer from a pull zone",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "hostname",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bunnycdn.api.pullZone.resetSecurityKey",
+      "shortPath": "pullZone.resetSecurityKey",
+      "description": "Reset the URL token security key for a pull zone",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "securityKey",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bunnycdn.api.pullZone.safeHopStatistics",
+      "shortPath": "pullZone.safeHopStatistics",
+      "description": "Retrieve SafeHop statistics for a pull zone",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pullZoneId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "dateFrom",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dateTo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hourly",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "bunnycdn.api.pullZone.setForceSSL",
+      "shortPath": "pullZone.setForceSSL",
+      "description": "Enable or disable Force SSL on a pull zone hostname",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "hostname",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "forceSSL",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bunnycdn.api.pullZone.update",
+      "shortPath": "pullZone.update",
+      "description": "Update settings for a specific pull zone",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "settings",
+            "optional": false,
+            "type": "{ OriginUrl?: string, AllowedReferrers?: any[], BlockedReferrers?: any[], BlockNoneReferrer?: boolean, BlockedIps?: any[], EnableGeoZoneUS?: boolean, EnableGeoZoneEU?: boolean, EnableGeoZoneASIA?: boolean, EnableGeoZoneSA?: boolean, EnableGeoZoneAF?: boolean, IpFamilyPolicy?: number, BlockRootPathAccess?: boolean, BlockPostRequests?: boolean, EnableQueryStringOrdering?: boolean, EnableWebpVary?: boolean, EnableAvifVary?: boolean, EnableMobileVary?: boolean, EnableCountryCodeVary?: boolean, EnableCountryStateCodeVary?: boolean, EnableHostnameVary?: boolean, EnableCacheSlice?: boolean, ZoneSecurityEnabled?: boolean, ZoneSecurityIncludeHashRemoteIP?: boolean, IgnoreQueryStrings?: boolean, MonthlyBandwidthLimit?: number, AccessControlOriginHeaderExtensions?: any[], EnableAccessControlOriginHeader?: boolean, DisableCookies?: boolean, BudgetRedirectedCountries?: any[], BlockedCountries?: any[], CacheControlMaxAgeOverride?: number, CacheControlPublicMaxAgeOverride?: number, CacheControlBrowserMaxAgeOverride?: number, AddHostHeader?: boolean, AddCanonicalHeader?: boolean, EnableLogging?: boolean, LoggingIPAnonymizationEnabled?: boolean, PermaCacheStorageZoneId?: number, PermaCacheType?: number, AWSSigningEnabled?: boolean, AWSSigningKey?: string, AWSSigningRegionName?: string, AWSSigningSecret?: string, EnableOriginShield?: boolean, OriginShieldZoneCode?: string, EnableTLS1?: boolean, EnableTLS1_1?: boolean, TlsSecurityLevel?: number, CacheErrorResponses?: boolean, VerifyOriginSSL?: boolean, LogForwardingEnabled?: boolean, LogForwardingHostname?: string, LogForwardingPort?: number, LogForwardingToken?: string, LogForwardingProtocol?: number, LoggingSaveToStorage?: boolean, LoggingStorageZoneId?: number, FollowRedirects?: boolean, ConnectionLimitPerIPCount?: number, RequestLimit?: number, LimitRateAfter?: number, LimitRatePerSecond?: number, BurstSize?: number, ErrorPageEnableCustomCode?: boolean, ErrorPageCustomCode?: string, ErrorPageEnableStatuspageWidget?: boolean, ErrorPageStatuspageCode?: string, ErrorPageWhitelabel?: boolean, OptimizerEnabled?: boolean, OptimizerTunnelEnabled?: boolean, OptimizerDesktopMaxWidth?: number, OptimizerMobileMaxWidth?: number, OptimizerImageQuality?: number, OptimizerMobileImageQuality?: number, OptimizerEnableWebP?: boolean, OptimizerPrerenderHtml?: boolean, OptimizerHtmlToMarkdown?: number, OptimizerLlmsTxt?: boolean, OptimizerEnableManipulationEngine?: boolean, OptimizerMinifyCSS?: boolean, OptimizerMinifyJavaScript?: boolean, OptimizerWatermarkEnabled?: boolean, OptimizerWatermarkUrl?: string, OptimizerWatermarkPosition?: number, OptimizerWatermarkOffset?: number, OptimizerWatermarkMinImageSize?: number, OptimizerAutomaticOptimizationEnabled?: boolean, OptimizerClasses?: any[], OptimizerForceClasses?: boolean, OptimizerStaticHtmlEnabled?: boolean, OptimizerStaticHtmlWordPressPath?: string, OptimizerStaticHtmlWordPressBypassCookie?: string, Type?: number, OriginRetries?: number, OriginConnectTimeout?: number, OriginResponseTimeout?: number, UseStaleWhileUpdating?: boolean, UseStaleWhileOffline?: boolean, OriginRetry5XXResponses?: boolean, OriginRetryConnectionTimeout?: boolean, OriginRetryResponseTimeout?: boolean, OriginRetryDelay?: number, DnsOriginPort?: number, DnsOriginScheme?: string, QueryStringVaryParameters?: any[], OriginShieldEnableConcurrencyLimit?: boolean, OriginShieldMaxConcurrentRequests?: number, EnableCookieVary?: boolean, CookieVaryParameters?: any[], EnableSafeHop?: boolean, OriginShieldQueueMaxWaitTime?: number, OriginShieldMaxQueuedRequests?: number, UseBackgroundUpdate?: boolean, EnableAutoSSL?: boolean, LogAnonymizationType?: number, StorageZoneId?: number, EdgeScriptId?: number, MiddlewareScriptId?: number, EdgeScriptExecutionPhase?: number, OriginType?: number, MagicContainersAppId?: string, MagicContainersEndpointId?: string, LogFormat?: number, LogForwardingFormat?: number, ShieldDDosProtectionType?: number, ShieldDDosProtectionEnabled?: boolean, OriginHostHeader?: string, EnableSmartCache?: boolean, EnableRequestCoalescing?: boolean, RequestCoalescingTimeout?: number, DisableLetsEncrypt?: boolean, EnableBunnyImageAi?: boolean, BunnyAiImageBlueprints?: any[], PreloadingScreenEnabled?: boolean, PreloadingScreenCode?: string, PreloadingScreenLogoUrl?: string, PreloadingScreenShowOnFirstVisit?: boolean, PreloadingScreenTheme?: number, PreloadingScreenCodeEnabled?: boolean, PreloadingScreenDelay?: number, RoutingFilters?: any[], StickySessionType?: number, StickySessionCookieName?: string, StickySessionClientHeaders?: string, OptimizerEnableUpscaling?: boolean, EnableWebSockets?: boolean, MaxWebSocketConnections?: number, CacheKeyHeaders?: string, LoadBalancerId?: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "Name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "OriginUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "Suspended",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "Hostnames",
+            "optional": true,
+            "type": "{ Id?: number, Value?: string | null, ForceSSL?: boolean, HasCertificate?: boolean }[]"
+          },
+          {
+            "key": "StorageZoneId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "MonthlyBandwidthUsed",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "MonthlyCharges",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bunnycdn.api.purge.url",
+      "shortPath": "purge.url",
+      "description": "Purge a single URL from cache across pull zones",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "async",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "exactPath",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "bunnycdn.api.search.global",
+      "shortPath": "search.global",
+      "description": "Global search across pull zones, storage zones, DNS zones and more",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "bunnycdn.api.shield.accessListConfigUpdate",
+      "shortPath": "shield.accessListConfigUpdate",
+      "description": "Update an access list configuration action or enabled state",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "shieldZoneId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "isEnabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "action",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "bunnycdn.api.shield.accessListCreate",
+      "shortPath": "shield.accessListCreate",
+      "description": "Create a custom access list in a shield zone",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "shieldZoneId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "checksum",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bunnycdn.api.shield.accessListEnums",
+      "shortPath": "shield.accessListEnums",
+      "description": "List available access list configuration values",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "shieldZoneId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "bunnycdn.api.shield.accessListGet",
+      "shortPath": "shield.accessListGet",
+      "description": "Get a custom access list by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "shieldZoneId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bunnycdn.api.shield.accessListsList",
+      "shortPath": "shield.accessListsList",
+      "description": "List access lists for a shield zone",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "shieldZoneId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "bunnycdn.api.shield.accessListUpdate",
+      "shortPath": "shield.accessListUpdate",
+      "description": "Update a custom access list in a shield zone",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "shieldZoneId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "checksum",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bunnycdn.api.shield.botDetectionGet",
+      "shortPath": "shield.botDetectionGet",
+      "description": "Get the bot detection configuration for a shield zone",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "shieldZoneId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "bunnycdn.api.shield.botDetectionUpdate",
+      "shortPath": "shield.botDetectionUpdate",
+      "description": "Update the bot detection configuration for a shield zone",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "shieldZoneId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "executionMode",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "bunnycdn.api.shield.ddosEnums",
+      "shortPath": "shield.ddosEnums",
+      "description": "List available Shield DDoS configuration values",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "bunnycdn.api.shield.eventLogs",
+      "shortPath": "shield.eventLogs",
+      "description": "Get shield event logs for a zone and date with continuation token",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "shieldZoneId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "continuationToken",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "bunnycdn.api.shield.metricsBotDetection",
+      "shortPath": "shield.metricsBotDetection",
+      "description": "Get bot detection metrics for a shield zone",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "shieldZoneId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "bunnycdn.api.shield.metricsOverview",
+      "shortPath": "shield.metricsOverview",
+      "description": "Get the security metrics overview for a shield zone",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "shieldZoneId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "bunnycdn.api.shield.metricsOverviewDetailed",
+      "shortPath": "shield.metricsOverviewDetailed",
+      "description": "Get detailed security metrics for a shield zone over a time range",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "shieldZoneId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "resolution",
+            "optional": true,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "bunnycdn.api.shield.metricsRateLimit",
+      "shortPath": "shield.metricsRateLimit",
+      "description": "Get metrics for a specific shield rate limit",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "bunnycdn.api.shield.metricsRateLimits",
+      "shortPath": "shield.metricsRateLimits",
+      "description": "Get aggregated rate limit metrics for a shield zone",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "shieldZoneId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "bunnycdn.api.shield.metricsUploadScanning",
+      "shortPath": "shield.metricsUploadScanning",
+      "description": "Get upload scanning metrics for a shield zone",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "shieldZoneId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "bunnycdn.api.shield.metricsWafRule",
+      "shortPath": "shield.metricsWafRule",
+      "description": "Get metrics for a specific WAF rule",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "shieldZoneId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "ruleId",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "bunnycdn.api.shield.promoState",
+      "shortPath": "shield.promoState",
+      "description": "Get the shield promotional state for the account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "bunnycdn.api.shield.rateLimitCreate",
+      "shortPath": "shield.rateLimitCreate",
+      "description": "Create a shield rate limit rule",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "shieldZoneId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "ruleName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ruleDescription",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ruleConfiguration",
+            "optional": true,
+            "type": "{ actionType?: number, variableTypes?: {}, operatorType?: number, severityType?: number, transformationTypes?: any[], value?: string, isNegated?: boolean, isRegexVariable?: boolean, requestCount?: number, counterKeyType?: number, timeframe?: number, blockTime?: number, chainedRuleConditions?: any[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "shieldZoneId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "ruleName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ruleDescription",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bunnycdn.api.shield.rateLimitDelete",
+      "shortPath": "shield.rateLimitDelete",
+      "description": "Delete a shield rate limit rule",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bunnycdn.api.shield.rateLimitGet",
+      "shortPath": "shield.rateLimitGet",
+      "description": "Get a shield rate limit rule by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "shieldZoneId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "ruleName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ruleDescription",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bunnycdn.api.shield.rateLimitsList",
+      "shortPath": "shield.rateLimitsList",
+      "description": "List rate limit rules for a shield zone",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "shieldZoneId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "perPage",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "bunnycdn.api.shield.rateLimitUpdate",
+      "shortPath": "shield.rateLimitUpdate",
+      "description": "Update a shield rate limit rule",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "ruleName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ruleDescription",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ruleConfiguration",
+            "optional": true,
+            "type": "{ actionType?: number, variableTypes?: {}, operatorType?: number, severityType?: number, transformationTypes?: any[], value?: string, isNegated?: boolean, isRegexVariable?: boolean, requestCount?: number, counterKeyType?: number, timeframe?: number, blockTime?: number, chainedRuleConditions?: any[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "shieldZoneId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "ruleName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ruleDescription",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bunnycdn.api.shield.uploadScanningGet",
+      "shortPath": "shield.uploadScanningGet",
+      "description": "Get the upload scanning configuration for a shield zone",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "shieldZoneId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "bunnycdn.api.shield.uploadScanningUpdate",
+      "shortPath": "shield.uploadScanningUpdate",
+      "description": "Update the upload scanning configuration for a shield zone",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "shieldZoneId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "isEnabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "csamScanningMode",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "antivirusScanningMode",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "bunnycdn.api.shield.wafCustomRuleGet",
+      "shortPath": "shield.wafCustomRuleGet",
+      "description": "Get a custom WAF rule by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "bunnycdn.api.shield.wafCustomRulesList",
+      "shortPath": "shield.wafCustomRulesList",
+      "description": "List custom WAF rules for a shield zone",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "shieldZoneId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "perPage",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "bunnycdn.api.shield.wafEngineConfig",
+      "shortPath": "shield.wafEngineConfig",
+      "description": "Get the Shield WAF engine configuration",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "bunnycdn.api.shield.wafEnums",
+      "shortPath": "shield.wafEnums",
+      "description": "List available Shield WAF configuration values",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "bunnycdn.api.shield.wafProfiles",
+      "shortPath": "shield.wafProfiles",
+      "description": "List available WAF security profiles",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "bunnycdn.api.shield.wafRulesByZone",
+      "shortPath": "shield.wafRulesByZone",
+      "description": "List WAF rules for a shield zone",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "shieldZoneId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "bunnycdn.api.shield.wafRulesPlanSegmentation",
+      "shortPath": "shield.wafRulesPlanSegmentation",
+      "description": "List WAF rules segmented by subscription plan",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "bunnycdn.api.shield.wafRulesReviewTriggered",
+      "shortPath": "shield.wafRulesReviewTriggered",
+      "description": "List triggered WAF rules awaiting review",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "shieldZoneId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "bunnycdn.api.shield.wafRulesReviewTriggeredPost",
+      "shortPath": "shield.wafRulesReviewTriggeredPost",
+      "description": "Apply an action to a triggered WAF rule",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "shieldZoneId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "ruleId",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "action",
+            "optional": true,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "bunnycdn.api.shield.zoneGet",
+      "shortPath": "shield.zoneGet",
+      "description": "Get a shield zone configuration by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "shieldZoneId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "shieldZoneId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "pullZoneId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "learningMode",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "wafEnabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "planType",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bunnycdn.api.shield.zoneGetByPullZone",
+      "shortPath": "shield.zoneGetByPullZone",
+      "description": "Get the shield zone configuration for a pull zone",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pullZoneId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "shieldZoneId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "pullZoneId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "learningMode",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "wafEnabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "planType",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bunnycdn.api.shield.zonesList",
+      "shortPath": "shield.zonesList",
+      "description": "List all shield zones",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "perPage",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "bunnycdn.api.shield.zonesPullZoneMapping",
+      "shortPath": "shield.zonesPullZoneMapping",
+      "description": "Get the mapping between shield zones and pull zones",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "bunnycdn.api.shield.zoneUpdate",
+      "shortPath": "shield.zoneUpdate",
+      "description": "Update a shield zone configuration",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "shieldZoneId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "shieldZone",
+            "optional": true,
+            "type": "{ shieldZoneId?: number, premiumPlan?: boolean, planType?: number, learningMode?: boolean, learningModeUntil?: string, wafEnabled?: boolean, wafExecutionMode?: number, wafDisabledRules?: any[], wafLogOnlyRules?: any[], wafCustomRuleOrder?: any[], wafRequestHeaderLoggingEnabled?: boolean, requestBodyLoggingEnabled?: boolean, wafRequestIgnoredHeaders?: any[], wafRealtimeThreatIntelligenceEnabled?: boolean, wafProfileId?: number, wafEngineConfig?: any[], wafRequestBodyLimitAction?: number, wafResponseBodyLimitAction?: number, dDoSShieldSensitivity?: number, dDoSChallengeWindow?: number, whitelabelResponsePages?: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "bunnycdn.api.statistics.countries",
+      "shortPath": "statistics.countries",
+      "description": "List countries supported by BunnyCDN",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ Id?: number, Name?: string, IsoCode?: string }[]"
+      }
+    },
+    {
+      "path": "bunnycdn.api.statistics.get",
+      "shortPath": "statistics.get",
+      "description": "Retrieve CDN bandwidth and request statistics",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dateFrom",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dateTo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pullZone",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "serverZoneId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hourly",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "exactRange",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "loadErrors",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "loadOriginResponseTimes",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "loadOriginTraffic",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "loadRequestsServed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "loadBandwidthUsed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "loadOriginShieldBandwidth",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "loadGeographicTrafficDistribution",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "loadUserBalanceHistory",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "bunnycdn.api.statistics.regions",
+      "shortPath": "statistics.regions",
+      "description": "List BunnyCDN regions with pricing info",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ Id?: number, Name?: string, RegionCode?: string }[]"
+      }
+    },
+    {
+      "path": "bunnycdn.api.storageZone.checkAvailability",
+      "shortPath": "storageZone.checkAvailability",
+      "description": "Check whether a storage zone name is available",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Available",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bunnycdn.api.storageZone.create",
+      "shortPath": "storageZone.create",
+      "description": "Create a new storage zone",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "region",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "details",
+            "optional": true,
+            "type": "{ Name: string, Region: string, ReplicationRegions?: any[], ZoneTier?: number, StorageZoneType?: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "Name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Region",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ZoneTier",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "StorageZoneType",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "Deleted",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bunnycdn.api.storageZone.get",
+      "shortPath": "storageZone.get",
+      "description": "Get details of a specific storage zone",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "Name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Region",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ZoneTier",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "StorageZoneType",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "Deleted",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bunnycdn.api.storageZone.list",
+      "shortPath": "storageZone.list",
+      "description": "List all storage zones",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "perPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "includeDeleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ Id: number, Name?: string, Region?: string, ZoneTier?: number, StorageZoneType?: number, Deleted?: boolean }[] | {}"
+      }
+    },
+    {
+      "path": "bunnycdn.api.storageZone.remove",
+      "shortPath": "storageZone.remove",
+      "description": "Delete a storage zone and all of its data",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "deleteLinkedPullZones",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bunnycdn.api.storageZone.update",
+      "shortPath": "storageZone.update",
+      "description": "Update settings for a specific storage zone",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "settings",
+            "optional": false,
+            "type": "{ ReplicationZones?: any[], OriginUrl?: string, Custom404FilePath?: string, Rewrite404To200?: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bunnycdn.api.stream.oembed",
+      "shortPath": "stream.oembed",
+      "description": "Retrieve oEmbed metadata for a video embed",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "maxWidth",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "maxHeight",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expires",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "bunnycdn.api.user.auditLog",
+      "shortPath": "user.auditLog",
+      "description": "Retrieve user audit log entries for a date",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "product",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "resourceType",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "resourceId",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "actorId",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "continuationToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "bunnycdn.api.videoLibrary.languages",
+      "shortPath": "videoLibrary.languages",
+      "description": "List languages supported by video libraries",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any[]"
+      }
+    },
+    {
+      "path": "bunnycdn.api.videoLibrary.list",
+      "shortPath": "videoLibrary.list",
+      "description": "List all video libraries",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "perPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ Id: number, Name?: string }[] | {}"
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

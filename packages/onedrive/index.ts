@@ -14,8 +14,8 @@ import type {
 	RequiredPluginEndpointSchemas,
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import { AuthMissingError } from 'corsair/core';
-import { getValidAccessToken } from './client';
+import { AuthMissingError, getOAuthAccessToken } from 'corsair/core';
+import { attachManagedRefreshAuth, getManagedAccessToken } from 'corsair/hub';
 import {
 	Drive,
 	Files,
@@ -34,6 +34,7 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { OnedriveSchema } from './schema';
+import { onedriveSubscribe } from './subscribe';
 import { DriveWebhooks } from './webhooks';
 import { matchOnedriveTenantWebhook } from './webhooks/tenant-matcher';
 import type {
@@ -50,7 +51,7 @@ import {
 } from './webhooks/types';
 
 export type OnedrivePluginOptions = {
-	authType?: PickAuth<'oauth_2'>;
+	authType?: PickAuth<'oauth_2' | 'managed'>;
 	key?: string;
 	hooks?: InternalOnedrivePlugin['hooks'];
 	webhookHooks?: InternalOnedrivePlugin['webhookHooks'];
@@ -522,11 +523,11 @@ const onedriveEndpointMeta = {
 	},
 	'items.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a drive item [DESTRUCTIVE]',
+		description: 'Delete a drive item',
 	},
 	'items.deletePermanently': {
 		riskLevel: 'destructive',
-		description: 'Permanently delete a drive item [DESTRUCTIVE]',
+		description: 'Permanently delete a drive item',
 	},
 	'items.copy': { riskLevel: 'write', description: 'Copy a drive item' },
 	'items.move': {
@@ -673,7 +674,7 @@ const onedriveEndpointMeta = {
 	},
 	'permissions.deleteFromItem': {
 		riskLevel: 'destructive',
-		description: 'Delete a permission from a drive item [DESTRUCTIVE]',
+		description: 'Delete a permission from a drive item',
 	},
 	'permissions.inviteUser': {
 		riskLevel: 'write',
@@ -689,7 +690,7 @@ const onedriveEndpointMeta = {
 	},
 	'permissions.deleteSharePermission': {
 		riskLevel: 'destructive',
-		description: 'Delete a share permission [DESTRUCTIVE]',
+		description: 'Delete a share permission',
 	},
 	'permissions.grantSharePermission': {
 		riskLevel: 'write',
@@ -743,6 +744,9 @@ const defaultAuthType = 'oauth_2' as const;
 
 export const onedriveAuthConfig = {
 	oauth_2: {
+		account: ['subscription_id', 'client_state'] as const,
+	},
+	managed: {
 		account: ['subscription_id', 'client_state'] as const,
 	},
 } as const satisfies PluginAuthConfig;
@@ -802,6 +806,7 @@ export function onedrive<const PluginOptions extends OnedrivePluginOptions>(
 			return createOnedriveMatch()(request);
 		},
 		pluginTenantWebhookMatcher: matchOnedriveTenantWebhook,
+		subscribe: onedriveSubscribe,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
@@ -828,78 +833,29 @@ export function onedrive<const PluginOptions extends OnedrivePluginOptions>(
 			}
 
 			if (ctx.authType === 'oauth_2') {
-				const [accessToken, expiresAt, refreshToken] = await Promise.all([
-					ctx.keys.get_access_token(),
-					ctx.keys.get_expires_at(),
-					ctx.keys.get_refresh_token(),
-				]);
+				return getOAuthAccessToken(ctx, {
+					plugin: 'onedrive',
+					tokenUrl:
+						'https://login.microsoftonline.com/common/oauth2/v2.0/token',
+				});
+			}
 
-				if (!refreshToken) {
-					throw new AuthMissingError('onedrive', 'oauth_2');
-				}
-
-				const creds = await ctx.keys.get_integration_credentials();
-
-				if (!creds.client_id || !creds.client_secret) {
+			if (ctx.authType === 'managed') {
+				if (!ctx.hub) {
 					throw new Error(
-						'[auth-missing:onedrive:client_credentials]: OneDrive client credentials are missing',
+						'[auth-missing:onedrive:managed]: Hub config is required for managed auth. Pass hub: { ... } to createCorsair().',
 					);
 				}
 
-				// Use a mutable variable so _refreshAuth always uses the latest token
-				let currentRefreshToken = refreshToken;
-
-				let result: Awaited<ReturnType<typeof getValidAccessToken>>;
-				try {
-					result = await getValidAccessToken({
-						accessToken,
-						expiresAt,
-						refreshToken: currentRefreshToken,
-						clientId: creds.client_id,
-						clientSecret: creds.client_secret,
-					});
-				} catch (error) {
-					throw new Error(
-						`[corsair:onedrive] Failed to obtain valid access token: ${error instanceof Error ? error.message : String(error)}`,
-					);
-				}
-
-				if (result.refreshed) {
-					try {
-						await ctx.keys.set_access_token(result.accessToken);
-						await ctx.keys.set_expires_at(String(result.expiresAt));
-						// Microsoft issues a new refresh token on each refresh — persist it
-						if (result.newRefreshToken) {
-							currentRefreshToken = result.newRefreshToken;
-							await ctx.keys.set_refresh_token(currentRefreshToken);
-						}
-					} catch (error) {
-						throw new Error(
-							`[corsair:onedrive] Token was refreshed but failed to persist new credentials: ${error instanceof Error ? error.message : String(error)}`,
-						);
-					}
-				}
-
-				// Expose a force-refresh function so endpoints can retry on 401
-				// without waiting for expires_at to lapse
-				(ctx as Record<string, unknown>)._refreshAuth = async () => {
-					const freshResult = await getValidAccessToken({
-						accessToken: null,
-						expiresAt: null,
-						refreshToken: currentRefreshToken,
-						clientId: creds.client_id!,
-						clientSecret: creds.client_secret!,
-						forceRefresh: true,
-					});
-					await ctx.keys.set_access_token(freshResult.accessToken);
-					await ctx.keys.set_expires_at(String(freshResult.expiresAt));
-					if (freshResult.newRefreshToken) {
-						currentRefreshToken = freshResult.newRefreshToken;
-						await ctx.keys.set_refresh_token(currentRefreshToken);
-					}
-					return freshResult.accessToken;
+				const managedContext = {
+					keys: ctx.keys,
+					hub: ctx.hub,
+					plugin: 'onedrive',
+					tenantId: ctx.tenantId,
 				};
 
+				const result = await getManagedAccessToken(managedContext);
+				await attachManagedRefreshAuth(ctx, managedContext);
 				return result.accessToken;
 			}
 

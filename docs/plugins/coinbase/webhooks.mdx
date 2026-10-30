@@ -1,0 +1,239 @@
+---
+title: Webhooks
+description: "Coinbase incoming webhooks: event paths, payloads, and response data."
+---
+
+The Coinbase plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/coinbase/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `notifications`
+  - `newPayment` (`notifications.newPayment`)
+  - `ping` (`notifications.ping`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+## Events
+
+## Notifications
+
+### New Payment
+
+`notifications.newPayment`
+
+A new on-chain payment arrived at a watched address
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `type` | `wallet:addresses:new-payment` | Yes | — |
+| `data` | `object` | No | — |
+| `user` | `object` | No | — |
+| `account` | `object` | No | — |
+| `delivery_attempts` | `number` | No | — |
+| `created_at` | `string` | No | — |
+| `resource` | `string` | No | — |
+| `resource_path` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="user full type">
+
+```ts
+{
+  id?: string,
+  resource?: string,
+  resource_path?: string
+}
+```
+</Accordion>
+
+<Accordion title="account full type">
+
+```ts
+{
+  id?: string,
+  resource?: string,
+  resource_path?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id?: string,
+  type: wallet:addresses:new-payment,
+  data?: {
+  },
+  user?: {
+    id?: string,
+    resource?: string,
+    resource_path?: string
+  },
+  account?: {
+    id?: string,
+    resource?: string,
+    resource_path?: string
+  },
+  delivery_attempts?: number,
+  created_at?: string,
+  resource?: string,
+  resource_path?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+coinbase({
+    webhookHooks: {
+        notifications: {
+            newPayment: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Ping
+
+`notifications.ping`
+
+Coinbase webhook ping used to verify a notification URL
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `type` | `ping` | Yes | — |
+| `data` | `object` | No | — |
+| `user` | `object` | No | — |
+| `account` | `object` | No | — |
+| `delivery_attempts` | `number` | No | — |
+| `created_at` | `string` | No | — |
+| `resource` | `string` | No | — |
+| `resource_path` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="user full type">
+
+```ts
+{
+  id?: string,
+  resource?: string,
+  resource_path?: string
+}
+```
+</Accordion>
+
+<Accordion title="account full type">
+
+```ts
+{
+  id?: string,
+  resource?: string,
+  resource_path?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id?: string,
+  type: ping,
+  data?: {
+  },
+  user?: {
+    id?: string,
+    resource?: string,
+    resource_path?: string
+  },
+  account?: {
+    id?: string,
+    resource?: string,
+    resource_path?: string
+  },
+  delivery_attempts?: number,
+  created_at?: string,
+  resource?: string,
+  resource_path?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+coinbase({
+    webhookHooks: {
+        notifications: {
+            ping: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+

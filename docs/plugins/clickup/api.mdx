@@ -1,0 +1,5522 @@
+---
+title: API
+description: "API reference for Clickup: every `clickup.api.*` operation with input and output types."
+---
+
+Every `clickup.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Chat
+
+### channelsCreate
+
+`chat.channelsCreate`
+
+Create a chat channel
+
+**Risk:** `write`
+
+```ts
+await corsair.clickup.api.chat.channelsCreate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `topic` | `string` | No | — |
+| `visibility` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### channelsCreateDm
+
+`chat.channelsCreateDm`
+
+Create a direct message channel
+
+**Risk:** `write`
+
+```ts
+await corsair.clickup.api.chat.channelsCreateDm({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `string` | Yes | — |
+| `user_ids` | `number[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### channelsCreateLocation
+
+`chat.channelsCreateLocation`
+
+Create a location chat channel
+
+**Risk:** `write`
+
+```ts
+await corsair.clickup.api.chat.channelsCreateLocation({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `string` | Yes | — |
+| `space_id` | `string` | No | — |
+| `folder_id` | `string` | No | — |
+| `list_id` | `string` | No | — |
+| `name` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### channelsDelete
+
+`chat.channelsDelete`
+
+Delete a chat channel
+
+**Risk:** `destructive`
+
+```ts
+await corsair.clickup.api.chat.channelsDelete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `string` | Yes | — |
+| `channel_id` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### channelsFollowers
+
+`chat.channelsFollowers`
+
+List followers of a chat channel
+
+**Risk:** `read`
+
+```ts
+await corsair.clickup.api.chat.channelsFollowers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `string` | Yes | — |
+| `channel_id` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `followers` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="followers full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### channelsGet
+
+`chat.channelsGet`
+
+Get a single chat channel
+
+**Risk:** `read`
+
+```ts
+await corsair.clickup.api.chat.channelsGet({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `string` | Yes | — |
+| `channel_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### channelsList
+
+`chat.channelsList`
+
+List chat channels in a Workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.clickup.api.chat.channelsList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `string` | Yes | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `is_follower` | `boolean` | No | — |
+| `include_closed` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channels` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="channels full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### channelsMembers
+
+`chat.channelsMembers`
+
+List members of a chat channel
+
+**Risk:** `read`
+
+```ts
+await corsair.clickup.api.chat.channelsMembers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `string` | Yes | — |
+| `channel_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `members` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="members full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### channelsUpdate
+
+`chat.channelsUpdate`
+
+Update a chat channel
+
+**Risk:** `write`
+
+```ts
+await corsair.clickup.api.chat.channelsUpdate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `string` | Yes | — |
+| `channel_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `topic` | `string` | No | — |
+| `description` | `string` | No | — |
+| `visibility` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### messagesCreate
+
+`chat.messagesCreate`
+
+Send a chat message
+
+**Risk:** `write`
+
+```ts
+await corsair.clickup.api.chat.messagesCreate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `string` | Yes | — |
+| `channel_id` | `string` | Yes | — |
+| `type` | `message \| post` | Yes | — |
+| `content` | `string` | Yes | — |
+| `assignee` | `number` | No | — |
+| `followers` | `number[]` | No | — |
+| `content_format` | `text/md \| text/plain` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### messagesDelete
+
+`chat.messagesDelete`
+
+Delete a chat message
+
+**Risk:** `destructive`
+
+```ts
+await corsair.clickup.api.chat.messagesDelete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `string` | Yes | — |
+| `message_id` | `string \| number` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### messagesList
+
+`chat.messagesList`
+
+List messages in a chat channel
+
+**Risk:** `read`
+
+```ts
+await corsair.clickup.api.chat.messagesList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `string` | Yes | — |
+| `channel_id` | `string` | Yes | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `content_format` | `text/md \| text/plain` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `messages` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### messagesUpdate
+
+`chat.messagesUpdate`
+
+Update a chat message
+
+**Risk:** `write`
+
+```ts
+await corsair.clickup.api.chat.messagesUpdate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `string` | Yes | — |
+| `message_id` | `string \| number` | Yes | — |
+| `content` | `string` | No | — |
+| `assignee` | `number` | No | — |
+| `resolved` | `boolean` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### reactionsCreate
+
+`chat.reactionsCreate`
+
+React to a chat message
+
+**Risk:** `write`
+
+```ts
+await corsair.clickup.api.chat.reactionsCreate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `string` | Yes | — |
+| `message_id` | `string \| number` | Yes | — |
+| `reaction` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### reactionsDelete
+
+`chat.reactionsDelete`
+
+Remove a reaction from a chat message
+
+**Risk:** `destructive`
+
+```ts
+await corsair.clickup.api.chat.reactionsDelete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `string` | Yes | — |
+| `message_id` | `string \| number` | Yes | — |
+| `reaction` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### reactionsGet
+
+`chat.reactionsGet`
+
+List reactions on a chat message
+
+**Risk:** `read`
+
+```ts
+await corsair.clickup.api.chat.reactionsGet({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `string` | Yes | — |
+| `message_id` | `string \| number` | Yes | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `reactions` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="reactions full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### repliesCreate
+
+`chat.repliesCreate`
+
+Reply to a chat message
+
+**Risk:** `write`
+
+```ts
+await corsair.clickup.api.chat.repliesCreate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `string` | Yes | — |
+| `message_id` | `string \| number` | Yes | — |
+| `type` | `message \| post` | No | — |
+| `content` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### repliesGet
+
+`chat.repliesGet`
+
+List replies to a chat message
+
+**Risk:** `read`
+
+```ts
+await corsair.clickup.api.chat.repliesGet({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `string` | Yes | — |
+| `message_id` | `string \| number` | Yes | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `replies` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="replies full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### subtypes
+
+`chat.subtypes`
+
+List post subtype IDs for a Workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.clickup.api.chat.subtypes({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `string` | Yes | — |
+| `comment_type` | `post \| ai \| syncup \| ai_via_brain` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subtypes` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="subtypes full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### taggedUsers
+
+`chat.taggedUsers`
+
+List users tagged in a chat message
+
+**Risk:** `read`
+
+```ts
+await corsair.clickup.api.chat.taggedUsers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `string` | Yes | — |
+| `message_id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `users` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="users full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Checklists
+
+### create
+
+`checklists.create`
+
+Create a checklist in a Task
+
+**Risk:** `write`
+
+```ts
+await corsair.clickup.api.checklists.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `custom_task_ids` | `boolean` | No | — |
+| `team_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### delete
+
+`checklists.delete`
+
+Delete a checklist
+
+**Risk:** `destructive`
+
+```ts
+await corsair.clickup.api.checklists.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `checklist_id` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### itemsCreate
+
+`checklists.itemsCreate`
+
+Create a checklist item
+
+**Risk:** `write`
+
+```ts
+await corsair.clickup.api.checklists.itemsCreate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `checklist_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `assignee` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### itemsDelete
+
+`checklists.itemsDelete`
+
+Delete a checklist item
+
+**Risk:** `destructive`
+
+```ts
+await corsair.clickup.api.checklists.itemsDelete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `checklist_id` | `string` | Yes | — |
+| `checklist_item_id` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### itemsUpdate
+
+`checklists.itemsUpdate`
+
+Update a checklist item
+
+**Risk:** `write`
+
+```ts
+await corsair.clickup.api.checklists.itemsUpdate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `checklist_id` | `string` | Yes | — |
+| `checklist_item_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `assignee` | `number` | No | — |
+| `resolved` | `boolean` | No | — |
+| `parent` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### update
+
+`checklists.update`
+
+Update a checklist
+
+**Risk:** `write`
+
+```ts
+await corsair.clickup.api.checklists.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `checklist_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `position` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+## Custom Fields
+
+### accessible
+
+`customFields.accessible`
+
+List accessible custom fields for a List
+
+**Risk:** `read`
+
+```ts
+await corsair.clickup.api.customFields.accessible({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fields` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+{
+  id: string,
+  name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### folderFields
+
+`customFields.folderFields`
+
+List custom fields available in a Folder
+
+**Risk:** `read`
+
+```ts
+await corsair.clickup.api.customFields.folderFields({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `folder_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fields` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+{
+  id: string,
+  name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### removeValue
+
+`customFields.removeValue`
+
+Remove a custom field value from a Task
+
+**Risk:** `destructive`
+
+```ts
+await corsair.clickup.api.customFields.removeValue({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | Yes | — |
+| `field_id` | `string` | Yes | — |
+| `custom_task_ids` | `boolean` | No | — |
+| `team_id` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### setValue
+
+`customFields.setValue`
+
+Set a custom field value on a Task
+
+**Risk:** `write`
+
+```ts
+await corsair.clickup.api.customFields.setValue({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | Yes | — |
+| `field_id` | `string` | Yes | — |
+| `custom_task_ids` | `boolean` | No | — |
+| `team_id` | `string` | No | — |
+| `value` | `any` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Dependencies
+
+### add
+
+`dependencies.add`
+
+Add a waiting-on/blocking dependency to a Task
+
+**Risk:** `write`
+
+```ts
+await corsair.clickup.api.dependencies.add({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | Yes | — |
+| `depends_on` | `string` | No | — |
+| `dependency_of` | `string` | No | — |
+| `custom_task_ids` | `boolean` | No | — |
+| `team_id` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### delete
+
+`dependencies.delete`
+
+Remove a dependency from a Task
+
+**Risk:** `destructive`
+
+```ts
+await corsair.clickup.api.dependencies.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | Yes | — |
+| `depends_on` | `string` | No | — |
+| `dependency_of` | `string` | No | — |
+| `custom_task_ids` | `boolean` | No | — |
+| `team_id` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Docs
+
+### content
+
+`docs.content`
+
+Get full Doc content
+
+**Risk:** `read`
+
+```ts
+await corsair.clickup.api.docs.content({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `string` | Yes | — |
+| `doc_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### create
+
+`docs.create`
+
+Create a new Doc
+
+**Risk:** `write`
+
+```ts
+await corsair.clickup.api.docs.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `parent` | `string` | No | — |
+| `visibility` | `PUBLIC \| PRIVATE` | No | — |
+| `create_page` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### createPage
+
+`docs.createPage`
+
+Create a page in a Doc
+
+**Risk:** `write`
+
+```ts
+await corsair.clickup.api.docs.createPage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `string` | Yes | — |
+| `doc_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `content` | `string` | No | — |
+| `content_format` | `text/md \| text/plain` | No | — |
+| `parent_page_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### pageContent
+
+`docs.pageContent`
+
+Get a single Doc page
+
+**Risk:** `read`
+
+```ts
+await corsair.clickup.api.docs.pageContent({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `string` | Yes | — |
+| `doc_id` | `string` | Yes | — |
+| `page_id` | `string` | Yes | — |
+| `content_format` | `text/md \| text/plain` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### pageListing
+
+`docs.pageListing`
+
+Get the page listing structure of a Doc
+
+**Risk:** `read`
+
+```ts
+await corsair.clickup.api.docs.pageListing({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `string` | Yes | — |
+| `doc_id` | `string` | Yes | — |
+| `max_page_depth` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pages` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="pages full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### pages
+
+`docs.pages`
+
+List pages in a Doc
+
+**Risk:** `read`
+
+```ts
+await corsair.clickup.api.docs.pages({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `string` | Yes | — |
+| `doc_id` | `string` | Yes | — |
+| `max_page_depth` | `number` | No | — |
+| `content_format` | `text/md \| text/plain` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pages` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="pages full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`docs.search`
+
+Search Docs in a Workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.clickup.api.docs.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `string` | Yes | — |
+| `creator` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `docs` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="docs full type">
+
+```ts
+{
+  id: string,
+  name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updatePage
+
+`docs.updatePage`
+
+Update a Doc page
+
+**Risk:** `write`
+
+```ts
+await corsair.clickup.api.docs.updatePage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `string` | Yes | — |
+| `doc_id` | `string` | Yes | — |
+| `page_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `sub_title` | `string` | No | — |
+| `content` | `string` | No | — |
+| `content_format` | `text/md \| text/plain` | No | — |
+| `content_edit_mode` | `replace \| append \| prepend` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+## Folders
+
+### create
+
+`folders.create`
+
+Create a new Folder
+
+**Risk:** `write`
+
+```ts
+await corsair.clickup.api.folders.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `space_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+---
+
+### delete
+
+`folders.delete`
+
+Delete a Folder
+
+**Risk:** `destructive`
+
+```ts
+await corsair.clickup.api.folders.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `folder_id` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### get
+
+`folders.get`
+
+Get a single Folder
+
+**Risk:** `read`
+
+```ts
+await corsair.clickup.api.folders.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `folder_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+---
+
+### list
+
+`folders.list`
+
+List Folders in a Space
+
+**Risk:** `read`
+
+```ts
+await corsair.clickup.api.folders.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `space_id` | `string` | Yes | — |
+| `archived` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `folders` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="folders full type">
+
+```ts
+{
+  id: string,
+  name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`folders.update`
+
+Rename a Folder
+
+**Risk:** `write`
+
+```ts
+await corsair.clickup.api.folders.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `folder_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+---
+
+### viewsCreate
+
+`folders.viewsCreate`
+
+Create a view in a Folder
+
+**Risk:** `write`
+
+```ts
+await corsair.clickup.api.folders.viewsCreate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `folder_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `type` | `list \| board \| calendar \| table \| timeline \| workload \| activity \| map \| chat \| gantt` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+---
+
+### viewsGet
+
+`folders.viewsGet`
+
+List views in a Folder
+
+**Risk:** `read`
+
+```ts
+await corsair.clickup.api.folders.viewsGet({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `folder_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `views` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="views full type">
+
+```ts
+{
+  id: string,
+  name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Goals
+
+### create
+
+`goals.create`
+
+Create a new Goal
+
+**Risk:** `write`
+
+```ts
+await corsair.clickup.api.goals.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `due_date` | `number` | No | — |
+| `color` | `string` | No | — |
+| `owners` | `number[]` | No | — |
+| `multiple_owners` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+---
+
+### delete
+
+`goals.delete`
+
+Delete a Goal
+
+**Risk:** `destructive`
+
+```ts
+await corsair.clickup.api.goals.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `goal_id` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### get
+
+`goals.get`
+
+Get a single Goal
+
+**Risk:** `read`
+
+```ts
+await corsair.clickup.api.goals.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `goal_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+---
+
+### keyResultsCreate
+
+`goals.keyResultsCreate`
+
+Create a key result for a Goal
+
+**Risk:** `write`
+
+```ts
+await corsair.clickup.api.goals.keyResultsCreate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `goal_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `owners` | `number[]` | Yes | — |
+| `type` | `number \| currency \| boolean \| percentage \| automatic` | Yes | — |
+| `steps_start` | `number` | No | — |
+| `steps_end` | `number` | No | — |
+| `unit` | `string` | No | — |
+| `task_ids` | `string[]` | No | — |
+| `list_ids` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+---
+
+### keyResultsDelete
+
+`goals.keyResultsDelete`
+
+Delete a key result
+
+**Risk:** `destructive`
+
+```ts
+await corsair.clickup.api.goals.keyResultsDelete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `key_result_id` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### keyResultsUpdate
+
+`goals.keyResultsUpdate`
+
+Update a key result
+
+**Risk:** `write`
+
+```ts
+await corsair.clickup.api.goals.keyResultsUpdate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `key_result_id` | `string` | Yes | — |
+| `steps_current` | `number` | No | — |
+| `note` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+---
+
+### list
+
+`goals.list`
+
+List Goals in a Workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.clickup.api.goals.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `goals` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="goals full type">
+
+```ts
+{
+  id: string,
+  name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`goals.update`
+
+Update a Goal
+
+**Risk:** `write`
+
+```ts
+await corsair.clickup.api.goals.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `goal_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `due_date` | `number` | No | — |
+| `color` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+---
+
+## Guests
+
+### addToFolder
+
+`guests.addToFolder`
+
+Share a Folder with a guest
+
+**Risk:** `write`
+
+```ts
+await corsair.clickup.api.guests.addToFolder({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `folder_id` | `string` | Yes | — |
+| `guest_id` | `string` | Yes | — |
+| `permission_level` | `number` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### addToList
+
+`guests.addToList`
+
+Share a List with a guest
+
+**Risk:** `write`
+
+```ts
+await corsair.clickup.api.guests.addToList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `guest_id` | `string` | Yes | — |
+| `permission_level` | `number` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### addToTask
+
+`guests.addToTask`
+
+Share a Task with a guest
+
+**Risk:** `write`
+
+```ts
+await corsair.clickup.api.guests.addToTask({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | Yes | — |
+| `guest_id` | `string` | Yes | — |
+| `permission_level` | `number` | No | — |
+| `custom_task_ids` | `boolean` | No | — |
+| `team_id` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`guests.get`
+
+Get a Workspace guest
+
+**Risk:** `read`
+
+```ts
+await corsair.clickup.api.guests.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_id` | `string` | Yes | — |
+| `guest_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `guest` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="guest full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### invite
+
+`guests.invite`
+
+Invite a guest to a Workspace
+
+**Risk:** `write`
+
+```ts
+await corsair.clickup.api.guests.invite({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_id` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+| `custom_role` | `string` | No | — |
+| `can_edit_tags` | `boolean` | No | — |
+| `can_see_time_spent` | `boolean` | No | — |
+| `can_see_time_estimated` | `boolean` | No | — |
+| `can_create_views` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `guest` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="guest full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`guests.remove`
+
+Remove a guest from a Workspace
+
+**Risk:** `destructive`
+
+```ts
+await corsair.clickup.api.guests.remove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_id` | `string` | Yes | — |
+| `guest_id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### removeFromFolder
+
+`guests.removeFromFolder`
+
+Remove a guest from a Folder
+
+**Risk:** `destructive`
+
+```ts
+await corsair.clickup.api.guests.removeFromFolder({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `folder_id` | `string` | Yes | — |
+| `guest_id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### removeFromList
+
+`guests.removeFromList`
+
+Remove a guest from a List
+
+**Risk:** `destructive`
+
+```ts
+await corsair.clickup.api.guests.removeFromList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `guest_id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### removeFromTask
+
+`guests.removeFromTask`
+
+Remove a guest from a Task
+
+**Risk:** `destructive`
+
+```ts
+await corsair.clickup.api.guests.removeFromTask({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | Yes | — |
+| `guest_id` | `string` | Yes | — |
+| `custom_task_ids` | `boolean` | No | — |
+| `team_id` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### update
+
+`guests.update`
+
+Update a Workspace guest
+
+**Risk:** `write`
+
+```ts
+await corsair.clickup.api.guests.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_id` | `string` | Yes | — |
+| `guest_id` | `string` | Yes | — |
+| `username` | `string` | No | — |
+| `custom_role` | `string` | No | — |
+| `can_edit_tags` | `boolean` | No | — |
+| `can_see_time_spent` | `boolean` | No | — |
+| `can_see_time_estimated` | `boolean` | No | — |
+| `can_create_views` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `guest` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="guest full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Lists
+
+### commentsCreate
+
+`lists.commentsCreate`
+
+Comment on a List
+
+**Risk:** `write`
+
+```ts
+await corsair.clickup.api.lists.commentsCreate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `comment_text` | `string` | Yes | — |
+| `assignee` | `number` | No | — |
+| `notify_all` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### commentsGet
+
+`lists.commentsGet`
+
+Get comments on a List
+
+**Risk:** `read`
+
+```ts
+await corsair.clickup.api.lists.commentsGet({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `start` | `number` | No | — |
+| `start_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `comments` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="comments full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`lists.create`
+
+Create a List in a Folder
+
+**Risk:** `write`
+
+```ts
+await corsair.clickup.api.lists.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `folder_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `content` | `string` | No | — |
+| `due_date` | `number` | No | — |
+| `priority` | `number` | No | — |
+| `assignee` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+---
+
+### createFolderless
+
+`lists.createFolderless`
+
+Create a folderless List in a Space
+
+**Risk:** `write`
+
+```ts
+await corsair.clickup.api.lists.createFolderless({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `space_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `content` | `string` | No | — |
+| `due_date` | `number` | No | — |
+| `priority` | `number` | No | — |
+| `assignee` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+---
+
+### createFromTemplate
+
+`lists.createFromTemplate`
+
+Create a List from a template
+
+**Risk:** `write`
+
+```ts
+await corsair.clickup.api.lists.createFromTemplate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `folder_id` | `string` | Yes | — |
+| `template_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+---
+
+### delete
+
+`lists.delete`
+
+Delete a List
+
+**Risk:** `destructive`
+
+```ts
+await corsair.clickup.api.lists.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### folderless
+
+`lists.folderless`
+
+List folderless Lists in a Space
+
+**Risk:** `read`
+
+```ts
+await corsair.clickup.api.lists.folderless({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `space_id` | `string` | Yes | — |
+| `archived` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lists` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="lists full type">
+
+```ts
+{
+  id: string,
+  name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`lists.get`
+
+Get a single List
+
+**Risk:** `read`
+
+```ts
+await corsair.clickup.api.lists.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+---
+
+### list
+
+`lists.list`
+
+List Lists in a Folder
+
+**Risk:** `read`
+
+```ts
+await corsair.clickup.api.lists.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `folder_id` | `string` | Yes | — |
+| `archived` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lists` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="lists full type">
+
+```ts
+{
+  id: string,
+  name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### members
+
+`lists.members`
+
+List members of a List
+
+**Risk:** `read`
+
+```ts
+await corsair.clickup.api.lists.members({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `members` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="members full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`lists.update`
+
+Update a List
+
+**Risk:** `write`
+
+```ts
+await corsair.clickup.api.lists.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `content` | `string` | No | — |
+| `due_date` | `number` | No | — |
+| `priority` | `number` | No | — |
+| `assignee` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+---
+
+### viewsCreate
+
+`lists.viewsCreate`
+
+Create a view in a List
+
+**Risk:** `write`
+
+```ts
+await corsair.clickup.api.lists.viewsCreate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `type` | `list \| board \| calendar \| table \| timeline \| workload \| activity \| map \| chat \| gantt` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+---
+
+### viewsGet
+
+`lists.viewsGet`
+
+List views in a List
+
+**Risk:** `read`
+
+```ts
+await corsair.clickup.api.lists.viewsGet({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `views` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="views full type">
+
+```ts
+{
+  id: string,
+  name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Spaces
+
+### availableFields
+
+`spaces.availableFields`
+
+List custom fields available in a Space
+
+**Risk:** `read`
+
+```ts
+await corsair.clickup.api.spaces.availableFields({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `space_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fields` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+{
+  id: string,
+  name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`spaces.create`
+
+Create a new Space
+
+**Risk:** `write`
+
+```ts
+await corsair.clickup.api.spaces.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `multiple_assignees` | `boolean` | No | — |
+| `features` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="features full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+---
+
+### delete
+
+`spaces.delete`
+
+Delete a Space
+
+**Risk:** `destructive`
+
+```ts
+await corsair.clickup.api.spaces.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `space_id` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### get
+
+`spaces.get`
+
+Get a single Space
+
+**Risk:** `read`
+
+```ts
+await corsair.clickup.api.spaces.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `space_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+---
+
+### list
+
+`spaces.list`
+
+List Spaces in a Workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.clickup.api.spaces.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_id` | `string` | Yes | — |
+| `archived` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `spaces` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="spaces full type">
+
+```ts
+{
+  id: string,
+  name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### tagsCreate
+
+`spaces.tagsCreate`
+
+Create a tag in a Space
+
+**Risk:** `write`
+
+```ts
+await corsair.clickup.api.spaces.tagsCreate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `space_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `tag_fg` | `string` | No | — |
+| `tag_bg` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### tagsDelete
+
+`spaces.tagsDelete`
+
+Delete a tag from a Space
+
+**Risk:** `destructive`
+
+```ts
+await corsair.clickup.api.spaces.tagsDelete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `space_id` | `string` | Yes | — |
+| `tag_name` | `string` | Yes | — |
+| `tag_name_1` | `string` | No | — |
+| `tag_tag_fg` | `string` | No | — |
+| `tag_tag_bg` | `string` | No | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### tagsGet
+
+`spaces.tagsGet`
+
+List tags in a Space
+
+**Risk:** `read`
+
+```ts
+await corsair.clickup.api.spaces.tagsGet({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `space_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tags` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="tags full type">
+
+```ts
+{
+  name: string,
+  tag_fg?: string,
+  tag_bg?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### tagsUpdate
+
+`spaces.tagsUpdate`
+
+Update a tag in a Space
+
+**Risk:** `write`
+
+```ts
+await corsair.clickup.api.spaces.tagsUpdate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `space_id` | `string` | Yes | — |
+| `tag_name` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `tag_fg` | `string` | Yes | — |
+| `tag_bg` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### update
+
+`spaces.update`
+
+Update an existing Space
+
+**Risk:** `write`
+
+```ts
+await corsair.clickup.api.spaces.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `space_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `color` | `string` | No | — |
+| `private` | `boolean` | No | — |
+| `admin_can_manage` | `boolean` | No | — |
+| `multiple_assignees` | `boolean` | No | — |
+| `features` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="features full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+---
+
+### viewsCreate
+
+`spaces.viewsCreate`
+
+Create a view in a Space
+
+**Risk:** `write`
+
+```ts
+await corsair.clickup.api.spaces.viewsCreate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `space_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `type` | `list \| board \| calendar \| table \| timeline \| workload \| activity \| map \| chat \| gantt` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+---
+
+### viewsGet
+
+`spaces.viewsGet`
+
+List views in a Space
+
+**Risk:** `read`
+
+```ts
+await corsair.clickup.api.spaces.viewsGet({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `space_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `views` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="views full type">
+
+```ts
+{
+  id: string,
+  name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Task Comments
+
+### create
+
+`taskComments.create`
+
+Comment on a Task
+
+**Risk:** `write`
+
+```ts
+await corsair.clickup.api.taskComments.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | Yes | — |
+| `comment_text` | `string` | Yes | — |
+| `assignee` | `number` | No | — |
+| `notify_all` | `boolean` | No | — |
+| `custom_task_ids` | `boolean` | No | — |
+| `team_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### delete
+
+`taskComments.delete`
+
+Delete a Task comment
+
+**Risk:** `destructive`
+
+```ts
+await corsair.clickup.api.taskComments.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `comment_id` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### get
+
+`taskComments.get`
+
+Get comments on a Task
+
+**Risk:** `read`
+
+```ts
+await corsair.clickup.api.taskComments.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | Yes | — |
+| `start` | `number` | No | — |
+| `start_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `comments` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="comments full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### threadedCreate
+
+`taskComments.threadedCreate`
+
+Reply to a comment in a thread
+
+**Risk:** `write`
+
+```ts
+await corsair.clickup.api.taskComments.threadedCreate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `comment_id` | `string` | Yes | — |
+| `comment_text` | `string` | Yes | — |
+| `assignee` | `number` | No | — |
+| `notify_all` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### threadedGet
+
+`taskComments.threadedGet`
+
+Get threaded replies to a comment
+
+**Risk:** `read`
+
+```ts
+await corsair.clickup.api.taskComments.threadedGet({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `comment_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `comments` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="comments full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`taskComments.update`
+
+Update a Task comment
+
+**Risk:** `write`
+
+```ts
+await corsair.clickup.api.taskComments.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `comment_id` | `string` | Yes | — |
+| `comment_text` | `string` | No | — |
+| `assignee` | `number` | No | — |
+| `resolved` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+## Task Links
+
+### add
+
+`taskLinks.add`
+
+Link two Tasks
+
+**Risk:** `write`
+
+```ts
+await corsair.clickup.api.taskLinks.add({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | Yes | — |
+| `links_to` | `string` | Yes | — |
+| `custom_task_ids` | `boolean` | No | — |
+| `team_id` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### delete
+
+`taskLinks.delete`
+
+Delete a link between two Tasks
+
+**Risk:** `destructive`
+
+```ts
+await corsair.clickup.api.taskLinks.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | Yes | — |
+| `links_to` | `string` | Yes | — |
+| `custom_task_ids` | `boolean` | No | — |
+| `team_id` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Task Lists
+
+### add
+
+`taskLists.add`
+
+Add a Task to an additional List
+
+**Risk:** `write`
+
+```ts
+await corsair.clickup.api.taskLists.add({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `task_id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### remove
+
+`taskLists.remove`
+
+Remove a Task from an additional List
+
+**Risk:** `destructive`
+
+```ts
+await corsair.clickup.api.taskLists.remove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `task_id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Tasks
+
+### attachmentsCreate
+
+`tasks.attachmentsCreate`
+
+Upload a file attachment to a Task
+
+**Risk:** `write`
+
+```ts
+await corsair.clickup.api.tasks.attachmentsCreate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | Yes | — |
+| `filename` | `string` | Yes | — |
+| `content_type` | `string` | No | — |
+| `file_base64` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+
+
+
+---
+
+### bulkTimeInStatus
+
+`tasks.bulkTimeInStatus`
+
+Get time in status for multiple Tasks
+
+**Risk:** `read`
+
+```ts
+await corsair.clickup.api.tasks.bulkTimeInStatus({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_ids` | `string[]` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### create
+
+`tasks.create`
+
+Create a new Task
+
+**Risk:** `write`
+
+```ts
+await corsair.clickup.api.tasks.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `markdown_content` | `string` | No | — |
+| `assignees` | `number[]` | No | — |
+| `status` | `string` | No | — |
+| `priority` | `number` | No | — |
+| `due_date` | `number` | No | — |
+| `due_date_time` | `boolean` | No | — |
+| `time_estimate` | `number` | No | — |
+| `start_date` | `number` | No | — |
+| `start_date_time` | `boolean` | No | — |
+| `notify_all` | `boolean` | No | — |
+| `parent` | `string` | No | — |
+| `links_to` | `string` | No | — |
+| `custom_fields` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="custom_fields full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+---
+
+### createFromTemplate
+
+`tasks.createFromTemplate`
+
+Create a Task from a template
+
+**Risk:** `write`
+
+```ts
+await corsair.clickup.api.tasks.createFromTemplate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `template_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+---
+
+### delete
+
+`tasks.delete`
+
+Delete a Task
+
+**Risk:** `destructive`
+
+```ts
+await corsair.clickup.api.tasks.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | Yes | — |
+| `custom_task_ids` | `boolean` | No | — |
+| `team_id` | `string` | No | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### filteredTeam
+
+`tasks.filteredTeam`
+
+List filtered Tasks across a Workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.clickup.api.tasks.filteredTeam({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_id` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `space_ids` | `string[]` | No | — |
+| `project_ids` | `string[]` | No | — |
+| `list_ids` | `string[]` | No | — |
+| `statuses` | `string[]` | No | — |
+| `assignees` | `number[]` | No | — |
+| `tags` | `string[]` | No | — |
+| `parent` | `string` | No | — |
+| `subtasks` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tasks` | `object[]` | No | — |
+| `last_page` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="tasks full type">
+
+```ts
+{
+  id: string,
+  name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`tasks.get`
+
+Get a single Task
+
+**Risk:** `read`
+
+```ts
+await corsair.clickup.api.tasks.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | Yes | — |
+| `custom_task_ids` | `boolean` | No | — |
+| `team_id` | `string` | No | — |
+| `include_subtasks` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+---
+
+### list
+
+`tasks.list`
+
+List Tasks in a List
+
+**Risk:** `read`
+
+```ts
+await corsair.clickup.api.tasks.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `archived` | `boolean` | No | — |
+| `subtasks` | `boolean` | No | — |
+| `include_closed` | `boolean` | No | — |
+| `statuses` | `string[]` | No | — |
+| `assignees` | `number[]` | No | — |
+| `tags` | `string[]` | No | — |
+| `order_by` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tasks` | `object[]` | No | — |
+| `last_page` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="tasks full type">
+
+```ts
+{
+  id: string,
+  name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### members
+
+`tasks.members`
+
+List members with explicit Task access
+
+**Risk:** `read`
+
+```ts
+await corsair.clickup.api.tasks.members({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `members` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="members full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### moveToHomeList
+
+`tasks.moveToHomeList`
+
+Move a Task to a new home List
+
+**Risk:** `write`
+
+```ts
+await corsair.clickup.api.tasks.moveToHomeList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `string` | Yes | — |
+| `task_id` | `string` | Yes | — |
+| `list_id` | `string` | Yes | — |
+| `move_custom_fields` | `boolean` | No | — |
+| `custom_fields_to_move` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+---
+
+### tagsAdd
+
+`tasks.tagsAdd`
+
+Add a tag to a Task
+
+**Risk:** `write`
+
+```ts
+await corsair.clickup.api.tasks.tagsAdd({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | Yes | — |
+| `tag_name` | `string` | Yes | — |
+| `custom_task_ids` | `boolean` | No | — |
+| `team_id` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### tagsRemove
+
+`tasks.tagsRemove`
+
+Remove a tag from a Task
+
+**Risk:** `destructive`
+
+```ts
+await corsair.clickup.api.tasks.tagsRemove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | Yes | — |
+| `tag_name` | `string` | Yes | — |
+| `custom_task_ids` | `boolean` | No | — |
+| `team_id` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### templates
+
+`tasks.templates`
+
+List Task templates in a Workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.clickup.api.tasks.templates({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_id` | `string` | Yes | — |
+| `page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `templates` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="templates full type">
+
+```ts
+{
+  id: string,
+  name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### timeInStatus
+
+`tasks.timeInStatus`
+
+Get time a Task spent in each status
+
+**Risk:** `read`
+
+```ts
+await corsair.clickup.api.tasks.timeInStatus({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### trackedTimeCreate
+
+`tasks.trackedTimeCreate`
+
+Record legacy tracked time for a Task
+
+**Risk:** `write`
+
+```ts
+await corsair.clickup.api.tasks.trackedTimeCreate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | Yes | — |
+| `start` | `number` | No | — |
+| `end` | `number` | No | — |
+| `billable` | `boolean` | No | — |
+| `description` | `string` | No | — |
+| `assignee` | `number` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### trackedTimeDelete
+
+`tasks.trackedTimeDelete`
+
+Delete a legacy time-tracked interval
+
+**Risk:** `destructive`
+
+```ts
+await corsair.clickup.api.tasks.trackedTimeDelete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | Yes | — |
+| `interval_id` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### trackedTimeGet
+
+`tasks.trackedTimeGet`
+
+Get legacy tracked time for a Task
+
+**Risk:** `read`
+
+```ts
+await corsair.clickup.api.tasks.trackedTimeGet({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### trackedTimeUpdate
+
+`tasks.trackedTimeUpdate`
+
+Edit a legacy time-tracked interval
+
+**Risk:** `write`
+
+```ts
+await corsair.clickup.api.tasks.trackedTimeUpdate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | Yes | — |
+| `interval_id` | `string` | Yes | — |
+| `start` | `number` | No | — |
+| `end` | `number` | No | — |
+| `description` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### update
+
+`tasks.update`
+
+Update an existing Task
+
+**Risk:** `write`
+
+```ts
+await corsair.clickup.api.tasks.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `status` | `string` | No | — |
+| `priority` | `number` | No | — |
+| `due_date` | `number` | No | — |
+| `due_date_time` | `boolean` | No | — |
+| `time_estimate` | `number` | No | — |
+| `start_date` | `number` | No | — |
+| `start_date_time` | `boolean` | No | — |
+| `assignees` | `number[]` | No | — |
+| `archived` | `boolean` | No | — |
+| `parent` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+---
+
+## Teams
+
+### create
+
+`teams.create`
+
+Create a user group
+
+**Risk:** `write`
+
+```ts
+await corsair.clickup.api.teams.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `members` | `number[]` | No | — |
+| `admins` | `number[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+---
+
+### delete
+
+`teams.delete`
+
+Delete a user group
+
+**Risk:** `destructive`
+
+```ts
+await corsair.clickup.api.teams.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group_id` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### list
+
+`teams.list`
+
+List user groups
+
+**Risk:** `read`
+
+```ts
+await corsair.clickup.api.teams.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `groups` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="groups full type">
+
+```ts
+{
+  id: string,
+  name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`teams.update`
+
+Update a user group
+
+**Risk:** `write`
+
+```ts
+await corsair.clickup.api.teams.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `handle` | `string` | No | — |
+| `add` | `number[]` | No | — |
+| `rem` | `number[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+---
+
+## Time Entries
+
+### create
+
+`timeEntries.create`
+
+Create a time entry
+
+**Risk:** `write`
+
+```ts
+await corsair.clickup.api.timeEntries.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_id` | `string` | Yes | — |
+| `start` | `number` | No | — |
+| `end` | `number` | No | — |
+| `duration` | `number` | No | — |
+| `description` | `string` | No | — |
+| `tid` | `string` | No | — |
+| `billable` | `boolean` | No | — |
+| `tags` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### delete
+
+`timeEntries.delete`
+
+Delete a time entry
+
+**Risk:** `destructive`
+
+```ts
+await corsair.clickup.api.timeEntries.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_id` | `string` | Yes | — |
+| `timer_id` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### get
+
+`timeEntries.get`
+
+Get a single time entry
+
+**Risk:** `read`
+
+```ts
+await corsair.clickup.api.timeEntries.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_id` | `string` | Yes | — |
+| `timer_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### history
+
+`timeEntries.history`
+
+Get time entry change history
+
+**Risk:** `read`
+
+```ts
+await corsair.clickup.api.timeEntries.history({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_id` | `string` | Yes | — |
+| `timer_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### range
+
+`timeEntries.range`
+
+List time entries in a date range
+
+**Risk:** `read`
+
+```ts
+await corsair.clickup.api.timeEntries.range({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_id` | `string` | Yes | — |
+| `start_date` | `number` | No | — |
+| `end_date` | `number` | No | — |
+| `assignee` | `number` | No | — |
+| `space_id` | `string` | No | — |
+| `folder_id` | `string` | No | — |
+| `list_id` | `string` | No | — |
+| `task_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### running
+
+`timeEntries.running`
+
+Get the running time entry
+
+**Risk:** `read`
+
+```ts
+await corsair.clickup.api.timeEntries.running({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### start
+
+`timeEntries.start`
+
+Start a time entry timer
+
+**Risk:** `write`
+
+```ts
+await corsair.clickup.api.timeEntries.start({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_id` | `string` | Yes | — |
+| `tid` | `string` | No | — |
+| `description` | `string` | No | — |
+| `billable` | `boolean` | No | — |
+| `tags` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### stop
+
+`timeEntries.stop`
+
+Stop the running time entry
+
+**Risk:** `write`
+
+```ts
+await corsair.clickup.api.timeEntries.stop({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### tagsAdd
+
+`timeEntries.tagsAdd`
+
+Add tags to time entries
+
+**Risk:** `write`
+
+```ts
+await corsair.clickup.api.timeEntries.tagsAdd({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_id` | `string` | Yes | — |
+| `tags` | `string[]` | Yes | — |
+| `timer_ids` | `string[]` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### tagsGetAll
+
+`timeEntries.tagsGetAll`
+
+List all time entry tags in a Workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.clickup.api.timeEntries.tagsGetAll({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### tagsRemove
+
+`timeEntries.tagsRemove`
+
+Remove tags from time entries
+
+**Risk:** `destructive`
+
+```ts
+await corsair.clickup.api.timeEntries.tagsRemove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_id` | `string` | Yes | — |
+| `tags` | `string[]` | Yes | — |
+| `timer_ids` | `string[]` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### tagsUpdate
+
+`timeEntries.tagsUpdate`
+
+Rename a time entry tag
+
+**Risk:** `write`
+
+```ts
+await corsair.clickup.api.timeEntries.tagsUpdate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `new_name` | `string` | No | — |
+| `background_color` | `string` | No | — |
+| `foreground_color` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### update
+
+`timeEntries.update`
+
+Update a time entry
+
+**Risk:** `write`
+
+```ts
+await corsair.clickup.api.timeEntries.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_id` | `string` | Yes | — |
+| `timer_id` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `start` | `number` | No | — |
+| `end` | `number` | No | — |
+| `duration` | `number` | No | — |
+| `tid` | `string` | No | — |
+| `billable` | `boolean` | No | — |
+| `tags` | `string[]` | No | — |
+| `tag_action` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+## Users
+
+### get
+
+`users.get`
+
+Get a Workspace user
+
+**Risk:** `read`
+
+```ts
+await corsair.clickup.api.users.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_id` | `string` | Yes | — |
+| `user_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### invite
+
+`users.invite`
+
+Invite a user to a Workspace
+
+**Risk:** `write`
+
+```ts
+await corsair.clickup.api.users.invite({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_id` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+| `admin` | `boolean` | No | — |
+| `custom_role` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`users.remove`
+
+Remove a user from a Workspace
+
+**Risk:** `destructive`
+
+```ts
+await corsair.clickup.api.users.remove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_id` | `string` | Yes | — |
+| `user_id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### update
+
+`users.update`
+
+Update a Workspace user
+
+**Risk:** `write`
+
+```ts
+await corsair.clickup.api.users.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_id` | `string` | Yes | — |
+| `user_id` | `string` | Yes | — |
+| `username` | `string` | No | — |
+| `admin` | `boolean` | No | — |
+| `custom_role` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Views
+
+### chatCommentsCreate
+
+`views.chatCommentsCreate`
+
+Comment on a Chat view
+
+**Risk:** `write`
+
+```ts
+await corsair.clickup.api.views.chatCommentsCreate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `view_id` | `string` | Yes | — |
+| `comment_text` | `string` | Yes | — |
+| `assignee` | `number` | No | — |
+| `notify_all` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### chatCommentsGet
+
+`views.chatCommentsGet`
+
+Get comments on a Chat view
+
+**Risk:** `read`
+
+```ts
+await corsair.clickup.api.views.chatCommentsGet({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `view_id` | `string` | Yes | — |
+| `start` | `number` | No | — |
+| `start_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `comments` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="comments full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`views.delete`
+
+Delete a View
+
+**Risk:** `destructive`
+
+```ts
+await corsair.clickup.api.views.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `view_id` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### get
+
+`views.get`
+
+Get a single View
+
+**Risk:** `read`
+
+```ts
+await corsair.clickup.api.views.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `view_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+---
+
+### tasks
+
+`views.tasks`
+
+List Tasks visible in a View
+
+**Risk:** `read`
+
+```ts
+await corsair.clickup.api.views.tasks({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `view_id` | `string` | Yes | — |
+| `page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tasks` | `object[]` | No | — |
+| `last_page` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="tasks full type">
+
+```ts
+{
+  id: string,
+  name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`views.update`
+
+Update a View
+
+**Risk:** `write`
+
+```ts
+await corsair.clickup.api.views.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `view_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `type` | `list \| board \| calendar \| table \| timeline \| workload \| activity \| map \| chat \| gantt` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+---
+
+## Workspace Acl
+
+### update
+
+`workspaceAcl.update`
+
+Update privacy and access for a Workspace object
+
+**Risk:** `write`
+
+```ts
+await corsair.clickup.api.workspaceAcl.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `string` | Yes | — |
+| `object_type` | `space \| folder \| list \| task \| view \| doc \| goal \| dashboard \| whiteboard` | Yes | — |
+| `object_id` | `string` | Yes | — |
+| `private` | `boolean` | No | — |
+| `grants` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="grants full type">
+
+```ts
+{
+  kind: user | group,
+  id: string,
+  permission_level: 1 | 3 | 4 | 5 | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Workspaces
+
+### authorizedUser
+
+`workspaces.authorizedUser`
+
+Get the authorized ClickUp user
+
+**Risk:** `read`
+
+```ts
+await corsair.clickup.api.workspaces.authorizedUser({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `user` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id: number,
+  username: string,
+  email: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### customRoles
+
+`workspaces.customRoles`
+
+List Workspace custom roles
+
+**Risk:** `read`
+
+```ts
+await corsair.clickup.api.workspaces.customRoles({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_id` | `string` | Yes | — |
+| `include_members` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `custom_roles` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="custom_roles full type">
+
+```ts
+{
+  id: string,
+  name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### customTaskTypes
+
+`workspaces.customTaskTypes`
+
+List Workspace custom task types
+
+**Risk:** `read`
+
+```ts
+await corsair.clickup.api.workspaces.customTaskTypes({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `custom_items` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="custom_items full type">
+
+```ts
+{
+  id: string,
+  name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### everythingViewsCreate
+
+`workspaces.everythingViewsCreate`
+
+Create an Everything-level Workspace view
+
+**Risk:** `write`
+
+```ts
+await corsair.clickup.api.workspaces.everythingViewsCreate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `type` | `list \| board \| calendar \| table \| timeline \| workload \| activity \| map \| chat \| gantt` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+---
+
+### everythingViewsGet
+
+`workspaces.everythingViewsGet`
+
+List Everything-level Workspace views
+
+**Risk:** `read`
+
+```ts
+await corsair.clickup.api.workspaces.everythingViewsGet({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `views` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="views full type">
+
+```ts
+{
+  id: string,
+  name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`workspaces.get`
+
+List Workspaces (Teams)
+
+**Risk:** `read`
+
+```ts
+await corsair.clickup.api.workspaces.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teams` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="teams full type">
+
+```ts
+{
+  id: string,
+  name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### plan
+
+`workspaces.plan`
+
+Get the Workspace subscription plan
+
+**Risk:** `read`
+
+```ts
+await corsair.clickup.api.workspaces.plan({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `plan` | `string` | No | — |
+
+
+
+---
+
+### seats
+
+`workspaces.seats`
+
+Get Workspace seat utilization
+
+**Risk:** `read`
+
+```ts
+await corsair.clickup.api.workspaces.seats({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `seats` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="seats full type">
+
+```ts
+{
+  id: string,
+  name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### sharedHierarchy
+
+`workspaces.sharedHierarchy`
+
+Get hierarchy shared with the authorized user
+
+**Risk:** `read`
+
+```ts
+await corsair.clickup.api.workspaces.sharedHierarchy({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shared` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="shared full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### teamFields
+
+`workspaces.teamFields`
+
+List Workspace-level custom fields
+
+**Risk:** `read`
+
+```ts
+await corsair.clickup.api.workspaces.teamFields({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fields` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+{
+  id: string,
+  name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

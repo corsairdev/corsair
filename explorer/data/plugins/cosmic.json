@@ -1,0 +1,994 @@
+{
+  "id": "cosmic",
+  "displayName": "Cosmic",
+  "description": "Cosmic plugin for Corsair",
+  "npmPackageName": "@corsair-dev/cosmic",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 20,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "bucket_slug"]
+    }
+  ],
+  "api": [
+    {
+      "path": "cosmic.api.media.delete",
+      "shortPath": "media.delete",
+      "description": "Delete Media by id",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bucketSlug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "trigger_webhook",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cosmic.api.media.find",
+      "shortPath": "media.find",
+      "description": "List Media in a Bucket",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bucketSlug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "props",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "media",
+            "optional": false,
+            "type": "{ id: string, name: string, original_name?: string, url?: string, imgix_url?: string, folder?: string, alt_text?: string, width?: number, height?: number, size?: number | string, type?: string, bucket?: string, created_at?: string, metadata?: {} }[]"
+          },
+          {
+            "key": "total",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cosmic.api.media.findOne",
+      "shortPath": "media.findOne",
+      "description": "Get a single Media item by name",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bucketSlug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "props",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "media",
+            "optional": false,
+            "type": "{ id: string, name: string, original_name?: string, url?: string, imgix_url?: string, folder?: string, alt_text?: string, width?: number, height?: number, size?: number | string, type?: string, bucket?: string, created_at?: string, metadata?: {} }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cosmic.api.media.insert",
+      "shortPath": "media.insert",
+      "description": "Upload Media to a Bucket",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bucketSlug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filename",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "folder",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "alt_text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "trigger_webhook",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "media",
+            "optional": false,
+            "type": "{ id: string, name: string, original_name?: string, url?: string, imgix_url?: string, folder?: string, alt_text?: string, width?: number, height?: number, size?: number | string, type?: string, bucket?: string, created_at?: string, metadata?: {} }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cosmic.api.media.update",
+      "shortPath": "media.update",
+      "description": "Update Media metadata by id",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bucketSlug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "folder",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "alt_text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "trigger_webhook",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cosmic.api.objects.batch",
+      "shortPath": "objects.batch",
+      "description": "Run up to 25 Object operations in one request",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bucketSlug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "operations",
+            "optional": false,
+            "type": "{ method: add | edit | delete, object_id?: string, object?: {}, trigger_webhook?: boolean }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "operations",
+            "optional": false,
+            "type": "{ method: string, status: string, object?: {}, message?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cosmic.api.objects.delete",
+      "shortPath": "objects.delete",
+      "description": "Delete an Object by id",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bucketSlug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "trigger_webhook",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cosmic.api.objects.find",
+      "shortPath": "objects.find",
+      "description": "List Objects in a Bucket with filtering and pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bucketSlug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "props",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "published | draft | any"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "depth",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "objects",
+            "optional": false,
+            "type": "{ id: string, slug?: string, title?: string, type?: string, status?: string, metadata?: {}, created_at?: string, modified_at?: string, published_at?: string, bucket?: string }[]"
+          },
+          {
+            "key": "total",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cosmic.api.objects.findOne",
+      "shortPath": "objects.findOne",
+      "description": "Get a single Object by type and slug",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bucketSlug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "props",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "published | draft | any"
+          },
+          {
+            "key": "depth",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": false,
+            "type": "{ id: string, slug?: string, title?: string, type?: string, status?: string, metadata?: {}, created_at?: string, modified_at?: string, published_at?: string, bucket?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cosmic.api.objects.getById",
+      "shortPath": "objects.getById",
+      "description": "Get a single Object by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bucketSlug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "props",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "published | draft | any"
+          },
+          {
+            "key": "depth",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": false,
+            "type": "{ id: string, slug?: string, title?: string, type?: string, status?: string, metadata?: {}, created_at?: string, modified_at?: string, published_at?: string, bucket?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cosmic.api.objects.insert",
+      "shortPath": "objects.insert",
+      "description": "Create an Object in a Bucket",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bucketSlug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "published | draft"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "trigger_webhook",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": false,
+            "type": "{ id: string, slug: string, title: string, type: string, status?: string, metadata?: {}, created_at?: string, modified_at?: string, published_at?: string, bucket?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cosmic.api.objects.update",
+      "shortPath": "objects.update",
+      "description": "Update an Object by id",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bucketSlug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "published | draft"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "trigger_webhook",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": false,
+            "type": "{ id: string, slug: string, title: string, type: string, status?: string, metadata?: {}, created_at?: string, modified_at?: string, published_at?: string, bucket?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cosmic.api.objectTypes.delete",
+      "shortPath": "objectTypes.delete",
+      "description": "Delete an Object type by slug",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bucketSlug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "trigger_webhook",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cosmic.api.objectTypes.find",
+      "shortPath": "objectTypes.find",
+      "description": "List Object types in a Bucket",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bucketSlug",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object_types",
+            "optional": false,
+            "type": "{ id: string, title: string, slug: string, singular?: string, singleton?: boolean, emoji?: string, metafields?: { id?: string, title: string, key: string, type: string, required?: boolean }[], created_at?: string, modified_at?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cosmic.api.objectTypes.findOne",
+      "shortPath": "objectTypes.findOne",
+      "description": "Get a single Object type by slug",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bucketSlug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object_type",
+            "optional": false,
+            "type": "{ id: string, title: string, slug: string, singular?: string, singleton?: boolean, emoji?: string, metafields?: { id?: string, title: string, key: string, type: string, required?: boolean }[], created_at?: string, modified_at?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cosmic.api.objectTypes.insert",
+      "shortPath": "objectTypes.insert",
+      "description": "Create an Object type",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bucketSlug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "singular",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "singleton",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "emoji",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metafields",
+            "optional": true,
+            "type": "{ id?: string, title: string, key: string, type: string, required?: boolean }[]"
+          },
+          {
+            "key": "localization",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{ slug_field?: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object_type",
+            "optional": false,
+            "type": "{ id: string, title: string, slug: string, singular?: string, singleton?: boolean, emoji?: string, metafields?: { id?: string, title: string, key: string, type: string, required?: boolean }[], created_at?: string, modified_at?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cosmic.api.objectTypes.update",
+      "shortPath": "objectTypes.update",
+      "description": "Update an Object type by slug",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bucketSlug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "singular",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "singleton",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "emoji",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metafields",
+            "optional": true,
+            "type": "{ id?: string, title: string, key: string, type: string, required?: boolean }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object_type",
+            "optional": false,
+            "type": "{ id: string, title: string, slug: string, singular?: string, singleton?: boolean, emoji?: string, metafields?: { id?: string, title: string, key: string, type: string, required?: boolean }[], created_at?: string, modified_at?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cosmic.api.revisions.find",
+      "shortPath": "revisions.find",
+      "description": "List Revisions for an Object",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bucketSlug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "objectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "props",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "created_at | -created_at"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "revisions",
+            "optional": false,
+            "type": "{ id: string, object_id: string, title: string, slug: string, status?: string, metadata?: {}, created_at?: string }[]"
+          },
+          {
+            "key": "total",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cosmic.api.revisions.findOne",
+      "shortPath": "revisions.findOne",
+      "description": "Get a single Revision by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bucketSlug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "objectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "revisionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "props",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "revision",
+            "optional": false,
+            "type": "{ id: string, object_id: string, title: string, slug: string, status?: string, metadata?: {}, created_at?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cosmic.api.revisions.insert",
+      "shortPath": "revisions.insert",
+      "description": "Add a draft Revision to an Object",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bucketSlug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "objectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "trigger_webhook",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "revision",
+            "optional": false,
+            "type": "{ id: string, object_id: string, title: string, slug: string, status?: string, metadata?: {}, created_at?: string }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

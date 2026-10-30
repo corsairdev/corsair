@@ -1,0 +1,2265 @@
+{
+  "id": "benzinga",
+  "displayName": "Benzinga",
+  "description": "Benzinga plugin for Corsair",
+  "npmPackageName": "@corsair-dev/benzinga",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 15,
+    "webhooks": 0,
+    "db": 13
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "benzinga.api.calendar.getConsensusRatings",
+      "shortPath": "calendar.getConsensusRatings",
+      "description": "Get aggregated analyst consensus rating and price targets for one ticker (GET /api/v1/consensus-ratings)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ticker",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "pagesize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "dateFrom",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dateTo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "simplify",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "aggregateType",
+            "optional": true,
+            "type": "number | percentage"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "aggregate_ratings",
+            "optional": true,
+            "type": "{ strong_buy?: number | null, buy?: number | null, hold?: number | null, sell?: number | null, strong_sell?: number | null }"
+          },
+          {
+            "key": "aggregate_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "consensus_price_target",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "consensus_rating",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "consensus_rating_val",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "high_price_target",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "low_price_target",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total_analyst_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "unique_analyst_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "benzinga.api.calendar.getEarningsStream",
+      "shortPath": "calendar.getEarningsStream",
+      "description": "Get the WebSocket URL for the real-time earnings calendar stream (wss://api.benzinga.com/api/v2.1/calendar/earnings/stream); append token=<api key> to connect",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tickers",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isins",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "authQueryParam",
+            "optional": false,
+            "type": "token"
+          },
+          {
+            "key": "commands",
+            "optional": false,
+            "type": "ping | replay[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "benzinga.api.calendar.listConferenceCalls",
+      "shortPath": "calendar.listConferenceCalls",
+      "description": "List conference call data (GET /api/v2.1/calendar/conference-calls, page/pagesize pagination)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagesize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dateFrom",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dateTo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tickers",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "conference",
+            "optional": false,
+            "type": "{ id: string, access_code?: string | null, confirmed?: boolean | null, cusip?: string | null, date?: string | null, exchange?: string | null, importance?: number | null, international_num?: string | null, isin?: string | null, name?: string | null, notes?: string | null, period?: string | null, period_year?: number | null, phone_num?: string | null, reservation_num?: string | null, start_time?: string | null, ticker?: string | null, time?: string | null, updated?: number | null, webcast_url?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "benzinga.api.calendar.listDividends",
+      "shortPath": "calendar.listDividends",
+      "description": "List dividends calendar data (GET /api/v2.2/calendar/dividends, page/pagesize pagination)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagesize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dateFrom",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dateTo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tickers",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "importance",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "updated",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "dateSort",
+            "optional": true,
+            "type": "announced | ex | payable | record"
+          },
+          {
+            "key": "dividend_yield",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "dividend_yield_operation",
+            "optional": true,
+            "type": "gt | gte | eq | lte | lt"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dividends",
+            "optional": false,
+            "type": "{ id: string, confirmed?: boolean | null, currency?: string | null, cusip?: string | null, date?: string | null, dividend?: string | null, dividend_prior?: string | null, dividend_type?: string | null, dividend_yield?: string | null, end_regular_dividend?: boolean | null, ex_dividend_date?: string | null, exchange?: string | null, frequency?: number | null, importance?: number | null, isin?: string | null, name?: string | null, notes?: string | null, payable_date?: string | null, period?: string | null, record_date?: string | null, ticker?: string | null, updated?: number | null, year?: number | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "benzinga.api.calendar.listEarnings",
+      "shortPath": "calendar.listEarnings",
+      "description": "List earnings calendar data (GET /api/v2.1/calendar/earnings, page/pagesize pagination)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagesize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dateFrom",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dateTo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tickers",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "importance",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "updated",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "dateSort",
+            "optional": true,
+            "type": "date"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "earnings",
+            "optional": false,
+            "type": "{ id: string, currency?: string | null, cusip?: string | null, date?: string | null, date_confirmed?: number | null, eps?: string | null, eps_est?: string | null, eps_prior?: string | null, eps_surprise?: string | null, eps_surprise_percent?: string | null, eps_type?: string | null, exchange?: string | null, importance?: number | null, isin?: string | null, name?: string | null, notes?: string | null, period?: string | null, period_year?: number | null, revenue?: string | null, revenue_est?: string | null, revenue_prior?: string | null, revenue_surprise?: string | null, revenue_surprise_percent?: string | null, revenue_type?: string | null, ticker?: string | null, time?: string | null, updated?: number | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "benzinga.api.calendar.listEconomics",
+      "shortPath": "calendar.listEconomics",
+      "description": "List economic calendar data (GET /api/v2.1/calendar/economics, page/pagesize pagination)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagesize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dateFrom",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dateTo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "importance",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "updated",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "event_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "event_category",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "economics",
+            "optional": false,
+            "type": "{ id: string, actual?: string | null, actual_t?: string | null, confirmed?: boolean | null, consensus?: string | null, consensus_t?: string | null, country?: string | null, date?: string | null, description?: string | null, event_category?: string | null, event_name?: string | null, event_period?: string | null, importance?: number | null, notes?: string | null, period_year?: number | null, prior?: string | null, prior_t?: string | null, time?: string | null, updated?: number | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "benzinga.api.calendar.listGuidance",
+      "shortPath": "calendar.listGuidance",
+      "description": "List company guidance data (GET /api/v2.1/calendar/guidance, page/pagesize pagination)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagesize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dateFrom",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dateTo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tickers",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "importance",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "updated",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "is_primary",
+            "optional": true,
+            "type": "Y | N | All"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "guidance",
+            "optional": false,
+            "type": "{ id: string, confirmed?: boolean | null, currency?: string | null, cusip?: string | null, date?: string | null, eps_guidance_est?: string | null, eps_guidance_max?: string | null, eps_guidance_min?: string | null, eps_guidance_prior_max?: string | null, eps_guidance_prior_min?: string | null, eps_type?: string | null, exchange?: string | null, importance?: number | null, is_primary?: string | null, name?: string | null, notes?: string | null, period?: string | null, period_year?: number | null, prelim?: string | null, revenue_guidance_est?: string | null, revenue_guidance_max?: string | null, revenue_guidance_min?: string | null, revenue_guidance_prior_max?: string | null, revenue_guidance_prior_min?: string | null, revenue_type?: string | null, ticker?: string | null, time?: string | null, updated?: number | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "benzinga.api.calendar.listIpos",
+      "shortPath": "calendar.listIpos",
+      "description": "List IPO calendar data (GET /api/v2.1/calendar/ipos, page/pagesize pagination)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagesize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "ipo_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tickers",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ipo_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ipos",
+            "optional": false,
+            "type": "{ id: string, currency?: string | null, cusip?: string | null, date?: string | null, deal_status?: string | null, description?: string | null, exchange?: string | null, initial_filing_date?: string | null, insider_lockup_date?: string | null, insider_lockup_days?: number | null, ipo_type?: string | null, last_yr_income?: number | null, last_yr_income_year?: number | null, last_yr_revenue?: number | null, last_yr_revenue_year?: number | null, lead_underwriters?: string[] | null, market_cap_at_offer?: number | null, name?: string | null, notes?: string | null, offering_shares?: number | null, offering_shares_ord_adr?: number | null, offering_value?: number | null, open_date_verified?: boolean | null, ord_shares_out_after_offer?: number | null, other_underwriters?: string[] | null, price_max?: string | null, price_min?: string | null, price_open?: string | null, price_public_offering?: string | null, pricing_date?: string | null, pricing_date_verified?: boolean | null, sec_accession_number?: string | null, sec_filing_url?: string | null, shares_outstanding?: number | null, sic?: number | null, spac_converted_to_target?: boolean | null, state_location?: string | null, ticker?: string | null, time?: string | null, underwriter_quiet_expiration_date?: string | null, underwriter_quiet_expiration_days?: number | null, updated?: number | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "benzinga.api.calendar.listRatings",
+      "shortPath": "calendar.listRatings",
+      "description": "List analyst ratings data (GET /api/v2.1/calendar/ratings, page/pagesize pagination)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagesize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dateFrom",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dateTo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tickers",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "importance",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "updated",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "analyst_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "firm_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "action",
+            "optional": true,
+            "type": "Downgrades | Maintains | Reinstates | Reiterates | Upgrades | Assumes | Initiates Coverage On | Terminates Coverage On | Removes | Suspends | Firm Dissolved"
+          },
+          {
+            "key": "analyst",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "firm",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "simplify",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ratings",
+            "optional": false,
+            "type": "{ id?: string, action_company?: string | null, action_pt?: string | null, adjusted_pt_current?: string | null, adjusted_pt_prior?: string | null, analyst?: string | null, analyst_id?: string | null, analyst_name?: string | null, currency?: string | null, cusip?: string | null, date?: string | null, exchange?: string | null, firm_id?: string | null, importance?: number | null, isin?: string | null, name?: string | null, notes?: string | null, pt_current?: string | null, pt_prior?: string | null, rating_current?: string | null, rating_prior?: string | null, ticker?: string | null, time?: string | null, updated?: number | null, url?: string | null, url_calendar?: string | null, url_news?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "benzinga.api.calendar.listRemoved",
+      "shortPath": "calendar.listRemoved",
+      "description": "List removed calendar events by type and update time (GET /api/v2.1/calendar-removed/, page/pageSize pagination)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "ratings | earnings | dividends | splits | ipos | offerings | economics | guidance | ma | conference calls"
+          },
+          {
+            "key": "updated",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "removed",
+            "optional": false,
+            "type": "{ id: string, type?: string | null, updated?: number | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "benzinga.api.calendar.listSplits",
+      "shortPath": "calendar.listSplits",
+      "description": "List stock split data (GET /api/v2.1/calendar/splits, page/pagesize pagination)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagesize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dateFrom",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dateTo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tickers",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "importance",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "updated",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_search_field",
+            "optional": true,
+            "type": "announced | ex"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "splits",
+            "optional": false,
+            "type": "{ id: string, cusip?: string | null, date_announced?: string | null, date_distribution?: string | null, date_ex?: string | null, date_recorded?: string | null, exchange?: string | null, importance?: number | null, name?: string | null, notes?: string | null, optionable?: boolean | null, ratio?: string | null, split_type?: string | null, ticker?: string | null, updated?: number | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "benzinga.api.news.get",
+      "shortPath": "news.get",
+      "description": "Get Benzinga news articles (GET /api/v2/news, page/pageSize pagination)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "displayOutput",
+            "optional": true,
+            "type": "full | abstract | headline"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dateFrom",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dateTo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedSince",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "publishedSince",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "id:asc | id:desc | created:asc | created:desc | updated:asc | updated:desc"
+          },
+          {
+            "key": "isin",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cusips",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tickers",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "primaryTickers",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "channels",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "topics",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "topic_group_by",
+            "optional": true,
+            "type": "and | or"
+          },
+          {
+            "key": "authors",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content_types",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "text"
+          },
+          {
+            "key": "importance",
+            "optional": true,
+            "type": "low | medium | high"
+          },
+          {
+            "key": "importanceRank",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, author?: string | null, created?: string | null, updated?: string | null, title?: string | null, teaser?: string | null, body?: string | null, url?: string | null, image?: { size?: string | null, url?: string | null, alt?: string | null }[] | null, channels?: { name: string }[] | null, stocks?: { name: string, cusip?: string | null, isin?: string | null, exchange?: string | null, gics?: string | null, gics_code?: string | null, sector?: string | null }[] | null, tags?: { name: string }[] | null, importance_rank?: number | null, original_id?: number | null }[]"
+      }
+    },
+    {
+      "path": "benzinga.api.news.getStream",
+      "shortPath": "news.getStream",
+      "description": "Get the WebSocket URL for the real-time news stream (wss://api.benzinga.com/api/v1/news/stream); append token=<api key> to connect",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tickers",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "channels",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "authQueryParam",
+            "optional": false,
+            "type": "token"
+          },
+          {
+            "key": "commands",
+            "optional": false,
+            "type": "ping | replay[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "benzinga.api.news.listChannels",
+      "shortPath": "news.listChannels",
+      "description": "List available Benzinga news channels (GET /api/v2.1/news/channels)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, parent?: number | null, channel?: string | null, weight?: number | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "benzinga.api.news.listRemoved",
+      "shortPath": "news.listRemoved",
+      "description": "List IDs and update times of removed news articles (GET /api/v2/news-removed, page/pageSize pagination)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "updatedSince",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "benzinga.db.conferenceCalls.search",
+      "entityName": "conferenceCalls",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "access_code",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "confirmed",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "cusip",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "exchange",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "importance",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "international_num",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "isin",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "notes",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "period",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "period_year",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "phone_num",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "reservation_num",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "start_time",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "ticker",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "time",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "webcast_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "benzinga.db.consensusRatings.search",
+      "entityName": "consensusRatings",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "ticker",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "aggregate_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "consensus_price_target",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "consensus_rating",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "consensus_rating_val",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "high_price_target",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "low_price_target",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "total_analyst_count",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "unique_analyst_count",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "benzinga.db.dividends.search",
+      "entityName": "dividends",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "confirmed",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "currency",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "cusip",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "dividend",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "dividend_prior",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "dividend_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "dividend_yield",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "end_regular_dividend",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "ex_dividend_date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "exchange",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "frequency",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "importance",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "isin",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "notes",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "payable_date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "period",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "record_date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "ticker",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "year",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "benzinga.db.earnings.search",
+      "entityName": "earnings",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "currency",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "cusip",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "date_confirmed",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "eps",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "eps_est",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "eps_prior",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "eps_surprise",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "eps_surprise_percent",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "eps_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "exchange",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "importance",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "isin",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "notes",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "period",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "period_year",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "revenue",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "revenue_est",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "revenue_prior",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "revenue_surprise",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "revenue_surprise_percent",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "revenue_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "ticker",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "time",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "benzinga.db.economics.search",
+      "entityName": "economics",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "actual",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "actual_t",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "confirmed",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "consensus",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "consensus_t",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "country",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "event_category",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "event_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "event_period",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "importance",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "notes",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "period_year",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "prior",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "prior_t",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "time",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "benzinga.db.guidance.search",
+      "entityName": "guidance",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "confirmed",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "currency",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "cusip",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "eps_guidance_est",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "eps_guidance_max",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "eps_guidance_min",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "eps_guidance_prior_max",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "eps_guidance_prior_min",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "eps_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "exchange",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "importance",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "is_primary",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "notes",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "period",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "period_year",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "prelim",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "revenue_guidance_est",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "revenue_guidance_max",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "revenue_guidance_min",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "revenue_guidance_prior_max",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "revenue_guidance_prior_min",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "revenue_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "ticker",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "time",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "benzinga.db.ipos.search",
+      "entityName": "ipos",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "currency",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "cusip",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "deal_status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "exchange",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "initial_filing_date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "insider_lockup_date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "insider_lockup_days",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "ipo_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "last_yr_income",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "last_yr_income_year",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "last_yr_revenue",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "last_yr_revenue_year",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "market_cap_at_offer",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "notes",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "offering_shares",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "offering_shares_ord_adr",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "offering_value",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "open_date_verified",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "ord_shares_out_after_offer",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "price_max",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "price_min",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "price_open",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "price_public_offering",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "pricing_date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "pricing_date_verified",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "sec_accession_number",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "sec_filing_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "shares_outstanding",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "sic",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "spac_converted_to_target",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "state_location",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "ticker",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "time",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "underwriter_quiet_expiration_date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "underwriter_quiet_expiration_days",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "updated",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "benzinga.db.newsArticles.search",
+      "entityName": "newsArticles",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "author",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "teaser",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "body",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "importance_rank",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "original_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "benzinga.db.newsChannels.search",
+      "entityName": "newsChannels",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "parent",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "channel",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "weight",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "benzinga.db.ratings.search",
+      "entityName": "ratings",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "action_company",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "action_pt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "adjusted_pt_current",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "adjusted_pt_prior",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "analyst",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "analyst_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "analyst_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "currency",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "cusip",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "exchange",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "firm_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "importance",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "isin",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "notes",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "pt_current",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "pt_prior",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "rating_current",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "rating_prior",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "ticker",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "time",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url_calendar",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url_news",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "benzinga.db.removedCalendarEvents.search",
+      "entityName": "removedCalendarEvents",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "benzinga.db.removedNewsItems.search",
+      "entityName": "removedNewsItems",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "updated",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "benzinga.db.splits.search",
+      "entityName": "splits",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "cusip",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "date_announced",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "date_distribution",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "date_ex",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "date_recorded",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "exchange",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "importance",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "notes",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "optionable",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "ratio",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "split_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "ticker",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    }
+  ]
+}

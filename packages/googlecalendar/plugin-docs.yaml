@@ -1,0 +1,30 @@
+displayName: Google Calendar
+description: Scheduling service for creating events, managing calendars, and checking availability.
+examples:
+  read:
+    path: calendar.getAvailability
+    title: Get availability
+    args:
+      timeMin: 2026-01-01T00:00:00Z
+      timeMax: 2026-01-07T23:59:59Z
+      items:
+        - id: primary
+  write:
+    path: events.create
+    title: Create an event
+    args:
+      event:
+        summary: Team Sync
+        start:
+          dateTime: 2026-01-02T10:00:00Z
+        end:
+          dateTime: 2026-01-02T11:00:00Z
+dbExample:
+  entity: events
+  note: Search synced events without hitting Google Calendar.
+  limit: 50
+exampleWebhook:
+  path: onEventChanged
+  note: Fires when a Google Calendar event is created, updated, or deleted.
+  after: |
+    console.log('Google Calendar event changed:', result.data);

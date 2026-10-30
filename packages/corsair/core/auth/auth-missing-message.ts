@@ -4,7 +4,7 @@ import { createHubConnectSessionForPlugin } from '../../hub/connect';
 import type { EndpointManualConfig } from '../config/manual-connect';
 import { hasManualConnectConfig } from '../config/manual-connect';
 import type { CorsairPlugin } from '../plugins';
-import type { AuthMissingError } from './errors/auth-missing';
+import { AuthMissingError } from './errors/auth-missing';
 import { encodeOAuthState, signState } from './state';
 
 /**
@@ -20,49 +20,12 @@ export function formatDefaultAuthMissingMessage(
 	return `[auth-missing:${pluginId}] Authentication required. Direct the user to connect their account: ${connectUrl}`;
 }
 
-type AuthMissingRoutingConfig = {
-	manual?: EndpointManualConfig;
-	hub?: HubConfig;
+/** The agent-facing message plus the connect link that produced it (null when
+ * no link could be minted), so the error can carry both. */
+export type ResolvedAuthMissingMessage = {
+	message: string;
+	connectUrl: string | null;
 };
-
-/**
- * Resolves a Hub connect URL for a plugin when auth credentials are missing.
- *
- * Mirrors {@link resolveApprovalUrl} for permissions: only needs `hub` from
- * `createCorsair({ hub })` plus explicit plugin/tenant/database/kek inputs.
- * Returns `null` when hub is not configured, database/kek are missing, or
- * session creation fails.
- *
- * @returns The hosted connect URL, or `null` if one could not be created.
- */
-export async function resolveAuthMissingConnectUrl(
-	routing: AuthMissingRoutingConfig,
-	input: {
-		plugin: CorsairPlugin;
-		tenantId: string;
-		database?: CorsairDatabase;
-		kek?: string;
-		plugins: readonly CorsairPlugin[];
-	},
-): Promise<string | null> {
-	const hub = routing.hub;
-	if (!hub || !input.database || !input.kek) {
-		return null;
-	}
-
-	try {
-		const session = await createHubConnectSessionForPlugin(hub, {
-			tenantId: input.tenantId,
-			plugin: input.plugin,
-			database: input.database,
-			kek: input.kek,
-			plugins: input.plugins,
-		});
-		return session.connectUrl;
-	} catch {
-		return null;
-	}
-}
 
 /**
  * Builds the agent-facing message returned when a keyBuilder raises AuthMissingError.
@@ -72,7 +35,7 @@ export async function resolveAuthMissingConnectUrl(
  * message (or delegates to `manual.onAuthMissing` when set). Falls back to a
  * plain `[auth-missing:…]` tag when no link can be generated.
  *
- * Called from endpoint binding via {@link resolveAuthMissingEndpointResult} —
+ * Called from endpoint binding via {@link throwAuthMissingEndpointError} —
  * same role as {@link resolveAsyncApprovalMessage} for permission-gated operations.
  */
 export async function resolveAuthMissingConnectMessage(input: {
@@ -85,7 +48,8 @@ export async function resolveAuthMissingConnectMessage(input: {
 	database?: CorsairDatabase;
 	kek?: string;
 	plugins: readonly CorsairPlugin[];
-}): Promise<string> {
+	multiTenancy?: boolean;
+}): Promise<ResolvedAuthMissingMessage> {
 	const hub = input.hub;
 	if (hub && input.database && input.kek) {
 		try {
@@ -95,41 +59,31 @@ export async function resolveAuthMissingConnectMessage(input: {
 				database: input.database,
 				kek: input.kek,
 				plugins: input.plugins,
+				multiTenancy: input.multiTenancy,
 			});
 
-			if (input.manual?.onAuthMissing) {
-				return input.manual.onAuthMissing({
-					plugin: input.pluginId,
-					connectUrl: session.connectUrl,
-					state: session.token,
-				});
-			}
-
-			return formatDefaultAuthMissingMessage(
-				input.pluginId,
-				session.connectUrl,
-			);
+			const message = input.manual?.onAuthMissing
+				? input.manual.onAuthMissing({
+						plugin: input.pluginId,
+						connectUrl: session.connectUrl,
+						state: session.token,
+					})
+				: formatDefaultAuthMissingMessage(input.pluginId, session.connectUrl);
+			return { message, connectUrl: session.connectUrl };
 		} catch {
-			return `[auth-missing:${input.pluginId}:${input.authType}] Authentication required. Could not create connect link. Check hub configuration and server logs.`;
+			return {
+				message: `[auth-missing:${input.pluginId}:${input.authType}] Authentication required. Could not create connect link. Check hub configuration and server logs.`,
+				connectUrl: null,
+			};
 		}
 	}
 
-	const connectUrl = await resolveAuthMissingConnectUrl(
-		{ manual: input.manual, hub: input.hub },
-		{
-			plugin: input.plugin,
-			tenantId: input.tenantId,
-			database: input.database,
-			kek: input.kek,
-			plugins: input.plugins,
-		},
-	);
-
-	if (connectUrl) {
-		return formatDefaultAuthMissingMessage(input.pluginId, connectUrl);
-	}
-
-	return `[auth-missing:${input.pluginId}:${input.authType}]`;
+	// hub/database/kek were all required above; reaching here means one is
+	// missing, so no link can be minted.
+	return {
+		message: `[auth-missing:${input.pluginId}:${input.authType}]`,
+		connectUrl: null,
+	};
 }
 
 /**
@@ -145,7 +99,7 @@ export function buildManualConnectMessage(
 		kek: string;
 	},
 	fallbackTenantId: string | undefined,
-): string {
+): ResolvedAuthMissingMessage {
 	const state = signState(
 		encodeOAuthState(
 			pluginId,
@@ -157,21 +111,16 @@ export function buildManualConnectMessage(
 	url.searchParams.set('state', state);
 	const connectUrl = url.toString();
 
-	if (manualConfig.onAuthMissing) {
-		return manualConfig.onAuthMissing({ plugin: pluginId, connectUrl, state });
-	}
-
-	return formatDefaultAuthMissingMessage(pluginId, connectUrl);
+	const message = manualConfig.onAuthMissing
+		? manualConfig.onAuthMissing({ plugin: pluginId, connectUrl, state })
+		: formatDefaultAuthMissingMessage(pluginId, connectUrl);
+	return { message, connectUrl };
 }
 
 /**
- * Resolves the string returned from a bound endpoint when auth credentials are missing.
- *
- * Prefers manual OAuth connect URLs, then hosted Hub connect URLs, then the raw
- * {@link AuthMissingError} message. Never throws — endpoint binding returns this
- * value directly instead of propagating an error.
+ * Resolves the agent-facing message when auth credentials are missing.
  */
-export async function resolveAuthMissingEndpointResult(input: {
+export async function resolveAuthMissingEndpointMessage(input: {
 	error: AuthMissingError;
 	manual?: EndpointManualConfig;
 	hub?: HubConfig;
@@ -180,9 +129,14 @@ export async function resolveAuthMissingEndpointResult(input: {
 	database?: CorsairDatabase;
 	kek?: string;
 	plugins?: readonly CorsairPlugin[];
-}): Promise<string> {
+	multiTenancy?: boolean;
+}): Promise<ResolvedAuthMissingMessage> {
 	const tenantId = input.tenantId ?? 'default';
 	const pluginId = input.error.pluginId;
+
+	if (input.error.authType === 'managed_pricing') {
+		return { message: input.error.message, connectUrl: null };
+	}
 
 	if (
 		input.manual &&
@@ -219,8 +173,36 @@ export async function resolveAuthMissingEndpointResult(input: {
 			database: input.database,
 			kek: input.kek,
 			plugins: input.plugins,
+			multiTenancy: input.multiTenancy,
 		});
 	}
 
-	return input.error.message;
+	return { message: input.error.message, connectUrl: null };
+}
+
+/**
+ * Resolves a connect message and throws {@link AuthMissingError} for endpoint callers.
+ */
+export async function throwAuthMissingEndpointError(input: {
+	error: AuthMissingError;
+	manual?: EndpointManualConfig;
+	hub?: HubConfig;
+	plugin?: CorsairPlugin;
+	tenantId?: string;
+	database?: CorsairDatabase;
+	kek?: string;
+	plugins?: readonly CorsairPlugin[];
+	multiTenancy?: boolean;
+}): Promise<never> {
+	const { message, connectUrl } =
+		await resolveAuthMissingEndpointMessage(input);
+	throw new AuthMissingError(
+		input.error.pluginId,
+		input.error.authType,
+		message,
+		{
+			connectUrl,
+			tenantId: input.tenantId ?? 'default',
+		},
+	);
 }

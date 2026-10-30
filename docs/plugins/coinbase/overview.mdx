@@ -1,0 +1,151 @@
+---
+title: Overview
+description: "Coinbase plugin for Corsair"
+---
+
+Use **Coinbase** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
+
+**What you get:**
+
+- 27 typed API operations
+- 6 synced entities (`accounts`, `currencies`, `paymentMethods`, `prices`, `transactions`, `users`) for fast `.search()` / `.list()`
+- 2 incoming webhook event types
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/coinbase
+```
+```bash yarn
+yarn add corsair @corsair-dev/coinbase
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/coinbase
+```
+```bash bun
+bun add corsair @corsair-dev/coinbase
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { coinbase } from '@corsair-dev/coinbase';
+
+export const corsair = createCorsair({
+	plugins: [
+		coinbase(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+coinbase()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+<Tab title="OAuth 2.0">
+
+Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your Coinbase OAuth app.
+
+```ts
+coinbase({
+	authType: 'oauth_2',
+})
+```
+
+More: [OAuth 2.0](/concepts/oauth)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'coinbase',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`accounts.get`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.coinbase.api.accounts.get({});
+```
+
+
+**Write**
+
+_No write-style endpoint inferred; pick any operation from the [API](/plugins/coinbase/api) reference._
+
+
+See the full list on the [API](/plugins/coinbase/api) page.
+
+## Query synced data
+
+Synced entities support `tenant.coinbase.db.<entity>.search()` and `.list()`: `accounts`, `currencies`, `paymentMethods`, `prices`, `transactions`, `users`.
+
+See [Database](/plugins/coinbase/database) for filters and operators.
+
+## Webhooks
+
+This plugin registers **2** webhook event types. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
+
+See [Webhooks](/plugins/coinbase/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/coinbase/api">
+    Every `coinbase.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/coinbase/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Webhooks" href="/plugins/coinbase/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

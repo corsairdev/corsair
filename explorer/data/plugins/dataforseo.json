@@ -1,0 +1,3071 @@
+{
+  "id": "dataforseo",
+  "displayName": "DataForSeo",
+  "description": "DataForSeo plugin for Corsair",
+  "npmPackageName": "@corsair-dev/dataforseo",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 28,
+    "webhooks": 0,
+    "db": 3
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": [
+        "api_key",
+        "webhook_signature",
+        "tenant_external_id",
+        "api_secret"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "dataforseo.api.account.userData",
+      "shortPath": "account.userData",
+      "description": "Get the account login, balance, and subscription expiry dates (free)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "status_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cost",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks_error",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks",
+            "optional": true,
+            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: {} | null, result?: { login: string, timezone?: string | null, money?: { total?: number | null, balance?: number | null } | null, backlinks_subscription_expiry_date?: string | null, llm_mentions_subscription_expiry_date?: string | null }[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dataforseo.api.ai.chatgptResponse",
+      "shortPath": "ai.chatgptResponse",
+      "description": "Get a ChatGPT model response to a prompt, with web sources when web search is on",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_prompt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "model_name",
+            "optional": false,
+            "type": "string",
+            "description": "Model name, e.g. gpt-4.1; see the provider models endpoint"
+          },
+          {
+            "key": "max_output_tokens",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "top_p",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "system_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message_chain",
+            "optional": true,
+            "type": "{ role: user | ai, message: string }[]"
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "temperature",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "web_search",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "force_web_search",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "web_search_country_iso_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "web_search_city",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "status_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cost",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks_error",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks",
+            "optional": true,
+            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: {} | null, result?: { model_name?: string | null, input_tokens?: number | null, output_tokens?: number | null, reasoning_tokens?: number | null, web_search?: boolean | null, money_spent?: number | null, datetime?: string | null, items?: { type: message | reasoning, sections?: { type?: string | null, text?: string | null, annotations?: { title?: string | null, url?: string | null, direct_url?: string | null, start_index?: number | null, end_index?: number | null, text?: string | null }[] | null }[] | null }[] | null, fan_out_queries?: string[] | {} | null }[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dataforseo.api.ai.geminiResponse",
+      "shortPath": "ai.geminiResponse",
+      "description": "Get a Gemini model response to a prompt",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_prompt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "model_name",
+            "optional": false,
+            "type": "string",
+            "description": "Model name, e.g. gpt-4.1; see the provider models endpoint"
+          },
+          {
+            "key": "max_output_tokens",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "top_p",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "system_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message_chain",
+            "optional": true,
+            "type": "{ role: user | ai, message: string }[]"
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "temperature",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "web_search",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "use_reasoning",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "status_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cost",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks_error",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks",
+            "optional": true,
+            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: {} | null, result?: { model_name?: string | null, input_tokens?: number | null, output_tokens?: number | null, reasoning_tokens?: number | null, web_search?: boolean | null, money_spent?: number | null, datetime?: string | null, items?: { type: message | reasoning, sections?: { type?: string | null, text?: string | null, annotations?: { title?: string | null, url?: string | null, direct_url?: string | null, start_index?: number | null, end_index?: number | null, text?: string | null }[] | null }[] | null }[] | null, fan_out_queries?: string[] | {} | null }[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dataforseo.api.ai.mentionsSearch",
+      "shortPath": "ai.mentionsSearch",
+      "description": "Search AI answers (ChatGPT, Google AI) that mention a domain or keyword",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "target",
+            "optional": false,
+            "type": "({ domain: string, include_subdomains?: boolean } | { keyword: string, match_type?: word_match | partial_match })[]"
+          },
+          {
+            "key": "location_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location_code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "language_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "language_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "platform",
+            "optional": true,
+            "type": "chat_gpt | google"
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "lazy"
+          },
+          {
+            "key": "order_by",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "search_after_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "status_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cost",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks_error",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks",
+            "optional": true,
+            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: {} | null, result?: { total_count?: number | null, offset?: number | null, search_after_token?: string | null, items_count?: number | null, items?: { platform?: string | null, model_name?: string | null, location_code?: number | null, language_code?: string | null, question?: string | null, answer?: string | null, sources?: { rank?: number | null, title?: string | null, domain?: string | null, url?: string | null, publication_date?: string | null, snippet?: string | null, source_name?: string | null, thumbnail?: string | null, markdown?: string | null }[] | null, search_results?: { rank?: number | null, title?: string | null, domain?: string | null, url?: string | null, publication_date?: string | null, description?: string | null, breadcrumb?: string | null }[] | null, ai_search_volume?: number | null, monthly_searches?: { year: number, month: number, search_volume?: number | null }[] | null, first_response_at?: string | null, last_response_at?: string | null, brand_entities?: { rank?: number | null, title?: string | null, category?: string | null }[] | null, fan_out_queries?: string[] | null, is_web_search_based?: boolean | null }[] | null }[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dataforseo.api.ai.mentionsTopDomains",
+      "shortPath": "ai.mentionsTopDomains",
+      "description": "Rank the domains cited most in AI answers about a domain or keyword",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "target",
+            "optional": false,
+            "type": "({ domain: string, include_subdomains?: boolean } | { keyword: string, match_type?: word_match | partial_match })[]"
+          },
+          {
+            "key": "location_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location_code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "language_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "language_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "platform",
+            "optional": true,
+            "type": "chat_gpt | google"
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "lazy"
+          },
+          {
+            "key": "order_by",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "links_scope",
+            "optional": true,
+            "type": "sources | search_results"
+          },
+          {
+            "key": "initial_dataset_filters",
+            "optional": true,
+            "type": "lazy"
+          },
+          {
+            "key": "internal_list_limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "include_domains",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "exclude_domains",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "status_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cost",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks_error",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks",
+            "optional": true,
+            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: {} | null, result?: { total_count?: number | null, offset?: number | null, items_count?: number | null, aggregated_metrics?: { location?: { key?: string | null, mentions?: number | null, ai_search_volume?: number | null }[] | null, language?: { key?: string | null, mentions?: number | null, ai_search_volume?: number | null }[] | null, platform?: { key?: string | null, mentions?: number | null, ai_search_volume?: number | null }[] | null, sources_domain?: { key?: string | null, mentions?: number | null, ai_search_volume?: number | null }[] | null, search_results_domain?: { key?: string | null, mentions?: number | null, ai_search_volume?: number | null }[] | null, brand_entities_title?: { key?: string | null, mentions?: number | null, ai_search_volume?: number | null }[] | null, brand_entities_category?: { key?: string | null, mentions?: number | null, ai_search_volume?: number | null }[] | null, total?: { mentions?: number | null, ai_search_volume?: number | null } | null } | null, items?: { domain?: string | null, location?: { key?: string | null, mentions?: number | null, ai_search_volume?: number | null }[] | null, language?: { key?: string | null, mentions?: number | null, ai_search_volume?: number | null }[] | null, platform?: { key?: string | null, mentions?: number | null, ai_search_volume?: number | null }[] | null, sources_domain?: { key?: string | null, mentions?: number | null, ai_search_volume?: number | null }[] | null, search_results_domain?: { key?: string | null, mentions?: number | null, ai_search_volume?: number | null }[] | null, brand_entities_title?: { key?: string | null, mentions?: number | null, ai_search_volume?: number | null }[] | null, brand_entities_category?: { key?: string | null, mentions?: number | null, ai_search_volume?: number | null }[] | null, total?: { mentions?: number | null, ai_search_volume?: number | null } | null }[] | null }[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dataforseo.api.ai.perplexityResponse",
+      "shortPath": "ai.perplexityResponse",
+      "description": "Get a Perplexity model response to a prompt, with cited sources",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_prompt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "model_name",
+            "optional": false,
+            "type": "string",
+            "description": "Model name, e.g. gpt-4.1; see the provider models endpoint"
+          },
+          {
+            "key": "max_output_tokens",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "top_p",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "system_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message_chain",
+            "optional": true,
+            "type": "{ role: user | ai, message: string }[]"
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "temperature",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "web_search_country_iso_code",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "status_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cost",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks_error",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks",
+            "optional": true,
+            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: {} | null, result?: { model_name?: string | null, input_tokens?: number | null, output_tokens?: number | null, reasoning_tokens?: number | null, web_search?: boolean | null, money_spent?: number | null, datetime?: string | null, items?: { type: message | reasoning, sections?: { type?: string | null, text?: string | null, annotations?: { title?: string | null, url?: string | null, direct_url?: string | null, start_index?: number | null, end_index?: number | null, text?: string | null }[] | null }[] | null }[] | null, fan_out_queries?: string[] | {} | null }[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dataforseo.api.amazon.asin",
+      "shortPath": "amazon.asin",
+      "description": "Get an Amazon product page by ASIN: price, rating, details, and top reviews",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "asin",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "location_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location_code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "language_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "language_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location_coordinate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "se_domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "status_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cost",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks_error",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks",
+            "optional": true,
+            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: {} | null, result?: { asin?: string | null, type?: string | null, se_domain?: string | null, location_code?: number | null, language_code?: string | null, check_url?: string | null, datetime?: string | null, item_types?: string[] | null, items_count?: number | null, items?: { type?: string | null, rank_group?: number | null, rank_absolute?: number | null, position?: string | null, xpath?: string | null, title?: string | null, details?: string | null, image_url?: string | null, author?: string | null, data_asin?: string | null, parent_asin?: string | null, product_asins?: string[] | null, price_from?: number | null, price_to?: number | null, percentage_discount?: string | null, currency?: string | null, is_amazon_choice?: boolean | null, rating?: { type?: string | null, position?: string | null, rating_type?: string | null, value?: number | null, votes_count?: number | null, rating_max?: number | null } | null, is_newer_model_available?: boolean | null, is_prime_video?: boolean | null, newer_model?: { title?: string | null, newer_model_asin?: string | null } | null, categories?: { category?: string | null, url?: string | null }[] | null, product_information?: ({ type: product_information_details_item, section_name?: string | null, body?: {} | null } | { type: product_information_text_item, section_name?: string | null, text?: string | null } | { type: product_information_extended_item, section_name?: string | null, contents?: { type?: string | null, title?: string | null, rows?: { type?: string | null, text?: string | null, alt?: string | null, url?: string | null }[] | null }[] | null })[] | null, product_images_list?: string[] | null, product_videos_list?: string[] | null, description?: string | null, is_available?: boolean | null, top_local_reviews?: { type?: string | null, rank_group?: number | null, rank_absolute?: number | null, position?: string | null, xpath?: string | null, verified?: boolean | null, subtitle?: string | null, helpful_votes?: string | null, images?: { type?: string | null, alt?: string | null, url?: string | null, image_url?: string | null }[] | null, videos?: { type?: string | null, source?: string | null, preview?: string | null, title?: string | null, timestamp?: string | null, url?: string | null }[] | null, user_profile?: { name?: string | null, avatar?: string | null, url?: string | null, reviews_count?: number | null, locations?: string | null } | null, title?: string | null, url?: string | null, review_text?: string | null, publication_date?: string | null, rating?: { rating_type?: string | null, value?: number | null, votes_count?: number | null, rating_max?: number | null } | null }[] | null, top_global_reviews?: { type?: string | null, rank_group?: number | null, rank_absolute?: number | null, position?: string | null, xpath?: string | null, verified?: boolean | null, subtitle?: string | null, helpful_votes?: string | null, images?: { type?: string | null, alt?: string | null, url?: string | null, image_url?: string | null }[] | null, videos?: { type?: string | null, source?: string | null, preview?: string | null, title?: string | null, timestamp?: string | null, url?: string | null }[] | null, user_profile?: { name?: string | null, avatar?: string | null, url?: string | null, reviews_count?: number | null, locations?: string | null } | null, title?: string | null, url?: string | null, review_text?: string | null, publication_date?: string | null, rating?: { rating_type?: string | null, value?: number | null, votes_count?: number | null, rating_max?: number | null } | null }[] | null }[] | null }[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dataforseo.api.amazon.products",
+      "shortPath": "amazon.products",
+      "description": "Get live Amazon search results for a keyword",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "keyword",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location_code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "language_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "language_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location_coordinate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "se_domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "depth",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_crawl_pages",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "department",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "search_param",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "price_min",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "price_max",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "relevance | price_low_to_high | price_high_to_low | featured | avg_customer_review | newest_arrival"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "status_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cost",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks_error",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks",
+            "optional": true,
+            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: {} | null, result?: { keyword?: string | null, type?: string | null, se_domain?: string | null, location_code?: number | null, language_code?: string | null, check_url?: string | null, datetime?: string | null, spell?: { keyword?: string | null, type?: string | null } | null, item_types?: string[] | null, se_results_count?: number | null, categories?: {} | null, items_count?: number | null, items?: ({ type: amazon_serp, rank_group?: number | null, rank_absolute?: number | null, position?: string | null, xpath?: string | null, domain?: string | null, title?: string | null, url?: string | null, image_url?: string | null, bought_past_month?: number | null, price_from?: number | null, price_to?: number | null, currency?: string | null, special_offers?: string[] | null, data_asin?: string | null, rating?: { type?: string | null, position?: string | null, rating_type?: string | null, value?: number | null, votes_count?: number | null, rating_max?: number | null } | null, is_amazon_choice?: boolean | null, is_best_seller?: boolean | null, delivery_info?: { delivery_message?: string | null, delivery_date_from?: string | null, delivery_date_to?: string | null, fastest_delivery_date_from?: string | null, fastest_delivery_date_to?: string | null, delivery_price?: { current?: number | null, regular?: number | null, max_value?: number | null, currency?: string | null, is_price_range?: boolean | null, displayed_price?: string | null } | null } | null, labels?: { type?: string | null, title?: string | null, url?: string | null, domain?: string | null }[] | null } | { type: amazon_paid, rank_group?: number | null, rank_absolute?: number | null, position?: string | null, xpath?: string | null, domain?: string | null, title?: string | null, url?: string | null, image_url?: string | null, bought_past_month?: number | null, price_from?: number | null, price_to?: number | null, currency?: string | null, special_offers?: string[] | null, data_asin?: string | null, rating?: { type?: string | null, position?: string | null, rating_type?: string | null, value?: number | null, votes_count?: number | null, rating_max?: number | null } | null, is_amazon_choice?: boolean | null, is_best_seller?: boolean | null, delivery_info?: { delivery_message?: string | null, delivery_date_from?: string | null, delivery_date_to?: string | null, fastest_delivery_date_from?: string | null, fastest_delivery_date_to?: string | null, delivery_price?: { current?: number | null, regular?: number | null, max_value?: number | null, currency?: string | null, is_price_range?: boolean | null, displayed_price?: string | null } | null } | null, labels?: { type?: string | null, title?: string | null, url?: string | null, domain?: string | null }[] | null } | { type: editorial_recommendations, rank_group?: number | null, rank_absolute?: number | null, position?: string | null, xpath?: string | null, items?: { type?: string | null, xpath?: string | null, domain?: string | null, title?: string | null, url?: string | null, image_url?: string | null, bought_past_month?: number | null, price_from?: number | null, price_to?: number | null, currency?: string | null, special_offers?: string[] | null, data_asin?: string | null, rating?: { type?: string | null, position?: string | null, rating_type?: string | null, value?: number | null, votes_count?: number | null, rating_max?: number | null } | null, is_amazon_choice?: boolean | null, is_best_seller?: boolean | null, delivery_info?: { delivery_message?: string | null, delivery_date_from?: string | null, delivery_date_to?: string | null, fastest_delivery_date_from?: string | null, fastest_delivery_date_to?: string | null, delivery_price?: { current?: number | null, regular?: number | null, max_value?: number | null, currency?: string | null, is_price_range?: boolean | null, displayed_price?: string | null } | null } | null, labels?: { type?: string | null, title?: string | null, url?: string | null, domain?: string | null }[] | null }[] | null } | { type: top_rated_from_our_brands, rank_group?: number | null, rank_absolute?: number | null, position?: string | null, xpath?: string | null, items?: { type?: string | null, xpath?: string | null, domain?: string | null, title?: string | null, url?: string | null, image_url?: string | null, bought_past_month?: number | null, price_from?: number | null, price_to?: number | null, currency?: string | null, special_offers?: string[] | null, data_asin?: string | null, rating?: { type?: string | null, position?: string | null, rating_type?: string | null, value?: number | null, votes_count?: number | null, rating_max?: number | null } | null, is_amazon_choice?: boolean | null, is_best_seller?: boolean | null, delivery_info?: { delivery_message?: string | null, delivery_date_from?: string | null, delivery_date_to?: string | null, fastest_delivery_date_from?: string | null, fastest_delivery_date_to?: string | null, delivery_price?: { current?: number | null, regular?: number | null, max_value?: number | null, currency?: string | null, is_price_range?: boolean | null, displayed_price?: string | null } | null } | null, labels?: { type?: string | null, title?: string | null, url?: string | null, domain?: string | null }[] | null }[] | null } | { type: related_searches, rank_group?: number | null, rank_absolute?: number | null, position?: string | null, xpath?: string | null, items?: { type?: string | null, title?: string | null, url?: string | null, image_alt?: string | null, image_url?: string | null }[] | null })[] | null }[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dataforseo.api.appStore.infoResult",
+      "shortPath": "appStore.infoResult",
+      "description": "Get the results of an App Store app info task by task id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "status_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cost",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks_error",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks",
+            "optional": true,
+            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: {} | null, result?: { app_id?: string | null, se_domain?: string | null, location_code?: number | null, language_code?: string | null, check_url?: string | null, datetime?: string | null, se_results_count?: number | null, items_count?: number | null, items?: { type?: string | null, rank_group?: number | null, rank_absolute?: number | null, position?: string | null, app_id?: string | null, title?: string | null, url?: string | null, icon?: string | null, reviews_count?: number | null, rating?: { rating_type?: string | null, value?: number | null, votes_count?: number | null, rating_max?: number | null } | null, price?: { current?: number | null, regular?: number | null, max_value?: number | null, currency?: string | null, is_price_range?: boolean | null, displayed_price?: string | null } | null, is_free?: boolean | null, subtitle?: string | null, description?: string | null, main_category?: string | null, categories?: string[] | null, languages?: string[] | null, advisories?: string[] | null, developer?: string | null, developer_id?: string | null, developer_url?: string | null, version?: string | null, minimum_os_version?: string | null, size?: string | null, released_date?: string | null, last_update_date?: string | null, update_notes?: string | null, images?: string[] | null, similar_apps?: { app_id?: string | null, title?: string | null, url?: string | null }[] | null, more_apps_by_developer?: { app_id?: string | null, title?: string | null, url?: string | null }[] | null }[] | null }[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dataforseo.api.appStore.infoTask",
+      "shortPath": "appStore.infoTask",
+      "description": "Post an App Store app info task; fetch it with appStore.infoResult",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "location_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location_code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "language_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "language_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "1 | 2"
+          },
+          {
+            "key": "postback_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "postback_data",
+            "optional": true,
+            "type": "advanced"
+          },
+          {
+            "key": "pingback_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "status_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cost",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks_error",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks",
+            "optional": true,
+            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: {} | null, result?: {}[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dataforseo.api.appStore.reviewsResult",
+      "shortPath": "appStore.reviewsResult",
+      "description": "Get the results of an App Store reviews task by task id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "status_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cost",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks_error",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks",
+            "optional": true,
+            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: {} | null, result?: { app_id?: string | null, type?: string | null, title?: string | null, rating?: { rating_type?: string | null, value?: number | null, votes_count?: number | null, rating_max?: number | null } | null, reviews_count?: number | null, se_domain?: string | null, location_code?: number | null, language_code?: string | null, check_url?: string | null, datetime?: string | null, se_results_count?: number | null, items_count?: number | null, items?: { type?: string | null, rank_group?: number | null, rank_absolute?: number | null, position?: string | null, id?: string | null, version?: string | null, rating?: { rating_type?: string | null, value?: number | null, votes_count?: number | null, rating_max?: number | null } | null, timestamp?: string | null, title?: string | null, review_text?: string | null, user_profile?: { profile_name?: string | null, profile_image_url?: string | null } | null }[] | null }[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dataforseo.api.appStore.reviewsTask",
+      "shortPath": "appStore.reviewsTask",
+      "description": "Post an App Store reviews task; fetch it with appStore.reviewsResult",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "depth",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "most_recent | most_helpful"
+          },
+          {
+            "key": "location_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location_code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "language_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "language_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "1 | 2"
+          },
+          {
+            "key": "postback_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "postback_data",
+            "optional": true,
+            "type": "advanced"
+          },
+          {
+            "key": "pingback_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "status_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cost",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks_error",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks",
+            "optional": true,
+            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: {} | null, result?: {}[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dataforseo.api.appStore.searchResult",
+      "shortPath": "appStore.searchResult",
+      "description": "Get the results of an App Store search task by task id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "status_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cost",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks_error",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks",
+            "optional": true,
+            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: {} | null, result?: { keyword?: string | null, se_domain?: string | null, location_code?: number | null, language_code?: string | null, check_url?: string | null, datetime?: string | null, se_results_count?: number | null, items_count?: number | null, items?: { type?: string | null, rank_group?: number | null, rank_absolute?: number | null, position?: string | null, app_id?: string | null, title?: string | null, url?: string | null, icon?: string | null, reviews_count?: number | null, rating?: { rating_type?: string | null, value?: number | null, votes_count?: number | null, rating_max?: number | null } | null, price?: { current?: number | null, regular?: number | null, max_value?: number | null, currency?: string | null, is_price_range?: boolean | null, displayed_price?: string | null } | null, is_free?: boolean | null }[] | null }[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dataforseo.api.appStore.searchTask",
+      "shortPath": "appStore.searchTask",
+      "description": "Post an App Store search task; fetch it with appStore.searchResult",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "keyword",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "depth",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "location_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location_code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "language_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "language_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "1 | 2"
+          },
+          {
+            "key": "postback_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "postback_data",
+            "optional": true,
+            "type": "advanced"
+          },
+          {
+            "key": "pingback_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "status_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cost",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks_error",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks",
+            "optional": true,
+            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: {} | null, result?: {}[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dataforseo.api.backlinks.anchors",
+      "shortPath": "backlinks.anchors",
+      "description": "List anchor texts used in links to a target",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "target",
+            "optional": false,
+            "type": "string",
+            "description": "Domain or subdomain without https:// and www., or an absolute page URL"
+          },
+          {
+            "key": "rank_scale",
+            "optional": true,
+            "type": "one_hundred | one_thousand"
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "include_subdomains",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "exclude_internal_backlinks",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "backlinks_status_type",
+            "optional": true,
+            "type": "all | live | lost"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "lazy"
+          },
+          {
+            "key": "order_by",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "include_indirect_links",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "internal_list_limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "backlinks_filters",
+            "optional": true,
+            "type": "lazy"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "status_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cost",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks_error",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks",
+            "optional": true,
+            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: {} | null, result?: { target?: string | null, total_count?: number | null, items_count?: number | null, items?: { type?: string | null, anchor?: string | null, rank?: number | null, backlinks?: number | null, first_seen?: string | null, lost_date?: string | null, backlinks_spam_score?: number | null, broken_backlinks?: number | null, broken_pages?: number | null, referring_domains?: number | null, referring_domains_nofollow?: number | null, referring_main_domains?: number | null, referring_main_domains_nofollow?: number | null, referring_ips?: number | null, referring_subnets?: number | null, referring_pages?: number | null, referring_pages_nofollow?: number | null, referring_links_tld?: {} | null, referring_links_types?: {} | null, referring_links_attributes?: {} | null, referring_links_platform_types?: {} | null, referring_links_semantic_locations?: {} | null, referring_links_countries?: {} | null }[] | null }[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dataforseo.api.backlinks.bulkRanks",
+      "shortPath": "backlinks.bulkRanks",
+      "description": "Get the rank of up to 1000 domains, subdomains, or pages",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "targets",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "rank_scale",
+            "optional": true,
+            "type": "one_hundred | one_thousand"
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "status_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cost",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks_error",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks",
+            "optional": true,
+            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: {} | null, result?: { items_count?: number | null, items?: { target?: string | null, rank?: number | null }[] | null }[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dataforseo.api.backlinks.competitors",
+      "shortPath": "backlinks.competitors",
+      "description": "Find domains that share backlinks with a target",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "target",
+            "optional": false,
+            "type": "string",
+            "description": "Domain or subdomain without https:// and www., or an absolute page URL"
+          },
+          {
+            "key": "rank_scale",
+            "optional": true,
+            "type": "one_hundred | one_thousand"
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "lazy"
+          },
+          {
+            "key": "order_by",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "main_domain",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "exclude_large_domains",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "exclude_internal_backlinks",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "status_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cost",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks_error",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks",
+            "optional": true,
+            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: {} | null, result?: { total_count?: number | null, items_count?: number | null, items?: { type?: string | null, target?: string | null, rank?: number | null, intersections?: number | null }[] | null }[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dataforseo.api.backlinks.list",
+      "shortPath": "backlinks.list",
+      "description": "List backlinks pointing to a target",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "target",
+            "optional": false,
+            "type": "string",
+            "description": "Domain or subdomain without https:// and www., or an absolute page URL"
+          },
+          {
+            "key": "rank_scale",
+            "optional": true,
+            "type": "one_hundred | one_thousand"
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "include_subdomains",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "exclude_internal_backlinks",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "backlinks_status_type",
+            "optional": true,
+            "type": "all | live | lost"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "lazy"
+          },
+          {
+            "key": "order_by",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "search_after_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mode",
+            "optional": true,
+            "type": "as_is | one_per_domain | one_per_anchor"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "status_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cost",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks_error",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks",
+            "optional": true,
+            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: {} | null, result?: { target?: string | null, mode?: string | null, search_after_token?: string | null, total_count?: number | null, items_count?: number | null, items?: { type?: string | null, domain_from?: string | null, url_from?: string | null, url_from_https?: boolean | null, domain_to?: string | null, url_to?: string | null, url_to_https?: boolean | null, tld_from?: string | null, is_new?: boolean | null, is_lost?: boolean | null, backlink_spam_score?: number | null, rank?: number | null, page_from_rank?: number | null, domain_from_rank?: number | null, domain_from_platform_type?: string[] | null, domain_from_is_ip?: boolean | null, domain_from_ip?: string | null, domain_from_country?: string | null, page_from_external_links?: number | null, page_from_internal_links?: number | null, page_from_size?: number | null, page_from_encoding?: string | null, page_from_language?: string | null, page_from_title?: string | null, page_from_status_code?: number | null, first_seen?: string | null, prev_seen?: string | null, last_seen?: string | null, item_type?: string | null, attributes?: string[] | null, dofollow?: boolean | null, original?: boolean | null, alt?: string | null, image_url?: string | null, anchor?: string | null, text_pre?: string | null, text_post?: string | null, semantic_location?: string | null, links_count?: number | null, group_count?: number | null, is_broken?: boolean | null, url_to_status_code?: number | null, url_to_spam_score?: number | null, url_to_redirect_target?: string | null, is_indirect_link?: boolean | null, indirect_link_path?: { type?: string | null, status_code?: number | null, url?: string | null }[] | null, ranked_keywords_info?: { page_from_keywords_count_top_3?: number | null, page_from_keywords_count_top_10?: number | null, page_from_keywords_count_top_100?: number | null } | null }[] | null }[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dataforseo.api.backlinks.referringDomains",
+      "shortPath": "backlinks.referringDomains",
+      "description": "List domains linking to a target with per-domain link metrics",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "target",
+            "optional": false,
+            "type": "string",
+            "description": "Domain or subdomain without https:// and www., or an absolute page URL"
+          },
+          {
+            "key": "rank_scale",
+            "optional": true,
+            "type": "one_hundred | one_thousand"
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "include_subdomains",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "exclude_internal_backlinks",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "backlinks_status_type",
+            "optional": true,
+            "type": "all | live | lost"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "lazy"
+          },
+          {
+            "key": "order_by",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "include_indirect_links",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "internal_list_limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "backlinks_filters",
+            "optional": true,
+            "type": "lazy"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "status_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cost",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks_error",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks",
+            "optional": true,
+            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: {} | null, result?: { target?: string | null, total_count?: number | null, items_count?: number | null, items?: { type?: string | null, domain?: string | null, rank?: number | null, backlinks?: number | null, first_seen?: string | null, lost_date?: string | null, backlinks_spam_score?: number | null, broken_backlinks?: number | null, broken_pages?: number | null, referring_domains?: number | null, referring_domains_nofollow?: number | null, referring_main_domains?: number | null, referring_main_domains_nofollow?: number | null, referring_ips?: number | null, referring_subnets?: number | null, referring_pages?: number | null, referring_pages_nofollow?: number | null, referring_links_tld?: {} | null, referring_links_types?: {} | null, referring_links_attributes?: {} | null, referring_links_platform_types?: {} | null, referring_links_semantic_locations?: {} | null, referring_links_countries?: {} | null }[] | null }[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dataforseo.api.backlinks.summary",
+      "shortPath": "backlinks.summary",
+      "description": "Get a backlink profile summary for a domain, subdomain, or page",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "target",
+            "optional": false,
+            "type": "string",
+            "description": "Domain or subdomain without https:// and www., or an absolute page URL"
+          },
+          {
+            "key": "rank_scale",
+            "optional": true,
+            "type": "one_hundred | one_thousand"
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "include_subdomains",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "exclude_internal_backlinks",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "backlinks_status_type",
+            "optional": true,
+            "type": "all | live | lost"
+          },
+          {
+            "key": "include_indirect_links",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "internal_list_limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "backlinks_filters",
+            "optional": true,
+            "type": "lazy"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "status_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cost",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks_error",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks",
+            "optional": true,
+            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: {} | null, result?: { target?: string | null, crawled_pages?: number | null, internal_links_count?: number | null, external_links_count?: number | null, info?: { server?: string | null, cms?: string | null, platform_type?: string[] | null, ip_address?: string | null, country?: string | null, is_ip?: boolean | null, target_spam_score?: number | null } | null, rank?: number | null, backlinks?: number | null, first_seen?: string | null, lost_date?: string | null, backlinks_spam_score?: number | null, broken_backlinks?: number | null, broken_pages?: number | null, referring_domains?: number | null, referring_domains_nofollow?: number | null, referring_main_domains?: number | null, referring_main_domains_nofollow?: number | null, referring_ips?: number | null, referring_subnets?: number | null, referring_pages?: number | null, referring_pages_nofollow?: number | null, referring_links_tld?: {} | null, referring_links_types?: {} | null, referring_links_attributes?: {} | null, referring_links_platform_types?: {} | null, referring_links_semantic_locations?: {} | null, referring_links_countries?: {} | null }[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dataforseo.api.keywords.ideas",
+      "shortPath": "keywords.ideas",
+      "description": "Get keyword ideas related to up to 200 seed keywords",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "keywords",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "location_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location_code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "language_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "language_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "closely_variants",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "lazy"
+          },
+          {
+            "key": "order_by",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "include_serp_info",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_clickstream_data",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "ignore_synonyms",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "status_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cost",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks_error",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks",
+            "optional": true,
+            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: {} | null, result?: { seed_keywords?: string[] | null, se_type?: string | null, location_code?: number | null, language_code?: string | null, total_count?: number | null, items_count?: number | null, offset?: number | null, offset_token?: string | null, items?: { se_type?: string | null, keyword: string, location_code?: number | null, language_code?: string | null, keyword_info?: { se_type?: string | null, last_updated_time?: string | null, competition?: number | null, competition_level?: string | null, cpc?: number | null, search_volume?: number | null, low_top_of_page_bid?: number | null, high_top_of_page_bid?: number | null, categories?: number[] | null, monthly_searches?: { year: number, month: number, search_volume?: number | null }[] | null, search_volume_trend?: { monthly?: number | null, quarterly?: number | null, yearly?: number | null } | null } | null, keyword_info_normalized_with_bing?: { last_updated_time?: string | null, search_volume?: number | null, is_normalized?: boolean | null, monthly_searches?: { year: number, month: number, search_volume?: number | null }[] | null } | null, keyword_info_normalized_with_clickstream?: { last_updated_time?: string | null, search_volume?: number | null, is_normalized?: boolean | null, monthly_searches?: { year: number, month: number, search_volume?: number | null }[] | null } | null, clickstream_keyword_info?: { search_volume?: number | null, last_updated_time?: string | null, gender_distribution?: {} | null, age_distribution?: {} | null, monthly_searches?: { year: number, month: number, search_volume?: number | null }[] | null } | null, keyword_properties?: { se_type?: string | null, core_keyword?: string | null, synonym_clustering_algorithm?: string | null, keyword_difficulty?: number | null, detected_language?: string | null, is_another_language?: boolean | null, words_count?: number | null } | null, serp_info?: { se_type?: string | null, check_url?: string | null, serp_item_types?: string[] | null, se_results_count?: number | null, last_updated_time?: string | null, previous_updated_time?: string | null } | null, avg_backlinks_info?: { se_type?: string | null, backlinks?: number | null, dofollow?: number | null, referring_pages?: number | null, referring_domains?: number | null, referring_main_domains?: number | null, rank?: number | null, main_domain_rank?: number | null, last_updated_time?: string | null } | null, search_intent_info?: { se_type?: string | null, main_intent?: string | null, foreign_intent?: string[] | null, last_updated_time?: string | null } | null }[] | null }[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dataforseo.api.keywords.locations",
+      "shortPath": "keywords.locations",
+      "description": "List DataForSEO Labs locations and languages (free)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "status_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cost",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks_error",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks",
+            "optional": true,
+            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: {} | null, result?: { location_code: number, location_name: string, location_code_parent?: number | null, country_iso_code?: string | null, location_type?: string | null, available_languages?: { available_sources?: string[] | null, language_name?: string | null, language_code?: string | null, keywords?: number | null, serps?: number | null }[] | null }[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dataforseo.api.keywords.searchVolume",
+      "shortPath": "keywords.searchVolume",
+      "description": "Get Google Ads search volume, CPC, and competition for up to 1000 keywords",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "keywords",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "location_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location_code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "language_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "language_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location_coordinate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "search_partners",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "date_from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "include_adult_keywords",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "relevance | search_volume | competition_index | low_top_of_page_bid | high_top_of_page_bid"
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "status_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cost",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks_error",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks",
+            "optional": true,
+            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: {} | null, result?: { keyword: string, spell?: string | null, location_code?: number | null, language_code?: string | null, search_partners?: boolean | null, competition?: string | null, competition_index?: number | null, search_volume?: number | null, low_top_of_page_bid?: number | null, high_top_of_page_bid?: number | null, cpc?: number | null, monthly_searches?: { year: number, month: number, search_volume?: number | null }[] | null }[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dataforseo.api.keywords.suggestions",
+      "shortPath": "keywords.suggestions",
+      "description": "Get keyword suggestions that contain a seed keyword, with search volume and difficulty",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "keyword",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "location_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location_code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "language_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "language_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "include_seed_keyword",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "exact_match",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "lazy"
+          },
+          {
+            "key": "order_by",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "include_serp_info",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_clickstream_data",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "ignore_synonyms",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "status_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cost",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks_error",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks",
+            "optional": true,
+            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: {} | null, result?: { seed_keyword?: string | null, seed_keyword_data?: { se_type?: string | null, keyword: string, location_code?: number | null, language_code?: string | null, keyword_info?: { se_type?: string | null, last_updated_time?: string | null, competition?: number | null, competition_level?: string | null, cpc?: number | null, search_volume?: number | null, low_top_of_page_bid?: number | null, high_top_of_page_bid?: number | null, categories?: number[] | null, monthly_searches?: { year: number, month: number, search_volume?: number | null }[] | null, search_volume_trend?: { monthly?: number | null, quarterly?: number | null, yearly?: number | null } | null } | null, keyword_info_normalized_with_bing?: { last_updated_time?: string | null, search_volume?: number | null, is_normalized?: boolean | null, monthly_searches?: { year: number, month: number, search_volume?: number | null }[] | null } | null, keyword_info_normalized_with_clickstream?: { last_updated_time?: string | null, search_volume?: number | null, is_normalized?: boolean | null, monthly_searches?: { year: number, month: number, search_volume?: number | null }[] | null } | null, clickstream_keyword_info?: { search_volume?: number | null, last_updated_time?: string | null, gender_distribution?: {} | null, age_distribution?: {} | null, monthly_searches?: { year: number, month: number, search_volume?: number | null }[] | null } | null, keyword_properties?: { se_type?: string | null, core_keyword?: string | null, synonym_clustering_algorithm?: string | null, keyword_difficulty?: number | null, detected_language?: string | null, is_another_language?: boolean | null, words_count?: number | null } | null, serp_info?: { se_type?: string | null, check_url?: string | null, serp_item_types?: string[] | null, se_results_count?: number | null, last_updated_time?: string | null, previous_updated_time?: string | null } | null, avg_backlinks_info?: { se_type?: string | null, backlinks?: number | null, dofollow?: number | null, referring_pages?: number | null, referring_domains?: number | null, referring_main_domains?: number | null, rank?: number | null, main_domain_rank?: number | null, last_updated_time?: string | null } | null, search_intent_info?: { se_type?: string | null, main_intent?: string | null, foreign_intent?: string[] | null, last_updated_time?: string | null } | null } | null, se_type?: string | null, location_code?: number | null, language_code?: string | null, total_count?: number | null, items_count?: number | null, offset?: number | null, offset_token?: string | null, items?: { se_type?: string | null, keyword: string, location_code?: number | null, language_code?: string | null, keyword_info?: { se_type?: string | null, last_updated_time?: string | null, competition?: number | null, competition_level?: string | null, cpc?: number | null, search_volume?: number | null, low_top_of_page_bid?: number | null, high_top_of_page_bid?: number | null, categories?: number[] | null, monthly_searches?: { year: number, month: number, search_volume?: number | null }[] | null, search_volume_trend?: { monthly?: number | null, quarterly?: number | null, yearly?: number | null } | null } | null, keyword_info_normalized_with_bing?: { last_updated_time?: string | null, search_volume?: number | null, is_normalized?: boolean | null, monthly_searches?: { year: number, month: number, search_volume?: number | null }[] | null } | null, keyword_info_normalized_with_clickstream?: { last_updated_time?: string | null, search_volume?: number | null, is_normalized?: boolean | null, monthly_searches?: { year: number, month: number, search_volume?: number | null }[] | null } | null, clickstream_keyword_info?: { search_volume?: number | null, last_updated_time?: string | null, gender_distribution?: {} | null, age_distribution?: {} | null, monthly_searches?: { year: number, month: number, search_volume?: number | null }[] | null } | null, keyword_properties?: { se_type?: string | null, core_keyword?: string | null, synonym_clustering_algorithm?: string | null, keyword_difficulty?: number | null, detected_language?: string | null, is_another_language?: boolean | null, words_count?: number | null } | null, serp_info?: { se_type?: string | null, check_url?: string | null, serp_item_types?: string[] | null, se_results_count?: number | null, last_updated_time?: string | null, previous_updated_time?: string | null } | null, avg_backlinks_info?: { se_type?: string | null, backlinks?: number | null, dofollow?: number | null, referring_pages?: number | null, referring_domains?: number | null, referring_main_domains?: number | null, rank?: number | null, main_domain_rank?: number | null, last_updated_time?: string | null } | null, search_intent_info?: { se_type?: string | null, main_intent?: string | null, foreign_intent?: string[] | null, last_updated_time?: string | null } | null }[] | null }[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dataforseo.api.serp.googleNews",
+      "shortPath": "serp.googleNews",
+      "description": "Get live Google News results for a keyword",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "keyword",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "location_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location_code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "language_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "language_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location_coordinate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "depth",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_crawl_pages",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "search_param",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "se_domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "os",
+            "optional": true,
+            "type": "windows | macos"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "status_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cost",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks_error",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks",
+            "optional": true,
+            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: {} | null, result?: { keyword?: string | null, type?: string | null, se_domain?: string | null, location_code?: number | null, language_code?: string | null, check_url?: string | null, datetime?: string | null, spell?: { keyword?: string | null, type?: string | null } | null, item_types?: string[] | null, se_results_count?: number | null, items_count?: number | null, includes_non_news_search_results?: boolean | null, items?: ({ type: news_search, rank_group?: number | null, rank_absolute?: number | null, page?: number | null, position?: string | null, xpath?: string | null, domain?: string | null, title?: string | null, url?: string | null, image_url?: string | null, snippet?: string | null, time_published?: string | null, timestamp?: string | null } | { type: top_stories, rank_group?: number | null, rank_absolute?: number | null, page?: number | null, position?: string | null, xpath?: string | null, items?: { type?: string | null, source?: string | null, domain?: string | null, title?: string | null, date?: string | null, timestamp?: string | null, url?: string | null, image_url?: string | null }[] | null })[] | null }[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dataforseo.api.serp.googleOrganic",
+      "shortPath": "serp.googleOrganic",
+      "description": "Get the live Google organic SERP for a keyword: organic, paid, AI Overview, People Also Ask, and other result types",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "keyword",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "location_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location_code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "language_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "language_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location_coordinate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "depth",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_crawl_pages",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "search_param",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "se_domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "device",
+            "optional": true,
+            "type": "desktop | mobile"
+          },
+          {
+            "key": "os",
+            "optional": true,
+            "type": "windows | macos | android | ios"
+          },
+          {
+            "key": "load_async_ai_overview",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "people_also_ask_click_depth",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "group_organic_results",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "remove_from_url",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "target",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "target_search_mode",
+            "optional": true,
+            "type": "all | any"
+          },
+          {
+            "key": "find_targets_in",
+            "optional": true,
+            "type": "organic | paid | local_pack | featured_snippet | events | google_flights | images | jobs | knowledge_graph | local_service | map | scholarly_articles | third_party_reviews | twitter[]"
+          },
+          {
+            "key": "ignore_targets_in",
+            "optional": true,
+            "type": "organic | paid | local_pack | featured_snippet | events | google_flights | images | jobs | knowledge_graph | local_service | map | scholarly_articles | third_party_reviews | twitter[]"
+          },
+          {
+            "key": "stop_crawl_on_match",
+            "optional": true,
+            "type": "{ match_value: string, match_type: domain | with_subdomains | wildcard }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "status_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cost",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks_error",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks",
+            "optional": true,
+            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: {} | null, result?: { keyword?: string | null, type?: string | null, se_domain?: string | null, location_code?: number | null, language_code?: string | null, check_url?: string | null, datetime?: string | null, spell?: { keyword?: string | null, type?: string | null } | null, item_types?: string[] | null, se_results_count?: number | null, items_count?: number | null, pages_count?: number | null, refinement_chips?: { type?: string | null, xpath?: string | null, items?: { type?: string | null, title?: string | null, url?: string | null, domain?: string | null }[] | null } | null, items?: ({ type: organic, rank_group?: number | null, rank_absolute?: number | null, page?: number | null, position?: string | null, xpath?: string | null, domain?: string | null, title?: string | null, description?: string | null, url?: string | null, breadcrumb?: string | null, website_name?: string | null, is_image?: boolean | null, is_video?: boolean | null, images?: { type?: string | null, alt?: string | null, url?: string | null, image_url?: string | null }[] | null, highlighted?: string[] | null, rating?: { rating_type?: string | null, value?: number | null, votes_count?: number | null, rating_max?: number | null } | null, price?: { current?: number | null, regular?: number | null, max_value?: number | null, currency?: string | null, is_price_range?: boolean | null, displayed_price?: string | null } | null, timestamp?: string | null, cache_url?: string | null, related_search_url?: string | null, is_featured_snippet?: boolean | null, is_malicious?: boolean | null, is_web_story?: boolean | null, pre_snippet?: string | null, extended_snippet?: string | null, amp_version?: boolean | null, links?: { type?: string | null, title?: string | null, snippet?: string | null, description?: string | null, url?: string | null, domain?: string | null }[] | null, faq?: { type?: string | null, items?: { type?: string | null, title?: string | null, description?: string | null, links?: { type?: string | null, title?: string | null, snippet?: string | null, description?: string | null, url?: string | null, domain?: string | null }[] | null }[] | null } | null } | { type: paid, rank_group?: number | null, rank_absolute?: number | null, page?: number | null, position?: string | null, xpath?: string | null, domain?: string | null, title?: string | null, description?: string | null, url?: string | null, breadcrumb?: string | null, website_name?: string | null, is_image?: boolean | null, is_video?: boolean | null, images?: { type?: string | null, alt?: string | null, url?: string | null, image_url?: string | null }[] | null, highlighted?: string[] | null, rating?: { rating_type?: string | null, value?: number | null, votes_count?: number | null, rating_max?: number | null } | null, price?: { current?: number | null, regular?: number | null, max_value?: number | null, currency?: string | null, is_price_range?: boolean | null, displayed_price?: string | null } | null, timestamp?: string | null, description_rows?: string[] | null, links?: { type?: string | null, title?: string | null, description?: string | null, url?: string | null, domain?: string | null }[] | null } | { type: featured_snippet, rank_group?: number | null, rank_absolute?: number | null, page?: number | null, position?: string | null, xpath?: string | null, domain?: string | null, title?: string | null, description?: string | null, url?: string | null, breadcrumb?: string | null, website_name?: string | null, is_image?: boolean | null, is_video?: boolean | null, images?: { type?: string | null, alt?: string | null, url?: string | null, image_url?: string | null }[] | null, highlighted?: string[] | null, rating?: { rating_type?: string | null, value?: number | null, votes_count?: number | null, rating_max?: number | null } | null, price?: { current?: number | null, regular?: number | null, max_value?: number | null, currency?: string | null, is_price_range?: boolean | null, displayed_price?: string | null } | null, timestamp?: string | null, featured_title?: string | null, table?: { table_element?: string | null, table_header?: string[] | null, table_content?: string[][] | null } | null } | { type: people_also_ask, rank_group?: number | null, rank_absolute?: number | null, page?: number | null, position?: string | null, xpath?: string | null, items?: { type?: string | null, title?: string | null, seed_question?: string | null, xpath?: string | null, expanded_element?: { type?: string | null, featured_title?: string | null, url?: string | null, domain?: string | null, title?: string | null, description?: string | null, images?: { type?: string | null, alt?: string | null, url?: string | null, image_url?: string | null }[] | null, timestamp?: string | null, asynchronous_ai_overview?: boolean | null, references?: { type?: string | null, source?: string | null, domain?: string | null, url?: string | null, title?: string | null, text?: string | null }[] | null }[] | null }[] | null } | { type: related_searches, rank_group?: number | null, rank_absolute?: number | null, page?: number | null, position?: string | null, xpath?: string | null, items?: string[] | null } | { type: top_stories, rank_group?: number | null, rank_absolute?: number | null, page?: number | null, position?: string | null, xpath?: string | null, title?: string | null, items?: { type?: string | null, source?: string | null, domain?: string | null, title?: string | null, date?: string | null, timestamp?: string | null, url?: string | null, image_url?: string | null }[] | null } | { type: local_pack, rank_group?: number | null, rank_absolute?: number | null, page?: number | null, position?: string | null, xpath?: string | null, title?: string | null, description?: string | null, domain?: string | null, phone?: string | null, booking_url?: string | null, url?: string | null, is_paid?: boolean | null, rating?: { rating_type?: string | null, value?: number | null, votes_count?: number | null, rating_max?: number | null } | null, cid?: string | null } | { type: ai_overview, rank_group?: number | null, rank_absolute?: number | null, page?: number | null, position?: string | null, xpath?: string | null, asynchronous_ai_overview?: boolean | null, markdown?: string | null, references?: { type?: string | null, source?: string | null, domain?: string | null, url?: string | null, title?: string | null, text?: string | null }[] | null } | { type: video, rank_group?: number | null, rank_absolute?: number | null, page?: number | null, position?: string | null, xpath?: string | null, items?: { type?: string | null, source?: string | null, preview?: string | null, title?: string | null, timestamp?: string | null, url?: string | null }[] | null } | { type: string, rank_group?: number | null, rank_absolute?: number | null, page?: number | null, position?: string | null, xpath?: string | null })[] | null }[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dataforseo.api.serp.languages",
+      "shortPath": "serp.languages",
+      "description": "List Google SERP language codes (free)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "status_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cost",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks_error",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks",
+            "optional": true,
+            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: {} | null, result?: { language_name: string, language_code: string }[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dataforseo.api.serp.locations",
+      "shortPath": "serp.locations",
+      "description": "List Google SERP location codes, optionally for one country (free)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "status_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cost",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks_error",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks",
+            "optional": true,
+            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: {} | null, result?: { location_code: number, location_name: string, location_code_parent?: number | null, country_iso_code?: string | null, location_type?: string | null }[] | null }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "dataforseo.db.amazonProducts.search",
+      "entityName": "amazonProducts",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "asin",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "seDomain",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "locationCode",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "languageCode",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "priceFrom",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "currency",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "rating",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "ratingCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "isAvailable",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "dataforseo.db.backlinkTargets.search",
+      "entityName": "backlinkTargets",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "target",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "rank",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "backlinks",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "referringDomains",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "referringMainDomains",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "spamScore",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "firstSeen",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "dataforseo.db.keywords.search",
+      "entityName": "keywords",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "keyword",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "locationCode",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "languageCode",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "searchVolume",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "cpc",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "competition",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

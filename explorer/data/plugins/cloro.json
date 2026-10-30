@@ -1,0 +1,552 @@
+{
+  "id": "cloro",
+  "displayName": "Cloro",
+  "description": "Cloro plugin for Corsair",
+  "npmPackageName": "@corsair-dev/cloro",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 10,
+    "webhooks": 0,
+    "db": 1
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "cloro.api.monitor.chatgpt",
+      "shortPath": "monitor.chatgpt",
+      "description": "Ask ChatGPT a prompt as a user in a given country and get the structured answer, sources, and shopping cards",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "prompt",
+            "optional": false,
+            "type": "string | string[]"
+          },
+          {
+            "key": "country",
+            "optional": false,
+            "type": "string",
+            "description": "ISO 3166-1 alpha-2 country code; see utility.countries"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string",
+            "description": "US state for state-level targeting (+2 credits); see utility.states"
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "{ html?: boolean, markdown?: boolean, rawResponse?: boolean, searchQueries?: boolean, ads?: boolean, shopping?: boolean }"
+          },
+          {
+            "key": "legacy",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "disableWebSearch",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ text?: string, sources?: { position?: number, url?: string, label?: string, description?: string, footnote?: boolean, datePublished?: string }[], html?: string, markdown?: string, rawResponse?: { type?: string, token?: string, conversation_id?: string, message?: { id?: string, role?: string, model?: string }, delta?: { content?: { type?: string, text_delta?: string }[] }, reason?: string }[], searchQueries?: string[], mapSearchQueries?: string[], model?: string | null, shoppingCards?: { tags?: string[], products?: { title?: string, position?: number, url?: string, price?: string, featured_tag?: string, merchant?: string, image_urls?: string[], rating?: number, num_reviews?: number, id?: string, offers?: { merchant_name?: string, marketplace_seller?: string | null, seller_name?: string, brand?: string | null, product_name?: string, url?: string, price?: string, details?: string, available?: boolean, checkoutable?: boolean, price_details?: { base?: string, total?: string }, tag?: { text?: string } }[], rating_grouped_citation?: { title?: string, url?: string, supporting_websites?: { title?: string, url?: string }[] } }[] }[], inlineProducts?: { product?: { title?: string, position?: number, url?: string, description?: string, price?: string, featured_tag?: string, rating?: number, num_reviews?: number, image_urls?: string[], id?: string, variants?: any, offers?: { merchant_name?: string, merchant_subtitle?: string | null, marketplace_seller?: string | null, seller_name?: string, brand?: string | null, product_name?: string, url?: string, price?: string, details?: string, original_price?: string | null, available?: boolean, checkoutable?: boolean, is_digital?: boolean | null, checkout_payload?: string | null, checkout_image_urls?: string[] | null, shop_id?: string | null, provider?: string, price_details?: { display_price?: string | null, base?: string, shipping?: string | null, tax?: string | null, total?: string }, tag?: { text?: string, tooltip?: string } | null }[], rating_grouped_citation?: { title?: string, url?: string, supporting_websites?: { title?: string, url?: string }[] }, provider?: string, providers?: string[], product_lookup_key?: { data?: string }, product_lookup_data?: { request_query?: string, all_ids?: {}, metadata_sources?: string[] }, showcase_metadata?: { image?: { url: string, width?: number, height?: number }, background?: { type?: string, primary?: string, secondary?: string }, slots?: {}, debug?: {} }, show_price_disclosure?: boolean, analytics_meta?: { product_event_uuid?: string }, metadata_sources?: string[], product_event_uuid?: string, generatedProductQuery?: string }, render_as?: inline | hero | block }[], entities?: { type: string, name: string, product?: { title?: string, position?: number, url?: string, description?: string, price?: string, featured_tag?: string, rating?: number, num_reviews?: number, image_urls?: string[], id?: string, variants?: any, offers?: { merchant_name?: string, merchant_subtitle?: string | null, marketplace_seller?: string | null, seller_name?: string, brand?: string | null, product_name?: string, url?: string, price?: string, details?: string, original_price?: string | null, available?: boolean, checkoutable?: boolean, is_digital?: boolean | null, checkout_payload?: string | null, checkout_image_urls?: string[] | null, shop_id?: string | null, provider?: string, price_details?: { display_price?: string | null, base?: string, shipping?: string | null, tax?: string | null, total?: string }, tag?: { text?: string, tooltip?: string } | null }[], rating_grouped_citation?: { title?: string, url?: string, supporting_websites?: { title?: string, url?: string }[] }, provider?: string, providers?: string[], product_lookup_key?: { data?: string }, product_lookup_data?: { request_query?: string, all_ids?: {}, metadata_sources?: string[] }, showcase_metadata?: { image?: { url: string, width?: number, height?: number }, background?: { type?: string, primary?: string, secondary?: string }, slots?: {}, debug?: {} }, show_price_disclosure?: boolean, analytics_meta?: { product_event_uuid?: string }, metadata_sources?: string[], product_event_uuid?: string, generatedProductQuery?: string } }[], map?: { id?: string, provider?: string, name?: string, position?: number, address?: string, latitude?: number, longitude?: number, categories?: string[], rating?: number, reviewCount?: number, description?: string, phone?: string, websiteUrl?: string }[], citationPills?: { url: string, label: string, description?: string, domain: string, datePublished?: string, citationPillId: number, type: searchResult | groupedWebpage, position: number }[], ads?: { brand: { name: string, url: string, favicon?: string }, cards: { title: string, body: string, url: string, image?: string }[], visibility: string, adsResponseIndex: number, rendered: boolean }[], followUpForm?: { questions: { label: string, type: radio | checkbox | select | text | textarea | date, name?: string, placeholder?: string, options: { label: string, value: string | boolean, selected: boolean }[] }[], submitLabel?: string, followUpPrompt?: string } | null } | { text?: string, sources?: { position?: number, url?: string, label?: string, description?: string, footnote?: boolean, datePublished?: string }[], html?: string, markdown?: string, rawResponse?: { type?: string, token?: string, conversation_id?: string, message?: { id?: string, role?: string, model?: string }, delta?: { content?: { type?: string, text_delta?: string }[] }, reason?: string }[], searchQueries?: string[], mapSearchQueries?: string[], model?: string | null, shoppingCards?: { tags?: string[], products?: { title?: string, position?: number, url?: string, price?: string, featured_tag?: string, merchant?: string, image_urls?: string[], rating?: number, num_reviews?: number, id?: string, offers?: { merchant_name?: string, marketplace_seller?: string | null, seller_name?: string, brand?: string | null, product_name?: string, url?: string, price?: string, details?: string, available?: boolean, checkoutable?: boolean, price_details?: { base?: string, total?: string }, tag?: { text?: string } }[], rating_grouped_citation?: { title?: string, url?: string, supporting_websites?: { title?: string, url?: string }[] } }[] }[], inlineProducts?: { product?: { title?: string, position?: number, url?: string, description?: string, price?: string, featured_tag?: string, rating?: number, num_reviews?: number, image_urls?: string[], id?: string, variants?: any, offers?: { merchant_name?: string, merchant_subtitle?: string | null, marketplace_seller?: string | null, seller_name?: string, brand?: string | null, product_name?: string, url?: string, price?: string, details?: string, original_price?: string | null, available?: boolean, checkoutable?: boolean, is_digital?: boolean | null, checkout_payload?: string | null, checkout_image_urls?: string[] | null, shop_id?: string | null, provider?: string, price_details?: { display_price?: string | null, base?: string, shipping?: string | null, tax?: string | null, total?: string }, tag?: { text?: string, tooltip?: string } | null }[], rating_grouped_citation?: { title?: string, url?: string, supporting_websites?: { title?: string, url?: string }[] }, provider?: string, providers?: string[], product_lookup_key?: { data?: string }, product_lookup_data?: { request_query?: string, all_ids?: {}, metadata_sources?: string[] }, showcase_metadata?: { image?: { url: string, width?: number, height?: number }, background?: { type?: string, primary?: string, secondary?: string }, slots?: {}, debug?: {} }, show_price_disclosure?: boolean, analytics_meta?: { product_event_uuid?: string }, metadata_sources?: string[], product_event_uuid?: string, generatedProductQuery?: string }, render_as?: inline | hero | block }[], entities?: { type: string, name: string, product?: { title?: string, position?: number, url?: string, description?: string, price?: string, featured_tag?: string, rating?: number, num_reviews?: number, image_urls?: string[], id?: string, variants?: any, offers?: { merchant_name?: string, merchant_subtitle?: string | null, marketplace_seller?: string | null, seller_name?: string, brand?: string | null, product_name?: string, url?: string, price?: string, details?: string, original_price?: string | null, available?: boolean, checkoutable?: boolean, is_digital?: boolean | null, checkout_payload?: string | null, checkout_image_urls?: string[] | null, shop_id?: string | null, provider?: string, price_details?: { display_price?: string | null, base?: string, shipping?: string | null, tax?: string | null, total?: string }, tag?: { text?: string, tooltip?: string } | null }[], rating_grouped_citation?: { title?: string, url?: string, supporting_websites?: { title?: string, url?: string }[] }, provider?: string, providers?: string[], product_lookup_key?: { data?: string }, product_lookup_data?: { request_query?: string, all_ids?: {}, metadata_sources?: string[] }, showcase_metadata?: { image?: { url: string, width?: number, height?: number }, background?: { type?: string, primary?: string, secondary?: string }, slots?: {}, debug?: {} }, show_price_disclosure?: boolean, analytics_meta?: { product_event_uuid?: string }, metadata_sources?: string[], product_event_uuid?: string, generatedProductQuery?: string } }[], map?: { id?: string, provider?: string, name?: string, position?: number, address?: string, latitude?: number, longitude?: number, categories?: string[], rating?: number, reviewCount?: number, description?: string, phone?: string, websiteUrl?: string }[], citationPills?: { url: string, label: string, description?: string, domain: string, datePublished?: string, citationPillId: number, type: searchResult | groupedWebpage, position: number }[], ads?: { brand: { name: string, url: string, favicon?: string }, cards: { title: string, body: string, url: string, image?: string }[], visibility: string, adsResponseIndex: number, rendered: boolean }[], followUpForm?: { questions: { label: string, type: radio | checkbox | select | text | textarea | date, name?: string, placeholder?: string, options: { label: string, value: string | boolean, selected: boolean }[] }[], submitLabel?: string, followUpPrompt?: string } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cloro.api.monitor.copilot",
+      "shortPath": "monitor.copilot",
+      "description": "Ask Microsoft Copilot a prompt in a given country and get the structured answer and sources",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "prompt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": false,
+            "type": "string",
+            "description": "ISO 3166-1 alpha-2 country code; see utility.countries"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string",
+            "description": "US state for state-level targeting (+2 credits); see utility.states"
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "{ html?: boolean, markdown?: boolean, rawResponse?: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ text?: string, html?: string, sources?: { position?: number, url?: string, label?: string, description?: string }[], citationPills?: { label: string, citationPillId: number, url: string, domain: string, description?: string, position: number }[], shoppingCards?: { type?: string, layout?: string, products?: { product?: { id?: string, groupId?: string, brandGroupId?: string }, position?: number, offerId?: string, url?: string, name?: string, description?: string, images?: { title?: string, url?: string }[], specifications?: { displayName?: string, values?: string[] }[], tags?: string[], price?: { amount?: number, currency?: string, currencySymbol?: string }, discountPrice?: { amount?: number, currency?: string, currencySymbol?: string } | null, seller?: string, sellerLogoUrl?: string, brandName?: string, rating?: { value?: number, count?: number, maxRating?: number | null }, canTrackPrice?: boolean }[] }[], map?: { name?: string, position?: number, placeId?: string, location?: { address?: string, latitude?: number, longitude?: number }, phoneNumber?: string, url?: string, reviews?: { count?: number, rating?: number, providerName?: string, providerIconUrl?: string, url?: string }[], photos?: { url?: string, altText?: string, providerName?: string, providerUrl?: string }[], openState?: string, category?: string, price?: any, layerLabel?: string }[], searchQueries?: string[], markdown?: string, rawResponse?: any[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cloro.api.monitor.gemini",
+      "shortPath": "monitor.gemini",
+      "description": "Ask Google Gemini a prompt in a given country and get the structured answer and sources",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "prompt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": false,
+            "type": "string",
+            "description": "ISO 3166-1 alpha-2 country code; see utility.countries"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string",
+            "description": "US state for state-level targeting (+2 credits); see utility.states"
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "{ html?: boolean, markdown?: boolean, rawResponse?: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ text?: string, markdown?: string, html?: string, sources?: { position?: number, label?: string, url?: string, description?: string }[], citationPills?: { label: string, citationPillId: number, url: string, domain: string, description?: string, position: number }[], places?: { index: number, title: string, link: string, thumbnail?: string, rating?: number, reviews?: number, type?: string, description?: string, price?: string }[], shoppingCards?: { position: number, title: string, productLink: string, productId: string, price?: { value?: number, currency?: string, raw?: string }, oldPrice?: { value?: number, currency?: string, raw?: string }, store?: string, storeLink?: string, storeCount?: number, shipping?: string, deliveryTime?: string, rating?: number, reviews?: number, brand?: string, description?: string, thumbnail?: string, images?: string[], catalogId?: string, gpcId?: string }[], rawResponse?: any[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cloro.api.monitor.googleAiMode",
+      "shortPath": "monitor.googleAiMode",
+      "description": "Ask Google AI Mode a prompt and get the structured answer, sources, places, and products",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 3166-1 alpha-2 country code; see utility.countries"
+          },
+          {
+            "key": "gl",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 3166-1 alpha-2 country code; see utility.countries"
+          },
+          {
+            "key": "hl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "prompt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "uule",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "device",
+            "optional": true,
+            "type": "desktop | mobile"
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "{ html?: boolean, markdown?: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ text?: string, html?: string, sources?: { position?: number, url?: string, label?: string, description?: string, redirectLink?: string }[], citationPills?: { label: string, citationPillId: number, url: string, domain: string, description?: string, position?: number, redirectLink?: string }[], markdown?: string, places?: { title: string, index: number, thumbnail?: string, rating?: number, reviews?: number, type?: string, address?: string, status?: string, placeId?: string, phone?: string, website?: string, link?: string, priceLevel?: string }[], shoppingCards?: { title?: string, price?: { value?: number, currency?: string, raw?: string }, store?: string, rating?: number, reviews?: string, thumbnail?: string, productLink?: string, productResultToken?: string, productDocid?: string, oldPrice?: { value?: number, currency?: string, raw?: string }, snippet?: string, snippetLinks?: { text?: string, link?: string, redirectLink?: string }[], position?: number }[], ads?: { title?: string, ads?: { title?: string, url?: string, position?: number, price?: { value?: number, currency?: string, raw?: string }, store?: string, rating?: number, reviews?: string, redirectLink?: string }[] }, inlineProducts?: { title?: string, position?: number, price?: { value?: number, currency?: string, raw?: string }, oldPrice?: { value?: number, currency?: string, raw?: string }, store?: string, thumbnail?: string, productLink?: string, productResultToken?: string, productDocid?: string }[], videos?: { title: string, link: string, platform?: string, channel?: string, duration?: string, thumbnail?: string, redirectLink?: string }[], map?: { title: string, index: number, thumbnail?: string, rating?: number, reviews?: number, type?: string, address?: string, status?: string, placeId: string, phone?: string, website?: string, link: string, gpsCoordinates: { latitude?: number, longitude?: number } }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cloro.api.monitor.googleNews",
+      "shortPath": "monitor.googleNews",
+      "description": "Run a Google News search (1-10 pages) and get articles",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 3166-1 alpha-2 country code; see utility.countries"
+          },
+          {
+            "key": "gl",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 3166-1 alpha-2 country code; see utility.countries"
+          },
+          {
+            "key": "hl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "device",
+            "optional": true,
+            "type": "desktop | mobile | ios | android"
+          },
+          {
+            "key": "pages",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "{ html?: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ newsResults?: { position?: number, title?: string, link?: string, snippet?: string, source?: string, date?: string, page?: number, thumbnail?: string, redirectLink?: string }[], html?: string[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cloro.api.monitor.googleSearch",
+      "shortPath": "monitor.googleSearch",
+      "description": "Run a Google search (1-10 pages) and get organic results, ads, People Also Ask, and the AI Overview",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 3166-1 alpha-2 country code; see utility.countries"
+          },
+          {
+            "key": "gl",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 3166-1 alpha-2 country code; see utility.countries"
+          },
+          {
+            "key": "hl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "uule",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "device",
+            "optional": true,
+            "type": "desktop | mobile | ios | android"
+          },
+          {
+            "key": "pages",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "{ html?: boolean, aioverview?: { markdown?: boolean }, paaAioverview?: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ organicResults?: { position?: number, title?: string, link?: string, displayedLink?: string, snippet?: string, date?: string, page?: number, sitelinks?: { inline?: { title?: string, link?: string, redirectLink?: string }[] }, redirectLink?: string }[], peopleAlsoAsk?: { question?: string, type?: AIOVERVIEW | LINK | UNKNOWN, snippet?: string, title?: string, link?: string, markdown?: string, sources?: { label?: string, url?: string, description?: string, position?: number, redirectLink?: string }[], redirectLink?: string }[], peopleAreSaying?: { position: number, title: string, link: string, date: string, redirectLink?: string }[], localResults?: { position: number, title: string, placeId?: string, rating?: number, reviews?: string, price?: string, type?: string, yearsInBusiness?: string, address?: string, phone?: string, hours?: string, description?: string, links?: { website?: string, directions?: string, redirectLink?: string } }[], localResultsMoreLink?: string, relatedSearches?: { query?: string, link?: string }[], ads?: { position?: number, blockPosition?: top | bottom | middle | rhs, type?: RESULT | SHOPPING_CARD, title?: string, url?: string, page?: number, displayedUrl?: string, domain?: string, description?: string, category?: string, price?: { value?: number, currency?: string, raw?: string }, oldPrice?: { value?: number, currency?: string, raw?: string }, store?: string, imageUrl?: string, sitelinks?: { url?: string, title?: string, description?: string }[] }[], aioverview?: { sources?: { position?: number, url?: string, label?: string, description?: string, redirectLink?: string }[], citationPills?: { label: string, citationPillId: number, url: string, domain: string, description?: string, position: number, redirectLink?: string }[], relatedLinks?: { label: string, citationPillId: number, url: string, domain: string, description?: string, redirectLink?: string }[], text?: string, markdown?: string, videos?: { url?: string, title?: string, thumbnail?: string, source?: string, platform?: string, date?: string, duration?: string, redirectLink?: string }[], places?: { title: string, index: number, thumbnail?: string, rating?: number, reviews?: number, type?: string, address?: string, status?: string, placeId?: string, phone?: string, website?: string, link?: string, priceLevel?: string }[], map?: { title: string, index: number, thumbnail?: string, rating?: number, reviews?: number, type?: string, address?: string, status?: string, placeId: string, phone?: string, website?: string, link: string, gpsCoordinates: { latitude?: number, longitude?: number } }[], ads?: { position: number, title: string, url: string, type: TEXT | SHOPPING, domain?: string, description?: string, price?: { value?: number, currency?: string, raw?: string }, old_price?: { value?: number, currency?: string, raw?: string }, store?: string, image?: string }[] } | null, shoppingCards?: { title: string, position: number, productResultToken?: string, promoLabel?: string, category?: string, price?: { value?: number, currency?: string, raw?: string }, oldPrice?: { value?: number, currency?: string, raw?: string }, store?: string, rating?: number, reviews?: string, thumbnail?: string }[], knowledgeGraph?: { title?: string, type?: string, kgmid?: string, description?: string, imageUrl?: string, website?: string, menu?: string, trailer?: string, source?: { name?: string, link?: string, redirectLink?: string }, attributes?: { key?: string, value?: string }[], profiles?: { name?: string, link?: string, redirectLink?: string }[], peopleAlsoSearchFor?: { name?: string, link?: string, redirectLink?: string }[], thingsToKnow?: { label?: string, subtitle?: string }[], ratings?: { platform?: string, rating?: string, link?: string, redirectLink?: string }[], streamingOptions?: { platform?: string, link?: string, redirectLink?: string }[], webRatings?: { platform?: string, rating?: string, link?: string, votes?: string, redirectLink?: string }[], statsCard?: { context?: string, stats?: { label?: string, value?: string }[] }, socialPosts?: { platform?: string, text?: string, link?: string, date?: string, redirectLink?: string }[], notableAlumni?: { name?: string, link?: string, redirectLink?: string }[], contact?: { label?: string, url?: string, redirectLink?: string }[], weather?: { temperature?: string, condition?: string }, rating?: { rating?: string, count?: string }, admission?: { provider?: string, price?: string, link?: string, badge?: string, redirectLink?: string }[], artworks?: { title?: string, link?: string, author?: string, redirectLink?: string }[], has3dModel?: boolean, hotelOptions?: { provider?: string, price?: string, link?: string, note?: string, redirectLink?: string }[], trendingProducts?: { title?: string, price?: string, link?: string, redirectLink?: string }[], merchantVideos?: { title?: string, link?: string, platform?: string, duration?: string, redirectLink?: string }[], listenOn?: { platform?: string, link?: string, redirectLink?: string }[], redirectLink?: string }, productResults?: { title: string, stores?: { name: string, link?: string, redirectLink?: string, price?: { value: number, currency: string, raw?: string }, installments?: string, description?: string, buyingOptions?: string[], logo?: string, shipping?: string, condition?: string, rating?: number, reviews?: string }[], aboutTheProduct?: { description?: string, features?: string[] }, specifications?: {}, images?: { mainUrl: string, thumbnailUrl?: string, title?: string }[], rating?: number, reviews?: string, variants?: {}[], userReviews?: {}[], relatedProducts?: {}[], productDocid?: string }[], html?: string[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cloro.api.monitor.perplexity",
+      "shortPath": "monitor.perplexity",
+      "description": "Ask Perplexity a prompt in a given country and get the structured answer and sources",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "prompt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": false,
+            "type": "string",
+            "description": "ISO 3166-1 alpha-2 country code; see utility.countries"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string",
+            "description": "US state for state-level targeting (+2 credits); see utility.states"
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "{ html?: boolean, markdown?: boolean, rawResponse?: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ text?: string, html?: string, sources?: { position?: number, url?: string, label?: string, description?: string }[], citationPills?: { label: string, citationPillId: number, url: string, domain: string, description?: string, position: number }[], markdown?: string, related_queries?: string[], videos?: { title?: string, url?: string, thumbnail?: string, medium?: string, source?: string, image_width?: number, image_height?: number, thumbnail_width?: number, thumbnail_height?: number }[], images?: { title?: string, url?: string, thumbnail?: string, medium?: string, source?: string, image_width?: number, image_height?: number, thumbnail_width?: number, thumbnail_height?: number }[], hotels?: { name?: string, url?: string, rating?: number, num_reviews?: number, address?: string[], phone?: string, description?: string, image_url?: string, images?: string[], lat?: number, lng?: number, price_level?: string, categories?: string[] }[], places?: { name?: string, url?: string, rating?: number, address?: string[], lat?: number, lng?: number, categories?: string[], map_url?: string, images?: string[] }[], shopping_cards?: { tags?: string[], products?: { title?: string, id?: string, url?: string, price?: string, merchant?: string, available?: boolean, imageUrls?: string[], numReviews?: number, offers?: { url?: string, price?: string, merchant_name?: string, product_name?: string, available?: boolean, price_details?: { display_price?: string }, original_price?: string | null }[], position?: number, rating?: number, original_price?: string | null, description?: string, variants?: {}[] }[] }[], search_model_queries?: string[], rawResponse?: any[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cloro.api.utility.countries",
+      "shortPath": "utility.countries",
+      "description": "List the country codes a monitor engine supports",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": true,
+            "type": "aimode | aioverview | chatgpt | copilot | gemini | google | perplexity"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string[]"
+      }
+    },
+    {
+      "path": "cloro.api.utility.credits",
+      "shortPath": "utility.credits",
+      "description": "Get the remaining cloro credit balance and billing cycle",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "remaining",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "perCycle",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cycleResetsAt",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cloro.api.utility.states",
+      "shortPath": "utility.states",
+      "description": "List the US states supported for state-level targeting",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "country",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ code: string, name: string }[]"
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "cloro.db.snapshots.search",
+      "entityName": "snapshots",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "prompt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "country",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "area",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "text",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "model",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "checkedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

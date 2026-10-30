@@ -1,0 +1,783 @@
+{
+  "id": "uniswapapi",
+  "displayName": "Uniswap",
+  "description": "Decentralized exchange protocol API for token swaps, pools, and on-chain liquidity data.",
+  "npmPackageName": "@corsair-dev/uniswapapi",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 8,
+    "webhooks": 0,
+    "db": 5
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "uniswapapi.api.approval.check",
+      "shortPath": "approval.check",
+      "description": "Check if a wallet has the required token approval for a swap",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "token",
+            "optional": false,
+            "type": "string",
+            "description": "Token contract address"
+          },
+          {
+            "key": "amount",
+            "optional": false,
+            "type": "string",
+            "description": "Amount to check approval for"
+          },
+          {
+            "key": "walletAddress",
+            "optional": false,
+            "type": "string",
+            "description": "Wallet address to check"
+          },
+          {
+            "key": "chainId",
+            "optional": false,
+            "type": "number",
+            "description": "Chain ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "approval",
+            "optional": true,
+            "type": "{ to: string, from?: string, data: string, value: string, chainId: number, gasLimit?: string, maxFeePerGas?: string, maxPriorityFeePerGas?: string, gasPrice?: string }"
+          },
+          {
+            "key": "cancel",
+            "optional": true,
+            "type": "{ to: string, from?: string, data: string, value: string, chainId: number, gasLimit?: string, maxFeePerGas?: string, maxPriorityFeePerGas?: string, gasPrice?: string }"
+          },
+          {
+            "key": "gasFee",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cancelGasFee",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "uniswapapi.api.delegation.check",
+      "shortPath": "delegation.check",
+      "description": "Check wallet delegation status for smart contract wallets across chains",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "walletAddresses",
+            "optional": false,
+            "type": "string[]",
+            "description": "Wallet addresses to check delegation for"
+          },
+          {
+            "key": "chainIds",
+            "optional": false,
+            "type": "number[]",
+            "description": "Chain IDs to check delegation status for"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "delegationDetails",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "uniswapapi.api.order.getStatus",
+      "shortPath": "order.getStatus",
+      "description": "Get the status and details of a gasless UniswapX order",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orderId",
+            "optional": true,
+            "type": "string",
+            "description": "Single UniswapX order ID"
+          },
+          {
+            "key": "orderIds",
+            "optional": true,
+            "type": "string[]",
+            "description": "Multiple UniswapX order IDs"
+          },
+          {
+            "key": "orderStatus",
+            "optional": true,
+            "type": "open | expired | error | cancelled | filled | unverified | insufficient-funds",
+            "description": "Filter orders by status"
+          },
+          {
+            "key": "swapper",
+            "optional": true,
+            "type": "string",
+            "description": "Filter orders by swapper address"
+          },
+          {
+            "key": "filler",
+            "optional": true,
+            "type": "string",
+            "description": "Filter orders by filler address"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of orders to return per page"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "Pagination cursor from a previous response"
+          },
+          {
+            "key": "sortKey",
+            "optional": true,
+            "type": "createdAt",
+            "description": "Field to sort results by"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "orders",
+            "optional": false,
+            "type": "{ orderId: string, orderStatus: open | expired | error | cancelled | filled | unverified | insufficient-funds, chainId: number, type: DutchLimit | Dutch | Dutch_V2 | Dutch_V3 | Priority, encodedOrder?: string, signature?: string, nonce?: string, quoteId?: string, swapper?: string, txHash?: string }[]"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "uniswapapi.api.quote.get",
+      "shortPath": "quote.get",
+      "description": "Get a swap/bridge/wrap quote with route and estimated gas",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "EXACT_INPUT | EXACT_OUTPUT",
+            "description": "Swap type"
+          },
+          {
+            "key": "tokenIn",
+            "optional": false,
+            "type": "string",
+            "description": "Input token contract address"
+          },
+          {
+            "key": "tokenInChainId",
+            "optional": false,
+            "type": "number",
+            "description": "Input token chain ID"
+          },
+          {
+            "key": "tokenOut",
+            "optional": false,
+            "type": "string",
+            "description": "Output token contract address"
+          },
+          {
+            "key": "tokenOutChainId",
+            "optional": false,
+            "type": "number",
+            "description": "Output token chain ID"
+          },
+          {
+            "key": "amount",
+            "optional": false,
+            "type": "string",
+            "description": "Token amount (in smallest unit)"
+          },
+          {
+            "key": "swapper",
+            "optional": false,
+            "type": "string",
+            "description": "Address of the swapper wallet"
+          },
+          {
+            "key": "slippageTolerance",
+            "optional": true,
+            "type": "number",
+            "description": "Slippage tolerance as a percentage (e.g. 0.5 = 0.5%)"
+          },
+          {
+            "key": "autoSlippage",
+            "optional": true,
+            "type": "DEFAULT",
+            "description": "Let the API compute slippage automatically; cannot be combined with slippageTolerance"
+          },
+          {
+            "key": "urgency",
+            "optional": true,
+            "type": "normal | fast | urgent",
+            "description": "Trade urgency"
+          },
+          {
+            "key": "recipient",
+            "optional": true,
+            "type": "string",
+            "description": "Recipient address, if different from swapper"
+          },
+          {
+            "key": "protocols",
+            "optional": true,
+            "type": "string[]",
+            "description": "Protocols to route through"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "routing",
+            "optional": false,
+            "type": "CLASSIC | DUTCH_LIMIT | DUTCH_V2 | DUTCH_V3 | BRIDGE | LIMIT_ORDER | PRIORITY | WRAP | UNWRAP | CHAINED"
+          },
+          {
+            "key": "quote",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "permitData",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "quoteId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tokenIn",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tokenOut",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "amountIn",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "amountOut",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "swapper",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gasEstimate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gasFee",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gasFeeUSD",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "route",
+            "optional": true,
+            "type": "{}[][]"
+          },
+          {
+            "key": "routeString",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "uniswapapi.api.swap.create",
+      "shortPath": "swap.create",
+      "description": "Create swap calldata (unsigned transaction) for broadcast",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "quote",
+            "optional": false,
+            "type": "{}",
+            "description": "The quote object returned from /v1/quote"
+          },
+          {
+            "key": "signature",
+            "optional": true,
+            "type": "string",
+            "description": "Signed Permit2 message; required when the quote returned permitData"
+          },
+          {
+            "key": "permitData",
+            "optional": true,
+            "type": "{}",
+            "description": "Permit2 message from the quote; must be sent together with its signature"
+          },
+          {
+            "key": "refreshGasPrice",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether to refresh gas price"
+          },
+          {
+            "key": "simulateTransaction",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether to simulate the transaction"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "swap",
+            "optional": false,
+            "type": "{ to: string, from?: string, data: string, value: string, chainId: number, gasLimit?: string, maxFeePerGas?: string, maxPriorityFeePerGas?: string, gasPrice?: string }"
+          },
+          {
+            "key": "gasFee",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "uniswapapi.api.swap.getStatus",
+      "shortPath": "swap.getStatus",
+      "description": "Get swap status (PENDING, SUCCESS, NOT_FOUND, FAILED, EXPIRED) by tx or userOp hash",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "txHashes",
+            "optional": true,
+            "type": "string[]",
+            "description": "On-chain transaction hashes to query"
+          },
+          {
+            "key": "userOpHashes",
+            "optional": true,
+            "type": "string[]",
+            "description": "ERC-4337 userOperation hashes to query"
+          },
+          {
+            "key": "chainId",
+            "optional": false,
+            "type": "number",
+            "description": "Chain ID the transactions belong to"
+          },
+          {
+            "key": "swapper",
+            "optional": true,
+            "type": "string",
+            "description": "Filter results by swapper address"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "swaps",
+            "optional": false,
+            "type": "{ status: PENDING | SUCCESS | NOT_FOUND | FAILED | EXPIRED, swapType?: CLASSIC | DUTCH_LIMIT | DUTCH_V2 | DUTCH_V3 | BRIDGE | LIMIT_ORDER | PRIORITY | WRAP | UNWRAP | CHAINED, txHash?: string, userOpHash?: string, swapId?: string, hashType?: TX | USER_OP }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "uniswapapi.api.swappableTokens.get",
+      "shortPath": "swappableTokens.get",
+      "description": "List tokens and chains a source token can be swapped or bridged to",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tokenIn",
+            "optional": false,
+            "type": "string",
+            "description": "Source token contract address"
+          },
+          {
+            "key": "tokenInChainId",
+            "optional": false,
+            "type": "number",
+            "description": "Source token chain ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tokens",
+            "optional": false,
+            "type": "{ address: string, chainId: number, name: string, symbol: string, decimals: number, project?: { logo?: {} | null, safetyLevel?: string, isSpam?: boolean }, isSpam?: boolean }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "uniswapapi.api.transaction.encode7702",
+      "shortPath": "transaction.encode7702",
+      "description": "Batch transactions into one for EIP-7702 smart contract wallet execution",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "calls",
+            "optional": false,
+            "type": "{ to: string, from?: string, data: string, value: string, chainId: number }[]",
+            "description": "Transactions to encode; all calls must share the same chainId"
+          },
+          {
+            "key": "smartContractDelegationAddress",
+            "optional": false,
+            "type": "string",
+            "description": "Smart contract delegation implementation address to use"
+          },
+          {
+            "key": "walletAddress",
+            "optional": false,
+            "type": "string",
+            "description": "Wallet address the transactions are encoded for"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "encoded",
+            "optional": false,
+            "type": "{ to: string, from?: string, data: string, value: string, chainId: number, gasLimit?: string, maxFeePerGas?: string, maxPriorityFeePerGas?: string, gasPrice?: string }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "uniswapapi.db.approval.search",
+      "entityName": "approval",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "walletAddress",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "token",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "amount",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "chainId",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "approvalNeeded",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    },
+    {
+      "path": "uniswapapi.db.gaslessOrder.search",
+      "entityName": "gaslessOrder",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "orderId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "orderHash",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "orderStatus",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "chainId",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "swapper",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "txHash",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "uniswapapi.db.quote.search",
+      "entityName": "quote",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "requestId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "quoteId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "tokenIn",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "tokenOut",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "tokenInChainId",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "tokenOutChainId",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "amountIn",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "amountOut",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "swapper",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "gasEstimate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "gasFeeUSD",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "gasFeeQuote",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "routeString",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "uniswapapi.db.swapStatus.search",
+      "entityName": "swapStatus",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "txHash",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "chainId",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "uniswapapi.db.token.search",
+      "entityName": "token",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "chainId",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "address",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "decimals",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "symbol",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "buyFeeBps",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "sellFeeBps",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

@@ -6,7 +6,7 @@ export const analyticsOperations = [
 		group: 'analytics',
 		name: 'getProjectLogs',
 		method: 'GET',
-		path: '/v1/projects/{ref}/analytics/endpoints/logs.all',
+		path: '/v1/projects/{ref}/analytics/endpoints/logs',
 		pathParams: ['ref'],
 		riskLevel: 'read',
 		description: 'Get project logs',

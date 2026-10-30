@@ -44,6 +44,7 @@ export async function processConnectLinkDelivery(
 			plugins: internal.plugins,
 			database: internal.database,
 			kek: internal.kek,
+			multiTenancy: internal.multiTenancy,
 		},
 		{
 			tenantId,
@@ -63,6 +64,7 @@ async function createHubConnectSessionForPlugins(
 		plugins: readonly CorsairPlugin[];
 		database: CorsairDatabase;
 		kek: string;
+		multiTenancy?: boolean;
 	},
 	input: {
 		tenantId: string;
@@ -80,6 +82,7 @@ async function createHubConnectSessionForPlugins(
 		database: context.database,
 		kek: context.kek,
 		hub,
+		multiTenancy: context.multiTenancy,
 	};
 
 	await ensureConnectAccountRowsFromContext(manifestContext, input.tenantId);

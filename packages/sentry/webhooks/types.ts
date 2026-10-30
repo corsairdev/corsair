@@ -3,7 +3,7 @@ import type {
 	RawWebhookRequest,
 	WebhookRequest,
 } from 'corsair/core';
-import crypto from 'crypto';
+import { verifyHmacSignature } from 'corsair/http';
 import { z } from 'zod';
 
 // ── Shared sub-schemas ───────────────────────────────────────────────────────
@@ -288,11 +288,7 @@ export function verifySentryWebhookSignature(
 		};
 	}
 
-	const hmac = crypto.createHmac('sha256', webhookSecret);
-	hmac.update(rawBody, 'utf8');
-	const digest = hmac.digest('hex');
-
-	const isValid = digest === signature;
+	const isValid = verifyHmacSignature(rawBody, webhookSecret, signature);
 	if (!isValid) {
 		return { valid: false, error: 'Invalid signature' };
 	}

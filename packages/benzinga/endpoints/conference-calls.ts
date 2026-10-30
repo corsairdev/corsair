@@ -1,0 +1,48 @@
+import { logEventFromContext } from 'corsair/core';
+import type { BenzingaEndpoints } from '..';
+import { makeBenzingaRequest } from '../client';
+import { persistEntities } from './persist';
+import type { ListConferenceCallsRawResponse } from './types';
+import {
+	BenzingaEndpointInputSchemas,
+	ListConferenceCallsRawResponseSchema,
+} from './types';
+
+export const listConferenceCalls: BenzingaEndpoints['listConferenceCalls'] =
+	async (ctx, rawInput) => {
+		const input =
+			BenzingaEndpointInputSchemas.listConferenceCalls.parse(rawInput);
+		const raw = await makeBenzingaRequest<ListConferenceCallsRawResponse>(
+			'/api/v2.1/calendar/conference-calls',
+			ctx.key,
+			{
+				page: input.page,
+				pagesize: input.pagesize,
+				'parameters[date]': input.date,
+				'parameters[date_from]': input.dateFrom,
+				'parameters[date_to]': input.dateTo,
+				'parameters[tickers]': input.tickers,
+				'parameters[updated]': input.updated,
+			},
+		);
+
+		const parsed = ListConferenceCallsRawResponseSchema.parse(raw);
+		const response = {
+			conference: parsed.conference ?? parsed['conference-calls'] ?? [],
+		};
+
+		await persistEntities(
+			ctx.db.conferenceCalls,
+			response.conference,
+			(r) => r.id,
+		);
+
+		await logEventFromContext(
+			ctx,
+			'benzinga.calendar.listConferenceCalls',
+			{ ...input },
+			'completed',
+		);
+
+		return response;
+	};

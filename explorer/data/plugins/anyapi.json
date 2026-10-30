@@ -1,0 +1,1286 @@
+{
+  "id": "anyapi",
+  "displayName": "AnyAPI",
+  "description": "One key for 470+ scraping and data APIs (LinkedIn, X, Reddit, Instagram, TikTok, Google search and Maps, Amazon, any web page), paid per request in USD with automatic failover between sources.",
+  "npmPackageName": "@corsair-dev/anyapi",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 16,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "anyapi.api.account.getBalance",
+      "shortPath": "account.getBalance",
+      "description": "Get the AnyAPI wallet balance in USD",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "usd",
+            "optional": false,
+            "type": "number",
+            "description": "Remaining wallet balance in USD"
+          }
+        ]
+      }
+    },
+    {
+      "path": "anyapi.api.apis.get",
+      "shortPath": "apis.get",
+      "description": "Get one AnyAPI endpoint by SKU: its input and output JSON Schema, price and recent latency",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sku",
+            "optional": false,
+            "type": "string",
+            "description": "AnyAPI endpoint id, e.g. linkedin.company or google.search"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "platformId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "execution",
+            "optional": true,
+            "type": "{ mode: string }"
+          },
+          {
+            "key": "pricing",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "failover",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "inputSchema",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "outputSchema",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "latency",
+            "optional": true,
+            "type": "{ p50Ms?: number | null, p95Ms?: number | null, p99Ms?: number | null, sample?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "anyapi.api.apis.list",
+      "shortPath": "apis.list",
+      "description": "List AnyAPI endpoints, optionally in one category, with their SKUs and prices",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "category",
+            "optional": true,
+            "type": "string",
+            "description": "Limit to one category, e.g. search"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "apis",
+            "optional": false,
+            "type": "{ slug: string, name?: string | null, description?: string | null, category?: string | null, platformId?: string | null, execution?: { mode: string } | null, pricing?: {} | null, failover?: boolean | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "anyapi.api.apis.quote",
+      "shortPath": "apis.quote",
+      "description": "Price an AnyAPI run for an exact input and validate the input, without running or charging anything",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sku",
+            "optional": false,
+            "type": "string",
+            "description": "AnyAPI endpoint id, e.g. linkedin.company or google.search"
+          },
+          {
+            "key": "input",
+            "optional": false,
+            "type": "{}",
+            "description": "The endpoint's input, matching its inputSchema from apis.get"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "maxCostUsd",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "minCostUsd",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "baseUsd",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "perItemUsd",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "exact",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "pricing",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "anyapi.api.apis.run",
+      "shortPath": "apis.run",
+      "description": "Run any AnyAPI endpoint by SKU with its input (read the schema with apis.get first); returns the result, its USD cost and a resultId",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sku",
+            "optional": false,
+            "type": "string",
+            "description": "AnyAPI endpoint id, e.g. linkedin.company or google.search"
+          },
+          {
+            "key": "input",
+            "optional": false,
+            "type": "{}",
+            "description": "The endpoint's input, matching its inputSchema from apis.get"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated keys to keep on each result item, e.g. name,followerCount"
+          },
+          {
+            "key": "maxItems",
+            "optional": true,
+            "type": "number",
+            "description": "Cap the number of result rows returned"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return only an outline of the result with per-field sizes"
+          },
+          {
+            "key": "jq",
+            "optional": true,
+            "type": "string",
+            "description": "jq expression applied to the result; its output replaces `output`"
+          },
+          {
+            "key": "maxCostUsd",
+            "optional": true,
+            "type": "number",
+            "description": "Most this call may cost in USD. Sources priced above it are skipped; if none fits, the call is refused without charge."
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string",
+            "description": "Reuse the same key to retry a call without paying twice. Scoped to your account for 24 hours."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ output: any, provider?: string | null, costUsd: number, items?: number | null, replayed?: boolean | null, source?: { id: string, name?: string | null, kind?: string | null } | null, resultId?: string | null, hint?: string | null, jqError?: string | null } | { requestId: string, sku: string, status: queued | running | succeeded | failed | expired, createdAt: string, completedAt?: string | null, expiresAt?: string | null, retryAfterSeconds?: number | null, serviceOutcome?: string | null, settlementState?: string | null, resultExpired?: boolean | null, result?: {} | null, error?: {} | null }"
+      }
+    },
+    {
+      "path": "anyapi.api.apis.search",
+      "shortPath": "apis.search",
+      "description": "Search the AnyAPI catalog of 470+ data endpoints by what you need, such as linkedin company employees; returns SKUs with prices",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string",
+            "description": "What you need, in your own words, e.g. \"linkedin company page\""
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "string",
+            "description": "Limit to one category, e.g. social"
+          },
+          {
+            "key": "platform",
+            "optional": true,
+            "type": "string",
+            "description": "Limit to one platform, e.g. linkedin"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ slug: string, name?: string | null, description?: string | null, category?: string | null, platformId?: string | null, execution?: { mode: string } | null, pricing?: {} | null, failover?: boolean | null }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "anyapi.api.google.search",
+      "shortPath": "google.search",
+      "description": "Search Google and get organic results (title, link, snippet), with country, language, location and time filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string",
+            "description": "The Google search query"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Results page, from 1"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "gl",
+            "optional": true,
+            "type": "string",
+            "description": "Two-letter country code, e.g. us"
+          },
+          {
+            "key": "hl",
+            "optional": true,
+            "type": "string",
+            "description": "Two-letter language code, e.g. en"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string",
+            "description": "Finer location than gl, e.g. Austin, Texas, United States"
+          },
+          {
+            "key": "timeframe",
+            "optional": true,
+            "type": "1h | 1d | 7d | 1y | all"
+          },
+          {
+            "key": "autocorrect",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "maxCostUsd",
+            "optional": true,
+            "type": "number",
+            "description": "Most this call may cost in USD. Sources priced above it are skipped; if none fits, the call is refused without charge."
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string",
+            "description": "Reuse the same key to retry a call without paying twice. Scoped to your account for 24 hours."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "output",
+            "optional": false,
+            "type": "{ found: boolean, data?: { query?: string | null, results?: { position?: number | null, title?: string | null, link?: string | null, snippet?: string | null }[] | null, nextCursor?: string | null } | null }"
+          },
+          {
+            "key": "provider",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "costUsd",
+            "optional": false,
+            "type": "number",
+            "description": "USD charged for this call"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "replayed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "{ id: string, name?: string | null, kind?: string | null }"
+          },
+          {
+            "key": "resultId",
+            "optional": true,
+            "type": "string",
+            "description": "Re-read and re-shape this result for free with results.get for about 15 minutes"
+          },
+          {
+            "key": "hint",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jqError",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "anyapi.api.instagram.getProfile",
+      "shortPath": "instagram.getProfile",
+      "description": "Get an Instagram profile by handle: bio, follower, following and post counts, verified and business flags",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "handle",
+            "optional": false,
+            "type": "string",
+            "description": "Instagram username without the @"
+          },
+          {
+            "key": "maxCostUsd",
+            "optional": true,
+            "type": "number",
+            "description": "Most this call may cost in USD. Sources priced above it are skipped; if none fits, the call is refused without charge."
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string",
+            "description": "Reuse the same key to retry a call without paying twice. Scoped to your account for 24 hours."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "output",
+            "optional": false,
+            "type": "{ found: boolean, data?: { userId?: string | null, handle?: string | null, displayName?: string | null, bio?: string | null, followers?: number | null, following?: number | null, posts?: number | null, verified?: boolean | null, private?: boolean | null, isBusiness?: boolean | null, avatarUrl?: string | null } | null }"
+          },
+          {
+            "key": "provider",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "costUsd",
+            "optional": false,
+            "type": "number",
+            "description": "USD charged for this call"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "replayed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "{ id: string, name?: string | null, kind?: string | null }"
+          },
+          {
+            "key": "resultId",
+            "optional": true,
+            "type": "string",
+            "description": "Re-read and re-shape this result for free with results.get for about 15 minutes"
+          },
+          {
+            "key": "hint",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jqError",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "anyapi.api.linkedin.getCompany",
+      "shortPath": "linkedin.getCompany",
+      "description": "Get a LinkedIn company page by URL: description, industry, website, employee and follower counts, locations",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "Full LinkedIn company page URL"
+          },
+          {
+            "key": "maxCostUsd",
+            "optional": true,
+            "type": "number",
+            "description": "Most this call may cost in USD. Sources priced above it are skipped; if none fits, the call is refused without charge."
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string",
+            "description": "Reuse the same key to retry a call without paying twice. Scoped to your account for 24 hours."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "output",
+            "optional": false,
+            "type": "{ found: boolean, data?: { id?: string | null, name?: string | null, universalName?: string | null, linkedinUrl?: string | null, website?: string | null, tagline?: string | null, description?: string | null, industry?: string | null, companyType?: string | null, employeeCount?: number | null, followerCount?: number | null, specialities?: any[] | null, locations?: any[] | null } | null }"
+          },
+          {
+            "key": "provider",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "costUsd",
+            "optional": false,
+            "type": "number",
+            "description": "USD charged for this call"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "replayed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "{ id: string, name?: string | null, kind?: string | null }"
+          },
+          {
+            "key": "resultId",
+            "optional": true,
+            "type": "string",
+            "description": "Re-read and re-shape this result for free with results.get for about 15 minutes"
+          },
+          {
+            "key": "hint",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jqError",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "anyapi.api.linkedin.getProfile",
+      "shortPath": "linkedin.getProfile",
+      "description": "Get a LinkedIn profile by URL: headline, about, location, followers, experience, education and skills",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "Full LinkedIn profile URL"
+          },
+          {
+            "key": "maxCostUsd",
+            "optional": true,
+            "type": "number",
+            "description": "Most this call may cost in USD. Sources priced above it are skipped; if none fits, the call is refused without charge."
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string",
+            "description": "Reuse the same key to retry a call without paying twice. Scoped to your account for 24 hours."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "output",
+            "optional": false,
+            "type": "{ found: boolean, data?: { id?: string | null, publicIdentifier?: string | null, url?: string | null, firstName?: string | null, lastName?: string | null, headline?: string | null, about?: string | null, location?: string | null, city?: string | null, country?: string | null, followerCount?: number | null, connectionsCount?: number | null, openToWork?: boolean | null, currentPosition?: any[] | null, experience?: any[] | null, education?: any[] | null, skills?: any[] | null } | null }"
+          },
+          {
+            "key": "provider",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "costUsd",
+            "optional": false,
+            "type": "number",
+            "description": "USD charged for this call"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "replayed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "{ id: string, name?: string | null, kind?: string | null }"
+          },
+          {
+            "key": "resultId",
+            "optional": true,
+            "type": "string",
+            "description": "Re-read and re-shape this result for free with results.get for about 15 minutes"
+          },
+          {
+            "key": "hint",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jqError",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "anyapi.api.maps.search",
+      "shortPath": "maps.search",
+      "description": "Search Google Maps places in a location: name, address, phone, website, rating and review count",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string",
+            "description": "What you would type in Google Maps, e.g. coffee shop"
+          },
+          {
+            "key": "location",
+            "optional": false,
+            "type": "string",
+            "description": "City plus country, e.g. Austin, USA"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "Two-letter language code"
+          },
+          {
+            "key": "placeMinimumStars",
+            "optional": true,
+            "type": "two | twoAndHalf | three | threeAndHalf | four | fourAndHalf"
+          },
+          {
+            "key": "website",
+            "optional": true,
+            "type": "allPlaces | withWebsite | withoutWebsite"
+          },
+          {
+            "key": "categoryFilterWords",
+            "optional": true,
+            "type": "string[]",
+            "description": "Google Maps category names to keep"
+          },
+          {
+            "key": "maxCostUsd",
+            "optional": true,
+            "type": "number",
+            "description": "Most this call may cost in USD. Sources priced above it are skipped; if none fits, the call is refused without charge."
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string",
+            "description": "Reuse the same key to retry a call without paying twice. Scoped to your account for 24 hours."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "output",
+            "optional": false,
+            "type": "{ found: boolean, data?: { items?: { placeId?: string | null, name?: string | null, category?: string | null, address?: string | null, city?: string | null, phone?: string | null, website?: string | null, url?: string | null, rating?: number | null, reviewCount?: number | null, latitude?: number | null, longitude?: number | null, permanentlyClosed?: boolean | null }[] | null, nextCursor?: string | null } | null }"
+          },
+          {
+            "key": "provider",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "costUsd",
+            "optional": false,
+            "type": "number",
+            "description": "USD charged for this call"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "replayed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "{ id: string, name?: string | null, kind?: string | null }"
+          },
+          {
+            "key": "resultId",
+            "optional": true,
+            "type": "string",
+            "description": "Re-read and re-shape this result for free with results.get for about 15 minutes"
+          },
+          {
+            "key": "hint",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jqError",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "anyapi.api.reddit.search",
+      "shortPath": "reddit.search",
+      "description": "Search Reddit posts across all subreddits, with sort and time filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string",
+            "description": "Search across all of Reddit"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "relevance | hot | top | new | comments"
+          },
+          {
+            "key": "timeframe",
+            "optional": true,
+            "type": "hour | day | week | month | year | all"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "nextCursor from the previous page"
+          },
+          {
+            "key": "maxCostUsd",
+            "optional": true,
+            "type": "number",
+            "description": "Most this call may cost in USD. Sources priced above it are skipped; if none fits, the call is refused without charge."
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string",
+            "description": "Reuse the same key to retry a call without paying twice. Scoped to your account for 24 hours."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "output",
+            "optional": false,
+            "type": "{ found: boolean, data?: { posts?: { id?: string | null, title?: string | null, subreddit?: string | null, author?: string | null, score?: number | null, numComments?: number | null, permalink?: string | null, url?: string | null, selftext?: string | null, createdUtc?: number | null }[] | null, nextCursor?: string | null } | null }"
+          },
+          {
+            "key": "provider",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "costUsd",
+            "optional": false,
+            "type": "number",
+            "description": "USD charged for this call"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "replayed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "{ id: string, name?: string | null, kind?: string | null }"
+          },
+          {
+            "key": "resultId",
+            "optional": true,
+            "type": "string",
+            "description": "Re-read and re-shape this result for free with results.get for about 15 minutes"
+          },
+          {
+            "key": "hint",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jqError",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "anyapi.api.requests.get",
+      "shortPath": "requests.get",
+      "description": "Get the status and, once finished, the result of a durable AnyAPI run that answered queued or running",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string",
+            "description": "requestId from a durable run that answered queued or running"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sku",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "queued | running | succeeded | failed | expired"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "completedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expiresAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "retryAfterSeconds",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "serviceOutcome",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "settlementState",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "resultExpired",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "result",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "anyapi.api.results.get",
+      "shortPath": "results.get",
+      "description": "Re-read and re-shape a run result for free (fields, maxItems, summary, jq) within about 15 minutes of the run",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "resultId",
+            "optional": false,
+            "type": "string",
+            "description": "resultId from an earlier run"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated keys to keep on each result item, e.g. name,followerCount"
+          },
+          {
+            "key": "maxItems",
+            "optional": true,
+            "type": "number",
+            "description": "Cap the number of result rows returned"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return only an outline of the result with per-field sizes"
+          },
+          {
+            "key": "jq",
+            "optional": true,
+            "type": "string",
+            "description": "jq expression applied to the result; its output replaces `output`"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "output",
+            "optional": false,
+            "type": "any"
+          },
+          {
+            "key": "provider",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "costUsd",
+            "optional": false,
+            "type": "number",
+            "description": "USD charged for the original run. The re-read itself is free, so do not add this to a running total."
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "replayed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "{ id: string, name?: string | null, kind?: string | null }"
+          },
+          {
+            "key": "resultId",
+            "optional": true,
+            "type": "string",
+            "description": "Re-read and re-shape this result for free with results.get for about 15 minutes"
+          },
+          {
+            "key": "hint",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jqError",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "anyapi.api.twitter.search",
+      "shortPath": "twitter.search",
+      "description": "Search X (Twitter) posts with advanced-search syntax, Latest or Top, with paging",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string",
+            "description": "X advanced-search query. Bare words are ANDed; quote phrases and group OR terms in brackets."
+          },
+          {
+            "key": "queryType",
+            "optional": true,
+            "type": "Latest | Top | Photos | Videos"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "nextCursor from the previous page"
+          },
+          {
+            "key": "maxCostUsd",
+            "optional": true,
+            "type": "number",
+            "description": "Most this call may cost in USD. Sources priced above it are skipped; if none fits, the call is refused without charge."
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string",
+            "description": "Reuse the same key to retry a call without paying twice. Scoped to your account for 24 hours."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "output",
+            "optional": false,
+            "type": "{ found: boolean, data?: { items?: { id?: string | null, url?: string | null, text?: string | null, createdUtc?: number | null, authorUsername?: string | null, authorName?: string | null, likeCount?: number | null, retweetCount?: number | null, replyCount?: number | null, viewCount?: number | null }[] | null, nextCursor?: string | null } | null }"
+          },
+          {
+            "key": "provider",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "costUsd",
+            "optional": false,
+            "type": "number",
+            "description": "USD charged for this call"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "replayed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "{ id: string, name?: string | null, kind?: string | null }"
+          },
+          {
+            "key": "resultId",
+            "optional": true,
+            "type": "string",
+            "description": "Re-read and re-shape this result for free with results.get for about 15 minutes"
+          },
+          {
+            "key": "hint",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jqError",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "anyapi.api.web.scrape",
+      "shortPath": "web.scrape",
+      "description": "Scrape any web page, including ones that block bots, as clean markdown and/or HTML",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "Full page URL, including https://"
+          },
+          {
+            "key": "formats",
+            "optional": true,
+            "type": "markdown | html | rawHtml[]",
+            "description": "Defaults to markdown and html"
+          },
+          {
+            "key": "onlyMainContent",
+            "optional": true,
+            "type": "boolean",
+            "description": "Drop navigation, headers and footers"
+          },
+          {
+            "key": "includeTags",
+            "optional": true,
+            "type": "string[]",
+            "description": "CSS selectors to keep"
+          },
+          {
+            "key": "excludeTags",
+            "optional": true,
+            "type": "string[]",
+            "description": "CSS selectors to drop"
+          },
+          {
+            "key": "waitFor",
+            "optional": true,
+            "type": "number",
+            "description": "Milliseconds to wait for the page to render"
+          },
+          {
+            "key": "mobile",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "blockAds",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "maxCostUsd",
+            "optional": true,
+            "type": "number",
+            "description": "Most this call may cost in USD. Sources priced above it are skipped; if none fits, the call is refused without charge."
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string",
+            "description": "Reuse the same key to retry a call without paying twice. Scoped to your account for 24 hours."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "output",
+            "optional": false,
+            "type": "{ found: boolean, data?: { url?: string | null, statusCode?: number | null, title?: string | null, description?: string | null, language?: string | null, markdown?: string | null, html?: string | null, rawHtml?: string | null } | null }"
+          },
+          {
+            "key": "provider",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "costUsd",
+            "optional": false,
+            "type": "number",
+            "description": "USD charged for this call"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "replayed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "{ id: string, name?: string | null, kind?: string | null }"
+          },
+          {
+            "key": "resultId",
+            "optional": true,
+            "type": "string",
+            "description": "Re-read and re-shape this result for free with results.get for about 15 minutes"
+          },
+          {
+            "key": "hint",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jqError",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

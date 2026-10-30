@@ -108,6 +108,7 @@ export function verifyVercelWebhookSignature(
 ): boolean {
 	const signature = request.headers['x-vercel-signature'];
 	if (!signature || typeof signature !== 'string') return false;
+	if (!secret?.trim()) return false;
 
 	try {
 		const hmac = crypto.createHmac('sha1', secret);

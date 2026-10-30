@@ -1,0 +1,2340 @@
+---
+title: API
+description: "API reference for Context.dev: every `contextdev.api.*` operation with input and output types."
+---
+
+Every `contextdev.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### usage
+
+`account.usage`
+
+Get the credit balance, current-period usage, and next refill
+
+**Risk:** `read`
+
+```ts
+await corsair.contextdev.api.account.usage({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `credits_remaining` | `number` | Yes | — |
+| `period` | `object` | No | — |
+| `next_refill` | `object` | No | — |
+| `auto_topup` | `object` | Yes | — |
+| `key_metadata` | `object` | No | — |
+| `request_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="period full type">
+
+```ts
+{
+  start: string,
+  credits_used: number
+}
+```
+</Accordion>
+
+<Accordion title="next_refill full type">
+
+```ts
+{
+  at: string,
+  credits: number
+}
+```
+</Accordion>
+
+<Accordion title="auto_topup full type">
+
+```ts
+{
+  enabled: boolean,
+  credits_used_this_period: number,
+  monthly_budget_credits?: number | null
+}
+```
+</Accordion>
+
+<Accordion title="key_metadata full type">
+
+```ts
+{
+  credits_consumed: number,
+  credits_remaining: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Brand
+
+### fonts
+
+`brand.fonts`
+
+List the fonts a website uses and how much of the page each covers
+
+**Risk:** `read`
+
+```ts
+await corsair.contextdev.api.brand.fonts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | No | — |
+| `directUrl` | `string` | No | — |
+| `maxAgeMs` | `number` | No | — |
+| `timeoutOpts` | `object` | No | — |
+| `tags` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="timeoutOpts full type">
+
+```ts
+{
+  milliseconds: number,
+  behavior?: fail | return-partial
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `finalDOMState` | `loaded \| still-loading` | No | — |
+| `status` | `string` | Yes | — |
+| `domain` | `string` | Yes | — |
+| `fonts` | `object[]` | Yes | — |
+| `fontLinks` | `object` | No | — |
+| `code` | `number` | Yes | — |
+| `cache_metadata` | `object` | Yes | — |
+| `key_metadata` | `object` | No | — |
+| `request_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="fonts full type">
+
+```ts
+{
+  font: string,
+  uses: string[],
+  fallbacks: string[],
+  num_elements: number,
+  num_words: number,
+  percent_words: number,
+  percent_elements: number
+}[]
+```
+</Accordion>
+
+<Accordion title="fontLinks full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="cache_metadata full type">
+
+```ts
+{
+  status: hit | miss | zdr,
+  age_ms: number
+}
+```
+</Accordion>
+
+<Accordion title="key_metadata full type">
+
+```ts
+{
+  credits_consumed: number,
+  credits_remaining: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### naics
+
+`brand.naics`
+
+Classify a brand or business description into NAICS codes
+
+**Risk:** `read`
+
+```ts
+await corsair.contextdev.api.brand.naics({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `input` | `string` | Yes | Brand domain, title, or a description of the business |
+| `minResults` | `number` | No | — |
+| `maxResults` | `number` | No | — |
+| `timeoutOpts` | `object` | No | — |
+| `zdr` | `enabled \| disabled` | No | — |
+| `tags` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="timeoutOpts full type">
+
+```ts
+{
+  milliseconds: number,
+  behavior?: fail | return-partial
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `partial` | `boolean` | No | — |
+| `status` | `string` | No | — |
+| `domain` | `string` | No | — |
+| `type` | `string` | No | — |
+| `key_metadata` | `object` | No | — |
+| `request_id` | `string` | Yes | — |
+| `codes` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="key_metadata full type">
+
+```ts
+{
+  credits_consumed: number,
+  credits_remaining: number
+}
+```
+</Accordion>
+
+<Accordion title="codes full type">
+
+```ts
+{
+  code: string,
+  name: string,
+  confidence: high | medium | low
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### prefetch
+
+`brand.prefetch`
+
+Queue brand or styleguide data so a later lookup returns sooner
+
+**Risk:** `write`
+
+```ts
+await corsair.contextdev.api.brand.prefetch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `brand \| styleguide` | Yes | — |
+| `identifier` | `object` | Yes | — |
+| `timeoutOpts` | `object` | No | — |
+| `tags` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="identifier full type">
+
+```ts
+{
+  domain: string
+} | {
+  email: string
+}
+```
+</Accordion>
+
+<Accordion title="timeoutOpts full type">
+
+```ts
+{
+  milliseconds: number,
+  behavior?: fail
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `message` | `string` | No | — |
+| `type` | `brand \| styleguide` | No | — |
+| `domain` | `string` | No | — |
+| `key_metadata` | `object` | No | — |
+| `request_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="key_metadata full type">
+
+```ts
+{
+  credits_consumed: number,
+  credits_remaining: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieve
+
+`brand.retrieve`
+
+Get a brand profile (logos, colors, socials, address, industry) by domain, name, email, ticker, URL, or card transaction
+
+**Risk:** `read`
+
+```ts
+await corsair.contextdev.api.brand.retrieve({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+  type: by_domain,
+  domain: string,
+  force_language?: string | null,
+  maxSpeed?: boolean,
+  maxAgeMs?: number,
+  timeoutOpts?: {
+    milliseconds: number,
+    behavior?: fail | return-partial
+  },
+  tags?: string[]
+} | {
+  type: by_name,
+  name: string,
+  country_gl?: string,
+  force_language?: string | null,
+  maxSpeed?: boolean,
+  maxAgeMs?: number,
+  timeoutOpts?: {
+    milliseconds: number,
+    behavior?: fail | return-partial
+  },
+  tags?: string[]
+} | {
+  type: by_email,
+  email: string,
+  force_language?: string | null,
+  maxSpeed?: boolean,
+  maxAgeMs?: number,
+  timeoutOpts?: {
+    milliseconds: number,
+    behavior?: fail | return-partial
+  },
+  tags?: string[]
+} | {
+  type: by_ticker,
+  ticker: string,
+  ticker_exchange?: string,
+  force_language?: string | null,
+  maxSpeed?: boolean,
+  maxAgeMs?: number,
+  timeoutOpts?: {
+    milliseconds: number,
+    behavior?: fail | return-partial
+  },
+  tags?: string[]
+} | {
+  type: by_direct_url,
+  direct_url: string,
+  timeoutOpts?: {
+    milliseconds: number,
+    behavior?: fail | return-partial
+  },
+  tags?: string[]
+} | {
+  type: by_transaction,
+  transaction_info: string,
+  country_gl?: string,
+  city?: string,
+  mcc?: string | number,
+  phone?: string | number,
+  high_confidence_only?: boolean,
+  force_language?: string | null,
+  maxSpeed?: boolean,
+  maxAgeMs?: number,
+  timeoutOpts?: {
+    milliseconds: number,
+    behavior?: fail | return-partial
+  },
+  tags?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `partial` | `boolean` | No | — |
+| `status` | `string` | Yes | — |
+| `brand` | `object` | Yes | — |
+| `code` | `number` | Yes | — |
+| `cache_metadata` | `object` | Yes | — |
+| `key_metadata` | `object` | No | — |
+| `request_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="brand full type">
+
+```ts
+{
+  domain?: string,
+  title?: string,
+  description?: string,
+  slogan?: string,
+  colors?: {
+    hex?: string,
+    name?: string,
+    source?: site | logo
+  }[],
+  logos?: {
+    url?: string,
+    mode?: light | dark | has_opaque_background,
+    colors?: {
+      hex?: string,
+      name?: string
+    }[],
+    resolution?: {
+      width?: number,
+      height?: number,
+      aspect_ratio?: number
+    },
+    type?: icon | logo
+  }[],
+  backdrops?: {
+    url?: string,
+    colors?: {
+      hex?: string,
+      name?: string
+    }[],
+    resolution?: {
+      width?: number,
+      height?: number,
+      aspect_ratio?: number
+    }
+  }[],
+  socials?: {
+    type?: string,
+    url?: string
+  }[],
+  address?: {
+    street?: string,
+    city?: string,
+    country?: string,
+    country_code?: string,
+    state_province?: string,
+    state_code?: string,
+    postal_code?: string
+  },
+  stock?: {
+    ticker?: string,
+    exchange?: string
+  },
+  employees?: {
+    range?: string,
+    exact?: number
+  },
+  is_nsfw?: boolean,
+  email?: string,
+  phone?: string,
+  industries?: {
+    eic?: {
+      industry: string,
+      subindustry: string
+    }[]
+  },
+  links?: {
+    careers?: string | null,
+    privacy?: string | null,
+    terms?: string | null,
+    contact?: string | null,
+    blog?: string | null,
+    pricing?: string | null
+  },
+  primary_language?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="cache_metadata full type">
+
+```ts
+{
+  status: hit | miss | zdr,
+  age_ms: number
+}
+```
+</Accordion>
+
+<Accordion title="key_metadata full type">
+
+```ts
+{
+  credits_consumed: number,
+  credits_remaining: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`brand.search`
+
+Find up to 10 brands by name or domain
+
+**Risk:** `read`
+
+```ts
+await corsair.contextdev.api.brand.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `autocomplete` | `boolean` | No | — |
+| `queryBy` | `name \| domain[]` | No | — |
+| `typoTolerance` | `number` | No | — |
+| `tags` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `key_metadata` | `object` | No | — |
+| `request_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  domain: string,
+  name: string,
+  logo: string
+}[]
+```
+</Accordion>
+
+<Accordion title="key_metadata full type">
+
+```ts
+{
+  credits_consumed: number,
+  credits_remaining: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### sic
+
+`brand.sic`
+
+Classify a brand or business description into SIC codes
+
+**Risk:** `read`
+
+```ts
+await corsair.contextdev.api.brand.sic({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `input` | `string` | Yes | Brand domain, title, or a description of the business |
+| `minResults` | `number` | No | — |
+| `maxResults` | `number` | No | — |
+| `timeoutOpts` | `object` | No | — |
+| `zdr` | `enabled \| disabled` | No | — |
+| `tags` | `string[]` | No | — |
+| `type` | `original_sic \| latest_sec` | No | — |
+
+<AccordionGroup>
+<Accordion title="timeoutOpts full type">
+
+```ts
+{
+  milliseconds: number,
+  behavior?: fail | return-partial
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `partial` | `boolean` | No | — |
+| `status` | `string` | No | — |
+| `domain` | `string` | No | — |
+| `type` | `string` | No | — |
+| `key_metadata` | `object` | No | — |
+| `request_id` | `string` | Yes | — |
+| `classification` | `original_sic \| latest_sec` | No | — |
+| `codes` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="key_metadata full type">
+
+```ts
+{
+  credits_consumed: number,
+  credits_remaining: number
+}
+```
+</Accordion>
+
+<Accordion title="codes full type">
+
+```ts
+{
+  code: string,
+  name: string,
+  confidence: high | medium | low,
+  majorGroup?: string,
+  majorGroupName?: string,
+  office?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### styleguide
+
+`brand.styleguide`
+
+Extract a website's colors, typography, spacing, shadows, and button styles
+
+**Risk:** `read`
+
+```ts
+await corsair.contextdev.api.brand.styleguide({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | No | — |
+| `directUrl` | `string` | No | — |
+| `maxAgeMs` | `number` | No | — |
+| `timeoutOpts` | `object` | No | — |
+| `colorScheme` | `light \| dark` | No | — |
+| `zdr` | `enabled \| disabled` | No | — |
+| `tags` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="timeoutOpts full type">
+
+```ts
+{
+  milliseconds: number,
+  behavior?: fail | return-partial
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `finalDOMState` | `loaded \| still-loading` | No | — |
+| `status` | `string` | No | — |
+| `domain` | `string` | No | — |
+| `styleguide` | `object` | No | — |
+| `code` | `number` | No | — |
+| `cache_metadata` | `object` | Yes | — |
+| `key_metadata` | `object` | No | — |
+| `request_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="styleguide full type">
+
+```ts
+{
+  mode: light | dark,
+  colors: {
+    accent: string,
+    background: string,
+    text: string
+  },
+  typography: {
+    headings: {
+      h1?: {
+        fontFamily: string,
+        fontFallbacks: string[],
+        fontSize: string,
+        fontWeight: number,
+        lineHeight: string,
+        letterSpacing: string
+      },
+      h2?: {
+        fontFamily: string,
+        fontFallbacks: string[],
+        fontSize: string,
+        fontWeight: number,
+        lineHeight: string,
+        letterSpacing: string
+      },
+      h3?: {
+        fontFamily: string,
+        fontFallbacks: string[],
+        fontSize: string,
+        fontWeight: number,
+        lineHeight: string,
+        letterSpacing: string
+      },
+      h4?: {
+        fontFamily: string,
+        fontFallbacks: string[],
+        fontSize: string,
+        fontWeight: number,
+        lineHeight: string,
+        letterSpacing: string
+      }
+    },
+    p?: {
+      fontFamily: string,
+      fontFallbacks: string[],
+      fontSize: string,
+      fontWeight: number,
+      lineHeight: string,
+      letterSpacing: string
+    }
+  },
+  elementSpacing: {
+    xs: string,
+    sm: string,
+    md: string,
+    lg: string,
+    xl: string
+  },
+  shadows: {
+    sm: string,
+    md: string,
+    lg: string,
+    xl: string,
+    inner: string
+  },
+  fontLinks: {
+  },
+  components: {
+    button: {
+      primary?: {
+        backgroundColor: string,
+        color: string,
+        borderColor: string,
+        borderRadius: string,
+        borderWidth: string,
+        borderStyle: string,
+        padding: string,
+        minWidth: string,
+        minHeight: string,
+        fontSize: string,
+        fontWeight: number,
+        fontFamily?: string,
+        fontFallbacks?: string[],
+        textDecoration: string,
+        textDecorationColor?: string,
+        boxShadow: string,
+        css: string
+      },
+      secondary?: {
+        backgroundColor: string,
+        color: string,
+        borderColor: string,
+        borderRadius: string,
+        borderWidth: string,
+        borderStyle: string,
+        padding: string,
+        minWidth: string,
+        minHeight: string,
+        fontSize: string,
+        fontWeight: number,
+        fontFamily?: string,
+        fontFallbacks?: string[],
+        textDecoration: string,
+        textDecorationColor?: string,
+        boxShadow: string,
+        css: string
+      },
+      link?: {
+        backgroundColor: string,
+        color: string,
+        borderColor: string,
+        borderRadius: string,
+        borderWidth: string,
+        borderStyle: string,
+        padding: string,
+        minWidth: string,
+        minHeight: string,
+        fontSize: string,
+        fontWeight: number,
+        fontFamily?: string,
+        fontFallbacks?: string[],
+        textDecoration: string,
+        textDecorationColor?: string,
+        boxShadow: string,
+        css: string
+      }
+    },
+    card?: {
+      backgroundColor: string,
+      borderColor: string,
+      borderRadius: string,
+      borderWidth: string,
+      borderStyle: string,
+      padding: string,
+      boxShadow: string,
+      textColor: string,
+      css: string
+    }
+  }
+}
+```
+</Accordion>
+
+<Accordion title="cache_metadata full type">
+
+```ts
+{
+  status: hit | miss | zdr,
+  age_ms: number
+}
+```
+</Accordion>
+
+<Accordion title="key_metadata full type">
+
+```ts
+{
+  credits_consumed: number,
+  credits_remaining: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## News
+
+### search
+
+`news.search`
+
+Search company news by name, domain, ticker, or ISIN, paginated by cursor
+
+**Risk:** `read`
+
+```ts
+await corsair.contextdev.api.news.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `searchBy` | `object` | Yes | — |
+| `filterBy` | `object` | No | — |
+| `sortBy` | `object` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="searchBy full type">
+
+```ts
+{
+  type: entity,
+  entity: {
+    type: name,
+    name: string
+  } | {
+    type: domain,
+    domain: string
+  } | {
+    type: ticker,
+    ticker: string,
+    exchange?: string
+  } | {
+    type: isin,
+    isin: string
+  }
+}
+```
+</Accordion>
+
+<Accordion title="filterBy full type">
+
+```ts
+{
+  sourceDomain?: string[],
+  sourceCountry?: string[],
+  articleLanguage?: string[],
+  articleType?: editorial | press_release | regulatory_filing | advisory[],
+  date?: {
+    from?: number,
+    to?: number
+  }
+}
+```
+</Accordion>
+
+<Accordion title="sortBy full type">
+
+```ts
+{
+  type: relevance | newest
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `has_more` | `boolean` | Yes | — |
+| `next_cursor` | `string` | No | — |
+| `meta` | `object` | Yes | — |
+| `key_metadata` | `object` | No | — |
+| `request_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  story_id: string,
+  url: string,
+  title: string,
+  description?: string | null,
+  language?: string | null,
+  authors: string[],
+  image_url?: string | null,
+  published_at?: string | null,
+  type: editorial | press_release | regulatory_filing | advisory,
+  source: {
+    name: string,
+    domain: string,
+    direct: boolean
+  },
+  match: {
+    level: primary | secondary,
+    confidence?: number | null
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  count: number
+}
+```
+</Accordion>
+
+<Accordion title="key_metadata full type">
+
+```ts
+{
+  credits_consumed: number,
+  credits_remaining: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## People
+
+### enrich
+
+`people.enrich`
+
+Find a person from an email, profile URLs, or name and return their profile with a match score
+
+**Risk:** `read`
+
+```ts
+await corsair.contextdev.api.people.enrich({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `social_urls` | `string[]` | No | — |
+| `name` | `object` | No | — |
+| `email` | `string` | No | — |
+| `company` | `object` | No | — |
+| `education` | `object[]` | No | — |
+| `location` | `object` | No | — |
+| `timeoutOpts` | `object` | No | — |
+| `zdr` | `enabled \| disabled` | No | — |
+| `tags` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="name full type">
+
+```ts
+{
+  first?: string,
+  last?: string
+}
+```
+</Accordion>
+
+<Accordion title="company full type">
+
+```ts
+{
+  name?: string,
+  domain?: string
+}
+```
+</Accordion>
+
+<Accordion title="education full type">
+
+```ts
+{
+  institution?: {
+    name?: string,
+    domain?: string
+  },
+  degree?: string,
+  field_of_study?: string,
+  graduation_year?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="location full type">
+
+```ts
+{
+  city?: string,
+  region?: string,
+  country?: string
+}
+```
+</Accordion>
+
+<Accordion title="timeoutOpts full type">
+
+```ts
+{
+  milliseconds: number,
+  behavior?: fail | return-partial
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `partial` | `boolean` | No | — |
+| `match` | `object` | Yes | — |
+| `key_metadata` | `object` | No | — |
+| `request_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="match full type">
+
+```ts
+{
+  status: candidate,
+  score: number,
+  person: {
+    name?: {
+      full?: string,
+      first?: string,
+      last?: string
+    },
+    email?: string,
+    avatar_url?: string,
+    bio?: string,
+    location?: {
+      display?: string,
+      city?: string,
+      region?: string,
+      country?: string,
+      country_code?: string
+    },
+    social_urls: string[],
+    website_urls: string[],
+    current_role?: {
+      title: string,
+      organization: {
+        name: string,
+        domain?: string
+      },
+      location?: string,
+      description?: string,
+      start_date?: {
+        year: number,
+        month?: number,
+        day?: number
+      },
+      end_date?: {
+        year: number,
+        month?: number,
+        day?: number
+      },
+      is_current?: boolean
+    },
+    current_role_status: present | none | unknown,
+    experience: {
+      title: string,
+      organization: {
+        name: string,
+        domain?: string
+      },
+      location?: string,
+      description?: string,
+      start_date?: {
+        year: number,
+        month?: number,
+        day?: number
+      },
+      end_date?: {
+        year: number,
+        month?: number,
+        day?: number
+      },
+      is_current?: boolean
+    }[],
+    education: {
+      institution: {
+        name: string,
+        domain?: string
+      },
+      degree?: string,
+      field_of_study?: string,
+      description?: string,
+      start_date?: {
+        year: number,
+        month?: number,
+        day?: number
+      },
+      end_date?: {
+        year: number,
+        month?: number,
+        day?: number
+      }
+    }[],
+    skills: string[],
+    last_updated?: string,
+    checked_at?: string
+  }
+} | {
+  status: not_found,
+  score: null,
+  person: null
+}
+```
+</Accordion>
+
+<Accordion title="key_metadata full type">
+
+```ts
+{
+  credits_consumed: number,
+  credits_remaining: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Web
+
+### answers
+
+`web.answers`
+
+Research a task on the web and return a sourced answer in a requested JSON shape
+
+**Risk:** `read`
+
+```ts
+await corsair.contextdev.api.web.answers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task` | `string` | Yes | — |
+| `mode` | `fast \| ultra` | No | — |
+| `json_format` | `object` | No | — |
+| `timeoutOpts` | `object` | No | — |
+| `zdr` | `enabled \| disabled` | No | — |
+| `tags` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="json_format full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="timeoutOpts full type">
+
+```ts
+{
+  milliseconds: number,
+  behavior?: fail | return-partial
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `partial` | `boolean` | No | — |
+| `json_content` | `object` | Yes | — |
+| `sources` | `string[]` | Yes | — |
+| `key_metadata` | `object` | No | — |
+| `request_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="json_content full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="key_metadata full type">
+
+```ts
+{
+  credits_consumed: number,
+  credits_remaining: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### crawl
+
+`web.crawl`
+
+Crawl a website (up to 500 pages) and return each page as Markdown
+
+**Risk:** `read`
+
+```ts
+await corsair.contextdev.api.web.crawl({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `maxPages` | `number` | No | — |
+| `urlRegex` | `string` | No | — |
+| `includeLinks` | `boolean` | No | — |
+| `includeImages` | `boolean` | No | — |
+| `shortenBase64Images` | `boolean` | No | — |
+| `useMainContentOnly` | `boolean` | No | — |
+| `pdf` | `object` | No | — |
+| `includeSelectors` | `string[]` | No | — |
+| `excludeSelectors` | `string[]` | No | — |
+| `country` | `string` | No | — |
+| `maxDepth` | `number` | No | — |
+| `followSubdomains` | `boolean` | No | — |
+| `includeFrames` | `boolean` | No | — |
+| `maxAgeMs` | `number` | No | — |
+| `waitForMs` | `number` | No | — |
+| `settleAnimations` | `boolean` | No | — |
+| `stopAfterMs` | `number` | No | — |
+| `timeoutOpts` | `object` | No | — |
+| `zdr` | `enabled \| disabled` | No | — |
+| `tags` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="pdf full type">
+
+```ts
+{
+  shouldParse?: boolean,
+  start?: number,
+  end?: number,
+  ocr?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="timeoutOpts full type">
+
+```ts
+{
+  milliseconds: number,
+  behavior?: fail | return-partial
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `partial` | `boolean` | No | — |
+| `results` | `object[]` | Yes | — |
+| `metadata` | `object` | Yes | — |
+| `cache_metadata` | `object` | Yes | — |
+| `key_metadata` | `object` | No | — |
+| `request_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  markdown: string,
+  metadata: {
+    title: string,
+    description?: string,
+    language?: string,
+    keywords?: string[],
+    canonicalUrl?: string,
+    author?: string,
+    siteName?: string,
+    image?: string,
+    favicon?: string,
+    publishedTime?: string,
+    modifiedTime?: string,
+    robots?: string,
+    openGraph?: {
+    },
+    twitter?: {
+    },
+    alternates?: {
+      href: string,
+      hreflang?: string,
+      type?: string,
+      title?: string
+    }[],
+    headings?: {
+      level: number,
+      text: string
+    }[],
+    jsonLd?: {
+    }[],
+    additionalMeta?: {
+    },
+    sourceUrl: string,
+    finalUrl: string,
+    url: string,
+    crawlDepth: number,
+    statusCode: number,
+    success: boolean
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+  numUrls: number,
+  maxCrawlDepth: number,
+  numSucceeded: number,
+  numFailed: number,
+  numSkipped: number
+}
+```
+</Accordion>
+
+<Accordion title="cache_metadata full type">
+
+```ts
+{
+  status: hit | miss | zdr,
+  age_ms: number
+}
+```
+</Accordion>
+
+<Accordion title="key_metadata full type">
+
+```ts
+{
+  credits_consumed: number,
+  credits_remaining: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### extract
+
+`web.extract`
+
+Extract structured data from a website using a JSON Schema
+
+**Risk:** `read`
+
+```ts
+await corsair.contextdev.api.web.extract({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `schema` | `object` | Yes | — |
+| `instructions` | `string` | No | — |
+| `factCheck` | `boolean` | No | — |
+| `maxPages` | `number` | No | — |
+| `pdf` | `object` | No | — |
+| `actions` | `object[]` | No | — |
+| `maxDepth` | `number` | No | — |
+| `followSubdomains` | `boolean` | No | — |
+| `includeFrames` | `boolean` | No | — |
+| `maxAgeMs` | `number` | No | — |
+| `waitForMs` | `number` | No | — |
+| `settleAnimations` | `boolean` | No | — |
+| `stopAfterMs` | `number` | No | — |
+| `timeoutOpts` | `object` | No | — |
+| `zdr` | `enabled \| disabled` | No | — |
+| `tags` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="schema full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="pdf full type">
+
+```ts
+{
+  shouldParse?: boolean,
+  start?: number,
+  end?: number
+}
+```
+</Accordion>
+
+<Accordion title="actions full type">
+
+```ts
+(
+  {
+    do: wait,
+    timeMs: number
+  } | {
+    do: perform,
+    action: string
+  } | {
+    do: scroll,
+    direction?: up | down | left | right,
+    amount?: number | viewport | max,
+    container?: string,
+    maxScrolls?: number
+  }
+)[]
+```
+</Accordion>
+
+<Accordion title="timeoutOpts full type">
+
+```ts
+{
+  milliseconds: number,
+  behavior?: fail | return-partial
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `partial` | `boolean` | No | — |
+| `status` | `string` | Yes | — |
+| `url` | `string` | Yes | — |
+| `urls_analyzed` | `string[]` | Yes | — |
+| `data` | `object` | Yes | — |
+| `metadata` | `object` | Yes | — |
+| `cache_metadata` | `object` | Yes | — |
+| `key_metadata` | `object` | No | — |
+| `request_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+  numUrls: number,
+  maxCrawlDepth: number,
+  numSucceeded: number,
+  numFailed: number,
+  numSkipped: number,
+  numBlocked: number,
+  actionsApplied?: {
+    instruction: string,
+    status: applied | failed | skipped,
+    method?: string,
+    targetDescription?: string,
+    completionEvidence?: string,
+    error?: string,
+    durationMs?: number
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="cache_metadata full type">
+
+```ts
+{
+  status: hit | miss | zdr,
+  age_ms: number
+}
+```
+</Accordion>
+
+<Accordion title="key_metadata full type">
+
+```ts
+{
+  credits_consumed: number,
+  credits_remaining: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### scrape
+
+`web.scrape`
+
+Scrape a URL as HTML, Markdown, screenshot, images, highlights, or schema-driven JSON
+
+**Risk:** `read`
+
+```ts
+await corsair.contextdev.api.web.scrape({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `formats` | `object` | Yes | — |
+| `markdownParams` | `object` | No | — |
+| `screenshotParams` | `object` | No | — |
+| `imageParams` | `object` | No | — |
+| `highlightsParams` | `object` | No | — |
+| `jsonParams` | `object` | No | — |
+| `parseParams` | `object` | No | — |
+| `productParams` | `object` | No | — |
+| `sharedParams` | `object` | No | — |
+| `maxAgeMs` | `number` | No | — |
+| `timeoutOpts` | `object` | No | — |
+| `zdr` | `enabled \| disabled` | No | — |
+| `tags` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="formats full type">
+
+```ts
+{
+  html?: boolean,
+  markdown?: boolean,
+  screenshot?: boolean,
+  images?: boolean,
+  bytes?: boolean,
+  parse?: boolean,
+  highlights?: boolean,
+  json?: boolean,
+  product?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="markdownParams full type">
+
+```ts
+{
+  includeLinks?: boolean,
+  includeImages?: boolean,
+  inlineImages?: placeholder | preserve
+}
+```
+</Accordion>
+
+<Accordion title="screenshotParams full type">
+
+```ts
+{
+  area?: viewport | fullPage | {
+    selector: string
+  } | {
+    x: number,
+    y: number,
+    width: number,
+    height: number
+  },
+  format?: png | jpeg | webp
+}
+```
+</Accordion>
+
+<Accordion title="imageParams full type">
+
+```ts
+{
+  enrich?: dimensions | classification | file[],
+  dedupe?: none | visual
+}
+```
+</Accordion>
+
+<Accordion title="highlightsParams full type">
+
+```ts
+{
+  query: string,
+  maxCharacters?: number
+}
+```
+</Accordion>
+
+<Accordion title="jsonParams full type">
+
+```ts
+{
+  schema: {
+  },
+  instructions?: string
+}
+```
+</Accordion>
+
+<Accordion title="parseParams full type">
+
+```ts
+{
+  type?: custom,
+  rules: lazy
+} | {
+  type: prebuilt,
+  parser: google-maps | google-play | google-play-reviews | app-store | app-store-reviews | emails | phone-numbers | links
+}
+```
+</Accordion>
+
+<Accordion title="productParams full type">
+
+```ts
+{
+  dedupeImages?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="sharedParams full type">
+
+```ts
+{
+  country?: string,
+  headers?: {
+  },
+  viewport?: {
+    width?: number,
+    height?: number
+  },
+  theme?: light | dark,
+  dismissCookies?: boolean,
+  dismissPopups?: boolean,
+  actions?: (
+    {
+      type: perform,
+      action: string
+    } | {
+      type: scroll,
+      direction?: down | up | left | right,
+      amount?: number | viewport | max,
+      selector?: string,
+      maxScrolls?: number
+    } | {
+      type: wait,
+      milliseconds: number
+    } | {
+      type: waitFor,
+      selector: string
+    }
+  )[],
+  waitFor?: number | string,
+  settleAnimations?: boolean,
+  mainContentOnly?: boolean,
+  includeSelectors?: string[],
+  excludeSelectors?: string[],
+  includeFrames?: boolean,
+  parsers?: {
+    pdf?: {
+      startPage?: number,
+      endPage?: number,
+      ocr?: off | auto
+    }
+  },
+  profile?: {
+    type: existing,
+    profileId: string
+  } | {
+    type: new,
+    identifier: string,
+    password: string
+  }
+}
+```
+</Accordion>
+
+<Accordion title="timeoutOpts full type">
+
+```ts
+{
+  milliseconds: number,
+  behavior?: fail | return-partial
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `html` | `object` | Yes | — |
+| `markdown` | `object` | Yes | — |
+| `screenshot` | `object` | Yes | — |
+| `images` | `object` | Yes | — |
+| `bytes` | `object` | Yes | — |
+| `parsed` | `object` | Yes | — |
+| `highlights` | `object` | Yes | — |
+| `json` | `object` | Yes | — |
+| `product` | `object` | Yes | — |
+| `profile` | `object` | No | — |
+| `isPartial` | `true` | No | — |
+| `metadata` | `object` | Yes | — |
+| `cache_metadata` | `object` | Yes | — |
+| `key_metadata` | `object` | No | — |
+| `request_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="html full type">
+
+```ts
+{
+  requested: boolean,
+  success?: boolean | null,
+  data?: string | null,
+  error_code?: string,
+  message?: string
+}
+```
+</Accordion>
+
+<Accordion title="markdown full type">
+
+```ts
+{
+  requested: boolean,
+  success?: boolean | null,
+  data?: string | null,
+  error_code?: string,
+  message?: string
+}
+```
+</Accordion>
+
+<Accordion title="screenshot full type">
+
+```ts
+{
+  requested: boolean,
+  success?: boolean | null,
+  data?: string | null,
+  error_code?: string,
+  message?: string
+}
+```
+</Accordion>
+
+<Accordion title="images full type">
+
+```ts
+{
+  requested: boolean,
+  success?: boolean | null,
+  data?: {
+    url: string,
+    alt?: string | null,
+    width?: number,
+    height?: number,
+    classification?: photography | illustration | logo | wordmark | icon | pattern | graphic | other,
+    fileUrl?: string
+  }[] | null,
+  error_code?: string,
+  message?: string
+}
+```
+</Accordion>
+
+<Accordion title="bytes full type">
+
+```ts
+{
+  requested: boolean,
+  success?: boolean | null,
+  data?: {
+    contentType: string,
+    base64: string
+  } | null,
+  error_code?: string,
+  message?: string
+}
+```
+</Accordion>
+
+<Accordion title="parsed full type">
+
+```ts
+{
+  requested: boolean,
+  success?: boolean | null,
+  data?: {
+  } | null,
+  error_code?: string,
+  message?: string,
+  type: google-maps | google-play | google-play-reviews | app-store | app-store-reviews | emails | phone-numbers | links | custom
+}
+```
+</Accordion>
+
+<Accordion title="highlights full type">
+
+```ts
+{
+  requested: boolean,
+  success?: boolean | null,
+  data?: string[] | null,
+  error_code?: string,
+  message?: string
+}
+```
+</Accordion>
+
+<Accordion title="json full type">
+
+```ts
+{
+  requested: boolean,
+  success?: boolean | null,
+  data?: {
+  } | null,
+  error_code?: string,
+  message?: string,
+  isTruncated?: true
+}
+```
+</Accordion>
+
+<Accordion title="product full type">
+
+```ts
+{
+  requested: boolean,
+  success?: boolean | null,
+  data?: {
+    isProductPage: boolean,
+    product?: {
+      name: string,
+      description?: string | null,
+      brand?: string | null,
+      sku?: string | null,
+      price?: number | null,
+      regularPrice?: number | null,
+      currency?: string | null,
+      availability?: in_stock | out_of_stock | limited_availability | preorder | backorder | made_to_order | discontinued | null,
+      category?: string | null,
+      imageUrl?: string | null,
+      images: string[],
+      dimensions: string[],
+      features: string[],
+      targetAudience: string[],
+      tags: string[],
+      variants: {
+        sku?: string | null,
+        attributes: {
+        },
+        url?: string | null,
+        images: string[]
+      }[]
+    } | null
+  } | null,
+  error_code?: string,
+  message?: string
+}
+```
+</Accordion>
+
+<Accordion title="profile full type">
+
+```ts
+{
+  id: string
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+  title?: string,
+  description?: string,
+  language?: string,
+  keywords?: string[],
+  canonicalUrl?: string,
+  author?: string,
+  siteName?: string,
+  image?: string,
+  favicon?: string,
+  publishedTime?: string,
+  modifiedTime?: string,
+  robots?: string,
+  openGraph?: {
+  },
+  twitter?: {
+  },
+  alternates?: {
+    href: string,
+    hreflang?: string,
+    type?: string,
+    title?: string
+  }[],
+  headings?: {
+    level: number,
+    text: string
+  }[],
+  jsonLd?: {
+  }[],
+  additionalMeta?: {
+  }
+}
+```
+</Accordion>
+
+<Accordion title="cache_metadata full type">
+
+```ts
+{
+  status: hit | miss | zdr,
+  age_ms: number
+}
+```
+</Accordion>
+
+<Accordion title="key_metadata full type">
+
+```ts
+{
+  credits_consumed: number,
+  credits_remaining: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`web.search`
+
+Search the web, optionally with page Markdown or highlights per result
+
+**Risk:** `read`
+
+```ts
+await corsair.contextdev.api.web.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `numResults` | `number` | No | — |
+| `includeDomains` | `string[]` | No | — |
+| `excludeDomains` | `string[]` | No | — |
+| `freshness` | `last_24_hours \| last_week \| last_month \| last_year` | No | — |
+| `country` | `string` | No | — |
+| `queryFanout` | `boolean` | No | — |
+| `markdownOptions` | `object` | No | — |
+| `highlightsOptions` | `object` | No | — |
+| `descriptionMaxCharacters` | `number` | No | — |
+| `timeoutOpts` | `object` | No | — |
+| `zdr` | `enabled \| disabled` | No | — |
+| `tags` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="markdownOptions full type">
+
+```ts
+{
+  enabled?: boolean,
+  includeLinks?: boolean,
+  includeImages?: boolean,
+  shortenBase64Images?: boolean,
+  useMainContentOnly?: boolean,
+  pdf?: {
+    shouldParse?: boolean,
+    start?: number,
+    end?: number
+  },
+  includeFrames?: boolean,
+  maxAgeMs?: number | null,
+  waitForMs?: number | null,
+  timeoutOpts?: {
+    milliseconds: number,
+    behavior?: fail | return-partial
+  }
+}
+```
+</Accordion>
+
+<Accordion title="highlightsOptions full type">
+
+```ts
+{
+  enabled?: boolean,
+  maxCharacters?: number
+}
+```
+</Accordion>
+
+<Accordion title="timeoutOpts full type">
+
+```ts
+{
+  milliseconds: number,
+  behavior?: fail | return-partial
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `partial` | `boolean` | No | — |
+| `query` | `string` | Yes | — |
+| `results` | `object[]` | Yes | — |
+| `cache_metadata` | `object` | Yes | — |
+| `key_metadata` | `object` | No | — |
+| `request_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  url: string,
+  title: string,
+  description: string,
+  relevance: high | medium | low,
+  markdown: {
+    finalDOMState?: loaded | still-loading,
+    markdown?: string | null,
+    code: SUCCESS | NOT_REQUESTED | TIMEOUT | CONTENT_TOO_LARGE | WEBSITE_ACCESS_ERROR | WEBSITE_BLOCKED | ERROR
+  },
+  highlights: {
+    highlights?: string[] | null,
+    code: SUCCESS | NOT_REQUESTED | TIMEOUT | CONTENT_TOO_LARGE | WEBSITE_ACCESS_ERROR | WEBSITE_BLOCKED | ERROR
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="cache_metadata full type">
+
+```ts
+{
+  status: hit | miss | zdr,
+  age_ms: number
+}
+```
+</Accordion>
+
+<Accordion title="key_metadata full type">
+
+```ts
+{
+  credits_consumed: number,
+  credits_remaining: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### urls
+
+`web.urls`
+
+Map a domain's URLs with titles and descriptions
+
+**Risk:** `read`
+
+```ts
+await corsair.contextdev.api.web.urls({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | Yes | — |
+| `headers` | `object` | No | — |
+| `includeSubdomains` | `boolean` | No | — |
+| `maxLinks` | `number` | No | — |
+| `sitemapUrl` | `string` | No | — |
+| `urlRegex` | `string` | No | — |
+| `search` | `string` | No | — |
+| `timeoutOpts` | `object` | No | — |
+| `zdr` | `enabled \| disabled` | No | — |
+| `tags` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="timeoutOpts full type">
+
+```ts
+{
+  milliseconds: number,
+  behavior?: fail | return-partial
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `domain` | `string` | Yes | — |
+| `urls` | `object[]` | Yes | — |
+| `partial` | `boolean` | No | — |
+| `key_metadata` | `object` | No | — |
+| `request_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="urls full type">
+
+```ts
+{
+  url: string,
+  title?: string,
+  description?: string,
+  keywords?: string[],
+  language?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="key_metadata full type">
+
+```ts
+{
+  credits_consumed: number,
+  credits_remaining: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

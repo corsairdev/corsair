@@ -1,0 +1,320 @@
+---
+title: Webhooks
+description: "Mailchimp incoming webhooks: event paths, payloads, and response data."
+---
+
+The Mailchimp plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/mailchimp/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `campaign` (`campaign`)
+- `profile` (`profile`)
+- `subscribe` (`subscribe`)
+- `unsubscribe` (`unsubscribe`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+## Events
+
+## Campaign
+
+### Campaign
+
+`campaign`
+
+Fired when a campaign is sent.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `campaign` | Yes | — |
+| `created_at` | `string` | No | — |
+| `fired_at` | `string` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  list_id?: string,
+  subject?: string,
+  status?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: campaign,
+  created_at?: string,
+  fired_at?: string,
+  data: {
+    id?: string,
+    list_id?: string,
+    subject?: string,
+    status?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+mailchimp({
+    webhookHooks: {
+        campaign: {
+            before(ctx, args) {
+                return { ctx, args };
+            },
+            after(ctx, response) {
+            },
+        },
+    },
+})
+```
+
+---
+
+## Profile
+
+### Profile
+
+`profile`
+
+Fired when a subscriber updates their profile.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `profile` | Yes | — |
+| `created_at` | `string` | No | — |
+| `fired_at` | `string` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  list_id?: string,
+  email?: string,
+  merges?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: profile,
+  created_at?: string,
+  fired_at?: string,
+  data: {
+    id?: string,
+    list_id?: string,
+    email?: string,
+    merges?: {
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+mailchimp({
+    webhookHooks: {
+        profile: {
+            before(ctx, args) {
+                return { ctx, args };
+            },
+            after(ctx, response) {
+            },
+        },
+    },
+})
+```
+
+---
+
+## Subscribe
+
+### Subscribe
+
+`subscribe`
+
+Fired when a subscriber joins a list.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `subscribe` | Yes | — |
+| `created_at` | `string` | No | — |
+| `fired_at` | `string` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  list_id?: string,
+  email?: string,
+  merges?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: subscribe,
+  created_at?: string,
+  fired_at?: string,
+  data: {
+    id?: string,
+    list_id?: string,
+    email?: string,
+    merges?: {
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+mailchimp({
+    webhookHooks: {
+        subscribe: {
+            before(ctx, args) {
+                return { ctx, args };
+            },
+            after(ctx, response) {
+            },
+        },
+    },
+})
+```
+
+---
+
+## Unsubscribe
+
+### Unsubscribe
+
+`unsubscribe`
+
+Fired when a subscriber leaves a list.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `unsubscribe` | Yes | — |
+| `created_at` | `string` | No | — |
+| `fired_at` | `string` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  list_id?: string,
+  email?: string,
+  merges?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: unsubscribe,
+  created_at?: string,
+  fired_at?: string,
+  data: {
+    id?: string,
+    list_id?: string,
+    email?: string,
+    merges?: {
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+mailchimp({
+    webhookHooks: {
+        unsubscribe: {
+            before(ctx, args) {
+                return { ctx, args };
+            },
+            after(ctx, response) {
+            },
+        },
+    },
+})
+```
+
+---
+

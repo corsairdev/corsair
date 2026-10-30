@@ -1,14 +1,14 @@
 ---
 title: Overview
-description: "Sentry plugin for Corsair"
+description: "Application monitoring for error tracking, performance tracing, and release health insights."
 ---
 
-Use **Sentry** through Corsair: one client, typed API calls, optional local DB sync, and incoming webhooks documented below.
+Use **Sentry** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
 
 **What you get:**
 
 - 25 typed API operations
-- 7 database entities synced for fast `.search()` / `.list()` queries
+- 7 synced entities (`comments`, `events`, `issues`, `organizations`, `projects`, `releases`, and 1 more) for fast `.search()` / `.list()`
 - 9 incoming webhook event types
 
 ## Setup
@@ -16,134 +16,131 @@ Use **Sentry** through Corsair: one client, typed API calls, optional local DB s
 <Steps>
 
 <Step title="Install">
-```bash
-pnpm install @corsair-dev/sentry
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/sentry
 ```
+```bash yarn
+yarn add corsair @corsair-dev/sentry
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/sentry
+```
+```bash bun
+bun add corsair @corsair-dev/sentry
+```
+</CodeGroup>
 
 </Step>
 
 <Step title="Add the plugin">
-<Tabs>
-<Tab title="Solo">
 ```ts corsair.ts
+import Database from 'better-sqlite3';
 import { createCorsair } from 'corsair';
 import { sentry } from '@corsair-dev/sentry';
 
 export const corsair = createCorsair({
-	// ... other config options,
-	multiTenancy: false,
-    plugins: [sentry()],
-});
-```
-</Tab>
-<Tab title="Multi-Tenant">
-```ts corsair.ts
-import { createCorsair } from 'corsair';
-import { sentry } from '@corsair-dev/sentry';
-
-export const corsair = createCorsair({
-	// ... other config options,
-    multiTenancy: true,
-    plugins: [sentry()],
+	plugins: [
+		sentry(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
 });
 ```
 
-See [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
-
-</Tab>
-</Tabs>
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
 
 </Step>
 
-<Step title="Get credentials">
-Follow [Get Credentials](/plugins/sentry/get-credentials) if you need help getting keys.
-
-</Step>
-
-<Step title="Store credentials">
+<Step title="Choose authentication">
 <Tabs>
-<Tab title="Solo">
-```bash
-pnpm corsair setup --plugin=sentry
-```
+<Tab title="API Key (Recommended)">
 
-Use the key names documented in [Get Credentials](/plugins/sentry/get-credentials) (for example `api_key=`, `bot_token=`, or OAuth client fields).
-</Tab>
-<Tab title="Multi-Tenant">
-```bash
-pnpm corsair setup --plugin=sentry --tenant=<tenantId>
-```
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
 
-Store per-tenant secrets after you create the tenant record. See [Multi-tenancy](/concepts/multi-tenancy).
-</Tab>
-</Tabs>
+Provider walkthrough: [Get Credentials](/plugins/sentry/get-credentials).
 
-</Step>
-
-</Steps>
-
-## Authentication
-
-Each tab shows how to register the plugin for that authentication method. The default `authType` from the plugin does not need to appear in the factory call.
-
-<Tabs>
-<Tab title="API Key (Default)">
-
-```ts corsair.ts
+```ts
 sentry()
 ```
-
-Store credentials with `pnpm corsair setup --plugin=sentry` (see [Get Credentials](/plugins/sentry/get-credentials) for field names). For OAuth, you typically store integration keys at the provider level and tokens per account or tenant.
 
 More: [API Key](/concepts/api-key)
 
 </Tab>
 </Tabs>
 
-## Webhooks
+</Step>
 
-This plugin registers **9** webhook handler(s). Configure your provider to POST events to your Corsair HTTP endpoint, then use `webhookHooks` in the plugin factory for custom logic.
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
 
-See [Webhooks](/plugins/sentry/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for how to set up routing.
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'sentry',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
 
+</Step>
 
-## Query synced data
-
-Synced entities support `corsair.sentry.db.<entity>.search()` and `.list()`. See [Database](/plugins/sentry/database) for filters and operators.
-
+</Steps>
 
 ## Example API calls
 
-**Read-style (read):** `events.get`
+**`events.get`**
 
 ```ts
-await corsair.sentry.api.events.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.sentry.api.events.get({});
 ```
 
 
-**Write-style (destructive):** `issues.delete`
+**`issues.delete`**
 
 ```ts
-await corsair.sentry.api.issues.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.sentry.api.issues.delete({});
 ```
 
 
-See the full list on the [API](/plugins/sentry/api) page. Use `pnpm corsair list --plugin=sentry` and `pnpm corsair schema <path>` locally to inspect schemas.
+See the full list on the [API](/plugins/sentry/api) page.
 
----
+## Query synced data
 
-## Hooks
+Synced entities support `tenant.sentry.db.<entity>.search()` and `.list()`: `comments`, `events`, `issues`, `organizations`, `projects`, `releases`, `teams`.
 
-Use `hooks` on API calls and `webhookHooks` on incoming events to add logging, approvals, or side effects. See [Hooks](/concepts/hooks) and the [Webhooks](/plugins/sentry/webhooks) page for payload types.
+See [Database](/plugins/sentry/database) for filters and operators.
 
----
+## Webhooks
 
-## Reference
+This plugin registers **9** webhook event types. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
 
-| Topic | Link |
-|-------|------|
-| API | [API](/plugins/sentry/api) |
-| Database | [Database](/plugins/sentry/database) |
-| Webhooks | [Webhooks](/plugins/sentry/webhooks) |
-| Credentials | [Get credentials](/plugins/sentry/get-credentials) |
+See [Webhooks](/plugins/sentry/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
 
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/sentry/api">
+    Every `sentry.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/sentry/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Webhooks" href="/plugins/sentry/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+  <Card title="Get credentials" href="/plugins/sentry/get-credentials">
+    Provider-console walkthrough for keys and OAuth apps.
+  </Card>
+</CardGroup>

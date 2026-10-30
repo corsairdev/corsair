@@ -1,0 +1,52 @@
+---
+title: API
+description: "API reference for WakaTime: every `wakatime.api.*` operation with input and output types."
+---
+
+Every `wakatime.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Users
+
+### current
+
+`users.current`
+
+Get the current WakaTime user
+
+**Risk:** `read`
+
+```ts
+await corsair.wakatime.api.users.current({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  username?: string,
+  display_name?: string,
+  email?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

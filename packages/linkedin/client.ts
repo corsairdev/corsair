@@ -20,97 +20,6 @@ const LINKEDIN_API_BASE = 'https://api.linkedin.com';
 // LinkedIn-Version is required by the versioned REST surface (e.g. /rest/posts).
 const LINKEDIN_API_VERSION = '202501';
 
-const LINKEDIN_TOKEN_URL = 'https://www.linkedin.com/oauth/v2/accessToken';
-
-// Refresh a day before the access token expires so long-lived sessions do not
-// hit a sudden 401 at the boundary.
-const REFRESH_BUFFER_SECONDS = 24 * 60 * 60;
-
-export type LinkedInTokenSet = {
-	accessToken: string;
-	refreshToken: string;
-	expiresAt: number;
-	refreshed: boolean;
-};
-
-type LinkedInTokenResponse = {
-	access_token: string;
-	expires_in: number;
-	refresh_token?: string;
-	refresh_token_expires_in?: number;
-};
-
-async function refreshLinkedInToken(
-	clientId: string,
-	clientSecret: string,
-	refreshToken: string,
-): Promise<LinkedInTokenResponse> {
-	const response = await fetch(LINKEDIN_TOKEN_URL, {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/x-www-form-urlencoded',
-		},
-		body: new URLSearchParams({
-			grant_type: 'refresh_token',
-			refresh_token: refreshToken,
-			client_id: clientId,
-			client_secret: clientSecret,
-		}),
-	});
-
-	if (!response.ok) {
-		const body = await response.text();
-		throw new LinkedInAPIError(
-			`Failed to refresh LinkedIn access token: ${body}`,
-			response.status,
-		);
-	}
-
-	// fetch().json() returns `any`; assert the documented token response shape.
-	return (await response.json()) as LinkedInTokenResponse;
-}
-
-export async function getValidLinkedInAccessToken({
-	accessToken,
-	refreshToken,
-	expiresAt,
-	clientId,
-	clientSecret,
-	forceRefresh = false,
-}: {
-	clientId: string;
-	clientSecret: string;
-	accessToken: string | null;
-	refreshToken: string;
-	expiresAt?: number | null;
-	forceRefresh?: boolean;
-}): Promise<LinkedInTokenSet> {
-	const now = Math.floor(Date.now() / 1000);
-
-	if (
-		!forceRefresh &&
-		accessToken &&
-		expiresAt &&
-		expiresAt > now + REFRESH_BUFFER_SECONDS
-	) {
-		return { accessToken, refreshToken, expiresAt, refreshed: false };
-	}
-
-	const tokenData = await refreshLinkedInToken(
-		clientId,
-		clientSecret,
-		refreshToken,
-	);
-
-	// LinkedIn rotates the refresh token on some flows; keep the new one when present.
-	return {
-		accessToken: tokenData.access_token,
-		refreshToken: tokenData.refresh_token ?? refreshToken,
-		expiresAt: now + tokenData.expires_in,
-		refreshed: true,
-	};
-}
-
 export type LinkedInRequestOptions = {
 	method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 	body?: Record<string, unknown>;
@@ -198,13 +107,6 @@ export type LinkedInRequestContext = {
 	key: string;
 	_refreshAuth?: () => Promise<string>;
 };
-
-export function attachLinkedInRefreshAuth(
-	ctx: object,
-	refreshAuth: () => Promise<string>,
-): void {
-	Object.assign(ctx, { _refreshAuth: refreshAuth });
-}
 
 /**
  * Wrapper around makeLinkedInRequest that retries once on 401 by force-refreshing

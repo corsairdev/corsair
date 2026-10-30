@@ -1,0 +1,74 @@
+---
+title: Database
+description: "People Data Labs local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The People Data Labs plugin syncs data locally. Use `corsair.pdl.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Companies
+
+Path: `pdl.db.companies.search`
+
+```ts
+const rows = await corsair.pdl.db.companies.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `companyId` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `website` | `string` | equals, contains, startsWith, endsWith, in |
+| `ticker` | `string` | equals, contains, startsWith, endsWith, in |
+| `industry` | `string` | equals, contains, startsWith, endsWith, in |
+| `employeeCount` | `number` | equals, gt, gte, lt, lte, in |
+| `foundedYear` | `number` | equals, gt, gte, lt, lte, in |
+| `likelihood` | `number` | equals, gt, gte, lt, lte, in |
+| `enrichedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## People
+
+Path: `pdl.db.people.search`
+
+```ts
+const rows = await corsair.pdl.db.people.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `pdlId` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `jobTitle` | `string` | equals, contains, startsWith, endsWith, in |
+| `jobCompanyName` | `string` | equals, contains, startsWith, endsWith, in |
+| `email` | `string` | equals, contains, startsWith, endsWith, in |
+| `phone` | `string` | equals, contains, startsWith, endsWith, in |
+| `country` | `string` | equals, contains, startsWith, endsWith, in |
+| `locality` | `string` | equals, contains, startsWith, endsWith, in |
+| `likelihood` | `number` | equals, gt, gte, lt, lte, in |
+| `enrichedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

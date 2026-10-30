@@ -1,0 +1,3303 @@
+---
+title: API
+description: "API reference for Dovetail: every `dovetail.api.*` operation with input and output types."
+---
+
+Every `dovetail.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Channels
+
+### create
+
+`channels.create`
+
+Creates a new channel in Dovetail to organize and collect feedback data. Channels are containers for specific types of customer feedback such as app reviews, NPS responses, churn reasons, product reviews, or support tickets. Use this to set up a new data collection source before importing feedback data.
+
+**Risk:** `write`
+
+```ts
+await corsair.dovetail.api.channels.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | Yes | — |
+| `content_type` | `APP_REVIEW \| CHURN_REASONS \| NPS_FEEDBACK \| PRODUCT_REVIEW \| SUPPORT_TICKETS` | Yes | — |
+| `project_category_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  title: string,
+  content_type?: string,
+  project_category_id?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  url?: string,
+  topics?: {
+    id: string,
+    channel_id?: string,
+    title: string,
+    description?: string,
+    created_at?: string | null,
+    updated_at?: string | null
+  }[],
+  project_category?: {
+    id: string
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createDataPoint
+
+`channels.createDataPoint`
+
+Tool to create a data point within a channel. Use after capturing new content to record and classify it in Dovetail.
+
+**Risk:** `write`
+
+```ts
+await corsair.dovetail.api.channels.createDataPoint({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel_id` | `string` | Yes | — |
+| `text` | `string` | Yes | — |
+| `timestamp` | `string` | Yes | — |
+| `source_title` | `string` | No | — |
+| `source_url` | `string` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  channel_id?: string,
+  text?: string,
+  timestamp?: string | null,
+  source_title?: string | null,
+  source_url?: string | null,
+  created_at?: string | null,
+  topics?: {
+    id: string,
+    title?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createTopic
+
+`channels.createTopic`
+
+Tool to create a new topic in a Dovetail channel. Requires channel_id, title, and description. Use to organize feedback within channels by creating themed discussion topics.
+
+**Risk:** `write`
+
+```ts
+await corsair.dovetail.api.channels.createTopic({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel_id` | `string` | Yes | — |
+| `title` | `string` | Yes | — |
+| `description` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  channel_id?: string,
+  title: string,
+  description?: string,
+  created_at?: string | null,
+  updated_at?: string | null,
+  channel?: {
+    id: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`channels.delete`
+
+Tool to delete an existing channel. Use when you need to remove a channel and move it to the project's trash (restorable for 30 days). Confirm the channel ID before calling.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.dovetail.api.channels.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  title: string,
+  deleted_at: string,
+  deleted: boolean,
+  url?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteTopic
+
+`channels.deleteTopic`
+
+Tool to delete an existing topic. Use when you have confirmed the topic ID and want to move it to trash (restorable for 30 days). Example: "Delete topic with ID 123e4567-e89b-12d3-a456-426614174000."
+
+**Risk:** `destructive`
+
+```ts
+await corsair.dovetail.api.channels.deleteTopic({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `topic_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  title: string,
+  description?: string,
+  deleted_at: string,
+  deleted: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`channels.update`
+
+Tool to update an existing channel's title or context. Use after confirming the channel ID and fields to change.
+
+**Risk:** `write`
+
+```ts
+await corsair.dovetail.api.channels.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel_id` | `string` | Yes | — |
+| `title` | `string` | Yes | — |
+| `context` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  title: string,
+  content_type?: string,
+  project_category_id?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  url?: string,
+  topics?: {
+    id: string,
+    channel_id?: string,
+    title: string,
+    description?: string,
+    created_at?: string | null,
+    updated_at?: string | null
+  }[],
+  project_category?: {
+    id: string
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateTopic
+
+`channels.updateTopic`
+
+Tool to update an existing topic. Use after confirming the topic ID and fields to change. Example: "Update topic with id 123... to have title 'New'".
+
+**Risk:** `write`
+
+```ts
+await corsair.dovetail.api.channels.updateTopic({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `topic_id` | `string` | Yes | — |
+| `title` | `string` | No | — |
+| `description` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  channel_id?: string,
+  title: string,
+  description?: string,
+  created_at?: string | null,
+  updated_at?: string | null,
+  channel?: {
+    id: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Contacts
+
+### create
+
+`contacts.create`
+
+Tool to create a new contact in Dovetail. Use when you need to register a contact before logging interactions.
+
+**Risk:** `write`
+
+```ts
+await corsair.dovetail.api.contacts.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+| `fields` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+{
+  label: string,
+  value?: any,
+  type?: BOOLEAN | DATETIME | EMAIL | NPS | NUMBER | PERSON | PHONE | SELECT | TEXT | URL
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  email?: string | null,
+  avatar_url?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  fields?: {
+    id?: string,
+    label: string,
+    value?: any,
+    type?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`contacts.get`
+
+Tool to retrieve details of a specific contact. Use when you have confirmed the contact ID and need full contact metadata from Dovetail.
+
+**Risk:** `read`
+
+```ts
+await corsair.dovetail.api.contacts.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  email?: string | null,
+  avatar_url?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  fields?: {
+    id?: string,
+    label: string,
+    value?: any,
+    type?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`contacts.list`
+
+Retrieves a paginated list of contacts from a Dovetail workspace. Returns contact IDs, names, creation timestamps, and custom fields. Use cursor-based pagination (limit + start_cursor) to navigate large contact lists efficiently.
+
+**Risk:** `read`
+
+```ts
+await corsair.dovetail.api.contacts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `object` | No | — |
+| `filter` | `object` | No | — |
+| `sort` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="page full type">
+
+```ts
+{
+  start_cursor?: string,
+  limit?: number
+}
+```
+</Accordion>
+
+<Accordion title="filter full type">
+
+```ts
+{
+  name?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `page` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  email?: string | null,
+  avatar_url?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  fields?: {
+    id?: string,
+    label: string,
+    value?: any,
+    type?: string
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="page full type">
+
+```ts
+{
+  total_count?: number,
+  has_more?: boolean,
+  next_cursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`contacts.update`
+
+Tool to update an existing contact in Dovetail. Use when you need to modify a contact's name, email, or custom fields.
+
+**Risk:** `write`
+
+```ts
+await corsair.dovetail.api.contacts.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `fields` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+{
+  label: string,
+  value?: any,
+  type?: BOOLEAN | DATETIME | EMAIL | NPS | NUMBER | PERSON | PHONE | SELECT | TEXT | URL
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  email?: string | null,
+  avatar_url?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  fields?: {
+    id?: string,
+    label: string,
+    value?: any,
+    type?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Data
+
+### create
+
+`data.create`
+
+Tool to create a data item in a Dovetail project with text content, title, and/or structured fields. Use when you need to capture and store research data, interview notes, or other content in a project.
+
+**Risk:** `write`
+
+```ts
+await corsair.dovetail.api.data.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `title` | `string` | No | — |
+| `content` | `string` | No | — |
+| `fields` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+{
+  label: string,
+  value?: any,
+  type?: BOOLEAN | DATETIME | EMAIL | NPS | NUMBER | PERSON | PHONE | SELECT | TEXT | URL
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  project_id?: string,
+  title?: string | null,
+  folder_id?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  deleted?: boolean,
+  deleted_at?: string | null,
+  fields?: {
+    id?: string,
+    label: string,
+    value?: any,
+    type?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`data.delete`
+
+Tool to delete an existing data item. Use when you have confirmed the data ID and want to move it to trash (restorable for 30 days). Example: "Delete data with ID 1tFfvvAmYPCLUqb9zO8dgN."
+
+**Risk:** `destructive`
+
+```ts
+await corsair.dovetail.api.data.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  project_id?: string,
+  title?: string | null,
+  folder_id?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  deleted?: boolean,
+  deleted_at?: string | null,
+  fields?: {
+    id?: string,
+    label: string,
+    value?: any,
+    type?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### export
+
+`data.export`
+
+Tool to export data in HTML or Markdown format. Use when you need to retrieve a formatted version of data items from Dovetail.
+
+**Risk:** `read`
+
+```ts
+await corsair.dovetail.api.data.export({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data_id` | `string` | Yes | — |
+| `type` | `html \| markdown` | Yes | — |
+| `include_file_content` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  title?: string | null,
+  content_html?: string,
+  content_markdown?: string,
+  content_text?: string,
+  files?: {
+    id: string,
+    name?: string,
+    text_status?: string
+  }[],
+  indexed?: boolean,
+  truncated?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`data.get`
+
+Tool to retrieve details of a specific data item by ID. Use when you have confirmed the data ID and need full metadata including custom fields, files, and project information from Dovetail.
+
+**Risk:** `read`
+
+```ts
+await corsair.dovetail.api.data.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  project_id?: string,
+  title?: string | null,
+  folder_id?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  deleted?: boolean,
+  deleted_at?: string | null,
+  fields?: {
+    id?: string,
+    label: string,
+    value?: any,
+    type?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### importFile
+
+`data.importFile`
+
+Tool to import a public URL of a file as new data in Dovetail. Use when you need to add external files to a project.
+
+**Risk:** `write`
+
+```ts
+await corsair.dovetail.api.data.importFile({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `title` | `string` | Yes | — |
+| `url` | `string` | No | — |
+| `file_id` | `string` | No | — |
+| `mime_type` | `string` | No | — |
+| `author_id` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `fields` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+{
+  label: string,
+  value?: any,
+  type?: BOOLEAN | DATETIME | EMAIL | NPS | NUMBER | PERSON | PHONE | SELECT | TEXT | URL
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  project_id?: string,
+  title?: string | null,
+  folder_id?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  deleted?: boolean,
+  deleted_at?: string | null,
+  fields?: {
+    id?: string,
+    label: string,
+    value?: any,
+    type?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`data.list`
+
+Tool to list data items in Dovetail. Use when you need to retrieve, filter, sort, or paginate through your workspace data. Supports filtering by created_at (date range), project_id, and title. Results can be sorted by created_at or title. Uses cursor-based pagination with configurable page size.
+
+**Risk:** `read`
+
+```ts
+await corsair.dovetail.api.data.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `object` | No | — |
+| `filter` | `object` | No | — |
+| `sort` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="page full type">
+
+```ts
+{
+  start_cursor?: string,
+  limit?: number
+}
+```
+</Accordion>
+
+<Accordion title="filter full type">
+
+```ts
+{
+  project_id?: string,
+  folder_id?: string,
+  title?: string,
+  created_at?: {
+    gt?: string,
+    gte?: string,
+    lt?: string,
+    lte?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `page` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  project_id?: string,
+  title?: string | null,
+  folder_id?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  deleted?: boolean,
+  deleted_at?: string | null,
+  fields?: {
+    id?: string,
+    label: string,
+    value?: any,
+    type?: string
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="page full type">
+
+```ts
+{
+  total_count?: number,
+  has_more?: boolean,
+  next_cursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`data.update`
+
+Tool to update a data item in Dovetail. Use when you need to modify the title or fields of an existing data item.
+
+**Risk:** `write`
+
+```ts
+await corsair.dovetail.api.data.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data_id` | `string` | Yes | — |
+| `title` | `string` | No | — |
+| `fields` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+{
+  label: string,
+  value?: any,
+  type?: BOOLEAN | DATETIME | EMAIL | NPS | NUMBER | PERSON | PHONE | SELECT | TEXT | URL
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  project_id?: string,
+  title?: string | null,
+  folder_id?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  deleted?: boolean,
+  deleted_at?: string | null,
+  fields?: {
+    id?: string,
+    label: string,
+    value?: any,
+    type?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Docs
+
+### create
+
+`docs.create`
+
+Tool to create a doc in a Dovetail project with text content, title and/or custom fields. Use when you need to document research findings, store notes, or create structured content within a project. The doc content is stored but not returned in the response.
+
+**Risk:** `write`
+
+```ts
+await corsair.dovetail.api.docs.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | No | — |
+| `content` | `string` | No | — |
+| `content_type` | `text \| html \| markdown` | No | — |
+| `project_id` | `string` | No | — |
+| `folder_id` | `string` | No | — |
+| `fields` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+{
+  label: string,
+  value?: any,
+  type?: BOOLEAN | DATETIME | EMAIL | NPS | NUMBER | PERSON | PHONE | SELECT | TEXT | URL
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  title?: string | null,
+  project_id?: string | null,
+  folder_id?: string | null,
+  cover_image_file_id?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  fields?: {
+    id?: string,
+    label: string,
+    value?: any,
+    type?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`docs.delete`
+
+Tool to delete an existing doc. Use when you need to remove a doc and move it to the project's trash (restorable for 30 days).
+
+**Risk:** `destructive`
+
+```ts
+await corsair.dovetail.api.docs.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `doc_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  title?: string | null,
+  project_id?: string | null,
+  folder_id?: string | null,
+  cover_image_file_id?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  fields?: {
+    id?: string,
+    label: string,
+    value?: any,
+    type?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### export
+
+`docs.export`
+
+Tool to export a doc in HTML or Markdown format. Use when you need to retrieve the full content of a doc from Dovetail in a specific format.
+
+**Risk:** `read`
+
+```ts
+await corsair.dovetail.api.docs.export({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `doc_id` | `string` | Yes | — |
+| `type` | `html \| markdown` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  title?: string | null,
+  content_html?: string,
+  content_markdown?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`docs.get`
+
+Tool to retrieve details of a specific doc by ID. Use when you have confirmed the doc ID and need full doc metadata from Dovetail.
+
+**Risk:** `read`
+
+```ts
+await corsair.dovetail.api.docs.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `doc_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  title?: string | null,
+  project_id?: string | null,
+  folder_id?: string | null,
+  cover_image_file_id?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  fields?: {
+    id?: string,
+    label: string,
+    value?: any,
+    type?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### importFile
+
+`docs.importFile`
+
+Tool to import a public file URL as a new doc in Dovetail. Use when you need to create a doc from an external file source. The file must be publicly accessible at the provided URL.
+
+**Risk:** `write`
+
+```ts
+await corsair.dovetail.api.docs.importFile({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | Yes | — |
+| `project_id` | `string` | No | — |
+| `folder_id` | `string` | No | — |
+| `url` | `string` | No | — |
+| `file_id` | `string` | No | — |
+| `mime_type` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  title?: string | null,
+  project_id?: string | null,
+  folder_id?: string | null,
+  cover_image_file_id?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  fields?: {
+    id?: string,
+    label: string,
+    value?: any,
+    type?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`docs.list`
+
+Tool to list docs in a Dovetail workspace with optional filtering, sorting, and pagination. Use when you need to retrieve docs, optionally filtered by project, title, content, or creation date.
+
+**Risk:** `read`
+
+```ts
+await corsair.dovetail.api.docs.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `object` | No | — |
+| `filter` | `object` | No | — |
+| `sort` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="page full type">
+
+```ts
+{
+  start_cursor?: string,
+  limit?: number
+}
+```
+</Accordion>
+
+<Accordion title="filter full type">
+
+```ts
+{
+  project_id?: string,
+  folder_id?: string,
+  title?: string,
+  created_at?: {
+    gt?: string,
+    gte?: string,
+    lt?: string,
+    lte?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `page` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  title?: string | null,
+  project_id?: string | null,
+  folder_id?: string | null,
+  cover_image_file_id?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  fields?: {
+    id?: string,
+    label: string,
+    value?: any,
+    type?: string
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="page full type">
+
+```ts
+{
+  total_count?: number,
+  has_more?: boolean,
+  next_cursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listUserDocs
+
+`docs.listUserDocs`
+
+Tool to get a list of docs associated with a user in Dovetail. Use when you need to retrieve documents for a specific user or the authenticated user (use 'me' as user_id).
+
+**Risk:** `read`
+
+```ts
+await corsair.dovetail.api.docs.listUserDocs({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `string` | Yes | — |
+| `page` | `object` | No | — |
+| `filter` | `object` | No | — |
+| `sort` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="page full type">
+
+```ts
+{
+  start_cursor?: string,
+  limit?: number
+}
+```
+</Accordion>
+
+<Accordion title="filter full type">
+
+```ts
+{
+  project_id?: string,
+  folder_id?: string,
+  title?: string,
+  created_at?: {
+    gt?: string,
+    gte?: string,
+    lt?: string,
+    lte?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `page` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  title?: string | null,
+  project_id?: string | null,
+  folder_id?: string | null,
+  cover_image_file_id?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  fields?: {
+    id?: string,
+    label: string,
+    value?: any,
+    type?: string
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="page full type">
+
+```ts
+{
+  total_count?: number,
+  has_more?: boolean,
+  next_cursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`docs.update`
+
+Tool to update a doc in Dovetail. Use when you need to modify a doc's title or custom fields.
+
+**Risk:** `write`
+
+```ts
+await corsair.dovetail.api.docs.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `doc_id` | `string` | Yes | — |
+| `title` | `string` | No | — |
+| `folder_id` | `string` | No | — |
+| `cover_image_file_id` | `string` | No | — |
+| `fields` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+{
+  label: string,
+  value?: any,
+  type?: BOOLEAN | DATETIME | EMAIL | NPS | NUMBER | PERSON | PHONE | SELECT | TEXT | URL
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  title?: string | null,
+  project_id?: string | null,
+  folder_id?: string | null,
+  cover_image_file_id?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  fields?: {
+    id?: string,
+    label: string,
+    value?: any,
+    type?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Files
+
+### get
+
+`files.get`
+
+Tool to retrieve details of a specific file by its ID. Use when you need file metadata, download URL, or processing status from Dovetail.
+
+**Risk:** `read`
+
+```ts
+await corsair.dovetail.api.files.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  size?: number,
+  mime_type?: string,
+  status?: string,
+  created_at?: string | null,
+  updated_at?: string | null,
+  download_url?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Folders
+
+### get
+
+`folders.get`
+
+Tool to retrieve details of a specific folder. Use when you have confirmed the folder ID and need full folder metadata from Dovetail.
+
+**Risk:** `read`
+
+```ts
+await corsair.dovetail.api.folders.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `folder_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  title: string,
+  parent_folder_id?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  folders?: string[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`folders.list`
+
+Tool to get a list of folders associated with a workspace. Use when you need to retrieve folder hierarchy, search for folders by title, or navigate the folder structure with pagination support.
+
+**Risk:** `read`
+
+```ts
+await corsair.dovetail.api.folders.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `object` | No | — |
+| `filter` | `object` | No | — |
+| `sort` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="page full type">
+
+```ts
+{
+  start_cursor?: string,
+  limit?: number
+}
+```
+</Accordion>
+
+<Accordion title="filter full type">
+
+```ts
+{
+  parent_folder_id?: string | null,
+  title?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `page` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  title: string,
+  parent_folder_id?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  folders?: string[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="page full type">
+
+```ts
+{
+  total_count?: number,
+  has_more?: boolean,
+  next_cursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Highlights
+
+### list
+
+`highlights.list`
+
+List highlights from your Dovetail workspace with optional filtering and pagination. Use this action to retrieve highlights that have been created across your notes and projects. Supports filtering by project or note, and cursor-based pagination for large result sets.
+
+**Risk:** `read`
+
+```ts
+await corsair.dovetail.api.highlights.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `object` | No | — |
+| `filter` | `object` | No | — |
+| `sort` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="page full type">
+
+```ts
+{
+  start_cursor?: string,
+  limit?: number
+}
+```
+</Accordion>
+
+<Accordion title="filter full type">
+
+```ts
+{
+  project_id?: string,
+  tag_id?: string,
+  highlight_id?: string,
+  created_at?: {
+    gt?: string,
+    gte?: string,
+    lt?: string,
+    lte?: string
+  },
+  updated_at?: {
+    gt?: string,
+    gte?: string,
+    lt?: string,
+    lte?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `page` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  project_id?: string,
+  note_id?: string,
+  tag_id?: string | null,
+  text?: string,
+  start_time?: number | null,
+  end_time?: number | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="page full type">
+
+```ts
+{
+  total_count?: number,
+  has_more?: boolean,
+  next_cursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Insights
+
+### create
+
+`insights.create`
+
+Creates a new insight in Dovetail to store synthesized research findings, observations, or conclusions. Use this tool when you need to document and save key findings from user research, interviews, or data analysis. Insights can optionally be linked to a project for better organization. Returns the created insight's ID, title, creation timestamp, and other metadata. Note: The body content is stored but not included in the response.
+
+**Risk:** `write`
+
+```ts
+await corsair.dovetail.api.insights.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | No | — |
+| `content` | `string` | No | — |
+| `content_type` | `text \| html \| markdown` | No | — |
+| `project_id` | `string` | No | — |
+| `folder_id` | `string` | No | — |
+| `fields` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+{
+  label: string,
+  value?: any,
+  type?: BOOLEAN | DATETIME | EMAIL | NPS | NUMBER | PERSON | PHONE | SELECT | TEXT | URL
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  title?: string | null,
+  project_id?: string | null,
+  folder_id?: string | null,
+  cover_image_file_id?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  fields?: {
+    id?: string,
+    label: string,
+    value?: any,
+    type?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`insights.delete`
+
+Tool to delete an existing insight. Use when you have confirmed the insight ID and want to move it to trash (restorable for 30 days).
+
+**Risk:** `destructive`
+
+```ts
+await corsair.dovetail.api.insights.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `insight_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  title?: string | null,
+  project_id?: string | null,
+  folder_id?: string | null,
+  cover_image_file_id?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  fields?: {
+    id?: string,
+    label: string,
+    value?: any,
+    type?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### export
+
+`insights.export`
+
+Tool to export an insight in HTML or Markdown format. Use when you need to retrieve the full content of an insight for documentation, reporting, or sharing purposes. The exported content includes the insight's title and body in the specified format.
+
+**Risk:** `read`
+
+```ts
+await corsair.dovetail.api.insights.export({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `insight_id` | `string` | Yes | — |
+| `type` | `html \| markdown` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  title?: string | null,
+  content_html?: string,
+  content_markdown?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`insights.get`
+
+Tool to retrieve details of a specific insight by ID. Use when you need full insight metadata from Dovetail.
+
+**Risk:** `read`
+
+```ts
+await corsair.dovetail.api.insights.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `insight_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  title?: string | null,
+  project_id?: string | null,
+  folder_id?: string | null,
+  cover_image_file_id?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  fields?: {
+    id?: string,
+    label: string,
+    value?: any,
+    type?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### importFile
+
+`insights.importFile`
+
+Tool to import a file from a public URL as a new insight in Dovetail. Use when you need to create an insight from an external file source such as PDFs, images, or documents. The file must be publicly accessible for Dovetail to fetch and import it. After import, the insight can be analyzed, tagged, and connected to projects.
+
+**Risk:** `write`
+
+```ts
+await corsair.dovetail.api.insights.importFile({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | Yes | — |
+| `project_id` | `string` | No | — |
+| `folder_id` | `string` | No | — |
+| `url` | `string` | No | — |
+| `file_id` | `string` | No | — |
+| `mime_type` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  title?: string | null,
+  project_id?: string | null,
+  folder_id?: string | null,
+  cover_image_file_id?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  fields?: {
+    id?: string,
+    label: string,
+    value?: any,
+    type?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`insights.list`
+
+Tool to get a list of insights associated with a workspace. Use when you need to retrieve insights with optional filtering by project, publication status, or title, and support for cursor-based pagination.
+
+**Risk:** `read`
+
+```ts
+await corsair.dovetail.api.insights.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `object` | No | — |
+| `filter` | `object` | No | — |
+| `sort` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="page full type">
+
+```ts
+{
+  start_cursor?: string,
+  limit?: number
+}
+```
+</Accordion>
+
+<Accordion title="filter full type">
+
+```ts
+{
+  project_id?: string,
+  folder_id?: string,
+  title?: string,
+  created_at?: {
+    gt?: string,
+    gte?: string,
+    lt?: string,
+    lte?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `page` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  title?: string | null,
+  project_id?: string | null,
+  folder_id?: string | null,
+  cover_image_file_id?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  fields?: {
+    id?: string,
+    label: string,
+    value?: any,
+    type?: string
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="page full type">
+
+```ts
+{
+  total_count?: number,
+  has_more?: boolean,
+  next_cursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listUserInsights
+
+`insights.listUserInsights`
+
+List personal insights for a user in Dovetail. Returns a paginated list of insights including their IDs, titles, creation dates, and published status. Use DOVETAIL_GET_TOKEN_INFO to obtain a valid user_id.
+
+**Risk:** `read`
+
+```ts
+await corsair.dovetail.api.insights.listUserInsights({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `string` | Yes | — |
+| `page` | `object` | No | — |
+| `filter` | `object` | No | — |
+| `sort` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="page full type">
+
+```ts
+{
+  start_cursor?: string,
+  limit?: number
+}
+```
+</Accordion>
+
+<Accordion title="filter full type">
+
+```ts
+{
+  project_id?: string,
+  folder_id?: string,
+  title?: string,
+  created_at?: {
+    gt?: string,
+    gte?: string,
+    lt?: string,
+    lte?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `page` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  title?: string | null,
+  project_id?: string | null,
+  folder_id?: string | null,
+  cover_image_file_id?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  fields?: {
+    id?: string,
+    label: string,
+    value?: any,
+    type?: string
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="page full type">
+
+```ts
+{
+  total_count?: number,
+  has_more?: boolean,
+  next_cursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`insights.update`
+
+Updates an existing insight in Dovetail, allowing you to modify the title and custom fields. Use when you need to revise insight information, correct titles, or update custom field values.
+
+**Risk:** `write`
+
+```ts
+await corsair.dovetail.api.insights.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `insight_id` | `string` | Yes | — |
+| `title` | `string` | No | — |
+| `folder_id` | `string` | No | — |
+| `cover_image_file_id` | `string` | No | — |
+| `fields` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+{
+  label: string,
+  value?: any,
+  type?: BOOLEAN | DATETIME | EMAIL | NPS | NUMBER | PERSON | PHONE | SELECT | TEXT | URL
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  title?: string | null,
+  project_id?: string | null,
+  folder_id?: string | null,
+  cover_image_file_id?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  fields?: {
+    id?: string,
+    label: string,
+    value?: any,
+    type?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Notes
+
+### create
+
+`notes.create`
+
+Tool to create a note in a Dovetail project with text content, title and/or custom fields. Use when you need to document research notes, store interview findings, or create structured content within a project. The note content is stored but not returned in the response.
+
+**Risk:** `write`
+
+```ts
+await corsair.dovetail.api.notes.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `title` | `string` | No | — |
+| `content` | `string` | No | — |
+| `fields` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+{
+  label: string,
+  value?: any,
+  type?: BOOLEAN | DATETIME | EMAIL | NPS | NUMBER | PERSON | PHONE | SELECT | TEXT | URL
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  project_id?: string,
+  title?: string | null,
+  folder_id?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  fields?: {
+    id?: string,
+    label: string,
+    value?: any,
+    type?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`notes.delete`
+
+Tool to delete an existing note. Use when you have confirmed the note ID and want to move it to trash (restorable for 30 days).
+
+**Risk:** `destructive`
+
+```ts
+await corsair.dovetail.api.notes.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `note_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  project_id?: string,
+  title?: string | null,
+  folder_id?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  fields?: {
+    id?: string,
+    label: string,
+    value?: any,
+    type?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### export
+
+`notes.export`
+
+Tool to export a note from Dovetail in HTML or Markdown format. Use when you need to retrieve the full content of a note in a specific export format.
+
+**Risk:** `read`
+
+```ts
+await corsair.dovetail.api.notes.export({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `note_id` | `string` | Yes | — |
+| `type` | `html \| markdown` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  title?: string | null,
+  content_html?: string,
+  content_markdown?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`notes.get`
+
+Tool to retrieve details of a specific note. Use when you have confirmed the note ID and need full note metadata from Dovetail.
+
+**Risk:** `read`
+
+```ts
+await corsair.dovetail.api.notes.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `note_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  project_id?: string,
+  title?: string | null,
+  folder_id?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  fields?: {
+    id?: string,
+    label: string,
+    value?: any,
+    type?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### importFile
+
+`notes.importFile`
+
+Tool to import a file from a public URL as a new note in Dovetail. Use when you need to create a note by importing content from an accessible file URL (PDF, video, audio, etc.).
+
+**Risk:** `write`
+
+```ts
+await corsair.dovetail.api.notes.importFile({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `title` | `string` | Yes | — |
+| `url` | `string` | Yes | — |
+| `mime_type` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  project_id?: string,
+  title?: string | null,
+  folder_id?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  fields?: {
+    id?: string,
+    label: string,
+    value?: any,
+    type?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`notes.list`
+
+List notes in Dovetail workspace with optional pagination and sorting. Use this tool to retrieve notes from your Dovetail workspace. Supports pagination for large result sets and sorting options. Returns note metadata including IDs, titles, timestamps, and associated project information.
+
+**Risk:** `read`
+
+```ts
+await corsair.dovetail.api.notes.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `object` | No | — |
+| `filter` | `object` | No | — |
+| `sort` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="page full type">
+
+```ts
+{
+  start_cursor?: string,
+  limit?: number
+}
+```
+</Accordion>
+
+<Accordion title="filter full type">
+
+```ts
+{
+  project_id?: string,
+  folder_id?: string,
+  created_at?: {
+    gt?: string,
+    gte?: string,
+    lt?: string,
+    lte?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `page` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  project_id?: string,
+  title?: string | null,
+  folder_id?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  fields?: {
+    id?: string,
+    label: string,
+    value?: any,
+    type?: string
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="page full type">
+
+```ts
+{
+  total_count?: number,
+  has_more?: boolean,
+  next_cursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`notes.update`
+
+Tool to update an existing note in Dovetail. Use when you need to modify a note's title, content, or custom fields. Example: "Update note 8IFq5LEC6hV1Vgsu0jPNJ with new title 'Q1 Review'".
+
+**Risk:** `write`
+
+```ts
+await corsair.dovetail.api.notes.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `note_id` | `string` | Yes | — |
+| `title` | `string` | No | — |
+| `fields` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+{
+  label: string,
+  value?: any,
+  type?: BOOLEAN | DATETIME | EMAIL | NPS | NUMBER | PERSON | PHONE | SELECT | TEXT | URL
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  project_id?: string,
+  title?: string | null,
+  folder_id?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  fields?: {
+    id?: string,
+    label: string,
+    value?: any,
+    type?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Projects
+
+### create
+
+`projects.create`
+
+Tool to create a new project in your Dovetail workspace. Use when you need to create a project to organize research data.
+
+**Risk:** `write`
+
+```ts
+await corsair.dovetail.api.projects.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | Yes | — |
+| `folder_id` | `string` | No | — |
+| `template_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  title: string,
+  folder_id?: string | null,
+  template_id?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  overview?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`projects.get`
+
+Tool to retrieve details of a specific project. Use when you have confirmed the project ID and need full project metadata from Dovetail.
+
+**Risk:** `read`
+
+```ts
+await corsair.dovetail.api.projects.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  title: string,
+  folder_id?: string | null,
+  template_id?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  overview?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`projects.list`
+
+Tool to list all projects in Dovetail. Use after authenticating with a valid workspace token when you need to retrieve the full project list.
+
+**Risk:** `read`
+
+```ts
+await corsair.dovetail.api.projects.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `object` | No | — |
+| `filter` | `object` | No | — |
+| `sort` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="page full type">
+
+```ts
+{
+  start_cursor?: string,
+  limit?: number
+}
+```
+</Accordion>
+
+<Accordion title="filter full type">
+
+```ts
+{
+  folder_id?: string,
+  title?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `page` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  title: string,
+  folder_id?: string | null,
+  template_id?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  overview?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="page full type">
+
+```ts
+{
+  total_count?: number,
+  has_more?: boolean,
+  next_cursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Search
+
+### magicSearch
+
+`search.magicSearch`
+
+Tool to perform a magic search across workspace data. Use when you need to retrieve relevant highlights, notes, insights, channels, themes, or tags by query.
+
+**Risk:** `read`
+
+```ts
+await corsair.dovetail.api.search.magicSearch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | No | — |
+| `offset` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `filter` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filter full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `highlights` | `any[]` | No | — |
+| `notes` | `any[]` | No | — |
+| `insights` | `any[]` | No | — |
+| `channels` | `any[]` | No | — |
+| `tags` | `any[]` | No | — |
+| `themes` | `any[]` | No | — |
+
+
+
+---
+
+## Tags
+
+### list
+
+`tags.list`
+
+List all tags in the authenticated Dovetail workspace. Returns tag details including title, color, highlight count, and timestamps. Supports pagination for workspaces with many tags.
+
+**Risk:** `read`
+
+```ts
+await corsair.dovetail.api.tags.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `object` | No | — |
+| `filter` | `object` | No | — |
+| `sort` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="page full type">
+
+```ts
+{
+  start_cursor?: string,
+  limit?: number
+}
+```
+</Accordion>
+
+<Accordion title="filter full type">
+
+```ts
+{
+  project_id?: string,
+  tag_board_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `page` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  title: string,
+  color?: string,
+  project_id?: string | null,
+  tag_board_id?: string | null,
+  scope?: string,
+  highlight_count?: number,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="page full type">
+
+```ts
+{
+  total_count?: number,
+  has_more?: boolean,
+  next_cursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Token
+
+### getInfo
+
+`token.getInfo`
+
+Retrieves information about the current API token, including its unique identifier and the associated workspace subdomain. Use this to verify which workspace the token belongs to.
+
+**Risk:** `read`
+
+```ts
+await corsair.dovetail.api.token.getInfo({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  subdomain: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
