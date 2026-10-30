@@ -8,6 +8,13 @@ const request = <T>(
 	options: Parameters<typeof makeEsputnikRequest>[2],
 ) => makeEsputnikRequest<T>(path, ctx.key, options);
 
+const typedRequest = <K extends keyof EsputnikEndpointOutputs>(
+	operation: K,
+	ctx: { key: string },
+	path: string,
+	options: Parameters<typeof makeEsputnikRequest>[2],
+) => request<EsputnikEndpointOutputs[K]>(ctx, path, options);
+
 const segment = (value: string): string => encodeURIComponent(value);
 
 export const accountEndpoints: Pick<
