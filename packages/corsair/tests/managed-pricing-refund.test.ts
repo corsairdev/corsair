@@ -1,7 +1,13 @@
 import { createHmac } from 'node:crypto';
 import { bindEndpointsRecursively } from '../core/endpoints/bind';
 import type { CorsairPlugin, EndpointMetaEntry } from '../core/plugins';
-import { reportManagedPricingCallFailed } from '../hub/managed-pricing-auth';
+import { parseManagedPricingCredentialsResponse } from '../hub/contracts/managed-pricing-api';
+import {
+	managedPricingOutcomeHeaders,
+	readUsageUnits,
+	reportManagedPricingCallFailed,
+	reportManagedPricingCallUsage,
+} from '../hub/managed-pricing-auth';
 import { RUNTIME_PROOF_HEADER } from '../hub/runtime-proof';
 import type { HubConfig } from '../hub/types';
 
@@ -55,8 +61,9 @@ function bind(
 // unknown: request bodies are parsed JSON, read with matchers.
 type Sent = { url: string; body: Record<string, unknown>; headers: Headers };
 
-// Hub answers the key request; the outcome report gets `outcomeStatus`.
-function mockHub(outcomeStatus = 200) {
+// Hub answers the key request (asking for usage at `usagePath`, if given);
+// the outcome report gets `outcomeStatus`.
+function mockHub(outcomeStatus = 200, usagePath?: string) {
 	const sent: Sent[] = [];
 	jest.spyOn(globalThis, 'fetch').mockImplementation(async (input, init) => {
 		const url = String(input);
@@ -66,7 +73,7 @@ function mockHub(outcomeStatus = 200) {
 			headers: new Headers(init?.headers),
 		});
 		const body = url.endsWith('/managed-pricing/credentials')
-			? { api_key: 'rd-test-key', expires_in: 300 }
+			? { api_key: 'rd-test-key', expires_in: 300, usage_path: usagePath }
 			: { status: 'released', creditsReturned: 20 };
 		return new Response(JSON.stringify(body), {
 			status: url.endsWith('/managed-pricing/credentials')
@@ -230,6 +237,34 @@ describe('a managed call that fails', () => {
 		expect(sent[1]?.has(RUNTIME_PROOF_HEADER)).toBe(false);
 	});
 
+	it('signs the usage report the same way', async () => {
+		const sent: Headers[] = [];
+		jest.spyOn(globalThis, 'fetch').mockImplementation(async (_input, init) => {
+			sent.push(new Headers(init?.headers));
+			return new Response('{}', {
+				status: 200,
+				headers: { 'content-type': 'application/json' },
+			});
+		});
+		const call = {
+			plugin: 'reducto',
+			tenantId: 'me',
+			operation: 'parse.parse',
+			idempotencyKey: 'k1',
+		};
+		await reportManagedPricingCallUsage(
+			{ ...hub, runtimeProofKey: 'proof-key' },
+			call,
+			12,
+		);
+		expect(sent[0]?.get(RUNTIME_PROOF_HEADER)).toEqual(
+			managedPricingOutcomeHeaders(
+				{ ...hub, runtimeProofKey: 'proof-key' },
+				call,
+			)[RUNTIME_PROOF_HEADER],
+		);
+	});
+
 	it('is not reported when the call succeeds', async () => {
 		const hubCalls = mockHub();
 		const api = bind(async (ctx) => ({ usedKey: ctx.key }));
@@ -304,5 +339,109 @@ describe('a managed call that fails', () => {
 		const reported = hubCalls.outcomes().map((o) => o.body.idempotencyKey);
 		expect(new Set(charged).size).toBe(2);
 		expect(reported).toEqual(charged);
+	});
+});
+
+describe('a managed call priced per unit', () => {
+	it('reports the units its result says it used', async () => {
+		const hubCalls = mockHub(200, 'usage.num_pages');
+		const api = bind(async () => ({ usage: { num_pages: 12 } }));
+
+		await expect(api.parse.parse({})).resolves.toEqual({
+			usage: { num_pages: 12 },
+		});
+
+		const [credentials] = hubCalls.credentials();
+		expect(hubCalls.outcomes().map((o) => o.body)).toEqual([
+			{
+				plugin: 'reducto',
+				tenantId: 'me',
+				operation: 'parse.parse',
+				idempotencyKey: credentials?.body.idempotencyKey,
+				outcome: 'succeeded',
+				usage: { units: 12 },
+			},
+		]);
+	});
+
+	it('reports nothing when the result has no usable number, so the hold stands', async () => {
+		const hubCalls = mockHub(200, 'usage.num_pages');
+		const api = bind(async () => ({ usage: null }));
+
+		await api.parse.parse({});
+		expect(hubCalls.outcomes()).toHaveLength(0);
+	});
+
+	it('reports a failure, not usage, when the call fails', async () => {
+		const hubCalls = mockHub(200, 'usage.num_pages');
+		const api = bind(async () => {
+			throw new Error('ReductoAPIError: 500');
+		});
+
+		await expect(api.parse.parse({})).rejects.toThrow('500');
+		expect(hubCalls.outcomes().map((o) => o.body.outcome)).toEqual(['failed']);
+	});
+
+	it('returns the result even when the usage report fails', async () => {
+		const hubCalls = mockHub(500, 'usage.num_pages');
+		const api = bind(async () => ({ usage: { num_pages: 3 } }));
+
+		await expect(api.parse.parse({})).resolves.toEqual({
+			usage: { num_pages: 3 },
+		});
+		expect(hubCalls.outcomes()).toHaveLength(1);
+	});
+
+	it('reports usage after an after hook runs', async () => {
+		const hubCalls = mockHub(200, 'costDollars.total');
+		const api = bind(async () => ({ costDollars: { total: 0.007 } }), {
+			parse: { parse: { after: async () => undefined } },
+		});
+
+		await api.parse.parse({});
+		expect(hubCalls.outcomes()[0]?.body.usage).toEqual({ units: 0.007 });
+	});
+});
+
+describe('readUsageUnits', () => {
+	it('reads a finite, non-negative number at the path', () => {
+		expect(
+			readUsageUnits(
+				{ data: { metadata: { creditsUsed: 5 } } },
+				'data.metadata.creditsUsed',
+			),
+		).toBe(5);
+		expect(readUsageUnits({ cost: 0 }, 'cost')).toBe(0);
+	});
+
+	it.each([
+		[{ cost: -1 }],
+		[{ cost: Number.NaN }],
+		[{ cost: '0.002' }],
+		[{}],
+		[null],
+		[{ usage: 'x' }],
+	])('reads nothing from %p', (result) => {
+		expect(readUsageUnits(result, 'cost')).toBeUndefined();
+		expect(readUsageUnits(result, 'usage.num_pages')).toBeUndefined();
+	});
+});
+
+describe('parseManagedPricingCredentialsResponse usage_path', () => {
+	it('keeps a dot path and drops anything else', () => {
+		expect(
+			parseManagedPricingCredentialsResponse({
+				api_key: 'k',
+				usage_path: 'usage.num_pages',
+			}).usage_path,
+		).toBe('usage.num_pages');
+		for (const bad of ['', 'usage..num_pages', 'usage[0]', 'a b', 7]) {
+			expect(
+				parseManagedPricingCredentialsResponse({
+					api_key: 'k',
+					usage_path: bad,
+				}).usage_path,
+			).toBeUndefined();
+		}
 	});
 });
