@@ -253,19 +253,41 @@ export async function resolveManagedPricingCall(
 	// Each endpoint call is metered on its own; retries inside the call
 	// reuse the key resolved here.
 	const idempotencyKey = randomUUID();
-	const result = await getManagedPricingApiKey(
-		{
-			hub: ctx.hub,
-			plugin: input.plugin,
-			tenantId,
-			cache: input.cache,
-		},
-		{ operation, idempotencyKey },
+	const call = { plugin: input.plugin, tenantId, operation, idempotencyKey };
+	try {
+		const result = await getManagedPricingApiKey(
+			{
+				hub: ctx.hub,
+				plugin: input.plugin,
+				tenantId,
+				cache: input.cache,
+			},
+			{ operation, idempotencyKey },
+		);
+		return { apiKey: result.apiKey, call };
+	} catch (error) {
+		// Hub may have charged a key request whose answer never arrived (it
+		// timed out, or the connection dropped), so it is reported like a failed
+		// call: Hub gives the credits back, or says it never charged that key.
+		// A request Hub answered with a refusal charged nothing.
+		if (gotNoAnswer(error)) {
+			await reportManagedPricingCallFailed(ctx.hub, call, error);
+		}
+		throw error;
+	}
+}
+
+// unknown: whatever fetch threw. An abort or timeout comes as a DOMException
+// named for it, a failed connection as fetch's TypeError. Read by name: a
+// DOMException is not always an Error instance across realms.
+function gotNoAnswer(error: unknown): boolean {
+	const name =
+		typeof error === 'object' && error !== null && 'name' in error
+			? error.name
+			: undefined;
+	return (
+		name === 'TimeoutError' || name === 'AbortError' || name === 'TypeError'
 	);
-	return {
-		apiKey: result.apiKey,
-		call: { plugin: input.plugin, tenantId, operation, idempotencyKey },
-	};
 }
 
 export async function resolveManagedPricingApiKey(

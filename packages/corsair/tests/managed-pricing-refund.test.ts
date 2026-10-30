@@ -87,6 +87,68 @@ afterEach(() => {
 	jest.restoreAllMocks();
 });
 
+describe('a key request Hub never answers', () => {
+	// The key request fails with `fail`; the outcome report is answered.
+	function mockKeyRequest(fail: () => Promise<Response>) {
+		const sent: Sent[] = [];
+		jest.spyOn(globalThis, 'fetch').mockImplementation(async (input, init) => {
+			const url = String(input);
+			sent.push({
+				url,
+				body: JSON.parse(String(init?.body ?? '{}')),
+				headers: new Headers(init?.headers),
+			});
+			if (url.endsWith('/managed-pricing/credentials')) return fail();
+			return new Response(JSON.stringify({ error: 'not found' }), {
+				status: 404,
+				headers: { 'content-type': 'application/json' },
+			});
+		});
+		return {
+			credentials: () =>
+				sent.filter((s) => s.url.endsWith('/managed-pricing/credentials')),
+			outcomes: () =>
+				sent.filter((s) => s.url.endsWith('/managed-pricing/usage/outcome')),
+		};
+	}
+
+	it('is reported under its key, since Hub may have charged it, and still throws', async () => {
+		const hubCalls = mockKeyRequest(async () => {
+			throw new DOMException('The operation timed out.', 'TimeoutError');
+		});
+		const run = jest.fn(async () => ({ ok: true }));
+		const api = bind(run);
+
+		await expect(api.parse.parse({})).rejects.toThrow('timed out');
+
+		expect(run).not.toHaveBeenCalled();
+		const [credentials] = hubCalls.credentials();
+		expect(hubCalls.outcomes()[0]?.body).toMatchObject({
+			operation: 'parse.parse',
+			idempotencyKey: credentials?.body.idempotencyKey,
+			outcome: 'failed',
+		});
+	});
+
+	it('is not reported when Hub answered with a refusal', async () => {
+		const hubCalls = mockKeyRequest(
+			async () =>
+				new Response(
+					JSON.stringify({
+						error: 'Not enough Corsair credits',
+						code: 'INSUFFICIENT_CREDITS',
+					}),
+					{ status: 402, headers: { 'content-type': 'application/json' } },
+				),
+		);
+		const api = bind(async () => ({ ok: true }));
+
+		await expect(api.parse.parse({})).rejects.toThrow();
+
+		expect(hubCalls.outcomes()).toHaveLength(0);
+	});
+});
+
 describe('a managed call that fails', () => {
 	it('is reported even when the thrown value cannot be printed', async () => {
 		const hubCalls = mockHub();
