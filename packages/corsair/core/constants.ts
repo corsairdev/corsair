@@ -213,6 +213,7 @@ export const BaseProviders = [
 	'epicgames',
 	'everhour',
 	'exa',
+	'excel',
 	'exist',
 	'extractaai',
 	'facebook',
@@ -233,6 +234,7 @@ export const BaseProviders = [
 	'gitlab',
 	'gladia',
 	'gmail',
+	'gmicloud',
 	'googleaddressvalidation',
 	'googleanalytics',
 	'googlebigquery',
@@ -625,6 +627,7 @@ export const ProviderDisplayNames = {
 	epicgames: 'Epic Games',
 	everhour: 'Everhour',
 	exa: 'Exa',
+	excel: 'Excel',
 	exist: 'Exist',
 	extractaai: 'Extracta.ai',
 	facebook: 'Facebook',
@@ -645,6 +648,7 @@ export const ProviderDisplayNames = {
 	gitlab: 'GitLab',
 	gladia: 'Gladia',
 	gmail: 'Gmail',
+	gmicloud: 'GMI Cloud',
 	googleaddressvalidation: 'Google Address Validation',
 	googleanalytics: 'Google Analytics',
 	googlebigquery: 'Google BigQuery',
@@ -1042,6 +1046,7 @@ export type AllProviders =
 	| 'epicgames'
 	| 'everhour'
 	| 'exa'
+	| 'excel'
 	| 'exist'
 	| 'extractaai'
 	| 'facebook'
@@ -1062,6 +1067,7 @@ export type AllProviders =
 	| 'gitlab'
 	| 'gladia'
 	| 'gmail'
+	| 'gmicloud'
 	| 'googleaddressvalidation'
 	| 'googleanalytics'
 	| 'googlebigquery'
