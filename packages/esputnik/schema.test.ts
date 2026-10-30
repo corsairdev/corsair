@@ -214,6 +214,20 @@ describe('eSputnik endpoint schemas', () => {
 		).toBe(true);
 	});
 
+	it('keeps undocumented provider responses JSON-safe', () => {
+		expect(
+			EsputnikEndpointOutputSchemas.registerEvent.safeParse({ accepted: true })
+				.success,
+		).toBe(true);
+		expect(
+			EsputnikEndpointOutputSchemas.registerEvent.safeParse(() => {}).success,
+		).toBe(false);
+		expect(
+			EsputnikEndpointOutputSchemas.searchViberMessages.safeParse([{ id: 1 }])
+				.success,
+		).toBe(true);
+	});
+
 	it('rejects malformed path and required-body inputs', () => {
 		expect(
 			EsputnikEndpointInputSchemas.getContactIdByToken.safeParse({

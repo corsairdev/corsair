@@ -63,6 +63,18 @@ const TokenPathSchema = z.object({
 	token_id: z.string().min(1),
 });
 const GenericObjectSchema = z.record(z.string(), z.unknown());
+
+type JsonValue =
+	| string
+	| number
+	| boolean
+	| null
+	| JsonValue[]
+	| { [key: string]: JsonValue };
+
+// eSputnik documents these responses as provider-defined JSON without stable
+// envelopes, so expose a JSON-safe contract instead of leaking `unknown`.
+const ProviderJsonSchema: z.ZodType<JsonValue> = z.json();
 const EmailListSchema = z.object({
 	emails: z.array(z.string().email()).min(1),
 });
@@ -261,6 +273,8 @@ export type EsputnikEndpointInputs = {
 };
 
 export type EsputnikEndpointOutputs = {
+	// ProviderJsonValue fields below are intentionally broad because eSputnik
+	// publishes no stable response envelope for these operations.
 	getAccountInfo: z.infer<typeof AccountInfoSchema>;
 	getBalance: z.infer<typeof BalanceSchema>;
 	addContact: { id: number };
@@ -268,7 +282,7 @@ export type EsputnikEndpointOutputs = {
 	updateContact: string;
 	// eSputnik documents an empty response for this mutation, so the provider
 	// response is intentionally opaque and accepted without a local envelope.
-	deleteContactByExternalCustomerId: unknown;
+	deleteContactByExternalCustomerId: JsonValue;
 	searchContacts: z.infer<typeof ContactSchema>[];
 	subscribeContact: z.infer<typeof ContactSubscriptionResultSchema>;
 	// Bulk/import response envelopes vary by provider validation outcome and are
@@ -277,27 +291,27 @@ export type EsputnikEndpointOutputs = {
 	fileContactsBulkUpdate: z.infer<typeof GenericObjectSchema>;
 	getImportSessionStatus: z.infer<typeof GenericObjectSchema>;
 	getContactEmails: z.infer<typeof GenericObjectSchema>;
-	addToUnsubscribed: unknown;
-	deleteFromUnsubscribed: unknown;
-	getGroupContacts: unknown[];
+	addToUnsubscribed: JsonValue;
+	deleteFromUnsubscribed: JsonValue;
+	getGroupContacts: JsonValue[];
 	detachContactsFromGroup: string;
 	attachContactsToGroup: string;
-	searchGroups: unknown[];
-	searchWorkflows: unknown[];
+	searchGroups: JsonValue[];
+	searchWorkflows: JsonValue[];
 	getContactIdByToken: { id: number };
-	getContactSubscriptionCategories: unknown[];
+	getContactSubscriptionCategories: JsonValue[];
 	changeContactSubscriptionCategories: string;
 	deleteContactById: string;
-	contactRecoms: unknown[];
+	contactRecoms: JsonValue[];
 	getAdditionalFields: z.infer<typeof GenericObjectSchema>;
 	getOrganisationBalanceHistory: z.infer<typeof GenericObjectSchema>;
 	ordersBulkInsert: z.infer<typeof GenericObjectSchema>;
-	registerEvent: unknown;
+	registerEvent: JsonValue;
 	sendHistoryEvents: z.infer<typeof GenericObjectSchema>;
-	removeHistoryEvents: unknown;
-	searchEmails: unknown[];
+	removeHistoryEvents: JsonValue;
+	searchEmails: JsonValue[];
 	getEmailMessageViewLink: z.infer<typeof GenericObjectSchema>;
-	sendPreparedMessage: unknown;
+	sendPreparedMessage: JsonValue;
 	addEmail: { id: number };
 	getEmail: z.infer<typeof GenericObjectSchema>;
 	updateMessage: string;
@@ -305,37 +319,37 @@ export type EsputnikEndpointOutputs = {
 	updateTranslatedMessage: string;
 	deleteTranslatedEmail: string;
 	sendEmail: z.infer<typeof GenericObjectSchema>;
-	searchMobilePushMessages: unknown[];
+	searchMobilePushMessages: JsonValue[];
 	addMobilePushMessage: { id: number };
 	getMobilePushMessage: z.infer<typeof GenericObjectSchema>;
 	updateBaseMobilePushMessage: string;
 	deleteMobilePushMessage: string;
 	updateTranslatedMobilePushMessage: string;
 	deleteTranslatedMobilePushMessage: string;
-	searchViberMessages: unknown[];
+	searchViberMessages: JsonValue[];
 	addViberMessage: { id: number };
 	getViberMessage: z.infer<typeof GenericObjectSchema>;
 	updateBaseViberMessage: string;
 	deleteViberMessage: string;
-	searchAppInboxMessages: unknown[];
+	searchAppInboxMessages: JsonValue[];
 	addAppInboxMessage: { id: number };
 	getAppInboxMessage: z.infer<typeof GenericObjectSchema>;
 	updateBaseAppInboxMessage: string;
 	deleteAppInboxMessage: string;
-	searchTelegramBotMessages: unknown[];
+	searchTelegramBotMessages: JsonValue[];
 	addTelegramBotMessage: { id: number };
 	getTelegramBotMessage: z.infer<typeof GenericObjectSchema>;
 	updateBaseTelegramBotMessage: string;
 	deleteTelegramBotMessage: string;
-	searchSmsMessages: unknown[];
+	searchSmsMessages: JsonValue[];
 	getSms: z.infer<typeof GenericObjectSchema>;
 	updateBaseSmsMessage: string;
 	deleteSmsMessage: string;
-	getBroadcasts: unknown[];
+	getBroadcasts: JsonValue[];
 	createBroadcast: { id: number };
 	getBroadcast: z.infer<typeof GenericObjectSchema>;
-	getSmsInterfaces: unknown[];
-	getEmailInterfaces: unknown[];
+	getSmsInterfaces: JsonValue[];
+	getEmailInterfaces: JsonValue[];
 	updateTranslatedViberMessage: string;
 	deleteTranslatedViberMessage: string;
 	updateTranslatedAppInboxMessage: string;
@@ -345,11 +359,11 @@ export type EsputnikEndpointOutputs = {
 	addSmsMessage: { id: number };
 	sendSms: z.infer<typeof GenericObjectSchema>;
 	cancelBroadcast: string;
-	contactActivity: unknown[];
-	contactMessages: unknown[];
+	contactActivity: JsonValue[];
+	contactMessages: JsonValue[];
 	getTokenActivated: { active: boolean };
 	changeTokenActivated: { active: boolean };
-	getDomains: unknown[];
+	getDomains: JsonValue[];
 	createDomain: Record<string, unknown>;
 	getScript: string;
 	getWebPushDomains: Record<string, unknown>;
@@ -357,22 +371,22 @@ export type EsputnikEndpointOutputs = {
 	deleteWebPushDomain: string;
 	getWebPushScript: Record<string, unknown>;
 	getProductFeedsConfiguration: Record<string, unknown>;
-	configureProductFeeds: unknown;
-	addAppTokens: unknown;
-	muteAppToken: unknown;
-	unmuteAppToken: unknown;
-	getSubscriptionCategories: unknown[];
-	getPromocodes: unknown;
-	getPromocodesCount: unknown;
-	insertPromocodes: unknown;
+	configureProductFeeds: JsonValue;
+	addAppTokens: JsonValue;
+	muteAppToken: JsonValue;
+	unmuteAppToken: JsonValue;
+	getSubscriptionCategories: JsonValue[];
+	getPromocodes: JsonValue;
+	getPromocodesCount: JsonValue;
+	insertPromocodes: JsonValue;
 	getPreprocessorFileStatus: Record<string, unknown>;
-	updatePreprocessorFile: unknown;
-	uploadPreprocessorFile: unknown;
+	updatePreprocessorFile: JsonValue;
+	uploadPreprocessorFile: JsonValue;
 	generateApiToken: Record<string, unknown>;
-	getInteractionStatus: unknown;
+	getInteractionStatus: JsonValue;
 	sendViber: z.infer<typeof GenericObjectSchema>;
-	sendAppInbox: unknown;
-	sendTelegramBot: unknown;
+	sendAppInbox: JsonValue;
+	sendTelegramBot: JsonValue;
 	updateTranslatedSmsMessage: string;
 	deleteTranslatedSmsMessage: string;
 };
@@ -534,72 +548,72 @@ export const EsputnikEndpointOutputSchemas = {
 	addContact: z.object({ id: z.number().int() }),
 	getContact: ContactSchema,
 	updateContact: z.string(),
-	deleteContactByExternalCustomerId: z.unknown(),
+	deleteContactByExternalCustomerId: ProviderJsonSchema,
 	searchContacts: z.array(ContactSchema),
 	subscribeContact: ContactSubscriptionResultSchema,
-	contactsBulkUpdate: z.record(z.string(), z.unknown()),
-	fileContactsBulkUpdate: z.record(z.string(), z.unknown()),
-	getImportSessionStatus: z.record(z.string(), z.unknown()),
-	getContactEmails: z.record(z.string(), z.unknown()),
-	addToUnsubscribed: z.unknown(),
-	deleteFromUnsubscribed: z.unknown(),
-	getGroupContacts: z.array(z.unknown()),
+	contactsBulkUpdate: z.record(z.string(), ProviderJsonSchema),
+	fileContactsBulkUpdate: z.record(z.string(), ProviderJsonSchema),
+	getImportSessionStatus: z.record(z.string(), ProviderJsonSchema),
+	getContactEmails: z.record(z.string(), ProviderJsonSchema),
+	addToUnsubscribed: ProviderJsonSchema,
+	deleteFromUnsubscribed: ProviderJsonSchema,
+	getGroupContacts: z.array(ProviderJsonSchema),
 	detachContactsFromGroup: z.string(),
 	attachContactsToGroup: z.string(),
-	searchGroups: z.array(z.unknown()),
-	searchWorkflows: z.array(z.unknown()),
+	searchGroups: z.array(ProviderJsonSchema),
+	searchWorkflows: z.array(ProviderJsonSchema),
 	getContactIdByToken: z.object({ id: z.number().int() }),
-	getContactSubscriptionCategories: z.array(z.unknown()),
+	getContactSubscriptionCategories: z.array(ProviderJsonSchema),
 	changeContactSubscriptionCategories: z.string(),
 	deleteContactById: z.string(),
-	contactRecoms: z.array(z.unknown()),
-	getAdditionalFields: z.record(z.string(), z.unknown()),
-	getOrganisationBalanceHistory: z.record(z.string(), z.unknown()),
-	ordersBulkInsert: z.record(z.string(), z.unknown()),
-	registerEvent: z.unknown(),
-	sendHistoryEvents: z.record(z.string(), z.unknown()),
-	removeHistoryEvents: z.unknown(),
-	searchEmails: z.array(z.unknown()),
-	getEmailMessageViewLink: z.record(z.string(), z.unknown()),
-	sendPreparedMessage: z.unknown(),
+	contactRecoms: z.array(ProviderJsonSchema),
+	getAdditionalFields: z.record(z.string(), ProviderJsonSchema),
+	getOrganisationBalanceHistory: z.record(z.string(), ProviderJsonSchema),
+	ordersBulkInsert: z.record(z.string(), ProviderJsonSchema),
+	registerEvent: ProviderJsonSchema,
+	sendHistoryEvents: z.record(z.string(), ProviderJsonSchema),
+	removeHistoryEvents: ProviderJsonSchema,
+	searchEmails: z.array(ProviderJsonSchema),
+	getEmailMessageViewLink: z.record(z.string(), ProviderJsonSchema),
+	sendPreparedMessage: ProviderJsonSchema,
 	addEmail: z.object({ id: z.number().int() }),
-	getEmail: z.record(z.string(), z.unknown()),
+	getEmail: z.record(z.string(), ProviderJsonSchema),
 	updateMessage: z.string(),
 	deleteEmail: z.string(),
 	updateTranslatedMessage: z.string(),
 	deleteTranslatedEmail: z.string(),
-	sendEmail: z.record(z.string(), z.unknown()),
-	searchMobilePushMessages: z.array(z.unknown()),
+	sendEmail: z.record(z.string(), ProviderJsonSchema),
+	searchMobilePushMessages: z.array(ProviderJsonSchema),
 	addMobilePushMessage: z.object({ id: z.number().int() }),
-	getMobilePushMessage: z.record(z.string(), z.unknown()),
+	getMobilePushMessage: z.record(z.string(), ProviderJsonSchema),
 	updateBaseMobilePushMessage: z.string(),
 	deleteMobilePushMessage: z.string(),
 	updateTranslatedMobilePushMessage: z.string(),
 	deleteTranslatedMobilePushMessage: z.string(),
-	searchViberMessages: z.array(z.unknown()),
+	searchViberMessages: z.array(ProviderJsonSchema),
 	addViberMessage: z.object({ id: z.number().int() }),
-	getViberMessage: z.record(z.string(), z.unknown()),
+	getViberMessage: z.record(z.string(), ProviderJsonSchema),
 	updateBaseViberMessage: z.string(),
 	deleteViberMessage: z.string(),
-	searchAppInboxMessages: z.array(z.unknown()),
+	searchAppInboxMessages: z.array(ProviderJsonSchema),
 	addAppInboxMessage: z.object({ id: z.number().int() }),
-	getAppInboxMessage: z.record(z.string(), z.unknown()),
+	getAppInboxMessage: z.record(z.string(), ProviderJsonSchema),
 	updateBaseAppInboxMessage: z.string(),
 	deleteAppInboxMessage: z.string(),
-	searchTelegramBotMessages: z.array(z.unknown()),
+	searchTelegramBotMessages: z.array(ProviderJsonSchema),
 	addTelegramBotMessage: z.object({ id: z.number().int() }),
-	getTelegramBotMessage: z.record(z.string(), z.unknown()),
+	getTelegramBotMessage: z.record(z.string(), ProviderJsonSchema),
 	updateBaseTelegramBotMessage: z.string(),
 	deleteTelegramBotMessage: z.string(),
-	searchSmsMessages: z.array(z.unknown()),
-	getSms: z.record(z.string(), z.unknown()),
+	searchSmsMessages: z.array(ProviderJsonSchema),
+	getSms: z.record(z.string(), ProviderJsonSchema),
 	updateBaseSmsMessage: z.string(),
 	deleteSmsMessage: z.string(),
-	getBroadcasts: z.array(z.unknown()),
+	getBroadcasts: z.array(ProviderJsonSchema),
 	createBroadcast: z.object({ id: z.number().int() }),
-	getBroadcast: z.record(z.string(), z.unknown()),
-	getSmsInterfaces: z.array(z.unknown()),
-	getEmailInterfaces: z.array(z.unknown()),
+	getBroadcast: z.record(z.string(), ProviderJsonSchema),
+	getSmsInterfaces: z.array(ProviderJsonSchema),
+	getEmailInterfaces: z.array(ProviderJsonSchema),
 	updateTranslatedViberMessage: z.string(),
 	deleteTranslatedViberMessage: z.string(),
 	updateTranslatedAppInboxMessage: z.string(),
@@ -607,36 +621,36 @@ export const EsputnikEndpointOutputSchemas = {
 	updateTranslatedTelegramMessage: z.string(),
 	deleteTranslatedTelegramMessage: z.string(),
 	addSmsMessage: z.object({ id: z.number().int() }),
-	sendSms: z.record(z.string(), z.unknown()),
+	sendSms: z.record(z.string(), ProviderJsonSchema),
 	cancelBroadcast: z.string(),
-	contactActivity: z.array(z.unknown()),
-	contactMessages: z.array(z.unknown()),
+	contactActivity: z.array(ProviderJsonSchema),
+	contactMessages: z.array(ProviderJsonSchema),
 	getTokenActivated: z.object({ active: z.boolean() }),
 	changeTokenActivated: z.object({ active: z.boolean() }),
-	getDomains: z.array(z.unknown()),
-	createDomain: z.record(z.string(), z.unknown()),
+	getDomains: z.array(ProviderJsonSchema),
+	createDomain: z.record(z.string(), ProviderJsonSchema),
 	getScript: z.string(),
-	getWebPushDomains: z.record(z.string(), z.unknown()),
-	addWebPushDomain: z.record(z.string(), z.unknown()),
+	getWebPushDomains: z.record(z.string(), ProviderJsonSchema),
+	addWebPushDomain: z.record(z.string(), ProviderJsonSchema),
 	deleteWebPushDomain: z.string(),
-	getWebPushScript: z.record(z.string(), z.unknown()),
-	getProductFeedsConfiguration: z.record(z.string(), z.unknown()),
-	configureProductFeeds: z.unknown(),
-	addAppTokens: z.unknown(),
-	muteAppToken: z.unknown(),
-	unmuteAppToken: z.unknown(),
-	getSubscriptionCategories: z.array(z.unknown()),
-	getPromocodes: z.unknown(),
-	getPromocodesCount: z.unknown(),
-	insertPromocodes: z.unknown(),
-	getPreprocessorFileStatus: z.record(z.string(), z.unknown()),
-	updatePreprocessorFile: z.unknown(),
-	uploadPreprocessorFile: z.unknown(),
-	generateApiToken: z.record(z.string(), z.unknown()),
-	getInteractionStatus: z.unknown(),
-	sendViber: z.record(z.string(), z.unknown()),
-	sendAppInbox: z.unknown(),
-	sendTelegramBot: z.unknown(),
+	getWebPushScript: z.record(z.string(), ProviderJsonSchema),
+	getProductFeedsConfiguration: z.record(z.string(), ProviderJsonSchema),
+	configureProductFeeds: ProviderJsonSchema,
+	addAppTokens: ProviderJsonSchema,
+	muteAppToken: ProviderJsonSchema,
+	unmuteAppToken: ProviderJsonSchema,
+	getSubscriptionCategories: z.array(ProviderJsonSchema),
+	getPromocodes: ProviderJsonSchema,
+	getPromocodesCount: ProviderJsonSchema,
+	insertPromocodes: ProviderJsonSchema,
+	getPreprocessorFileStatus: z.record(z.string(), ProviderJsonSchema),
+	updatePreprocessorFile: ProviderJsonSchema,
+	uploadPreprocessorFile: ProviderJsonSchema,
+	generateApiToken: z.record(z.string(), ProviderJsonSchema),
+	getInteractionStatus: ProviderJsonSchema,
+	sendViber: z.record(z.string(), ProviderJsonSchema),
+	sendAppInbox: ProviderJsonSchema,
+	sendTelegramBot: ProviderJsonSchema,
 	updateTranslatedSmsMessage: z.string(),
 	deleteTranslatedSmsMessage: z.string(),
 } as const;
