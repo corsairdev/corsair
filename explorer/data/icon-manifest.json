@@ -784,7 +784,7 @@
     "twitterapiio": "twenty-icons",
     "twochat": "twenty-icons",
     "typeform": "twenty-icons",
-    "typesafe": "twenty-icons",
+    "typesafe": "url-override",
     "unione": "twenty-icons",
     "unipile": "twenty-icons",
     "uniswapapi": "twenty-icons",
