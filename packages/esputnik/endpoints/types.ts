@@ -11,6 +11,8 @@ const ContactBodySchema = z.object({
 	languageCode: z.string().optional(),
 	timeZone: z.string().optional(),
 	marketId: z.string().optional(),
+	address: z.record(z.string(), z.unknown()).optional(),
+	fields: z.record(z.string(), z.unknown()).optional(),
 });
 const SearchContactsSchema = z.object({
 	externalCustomerId: z.string().optional(),

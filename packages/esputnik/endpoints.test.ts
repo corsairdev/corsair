@@ -41,6 +41,8 @@ describe('eSputnik routes', () => {
 	it('creates contacts with a JSON body', async () => {
 		const input = {
 			channels: [{ type: 'email', value: 'person@example.com' }],
+			address: { city: 'London' },
+			fields: { customerTier: 'gold' },
 		};
 		await contactEndpoints.addContact(ctx, input);
 		expect(request).toHaveBeenCalledWith('/api/v1/contact', 'test-api-key', {
@@ -53,10 +55,16 @@ describe('eSputnik routes', () => {
 		await contactEndpoints.updateContact(ctx, {
 			id: 42,
 			channels: [{ type: 'email', value: 'person@example.com' }],
+			address: { city: 'London' },
+			fields: { customerTier: 'gold' },
 		});
 		expect(request).toHaveBeenCalledWith('/api/v1/contact/42', 'test-api-key', {
 			method: 'PUT',
-			body: { channels: [{ type: 'email', value: 'person@example.com' }] },
+			body: {
+				channels: [{ type: 'email', value: 'person@example.com' }],
+				address: { city: 'London' },
+				fields: { customerTier: 'gold' },
+			},
 		});
 	});
 
