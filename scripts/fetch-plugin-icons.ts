@@ -58,6 +58,10 @@ const PLUGIN_ICON_URL_OVERRIDES: Record<string, string> = {
 	turso: 'https://turso.tech/apple-touch-icon.png',
 	// twenty-icons returns a 32px blur; Google's favicon is the sharp site mark.
 	octen: 'https://www.google.com/s2/favicons?domain=octen.ai&sz=128',
+	// twenty-icons has an old blue and green mark; typesafe.ai's apple touch icon
+	// is the current black knot on pink.
+	typesafe:
+		'https://framerusercontent.com/images/kcuF2BEp5XaVfkmFB634IPRKQH0.png',
 };
 
 type FetchResult =
