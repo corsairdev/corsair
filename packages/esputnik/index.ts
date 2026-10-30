@@ -16,10 +16,18 @@ import { AuthMissingError } from 'corsair/core';
 import {
 	accountEndpoints,
 	accountExtendedEndpoints,
+	appInboxEndpoints,
+	batchTwoRemainderEndpoints,
+	broadcastEndpoints,
 	contactEndpoints,
 	emailEndpoints,
 	eventEndpoints,
+	interfaceEndpoints,
+	mobilePushEndpoints,
 	orderEndpoints,
+	smsEndpoints,
+	telegramBotEndpoints,
+	viberEndpoints,
 } from './endpoints';
 import type {
 	EsputnikEndpointInputs,
@@ -99,6 +107,46 @@ export type EsputnikEndpoints = {
 	updateTranslatedMessage: EsputnikEndpoint<'updateTranslatedMessage'>;
 	deleteTranslatedEmail: EsputnikEndpoint<'deleteTranslatedEmail'>;
 	sendEmail: EsputnikEndpoint<'sendEmail'>;
+	searchMobilePushMessages: EsputnikEndpoint<'searchMobilePushMessages'>;
+	addMobilePushMessage: EsputnikEndpoint<'addMobilePushMessage'>;
+	getMobilePushMessage: EsputnikEndpoint<'getMobilePushMessage'>;
+	updateBaseMobilePushMessage: EsputnikEndpoint<'updateBaseMobilePushMessage'>;
+	deleteMobilePushMessage: EsputnikEndpoint<'deleteMobilePushMessage'>;
+	updateTranslatedMobilePushMessage: EsputnikEndpoint<'updateTranslatedMobilePushMessage'>;
+	deleteTranslatedMobilePushMessage: EsputnikEndpoint<'deleteTranslatedMobilePushMessage'>;
+	searchViberMessages: EsputnikEndpoint<'searchViberMessages'>;
+	addViberMessage: EsputnikEndpoint<'addViberMessage'>;
+	getViberMessage: EsputnikEndpoint<'getViberMessage'>;
+	updateBaseViberMessage: EsputnikEndpoint<'updateBaseViberMessage'>;
+	deleteViberMessage: EsputnikEndpoint<'deleteViberMessage'>;
+	searchAppInboxMessages: EsputnikEndpoint<'searchAppInboxMessages'>;
+	addAppInboxMessage: EsputnikEndpoint<'addAppInboxMessage'>;
+	getAppInboxMessage: EsputnikEndpoint<'getAppInboxMessage'>;
+	updateBaseAppInboxMessage: EsputnikEndpoint<'updateBaseAppInboxMessage'>;
+	deleteAppInboxMessage: EsputnikEndpoint<'deleteAppInboxMessage'>;
+	searchTelegramBotMessages: EsputnikEndpoint<'searchTelegramBotMessages'>;
+	addTelegramBotMessage: EsputnikEndpoint<'addTelegramBotMessage'>;
+	getTelegramBotMessage: EsputnikEndpoint<'getTelegramBotMessage'>;
+	updateBaseTelegramBotMessage: EsputnikEndpoint<'updateBaseTelegramBotMessage'>;
+	deleteTelegramBotMessage: EsputnikEndpoint<'deleteTelegramBotMessage'>;
+	searchSmsMessages: EsputnikEndpoint<'searchSmsMessages'>;
+	getSms: EsputnikEndpoint<'getSms'>;
+	updateBaseSmsMessage: EsputnikEndpoint<'updateBaseSmsMessage'>;
+	deleteSmsMessage: EsputnikEndpoint<'deleteSmsMessage'>;
+	getBroadcasts: EsputnikEndpoint<'getBroadcasts'>;
+	createBroadcast: EsputnikEndpoint<'createBroadcast'>;
+	getBroadcast: EsputnikEndpoint<'getBroadcast'>;
+	getSmsInterfaces: EsputnikEndpoint<'getSmsInterfaces'>;
+	getEmailInterfaces: EsputnikEndpoint<'getEmailInterfaces'>;
+	updateTranslatedViberMessage: EsputnikEndpoint<'updateTranslatedViberMessage'>;
+	deleteTranslatedViberMessage: EsputnikEndpoint<'deleteTranslatedViberMessage'>;
+	updateTranslatedAppInboxMessage: EsputnikEndpoint<'updateTranslatedAppInboxMessage'>;
+	deleteTranslatedAppInboxMessage: EsputnikEndpoint<'deleteTranslatedAppInboxMessage'>;
+	updateTranslatedTelegramMessage: EsputnikEndpoint<'updateTranslatedTelegramMessage'>;
+	deleteTranslatedTelegramMessage: EsputnikEndpoint<'deleteTranslatedTelegramMessage'>;
+	addSmsMessage: EsputnikEndpoint<'addSmsMessage'>;
+	sendSms: EsputnikEndpoint<'sendSms'>;
+	cancelBroadcast: EsputnikEndpoint<'cancelBroadcast'>;
 };
 
 const esputnikEndpointsNested = {
@@ -108,6 +156,37 @@ const esputnikEndpointsNested = {
 	orders: orderEndpoints,
 	events: eventEndpoints,
 	emails: emailEndpoints,
+	mobilePush: mobilePushEndpoints,
+	viber: {
+		searchViberMessages: viberEndpoints.search,
+		addViberMessage: viberEndpoints.add,
+		getViberMessage: viberEndpoints.get,
+		updateBaseViberMessage: viberEndpoints.update,
+		deleteViberMessage: viberEndpoints.delete,
+	},
+	appInbox: {
+		searchAppInboxMessages: appInboxEndpoints.search,
+		addAppInboxMessage: appInboxEndpoints.add,
+		getAppInboxMessage: appInboxEndpoints.get,
+		updateBaseAppInboxMessage: appInboxEndpoints.update,
+		deleteAppInboxMessage: appInboxEndpoints.delete,
+	},
+	telegramBot: {
+		searchTelegramBotMessages: telegramBotEndpoints.search,
+		addTelegramBotMessage: telegramBotEndpoints.add,
+		getTelegramBotMessage: telegramBotEndpoints.get,
+		updateBaseTelegramBotMessage: telegramBotEndpoints.update,
+		deleteTelegramBotMessage: telegramBotEndpoints.delete,
+	},
+	sms: {
+		searchSmsMessages: smsEndpoints.search,
+		getSms: smsEndpoints.get,
+		updateBaseSmsMessage: smsEndpoints.update,
+		deleteSmsMessage: smsEndpoints.delete,
+	},
+	broadcasts: broadcastEndpoints,
+	interfaces: interfaceEndpoints,
+	batchTwoRemainder: batchTwoRemainderEndpoints,
 } as const;
 
 export const esputnikEndpointSchemas = {
@@ -270,6 +349,166 @@ export const esputnikEndpointSchemas = {
 	'emails.sendEmail': {
 		input: EsputnikEndpointInputSchemas.sendEmail,
 		output: EsputnikEndpointOutputSchemas.sendEmail,
+	},
+	'mobilePush.searchMobilePushMessages': {
+		input: EsputnikEndpointInputSchemas.searchMobilePushMessages,
+		output: EsputnikEndpointOutputSchemas.searchMobilePushMessages,
+	},
+	'mobilePush.addMobilePushMessage': {
+		input: EsputnikEndpointInputSchemas.addMobilePushMessage,
+		output: EsputnikEndpointOutputSchemas.addMobilePushMessage,
+	},
+	'mobilePush.getMobilePushMessage': {
+		input: EsputnikEndpointInputSchemas.getMobilePushMessage,
+		output: EsputnikEndpointOutputSchemas.getMobilePushMessage,
+	},
+	'mobilePush.updateBaseMobilePushMessage': {
+		input: EsputnikEndpointInputSchemas.updateBaseMobilePushMessage,
+		output: EsputnikEndpointOutputSchemas.updateBaseMobilePushMessage,
+	},
+	'mobilePush.deleteMobilePushMessage': {
+		input: EsputnikEndpointInputSchemas.deleteMobilePushMessage,
+		output: EsputnikEndpointOutputSchemas.deleteMobilePushMessage,
+	},
+	'mobilePush.updateTranslatedMobilePushMessage': {
+		input: EsputnikEndpointInputSchemas.updateTranslatedMobilePushMessage,
+		output: EsputnikEndpointOutputSchemas.updateTranslatedMobilePushMessage,
+	},
+	'mobilePush.deleteTranslatedMobilePushMessage': {
+		input: EsputnikEndpointInputSchemas.deleteTranslatedMobilePushMessage,
+		output: EsputnikEndpointOutputSchemas.deleteTranslatedMobilePushMessage,
+	},
+	'viber.searchViberMessages': {
+		input: EsputnikEndpointInputSchemas.searchViberMessages,
+		output: EsputnikEndpointOutputSchemas.searchViberMessages,
+	},
+	'viber.addViberMessage': {
+		input: EsputnikEndpointInputSchemas.addViberMessage,
+		output: EsputnikEndpointOutputSchemas.addViberMessage,
+	},
+	'viber.getViberMessage': {
+		input: EsputnikEndpointInputSchemas.getViberMessage,
+		output: EsputnikEndpointOutputSchemas.getViberMessage,
+	},
+	'viber.updateBaseViberMessage': {
+		input: EsputnikEndpointInputSchemas.updateBaseViberMessage,
+		output: EsputnikEndpointOutputSchemas.updateBaseViberMessage,
+	},
+	'viber.deleteViberMessage': {
+		input: EsputnikEndpointInputSchemas.deleteViberMessage,
+		output: EsputnikEndpointOutputSchemas.deleteViberMessage,
+	},
+	'appInbox.searchAppInboxMessages': {
+		input: EsputnikEndpointInputSchemas.searchAppInboxMessages,
+		output: EsputnikEndpointOutputSchemas.searchAppInboxMessages,
+	},
+	'appInbox.addAppInboxMessage': {
+		input: EsputnikEndpointInputSchemas.addAppInboxMessage,
+		output: EsputnikEndpointOutputSchemas.addAppInboxMessage,
+	},
+	'appInbox.getAppInboxMessage': {
+		input: EsputnikEndpointInputSchemas.getAppInboxMessage,
+		output: EsputnikEndpointOutputSchemas.getAppInboxMessage,
+	},
+	'appInbox.updateBaseAppInboxMessage': {
+		input: EsputnikEndpointInputSchemas.updateBaseAppInboxMessage,
+		output: EsputnikEndpointOutputSchemas.updateBaseAppInboxMessage,
+	},
+	'appInbox.deleteAppInboxMessage': {
+		input: EsputnikEndpointInputSchemas.deleteAppInboxMessage,
+		output: EsputnikEndpointOutputSchemas.deleteAppInboxMessage,
+	},
+	'telegramBot.searchTelegramBotMessages': {
+		input: EsputnikEndpointInputSchemas.searchTelegramBotMessages,
+		output: EsputnikEndpointOutputSchemas.searchTelegramBotMessages,
+	},
+	'telegramBot.addTelegramBotMessage': {
+		input: EsputnikEndpointInputSchemas.addTelegramBotMessage,
+		output: EsputnikEndpointOutputSchemas.addTelegramBotMessage,
+	},
+	'telegramBot.getTelegramBotMessage': {
+		input: EsputnikEndpointInputSchemas.getTelegramBotMessage,
+		output: EsputnikEndpointOutputSchemas.getTelegramBotMessage,
+	},
+	'telegramBot.updateBaseTelegramBotMessage': {
+		input: EsputnikEndpointInputSchemas.updateBaseTelegramBotMessage,
+		output: EsputnikEndpointOutputSchemas.updateBaseTelegramBotMessage,
+	},
+	'telegramBot.deleteTelegramBotMessage': {
+		input: EsputnikEndpointInputSchemas.deleteTelegramBotMessage,
+		output: EsputnikEndpointOutputSchemas.deleteTelegramBotMessage,
+	},
+	'sms.searchSmsMessages': {
+		input: EsputnikEndpointInputSchemas.searchSmsMessages,
+		output: EsputnikEndpointOutputSchemas.searchSmsMessages,
+	},
+	'sms.getSms': {
+		input: EsputnikEndpointInputSchemas.getSms,
+		output: EsputnikEndpointOutputSchemas.getSms,
+	},
+	'sms.updateBaseSmsMessage': {
+		input: EsputnikEndpointInputSchemas.updateBaseSmsMessage,
+		output: EsputnikEndpointOutputSchemas.updateBaseSmsMessage,
+	},
+	'sms.deleteSmsMessage': {
+		input: EsputnikEndpointInputSchemas.deleteSmsMessage,
+		output: EsputnikEndpointOutputSchemas.deleteSmsMessage,
+	},
+	'broadcasts.getBroadcasts': {
+		input: EsputnikEndpointInputSchemas.getBroadcasts,
+		output: EsputnikEndpointOutputSchemas.getBroadcasts,
+	},
+	'broadcasts.createBroadcast': {
+		input: EsputnikEndpointInputSchemas.createBroadcast,
+		output: EsputnikEndpointOutputSchemas.createBroadcast,
+	},
+	'broadcasts.getBroadcast': {
+		input: EsputnikEndpointInputSchemas.getBroadcast,
+		output: EsputnikEndpointOutputSchemas.getBroadcast,
+	},
+	'interfaces.getSmsInterfaces': {
+		input: EsputnikEndpointInputSchemas.getSmsInterfaces,
+		output: EsputnikEndpointOutputSchemas.getSmsInterfaces,
+	},
+	'interfaces.getEmailInterfaces': {
+		input: EsputnikEndpointInputSchemas.getEmailInterfaces,
+		output: EsputnikEndpointOutputSchemas.getEmailInterfaces,
+	},
+	'batchTwoRemainder.updateTranslatedViberMessage': {
+		input: EsputnikEndpointInputSchemas.updateTranslatedViberMessage,
+		output: EsputnikEndpointOutputSchemas.updateTranslatedViberMessage,
+	},
+	'batchTwoRemainder.deleteTranslatedViberMessage': {
+		input: EsputnikEndpointInputSchemas.deleteTranslatedViberMessage,
+		output: EsputnikEndpointOutputSchemas.deleteTranslatedViberMessage,
+	},
+	'batchTwoRemainder.updateTranslatedAppInboxMessage': {
+		input: EsputnikEndpointInputSchemas.updateTranslatedAppInboxMessage,
+		output: EsputnikEndpointOutputSchemas.updateTranslatedAppInboxMessage,
+	},
+	'batchTwoRemainder.deleteTranslatedAppInboxMessage': {
+		input: EsputnikEndpointInputSchemas.deleteTranslatedAppInboxMessage,
+		output: EsputnikEndpointOutputSchemas.deleteTranslatedAppInboxMessage,
+	},
+	'batchTwoRemainder.updateTranslatedTelegramMessage': {
+		input: EsputnikEndpointInputSchemas.updateTranslatedTelegramMessage,
+		output: EsputnikEndpointOutputSchemas.updateTranslatedTelegramMessage,
+	},
+	'batchTwoRemainder.deleteTranslatedTelegramMessage': {
+		input: EsputnikEndpointInputSchemas.deleteTranslatedTelegramMessage,
+		output: EsputnikEndpointOutputSchemas.deleteTranslatedTelegramMessage,
+	},
+	'batchTwoRemainder.addSmsMessage': {
+		input: EsputnikEndpointInputSchemas.addSmsMessage,
+		output: EsputnikEndpointOutputSchemas.addSmsMessage,
+	},
+	'batchTwoRemainder.sendSms': {
+		input: EsputnikEndpointInputSchemas.sendSms,
+		output: EsputnikEndpointOutputSchemas.sendSms,
+	},
+	'batchTwoRemainder.cancelBroadcast': {
+		input: EsputnikEndpointInputSchemas.cancelBroadcast,
+		output: EsputnikEndpointOutputSchemas.cancelBroadcast,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof esputnikEndpointsNested
@@ -435,6 +674,166 @@ const esputnikEndpointMeta = {
 	'emails.sendEmail': {
 		riskLevel: 'write',
 		description: 'Send an eSputnik email message',
+	},
+	'mobilePush.searchMobilePushMessages': {
+		riskLevel: 'read',
+		description: 'Search eSputnik mobile push messages',
+	},
+	'mobilePush.addMobilePushMessage': {
+		riskLevel: 'write',
+		description: 'Create an eSputnik mobile push message',
+	},
+	'mobilePush.getMobilePushMessage': {
+		riskLevel: 'read',
+		description: 'Get an eSputnik mobile push message',
+	},
+	'mobilePush.updateBaseMobilePushMessage': {
+		riskLevel: 'write',
+		description: 'Update an eSputnik mobile push message',
+	},
+	'mobilePush.deleteMobilePushMessage': {
+		riskLevel: 'destructive',
+		description: 'Delete an eSputnik mobile push message',
+	},
+	'mobilePush.updateTranslatedMobilePushMessage': {
+		riskLevel: 'write',
+		description: 'Update a translated eSputnik mobile push message',
+	},
+	'mobilePush.deleteTranslatedMobilePushMessage': {
+		riskLevel: 'destructive',
+		description: 'Delete a translated eSputnik mobile push message',
+	},
+	'viber.searchViberMessages': {
+		riskLevel: 'read',
+		description: 'Search eSputnik Viber messages',
+	},
+	'viber.addViberMessage': {
+		riskLevel: 'write',
+		description: 'Create an eSputnik Viber message',
+	},
+	'viber.getViberMessage': {
+		riskLevel: 'read',
+		description: 'Get an eSputnik Viber message',
+	},
+	'viber.updateBaseViberMessage': {
+		riskLevel: 'write',
+		description: 'Update an eSputnik Viber message',
+	},
+	'viber.deleteViberMessage': {
+		riskLevel: 'destructive',
+		description: 'Delete an eSputnik Viber message',
+	},
+	'appInbox.searchAppInboxMessages': {
+		riskLevel: 'read',
+		description: 'Search eSputnik App Inbox messages',
+	},
+	'appInbox.addAppInboxMessage': {
+		riskLevel: 'write',
+		description: 'Create an eSputnik App Inbox message',
+	},
+	'appInbox.getAppInboxMessage': {
+		riskLevel: 'read',
+		description: 'Get an eSputnik App Inbox message',
+	},
+	'appInbox.updateBaseAppInboxMessage': {
+		riskLevel: 'write',
+		description: 'Update an eSputnik App Inbox message',
+	},
+	'appInbox.deleteAppInboxMessage': {
+		riskLevel: 'destructive',
+		description: 'Delete an eSputnik App Inbox message',
+	},
+	'telegramBot.searchTelegramBotMessages': {
+		riskLevel: 'read',
+		description: 'Search eSputnik Telegram bot messages',
+	},
+	'telegramBot.addTelegramBotMessage': {
+		riskLevel: 'write',
+		description: 'Create an eSputnik Telegram bot message',
+	},
+	'telegramBot.getTelegramBotMessage': {
+		riskLevel: 'read',
+		description: 'Get an eSputnik Telegram bot message',
+	},
+	'telegramBot.updateBaseTelegramBotMessage': {
+		riskLevel: 'write',
+		description: 'Update an eSputnik Telegram bot message',
+	},
+	'telegramBot.deleteTelegramBotMessage': {
+		riskLevel: 'destructive',
+		description: 'Delete an eSputnik Telegram bot message',
+	},
+	'sms.searchSmsMessages': {
+		riskLevel: 'read',
+		description: 'Search eSputnik SMS messages',
+	},
+	'sms.getSms': {
+		riskLevel: 'read',
+		description: 'Get an eSputnik SMS message',
+	},
+	'sms.updateBaseSmsMessage': {
+		riskLevel: 'write',
+		description: 'Update an eSputnik SMS message',
+	},
+	'sms.deleteSmsMessage': {
+		riskLevel: 'destructive',
+		description: 'Delete an eSputnik SMS message',
+	},
+	'broadcasts.getBroadcasts': {
+		riskLevel: 'read',
+		description: 'List eSputnik broadcasts',
+	},
+	'broadcasts.createBroadcast': {
+		riskLevel: 'write',
+		description: 'Create an eSputnik broadcast',
+	},
+	'broadcasts.getBroadcast': {
+		riskLevel: 'read',
+		description: 'Get an eSputnik broadcast',
+	},
+	'interfaces.getSmsInterfaces': {
+		riskLevel: 'read',
+		description: 'List eSputnik SMS interfaces',
+	},
+	'interfaces.getEmailInterfaces': {
+		riskLevel: 'read',
+		description: 'List eSputnik email interfaces',
+	},
+	'batchTwoRemainder.updateTranslatedViberMessage': {
+		riskLevel: 'write',
+		description: 'Update a translated eSputnik Viber message',
+	},
+	'batchTwoRemainder.deleteTranslatedViberMessage': {
+		riskLevel: 'destructive',
+		description: 'Delete a translated eSputnik Viber message',
+	},
+	'batchTwoRemainder.updateTranslatedAppInboxMessage': {
+		riskLevel: 'write',
+		description: 'Update a translated eSputnik App Inbox message',
+	},
+	'batchTwoRemainder.deleteTranslatedAppInboxMessage': {
+		riskLevel: 'destructive',
+		description: 'Delete a translated eSputnik App Inbox message',
+	},
+	'batchTwoRemainder.updateTranslatedTelegramMessage': {
+		riskLevel: 'write',
+		description: 'Update a translated eSputnik Telegram bot message',
+	},
+	'batchTwoRemainder.deleteTranslatedTelegramMessage': {
+		riskLevel: 'destructive',
+		description: 'Delete a translated eSputnik Telegram bot message',
+	},
+	'batchTwoRemainder.addSmsMessage': {
+		riskLevel: 'write',
+		description: 'Create an eSputnik SMS message',
+	},
+	'batchTwoRemainder.sendSms': {
+		riskLevel: 'write',
+		description: 'Send an eSputnik SMS message',
+	},
+	'batchTwoRemainder.cancelBroadcast': {
+		riskLevel: 'destructive',
+		description: 'Cancel an eSputnik scheduled broadcast',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof esputnikEndpointsNested>;
 

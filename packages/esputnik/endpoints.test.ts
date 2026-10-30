@@ -2,10 +2,17 @@ import { makeEsputnikRequest } from './client';
 import {
 	accountEndpoints,
 	accountExtendedEndpoints,
+	appInboxEndpoints,
+	broadcastEndpoints,
 	contactEndpoints,
 	emailEndpoints,
 	eventEndpoints,
+	interfaceEndpoints,
+	mobilePushEndpoints,
 	orderEndpoints,
+	smsEndpoints,
+	telegramBotEndpoints,
+	viberEndpoints,
 } from './endpoints';
 import type { EsputnikContext } from './index';
 
@@ -215,6 +222,56 @@ describe('eSputnik routes', () => {
 				method: 'POST',
 				body: {},
 			},
+		);
+	});
+
+	it('routes Batch 2 message families to their documented resources', async () => {
+		await mobilePushEndpoints.searchMobilePushMessages(ctx, {});
+		await viberEndpoints.search(ctx, {});
+		await appInboxEndpoints.search(ctx, {});
+		await telegramBotEndpoints.search(ctx, {});
+		await smsEndpoints.search(ctx, {});
+		await broadcastEndpoints.getBroadcasts(ctx, {});
+		await interfaceEndpoints.getSmsInterfaces(ctx);
+		await interfaceEndpoints.getEmailInterfaces(ctx);
+
+		expect(request).toHaveBeenCalledWith(
+			'/api/v1/messages/mobilepush',
+			'test-api-key',
+			{ query: {} },
+		);
+		expect(request).toHaveBeenCalledWith(
+			'/api/v1/messages/viber',
+			'test-api-key',
+			{ query: {} },
+		);
+		expect(request).toHaveBeenCalledWith(
+			'/api/v1/messages/appinbox',
+			'test-api-key',
+			{ query: {} },
+		);
+		expect(request).toHaveBeenCalledWith(
+			'/api/v1/messages/telegrambot',
+			'test-api-key',
+			{ query: {} },
+		);
+		expect(request).toHaveBeenCalledWith(
+			'/api/v1/messages/sms',
+			'test-api-key',
+			{ query: {} },
+		);
+		expect(request).toHaveBeenCalledWith('/api/v1/broadcasts', 'test-api-key', {
+			query: {},
+		});
+		expect(request).toHaveBeenCalledWith(
+			'/api/v1/interfaces/sms',
+			'test-api-key',
+			{},
+		);
+		expect(request).toHaveBeenCalledWith(
+			'/api/v1/interfaces/email',
+			'test-api-key',
+			{},
 		);
 	});
 });

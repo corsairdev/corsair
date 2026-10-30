@@ -83,6 +83,26 @@ const EmailLanguagePathSchema = z.object({
 	id: z.number().int().positive(),
 	language: z.string().min(2),
 });
+const MessageSearchSchema = ContactPageQuerySchema.extend({
+	search: z.string().optional(),
+});
+const GenericMessageBodySchema = z.record(z.string(), z.unknown());
+const MobilePushBodySchema = z
+	.object({
+		name: z.string().min(1),
+		title: z.string().min(1),
+		text: z.string().min(1),
+		languageCode: z.string().optional(),
+		tags: z.array(z.string()).optional(),
+		link: z.string().optional(),
+		imageSource: z.string().optional(),
+		customData: z.string().optional(),
+		ttlSec: z.number().int().positive().optional(),
+		soundEnabled: z.boolean().optional(),
+		badgeCount: z.number().int().optional(),
+		images: z.array(z.string()).max(10).optional(),
+	})
+	.passthrough();
 
 export type EsputnikEndpointInputs = {
 	getAccountInfo: Record<string, never>;
@@ -148,6 +168,57 @@ export type EsputnikEndpointInputs = {
 		z.infer<typeof EmailMessageBodySchema>;
 	deleteTranslatedEmail: z.infer<typeof EmailLanguagePathSchema>;
 	sendEmail: z.infer<typeof GenericObjectSchema>;
+	searchMobilePushMessages: z.infer<typeof ContactPageQuerySchema> & {
+		search?: string;
+	};
+	addMobilePushMessage: z.infer<typeof MobilePushBodySchema>;
+	getMobilePushMessage: z.infer<typeof IdPathSchema>;
+	updateBaseMobilePushMessage: z.infer<typeof IdPathSchema> &
+		z.infer<typeof MobilePushBodySchema>;
+	deleteMobilePushMessage: z.infer<typeof IdPathSchema>;
+	updateTranslatedMobilePushMessage: z.infer<typeof EmailLanguagePathSchema> &
+		z.infer<typeof MobilePushBodySchema>;
+	deleteTranslatedMobilePushMessage: z.infer<typeof EmailLanguagePathSchema>;
+	searchViberMessages: z.infer<typeof MessageSearchSchema>;
+	addViberMessage: z.infer<typeof GenericMessageBodySchema>;
+	getViberMessage: z.infer<typeof IdPathSchema>;
+	updateBaseViberMessage: z.infer<typeof IdPathSchema> &
+		z.infer<typeof GenericMessageBodySchema>;
+	deleteViberMessage: z.infer<typeof IdPathSchema>;
+	searchAppInboxMessages: z.infer<typeof MessageSearchSchema>;
+	addAppInboxMessage: z.infer<typeof GenericMessageBodySchema>;
+	getAppInboxMessage: z.infer<typeof IdPathSchema>;
+	updateBaseAppInboxMessage: z.infer<typeof IdPathSchema> &
+		z.infer<typeof GenericMessageBodySchema>;
+	deleteAppInboxMessage: z.infer<typeof IdPathSchema>;
+	searchTelegramBotMessages: z.infer<typeof MessageSearchSchema>;
+	addTelegramBotMessage: z.infer<typeof GenericMessageBodySchema>;
+	getTelegramBotMessage: z.infer<typeof IdPathSchema>;
+	updateBaseTelegramBotMessage: z.infer<typeof IdPathSchema> &
+		z.infer<typeof GenericMessageBodySchema>;
+	deleteTelegramBotMessage: z.infer<typeof IdPathSchema>;
+	searchSmsMessages: z.infer<typeof MessageSearchSchema>;
+	getSms: z.infer<typeof IdPathSchema>;
+	updateBaseSmsMessage: z.infer<typeof IdPathSchema> &
+		z.infer<typeof GenericMessageBodySchema>;
+	deleteSmsMessage: z.infer<typeof IdPathSchema>;
+	getBroadcasts: z.infer<typeof MessageSearchSchema>;
+	createBroadcast: z.infer<typeof GenericMessageBodySchema>;
+	getBroadcast: z.infer<typeof IdPathSchema>;
+	getSmsInterfaces: Record<string, never>;
+	getEmailInterfaces: Record<string, never>;
+	updateTranslatedViberMessage: z.infer<typeof EmailLanguagePathSchema> &
+		z.infer<typeof GenericObjectSchema>;
+	deleteTranslatedViberMessage: z.infer<typeof EmailLanguagePathSchema>;
+	updateTranslatedAppInboxMessage: z.infer<typeof EmailLanguagePathSchema> &
+		z.infer<typeof GenericObjectSchema>;
+	deleteTranslatedAppInboxMessage: z.infer<typeof EmailLanguagePathSchema>;
+	updateTranslatedTelegramMessage: z.infer<typeof EmailLanguagePathSchema> &
+		z.infer<typeof GenericObjectSchema>;
+	deleteTranslatedTelegramMessage: z.infer<typeof EmailLanguagePathSchema>;
+	addSmsMessage: z.infer<typeof GenericObjectSchema>;
+	sendSms: z.infer<typeof GenericObjectSchema>;
+	cancelBroadcast: z.infer<typeof IdPathSchema>;
 };
 
 export type EsputnikEndpointOutputs = {
@@ -191,6 +262,46 @@ export type EsputnikEndpointOutputs = {
 	updateTranslatedMessage: string;
 	deleteTranslatedEmail: string;
 	sendEmail: z.infer<typeof GenericObjectSchema>;
+	searchMobilePushMessages: unknown[];
+	addMobilePushMessage: { id: number };
+	getMobilePushMessage: z.infer<typeof GenericObjectSchema>;
+	updateBaseMobilePushMessage: string;
+	deleteMobilePushMessage: string;
+	updateTranslatedMobilePushMessage: string;
+	deleteTranslatedMobilePushMessage: string;
+	searchViberMessages: unknown[];
+	addViberMessage: { id: number };
+	getViberMessage: z.infer<typeof GenericObjectSchema>;
+	updateBaseViberMessage: string;
+	deleteViberMessage: string;
+	searchAppInboxMessages: unknown[];
+	addAppInboxMessage: { id: number };
+	getAppInboxMessage: z.infer<typeof GenericObjectSchema>;
+	updateBaseAppInboxMessage: string;
+	deleteAppInboxMessage: string;
+	searchTelegramBotMessages: unknown[];
+	addTelegramBotMessage: { id: number };
+	getTelegramBotMessage: z.infer<typeof GenericObjectSchema>;
+	updateBaseTelegramBotMessage: string;
+	deleteTelegramBotMessage: string;
+	searchSmsMessages: unknown[];
+	getSms: z.infer<typeof GenericObjectSchema>;
+	updateBaseSmsMessage: string;
+	deleteSmsMessage: string;
+	getBroadcasts: unknown[];
+	createBroadcast: { id: number };
+	getBroadcast: z.infer<typeof GenericObjectSchema>;
+	getSmsInterfaces: unknown[];
+	getEmailInterfaces: unknown[];
+	updateTranslatedViberMessage: string;
+	deleteTranslatedViberMessage: string;
+	updateTranslatedAppInboxMessage: string;
+	deleteTranslatedAppInboxMessage: string;
+	updateTranslatedTelegramMessage: string;
+	deleteTranslatedTelegramMessage: string;
+	addSmsMessage: { id: number };
+	sendSms: z.infer<typeof GenericObjectSchema>;
+	cancelBroadcast: string;
 };
 
 export const EsputnikEndpointInputSchemas = {
@@ -263,6 +374,55 @@ export const EsputnikEndpointInputSchemas = {
 	updateTranslatedMessage: EmailLanguagePathSchema.and(EmailMessageBodySchema),
 	deleteTranslatedEmail: EmailLanguagePathSchema,
 	sendEmail: GenericObjectSchema,
+	searchMobilePushMessages: ContactPageQuerySchema.extend({
+		search: z.string().optional(),
+	}),
+	addMobilePushMessage: MobilePushBodySchema,
+	getMobilePushMessage: IdPathSchema,
+	updateBaseMobilePushMessage: IdPathSchema.and(MobilePushBodySchema),
+	deleteMobilePushMessage: IdPathSchema,
+	updateTranslatedMobilePushMessage:
+		EmailLanguagePathSchema.and(MobilePushBodySchema),
+	deleteTranslatedMobilePushMessage: EmailLanguagePathSchema,
+	searchViberMessages: MessageSearchSchema,
+	addViberMessage: GenericMessageBodySchema,
+	getViberMessage: IdPathSchema,
+	updateBaseViberMessage: IdPathSchema.and(GenericMessageBodySchema),
+	deleteViberMessage: IdPathSchema,
+	searchAppInboxMessages: MessageSearchSchema,
+	addAppInboxMessage: GenericMessageBodySchema,
+	getAppInboxMessage: IdPathSchema,
+	updateBaseAppInboxMessage: IdPathSchema.and(GenericMessageBodySchema),
+	deleteAppInboxMessage: IdPathSchema,
+	searchTelegramBotMessages: MessageSearchSchema,
+	addTelegramBotMessage: GenericMessageBodySchema,
+	getTelegramBotMessage: IdPathSchema,
+	updateBaseTelegramBotMessage: IdPathSchema.and(GenericMessageBodySchema),
+	deleteTelegramBotMessage: IdPathSchema,
+	searchSmsMessages: MessageSearchSchema,
+	getSms: IdPathSchema,
+	updateBaseSmsMessage: IdPathSchema.and(GenericMessageBodySchema),
+	deleteSmsMessage: IdPathSchema,
+	getBroadcasts: MessageSearchSchema,
+	createBroadcast: GenericMessageBodySchema,
+	getBroadcast: IdPathSchema,
+	getSmsInterfaces: EmptyInputSchema,
+	getEmailInterfaces: EmptyInputSchema,
+	updateTranslatedViberMessage: EmailLanguagePathSchema.and(
+		GenericMessageBodySchema,
+	),
+	deleteTranslatedViberMessage: EmailLanguagePathSchema,
+	updateTranslatedAppInboxMessage: EmailLanguagePathSchema.and(
+		GenericMessageBodySchema,
+	),
+	deleteTranslatedAppInboxMessage: EmailLanguagePathSchema,
+	updateTranslatedTelegramMessage: EmailLanguagePathSchema.and(
+		GenericMessageBodySchema,
+	),
+	deleteTranslatedTelegramMessage: EmailLanguagePathSchema,
+	addSmsMessage: GenericMessageBodySchema,
+	sendSms: GenericMessageBodySchema,
+	cancelBroadcast: IdPathSchema,
 } as const;
 
 export const EsputnikEndpointOutputSchemas = {
@@ -306,4 +466,44 @@ export const EsputnikEndpointOutputSchemas = {
 	updateTranslatedMessage: z.string(),
 	deleteTranslatedEmail: z.string(),
 	sendEmail: z.record(z.string(), z.unknown()),
+	searchMobilePushMessages: z.array(z.unknown()),
+	addMobilePushMessage: z.object({ id: z.number().int() }),
+	getMobilePushMessage: z.record(z.string(), z.unknown()),
+	updateBaseMobilePushMessage: z.string(),
+	deleteMobilePushMessage: z.string(),
+	updateTranslatedMobilePushMessage: z.string(),
+	deleteTranslatedMobilePushMessage: z.string(),
+	searchViberMessages: z.array(z.unknown()),
+	addViberMessage: z.object({ id: z.number().int() }),
+	getViberMessage: z.record(z.string(), z.unknown()),
+	updateBaseViberMessage: z.string(),
+	deleteViberMessage: z.string(),
+	searchAppInboxMessages: z.array(z.unknown()),
+	addAppInboxMessage: z.object({ id: z.number().int() }),
+	getAppInboxMessage: z.record(z.string(), z.unknown()),
+	updateBaseAppInboxMessage: z.string(),
+	deleteAppInboxMessage: z.string(),
+	searchTelegramBotMessages: z.array(z.unknown()),
+	addTelegramBotMessage: z.object({ id: z.number().int() }),
+	getTelegramBotMessage: z.record(z.string(), z.unknown()),
+	updateBaseTelegramBotMessage: z.string(),
+	deleteTelegramBotMessage: z.string(),
+	searchSmsMessages: z.array(z.unknown()),
+	getSms: z.record(z.string(), z.unknown()),
+	updateBaseSmsMessage: z.string(),
+	deleteSmsMessage: z.string(),
+	getBroadcasts: z.array(z.unknown()),
+	createBroadcast: z.object({ id: z.number().int() }),
+	getBroadcast: z.record(z.string(), z.unknown()),
+	getSmsInterfaces: z.array(z.unknown()),
+	getEmailInterfaces: z.array(z.unknown()),
+	updateTranslatedViberMessage: z.string(),
+	deleteTranslatedViberMessage: z.string(),
+	updateTranslatedAppInboxMessage: z.string(),
+	deleteTranslatedAppInboxMessage: z.string(),
+	updateTranslatedTelegramMessage: z.string(),
+	deleteTranslatedTelegramMessage: z.string(),
+	addSmsMessage: z.object({ id: z.number().int() }),
+	sendSms: z.record(z.string(), z.unknown()),
+	cancelBroadcast: z.string(),
 } as const;

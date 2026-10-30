@@ -250,4 +250,183 @@ export const emailEndpoints = {
 	) => request(ctx, '/api/v1/message/email', { method: 'POST', body: input }),
 };
 
+export const mobilePushEndpoints = {
+	searchMobilePushMessages: (
+		ctx: { key: string },
+		input: EsputnikEndpointInputs['searchMobilePushMessages'],
+	) => request(ctx, '/api/v1/messages/mobilepush', { query: input }),
+	addMobilePushMessage: (
+		ctx: { key: string },
+		input: EsputnikEndpointInputs['addMobilePushMessage'],
+	) =>
+		request(ctx, '/api/v1/messages/mobilepush', {
+			method: 'POST',
+			body: input,
+		}),
+	getMobilePushMessage: (
+		ctx: { key: string },
+		input: EsputnikEndpointInputs['getMobilePushMessage'],
+	) => request(ctx, `/api/v1/messages/mobilepush/${input.id}`, {}),
+	updateBaseMobilePushMessage: (
+		ctx: { key: string },
+		input: EsputnikEndpointInputs['updateBaseMobilePushMessage'],
+	) => {
+		const { id, ...body } = input;
+		return request(ctx, `/api/v1/messages/mobilepush/${id}`, {
+			method: 'PUT',
+			body,
+		});
+	},
+	deleteMobilePushMessage: (
+		ctx: { key: string },
+		input: EsputnikEndpointInputs['deleteMobilePushMessage'],
+	) =>
+		request(ctx, `/api/v1/messages/mobilepush/${input.id}`, {
+			method: 'DELETE',
+		}),
+	updateTranslatedMobilePushMessage: (
+		ctx: { key: string },
+		input: EsputnikEndpointInputs['updateTranslatedMobilePushMessage'],
+	) => {
+		const { id, language, ...body } = input;
+		return request(ctx, `/api/v1/messages/mobilepush/${id}/${language}`, {
+			method: 'PUT',
+			body,
+		});
+	},
+	deleteTranslatedMobilePushMessage: (
+		ctx: { key: string },
+		input: EsputnikEndpointInputs['deleteTranslatedMobilePushMessage'],
+	) =>
+		request(ctx, `/api/v1/messages/mobilepush/${input.id}/${input.language}`, {
+			method: 'DELETE',
+		}),
+};
+
+const messageFamily = (base: string) => ({
+	search: (
+		ctx: { key: string },
+		input: Record<string, string | number | boolean | undefined>,
+	) => request(ctx, `/api/v1/messages/${base}`, { query: input }),
+	add: (ctx: { key: string }, input: Record<string, unknown>) =>
+		request(ctx, `/api/v1/messages/${base}`, { method: 'POST', body: input }),
+	get: (ctx: { key: string }, input: { id: number }) =>
+		request(ctx, `/api/v1/messages/${base}/${input.id}`, {}),
+	update: (
+		ctx: { key: string },
+		input: { id: number } & Record<string, unknown>,
+	) => {
+		const { id, ...body } = input;
+		return request(ctx, `/api/v1/messages/${base}/${id}`, {
+			method: 'PUT',
+			body,
+		});
+	},
+	delete: (ctx: { key: string }, input: { id: number }) =>
+		request(ctx, `/api/v1/messages/${base}/${input.id}`, { method: 'DELETE' }),
+});
+
+export const viberEndpoints = messageFamily('viber');
+export const appInboxEndpoints = messageFamily('appinbox');
+export const telegramBotEndpoints = messageFamily('telegrambot');
+export const smsEndpoints = {
+	search: (
+		ctx: { key: string },
+		input: Record<string, string | number | boolean | undefined>,
+	) => request(ctx, '/api/v1/messages/sms', { query: input }),
+	get: (ctx: { key: string }, input: { id: number }) =>
+		request(ctx, `/api/v1/messages/sms/${input.id}`, {}),
+	update: (
+		ctx: { key: string },
+		input: { id: number } & Record<string, unknown>,
+	) => {
+		const { id, ...body } = input;
+		return request(ctx, `/api/v1/messages/sms/${id}`, { method: 'PUT', body });
+	},
+	delete: (ctx: { key: string }, input: { id: number }) =>
+		request(ctx, `/api/v1/messages/sms/${input.id}`, { method: 'DELETE' }),
+};
+
+export const broadcastEndpoints = {
+	getBroadcasts: (
+		ctx: { key: string },
+		input: Record<string, string | number | boolean | undefined>,
+	) => request(ctx, '/api/v1/broadcasts', { query: input }),
+	createBroadcast: (ctx: { key: string }, input: Record<string, unknown>) =>
+		request(ctx, '/api/v1/broadcasts', { method: 'POST', body: input }),
+	getBroadcast: (ctx: { key: string }, input: { id: number }) =>
+		request(ctx, `/api/v1/broadcasts/${input.id}`, {}),
+};
+
+export const interfaceEndpoints = {
+	getSmsInterfaces: (ctx: { key: string }) =>
+		request(ctx, '/api/v1/interfaces/sms', {}),
+	getEmailInterfaces: (ctx: { key: string }) =>
+		request(ctx, '/api/v1/interfaces/email', {}),
+};
+
+export const batchTwoRemainderEndpoints = {
+	updateTranslatedViberMessage: (
+		ctx: { key: string },
+		input: EsputnikEndpointInputs['updateTranslatedViberMessage'],
+	) => {
+		const { id, language, ...body } = input;
+		return request(ctx, `/api/v1/messages/viber/${id}/${language}`, {
+			method: 'PUT',
+			body,
+		});
+	},
+	deleteTranslatedViberMessage: (
+		ctx: { key: string },
+		input: EsputnikEndpointInputs['deleteTranslatedViberMessage'],
+	) =>
+		request(ctx, `/api/v1/messages/viber/${input.id}/${input.language}`, {
+			method: 'DELETE',
+		}),
+	updateTranslatedAppInboxMessage: (
+		ctx: { key: string },
+		input: EsputnikEndpointInputs['updateTranslatedAppInboxMessage'],
+	) => {
+		const { id, language, ...body } = input;
+		return request(ctx, `/api/v1/messages/appinbox/${id}/${language}`, {
+			method: 'PUT',
+			body,
+		});
+	},
+	deleteTranslatedAppInboxMessage: (
+		ctx: { key: string },
+		input: EsputnikEndpointInputs['deleteTranslatedAppInboxMessage'],
+	) =>
+		request(ctx, `/api/v1/messages/appinbox/${input.id}/${input.language}`, {
+			method: 'DELETE',
+		}),
+	updateTranslatedTelegramMessage: (
+		ctx: { key: string },
+		input: EsputnikEndpointInputs['updateTranslatedTelegramMessage'],
+	) => {
+		const { id, language, ...body } = input;
+		return request(ctx, `/api/v1/messages/telegrambot/${id}/${language}`, {
+			method: 'PUT',
+			body,
+		});
+	},
+	deleteTranslatedTelegramMessage: (
+		ctx: { key: string },
+		input: EsputnikEndpointInputs['deleteTranslatedTelegramMessage'],
+	) =>
+		request(ctx, `/api/v1/messages/telegrambot/${input.id}/${input.language}`, {
+			method: 'DELETE',
+		}),
+	addSmsMessage: (
+		ctx: { key: string },
+		input: EsputnikEndpointInputs['addSmsMessage'],
+	) => request(ctx, '/api/v1/messages/sms', { method: 'POST', body: input }),
+	sendSms: (ctx: { key: string }, input: EsputnikEndpointInputs['sendSms']) =>
+		request(ctx, '/api/v1/message/sms', { method: 'POST', body: input }),
+	cancelBroadcast: (
+		ctx: { key: string },
+		input: EsputnikEndpointInputs['cancelBroadcast'],
+	) => request(ctx, `/api/v1/broadcasts/${input.id}`, { method: 'DELETE' }),
+};
+
 export * from './types';
