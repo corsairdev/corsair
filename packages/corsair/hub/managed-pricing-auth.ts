@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import { AuthMissingError } from '../core/auth/errors/auth-missing';
 import { singleFlight } from '../core/auth/single-flight';
 import { hubApiPost, normalizeHubApiUrl } from './client/http';
@@ -9,6 +10,9 @@ import type { HubConfig } from './types';
 const HUB_SCOPE_FIELD_SEP = '\x1e';
 
 const CREDENTIAL_REFRESH_BUFFER_SECONDS = 60;
+/** Every managed call waits on its key, so a Hub that stalls fails the call
+ *  instead of holding it until the runtime's own wall. */
+const KEY_REQUEST_TIMEOUT_MS = 10_000;
 
 export type ManagedPricingAuthContext = {
 	hub: HubConfig;
@@ -22,6 +26,12 @@ export type GetManagedPricingApiKeyOptions = {
 	/** Plugin operation id (e.g. scrape.run) — forwarded to Hub; prices are resolved server-side. */
 	operation: string;
 	forceRefresh?: boolean;
+	/**
+	 * One key per endpoint call. Hub charges once per key, so a call that sends
+	 * one is always fetched fresh: a cached credential would let repeat calls
+	 * through without a charge.
+	 */
+	idempotencyKey?: string;
 };
 
 /** Context from keyBuilder when the runtime is executing a metered endpoint. */
@@ -130,14 +140,19 @@ export async function getManagedPricingApiKey(
 	}
 
 	const forceRefresh = options.forceRefresh ?? false;
+	const idempotencyKey = options.idempotencyKey?.trim() || undefined;
 	const storageKey = cacheKey(ctx.hub, ctx.plugin, ctx.tenantId, operation);
-	const flightKind = forceRefresh ? 'force' : 'routine';
+	const flightKind = idempotencyKey
+		? `call:${idempotencyKey}`
+		: forceRefresh
+			? 'force'
+			: 'routine';
 	const flightKey = `managed_pricing:${flightKind}:${storageKey}`;
 
 	return singleFlight(ctx.cache, flightKey, async () => {
 		const now = Math.floor(Date.now() / 1000);
 
-		if (!forceRefresh) {
+		if (!forceRefresh && !idempotencyKey) {
 			const cached = readCache(ctx.cache, storageKey);
 			if (cached && isCredentialFresh(cached, now)) {
 				return {
@@ -155,6 +170,7 @@ export async function getManagedPricingApiKey(
 				plugin: ctx.plugin,
 				tenantId: ctx.tenantId,
 				operation,
+				...(idempotencyKey ? { idempotencyKey } : {}),
 			},
 			extraHeaders: {
 				...runtimeProofHeaders(ctx.hub, {
@@ -164,18 +180,24 @@ export async function getManagedPricingApiKey(
 					operation,
 				}),
 				'x-corsair-metered-operation': operation,
+				...(idempotencyKey
+					? { 'x-corsair-idempotency-key': idempotencyKey }
+					: {}),
 			},
 			notFoundMessage: 'Managed pricing is not configured for this project',
 			parseResponse: parseManagedPricingCredentialsResponse,
+			signal: AbortSignal.timeout(KEY_REQUEST_TIMEOUT_MS),
 		});
 
 		const expiresAt =
 			response.expires_in !== undefined ? now + response.expires_in : null;
 
-		writeCache(ctx.cache, storageKey, {
-			apiKey: response.api_key,
-			expiresAt,
-		});
+		if (!idempotencyKey) {
+			writeCache(ctx.cache, storageKey, {
+				apiKey: response.api_key,
+				expiresAt,
+			});
+		}
 
 		return {
 			apiKey: response.api_key,
@@ -222,7 +244,9 @@ export async function resolveManagedPricingApiKey(
 			tenantId,
 			cache: input.cache,
 		},
-		{ operation },
+		// Each endpoint call is metered on its own; retries inside the call
+		// reuse the key resolved here.
+		{ operation, idempotencyKey: randomUUID() },
 	);
 	return result.apiKey;
 }
