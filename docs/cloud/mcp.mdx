@@ -123,26 +123,23 @@ Some clients can't sign in to an MCP server, such as GitHub Copilot's coding age
 
 | Tool | What it does | Type |
 | --- | --- | --- |
-| `list_integrations` | Lists the apps on this link and whether each is ready, or searches the apps Corsair supports | Read |
-| `list_integration_operations` | Shows what a connected app can do and the arguments each action takes | Read |
-| `add_integrations` | Starts connecting an app and returns a sign-in link for you to open. The app is added once you sign in | Write |
-| `search_data` | Searches data Corsair has synced from your apps, such as Slack messages, email and calendar events | Read |
-| `fetch_record` | Opens results from `search_data` in full, from Corsair's synced copy | Read |
-| `read_data` | Reads your apps live with a short script. It stops before any action that would change something | Read |
+| `list_integrations` | Lists the apps on this link and whether each is ready, or checks whether Corsair can connect an app that isn't here yet | Read |
+| `get_connect_link` | Returns the sign-in link for an app, adding the app first if it isn't here. A few apps Corsair bills for directly come back ready, with no link | Write |
+| `list_operations` | Shows what connected apps can do, with each action's risk and the arguments it requires | Read |
+| `get_schema` | Shows the full arguments and return shape of one or more actions | Read |
+| `search` | Searches everything Corsair has synced from your apps in one call, such as email, chat, issues, docs and calendar, and opens results in full | Read |
+| `read_data` | Reads your apps live with a short script, for what `search` doesn't have or what must be current. It stops before any action that would change something | Read |
 | `run_script` | Makes changes in your apps with a short script: send, create, update or delete | Sensitive write |
-| `add_triggers` | Sets up an automation that runs on an app event or a schedule | Sensitive write |
-| `list_triggers` | Lists the automations on this link | Read |
-| `remove_triggers` | Stops an automation. Its steps stay saved so it can be turned back on | Write |
-| `list_runs` | Lists recent automation runs and how each went | Read |
-| `get_run` | Shows one run step by step, with the error if it failed | Read |
+| `view_routines` | Lists the routines on this link and their recent runs, or shows one run step by step with its error | Read |
+| `update_routine` | Creates, changes, pauses or removes a routine, an automation that runs on an app event or a schedule. Describe it in plain words and Corsair writes and tests it | Sensitive write |
 
-Read tools never change anything. Write tools change only your Corsair setup, and you can undo them. Sensitive writes act in your apps, or set up an automation that will act later without asking, so a client should ask you before every call.
+Read tools never change anything. Write tools change only your Corsair setup, and you can undo them. Sensitive writes act in your apps, or set up a routine that will act later without asking, so a client should ask you before every call.
 
 Scripts run in a sandbox that can only call your connected apps' actions. They have no network, filesystem or other system access, and the agent never sees your app credentials.
 
-Not every link shows every tool. A link that isn't allowed to add apps has no `add_integrations`, and a Read link has no `add_triggers` or `remove_triggers`.
+Not every link shows every tool. A link that isn't allowed to add apps has no `get_connect_link`, and a link that can't change routines has no `update_routine`.
 
-`read_data`, `search_data`, `fetch_record` and the `list_` and `get_` tools are marked read-only, so most clients run them without asking. Clients usually ask you before running the others.
+`list_integrations`, `list_operations`, `get_schema`, `search`, `read_data` and `view_routines` are marked read-only, so most clients run them without asking. Clients usually ask you before running the others.
 
 ## Modes and approvals
 
@@ -163,7 +160,7 @@ Change a link's mode at [hub.corsair.dev/me](https://hub.corsair.dev/me).
 
 <AccordionGroup>
   <Accordion title="The agent says an app isn't connected">
-    Ask it to connect the app. It calls `add_integrations` and gives you a sign-in link. Open it, sign in to the app, then tell the agent you're done.
+    Ask it to connect the app. It calls `get_connect_link` and gives you a sign-in link. Open it, sign in to the app, then tell the agent you're done.
   </Accordion>
   <Accordion title="An app needs setting up before it can be connected">
     The project behind your link has to finish setting the app up first, for example by adding its OAuth credentials. Whoever manages the project does this in Corsair.
