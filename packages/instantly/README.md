@@ -151,7 +151,7 @@ pnpm add @corsair-dev/instantly
 | `webhookEvents.getSummary` | `instantly.api.webhookEvents.getSummary` | `read` | Totals and success rate of webhook deliveries, optionally in a date range |
 | `webhookEvents.getSummaryByDate` | `instantly.api.webhookEvents.getSummaryByDate` | `read` | Webhook delivery totals and success rate per day |
 | `webhookEvents.list` | `instantly.api.webhookEvents.list` | `read` | List webhook deliveries with their payload, status code and retries; filter by success, date or search |
-| `webhooks.create` | `instantly.api.webhooks.create` | `write` | Subscribe a URL to an event (reply_received, email_bounced, lead_interested...) or all_events, for one campaign or all. Attaches the plugin's webhook secret so Corsair can verify deliveries. Webhooks need the Hypergrowth plan or higher; on Growth, poll emails.list with email_type received instead |
+| `webhooks.create` | `instantly.api.webhooks.create` | `write` | Subscribe a URL to an event (reply_received, email_bounced, lead_interested...) or all_events, for one campaign or all. Attaches the plugin's webhook secret so Corsair can verify deliveries. Webhooks need Instantly's Hypergrowth plan or higher |
 | `webhooks.delete` | `instantly.api.webhooks.delete` | `destructive` | Delete a webhook subscription; Instantly stops sending its events |
 | `webhooks.get` | `instantly.api.webhooks.get` | `read` | Get one webhook subscription (header values redacted) |
 | `webhooks.list` | `instantly.api.webhooks.list` | `read` | List webhook subscriptions with their URL, event type, campaign and status (header values redacted) |
