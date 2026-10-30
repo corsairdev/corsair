@@ -10,11 +10,19 @@ import { renderToStaticMarkup } from 'react-dom/server';
 Object.assign(globalThis, { React });
 const { portableTextComponents } = await import('./portable-text-components');
 
-function render(value: unknown[]) {
+type CodeBlockFixture = {
+	_type: 'codeBlock';
+	_key: string;
+	code?: string;
+	filename?: string;
+	language?: string;
+};
+
+function render(value: CodeBlockFixture[]) {
 	return renderToStaticMarkup(
-		createElement(PortableText, {
+		createElement(PortableText<CodeBlockFixture>, {
 			components: portableTextComponents,
-			value: value as never,
+			value,
 			onMissingComponent: (message: string) => {
 				throw new Error(message);
 			},

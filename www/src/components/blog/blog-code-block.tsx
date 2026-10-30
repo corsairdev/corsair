@@ -12,16 +12,17 @@ export function BlogCodeBlock({
 	filename?: string;
 	language?: string;
 }) {
-	const [copied, setCopied] = useState(false);
+	const [status, setStatus] = useState<'idle' | 'copied' | 'failed'>('idle');
 
 	const copy = useCallback(async () => {
 		try {
 			await navigator.clipboard.writeText(code);
-			setCopied(true);
-			window.setTimeout(() => setCopied(false), 2000);
+			setStatus('copied');
 		} catch {
-			setCopied(false);
+			// The browser can deny clipboard access; the code stays selectable.
+			setStatus('failed');
 		}
+		window.setTimeout(() => setStatus('idle'), 2000);
 	}, [code]);
 
 	return (
@@ -36,14 +37,24 @@ export function BlogCodeBlock({
 						void copy();
 					}}
 					className="inline-flex shrink-0 items-center gap-1 rounded-sm px-1.5 py-1 text-xs text-[#1c1c1c99] transition-colors hover:bg-[#1c1c1c0d] hover:text-[#1c1c1c]"
-					aria-label={copied ? 'Copied' : 'Copy code'}
+					aria-label={
+						status === 'copied'
+							? 'Copied'
+							: status === 'failed'
+								? 'Copy failed'
+								: 'Copy code'
+					}
 				>
-					{copied ? (
+					{status === 'copied' ? (
 						<Check className="size-3.5 text-[#4a38f5]" weight="bold" />
 					) : (
 						<Copy className="size-3.5" />
 					)}
-					{copied ? 'Copied' : 'Copy'}
+					{status === 'copied'
+						? 'Copied'
+						: status === 'failed'
+							? 'Copy failed'
+							: 'Copy'}
 				</button>
 			</div>
 			<pre className="overflow-x-auto px-4 py-3 font-[family-name:var(--landing-font-mono)] text-[13px] leading-relaxed text-[#1c1c1c]">
