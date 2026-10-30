@@ -2,17 +2,9 @@ import type { EsputnikEndpoints } from '..';
 import { makeEsputnikRequest } from '../client';
 import type { EsputnikEndpointInputs, EsputnikEndpointOutputs } from './types';
 
-type ProviderJson =
-	| string
-	| number
-	| boolean
-	| null
-	| ProviderJson[]
-	| { [key: string]: ProviderJson };
-
-// Some handlers still use provider-defined envelopes; this fallback keeps
-// those responses JSON-safe until eSputnik publishes stable endpoint schemas.
-const request = <T = ProviderJson>(
+// Untyped route helpers use the declared eSputnik output union until their
+// operation-specific key can be threaded through a shared route factory.
+const request = <T = EsputnikEndpointOutputs[keyof EsputnikEndpointOutputs]>(
 	ctx: { key: string },
 	path: string,
 	options: Parameters<typeof makeEsputnikRequest>[2],
