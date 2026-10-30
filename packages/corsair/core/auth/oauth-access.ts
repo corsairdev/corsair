@@ -24,6 +24,21 @@ export type OAuthAccessOptions = {
 	extraParams?: Record<string, string>;
 };
 
+// Cross-process lock when a database is configured (see with_refresh_lock);
+// inside it callers re-read freshness, so the loser reuses the winner's token.
+const underLock = <R>(
+	ctx: OAuthAccessContext,
+	fn: () => Promise<R>,
+): Promise<R> =>
+	ctx.keys.with_refresh_lock ? ctx.keys.with_refresh_lock(fn) : fn();
+
+// A forced (401) refresh must not spend a refresh_token another process already
+// rotated while we waited for the lock.
+const rotatedSince = async (
+	ctx: OAuthAccessContext,
+	before: string | null,
+): Promise<boolean> => (await ctx.keys.get_refresh_token()) !== before;
+
 // Single acquisition path for an oauth_2 access token. Dispatches on where the
 // client_secret lives: absent locally ⇒ the secret is in the hub (BYO+Hub), so
 // refresh round-trips the refresh_token through the hub; present ⇒ inline/no-Hub,
@@ -53,13 +68,15 @@ export async function getOAuthAccessToken(
 		// routine flight only exists while it is actually minting, so a forced
 		// joiner never inherits a stale token.
 		const runHubRefresh = (force: boolean): Promise<string> =>
-			singleFlight(
-				ctx.keys,
-				flightKey,
-				async () =>
-					(await getHubAccessToken(hubContext, { forceRefresh: force }))
-						.accessToken,
-			);
+			singleFlight(ctx.keys, flightKey, async () => {
+				const before = await ctx.keys.get_refresh_token();
+				return underLock(ctx, async () => {
+					const forceRefresh =
+						force && (await rotatedSince(ctx, before)) === false;
+					return (await getHubAccessToken(hubContext, { forceRefresh }))
+						.accessToken;
+				});
+			});
 		(ctx as Record<string, unknown>)._refreshAuth = () => runHubRefresh(true);
 
 		const [accessToken, expiresAt] = await Promise.all([
@@ -84,33 +101,36 @@ export async function getOAuthAccessToken(
 	// shortcut hit means a concurrent refresh already minted a fresh token.
 	const runRefresh = (force: boolean): Promise<string> =>
 		singleFlight(ctx.keys, flightKey, async () => {
-			const [currentAccess, expiresAt, refreshToken] = await Promise.all([
-				ctx.keys.get_access_token(),
-				ctx.keys.get_expires_at(),
-				ctx.keys.get_refresh_token(),
-			]);
-			// Re-check under the single-flight: a concurrent caller may have just
-			// refreshed and persisted a token while we waited.
-			if (
-				!force &&
-				isAccessTokenFresh({ accessToken: currentAccess, expiresAt })
-			) {
-				return currentAccess as string;
-			}
-			if (!refreshToken) {
-				throw new AuthMissingError(opts.plugin, 'oauth_2');
-			}
-			const tokens = await refreshOAuthTokensLocal({
-				tokenUrl: opts.tokenUrl,
-				tokenAuthMethod: opts.tokenAuthMethod,
-				bodyFormat: opts.bodyFormat,
-				extraParams: opts.extraParams,
-				clientId,
-				clientSecret,
-				refreshToken,
+			const before = await ctx.keys.get_refresh_token();
+			return underLock(ctx, async () => {
+				const [currentAccess, expiresAt, refreshToken] = await Promise.all([
+					ctx.keys.get_access_token(),
+					ctx.keys.get_expires_at(),
+					ctx.keys.get_refresh_token(),
+				]);
+				// Re-check under the single-flight: a concurrent caller may have just
+				// refreshed and persisted a token while we waited.
+				if (
+					!(force && (await rotatedSince(ctx, before)) === false) &&
+					isAccessTokenFresh({ accessToken: currentAccess, expiresAt })
+				) {
+					return currentAccess as string;
+				}
+				if (!refreshToken) {
+					throw new AuthMissingError(opts.plugin, 'oauth_2');
+				}
+				const tokens = await refreshOAuthTokensLocal({
+					tokenUrl: opts.tokenUrl,
+					tokenAuthMethod: opts.tokenAuthMethod,
+					bodyFormat: opts.bodyFormat,
+					extraParams: opts.extraParams,
+					clientId,
+					clientSecret,
+					refreshToken,
+				});
+				await cacheRefreshedTokens(ctx.keys, tokens, expiresAt);
+				return tokens.access_token;
 			});
-			await cacheRefreshedTokens(ctx.keys, tokens, expiresAt);
-			return tokens.access_token;
 		});
 
 	(ctx as Record<string, unknown>)._refreshAuth = () => runRefresh(true);

@@ -1,3 +1,4 @@
+import { sql } from 'kysely';
 import { reencryptSealedAccountData } from '../../db/data-at-rest';
 import type { CorsairDatabase } from '../../db/kysely/database';
 import type { AuthTypes } from '../constants';
@@ -575,6 +576,34 @@ export function createAccountKeyManager<T extends AuthTypes>(
 
 	// Add OAuth2-specific get_integration_credentials method
 	if (authType === 'oauth_2') {
+		// Serialises token refresh for this (tenant, integration) across processes.
+		// A transaction-scoped advisory lock, not SELECT ... FOR UPDATE on the
+		// account row: the refresh persists through other pooled connections, and
+		// a row lock held by this transaction would block those very writes.
+		// Held on a side connection, so the pool needs >1 connection.
+		manager.with_refresh_lock = async <R>(fn: () => Promise<R>): Promise<R> => {
+			if (database.isPg === false) return fn();
+			let lockFailed = false;
+			try {
+				return await database.db.transaction().execute(async (trx) => {
+					try {
+						await sql`set local lock_timeout = '5s'`.execute(trx);
+						await sql`select pg_advisory_xact_lock(hashtext(${`corsair-refresh:${tenantId}:${integrationName}`}::text))`.execute(
+							trx,
+						);
+					} catch (err) {
+						lockFailed = true;
+						throw err;
+					}
+					return fn();
+				});
+			} catch (err) {
+				// Lock timeout (stuck holder) or unsupported dialect: plain refresh.
+				if (lockFailed) return fn();
+				throw err;
+			}
+		};
+
 		manager.get_integration_credentials =
 			async (): Promise<OAuth2IntegrationCredentials> => {
 				const config = await getDecryptedIntegrationConfig();
