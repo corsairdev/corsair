@@ -1,0 +1,157 @@
+---
+title: Database
+description: "Coassemble local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Coassemble plugin syncs data locally. Use `corsair.coassemble.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Clients
+
+Path: `coassemble.db.clients.search`
+
+```ts
+const rows = await corsair.coassemble.db.clients.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `clientIdentifier` | `string` | equals, contains, startsWith, endsWith, in |
+| `userCount` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Courses
+
+Path: `coassemble.db.courses.search`
+
+```ts
+const rows = await corsair.coassemble.db.courses.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `image` | `string` | equals, contains, startsWith, endsWith, in |
+| `imageAltText` | `string` | equals, contains, startsWith, endsWith, in |
+| `imageSource` | `number` | equals, gt, gte, lt, lte, in |
+| `thumbnail` | `string` | equals, contains, startsWith, endsWith, in |
+| `thumbnailRevision` | `string` | equals, contains, startsWith, endsWith, in |
+| `thumbnailOutdated` | `boolean` | equals |
+| `timeEstimateMinutes` | `number` | equals, gt, gte, lt, lte, in |
+| `clientId` | `number` | equals, gt, gte, lt, lte, in |
+| `active` | `boolean` | equals |
+| `identified` | `boolean` | equals |
+| `private` | `boolean` | equals |
+| `paid` | `boolean` | equals |
+| `domain` | `boolean` | equals |
+| `price` | `number` | equals, gt, gte, lt, lte, in |
+| `key` | `string` | equals, contains, startsWith, endsWith, in |
+| `source` | `string` | equals, contains, startsWith, endsWith, in |
+| `identifier` | `string` | equals, contains, startsWith, endsWith, in |
+| `clientIdentifier` | `string` | equals, contains, startsWith, endsWith, in |
+| `language` | `string` | equals, contains, startsWith, endsWith, in |
+| `collabSeq` | `number` | equals, gt, gte, lt, lte, in |
+| `narrationLanguage` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `legacy` | `boolean` | equals |
+| `documentFlow` | `string` | equals, contains, startsWith, endsWith, in |
+| `folderId` | `number` | equals, gt, gte, lt, lte, in |
+| `parentId` | `number` | equals, gt, gte, lt, lte, in |
+| `themeId` | `number` | equals, gt, gte, lt, lte, in |
+| `draftId` | `number` | equals, gt, gte, lt, lte, in |
+| `startScreenId` | `number` | equals, gt, gte, lt, lte, in |
+| `finishScreenId` | `number` | equals, gt, gte, lt, lte, in |
+| `sequence` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Trackings
+
+Path: `coassemble.db.trackings.search`
+
+```ts
+const rows = await corsair.coassemble.db.trackings.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `feedback` | `string` | equals, contains, startsWith, endsWith, in |
+| `email` | `string` | equals, contains, startsWith, endsWith, in |
+| `identifier` | `string` | equals, contains, startsWith, endsWith, in |
+| `clientIdentifier` | `string` | equals, contains, startsWith, endsWith, in |
+| `passed` | `boolean` | equals |
+| `score` | `number` | equals, gt, gte, lt, lte, in |
+| `progress_percent` | `number` | equals, gt, gte, lt, lte, in |
+| `total_time` | `number` | equals, gt, gte, lt, lte, in |
+| `language` | `string` | equals, contains, startsWith, endsWith, in |
+| `scorm` | `boolean` | equals |
+| `success` | `boolean` | equals |
+| `score_percent` | `number` | equals, gt, gte, lt, lte, in |
+| `runtime_errors` | `number` | equals, gt, gte, lt, lte, in |
+| `has_progress_signal` | `boolean` | equals |
+| `progress_status` | `string` | equals, contains, startsWith, endsWith, in |
+| `attempt_count` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Users
+
+Path: `coassemble.db.users.search`
+
+```ts
+const rows = await corsair.coassemble.db.users.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `identifier` | `string` | equals, contains, startsWith, endsWith, in |
+| `clientIdentifier` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `avatar` | `string` | equals, contains, startsWith, endsWith, in |
+| `testMode` | `boolean` | equals |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
