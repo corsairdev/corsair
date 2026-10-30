@@ -359,8 +359,10 @@ export function bindEndpointsRecursively({
 					startedJob = reported.startedJob;
 				};
 				// unknown: each plugin's result has its own shape; only the path is known.
+				// A job call reports nothing here: its usage is settled once, when a
+				// read sees the job end (reportJob).
 				const reportUsage = async (result: unknown) => {
-					if (!meteredCall || !hubConfig || !usagePath) return;
+					if (!meteredCall || !hubConfig || !usagePath || managedJob) return;
 					const units = readUsageUnits(result, usagePath);
 					if (units !== undefined) {
 						await reportManagedPricingCallUsage(hubConfig, meteredCall, units);

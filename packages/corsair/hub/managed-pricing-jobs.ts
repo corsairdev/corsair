@@ -1,5 +1,5 @@
 import { singleFlight } from '../core/auth/single-flight';
-import { hubApiGet, hubApiPost } from './client/http';
+import { hubApiGet, hubApiPost, hubErrorStatus } from './client/http';
 import type { ManagedPricingCall } from './managed-pricing-auth';
 import { managedPricingHubScope, readUsageUnits } from './managed-pricing-auth';
 import { runtimeProofHeaders } from './runtime-proof';
@@ -189,7 +189,11 @@ async function post(
 				signal: AbortSignal.timeout(REPORT_TIMEOUT_MS),
 			});
 			return true;
-		} catch {
+		} catch (error) {
+			// A refusal comes back the same however often it is sent; only no
+			// answer, a 429 or a 5xx may pass on another try.
+			const status = hubErrorStatus(error);
+			if (status !== undefined && status !== 429 && status < 500) break;
 			if (attempt < attempts) {
 				await new Promise((resolve) => setTimeout(resolve, 250 * attempt));
 			}

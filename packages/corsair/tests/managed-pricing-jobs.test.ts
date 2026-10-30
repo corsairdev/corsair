@@ -100,13 +100,17 @@ function mockHub({
 	kinds = true,
 	stallKinds = false,
 	credentialsJob,
+	usagePath,
 	failStarts = 0,
+	failStartsWith = 503,
 }: {
 	kinds?: boolean;
 	stallKinds?: boolean;
 	// unknown: the job descriptor Hub's answer carries, as JSON.
 	credentialsJob?: Record<string, unknown>;
+	usagePath?: string;
 	failStarts?: number;
+	failStartsWith?: number;
 } = {}) {
 	let startsFailed = 0;
 	const sent: Sent[] = [];
@@ -137,11 +141,12 @@ function mockHub({
 				api_key: 'fc-test-key',
 				expires_in: 300,
 				...(credentialsJob ? { job: credentialsJob } : {}),
+				...(usagePath ? { usage_path: usagePath } : {}),
 			});
 		}
 		if (url.endsWith('/managed-pricing/jobs') && startsFailed < failStarts) {
 			startsFailed++;
-			return json(503, { error: 'Hub is restarting' });
+			return json(failStartsWith, { error: 'Hub refused the report' });
 		}
 		return json(200, { job: { id: 'mpj_1', status: 'running' } });
 	});
@@ -390,6 +395,29 @@ describe('after review', () => {
 		});
 		await api.crawl.start({ url: 'https://example.com', limit: 50 });
 		expect(hubCalls.starts()).toHaveLength(3);
+		expect(hubCalls.outcomes()).toHaveLength(0);
+	});
+
+	it('does not send a start report again that Hub refused', async () => {
+		const hubCalls = mockHub({ failStarts: 3, failStartsWith: 400 });
+		const api = bind({
+			'crawl.start': async () => ({ success: true, id: 'crawl-abc' }),
+		});
+		await api.crawl.start({ url: 'https://example.com', limit: 50 });
+		expect(hubCalls.starts()).toHaveLength(1);
+	});
+
+	it('sends no per-call usage report for a job, which settles when it ends', async () => {
+		const hubCalls = mockHub({ usagePath: 'creditsUsed' });
+		const api = bind({
+			'crawl.start': async () => ({
+				success: true,
+				id: 'crawl-abc',
+				creditsUsed: 7,
+			}),
+		});
+		await api.crawl.start({ url: 'https://example.com', limit: 50 });
+		expect(hubCalls.starts()).toHaveLength(1);
 		expect(hubCalls.outcomes()).toHaveLength(0);
 	});
 });
