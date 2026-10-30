@@ -106,8 +106,15 @@ async function seed(
 		.execute();
 }
 
-const makeKeys = (database: CorsairDatabase) =>
+const makeKeys = (
+	database: CorsairDatabase,
+	extra: {
+		ensureProvisioned?: () => Promise<void>;
+		refreshLockTimeoutMs?: number;
+	} = {},
+) =>
 	createAccountKeyManager({
+		...extra,
 		authType: 'oauth_2',
 		integrationName: 'github',
 		tenantId: 'default',
@@ -239,4 +246,49 @@ describe('oauth refresh cross-process lock', () => {
 			8000,
 		);
 	}
+
+	pgIt(
+		'lock timeout while a holder is mid-refresh: waiter reuses the fresh stored token, no second request',
+		async () => {
+			const database = createCorsairDatabase(sql);
+			await seed(database, { client_id: 'cid', client_secret: 'sec' });
+			const state = installRotatingEndpoint('rt-0');
+			const key = 'corsair-refresh:default:github';
+			let release!: () => void;
+			const held = new Promise<void>((r) => {
+				release = r;
+			});
+			let locked!: () => void;
+			const lockTaken = new Promise<void>((r) => {
+				locked = r;
+			});
+			// Stands in for process A, mid-call to the provider.
+			const holder = sql.begin(async (tx) => {
+				await tx`select pg_advisory_xact_lock(hashtext(${key}::text))`;
+				locked();
+				await held;
+			});
+			await lockTaken;
+
+			const provisioned = jest.fn(async () => {});
+			const procB = {
+				keys: makeKeys(database, {
+					refreshLockTimeoutMs: 300,
+					ensureProvisioned: provisioned,
+				}),
+				tenantId: 'default',
+			};
+			const b = getOAuthAccessToken(procB, opts);
+			await wait(100);
+			// A finishes its rotation and persists while B is still waiting.
+			const writer = makeKeys(database);
+			await writer.set_access_token('at-from-a');
+			await writer.set_expires_at(String(Math.floor(Date.now() / 1000) + 3600));
+			expect(await b).toBe('at-from-a');
+			expect(state.requests).toBe(0);
+			release();
+			await holder;
+		},
+		8000,
+	);
 });

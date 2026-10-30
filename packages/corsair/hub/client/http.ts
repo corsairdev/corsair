@@ -118,10 +118,14 @@ export async function hubApiPost<T>(input: {
 	notFoundMessage?: string;
 	parseResponse: (payload: unknown) => T;
 	extraHeaders?: Record<string, string>;
+	timeoutMs?: number;
 }): Promise<T> {
 	const apiUrl = normalizeHubApiUrl(input.hub.apiUrl);
 	const response = await fetch(`${apiUrl}${input.path}`, {
 		method: 'POST',
+		...(input.timeoutMs
+			? { signal: AbortSignal.timeout(input.timeoutMs) }
+			: {}),
 		headers: {
 			'content-type': 'application/json',
 			authorization: `Bearer ${input.hub.projectApiKey}`,

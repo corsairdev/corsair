@@ -2,6 +2,7 @@ import { AuthMissingError } from '../core/auth/errors/auth-missing';
 import {
 	cacheRefreshedTokens,
 	isAccessTokenFresh,
+	TOKEN_REFRESH_TIMEOUT_MS,
 } from '../core/auth/oauth-token-cache';
 import type { AccountKeyManagerFor } from '../core/auth/types';
 import { hubApiPost } from './client/http';
@@ -60,6 +61,7 @@ export async function getHubAccessToken(
 		path: '/oauth/refresh',
 		body: { plugin, tenantId, refresh_token: refreshToken },
 		parseResponse: parseOAuthRefreshResponse,
+		timeoutMs: TOKEN_REFRESH_TIMEOUT_MS,
 	});
 
 	const nextExpiresAt = await cacheRefreshedTokens(keys, tokens, expiresAt);

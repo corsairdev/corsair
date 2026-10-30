@@ -4,6 +4,10 @@
 
 export const TOKEN_REFRESH_BUFFER_SECONDS = 5 * 60;
 
+// Bounds the provider/hub call made while holding the refresh lock; the lock
+// wait must stay above it so a waiter never outlasts a live holder.
+export const TOKEN_REFRESH_TIMEOUT_MS = 10_000;
+
 export function isAccessTokenFresh(input: {
 	accessToken?: string | null;
 	expiresAt?: string | null;

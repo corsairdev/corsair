@@ -3,6 +3,8 @@
 // single implementation covers every provider that speaks standard OAuth 2.0,
 // replacing the per-plugin refresh<X>AccessToken helpers.
 
+import { TOKEN_REFRESH_TIMEOUT_MS } from './oauth-token-cache';
+
 export type OAuthTokenAuthMethod =
 	| 'body' // client_id + client_secret in the request body (most providers)
 	| 'basic' // HTTP Basic base64(client_id:client_secret) (Bitbucket)
@@ -64,6 +66,7 @@ export async function refreshOAuthTokensLocal(
 
 	const response = await fetch(tokenUrl, {
 		method: 'POST',
+		signal: AbortSignal.timeout(TOKEN_REFRESH_TIMEOUT_MS),
 		headers,
 		body:
 			bodyFormat === 'json'
