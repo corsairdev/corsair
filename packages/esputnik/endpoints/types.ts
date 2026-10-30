@@ -83,6 +83,14 @@ const EmailLanguagePathSchema = z.object({
 	id: z.number().int().positive(),
 	language: z.string().min(2),
 });
+const BehaviorQuerySchema = z.record(z.string(), z.unknown());
+const DomainSchema = z.object({ domain: z.string().min(1) });
+const WebPushDomainSchema = z.object({
+	domain: z.string().min(1),
+	serviceWorkerName: z.string().min(1),
+	serviceWorkerPath: z.string().min(1),
+	serviceWorkerScope: z.string().min(1),
+});
 const MessageSearchSchema = ContactPageQuerySchema.extend({
 	search: z.string().optional(),
 });
@@ -219,6 +227,37 @@ export type EsputnikEndpointInputs = {
 	addSmsMessage: z.infer<typeof GenericObjectSchema>;
 	sendSms: z.infer<typeof GenericObjectSchema>;
 	cancelBroadcast: z.infer<typeof IdPathSchema>;
+	contactActivity: z.infer<typeof BehaviorQuerySchema>;
+	contactMessages: z.infer<typeof BehaviorQuerySchema>;
+	getTokenActivated: z.infer<typeof TokenPathSchema>;
+	changeTokenActivated: z.infer<typeof TokenPathSchema> & { active: boolean };
+	getDomains: Record<string, never>;
+	createDomain: z.infer<typeof DomainSchema>;
+	getScript: Record<string, never>;
+	getWebPushDomains: Record<string, never>;
+	addWebPushDomain: z.infer<typeof WebPushDomainSchema>;
+	deleteWebPushDomain: { domain: string };
+	getWebPushScript: { domain?: string };
+	getProductFeedsConfiguration: Record<string, never>;
+	configureProductFeeds: z.infer<typeof GenericObjectSchema>;
+	addAppTokens: z.infer<typeof GenericObjectSchema>;
+	muteAppToken: z.infer<typeof GenericObjectSchema>;
+	unmuteAppToken: z.infer<typeof GenericObjectSchema>;
+	getSubscriptionCategories: Record<string, never>;
+	getPromocodes: z.infer<typeof GenericObjectSchema>;
+	getPromocodesCount: Record<string, never>;
+	insertPromocodes: z.infer<typeof GenericObjectSchema>;
+	getPreprocessorFileStatus: z.infer<typeof SessionPathSchema>;
+	updatePreprocessorFile: z.infer<typeof GenericObjectSchema>;
+	uploadPreprocessorFile: z.infer<typeof GenericObjectSchema>;
+	generateApiToken: z.infer<typeof GenericObjectSchema>;
+	getInteractionStatus: z.infer<typeof GenericObjectSchema>;
+	sendViber: z.infer<typeof GenericObjectSchema>;
+	sendAppInbox: z.infer<typeof GenericObjectSchema>;
+	sendTelegramBot: z.infer<typeof GenericObjectSchema>;
+	updateTranslatedSmsMessage: z.infer<typeof EmailLanguagePathSchema> &
+		z.infer<typeof GenericObjectSchema>;
+	deleteTranslatedSmsMessage: z.infer<typeof EmailLanguagePathSchema>;
 };
 
 export type EsputnikEndpointOutputs = {
@@ -302,6 +341,36 @@ export type EsputnikEndpointOutputs = {
 	addSmsMessage: { id: number };
 	sendSms: z.infer<typeof GenericObjectSchema>;
 	cancelBroadcast: string;
+	contactActivity: unknown[];
+	contactMessages: unknown[];
+	getTokenActivated: { active: boolean };
+	changeTokenActivated: { active: boolean };
+	getDomains: unknown[];
+	createDomain: Record<string, unknown>;
+	getScript: string;
+	getWebPushDomains: Record<string, unknown>;
+	addWebPushDomain: Record<string, unknown>;
+	deleteWebPushDomain: string;
+	getWebPushScript: Record<string, unknown>;
+	getProductFeedsConfiguration: Record<string, unknown>;
+	configureProductFeeds: unknown;
+	addAppTokens: unknown;
+	muteAppToken: unknown;
+	unmuteAppToken: unknown;
+	getSubscriptionCategories: unknown[];
+	getPromocodes: unknown;
+	getPromocodesCount: unknown;
+	insertPromocodes: unknown;
+	getPreprocessorFileStatus: Record<string, unknown>;
+	updatePreprocessorFile: unknown;
+	uploadPreprocessorFile: unknown;
+	generateApiToken: Record<string, unknown>;
+	getInteractionStatus: unknown;
+	sendViber: z.infer<typeof GenericObjectSchema>;
+	sendAppInbox: unknown;
+	sendTelegramBot: unknown;
+	updateTranslatedSmsMessage: string;
+	deleteTranslatedSmsMessage: string;
 };
 
 export const EsputnikEndpointInputSchemas = {
@@ -423,6 +492,36 @@ export const EsputnikEndpointInputSchemas = {
 	addSmsMessage: GenericMessageBodySchema,
 	sendSms: GenericMessageBodySchema,
 	cancelBroadcast: IdPathSchema,
+	contactActivity: BehaviorQuerySchema,
+	contactMessages: BehaviorQuerySchema,
+	getTokenActivated: TokenPathSchema,
+	changeTokenActivated: TokenPathSchema.extend({ active: z.boolean() }),
+	getDomains: EmptyInputSchema,
+	createDomain: DomainSchema,
+	getScript: EmptyInputSchema,
+	getWebPushDomains: EmptyInputSchema,
+	addWebPushDomain: WebPushDomainSchema,
+	deleteWebPushDomain: z.object({ domain: z.string().min(1) }),
+	getWebPushScript: z.object({ domain: z.string().optional() }),
+	getProductFeedsConfiguration: EmptyInputSchema,
+	configureProductFeeds: GenericObjectSchema,
+	addAppTokens: GenericObjectSchema,
+	muteAppToken: GenericObjectSchema,
+	unmuteAppToken: GenericObjectSchema,
+	getSubscriptionCategories: EmptyInputSchema,
+	getPromocodes: GenericObjectSchema,
+	getPromocodesCount: EmptyInputSchema,
+	insertPromocodes: GenericObjectSchema,
+	getPreprocessorFileStatus: SessionPathSchema,
+	updatePreprocessorFile: GenericObjectSchema,
+	uploadPreprocessorFile: GenericObjectSchema,
+	generateApiToken: GenericObjectSchema,
+	getInteractionStatus: GenericObjectSchema,
+	sendViber: GenericObjectSchema,
+	sendAppInbox: GenericObjectSchema,
+	sendTelegramBot: GenericObjectSchema,
+	updateTranslatedSmsMessage: EmailLanguagePathSchema.and(GenericObjectSchema),
+	deleteTranslatedSmsMessage: EmailLanguagePathSchema,
 } as const;
 
 export const EsputnikEndpointOutputSchemas = {
@@ -506,4 +605,34 @@ export const EsputnikEndpointOutputSchemas = {
 	addSmsMessage: z.object({ id: z.number().int() }),
 	sendSms: z.record(z.string(), z.unknown()),
 	cancelBroadcast: z.string(),
+	contactActivity: z.array(z.unknown()),
+	contactMessages: z.array(z.unknown()),
+	getTokenActivated: z.object({ active: z.boolean() }),
+	changeTokenActivated: z.object({ active: z.boolean() }),
+	getDomains: z.array(z.unknown()),
+	createDomain: z.record(z.string(), z.unknown()),
+	getScript: z.string(),
+	getWebPushDomains: z.record(z.string(), z.unknown()),
+	addWebPushDomain: z.record(z.string(), z.unknown()),
+	deleteWebPushDomain: z.string(),
+	getWebPushScript: z.record(z.string(), z.unknown()),
+	getProductFeedsConfiguration: z.record(z.string(), z.unknown()),
+	configureProductFeeds: z.unknown(),
+	addAppTokens: z.unknown(),
+	muteAppToken: z.unknown(),
+	unmuteAppToken: z.unknown(),
+	getSubscriptionCategories: z.array(z.unknown()),
+	getPromocodes: z.unknown(),
+	getPromocodesCount: z.unknown(),
+	insertPromocodes: z.unknown(),
+	getPreprocessorFileStatus: z.record(z.string(), z.unknown()),
+	updatePreprocessorFile: z.unknown(),
+	uploadPreprocessorFile: z.unknown(),
+	generateApiToken: z.record(z.string(), z.unknown()),
+	getInteractionStatus: z.unknown(),
+	sendViber: z.record(z.string(), z.unknown()),
+	sendAppInbox: z.unknown(),
+	sendTelegramBot: z.unknown(),
+	updateTranslatedSmsMessage: z.string(),
+	deleteTranslatedSmsMessage: z.string(),
 } as const;

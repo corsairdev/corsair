@@ -22,6 +22,7 @@ import {
 	contactEndpoints,
 	emailEndpoints,
 	eventEndpoints,
+	finalBatchEndpoints,
 	interfaceEndpoints,
 	mobilePushEndpoints,
 	orderEndpoints,
@@ -147,6 +148,36 @@ export type EsputnikEndpoints = {
 	addSmsMessage: EsputnikEndpoint<'addSmsMessage'>;
 	sendSms: EsputnikEndpoint<'sendSms'>;
 	cancelBroadcast: EsputnikEndpoint<'cancelBroadcast'>;
+	contactActivity: EsputnikEndpoint<'contactActivity'>;
+	contactMessages: EsputnikEndpoint<'contactMessages'>;
+	getTokenActivated: EsputnikEndpoint<'getTokenActivated'>;
+	changeTokenActivated: EsputnikEndpoint<'changeTokenActivated'>;
+	getDomains: EsputnikEndpoint<'getDomains'>;
+	createDomain: EsputnikEndpoint<'createDomain'>;
+	getScript: EsputnikEndpoint<'getScript'>;
+	getWebPushDomains: EsputnikEndpoint<'getWebPushDomains'>;
+	addWebPushDomain: EsputnikEndpoint<'addWebPushDomain'>;
+	deleteWebPushDomain: EsputnikEndpoint<'deleteWebPushDomain'>;
+	getWebPushScript: EsputnikEndpoint<'getWebPushScript'>;
+	getProductFeedsConfiguration: EsputnikEndpoint<'getProductFeedsConfiguration'>;
+	configureProductFeeds: EsputnikEndpoint<'configureProductFeeds'>;
+	addAppTokens: EsputnikEndpoint<'addAppTokens'>;
+	muteAppToken: EsputnikEndpoint<'muteAppToken'>;
+	unmuteAppToken: EsputnikEndpoint<'unmuteAppToken'>;
+	getSubscriptionCategories: EsputnikEndpoint<'getSubscriptionCategories'>;
+	getPromocodes: EsputnikEndpoint<'getPromocodes'>;
+	getPromocodesCount: EsputnikEndpoint<'getPromocodesCount'>;
+	insertPromocodes: EsputnikEndpoint<'insertPromocodes'>;
+	getPreprocessorFileStatus: EsputnikEndpoint<'getPreprocessorFileStatus'>;
+	updatePreprocessorFile: EsputnikEndpoint<'updatePreprocessorFile'>;
+	uploadPreprocessorFile: EsputnikEndpoint<'uploadPreprocessorFile'>;
+	generateApiToken: EsputnikEndpoint<'generateApiToken'>;
+	getInteractionStatus: EsputnikEndpoint<'getInteractionStatus'>;
+	sendViber: EsputnikEndpoint<'sendViber'>;
+	sendAppInbox: EsputnikEndpoint<'sendAppInbox'>;
+	sendTelegramBot: EsputnikEndpoint<'sendTelegramBot'>;
+	updateTranslatedSmsMessage: EsputnikEndpoint<'updateTranslatedSmsMessage'>;
+	deleteTranslatedSmsMessage: EsputnikEndpoint<'deleteTranslatedSmsMessage'>;
 };
 
 const esputnikEndpointsNested = {
@@ -187,6 +218,7 @@ const esputnikEndpointsNested = {
 	broadcasts: broadcastEndpoints,
 	interfaces: interfaceEndpoints,
 	batchTwoRemainder: batchTwoRemainderEndpoints,
+	finalBatch: finalBatchEndpoints,
 } as const;
 
 export const esputnikEndpointSchemas = {
@@ -509,6 +541,126 @@ export const esputnikEndpointSchemas = {
 	'batchTwoRemainder.cancelBroadcast': {
 		input: EsputnikEndpointInputSchemas.cancelBroadcast,
 		output: EsputnikEndpointOutputSchemas.cancelBroadcast,
+	},
+	'finalBatch.contactActivity': {
+		input: EsputnikEndpointInputSchemas.contactActivity,
+		output: EsputnikEndpointOutputSchemas.contactActivity,
+	},
+	'finalBatch.contactMessages': {
+		input: EsputnikEndpointInputSchemas.contactMessages,
+		output: EsputnikEndpointOutputSchemas.contactMessages,
+	},
+	'finalBatch.getTokenActivated': {
+		input: EsputnikEndpointInputSchemas.getTokenActivated,
+		output: EsputnikEndpointOutputSchemas.getTokenActivated,
+	},
+	'finalBatch.changeTokenActivated': {
+		input: EsputnikEndpointInputSchemas.changeTokenActivated,
+		output: EsputnikEndpointOutputSchemas.changeTokenActivated,
+	},
+	'finalBatch.getDomains': {
+		input: EsputnikEndpointInputSchemas.getDomains,
+		output: EsputnikEndpointOutputSchemas.getDomains,
+	},
+	'finalBatch.createDomain': {
+		input: EsputnikEndpointInputSchemas.createDomain,
+		output: EsputnikEndpointOutputSchemas.createDomain,
+	},
+	'finalBatch.getScript': {
+		input: EsputnikEndpointInputSchemas.getScript,
+		output: EsputnikEndpointOutputSchemas.getScript,
+	},
+	'finalBatch.getWebPushDomains': {
+		input: EsputnikEndpointInputSchemas.getWebPushDomains,
+		output: EsputnikEndpointOutputSchemas.getWebPushDomains,
+	},
+	'finalBatch.addWebPushDomain': {
+		input: EsputnikEndpointInputSchemas.addWebPushDomain,
+		output: EsputnikEndpointOutputSchemas.addWebPushDomain,
+	},
+	'finalBatch.deleteWebPushDomain': {
+		input: EsputnikEndpointInputSchemas.deleteWebPushDomain,
+		output: EsputnikEndpointOutputSchemas.deleteWebPushDomain,
+	},
+	'finalBatch.getWebPushScript': {
+		input: EsputnikEndpointInputSchemas.getWebPushScript,
+		output: EsputnikEndpointOutputSchemas.getWebPushScript,
+	},
+	'finalBatch.getProductFeedsConfiguration': {
+		input: EsputnikEndpointInputSchemas.getProductFeedsConfiguration,
+		output: EsputnikEndpointOutputSchemas.getProductFeedsConfiguration,
+	},
+	'finalBatch.configureProductFeeds': {
+		input: EsputnikEndpointInputSchemas.configureProductFeeds,
+		output: EsputnikEndpointOutputSchemas.configureProductFeeds,
+	},
+	'finalBatch.addAppTokens': {
+		input: EsputnikEndpointInputSchemas.addAppTokens,
+		output: EsputnikEndpointOutputSchemas.addAppTokens,
+	},
+	'finalBatch.muteAppToken': {
+		input: EsputnikEndpointInputSchemas.muteAppToken,
+		output: EsputnikEndpointOutputSchemas.muteAppToken,
+	},
+	'finalBatch.unmuteAppToken': {
+		input: EsputnikEndpointInputSchemas.unmuteAppToken,
+		output: EsputnikEndpointOutputSchemas.unmuteAppToken,
+	},
+	'finalBatch.getSubscriptionCategories': {
+		input: EsputnikEndpointInputSchemas.getSubscriptionCategories,
+		output: EsputnikEndpointOutputSchemas.getSubscriptionCategories,
+	},
+	'finalBatch.getPromocodes': {
+		input: EsputnikEndpointInputSchemas.getPromocodes,
+		output: EsputnikEndpointOutputSchemas.getPromocodes,
+	},
+	'finalBatch.getPromocodesCount': {
+		input: EsputnikEndpointInputSchemas.getPromocodesCount,
+		output: EsputnikEndpointOutputSchemas.getPromocodesCount,
+	},
+	'finalBatch.insertPromocodes': {
+		input: EsputnikEndpointInputSchemas.insertPromocodes,
+		output: EsputnikEndpointOutputSchemas.insertPromocodes,
+	},
+	'finalBatch.getPreprocessorFileStatus': {
+		input: EsputnikEndpointInputSchemas.getPreprocessorFileStatus,
+		output: EsputnikEndpointOutputSchemas.getPreprocessorFileStatus,
+	},
+	'finalBatch.updatePreprocessorFile': {
+		input: EsputnikEndpointInputSchemas.updatePreprocessorFile,
+		output: EsputnikEndpointOutputSchemas.updatePreprocessorFile,
+	},
+	'finalBatch.uploadPreprocessorFile': {
+		input: EsputnikEndpointInputSchemas.uploadPreprocessorFile,
+		output: EsputnikEndpointOutputSchemas.uploadPreprocessorFile,
+	},
+	'finalBatch.generateApiToken': {
+		input: EsputnikEndpointInputSchemas.generateApiToken,
+		output: EsputnikEndpointOutputSchemas.generateApiToken,
+	},
+	'finalBatch.getInteractionStatus': {
+		input: EsputnikEndpointInputSchemas.getInteractionStatus,
+		output: EsputnikEndpointOutputSchemas.getInteractionStatus,
+	},
+	'finalBatch.sendViber': {
+		input: EsputnikEndpointInputSchemas.sendViber,
+		output: EsputnikEndpointOutputSchemas.sendViber,
+	},
+	'finalBatch.sendAppInbox': {
+		input: EsputnikEndpointInputSchemas.sendAppInbox,
+		output: EsputnikEndpointOutputSchemas.sendAppInbox,
+	},
+	'finalBatch.sendTelegramBot': {
+		input: EsputnikEndpointInputSchemas.sendTelegramBot,
+		output: EsputnikEndpointOutputSchemas.sendTelegramBot,
+	},
+	'finalBatch.updateTranslatedSmsMessage': {
+		input: EsputnikEndpointInputSchemas.updateTranslatedSmsMessage,
+		output: EsputnikEndpointOutputSchemas.updateTranslatedSmsMessage,
+	},
+	'finalBatch.deleteTranslatedSmsMessage': {
+		input: EsputnikEndpointInputSchemas.deleteTranslatedSmsMessage,
+		output: EsputnikEndpointOutputSchemas.deleteTranslatedSmsMessage,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof esputnikEndpointsNested
@@ -834,6 +986,126 @@ const esputnikEndpointMeta = {
 	'batchTwoRemainder.cancelBroadcast': {
 		riskLevel: 'destructive',
 		description: 'Cancel an eSputnik scheduled broadcast',
+	},
+	'finalBatch.contactActivity': {
+		riskLevel: 'read',
+		description: 'Get eSputnik contact activity records',
+	},
+	'finalBatch.contactMessages': {
+		riskLevel: 'read',
+		description: 'Get eSputnik contact message history',
+	},
+	'finalBatch.getTokenActivated': {
+		riskLevel: 'read',
+		description: 'Get eSputnik mobile token activity',
+	},
+	'finalBatch.changeTokenActivated': {
+		riskLevel: 'write',
+		description: 'Change eSputnik mobile token activity',
+	},
+	'finalBatch.getDomains': {
+		riskLevel: 'read',
+		description: 'List eSputnik organization domains',
+	},
+	'finalBatch.createDomain': {
+		riskLevel: 'write',
+		description: 'Register an eSputnik domain',
+	},
+	'finalBatch.getScript': {
+		riskLevel: 'read',
+		description: 'Get the eSputnik tracking script',
+	},
+	'finalBatch.getWebPushDomains': {
+		riskLevel: 'read',
+		description: 'List eSputnik web push domains',
+	},
+	'finalBatch.addWebPushDomain': {
+		riskLevel: 'write',
+		description: 'Register an eSputnik web push domain',
+	},
+	'finalBatch.deleteWebPushDomain': {
+		riskLevel: 'destructive',
+		description: 'Delete an eSputnik web push domain',
+	},
+	'finalBatch.getWebPushScript': {
+		riskLevel: 'read',
+		description: 'Get an eSputnik web push script',
+	},
+	'finalBatch.getProductFeedsConfiguration': {
+		riskLevel: 'read',
+		description: 'Get eSputnik product feed configuration',
+	},
+	'finalBatch.configureProductFeeds': {
+		riskLevel: 'write',
+		description: 'Configure eSputnik product feeds',
+	},
+	'finalBatch.addAppTokens': {
+		riskLevel: 'write',
+		description: 'Add eSputnik application tokens',
+	},
+	'finalBatch.muteAppToken': {
+		riskLevel: 'write',
+		description: 'Mute eSputnik application tokens',
+	},
+	'finalBatch.unmuteAppToken': {
+		riskLevel: 'write',
+		description: 'Unmute eSputnik application tokens',
+	},
+	'finalBatch.getSubscriptionCategories': {
+		riskLevel: 'read',
+		description: 'List eSputnik subscription categories',
+	},
+	'finalBatch.getPromocodes': {
+		riskLevel: 'read',
+		description: 'Get eSputnik promotional codes',
+	},
+	'finalBatch.getPromocodesCount': {
+		riskLevel: 'read',
+		description: 'Get the eSputnik promotional code count',
+	},
+	'finalBatch.insertPromocodes': {
+		riskLevel: 'write',
+		description: 'Upload eSputnik promotional codes',
+	},
+	'finalBatch.getPreprocessorFileStatus': {
+		riskLevel: 'read',
+		description: 'Get eSputnik preprocessor file status',
+	},
+	'finalBatch.updatePreprocessorFile': {
+		riskLevel: 'write',
+		description: 'Update an eSputnik preprocessor file',
+	},
+	'finalBatch.uploadPreprocessorFile': {
+		riskLevel: 'write',
+		description: 'Upload an eSputnik preprocessor file',
+	},
+	'finalBatch.generateApiToken': {
+		riskLevel: 'write',
+		description: 'Generate an eSputnik API token',
+	},
+	'finalBatch.getInteractionStatus': {
+		riskLevel: 'read',
+		description: 'Get an eSputnik interaction status',
+	},
+	'finalBatch.sendViber': {
+		riskLevel: 'write',
+		description: 'Send an eSputnik Viber message',
+	},
+	'finalBatch.sendAppInbox': {
+		riskLevel: 'write',
+		description: 'Send an eSputnik App Inbox message',
+	},
+	'finalBatch.sendTelegramBot': {
+		riskLevel: 'write',
+		description: 'Send an eSputnik Telegram bot message',
+	},
+	'finalBatch.updateTranslatedSmsMessage': {
+		riskLevel: 'write',
+		description: 'Update a translated eSputnik SMS message',
+	},
+	'finalBatch.deleteTranslatedSmsMessage': {
+		riskLevel: 'destructive',
+		description: 'Delete a translated eSputnik SMS message',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof esputnikEndpointsNested>;
 

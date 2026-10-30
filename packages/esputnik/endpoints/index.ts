@@ -429,4 +429,126 @@ export const batchTwoRemainderEndpoints = {
 	) => request(ctx, `/api/v1/broadcasts/${input.id}`, { method: 'DELETE' }),
 };
 
+export const finalBatchEndpoints = {
+	contactActivity: (
+		ctx: { key: string },
+		input: Record<string, string | number | boolean | undefined>,
+	) => request(ctx, '/api/v2/contacts/activity', { query: input }),
+	contactMessages: (
+		ctx: { key: string },
+		input: Record<string, string | number | boolean | undefined>,
+	) => request(ctx, '/api/v2/contacts/messages', { query: input }),
+	getTokenActivated: (
+		ctx: { key: string },
+		input: { app_uuid: string; token_id: string },
+	) =>
+		request(
+			ctx,
+			`/api/v1/contact/token/activated/${input.app_uuid}/${input.token_id}`,
+			{},
+		),
+	changeTokenActivated: (
+		ctx: { key: string },
+		input: { app_uuid: string; token_id: string; active: boolean },
+	) => {
+		const { app_uuid, token_id, active } = input;
+		return request(
+			ctx,
+			`/api/v1/contact/token/activated/${app_uuid}/${token_id}`,
+			{ method: 'PUT', body: { active } },
+		);
+	},
+	getDomains: (ctx: { key: string }) =>
+		request(ctx, '/api/v1/site/domains', {}),
+	createDomain: (ctx: { key: string }, input: Record<string, unknown>) =>
+		request(ctx, '/api/v1/site/domains', { method: 'POST', body: input }),
+	getScript: (ctx: { key: string }) => request(ctx, '/api/v1/site/script', {}),
+	getWebPushDomains: (ctx: { key: string }) =>
+		request(ctx, '/api/v1/site/webpush/domains', {}),
+	addWebPushDomain: (ctx: { key: string }, input: Record<string, unknown>) =>
+		request(ctx, '/api/v1/site/webpush/domain', {
+			method: 'POST',
+			body: input,
+		}),
+	deleteWebPushDomain: (ctx: { key: string }, input: { domain: string }) =>
+		request(ctx, '/api/v1/site/webpush/domains', {
+			method: 'DELETE',
+			query: input,
+		}),
+	getWebPushScript: (ctx: { key: string }, input: { domain?: string }) =>
+		request(ctx, '/api/v1/site/webpush/script', { query: input }),
+	getProductFeedsConfiguration: (ctx: { key: string }) =>
+		request(ctx, '/api/v1/productfeeds/configuration', {}),
+	configureProductFeeds: (
+		ctx: { key: string },
+		input: Record<string, unknown>,
+	) =>
+		request(ctx, '/api/v1/productfeeds/configuration', {
+			method: 'PUT',
+			body: input,
+		}),
+	addAppTokens: (ctx: { key: string }, input: Record<string, unknown>) =>
+		request(ctx, '/api/v1/apptokens', { method: 'POST', body: input }),
+	muteAppToken: (ctx: { key: string }, input: Record<string, unknown>) =>
+		request(ctx, '/api/v1/apptokens/mute', { method: 'POST', body: input }),
+	unmuteAppToken: (ctx: { key: string }, input: Record<string, unknown>) =>
+		request(ctx, '/api/v1/apptokens/unmute', { method: 'POST', body: input }),
+	getSubscriptionCategories: (ctx: { key: string }) =>
+		request(ctx, '/api/v1/subscriptioncategories', {}),
+	getPromocodes: (
+		ctx: { key: string },
+		input: Record<string, string | number | boolean | undefined>,
+	) => request(ctx, '/api/v1/promocodes', { query: input }),
+	getPromocodesCount: (ctx: { key: string }) =>
+		request(ctx, '/api/v1/promocodes/count', {}),
+	insertPromocodes: (ctx: { key: string }, input: Record<string, unknown>) =>
+		request(ctx, '/api/v1/promocodes', { method: 'POST', body: input }),
+	getPreprocessorFileStatus: (
+		ctx: { key: string },
+		input: { sessionId: string },
+	) => request(ctx, `/api/v1/preprocessor/file/${input.sessionId}`, {}),
+	updatePreprocessorFile: (
+		ctx: { key: string },
+		input: Record<string, unknown>,
+	) =>
+		request(ctx, '/api/v1/preprocessor/file', { method: 'PUT', body: input }),
+	uploadPreprocessorFile: (
+		ctx: { key: string },
+		input: Record<string, unknown>,
+	) =>
+		request(ctx, '/api/v1/preprocessor/file', { method: 'POST', body: input }),
+	generateApiToken: (ctx: { key: string }, input: Record<string, unknown>) =>
+		request(ctx, '/api/v1/apikey', { method: 'POST', body: input }),
+	getInteractionStatus: (
+		ctx: { key: string },
+		input: Record<string, string | number | boolean | undefined>,
+	) => request(ctx, '/api/v1/interactions/status', { query: input }),
+	sendViber: (ctx: { key: string }, input: Record<string, unknown>) =>
+		request(ctx, '/api/v1/message/viber', { method: 'POST', body: input }),
+	sendAppInbox: (ctx: { key: string }, input: Record<string, unknown>) =>
+		request(ctx, '/api/v1/message/appinbox', { method: 'POST', body: input }),
+	sendTelegramBot: (ctx: { key: string }, input: Record<string, unknown>) =>
+		request(ctx, '/api/v1/message/telegrambot', {
+			method: 'POST',
+			body: input,
+		}),
+	updateTranslatedSmsMessage: (
+		ctx: { key: string },
+		input: EsputnikEndpointInputs['updateTranslatedSmsMessage'],
+	) => {
+		const { id, language, ...body } = input;
+		return request(ctx, `/api/v1/messages/sms/${id}/${language}`, {
+			method: 'PUT',
+			body,
+		});
+	},
+	deleteTranslatedSmsMessage: (
+		ctx: { key: string },
+		input: EsputnikEndpointInputs['deleteTranslatedSmsMessage'],
+	) =>
+		request(ctx, `/api/v1/messages/sms/${input.id}/${input.language}`, {
+			method: 'DELETE',
+		}),
+};
+
 export * from './types';
