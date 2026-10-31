@@ -220,6 +220,7 @@ export const BaseProviders = [
 	'figma',
 	'filevine',
 	'filloutforms',
+	'finerworks',
 	'firecrawl',
 	'fireflies',
 	'fixer',
@@ -633,6 +634,7 @@ export const ProviderDisplayNames = {
 	figma: 'Figma',
 	filevine: 'Filevine',
 	filloutforms: 'FilloutForms',
+	finerworks: 'FinerWorks',
 	firecrawl: 'Firecrawl',
 	fireflies: 'Fireflies',
 	fixer: 'Fixer',
@@ -1051,6 +1053,7 @@ export type AllProviders =
 	| 'figma'
 	| 'filevine'
 	| 'filloutforms'
+	| 'finerworks'
 	| 'firecrawl'
 	| 'fireflies'
 	| 'fixer'
