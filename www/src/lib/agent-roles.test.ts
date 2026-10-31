@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
 import { AGENT_ROLES } from './agent-roles';
-import { creditsInUsd, MANAGED_TOOLS } from './managed-tools';
+import { creditsInUsd, MANAGED_TOOLS, priceText } from './managed-tools';
 import { getUseCase, starterPrompt } from './use-cases';
 
 describe('agent roles', () => {
@@ -45,27 +45,43 @@ describe('agent roles', () => {
 });
 
 describe('managed tools', () => {
-	it('lists whole-credit prices and each call once', () => {
+	it('price every live call in whole credits, and list each call once', () => {
 		for (const tool of MANAGED_TOOLS) {
 			const calls = tool.calls.map((c) => c.tool);
 			assert.equal(new Set(calls).size, calls.length, tool.app);
 			for (const call of tool.calls) {
+				if (!tool.live) continue;
+				assert.ok(call.price, `${tool.app}.${call.tool} is live with no price`);
 				assert.ok(
-					Number.isInteger(call.credits) && call.credits > 0,
+					Number.isInteger(call.price.credits) && call.price.credits > 0,
 					`${tool.app}.${call.tool}`,
 				);
 			}
 		}
-		assert.ok(
-			MANAGED_TOOLS.some((t) => t.live),
-			'at least one provider is live',
-		);
+		const apps = MANAGED_TOOLS.map((t) => t.app);
+		assert.equal(new Set(apps).size, apps.length);
 	});
 
 	it('prices credits in dollars at 100 per $1', () => {
 		assert.equal(creditsInUsd(1), '$0.01');
 		assert.equal(creditsInUsd(15), '$0.15');
 		assert.equal(creditsInUsd(40), '$0.40');
+	});
+
+	it('says how each kind of price is charged', () => {
+		assert.deepEqual(priceText({ kind: 'flat', credits: 1 }), {
+			credits: '1 credit',
+			usd: '$0.01',
+		});
+		assert.deepEqual(priceText({ kind: 'per', credits: 2, unit: 'page' }), {
+			credits: '2 credits / page',
+			usd: '$0.02 / page',
+		});
+		assert.equal(
+			priceText({ kind: 'from', credits: 1 }).credits,
+			'from 1 credit',
+		);
+		assert.equal(priceText({ kind: 'upTo', credits: 4 }).usd, 'up to $0.04');
 	});
 });
 

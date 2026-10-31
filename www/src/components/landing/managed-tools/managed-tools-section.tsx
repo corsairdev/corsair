@@ -6,6 +6,7 @@ import {
 	creditsInUsd,
 	MANAGED_TOOLS,
 	MONTHLY_FREE_CREDITS,
+	priceText,
 } from '@/lib/managed-tools';
 
 /** Pay per call for tools Corsair holds the key for. */
@@ -27,9 +28,10 @@ export function ManagedToolsSection() {
 						No account for every tool. Pay per call.
 					</h2>
 					<p className="mt-4 max-w-xl text-[16px] leading-relaxed text-[#1c1c1c99]">
-						For tools like Firecrawl, Corsair holds the API key. Add one to your
-						link and it&apos;s ready: no sign-up with the provider, no key to
-						paste, no monthly plan. Each call costs Corsair credits.
+						For tools like Firecrawl, Exa, Apollo and Reducto, Corsair holds the
+						API key. Add one to your link and it&apos;s ready: no sign-up with
+						the provider, no key to paste, no monthly plan. Each call costs
+						Corsair credits, and a call that fails gets them back.
 					</p>
 					<ul className="mt-6 grid max-w-xl grid-cols-1 gap-2 text-[14px] text-[#1c1c1c] sm:grid-cols-3">
 						<li className="rounded-md border border-[#1c1c1c]/10 bg-white px-3 py-2.5">
@@ -93,12 +95,14 @@ export function ManagedToolsSection() {
 											</span>
 										</span>
 									</Link>
-									<span className="shrink-0 text-right font-[family-name:var(--landing-font-mono)] text-[13px] text-[#1c1c1c]">
-										{call.credits} {call.credits === 1 ? 'credit' : 'credits'}
-										<span className="block text-[11px] text-[#1c1c1c66]">
-											{creditsInUsd(call.credits)}
+									{tool.live && call.price ? (
+										<span className="shrink-0 text-right font-[family-name:var(--landing-font-mono)] text-[13px] text-[#1c1c1c]">
+											{priceText(call.price).credits}
+											<span className="block text-[11px] text-[#1c1c1c66]">
+												{priceText(call.price).usd}
+											</span>
 										</span>
-									</span>
+									) : null}
 								</li>
 							);
 						})}
