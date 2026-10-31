@@ -65,6 +65,7 @@ await corsair.googledrive.api.files.copy({});
 | `modifiedByMe` | `boolean` | No | — |
 | `shared` | `boolean` | No | — |
 | `ownedByMe` | `boolean` | No | — |
+| `owners` | `object[]` | No | — |
 | `permissionIds` | `string[]` | No | — |
 | `hasAugmentedPermissions` | `boolean` | No | — |
 | `folderColorRgb` | `string` | No | — |
@@ -94,6 +95,20 @@ await corsair.googledrive.api.files.copy({});
 ```ts
 {
 }
+```
+</Accordion>
+
+<Accordion title="owners full type">
+
+```ts
+{
+  kind?: string,
+  displayName?: string,
+  photoLink?: string,
+  me?: boolean,
+  permissionId?: string,
+  emailAddress?: string
+}[]
 ```
 </Accordion>
 </AccordionGroup>
@@ -156,6 +171,7 @@ await corsair.googledrive.api.files.createFromText({});
 | `modifiedByMe` | `boolean` | No | — |
 | `shared` | `boolean` | No | — |
 | `ownedByMe` | `boolean` | No | — |
+| `owners` | `object[]` | No | — |
 | `permissionIds` | `string[]` | No | — |
 | `hasAugmentedPermissions` | `boolean` | No | — |
 | `folderColorRgb` | `string` | No | — |
@@ -185,6 +201,20 @@ await corsair.googledrive.api.files.createFromText({});
 ```ts
 {
 }
+```
+</Accordion>
+
+<Accordion title="owners full type">
+
+```ts
+{
+  kind?: string,
+  displayName?: string,
+  photoLink?: string,
+  me?: boolean,
+  permissionId?: string,
+  emailAddress?: string
+}[]
 ```
 </Accordion>
 </AccordionGroup>
@@ -246,6 +276,42 @@ await corsair.googledrive.api.files.download({});
 
 ---
 
+### exportText
+
+`files.exportText`
+
+Get the plain text of a Google Doc across all of its tabs and store it
+
+**Risk:** `read`
+
+```ts
+await corsair.googledrive.api.files.exportText({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `mimeType` | `string` | No | — |
+| `createdTime` | `string` | No | — |
+| `modifiedTime` | `string` | No | — |
+| `webViewLink` | `string` | No | — |
+| `text` | `string` | Yes | — |
+
+
+
+---
+
 ### get
 
 `files.get`
@@ -267,6 +333,7 @@ await corsair.googledrive.api.files.get({});
 | `supportsAllDrives` | `boolean` | No | — |
 | `supportsTeamDrives` | `boolean` | No | — |
 | `includePermissionsForView` | `string` | No | — |
+| `fields` | `string` | No | — |
 
 
 
@@ -300,6 +367,7 @@ await corsair.googledrive.api.files.get({});
 | `modifiedByMe` | `boolean` | No | — |
 | `shared` | `boolean` | No | — |
 | `ownedByMe` | `boolean` | No | — |
+| `owners` | `object[]` | No | — |
 | `permissionIds` | `string[]` | No | — |
 | `hasAugmentedPermissions` | `boolean` | No | — |
 | `folderColorRgb` | `string` | No | — |
@@ -329,6 +397,20 @@ await corsair.googledrive.api.files.get({});
 ```ts
 {
 }
+```
+</Accordion>
+
+<Accordion title="owners full type">
+
+```ts
+{
+  kind?: string,
+  displayName?: string,
+  photoLink?: string,
+  me?: boolean,
+  permissionId?: string,
+  emailAddress?: string
+}[]
 ```
 </Accordion>
 </AccordionGroup>
@@ -365,6 +447,7 @@ await corsair.googledrive.api.files.list({});
 | `supportsAllDrives` | `boolean` | No | — |
 | `supportsTeamDrives` | `boolean` | No | — |
 | `teamDriveId` | `string` | No | — |
+| `fields` | `string` | No | — |
 
 
 
@@ -410,6 +493,14 @@ await corsair.googledrive.api.files.list({});
   modifiedByMe?: boolean,
   shared?: boolean,
   ownedByMe?: boolean,
+  owners?: {
+    kind?: string,
+    displayName?: string,
+    photoLink?: string,
+    me?: boolean,
+    permissionId?: string,
+    emailAddress?: string
+  }[],
   permissionIds?: string[],
   hasAugmentedPermissions?: boolean,
   folderColorRgb?: string,
@@ -487,6 +578,7 @@ await corsair.googledrive.api.files.move({});
 | `modifiedByMe` | `boolean` | No | — |
 | `shared` | `boolean` | No | — |
 | `ownedByMe` | `boolean` | No | — |
+| `owners` | `object[]` | No | — |
 | `permissionIds` | `string[]` | No | — |
 | `hasAugmentedPermissions` | `boolean` | No | — |
 | `folderColorRgb` | `string` | No | — |
@@ -516,6 +608,20 @@ await corsair.googledrive.api.files.move({});
 ```ts
 {
 }
+```
+</Accordion>
+
+<Accordion title="owners full type">
+
+```ts
+{
+  kind?: string,
+  displayName?: string,
+  photoLink?: string,
+  me?: boolean,
+  permissionId?: string,
+  emailAddress?: string
+}[]
 ```
 </Accordion>
 </AccordionGroup>
@@ -656,6 +762,7 @@ await corsair.googledrive.api.files.update({});
 | `modifiedByMe` | `boolean` | No | — |
 | `shared` | `boolean` | No | — |
 | `ownedByMe` | `boolean` | No | — |
+| `owners` | `object[]` | No | — |
 | `permissionIds` | `string[]` | No | — |
 | `hasAugmentedPermissions` | `boolean` | No | — |
 | `folderColorRgb` | `string` | No | — |
@@ -685,6 +792,20 @@ await corsair.googledrive.api.files.update({});
 ```ts
 {
 }
+```
+</Accordion>
+
+<Accordion title="owners full type">
+
+```ts
+{
+  kind?: string,
+  displayName?: string,
+  photoLink?: string,
+  me?: boolean,
+  permissionId?: string,
+  emailAddress?: string
+}[]
 ```
 </Accordion>
 </AccordionGroup>
@@ -746,6 +867,7 @@ await corsair.googledrive.api.files.upload({});
 | `modifiedByMe` | `boolean` | No | — |
 | `shared` | `boolean` | No | — |
 | `ownedByMe` | `boolean` | No | — |
+| `owners` | `object[]` | No | — |
 | `permissionIds` | `string[]` | No | — |
 | `hasAugmentedPermissions` | `boolean` | No | — |
 | `folderColorRgb` | `string` | No | — |
@@ -775,6 +897,20 @@ await corsair.googledrive.api.files.upload({});
 ```ts
 {
 }
+```
+</Accordion>
+
+<Accordion title="owners full type">
+
+```ts
+{
+  kind?: string,
+  displayName?: string,
+  photoLink?: string,
+  me?: boolean,
+  permissionId?: string,
+  emailAddress?: string
+}[]
 ```
 </Accordion>
 </AccordionGroup>
@@ -837,6 +973,7 @@ await corsair.googledrive.api.folders.create({});
 | `modifiedByMe` | `boolean` | No | — |
 | `shared` | `boolean` | No | — |
 | `ownedByMe` | `boolean` | No | — |
+| `owners` | `object[]` | No | — |
 | `permissionIds` | `string[]` | No | — |
 | `hasAugmentedPermissions` | `boolean` | No | — |
 | `folderColorRgb` | `string` | No | — |
@@ -866,6 +1003,20 @@ await corsair.googledrive.api.folders.create({});
 ```ts
 {
 }
+```
+</Accordion>
+
+<Accordion title="owners full type">
+
+```ts
+{
+  kind?: string,
+  displayName?: string,
+  photoLink?: string,
+  me?: boolean,
+  permissionId?: string,
+  emailAddress?: string
+}[]
 ```
 </Accordion>
 </AccordionGroup>
@@ -954,6 +1105,7 @@ await corsair.googledrive.api.folders.get({});
 | `modifiedByMe` | `boolean` | No | — |
 | `shared` | `boolean` | No | — |
 | `ownedByMe` | `boolean` | No | — |
+| `owners` | `object[]` | No | — |
 | `permissionIds` | `string[]` | No | — |
 | `hasAugmentedPermissions` | `boolean` | No | — |
 | `folderColorRgb` | `string` | No | — |
@@ -983,6 +1135,20 @@ await corsair.googledrive.api.folders.get({});
 ```ts
 {
 }
+```
+</Accordion>
+
+<Accordion title="owners full type">
+
+```ts
+{
+  kind?: string,
+  displayName?: string,
+  photoLink?: string,
+  me?: boolean,
+  permissionId?: string,
+  emailAddress?: string
+}[]
 ```
 </Accordion>
 </AccordionGroup>
@@ -1064,6 +1230,14 @@ await corsair.googledrive.api.folders.list({});
   modifiedByMe?: boolean,
   shared?: boolean,
   ownedByMe?: boolean,
+  owners?: {
+    kind?: string,
+    displayName?: string,
+    photoLink?: string,
+    me?: boolean,
+    permissionId?: string,
+    emailAddress?: string
+  }[],
   permissionIds?: string[],
   hasAugmentedPermissions?: boolean,
   folderColorRgb?: string,
@@ -1215,6 +1389,14 @@ await corsair.googledrive.api.search.filesAndFolders({});
   modifiedByMe?: boolean,
   shared?: boolean,
   ownedByMe?: boolean,
+  owners?: {
+    kind?: string,
+    displayName?: string,
+    photoLink?: string,
+    me?: boolean,
+    permissionId?: string,
+    emailAddress?: string
+  }[],
   permissionIds?: string[],
   hasAugmentedPermissions?: boolean,
   folderColorRgb?: string,
