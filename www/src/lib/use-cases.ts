@@ -590,6 +590,11 @@ export function useCaseAppName(appId: string): string {
 	return USE_CASE_APP_NAMES[appId] ?? appId;
 }
 
+/** The prompt for an app with no written use case yet. */
+export function starterPrompt(displayName: string): string {
+	return `Using Corsair, show me what you can do in ${displayName} on my account, then run one read-only example and show me the result.`;
+}
+
 export function getUseCase(slug: string): UseCase | undefined {
 	return USE_CASES.find((useCase) => useCase.slug === slug);
 }

@@ -1,7 +1,10 @@
 import Link from 'next/link';
 
-import { UseCaseCard } from '@/components/use-cases/use-case-parts';
-import { useCasesForApp } from '@/lib/use-cases';
+import {
+	UseCaseCard,
+	UseCasePromptBox,
+} from '@/components/use-cases/use-case-parts';
+import { starterPrompt, useCasesForApp } from '@/lib/use-cases';
 
 const MAX_SHOWN = 4;
 
@@ -14,7 +17,34 @@ export function IntegrationUseCasesSection({
 	displayName: string;
 }) {
 	const useCases = useCasesForApp(integrationId).slice(0, MAX_SHOWN);
-	if (useCases.length === 0) return null;
+	// Apps without a written use case get one prompt that works for any app:
+	// the agent reads what the app can do (list_operations) and tries a read.
+	if (useCases.length === 0) {
+		return (
+			<section id="use-cases" className="scroll-mt-24 pt-8 pb-2 md:pt-10">
+				<div className="mx-auto max-w-[960px] px-4 sm:px-6 md:px-10">
+					<h2 className="font-[family-name:var(--landing-font-serif)] text-[clamp(1.5rem,3vw,2rem)] font-light tracking-[-0.03em] text-[#1c1c1c]">
+						Try {displayName} with your agent
+					</h2>
+					<p className="mt-2 max-w-2xl text-[15px] leading-relaxed text-[#1c1c1c99]">
+						Connect {displayName}, then paste this into Claude, ChatGPT or
+						Cursor. For ideas from other apps,{' '}
+						<Link
+							href="/use-cases"
+							className="font-medium text-[#4a38f5] no-underline hover:underline"
+						>
+							see the use cases
+						</Link>
+						.
+					</p>
+					<UseCasePromptBox
+						useCase={{ prompt: starterPrompt(displayName) }}
+						className="mt-5"
+					/>
+				</div>
+			</section>
+		);
+	}
 
 	return (
 		<section id="use-cases" className="scroll-mt-24 pt-8 pb-2 md:pt-10">
