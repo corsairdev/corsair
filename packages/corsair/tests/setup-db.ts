@@ -67,7 +67,7 @@ export function createTestDatabase(): {
 
 	return {
 		db,
-		database: { db },
+		database: { db, isPg: false },
 		cleanup: () => {
 			db.destroy();
 			sqlite.close();
