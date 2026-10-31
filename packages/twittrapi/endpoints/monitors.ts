@@ -1,0 +1,364 @@
+import { logEventFromContext } from 'corsair/core';
+import { makeTwittrApiRequest } from '../client';
+import type { TwittrApiEndpoints } from '../index';
+import type { TwittrApiMonitorWebhook } from '../schema/database';
+import { asArray } from '../utils';
+import type { TwittrApiEndpointOutputs } from './types';
+
+// The webhook secret signs X-TwittrAPI-Signature and must never land in the
+// entity store, where any tenant with entity read access could forge events.
+function stripWebhookSecret(
+	webhook: TwittrApiMonitorWebhook,
+): Omit<TwittrApiMonitorWebhook, 'secret'> {
+	const { secret: _secret, ...rest } = webhook;
+	return rest;
+}
+
+export const getPlan: TwittrApiEndpoints['monitorsGetPlan'] = async (
+	ctx,
+	_input,
+) => {
+	const response = await makeTwittrApiRequest<
+		TwittrApiEndpointOutputs['monitorsGetPlan']
+	>('/monitors', ctx.key, { method: 'GET' });
+
+	await logEventFromContext(ctx, 'twittrapi.monitors.getPlan', {}, 'completed');
+	return response;
+};
+
+export const listAccounts: TwittrApiEndpoints['monitorsListAccounts'] = async (
+	ctx,
+	_input,
+) => {
+	const response = await makeTwittrApiRequest<
+		TwittrApiEndpointOutputs['monitorsListAccounts']
+	>('/monitors/accounts', ctx.key, { method: 'GET' });
+
+	if (response.data && ctx.db.monitoredAccounts) {
+		for (const account of asArray(response.data)) {
+			try {
+				await ctx.db.monitoredAccounts.upsertByEntityId(
+					account.userId,
+					account,
+				);
+			} catch {
+				// best-effort
+			}
+		}
+	}
+
+	await logEventFromContext(
+		ctx,
+		'twittrapi.monitors.listAccounts',
+		{},
+		'completed',
+	);
+	return response;
+};
+
+export const addAccounts: TwittrApiEndpoints['monitorsAddAccounts'] = async (
+	ctx,
+	input,
+) => {
+	const response = await makeTwittrApiRequest<
+		TwittrApiEndpointOutputs['monitorsAddAccounts']
+	>('/monitors/accounts', ctx.key, {
+		method: 'POST',
+		body: { ...input },
+	});
+
+	await logEventFromContext(
+		ctx,
+		'twittrapi.monitors.addAccounts',
+		{ ...input },
+		'completed',
+	);
+	return response;
+};
+
+export const updateAccount: TwittrApiEndpoints['monitorsUpdateAccount'] =
+	async (ctx, input) => {
+		const response = await makeTwittrApiRequest<
+			TwittrApiEndpointOutputs['monitorsUpdateAccount']
+		>(`/monitors/accounts/${encodeURIComponent(input.usernameOrId)}`, ctx.key, {
+			method: 'PATCH',
+			body: { filters: input.filters },
+		});
+
+		if (response.data && ctx.db.monitoredAccounts) {
+			try {
+				await ctx.db.monitoredAccounts.upsertByEntityId(
+					response.data.userId,
+					response.data,
+				);
+			} catch {
+				// best-effort
+			}
+		}
+
+		await logEventFromContext(
+			ctx,
+			'twittrapi.monitors.updateAccount',
+			{ ...input },
+			'completed',
+		);
+		return response;
+	};
+
+export const removeAccount: TwittrApiEndpoints['monitorsRemoveAccount'] =
+	async (ctx, input) => {
+		const response = await makeTwittrApiRequest<
+			TwittrApiEndpointOutputs['monitorsRemoveAccount']
+		>(`/monitors/accounts/${encodeURIComponent(input.usernameOrId)}`, ctx.key, {
+			method: 'DELETE',
+		});
+
+		if (ctx.db.monitoredAccounts) {
+			try {
+				// Entities are keyed by numeric userId, but callers may pass a
+				// username — resolve it first so the local row is actually removed.
+				const matches = await ctx.db.monitoredAccounts.search({
+					data: { username: input.usernameOrId },
+				});
+				for (const match of matches ?? []) {
+					try {
+						await ctx.db.monitoredAccounts.deleteById(match.id);
+					} catch {
+						// best-effort
+					}
+				}
+				await ctx.db.monitoredAccounts.deleteByEntityId(input.usernameOrId);
+			} catch {
+				// best-effort: listAccounts re-syncs on the next read
+			}
+		}
+
+		await logEventFromContext(
+			ctx,
+			'twittrapi.monitors.removeAccount',
+			{ ...input },
+			'completed',
+		);
+		return response;
+	};
+
+export const listWebhooks: TwittrApiEndpoints['monitorsListWebhooks'] = async (
+	ctx,
+	_input,
+) => {
+	const response = await makeTwittrApiRequest<
+		TwittrApiEndpointOutputs['monitorsListWebhooks']
+	>('/monitors/webhooks', ctx.key, { method: 'GET' });
+
+	if (response.webhooks && ctx.db.monitorWebhooks) {
+		for (const webhook of asArray(response.webhooks)) {
+			try {
+				await ctx.db.monitorWebhooks.upsertByEntityId(
+					String(webhook.id),
+					stripWebhookSecret(webhook),
+				);
+			} catch {
+				// best-effort
+			}
+		}
+	}
+
+	await logEventFromContext(
+		ctx,
+		'twittrapi.monitors.listWebhooks',
+		{},
+		'completed',
+	);
+	return response;
+};
+
+export const createWebhook: TwittrApiEndpoints['monitorsCreateWebhook'] =
+	async (ctx, input) => {
+		const response = await makeTwittrApiRequest<
+			TwittrApiEndpointOutputs['monitorsCreateWebhook']
+		>('/monitors/webhooks', ctx.key, {
+			method: 'POST',
+			body: { ...input },
+		});
+
+		if (response.webhook && ctx.db.monitorWebhooks) {
+			try {
+				await ctx.db.monitorWebhooks.upsertByEntityId(
+					String(response.webhook.id),
+					stripWebhookSecret(response.webhook),
+				);
+			} catch {
+				// best-effort
+			}
+		}
+
+		await logEventFromContext(
+			ctx,
+			'twittrapi.monitors.createWebhook',
+			{ url: input.url },
+			'completed',
+		);
+		return response;
+	};
+
+export const getWebhook: TwittrApiEndpoints['monitorsGetWebhook'] = async (
+	ctx,
+	input,
+) => {
+	const response = await makeTwittrApiRequest<
+		TwittrApiEndpointOutputs['monitorsGetWebhook']
+	>(
+		`/monitors/webhooks/${encodeURIComponent(String(input.webhookId))}`,
+		ctx.key,
+		{
+			method: 'GET',
+		},
+	);
+
+	if (response.webhook && ctx.db.monitorWebhooks) {
+		try {
+			await ctx.db.monitorWebhooks.upsertByEntityId(
+				String(response.webhook.id),
+				stripWebhookSecret(response.webhook),
+			);
+		} catch {
+			// best-effort
+		}
+	}
+
+	await logEventFromContext(
+		ctx,
+		'twittrapi.monitors.getWebhook',
+		{ ...input },
+		'completed',
+	);
+	return response;
+};
+
+export const updateWebhook: TwittrApiEndpoints['monitorsUpdateWebhook'] =
+	async (ctx, input) => {
+		const { webhookId, ...body } = input;
+		const response = await makeTwittrApiRequest<
+			TwittrApiEndpointOutputs['monitorsUpdateWebhook']
+		>(`/monitors/webhooks/${encodeURIComponent(String(webhookId))}`, ctx.key, {
+			method: 'PATCH',
+			body: { ...body },
+		});
+
+		if (response.webhook && ctx.db.monitorWebhooks) {
+			try {
+				await ctx.db.monitorWebhooks.upsertByEntityId(
+					String(response.webhook.id),
+					stripWebhookSecret(response.webhook),
+				);
+			} catch {
+				// best-effort
+			}
+		}
+
+		await logEventFromContext(
+			ctx,
+			'twittrapi.monitors.updateWebhook',
+			{ ...input },
+			'completed',
+		);
+		return response;
+	};
+
+export const deleteWebhook: TwittrApiEndpoints['monitorsDeleteWebhook'] =
+	async (ctx, input) => {
+		const response = await makeTwittrApiRequest<
+			TwittrApiEndpointOutputs['monitorsDeleteWebhook']
+		>(
+			`/monitors/webhooks/${encodeURIComponent(String(input.webhookId))}`,
+			ctx.key,
+			{
+				method: 'DELETE',
+			},
+		);
+
+		if (ctx.db.monitorWebhooks) {
+			try {
+				await ctx.db.monitorWebhooks.deleteByEntityId(String(input.webhookId));
+			} catch {
+				// best-effort: listWebhooks re-syncs on the next read
+			}
+		}
+
+		await logEventFromContext(
+			ctx,
+			'twittrapi.monitors.deleteWebhook',
+			{ ...input },
+			'completed',
+		);
+		return response;
+	};
+
+export const testWebhook: TwittrApiEndpoints['monitorsTestWebhook'] = async (
+	ctx,
+	input,
+) => {
+	const response = await makeTwittrApiRequest<
+		TwittrApiEndpointOutputs['monitorsTestWebhook']
+	>(
+		`/monitors/webhooks/${encodeURIComponent(String(input.webhookId))}/test`,
+		ctx.key,
+		{ method: 'POST', body: {} },
+	);
+
+	await logEventFromContext(
+		ctx,
+		'twittrapi.monitors.testWebhook',
+		{ ...input },
+		'completed',
+	);
+	return response;
+};
+
+export const getEvents: TwittrApiEndpoints['monitorsGetEvents'] = async (
+	ctx,
+	input,
+) => {
+	const response = await makeTwittrApiRequest<
+		TwittrApiEndpointOutputs['monitorsGetEvents']
+	>('/monitors/events', ctx.key, {
+		method: 'GET',
+		query: { since: input.since, limit: input.limit },
+	});
+
+	if (response.data && ctx.db.monitorEvents) {
+		for (const event of asArray(response.data)) {
+			try {
+				await ctx.db.monitorEvents.upsertByEntityId(event.id, event);
+			} catch {
+				// best-effort
+			}
+		}
+	}
+
+	await logEventFromContext(
+		ctx,
+		'twittrapi.monitors.getEvents',
+		{ ...input },
+		'completed',
+	);
+	return response;
+};
+
+export const getDeliveries: TwittrApiEndpoints['monitorsGetDeliveries'] =
+	async (ctx, input) => {
+		const response = await makeTwittrApiRequest<
+			TwittrApiEndpointOutputs['monitorsGetDeliveries']
+		>('/monitors/deliveries', ctx.key, {
+			method: 'GET',
+			query: { limit: input.limit },
+		});
+
+		await logEventFromContext(
+			ctx,
+			'twittrapi.monitors.getDeliveries',
+			{ ...input },
+			'completed',
+		);
+		return response;
+	};
