@@ -94,6 +94,10 @@ describe('triggerLabel', () => {
 			'Deployment status created',
 		);
 		assert.equal(triggerLabel('Users', 'Team Join'), 'User team join');
+		assert.equal(triggerLabel('Branches', 'Created'), 'Branch created');
+		assert.equal(triggerLabel('Addresses', 'Updated'), 'Address updated');
+		assert.equal(triggerLabel('Inboxes', 'Created'), 'Inbox created');
+		assert.equal(triggerLabel('Address', 'Updated'), 'Address updated');
 	});
 
 	it('does not repeat a resource the name already has', () => {

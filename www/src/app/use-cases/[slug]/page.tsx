@@ -123,6 +123,16 @@ export default async function UseCaseRoute({ params }: PageProps) {
 	const actions = await catalogActions(useCase);
 	const related = relatedUseCases(useCase);
 	const appNames = useCase.apps.map(useCaseAppName);
+	// ChatGPT personal plans only get a custom server's read tools, so say so
+	// when the prompt writes or sets up a routine (update_routine is a write).
+	// A tool missing from the catalog counts as a write, as the runtime does.
+	const needsWrites =
+		Boolean(useCase.runs) ||
+		useCase.operations.some(
+			(operation) =>
+				(actions.get(`${operation.app}:${operation.id}`)?.riskLevel ??
+					'write') !== 'read',
+		);
 
 	return (
 		<main className="pb-16">
@@ -225,6 +235,15 @@ export default async function UseCaseRoute({ params }: PageProps) {
 									Steps for each client
 								</Link>
 							</p>
+							{needsWrites ? (
+								<p className="mt-2 text-sm">
+									ChatGPT personal plans get read tools only, and this prompt{' '}
+									{useCase.runs
+										? 'sets up a routine'
+										: 'changes things in your apps'}
+									. On those plans, use Claude, Cursor or Claude Code instead.
+								</p>
+							) : null}
 						</Step>
 						<Step number={3} title="Paste the prompt">
 							<p>

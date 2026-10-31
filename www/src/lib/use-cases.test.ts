@@ -146,6 +146,8 @@ describe('buildUseCaseJsonLd', () => {
 			name: 'X',
 			faqs: [{ id: 'a', question: 'Use `q`?', answer: 'Run `a`.' }],
 		});
+		// The builder types the graph loosely (see use-case-seo.ts); the test
+		// reads the two nodes it expects.
 		const graph = ld['@graph'] as Record<string, unknown>[];
 		assert.equal(graph[0]['@type'], 'BreadcrumbList');
 		const faq = graph[1] as {

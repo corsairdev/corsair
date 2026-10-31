@@ -16,9 +16,14 @@ export type LugHandleAnswer =
 
 const REASONS = new Set(['taken', 'reserved', 'blocked', 'format']);
 
-/** Keeps only the fields the page shows, so nothing else from upstream leaks through. */
+/**
+ * Keeps only the fields the page shows, so nothing else from upstream leaks
+ * through. `body` is another service's JSON (or null if it wasn't JSON), so it
+ * is `unknown` until each field is checked here.
+ */
 export function readLugHandleAnswer(body: unknown): LugHandleAnswer | null {
 	if (!body || typeof body !== 'object') return null;
+	// An object of unchecked fields; each one is tested below before use.
 	const { available, reason, suggestion } = body as Record<string, unknown>;
 	if (available === true) return { available: true };
 	if (available !== false || typeof reason !== 'string') return null;

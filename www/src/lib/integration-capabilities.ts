@@ -65,10 +65,11 @@ export function orderCapabilityGroups(
 		}));
 }
 
-// "Messages" -> "Message", "Activities" -> "Activity"; leaves "Status",
-// "Address" and "Analysis" alone.
+// "Messages" -> "Message", "Activities" -> "Activity", "Branches" -> "Branch",
+// "Addresses" -> "Address"; leaves "Status", "Address" and "Analysis" alone.
 function singular(word: string): string {
 	if (/ies$/i.test(word)) return `${word.slice(0, -3)}y`;
+	if (/(ch|sh|x|ss)es$/i.test(word)) return word.slice(0, -2);
 	if (/(ss|us|is)$/i.test(word) || !/s$/i.test(word)) return word;
 	return word.slice(0, -1);
 }

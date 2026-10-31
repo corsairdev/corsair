@@ -19,7 +19,11 @@ const ROTATE_MS = 7000;
 export function AgentRolesSection() {
 	const [active, setActive] = useState(0);
 	const [pinned, setPinned] = useState(false);
-	const [paused, setPaused] = useState(false);
+	// Hover and keyboard focus pause it separately, so moving the mouse away
+	// never rotates a panel out from under a keyboard user.
+	const [hovered, setHovered] = useState(false);
+	const [focused, setFocused] = useState(false);
+	const paused = hovered || focused;
 	const reduceMotion = useRef(false);
 
 	useEffect(() => {
@@ -44,10 +48,15 @@ export function AgentRolesSection() {
 			id="roles"
 			aria-labelledby="roles-heading"
 			className="relative w-full scroll-mt-16 py-14 sm:py-20"
-			onMouseEnter={() => setPaused(true)}
-			onMouseLeave={() => setPaused(false)}
-			onFocusCapture={() => setPaused(true)}
-			onBlurCapture={() => setPaused(false)}
+			onMouseEnter={() => setHovered(true)}
+			onMouseLeave={() => setHovered(false)}
+			onFocusCapture={() => setFocused(true)}
+			onBlurCapture={(event) => {
+				// Moving focus between two things inside the section keeps it paused.
+				if (!event.currentTarget.contains(event.relatedTarget)) {
+					setFocused(false);
+				}
+			}}
 		>
 			<div className="mx-auto max-w-[1100px] px-4 sm:px-6 md:px-10">
 				<div className="text-center">

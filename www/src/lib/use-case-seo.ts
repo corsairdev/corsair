@@ -13,6 +13,9 @@ export function useCaseUrl(slug: string) {
 export function buildUseCaseJsonLd(
 	useCase: Pick<UseCase, 'slug' | 'name' | 'faqs'>,
 ) {
+	// Each schema.org node has its own fields per @type; unknown keeps the
+	// graph a plain JSON array without one type per node kind (as in
+	// integration-seo.ts).
 	const graph: Record<string, unknown>[] = [
 		{
 			'@type': 'BreadcrumbList',

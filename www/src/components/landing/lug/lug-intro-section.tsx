@@ -41,8 +41,8 @@ export function LugIntroSection() {
 	const [value, setValue] = useState('');
 	const [submitted, setSubmitted] = useState(false);
 	const [check, setCheck] = useState<Check | null>(null);
-	// Claim pressed before the check for this name finished.
-	const [pending, setPending] = useState(false);
+	// The name Claim was pressed for, while its check is still running.
+	const [pendingHandle, setPendingHandle] = useState<string | null>(null);
 	const handle = value.trim().toLowerCase();
 	const problem = problemText(handle);
 	const showProblem = Boolean(problem) && (submitted || handle.length > 2);
@@ -88,21 +88,27 @@ export function LugIntroSection() {
 		};
 	}, [handle]);
 
-	// Hand off once the check for this name answers. If the check itself
-	// fails, Hub still checks on /me before anything is claimed.
+	// Hand off once the check for the submitted name answers. Editing the name
+	// cancels the claim, so nobody is sent to sign up for a name they didn't
+	// submit. If the check itself fails, Hub still checks on /me.
 	useEffect(() => {
-		if (!pending || !current || current.state === 'checking') return;
-		setPending(false);
-		if (current.state === 'free' || current.state === 'error') {
-			window.location.assign(hubLugClaimUrl(current.handle));
+		if (!pendingHandle) return;
+		if (pendingHandle !== handle) {
+			setPendingHandle(null);
+			return;
 		}
-	}, [pending, current]);
+		if (!current || current.state === 'checking') return;
+		setPendingHandle(null);
+		if (current.state === 'free' || current.state === 'error') {
+			window.location.assign(hubLugClaimUrl(pendingHandle));
+		}
+	}, [pendingHandle, handle, current]);
 
 	const onSubmit = (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 		setSubmitted(true);
 		if (!handle || problem || unavailable) return;
-		setPending(true);
+		setPendingHandle(handle);
 	};
 
 	const hint = showProblem
@@ -235,7 +241,7 @@ export function LugIntroSection() {
 								type="submit"
 								className="inline-flex items-center gap-2 rounded-lg bg-[#4a38f5] px-5 py-3 text-[15px] font-medium text-white transition-colors hover:bg-[#3d2ee0] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#4a38f5]"
 							>
-								{pending ? 'Checking…' : 'Claim it'}
+								{pendingHandle === handle ? 'Checking…' : 'Claim it'}
 								<ArrowRight size={16} weight="bold" aria-hidden />
 							</button>
 							<a
