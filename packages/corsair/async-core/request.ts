@@ -278,6 +278,41 @@ const getResponseBody = async (response: Response): Promise<any> => {
 	return undefined;
 };
 
+const STATUS_WORDS: Record<number, string> = {
+	400: 'Bad Request',
+	401: 'Unauthorized',
+	403: 'Forbidden',
+	404: 'Not Found',
+	429: 'Too Many Requests',
+	500: 'Internal Server Error',
+	502: 'Bad Gateway',
+	503: 'Service Unavailable',
+};
+
+/**
+ * The provider's own sentence, which names the cause a status word never can:
+ * a 403 from Google says the API is disabled on the project, and 'Forbidden'
+ * sends the reader looking for a permission that was never the problem.
+ * Google, GCP and Microsoft Graph nest it one level under `error`.
+ */
+const providerMessage = (body: unknown): string | undefined => {
+	if (typeof body === 'string') return body.trim() || undefined;
+	if (!body || typeof body !== 'object') return undefined;
+	const fields = body as Record<string, unknown>;
+	for (const value of [
+		fields.message,
+		fields.error_description,
+		fields.error,
+		fields.detail,
+	]) {
+		if (typeof value === 'string' && value.trim()) return value.trim();
+	}
+	if (fields.error && typeof fields.error === 'object') {
+		return providerMessage(fields.error);
+	}
+	return undefined;
+};
+
 const catchErrorCodes = (
 	options: ApiRequestOptions,
 	result: ApiResult,
@@ -288,42 +323,28 @@ const catchErrorCodes = (
 		rateLimitLimit?: number;
 	},
 ): void => {
-	const errors: Record<number, string> = {
-		400: 'Bad Request',
-		401: 'Unauthorized',
-		403: 'Forbidden',
-		404: 'Not Found',
-		429: 'Too Many Requests',
-		500: 'Internal Server Error',
-		502: 'Bad Gateway',
-		503: 'Service Unavailable',
-		...options.errors,
-	};
-
-	const error = errors[result.status];
-	if (error) {
-		throw new ApiError(options, result, error, rateLimitInfo);
+	// A plugin that spells out a message for a status meant that message.
+	const override = options.errors?.[result.status];
+	if (override) {
+		throw new ApiError(options, result, override, rateLimitInfo);
 	}
 
-	if (!result.ok) {
-		const errorStatus = result.status ?? 'unknown';
-		const errorStatusText = result.statusText ?? 'unknown';
-		const errorBody = (() => {
-			try {
-				return JSON.stringify(result.body, null, 2);
-			} catch (e) {
-				return undefined;
-			}
-		})();
+	if (result.ok) return;
 
-		const errorMessage =
-			result.body?.message ||
-			result.body?.error ||
-			result.body?.detail ||
-			`Generic Error: status: ${errorStatus}; status text: ${errorStatusText}; body: ${errorBody}`;
+	const errorBody = (() => {
+		try {
+			return JSON.stringify(result.body, null, 2);
+		} catch {
+			return undefined;
+		}
+	})();
 
-		throw new ApiError(options, result, errorMessage, rateLimitInfo);
-	}
+	const errorMessage =
+		providerMessage(result.body) ??
+		STATUS_WORDS[result.status] ??
+		`Generic Error: status: ${result.status ?? 'unknown'}; status text: ${result.statusText ?? 'unknown'}; body: ${errorBody}`;
+
+	throw new ApiError(options, result, errorMessage, rateLimitInfo);
 };
 
 export interface RequestOptions {
