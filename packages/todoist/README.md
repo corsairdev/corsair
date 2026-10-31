@@ -44,7 +44,7 @@ pnpm add @corsair-dev/todoist
 | `tasks.delete` | `todoist.api.tasks.delete` | `destructive` | Delete a Todoist task |
 | `tasks.get` | `todoist.api.tasks.get` | `read` | Get a Todoist task by ID |
 | `tasks.getMany` | `todoist.api.tasks.getMany` | `read` | List Todoist tasks with filters |
-| `tasks.move` | `todoist.api.tasks.move` | `write` | Move a Todoist task between project or section |
+| `tasks.move` | `todoist.api.tasks.move` | `write` | Move a Todoist task to one project, section, or parent |
 | `tasks.quickAdd` | `todoist.api.tasks.quickAdd` | `write` | Quick add a Todoist task using natural language |
 | `tasks.reopen` | `todoist.api.tasks.reopen` | `write` | Reopen a completed Todoist task |
 | `tasks.update` | `todoist.api.tasks.update` | `write` | Update a Todoist task |
