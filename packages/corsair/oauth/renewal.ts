@@ -1,5 +1,6 @@
 import type { CorsairInternalConfig, CorsairKeyBuilderBase } from '../core';
 import { createAccountKeyManager } from '../core';
+import { bindFlightStore } from '../core/auth/single-flight';
 import { getCorsairInternal } from '../core/utils/corsair-instance';
 import { getPluginAuthType } from '../core/utils/plugin-auth';
 import { subscribeAndReport } from './subscribe-report';
@@ -53,8 +54,23 @@ export async function renewAccounts(input: {
 				const primingKeys = Object.create(keys, {
 					get_expires_at: { value: async () => '0' },
 				});
+				// Object.create makes a new wrapper, so it has no flight binding of
+				// its own. Point it at the same store: a managed refresh racing a
+				// tenant request must join that request's flight.
+				if (internal.database) {
+					bindFlightStore(primingKeys, internal.database);
+				}
 				await keyBuilder(
-					{ authType, keys: primingKeys, hub: internal.hub },
+					{
+						authType,
+						keys: primingKeys,
+						hub: internal.hub,
+						tenantId: row.tenantId,
+						// The key manager is a per-manager wrapper here, so carry the
+						// instance database explicitly: a refresh racing a tenant request
+						// must join that request's flight, not start a second one.
+						database: internal.database,
+					},
 					'endpoint',
 				);
 			}
