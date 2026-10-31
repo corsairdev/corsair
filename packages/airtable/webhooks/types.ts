@@ -101,16 +101,23 @@ export type AirtableWebhookPayloadsResponse = z.infer<
 
 // The webhook body is unknown because it comes directly from the HTTP request payload
 function parseBody(body: unknown): unknown {
-	return typeof body === 'string' ? JSON.parse(body) : body;
+	if (typeof body !== 'string') return body;
+
+	try {
+		return JSON.parse(body);
+	} catch {
+		return null;
+	}
 }
 
 export function createAirtableMatch(): CorsairWebhookMatcher {
 	return (request: RawWebhookRequest) => {
 		// Parsed webhook body uses unknown for values because Airtable payloads are dynamic
-		const parsedBody = parseBody(request.body) as Record<string, unknown>;
+		const parsedBody = parseBody(request.body);
 		return (
 			typeof parsedBody === 'object' &&
 			parsedBody !== null &&
+			!Array.isArray(parsedBody) &&
 			'base' in parsedBody &&
 			'webhook' in parsedBody
 		);
