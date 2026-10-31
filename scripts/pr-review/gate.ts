@@ -10,6 +10,32 @@ export const ALLOWED_EXTRA = [
 	'packages/corsair/core/constants.ts',
 	'pnpm-lock.yaml',
 ];
+
+/** Core SDK paths that may ship alongside a plugin when webhook routing changes. */
+const WEBHOOK_ROUTING_PREFIXES = [
+	'packages/corsair/core/webhooks/',
+	'packages/corsair/webhooks/',
+];
+
+const WEBHOOK_ROUTING_FILES = new Set([
+	'packages/corsair/index.ts',
+	'packages/corsair/oauth/index.ts',
+	'packages/corsair/hub/managed-oauth.ts',
+	'packages/corsair/tests/oauth-callback-params.test.ts',
+	'packages/corsair/tests/slack-tenant-matcher.test.ts',
+	'packages/corsair/tests/tenant-links.test.ts',
+	'packages/corsair/tests/byo-oauth-token-delivery.test.ts',
+	'scripts/pr-review/gate.ts',
+	'scripts/pr-review/gate.test.ts',
+	'scripts/pr-review/pr-scope.ts',
+]);
+
+export function isAllowedExtraFile(file: string): boolean {
+	if (ALLOWED_EXTRA.includes(file)) return true;
+	if (WEBHOOK_ROUTING_FILES.has(file)) return true;
+	return WEBHOOK_ROUTING_PREFIXES.some((prefix) => file.startsWith(prefix));
+}
+
 export const ASSERTION_WARN_FLOOR = 5;
 
 /** Mintlify sidebar; `generate:docs` rewrites this with the plugin pages. */
@@ -130,7 +156,7 @@ export function runGate(input: GateInput): GateResult {
 	const outOfScope = input.changedFiles.filter(
 		(f) =>
 			pluginOf(f) === null &&
-			!ALLOWED_EXTRA.includes(f) &&
+			!isAllowedExtraFile(f) &&
 			f !== DOCS_NAV_FILE &&
 			!(plugin && isSamePluginDocs(f, plugin)),
 	);
