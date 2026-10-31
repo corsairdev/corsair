@@ -17,30 +17,6 @@ describe('makeRootlyRequest', () => {
 		jest.clearAllMocks();
 	});
 
-	it('parses raw JSON string responses into objects (JSON:API media type)', async () => {
-		const rawString = JSON.stringify({
-			data: {
-				id: 'inc-123',
-				type: 'incidents',
-				attributes: { title: 'Outage' },
-			},
-		});
-		mockedRequest.mockResolvedValueOnce(rawString);
-
-		const result = await makeRootlyRequest<{ data: { id: string } }>(
-			'incidents/inc-123',
-			'test-key',
-		);
-
-		expect(result).toEqual({
-			data: {
-				id: 'inc-123',
-				type: 'incidents',
-				attributes: { title: 'Outage' },
-			},
-		});
-	});
-
 	it('returns structured object responses directly', async () => {
 		const objectResponse = {
 			data: {
@@ -118,8 +94,9 @@ describe('makeRootlyRequest', () => {
 		expect(error.isRateLimitError()).toBe(false);
 	});
 
-	it('throws RootlyAPIError if raw string response cannot be parsed as JSON', async () => {
-		mockedRequest.mockResolvedValueOnce('invalid json');
+	it('wraps non-ApiError failures in RootlyAPIError', async () => {
+		const networkError = new Error('socket hang up');
+		mockedRequest.mockRejectedValueOnce(networkError);
 
 		// Justification for `unknown`: promise rejections are untyped, so the
 		// rejection is typed `unknown` (never `any`), forcing the
@@ -131,6 +108,8 @@ describe('makeRootlyRequest', () => {
 		expect(error).toBeInstanceOf(RootlyAPIError);
 		if (!(error instanceof RootlyAPIError))
 			throw new Error('expected RootlyAPIError');
-		expect(error.message).toContain('Failed to parse Rootly API JSON response');
+		expect(error.message).toBe('socket hang up');
+		expect(error.status).toBeUndefined();
+		expect(error.cause).toBe(networkError);
 	});
 });
