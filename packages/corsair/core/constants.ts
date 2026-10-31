@@ -420,6 +420,7 @@ export const BaseProviders = [
 	'zenserp',
 	'zohobigin',
 	'zohoinventory',
+	'zohoinvoice',
 	'zohomail',
 	'zoom',
 	'zoominfo',
@@ -832,6 +833,7 @@ export const ProviderDisplayNames = {
 	zenserp: 'Zenserp',
 	zohobigin: 'Zoho Bigin',
 	zohoinventory: 'Zoho Inventory',
+	zohoinvoice: 'Zoho Invoice',
 	zohomail: 'Zoho Mail',
 	zoom: 'Zoom',
 	zoominfo: 'ZoomInfo',
@@ -1251,6 +1253,7 @@ export type AllProviders =
 	| 'zenserp'
 	| 'zohobigin'
 	| 'zohoinventory'
+	| 'zohoinvoice'
 	| 'zohomail'
 	| 'zoom'
 	| 'zoominfo'
