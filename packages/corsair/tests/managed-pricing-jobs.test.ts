@@ -101,6 +101,7 @@ function mockHub({
 	stallKinds = false,
 	credentialsJob,
 	usagePath,
+	failedWhen,
 	failStarts = 0,
 	failStartsWith = 503,
 }: {
@@ -109,6 +110,8 @@ function mockHub({
 	// unknown: the job descriptor Hub's answer carries, as JSON.
 	credentialsJob?: Record<string, unknown>;
 	usagePath?: string;
+	// unknown: the failed_when Hub's answer carries, as JSON.
+	failedWhen?: Record<string, unknown>;
 	failStarts?: number;
 	failStartsWith?: number;
 } = {}) {
@@ -142,6 +145,7 @@ function mockHub({
 				expires_in: 300,
 				...(credentialsJob ? { job: credentialsJob } : {}),
 				...(usagePath ? { usage_path: usagePath } : {}),
+				...(failedWhen ? { failed_when: failedWhen } : {}),
 			});
 		}
 		if (url.endsWith('/managed-pricing/jobs') && startsFailed < failStarts) {
@@ -162,6 +166,33 @@ function mockHub({
 
 afterEach(() => {
 	jest.restoreAllMocks();
+});
+
+describe('a job start whose answer says it failed', () => {
+	const FIRECRAWL = { path: 'success', equals: false };
+
+	it('keeps its hold when the answer still carries a job id: the job is running', async () => {
+		const hubCalls = mockHub({ failedWhen: FIRECRAWL });
+		const api = bind({
+			'crawl.start': async () => ({ success: false, id: 'crawl-abc' }),
+		});
+		await api.crawl.start({ url: 'https://example.com', limit: 50 });
+		expect(hubCalls.starts()).toHaveLength(1);
+		expect(hubCalls.outcomes()).toHaveLength(0);
+	});
+
+	it('is given back when it started nothing', async () => {
+		const hubCalls = mockHub({ failedWhen: FIRECRAWL });
+		const api = bind({
+			'crawl.start': async () => ({ success: false, error: 'Invalid URL' }),
+		});
+		await api.crawl.start({ url: 'https://example.com', limit: 50 });
+		expect(hubCalls.starts()).toHaveLength(0);
+		expect(hubCalls.outcomes()[0]?.body).toMatchObject({
+			operation: 'crawl.start',
+			outcome: 'failed',
+		});
+	});
 });
 
 describe('a job started on Corsair key', () => {
