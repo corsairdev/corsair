@@ -67,7 +67,7 @@ describe('Tests for verifyBoxWebhookSignature', () => {
 
 		const wrongSignature = crypto
 			.createHmac('sha256', 'wrong-secret')
-			.update(timestamp + rawBody)
+			.update(rawBody + timestamp)
 			.digest('base64');
 
 		const result = verifyBoxWebhookSignature(
@@ -89,7 +89,7 @@ describe('Tests for verifyBoxWebhookSignature', () => {
 		const rawBody = JSON.stringify(payload);
 		const signature = crypto
 			.createHmac('sha256', secret)
-			.update(timestamp + rawBody)
+			.update(rawBody + timestamp)
 			.digest('base64');
 
 		const result = verifyBoxWebhookSignature(
@@ -103,6 +103,28 @@ describe('Tests for verifyBoxWebhookSignature', () => {
 		expect(result).toEqual({
 			valid: true,
 			error: undefined,
+		});
+	});
+
+	it('should return invalid when the timestamp is signed before the body', () => {
+		const timestamp = new Date().toISOString();
+		const rawBody = JSON.stringify(payload);
+		const signature = crypto
+			.createHmac('sha256', secret)
+			.update(timestamp + rawBody)
+			.digest('base64');
+
+		const result = verifyBoxWebhookSignature(
+			requestWith({
+				'box-signature-primary': signature,
+				'box-delivery-timestamp': timestamp,
+			}),
+			secret,
+		);
+
+		expect(result).toEqual({
+			valid: false,
+			error: 'Invalid signature',
 		});
 	});
 });

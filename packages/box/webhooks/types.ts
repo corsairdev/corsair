@@ -316,9 +316,10 @@ export function verifyBoxWebhookSignature(
 			error: 'Webhook timestamp is too old or too far in the future',
 		};
 	}
-	// Box signature: HMAC-SHA256( delivery_timestamp + raw_body, key ) encoded as base64
+	// Box signature: HMAC-SHA256( raw_body + delivery_timestamp, key ) encoded as base64
+	// https://developer.box.com/guides/webhooks/v2/signatures-v2/
 	const body = request.rawBody ?? JSON.stringify(request.payload);
-	const data = timestamp + body;
+	const data = body + timestamp;
 
 	const expectedSignature = crypto
 		.createHmac('sha256', secret)
