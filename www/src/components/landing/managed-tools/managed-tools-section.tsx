@@ -31,7 +31,7 @@ export function ManagedToolsSection() {
 						For tools like Firecrawl, Exa, Apollo and Reducto, Corsair holds the
 						API key. Add one to your link and it&apos;s ready: no sign-up with
 						the provider, no key to paste, no monthly plan. Each call costs
-						Corsair credits, and a call that fails gets them back.
+						Corsair credits, and a call that errors gets them back.
 					</p>
 					<ul className="mt-6 grid max-w-xl grid-cols-1 gap-2 text-[14px] text-[#1c1c1c] sm:grid-cols-3">
 						<li className="rounded-md border border-[#1c1c1c]/10 bg-white px-3 py-2.5">
