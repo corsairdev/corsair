@@ -41,6 +41,53 @@ describe('bonsai plugin registration', () => {
 		).rejects.toBeInstanceOf(AuthMissingError);
 	});
 
+	it('takes key:secret from the key field when no secret is stored', async () => {
+		const token = await keyBuilderOf(bonsai())(
+			{
+				authType: 'api_key',
+				keys: {
+					get_api_key: async () => 'k:s',
+					get_api_secret: async () => null,
+				},
+			},
+			'endpoint',
+		);
+		expect(JSON.parse(token)).toEqual({ apiKey: 'k', apiSecret: 's' });
+	});
+
+	it('keeps a stored secret over a colon in the key', async () => {
+		const token = await keyBuilderOf(bonsai())(
+			{
+				authType: 'api_key',
+				keys: {
+					get_api_key: async () => 'k:x',
+					get_api_secret: async () => 's',
+				},
+			},
+			'endpoint',
+		);
+		expect(JSON.parse(token)).toEqual({ apiKey: 'k:x', apiSecret: 's' });
+	});
+
+	it.each([
+		['a key with no secret', 'k'],
+		['an empty key half', ':s'],
+		['an empty secret half', 'k:'],
+	])('throws AuthMissingError for %s', async (_name, apiKey) => {
+		await expect(
+			keyBuilderOf(bonsai())(
+				{
+					authType: 'api_key',
+					keys: {
+						get_api_key: async () => apiKey,
+						get_api_secret: async () => null,
+					},
+				},
+				'endpoint',
+			),
+		).rejects.toBeInstanceOf(AuthMissingError);
+	});
+
 	it('keeps DEFAULT last when custom handlers are merged', () => {
 		const plugin = bonsai({
 			errorHandlers: {
