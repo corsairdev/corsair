@@ -90,6 +90,7 @@ export function parseManagedPricingCredentialsResponse(
 		};
 	}
 
+	// unknown: Hub's JSON, typed only once each field below is checked.
 	const failedWhen = body.failed_when as Record<string, unknown> | undefined;
 	if (
 		failedWhen &&

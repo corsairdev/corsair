@@ -152,6 +152,7 @@ describe('a call whose answer says it failed', () => {
 			const body = result as { success: boolean };
 			body.success = !body.success;
 		};
+		// unknown: an after hook gets the endpoint's context and result as they are.
 		const hooks = {
 			parse: {
 				parse: { after: async (_ctx: unknown, res: unknown) => flip(res) },
@@ -172,6 +173,7 @@ describe('a call whose answer says it failed', () => {
 		const api = bind(async () => ({ success: true, creditsUsed: 3 }), {
 			parse: {
 				parse: {
+					// unknown: an after hook gets the endpoint's context and result as they are.
 					after: async (_ctx: unknown, res: unknown) => {
 						(res as { creditsUsed: number }).creditsUsed = 0;
 					},
