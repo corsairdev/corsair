@@ -17,6 +17,12 @@ export type HubManagedPricingCredentialsResponse = {
 	 * once the call succeeds.
 	 */
 	usage_path?: string;
+	/**
+	 * Set when the operation starts a provider job on Corsair's key: where its
+	 * result has the job id, so the SDK can record the job even when it could
+	 * not read Hub's job table.
+	 */
+	job?: { role: 'start'; id_path: string; status_operation?: string };
 };
 
 const USAGE_PATH = /^[A-Za-z_][A-Za-z0-9_]*(\.[A-Za-z_][A-Za-z0-9_]*)*$/;
@@ -56,6 +62,21 @@ export function parseManagedPricingCredentialsResponse(
 
 	if (typeof body.usage_path === 'string' && USAGE_PATH.test(body.usage_path)) {
 		result.usage_path = body.usage_path;
+	}
+
+	const job = body.job as Record<string, unknown> | undefined;
+	if (
+		job?.role === 'start' &&
+		typeof job.id_path === 'string' &&
+		USAGE_PATH.test(job.id_path)
+	) {
+		result.job = {
+			role: 'start',
+			id_path: job.id_path,
+			...(typeof job.status_operation === 'string'
+				? { status_operation: job.status_operation }
+				: {}),
+		};
 	}
 
 	return result;

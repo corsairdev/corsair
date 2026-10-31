@@ -32,6 +32,10 @@ export type GetManagedPricingApiKeyOptions = {
 	 * through without a charge.
 	 */
 	idempotencyKey?: string;
+	/** A job start's bound, which Hub holds credits for (managed-pricing-jobs.ts). */
+	cap?: number;
+	/** The provider's job id a job read asks about. */
+	jobId?: string;
 };
 
 /** Context from keyBuilder when the runtime is executing a metered endpoint. */
@@ -47,6 +51,8 @@ export type ManagedPricingApiKeyResult = {
 	fromCache: boolean;
 	/** Where the result says how much the call used, for a per-unit price. */
 	usagePath?: string;
+	/** Set when the call starts a provider job on Corsair's key. */
+	startedJobIdPath?: string;
 };
 
 type CachedManagedPricingCredential = {
@@ -173,6 +179,8 @@ export async function getManagedPricingApiKey(
 				tenantId: ctx.tenantId,
 				operation,
 				...(idempotencyKey ? { idempotencyKey } : {}),
+				...(options.cap !== undefined ? { cap: options.cap } : {}),
+				...(options.jobId ? { jobId: options.jobId } : {}),
 			},
 			extraHeaders: {
 				...runtimeProofHeaders(ctx.hub, {
@@ -206,6 +214,7 @@ export async function getManagedPricingApiKey(
 			expiresAt,
 			fromCache: false,
 			...(response.usage_path ? { usagePath: response.usage_path } : {}),
+			...(response.job ? { startedJobIdPath: response.job.id_path } : {}),
 		};
 	});
 }
@@ -234,8 +243,19 @@ export type ManagedPricingCall = {
  */
 export async function resolveManagedPricingCall(
 	ctx: ManagedPricingKeyBuilderContext,
-	input: { plugin: string; cache: object; operation?: string },
-): Promise<{ apiKey: string; call: ManagedPricingCall; usagePath?: string }> {
+	input: {
+		plugin: string;
+		cache: object;
+		operation?: string;
+		cap?: number;
+		jobId?: string;
+	},
+): Promise<{
+	apiKey: string;
+	call: ManagedPricingCall;
+	usagePath?: string;
+	startedJobIdPath?: string;
+}> {
 	requireHubForManagedPricing(input.plugin, ctx.hub);
 	const tenantId = ctx.tenantId?.trim();
 	if (!tenantId) {
@@ -265,12 +285,15 @@ export async function resolveManagedPricingCall(
 				tenantId,
 				cache: input.cache,
 			},
-			{ operation, idempotencyKey },
+			{ operation, idempotencyKey, cap: input.cap, jobId: input.jobId },
 		);
 		return {
 			apiKey: result.apiKey,
 			call,
 			...(result.usagePath ? { usagePath: result.usagePath } : {}),
+			...(result.startedJobIdPath
+				? { startedJobIdPath: result.startedJobIdPath }
+				: {}),
 		};
 	} catch (error) {
 		// Hub may have charged a key request whose answer never arrived (it

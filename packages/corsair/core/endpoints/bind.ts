@@ -8,6 +8,13 @@ import {
 	reportManagedPricingCallUsage,
 	resolveManagedPricingCall,
 } from '../../hub/managed-pricing-auth';
+import type { ManagedJobKind } from '../../hub/managed-pricing-jobs';
+import {
+	getManagedJobKinds,
+	managedJobKindFor,
+	managedJobRequestFields,
+	reportManagedJobCall,
+} from '../../hub/managed-pricing-jobs';
 import { reportPluginConnectionStatusFromBinding } from '../../hub/report-connection-status';
 import { throwAuthMissingEndpointError } from '../auth/auth-missing-message';
 import { AuthMissingError } from '../auth/errors/auth-missing';
@@ -314,15 +321,48 @@ export function bindEndpointsRecursively({
 				// Set when Hub prices the call per unit: where the result says how
 				// many units it used.
 				let usagePath: string | undefined;
+				// Set when the call starts a provider job or reads one back on
+				// Corsair's key (managed-pricing-jobs.ts).
+				let managedJob: ManagedJobKind | undefined;
+				// What the key request carried, kept rather than re-read: a before
+				// hook may change `args` in place.
+				let sentJobFields: { cap?: number; jobId?: string } = {};
+				// Set once a started job is reported: it is running at the provider,
+				// so a later local failure must not give its hold back.
+				let startedJob = false;
 				// unknown: whatever the call, a hook or the permission record threw.
 				const reportIfCharged = async (error: unknown) => {
-					if (meteredCall && hubConfig) {
+					// A job read or a call scoped to a job is never charged, so it has
+					// nothing to give back.
+					if (
+						meteredCall &&
+						hubConfig &&
+						managedJob?.role !== 'status' &&
+						managedJob?.role !== 'scoped' &&
+						!startedJob
+					) {
 						await reportManagedPricingCallFailed(hubConfig, meteredCall, error);
 					}
 				};
+				// Right after the provider answers, before any hook or approval
+				// record that could still throw: the job exists either way.
+				// unknown: the arguments the provider got and what it returned.
+				const reportJob = async (callArgs: unknown, result: unknown) => {
+					if (!managedJob || !hubConfig || !meteredCall) return;
+					const reported = await reportManagedJobCall(
+						hubConfig,
+						managedJob,
+						meteredCall,
+						callArgs,
+						result,
+					);
+					startedJob = reported.startedJob;
+				};
 				// unknown: each plugin's result has its own shape; only the path is known.
+				// A job call reports nothing here: its usage is settled once, when a
+				// read sees the job end (reportJob).
 				const reportUsage = async (result: unknown) => {
-					if (!meteredCall || !hubConfig || !usagePath) return;
+					if (!meteredCall || !hubConfig || !usagePath || managedJob) return;
 					const units = readUsageUnits(result, usagePath);
 					if (units !== undefined) {
 						await reportManagedPricingCallUsage(hubConfig, meteredCall, units);
@@ -334,6 +374,13 @@ export function bindEndpointsRecursively({
 				const pluginAuthType = plugin ? getPluginAuthType(plugin) : undefined;
 				try {
 					if (pluginAuthType === 'managed_pricing' && hubConfig) {
+						const cache = managedPricingCacheFor(pluginId);
+						managedJob = managedJobKindFor(
+							await getManagedJobKinds(hubConfig, cache),
+							pluginId,
+							operationPath,
+						);
+						sentJobFields = managedJobRequestFields(managedJob, args);
 						const resolved = await resolveManagedPricingCall(
 							{
 								hub: hubConfig,
@@ -342,10 +389,22 @@ export function bindEndpointsRecursively({
 							},
 							{
 								plugin: pluginId,
-								cache: managedPricingCacheFor(pluginId),
+								cache,
 								operation: operationPath,
+								...sentJobFields,
 							},
 						);
+						// Hub names a job start in its own answer too, so the job is
+						// recorded even when its table could not be read.
+						if (!managedJob && resolved.startedJobIdPath) {
+							managedJob = {
+								plugin: pluginId,
+								operation: operationPath,
+								role: 'start',
+								id_path: resolved.startedJobIdPath,
+								status_operation: '',
+							};
+						}
 						key = resolved.apiKey;
 						meteredCall = resolved.call;
 						usagePath = resolved.usagePath;
@@ -424,6 +483,7 @@ export function bindEndpointsRecursively({
 					// caller gets an error, so the call is refunded like any other.
 					try {
 						res = await call(0, { ...ctx, key }, args);
+						await reportJob(args, res);
 						await onPermissionComplete?.();
 					} catch (error) {
 						await reportIfCharged(error);
@@ -460,7 +520,24 @@ export function bindEndpointsRecursively({
 						await reportIfCharged(new Error('Stopped by a before hook'));
 						return;
 					}
+					// Hub held credits for the cap, or checked the job id, it was
+					// sent with the key request; a hook may not change either after.
+					if (managedJob) {
+						const final = managedJobRequestFields(
+							managedJob,
+							beforeResult.args,
+						);
+						if (
+							sentJobFields.cap !== final.cap ||
+							sentJobFields.jobId !== final.jobId
+						) {
+							throw new Error(
+								`A before hook changed ${operationPath}'s ${managedJob.role === 'start' ? 'cap' : 'job id'} after Corsair checked it, so the call did not run.`,
+							);
+						}
+					}
 					res = await call(0, beforeResult.ctx, beforeResult.args);
+					await reportJob(beforeResult.args, res);
 					await endpointHooks.after?.(
 						beforeResult.ctx,
 						res,
