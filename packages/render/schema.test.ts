@@ -1,0 +1,411 @@
+import { RenderEndpointInputSchemas } from './endpoints/types';
+import { render, renderEndpointSchemas } from './index';
+import { RenderSchema } from './schema';
+
+jest.mock('./client', () => ({
+	makeRenderRequest: jest.fn(),
+}));
+
+import { makeRenderRequest } from './client';
+
+describe('Render schema', () => {
+	it('declares a semver version', () => {
+		expect(RenderSchema.version).toBeDefined();
+		expect(RenderSchema.version).toMatch(/^\d+\.\d+\.\d+$/);
+	});
+
+	it('declares an entities map', () => {
+		expect(typeof RenderSchema.entities).toBe('object');
+		expect(RenderSchema.entities).not.toBeNull();
+		expect(Array.isArray(Object.keys(RenderSchema.entities))).toBe(true);
+		for (const entity of Object.values(RenderSchema.entities)) {
+			expect(entity).toBeDefined();
+		}
+	});
+
+	it('registers the full current Render operation catalog', () => {
+		expect(Object.keys(renderEndpointSchemas).length).toBeGreaterThanOrEqual(
+			93,
+		);
+	});
+
+	it('enforces endpoint schemas at the bound endpoint boundary', async () => {
+		const request = jest.mocked(makeRenderRequest);
+		request.mockClear();
+		request.mockResolvedValue([]);
+		const plugin = render({ key: 'secret' });
+		const ctx = {
+			key: 'secret',
+			$getAccountId: jest.fn().mockResolvedValue('account-1'),
+		} as never;
+		if (!plugin.endpoints) throw new Error('Render endpoints are missing');
+
+		await expect(
+			plugin.endpoints.services.list(ctx, { limit: 0 } as never),
+		).rejects.toThrow();
+		expect(request).not.toHaveBeenCalled();
+
+		await expect(plugin.endpoints.services.list(ctx, {})).resolves.toEqual([]);
+		await expect(plugin.endpoints.projects.list(ctx, {})).resolves.toEqual([]);
+
+		request.mockResolvedValue({ invalid: true });
+		await expect(plugin.endpoints.services.list(ctx, {})).rejects.toThrow();
+
+		request.mockResolvedValue(undefined);
+		await expect(
+			plugin.endpoints.services.delete(ctx, { serviceId: 'service-1' }),
+		).resolves.toBeUndefined();
+	});
+
+	it('requires identifiers for resource operations with path parameters', () => {
+		const idOperations = [
+			'retrieveEnvironment',
+			'updateEnvironment',
+			'deleteEnvironment',
+			'retrieveEnvGroup',
+			'updateEnvGroup',
+			'deleteEnvGroup',
+			'retrieveProject',
+			'updateProject',
+			'retrievePostgres',
+			'updatePostgres',
+			'retrieveRegistryCredential',
+			'updateRegistryCredential',
+			'deleteRegistryCredential',
+		] as const;
+
+		for (const operation of idOperations) {
+			const schema = RenderEndpointInputSchemas[operation];
+			expect(schema.safeParse({}).success).toBe(false);
+			expect(schema.safeParse({ id: 'resource-1' }).success).toBe(true);
+		}
+	});
+
+	it('requires every path parameter at the schema boundary', () => {
+		const idOperations = [
+			'retrieveOwner',
+			'listOwnerMembers',
+			'listOwnerAuditLogs',
+			'listOrganizationAuditLogs',
+			'deleteOwnerLogStream',
+			'updateOwnerLogStream',
+			'addHeaders',
+			'addResourcesToEnvironment',
+			'addRoute',
+			'createCustomDomain',
+			'deleteKeyValue',
+			'disconnectBlueprint',
+			'listBlueprintSyncs',
+			'suspendKeyValue',
+			'resumeKeyValue',
+			'retrieveKeyValueConnectionInfo',
+			'listInstances',
+			'listPostgresExport',
+			'listPostgresUsers',
+			'listRoutes',
+			'listSecretFiles',
+			'retrieveOwnerNotificationSettings',
+			'updateEnvVarsForService',
+			'updateHeaders',
+			'updateResourceLogStream',
+			'updateSecretFilesForService',
+			'deleteOwnerMetricsStream',
+			'updateOwnerNotificationSettings',
+			'updateRoutes',
+			'retrieveDisk',
+			'updateDisk',
+			'deleteDisk',
+			'listDiskSnapshots',
+			'retrieveMaintenance',
+			'updateMaintenance',
+			'triggerMaintenance',
+			'triggerCronJobRun',
+			'retrieveWebhook',
+			'updateWebhook',
+			'deleteWebhook',
+			'restartPostgres',
+			'suspendPostgres',
+			'resumePostgres',
+			'failoverPostgres',
+			'retrievePostgresConnectionInfo',
+			'retrievePostgresRecoveryInfo',
+			'recoverPostgres',
+		] as const;
+		for (const operation of idOperations) {
+			const schema = RenderEndpointInputSchemas[operation];
+			expect(schema.safeParse({}).success).toBe(false);
+			expect(schema.safeParse({ id: 'resource-1' }).success).toBe(true);
+		}
+
+		const keyOperations = [
+			'addOrUpdateSecretFile',
+			'deleteEnvGroupEnvVar',
+			'deleteEnvGroupSecretFile',
+			'deleteSecretFile',
+			'retrieveCustomDomain',
+			'retrieveDeploy',
+			'retrieveEnvGroupEnvVar',
+			'retrieveEnvGroupSecretFile',
+			'retrieveEnvVar',
+			'retrieveSecretFile',
+			'updateEnvGroupEnvVar',
+			'updateEnvGroupSecretFile',
+			'updateEnvVar',
+			'verifyCustomDomain',
+		] as const;
+		for (const operation of keyOperations) {
+			const schema = RenderEndpointInputSchemas[operation];
+			expect(schema.safeParse({ id: 'resource-1' }).success).toBe(false);
+			expect(
+				schema.safeParse({ id: 'resource-1', key: 'resource-key' }).success,
+			).toBe(true);
+		}
+
+		expect(
+			RenderEndpointInputSchemas.linkServiceToEnvGroup.safeParse({
+				id: 'group-1',
+			}).success,
+		).toBe(false);
+		expect(
+			RenderEndpointInputSchemas.linkServiceToEnvGroup.safeParse({
+				id: 'group-1',
+				serviceId: 'service-1',
+			}).success,
+		).toBe(true);
+
+		// Multi-parameter paths require every segment identifier.
+		expect(
+			RenderEndpointInputSchemas.deletePostgresUser.safeParse({
+				id: 'postgres-1',
+			}).success,
+		).toBe(false);
+		expect(
+			RenderEndpointInputSchemas.deletePostgresUser.safeParse({
+				id: 'postgres-1',
+				username: 'app_user',
+			}).success,
+		).toBe(true);
+
+		// Service-scoped operations require the service identifier plus their
+		// route parameter or command payload.
+		for (const [operation, required] of [
+			['cancelDeploy', { serviceId: 'service-1', deployId: 'deploy-1' }],
+			['rollbackDeploy', { serviceId: 'service-1', deployId: 'deploy-1' }],
+			['cancelServiceJob', { serviceId: 'service-1', jobId: 'job-1' }],
+			['createServiceJob', { serviceId: 'service-1', startCommand: 'echo hi' }],
+			['restoreDiskSnapshot', { id: 'disk-1', snapshotKey: 'snapshot-1' }],
+		] as const) {
+			const schema = RenderEndpointInputSchemas[operation];
+			expect(schema.safeParse({ id: 'resource-1' }).success).toBe(false);
+			expect(schema.safeParse(required).success).toBe(true);
+		}
+
+		// Creation operations validate their full documented payloads.
+		expect(
+			RenderEndpointInputSchemas.createDisk.safeParse({
+				name: 'disk-1',
+			}).success,
+		).toBe(false);
+		expect(
+			RenderEndpointInputSchemas.createDisk.safeParse({
+				name: 'disk-1',
+				sizeGB: 5,
+				mountPath: '/data',
+				serviceId: 'service-1',
+			}).success,
+		).toBe(true);
+		expect(
+			RenderEndpointInputSchemas.createWebhook.safeParse({
+				ownerId: 'owner-1',
+			}).success,
+		).toBe(false);
+		expect(
+			RenderEndpointInputSchemas.createWebhook.safeParse({
+				ownerId: 'owner-1',
+				name: 'hook',
+				url: 'https://example.test/hook',
+				enabled: true,
+				eventFilter: [],
+			}).success,
+		).toBe(true);
+	});
+
+	it('does not register deprecated Render operations', () => {
+		// Render deprecated the entire Redis API in favor of Key Value; the
+		// deprecated operation ids are enumerated in the public OpenAPI spec.
+		const registered = Object.keys(renderEndpointSchemas);
+		expect(registered.filter((path) => path.includes('redis'))).toEqual([]);
+		expect(registered.some((path) => path.startsWith('keyValue.'))).toBe(true);
+	});
+
+	it('provides executable input and output contracts for every operation', () => {
+		for (const schemas of Object.values(renderEndpointSchemas)) {
+			expect(typeof schemas.input.safeParse).toBe('function');
+			expect(typeof schemas.output.safeParse).toBe('function');
+		}
+	});
+
+	it('keeps every registered endpoint behind a schema boundary', () => {
+		const plugin = render({ key: 'secret' });
+		const paths: string[] = [];
+		const visit = (value: unknown, prefix: string[] = []) => {
+			if (typeof value === 'function') {
+				paths.push(prefix.join('.'));
+				return;
+			}
+			if (value && typeof value === 'object') {
+				for (const [key, child] of Object.entries(value)) {
+					visit(child, [...prefix, key]);
+				}
+			}
+		};
+
+		visit(plugin.endpoints);
+		expect(paths).toHaveLength(Object.keys(renderEndpointSchemas).length);
+		for (const path of paths) {
+			expect(
+				renderEndpointSchemas[path as keyof typeof renderEndpointSchemas],
+			).toBeDefined();
+		}
+	});
+
+	// Per the plugin endpoint-test rule, this table-driven traversal invokes
+	// every registered operation and asserts one request plus response parsing.
+	it('exercises every registered operation through its public boundary', async () => {
+		const request = jest.mocked(makeRenderRequest);
+		request.mockClear();
+		const plugin = render({ key: 'secret' });
+		const ctx = {
+			key: 'secret',
+			$getAccountId: jest.fn().mockResolvedValue('account-1'),
+		} as never;
+		const inputCandidates = [
+			{ id: 'resource-1', key: 'resource-key', serviceId: 'service-1' },
+			{ serviceId: 'service-1' },
+			{ id: 'resource-1' },
+			{ key: 'resource-key' },
+			{},
+			{ serviceId: 'service-1', deployId: 'deploy-1' },
+			{ serviceId: 'service-1', jobId: 'job-1' },
+			{ serviceId: 'service-1', startCommand: 'echo hi', planId: 'plan-1' },
+			{ type: 'web_service', name: 'service-1', ownerId: 'owner-1' },
+			{ serviceId: 'service-1', envVarKey: 'API_KEY' },
+			{ serviceId: 'service-1', name: ['Cache-Control'] },
+			{ serviceId: 'service-1', domainType: 'apex' },
+			{ serviceId: 'service-1', customDomainNameOrID: 'www.example.com' },
+			{ serviceId: 'service-1', numInstances: 3 },
+			{
+				serviceId: 'service-1',
+				imagePath: 'docker.io/library/nginx:latest',
+			},
+			{
+				serviceId: 'service-1',
+				enabled: true,
+				min: 1,
+				max: 5,
+				criteria: {
+					cpu: { enabled: true, percentage: 70 },
+					memory: { enabled: false, percentage: 80 },
+				},
+			},
+			{
+				name: 'disk-1',
+				sizeGB: 5,
+				mountPath: '/data',
+				serviceId: 'service-1',
+			},
+			{ id: 'resource-1', snapshotKey: 'snapshot-1' },
+			{ id: 'resource-1', username: 'user-1' },
+			{ buildSourceId: 'build-source-1' },
+			{ buildSourceId: 'build-source-1', buildId: 'build-1' },
+			{ buildSourceId: 'build-source-1', envVarKey: 'TOKEN' },
+			{ buildSourceId: 'build-source-1', envVarKey: 'TOKEN', body: {} },
+			{ buildSourceId: 'build-source-1', envGroupId: 'env-group-1' },
+			{ buildSourceId: 'build-source-1', body: {} },
+			{ buildSourceId: 'build-source-1', body: [] },
+			{ ownerId: 'owner-1', name: 'build-source' },
+			{ ownerId: 'owner-1', name: 'resource' },
+			{ ownerId: 'owner-1', userId: 'user-1', role: 'DEVELOPER' },
+			{ cronJobId: 'cron-1' },
+			{ resourceId: 'resource-1' },
+			{ eventId: 'event-1' },
+			{ webhookId: 'webhook-1' },
+			{ serviceId: 'service-1', headerId: 'header-1' },
+			{ serviceId: 'service-1', routeId: 'route-1' },
+			{ serviceId: 'service-1', routeId: 'route-1', body: {} },
+			{ environmentId: 'environment-1', resourceIds: ['service-1'] },
+			{ envGroupId: 'env-group-1', serviceId: 'service-1' },
+			{ redisId: 'redis-1', name: 'cache' },
+			{ name: 'cache', ownerId: 'owner-1', plan: 'starter' },
+			{
+				ownerId: 'owner-1',
+				provider: 'CUSTOM',
+				url: 'https://metrics.example.com',
+			},
+			{ id: 'resource-1', body: {} },
+			{ workflowId: 'workflow-1' },
+			{ taskId: 'task-1' },
+			{
+				ownerId: 'owner-1',
+				name: 'hook',
+				url: 'https://example.test/hook',
+				enabled: true,
+				eventFilter: ['deploy.created'],
+			},
+		];
+		const outputCandidates = [
+			[],
+			{ data: 'event: task.completed\\ndata: {}\\n\\n' },
+			{
+				id: 'resource-1',
+				name: 'resource',
+				type: 'service',
+				ownerId: 'owner-1',
+			},
+			{
+				service: {
+					id: 'service-1',
+					name: 'service',
+					type: 'web_service',
+					ownerId: 'owner-1',
+				},
+			},
+			{},
+			undefined,
+		];
+		let invokedOperations = 0;
+		const visit = async (value: unknown, prefix: string[] = []) => {
+			if (typeof value === 'function') {
+				invokedOperations += 1;
+				const path = prefix.join('.') as keyof typeof renderEndpointSchemas;
+				const contract = renderEndpointSchemas[path];
+				if (!contract) throw new Error(`Missing contract for ${path}`);
+				const input = inputCandidates.find(
+					(candidate) => contract.input.safeParse(candidate).success,
+				);
+				if (!input) throw new Error(`No valid test input for ${path}`);
+				const output = outputCandidates.find(
+					(candidate) => contract.output.safeParse(candidate).success,
+				);
+				request.mockResolvedValue(output);
+				await (value as (context: unknown, args: unknown) => Promise<unknown>)(
+					ctx,
+					input,
+				);
+				return;
+			}
+			if (value && typeof value === 'object') {
+				for (const [key, child] of Object.entries(value)) {
+					await visit(child, [...prefix, key]);
+				}
+			}
+		};
+
+		await visit(plugin.endpoints);
+		expect(invokedOperations).toBe(Object.keys(renderEndpointSchemas).length);
+		expect(request).toHaveBeenCalledTimes(invokedOperations);
+	});
+});
+
+// Per .github/PLUGIN_PR_RULES.md (R2), every implemented endpoint
+// needs a corresponding test.

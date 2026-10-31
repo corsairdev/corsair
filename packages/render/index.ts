@@ -1,0 +1,2574 @@
+import type {
+	AuthTypes,
+	BindEndpoints,
+	CorsairEndpoint,
+	CorsairErrorHandler,
+	CorsairPlugin,
+	CorsairPluginContext,
+	KeyBuilderContext,
+	PickAuth,
+	PluginAuthConfig,
+	PluginPermissionsConfig,
+	RequiredPluginEndpointMeta,
+	RequiredPluginEndpointSchemas,
+} from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
+import type { RenderEndpointInputs, RenderEndpointOutputs } from './endpoints';
+import {
+	addHeaders,
+	addOrUpdateSecretFile,
+	addResourcesToEnvironment,
+	addRoute,
+	cancelCronJobRun,
+	cancelDeploy,
+	cancelServiceJob,
+	cancelTaskRun,
+	createBuildSource,
+	createCustomDomain,
+	createDedicatedIp,
+	createDisk,
+	createEnvGroup,
+	createEnvironment,
+	createKeyValue,
+	createPostgres,
+	createPostgresExport,
+	createPostgresUser,
+	createProject,
+	createRegistryCredential,
+	createService,
+	createServiceJob,
+	createServicePreview,
+	createTaskRun,
+	createWebhook,
+	createWorkflow,
+	createWorkflowVersion,
+	deleteAutoscaling,
+	deleteBuildSource,
+	deleteBuildSourceEnvVar,
+	deleteBuildSourceSecretFile,
+	deleteDedicatedIp,
+	deleteDisk,
+	deleteEnvGroup,
+	deleteEnvGroupEnvVar,
+	deleteEnvGroupSecretFile,
+	deleteEnvironment,
+	deleteKeyValue,
+	deleteOwnerLogStream,
+	deleteOwnerMetricsStream,
+	deletePostgres,
+	deletePostgresUser,
+	deleteProject,
+	deleteRegistryCredential,
+	deleteResourceLogStream,
+	deleteSecretFile,
+	deleteService,
+	deleteServiceCustomDomain,
+	deleteServiceEnvVar,
+	deleteServiceHeader,
+	deleteServiceRoute,
+	deleteWebhook,
+	deleteWorkflow,
+	disconnectBlueprint,
+	failoverPostgres,
+	getActiveConnections,
+	getBandwidth,
+	getBandwidthSources,
+	getCpu,
+	getCpuLimit,
+	getCpuTarget,
+	getDiskCapacity,
+	getDiskUsage,
+	getHttpLatency,
+	getHttpRequests,
+	getInstanceCount,
+	getMemory,
+	getMemoryLimit,
+	getMemoryTarget,
+	getReplicationLag,
+	getTaskRunsCompleted,
+	getTaskRunsQueued,
+	getUser,
+	linkEnvGroupToBuildSource,
+	linkServiceToEnvGroup,
+	listApplicationFilterValues,
+	listBlueprintSyncs,
+	listBlueprints,
+	listBuildSourceBuilds,
+	listBuildSourceEnvVars,
+	listBuildSourceSecretFiles,
+	listBuildSources,
+	listDedicatedIps,
+	listDeploys,
+	listDiskSnapshots,
+	listDisks,
+	listEnvGroups,
+	listEnvironments,
+	listHttpFilterValues,
+	listInstances,
+	listKeyValue,
+	listLogs,
+	listLogsValues,
+	listMaintenance,
+	listNotificationOverrides,
+	listOrganizationAuditLogs,
+	listOutboundIps,
+	listOwnerAuditLogs,
+	listOwnerMembers,
+	listOwners,
+	listPathFilterValues,
+	listPostgres,
+	listPostgresExport,
+	listPostgresProcesses,
+	listPostgresSizes,
+	listPostgresTableScans,
+	listPostgresTopQueries,
+	listPostgresUsers,
+	listProjects,
+	listRegistryCredentials,
+	listResourceLogStreams,
+	listRoutes,
+	listSecretFiles,
+	listServiceCustomDomains,
+	listServiceEnvVars,
+	listServiceEvents,
+	listServiceHeaders,
+	listServiceJobs,
+	listServices,
+	listTaskRuns,
+	listTasks,
+	listWebhookEvents,
+	listWebhooks,
+	listWorkflows,
+	listWorkflowVersions,
+	patchServiceRoute,
+	purgeServiceCache,
+	RenderEndpointInputSchemas,
+	RenderEndpointOutputSchemas,
+	recoverPostgres,
+	removeResourcesFromEnvironment,
+	removeWorkspaceMember,
+	restartPostgres,
+	restartService,
+	restoreDiskSnapshot,
+	resumeKeyValue,
+	resumePostgres,
+	resumeService,
+	retrieveBlueprint,
+	retrieveBuildSource,
+	retrieveBuildSourceBuild,
+	retrieveBuildSourceEnvVar,
+	retrieveBuildSourceSecretFile,
+	retrieveCustomDomain,
+	retrieveDedicatedIp,
+	retrieveDeploy,
+	retrieveDisk,
+	retrieveEnvGroup,
+	retrieveEnvGroupEnvVar,
+	retrieveEnvGroupSecretFile,
+	retrieveEnvironment,
+	retrieveEnvVar,
+	retrieveEvent,
+	retrieveKeyValue,
+	retrieveKeyValueConnectionInfo,
+	retrieveMaintenance,
+	retrieveOwner,
+	retrieveOwnerLogStream,
+	retrieveOwnerMetricsStream,
+	retrieveOwnerNotificationSettings,
+	retrievePostgres,
+	retrievePostgresConnectionInfo,
+	retrievePostgresRecoveryInfo,
+	retrieveProject,
+	retrieveRegistryCredential,
+	retrieveResourceLogStream,
+	retrieveSecretFile,
+	retrieveService,
+	retrieveServiceJob,
+	retrieveServiceNotificationOverrides,
+	retrieveTask,
+	retrieveTaskRun,
+	retrieveWebhook,
+	retrieveWorkflow,
+	retrieveWorkflowVersion,
+	rollbackDeploy,
+	scaleService,
+	suspendKeyValue,
+	suspendPostgres,
+	suspendService,
+	triggerBuildSourceBuild,
+	triggerCronJobRun,
+	triggerDeploy,
+	triggerMaintenance,
+	unlinkEnvGroupFromBuildSource,
+	unlinkServiceFromEnvGroup,
+	updateAutoscaling,
+	updateBlueprint,
+	updateBuildSource,
+	updateBuildSourceEnvVar,
+	updateBuildSourceEnvVars,
+	updateBuildSourceSecretFile,
+	updateBuildSourceSecretFiles,
+	updateDedicatedIp,
+	updateDisk,
+	updateEnvGroup,
+	updateEnvGroupEnvVar,
+	updateEnvGroupSecretFile,
+	updateEnvironment,
+	updateEnvVar,
+	updateEnvVarsForService,
+	updateHeaders,
+	updateKeyValue,
+	updateMaintenance,
+	updateOwnerLogStream,
+	updateOwnerNotificationSettings,
+	updatePostgres,
+	updateProject,
+	updateRegistryCredential,
+	updateResourceLogStream,
+	updateRoutes,
+	updateSecretFilesForService,
+	updateService,
+	updateServiceNotificationOverrides,
+	updateWebhook,
+	updateWorkflow,
+	updateWorkspaceMember,
+	upsertOwnerMetricsStream,
+	validateBlueprint,
+	verifyCustomDomain,
+} from './endpoints';
+
+import { errorHandlers } from './error-handlers';
+import { RenderSchema } from './schema';
+
+export type RenderPluginOptions = {
+	authType?: PickAuth<'api_key'>;
+	key?: string;
+	hooks?: InternalRenderPlugin['hooks'];
+	errorHandlers?: CorsairErrorHandler;
+	permissions?: PluginPermissionsConfig<typeof renderEndpointsNested>;
+};
+
+export type RenderContext = CorsairPluginContext<
+	typeof RenderSchema,
+	RenderPluginOptions
+>;
+export type RenderKeyBuilderContext = KeyBuilderContext<RenderPluginOptions>;
+export type RenderBoundEndpoints = BindEndpoints<typeof renderEndpointsNested>;
+
+type RenderEndpoint<K extends keyof RenderEndpointOutputs> = CorsairEndpoint<
+	RenderContext,
+	RenderEndpointInputs[K],
+	RenderEndpointOutputs[K]
+>;
+
+export type RenderEndpoints = {
+	listServices: RenderEndpoint<'listServices'>;
+	createService: RenderEndpoint<'createService'>;
+	retrieveService: RenderEndpoint<'retrieveService'>;
+	deleteService: RenderEndpoint<'deleteService'>;
+	updateService: RenderEndpoint<'updateService'>;
+	triggerDeploy: RenderEndpoint<'triggerDeploy'>;
+	listDeploys: RenderEndpoint<'listDeploys'>;
+	purgeServiceCache: RenderEndpoint<'purgeServiceCache'>;
+	cancelDeploy: RenderEndpoint<'cancelDeploy'>;
+	rollbackDeploy: RenderEndpoint<'rollbackDeploy'>;
+	listServiceEvents: RenderEndpoint<'listServiceEvents'>;
+	listOutboundIps: RenderEndpoint<'listOutboundIps'>;
+	listServiceJobs: RenderEndpoint<'listServiceJobs'>;
+	retrieveServiceJob: RenderEndpoint<'retrieveServiceJob'>;
+	createServiceJob: RenderEndpoint<'createServiceJob'>;
+	createServicePreview: RenderEndpoint<'createServicePreview'>;
+	cancelServiceJob: RenderEndpoint<'cancelServiceJob'>;
+	restartService: RenderEndpoint<'restartService'>;
+	suspendService: RenderEndpoint<'suspendService'>;
+	resumeService: RenderEndpoint<'resumeService'>;
+	scaleService: RenderEndpoint<'scaleService'>;
+	updateAutoscaling: RenderEndpoint<'updateAutoscaling'>;
+	deleteAutoscaling: RenderEndpoint<'deleteAutoscaling'>;
+	deleteServiceHeader: RenderEndpoint<'deleteServiceHeader'>;
+	patchServiceRoute: RenderEndpoint<'patchServiceRoute'>;
+	deleteServiceRoute: RenderEndpoint<'deleteServiceRoute'>;
+	listServiceEnvVars: RenderEndpoint<'listServiceEnvVars'>;
+	deleteServiceEnvVar: RenderEndpoint<'deleteServiceEnvVar'>;
+	listServiceHeaders: RenderEndpoint<'listServiceHeaders'>;
+	listServiceCustomDomains: RenderEndpoint<'listServiceCustomDomains'>;
+	deleteServiceCustomDomain: RenderEndpoint<'deleteServiceCustomDomain'>;
+	listEnvironments: RenderEndpoint<'listEnvironments'>;
+	createEnvironment: RenderEndpoint<'createEnvironment'>;
+	retrieveEnvironment: RenderEndpoint<'retrieveEnvironment'>;
+	updateEnvironment: RenderEndpoint<'updateEnvironment'>;
+	deleteEnvironment: RenderEndpoint<'deleteEnvironment'>;
+	removeResourcesFromEnvironment: RenderEndpoint<'removeResourcesFromEnvironment'>;
+	listEnvGroups: RenderEndpoint<'listEnvGroups'>;
+	createEnvGroup: RenderEndpoint<'createEnvGroup'>;
+	retrieveEnvGroup: RenderEndpoint<'retrieveEnvGroup'>;
+	updateEnvGroup: RenderEndpoint<'updateEnvGroup'>;
+	deleteEnvGroup: RenderEndpoint<'deleteEnvGroup'>;
+	unlinkServiceFromEnvGroup: RenderEndpoint<'unlinkServiceFromEnvGroup'>;
+	listProjects: RenderEndpoint<'listProjects'>;
+	createProject: RenderEndpoint<'createProject'>;
+	retrieveProject: RenderEndpoint<'retrieveProject'>;
+	updateProject: RenderEndpoint<'updateProject'>;
+	deleteProject: RenderEndpoint<'deleteProject'>;
+	listPostgres: RenderEndpoint<'listPostgres'>;
+	createPostgres: RenderEndpoint<'createPostgres'>;
+	retrievePostgres: RenderEndpoint<'retrievePostgres'>;
+	updatePostgres: RenderEndpoint<'updatePostgres'>;
+	restartPostgres: RenderEndpoint<'restartPostgres'>;
+	suspendPostgres: RenderEndpoint<'suspendPostgres'>;
+	resumePostgres: RenderEndpoint<'resumePostgres'>;
+	failoverPostgres: RenderEndpoint<'failoverPostgres'>;
+	retrievePostgresConnectionInfo: RenderEndpoint<'retrievePostgresConnectionInfo'>;
+	retrievePostgresRecoveryInfo: RenderEndpoint<'retrievePostgresRecoveryInfo'>;
+	recoverPostgres: RenderEndpoint<'recoverPostgres'>;
+	deletePostgresUser: RenderEndpoint<'deletePostgresUser'>;
+	listRegistryCredentials: RenderEndpoint<'listRegistryCredentials'>;
+	createRegistryCredential: RenderEndpoint<'createRegistryCredential'>;
+	retrieveRegistryCredential: RenderEndpoint<'retrieveRegistryCredential'>;
+	updateRegistryCredential: RenderEndpoint<'updateRegistryCredential'>;
+	deleteRegistryCredential: RenderEndpoint<'deleteRegistryCredential'>;
+	listOwners: RenderEndpoint<'listOwners'>;
+	retrieveOwner: RenderEndpoint<'retrieveOwner'>;
+	listOwnerMembers: RenderEndpoint<'listOwnerMembers'>;
+	updateWorkspaceMember: RenderEndpoint<'updateWorkspaceMember'>;
+	removeWorkspaceMember: RenderEndpoint<'removeWorkspaceMember'>;
+	listOwnerAuditLogs: RenderEndpoint<'listOwnerAuditLogs'>;
+	listOrganizationAuditLogs: RenderEndpoint<'listOrganizationAuditLogs'>;
+	getUser: RenderEndpoint<'getUser'>;
+	listLogs: RenderEndpoint<'listLogs'>;
+	listLogsValues: RenderEndpoint<'listLogsValues'>;
+	listResourceLogStreams: RenderEndpoint<'listResourceLogStreams'>;
+	deleteOwnerLogStream: RenderEndpoint<'deleteOwnerLogStream'>;
+	updateOwnerLogStream: RenderEndpoint<'updateOwnerLogStream'>;
+	retrieveOwnerLogStream: RenderEndpoint<'retrieveOwnerLogStream'>;
+	retrieveResourceLogStream: RenderEndpoint<'retrieveResourceLogStream'>;
+	deleteResourceLogStream: RenderEndpoint<'deleteResourceLogStream'>;
+	getActiveConnections: RenderEndpoint<'getActiveConnections'>;
+	getBandwidthSources: RenderEndpoint<'getBandwidthSources'>;
+	getCpu: RenderEndpoint<'getCpu'>;
+	getCpuLimit: RenderEndpoint<'getCpuLimit'>;
+	getCpuTarget: RenderEndpoint<'getCpuTarget'>;
+	getHttpRequests: RenderEndpoint<'getHttpRequests'>;
+	getHttpLatency: RenderEndpoint<'getHttpLatency'>;
+	getBandwidth: RenderEndpoint<'getBandwidth'>;
+	getReplicationLag: RenderEndpoint<'getReplicationLag'>;
+	getDiskCapacity: RenderEndpoint<'getDiskCapacity'>;
+	getDiskUsage: RenderEndpoint<'getDiskUsage'>;
+	getInstanceCount: RenderEndpoint<'getInstanceCount'>;
+	getMemory: RenderEndpoint<'getMemory'>;
+	getMemoryLimit: RenderEndpoint<'getMemoryLimit'>;
+	getMemoryTarget: RenderEndpoint<'getMemoryTarget'>;
+	listApplicationFilterValues: RenderEndpoint<'listApplicationFilterValues'>;
+	listHttpFilterValues: RenderEndpoint<'listHttpFilterValues'>;
+	listPathFilterValues: RenderEndpoint<'listPathFilterValues'>;
+	getTaskRunsQueued: RenderEndpoint<'getTaskRunsQueued'>;
+	getTaskRunsCompleted: RenderEndpoint<'getTaskRunsCompleted'>;
+	listDisks: RenderEndpoint<'listDisks'>;
+	listMaintenance: RenderEndpoint<'listMaintenance'>;
+	listTaskRuns: RenderEndpoint<'listTaskRuns'>;
+	listTasks: RenderEndpoint<'listTasks'>;
+	listWorkflows: RenderEndpoint<'listWorkflows'>;
+	listWorkflowVersions: RenderEndpoint<'listWorkflowVersions'>;
+	listWebhooks: RenderEndpoint<'listWebhooks'>;
+	listWebhookEvents: RenderEndpoint<'listWebhookEvents'>;
+	retrieveEvent: RenderEndpoint<'retrieveEvent'>;
+	createDisk: RenderEndpoint<'createDisk'>;
+	retrieveDisk: RenderEndpoint<'retrieveDisk'>;
+	updateDisk: RenderEndpoint<'updateDisk'>;
+	deleteDisk: RenderEndpoint<'deleteDisk'>;
+	listDiskSnapshots: RenderEndpoint<'listDiskSnapshots'>;
+	restoreDiskSnapshot: RenderEndpoint<'restoreDiskSnapshot'>;
+	retrieveMaintenance: RenderEndpoint<'retrieveMaintenance'>;
+	updateMaintenance: RenderEndpoint<'updateMaintenance'>;
+	triggerMaintenance: RenderEndpoint<'triggerMaintenance'>;
+	triggerCronJobRun: RenderEndpoint<'triggerCronJobRun'>;
+	cancelCronJobRun: RenderEndpoint<'cancelCronJobRun'>;
+	createWebhook: RenderEndpoint<'createWebhook'>;
+	retrieveWebhook: RenderEndpoint<'retrieveWebhook'>;
+	updateWebhook: RenderEndpoint<'updateWebhook'>;
+	deleteWebhook: RenderEndpoint<'deleteWebhook'>;
+	addHeaders: RenderEndpoint<'addHeaders'>;
+	addOrUpdateSecretFile: RenderEndpoint<'addOrUpdateSecretFile'>;
+	addResourcesToEnvironment: RenderEndpoint<'addResourcesToEnvironment'>;
+	addRoute: RenderEndpoint<'addRoute'>;
+	createCustomDomain: RenderEndpoint<'createCustomDomain'>;
+	deleteEnvGroupEnvVar: RenderEndpoint<'deleteEnvGroupEnvVar'>;
+	deleteEnvGroupSecretFile: RenderEndpoint<'deleteEnvGroupSecretFile'>;
+	deleteKeyValue: RenderEndpoint<'deleteKeyValue'>;
+	deleteSecretFile: RenderEndpoint<'deleteSecretFile'>;
+	disconnectBlueprint: RenderEndpoint<'disconnectBlueprint'>;
+	linkServiceToEnvGroup: RenderEndpoint<'linkServiceToEnvGroup'>;
+	listBlueprints: RenderEndpoint<'listBlueprints'>;
+	listBlueprintSyncs: RenderEndpoint<'listBlueprintSyncs'>;
+	suspendKeyValue: RenderEndpoint<'suspendKeyValue'>;
+	resumeKeyValue: RenderEndpoint<'resumeKeyValue'>;
+	retrieveKeyValueConnectionInfo: RenderEndpoint<'retrieveKeyValueConnectionInfo'>;
+	listInstances: RenderEndpoint<'listInstances'>;
+	listKeyValue: RenderEndpoint<'listKeyValue'>;
+	createKeyValue: RenderEndpoint<'createKeyValue'>;
+	retrieveKeyValue: RenderEndpoint<'retrieveKeyValue'>;
+	updateKeyValue: RenderEndpoint<'updateKeyValue'>;
+	listNotificationOverrides: RenderEndpoint<'listNotificationOverrides'>;
+	retrieveServiceNotificationOverrides: RenderEndpoint<'retrieveServiceNotificationOverrides'>;
+	updateServiceNotificationOverrides: RenderEndpoint<'updateServiceNotificationOverrides'>;
+	listPostgresExport: RenderEndpoint<'listPostgresExport'>;
+	listPostgresUsers: RenderEndpoint<'listPostgresUsers'>;
+	listRoutes: RenderEndpoint<'listRoutes'>;
+	listSecretFiles: RenderEndpoint<'listSecretFiles'>;
+	retrieveCustomDomain: RenderEndpoint<'retrieveCustomDomain'>;
+	retrieveDeploy: RenderEndpoint<'retrieveDeploy'>;
+	retrieveEnvGroupEnvVar: RenderEndpoint<'retrieveEnvGroupEnvVar'>;
+	retrieveEnvGroupSecretFile: RenderEndpoint<'retrieveEnvGroupSecretFile'>;
+	retrieveEnvVar: RenderEndpoint<'retrieveEnvVar'>;
+	retrieveOwnerNotificationSettings: RenderEndpoint<'retrieveOwnerNotificationSettings'>;
+	retrieveSecretFile: RenderEndpoint<'retrieveSecretFile'>;
+	updateEnvGroupEnvVar: RenderEndpoint<'updateEnvGroupEnvVar'>;
+	updateEnvGroupSecretFile: RenderEndpoint<'updateEnvGroupSecretFile'>;
+	updateEnvVar: RenderEndpoint<'updateEnvVar'>;
+	updateEnvVarsForService: RenderEndpoint<'updateEnvVarsForService'>;
+	updateHeaders: RenderEndpoint<'updateHeaders'>;
+	updateResourceLogStream: RenderEndpoint<'updateResourceLogStream'>;
+	updateSecretFilesForService: RenderEndpoint<'updateSecretFilesForService'>;
+	verifyCustomDomain: RenderEndpoint<'verifyCustomDomain'>;
+	deleteOwnerMetricsStream: RenderEndpoint<'deleteOwnerMetricsStream'>;
+	retrieveOwnerMetricsStream: RenderEndpoint<'retrieveOwnerMetricsStream'>;
+	upsertOwnerMetricsStream: RenderEndpoint<'upsertOwnerMetricsStream'>;
+	updateOwnerNotificationSettings: RenderEndpoint<'updateOwnerNotificationSettings'>;
+	updateRoutes: RenderEndpoint<'updateRoutes'>;
+	createBuildSource: RenderEndpoint<'createBuildSource'>;
+	listBuildSources: RenderEndpoint<'listBuildSources'>;
+	retrieveBuildSource: RenderEndpoint<'retrieveBuildSource'>;
+	updateBuildSource: RenderEndpoint<'updateBuildSource'>;
+	deleteBuildSource: RenderEndpoint<'deleteBuildSource'>;
+	listBuildSourceBuilds: RenderEndpoint<'listBuildSourceBuilds'>;
+	triggerBuildSourceBuild: RenderEndpoint<'triggerBuildSourceBuild'>;
+	retrieveBuildSourceBuild: RenderEndpoint<'retrieveBuildSourceBuild'>;
+	listBuildSourceEnvVars: RenderEndpoint<'listBuildSourceEnvVars'>;
+	updateBuildSourceEnvVars: RenderEndpoint<'updateBuildSourceEnvVars'>;
+	retrieveBuildSourceEnvVar: RenderEndpoint<'retrieveBuildSourceEnvVar'>;
+	updateBuildSourceEnvVar: RenderEndpoint<'updateBuildSourceEnvVar'>;
+	deleteBuildSourceEnvVar: RenderEndpoint<'deleteBuildSourceEnvVar'>;
+	listBuildSourceSecretFiles: RenderEndpoint<'listBuildSourceSecretFiles'>;
+	updateBuildSourceSecretFiles: RenderEndpoint<'updateBuildSourceSecretFiles'>;
+	retrieveBuildSourceSecretFile: RenderEndpoint<'retrieveBuildSourceSecretFile'>;
+	updateBuildSourceSecretFile: RenderEndpoint<'updateBuildSourceSecretFile'>;
+	deleteBuildSourceSecretFile: RenderEndpoint<'deleteBuildSourceSecretFile'>;
+	linkEnvGroupToBuildSource: RenderEndpoint<'linkEnvGroupToBuildSource'>;
+	unlinkEnvGroupFromBuildSource: RenderEndpoint<'unlinkEnvGroupFromBuildSource'>;
+	validateBlueprint: RenderEndpoint<'validateBlueprint'>;
+	retrieveBlueprint: RenderEndpoint<'retrieveBlueprint'>;
+	updateBlueprint: RenderEndpoint<'updateBlueprint'>;
+	listDedicatedIps: RenderEndpoint<'listDedicatedIps'>;
+	createDedicatedIp: RenderEndpoint<'createDedicatedIp'>;
+	retrieveDedicatedIp: RenderEndpoint<'retrieveDedicatedIp'>;
+	updateDedicatedIp: RenderEndpoint<'updateDedicatedIp'>;
+	deleteDedicatedIp: RenderEndpoint<'deleteDedicatedIp'>;
+	deletePostgres: RenderEndpoint<'deletePostgres'>;
+	createPostgresExport: RenderEndpoint<'createPostgresExport'>;
+	createPostgresUser: RenderEndpoint<'createPostgresUser'>;
+	listPostgresProcesses: RenderEndpoint<'listPostgresProcesses'>;
+	listPostgresTopQueries: RenderEndpoint<'listPostgresTopQueries'>;
+	listPostgresSizes: RenderEndpoint<'listPostgresSizes'>;
+	listPostgresTableScans: RenderEndpoint<'listPostgresTableScans'>;
+	createWorkflow: RenderEndpoint<'createWorkflow'>;
+	retrieveWorkflow: RenderEndpoint<'retrieveWorkflow'>;
+	updateWorkflow: RenderEndpoint<'updateWorkflow'>;
+	deleteWorkflow: RenderEndpoint<'deleteWorkflow'>;
+	createWorkflowVersion: RenderEndpoint<'createWorkflowVersion'>;
+	retrieveWorkflowVersion: RenderEndpoint<'retrieveWorkflowVersion'>;
+	retrieveTask: RenderEndpoint<'retrieveTask'>;
+	createTaskRun: RenderEndpoint<'createTaskRun'>;
+	retrieveTaskRun: RenderEndpoint<'retrieveTaskRun'>;
+	cancelTaskRun: RenderEndpoint<'cancelTaskRun'>;
+};
+
+const renderEndpointsNested = {
+	services: {
+		list: listServices,
+		create: createService,
+		retrieve: retrieveService,
+		delete: deleteService,
+		update: updateService,
+		triggerDeploy,
+		listDeploys,
+		purgeCache: purgeServiceCache,
+		cancelDeploy,
+		rollbackDeploy,
+		listEvents: listServiceEvents,
+		listOutboundIps,
+		jobs: {
+			list: listServiceJobs,
+			retrieve: retrieveServiceJob,
+			create: createServiceJob,
+			cancel: cancelServiceJob,
+		},
+		restart: restartService,
+		suspend: suspendService,
+		resume: resumeService,
+		scale: scaleService,
+		updateAutoscaling,
+		deleteAutoscaling,
+		createPreview: createServicePreview,
+		deleteHeader: deleteServiceHeader,
+		patchRoute: patchServiceRoute,
+		deleteRoute: deleteServiceRoute,
+		envVars: { list: listServiceEnvVars, delete: deleteServiceEnvVar },
+		headers: { list: listServiceHeaders },
+		customDomains: {
+			list: listServiceCustomDomains,
+			delete: deleteServiceCustomDomain,
+		},
+		environments: {
+			list: listEnvironments,
+			create: createEnvironment,
+			retrieve: retrieveEnvironment,
+			update: updateEnvironment,
+			delete: deleteEnvironment,
+			removeResources: removeResourcesFromEnvironment,
+		},
+		envGroups: {
+			list: listEnvGroups,
+			create: createEnvGroup,
+			retrieve: retrieveEnvGroup,
+			update: updateEnvGroup,
+			delete: deleteEnvGroup,
+			unlinkService: unlinkServiceFromEnvGroup,
+		},
+	},
+	projects: {
+		list: listProjects,
+		create: createProject,
+		retrieve: retrieveProject,
+		update: updateProject,
+		delete: deleteProject,
+	},
+	postgres: {
+		list: listPostgres,
+		create: createPostgres,
+		retrieve: retrievePostgres,
+		update: updatePostgres,
+		restart: restartPostgres,
+		suspend: suspendPostgres,
+		resume: resumePostgres,
+		failover: failoverPostgres,
+		connectionInfo: retrievePostgresConnectionInfo,
+		recoveryInfo: retrievePostgresRecoveryInfo,
+		recover: recoverPostgres,
+		deleteUser: deletePostgresUser,
+		delete: deletePostgres,
+		createExport: createPostgresExport,
+		createUser: createPostgresUser,
+		processes: listPostgresProcesses,
+		topQueries: listPostgresTopQueries,
+		sizes: listPostgresSizes,
+		tableScans: listPostgresTableScans,
+	},
+	registryCredentials: {
+		list: listRegistryCredentials,
+		create: createRegistryCredential,
+		retrieve: retrieveRegistryCredential,
+		update: updateRegistryCredential,
+		delete: deleteRegistryCredential,
+	},
+	owners: {
+		list: listOwners,
+		retrieve: retrieveOwner,
+		members: listOwnerMembers,
+		updateMember: updateWorkspaceMember,
+		removeMember: removeWorkspaceMember,
+		auditLogs: listOwnerAuditLogs,
+	},
+	organizations: {
+		auditLogs: listOrganizationAuditLogs,
+	},
+	keyValue: {
+		create: createKeyValue,
+		retrieve: retrieveKeyValue,
+		update: updateKeyValue,
+		suspend: suspendKeyValue,
+		resume: resumeKeyValue,
+		connectionInfo: retrieveKeyValueConnectionInfo,
+	},
+	blueprints: {
+		listSyncs: listBlueprintSyncs,
+		validate: validateBlueprint,
+		retrieve: retrieveBlueprint,
+		update: updateBlueprint,
+	},
+	dedicatedIps: {
+		list: listDedicatedIps,
+		create: createDedicatedIp,
+		retrieve: retrieveDedicatedIp,
+		update: updateDedicatedIp,
+		delete: deleteDedicatedIp,
+	},
+	buildSources: {
+		create: createBuildSource,
+		list: listBuildSources,
+		retrieve: retrieveBuildSource,
+		update: updateBuildSource,
+		delete: deleteBuildSource,
+		builds: {
+			list: listBuildSourceBuilds,
+			trigger: triggerBuildSourceBuild,
+			retrieve: retrieveBuildSourceBuild,
+		},
+		envVars: {
+			list: listBuildSourceEnvVars,
+			update: updateBuildSourceEnvVars,
+			retrieve: retrieveBuildSourceEnvVar,
+			upsert: updateBuildSourceEnvVar,
+			delete: deleteBuildSourceEnvVar,
+		},
+		secretFiles: {
+			list: listBuildSourceSecretFiles,
+			update: updateBuildSourceSecretFiles,
+			retrieve: retrieveBuildSourceSecretFile,
+			upsert: updateBuildSourceSecretFile,
+			delete: deleteBuildSourceSecretFile,
+		},
+		envGroups: {
+			link: linkEnvGroupToBuildSource,
+			unlink: unlinkEnvGroupFromBuildSource,
+		},
+	},
+	user: { get: getUser },
+	logs: {
+		list: listLogs,
+		values: listLogsValues,
+		resourceStreams: listResourceLogStreams,
+		deleteOwnerStream: deleteOwnerLogStream,
+		updateOwnerStream: updateOwnerLogStream,
+		retrieveOwnerStream: retrieveOwnerLogStream,
+		retrieveResourceStream: retrieveResourceLogStream,
+		deleteResourceStream: deleteResourceLogStream,
+	},
+	metrics: {
+		activeConnections: getActiveConnections,
+		bandwidthSources: getBandwidthSources,
+		cpu: getCpu,
+		cpuLimit: getCpuLimit,
+		cpuTarget: getCpuTarget,
+		httpRequests: getHttpRequests,
+		httpLatency: getHttpLatency,
+		bandwidth: getBandwidth,
+		replicationLag: getReplicationLag,
+		diskCapacity: getDiskCapacity,
+		diskUsage: getDiskUsage,
+		instanceCount: getInstanceCount,
+		memory: getMemory,
+		memoryLimit: getMemoryLimit,
+		memoryTarget: getMemoryTarget,
+		applicationFilterValues: listApplicationFilterValues,
+		httpFilterValues: listHttpFilterValues,
+		pathFilterValues: listPathFilterValues,
+		taskRunsQueued: getTaskRunsQueued,
+		taskRunsCompleted: getTaskRunsCompleted,
+	},
+	events: { retrieve: retrieveEvent },
+	automation: {
+		listDisks,
+		listMaintenance,
+		listTaskRuns,
+		listTasks,
+		listWorkflows,
+		listWorkflowVersions,
+		listWebhooks,
+		listWebhookEvents,
+		createDisk,
+		retrieveDisk,
+		updateDisk,
+		deleteDisk,
+		listDiskSnapshots,
+		restoreDiskSnapshot,
+		retrieveMaintenance,
+		updateMaintenance,
+		triggerMaintenance,
+		triggerCronJobRun,
+		cancelCronJobRun,
+		createWebhook,
+		retrieveWebhook,
+		updateWebhook,
+		deleteWebhook,
+		createWorkflow,
+		retrieveWorkflow,
+		updateWorkflow,
+		deleteWorkflow,
+		createWorkflowVersion,
+		retrieveWorkflowVersion,
+		retrieveTask,
+		createTaskRun,
+		retrieveTaskRun,
+		cancelTaskRun,
+	},
+	final: {
+		addHeaders,
+		addOrUpdateSecretFile,
+		addResourcesToEnvironment,
+		addRoute,
+		createCustomDomain,
+		deleteEnvGroupEnvVar,
+		deleteEnvGroupSecretFile,
+		deleteKeyValue,
+		deleteSecretFile,
+		disconnectBlueprint,
+		linkServiceToEnvGroup,
+		listBlueprints,
+		listInstances,
+		listKeyValue,
+		listNotificationOverrides,
+		retrieveServiceNotificationOverrides,
+		listPostgresExport,
+		listPostgresUsers,
+		listRoutes,
+		listSecretFiles,
+		retrieveCustomDomain,
+		retrieveDeploy,
+		retrieveEnvGroupEnvVar,
+		retrieveEnvGroupSecretFile,
+		retrieveEnvVar,
+		retrieveOwnerNotificationSettings,
+		retrieveSecretFile,
+		updateEnvGroupEnvVar,
+		updateEnvGroupSecretFile,
+		updateEnvVar,
+		updateEnvVarsForService,
+		updateHeaders,
+		updateResourceLogStream,
+		updateSecretFilesForService,
+		verifyCustomDomain,
+		deleteOwnerMetricsStream,
+		retrieveOwnerMetricsStream,
+		upsertOwnerMetricsStream,
+		updateOwnerNotificationSettings,
+		updateServiceNotificationOverrides,
+		updateRoutes,
+	},
+} as const;
+
+export const renderEndpointSchemas = {
+	'services.list': {
+		input: RenderEndpointInputSchemas.listServices,
+		output: RenderEndpointOutputSchemas.listServices,
+	},
+	'services.create': {
+		input: RenderEndpointInputSchemas.createService,
+		output: RenderEndpointOutputSchemas.createService,
+	},
+	'services.retrieve': {
+		input: RenderEndpointInputSchemas.retrieveService,
+		output: RenderEndpointOutputSchemas.retrieveService,
+	},
+	'services.delete': {
+		input: RenderEndpointInputSchemas.deleteService,
+		output: RenderEndpointOutputSchemas.deleteService,
+	},
+	'services.update': {
+		input: RenderEndpointInputSchemas.updateService,
+		output: RenderEndpointOutputSchemas.updateService,
+	},
+	'services.triggerDeploy': {
+		input: RenderEndpointInputSchemas.triggerDeploy,
+		output: RenderEndpointOutputSchemas.triggerDeploy,
+	},
+	'services.listDeploys': {
+		input: RenderEndpointInputSchemas.listDeploys,
+		output: RenderEndpointOutputSchemas.listDeploys,
+	},
+	'services.purgeCache': {
+		input: RenderEndpointInputSchemas.purgeServiceCache,
+		output: RenderEndpointOutputSchemas.purgeServiceCache,
+	},
+	'services.cancelDeploy': {
+		input: RenderEndpointInputSchemas.cancelDeploy,
+		output: RenderEndpointOutputSchemas.cancelDeploy,
+	},
+	'services.rollbackDeploy': {
+		input: RenderEndpointInputSchemas.rollbackDeploy,
+		output: RenderEndpointOutputSchemas.rollbackDeploy,
+	},
+	'services.listEvents': {
+		input: RenderEndpointInputSchemas.listServiceEvents,
+		output: RenderEndpointOutputSchemas.listServiceEvents,
+	},
+	'services.listOutboundIps': {
+		input: RenderEndpointInputSchemas.listOutboundIps,
+		output: RenderEndpointOutputSchemas.listOutboundIps,
+	},
+	'services.jobs.list': {
+		input: RenderEndpointInputSchemas.listServiceJobs,
+		output: RenderEndpointOutputSchemas.listServiceJobs,
+	},
+	'services.jobs.retrieve': {
+		input: RenderEndpointInputSchemas.retrieveServiceJob,
+		output: RenderEndpointOutputSchemas.retrieveServiceJob,
+	},
+	'services.jobs.create': {
+		input: RenderEndpointInputSchemas.createServiceJob,
+		output: RenderEndpointOutputSchemas.createServiceJob,
+	},
+	'services.jobs.cancel': {
+		input: RenderEndpointInputSchemas.cancelServiceJob,
+		output: RenderEndpointOutputSchemas.cancelServiceJob,
+	},
+	'services.restart': {
+		input: RenderEndpointInputSchemas.restartService,
+		output: RenderEndpointOutputSchemas.restartService,
+	},
+	'services.suspend': {
+		input: RenderEndpointInputSchemas.suspendService,
+		output: RenderEndpointOutputSchemas.suspendService,
+	},
+	'services.resume': {
+		input: RenderEndpointInputSchemas.resumeService,
+		output: RenderEndpointOutputSchemas.resumeService,
+	},
+	'services.scale': {
+		input: RenderEndpointInputSchemas.scaleService,
+		output: RenderEndpointOutputSchemas.scaleService,
+	},
+	'services.updateAutoscaling': {
+		input: RenderEndpointInputSchemas.updateAutoscaling,
+		output: RenderEndpointOutputSchemas.updateAutoscaling,
+	},
+	'services.deleteAutoscaling': {
+		input: RenderEndpointInputSchemas.deleteAutoscaling,
+		output: RenderEndpointOutputSchemas.deleteAutoscaling,
+	},
+	'services.createPreview': {
+		input: RenderEndpointInputSchemas.createServicePreview,
+		output: RenderEndpointOutputSchemas.createServicePreview,
+	},
+	'services.deleteHeader': {
+		input: RenderEndpointInputSchemas.deleteServiceHeader,
+		output: RenderEndpointOutputSchemas.deleteServiceHeader,
+	},
+	'services.patchRoute': {
+		input: RenderEndpointInputSchemas.patchServiceRoute,
+		output: RenderEndpointOutputSchemas.patchServiceRoute,
+	},
+	'services.deleteRoute': {
+		input: RenderEndpointInputSchemas.deleteServiceRoute,
+		output: RenderEndpointOutputSchemas.deleteServiceRoute,
+	},
+	'services.envVars.list': {
+		input: RenderEndpointInputSchemas.listServiceEnvVars,
+		output: RenderEndpointOutputSchemas.listServiceEnvVars,
+	},
+	'services.envVars.delete': {
+		input: RenderEndpointInputSchemas.deleteServiceEnvVar,
+		output: RenderEndpointOutputSchemas.deleteServiceEnvVar,
+	},
+	'services.headers.list': {
+		input: RenderEndpointInputSchemas.listServiceHeaders,
+		output: RenderEndpointOutputSchemas.listServiceHeaders,
+	},
+	'services.customDomains.list': {
+		input: RenderEndpointInputSchemas.listServiceCustomDomains,
+		output: RenderEndpointOutputSchemas.listServiceCustomDomains,
+	},
+	'services.customDomains.delete': {
+		input: RenderEndpointInputSchemas.deleteServiceCustomDomain,
+		output: RenderEndpointOutputSchemas.deleteServiceCustomDomain,
+	},
+	'services.environments.list': {
+		input: RenderEndpointInputSchemas.listEnvironments,
+		output: RenderEndpointOutputSchemas.listEnvironments,
+	},
+	'services.environments.create': {
+		input: RenderEndpointInputSchemas.createEnvironment,
+		output: RenderEndpointOutputSchemas.createEnvironment,
+	},
+	'services.environments.retrieve': {
+		input: RenderEndpointInputSchemas.retrieveEnvironment,
+		output: RenderEndpointOutputSchemas.retrieveEnvironment,
+	},
+	'services.environments.update': {
+		input: RenderEndpointInputSchemas.updateEnvironment,
+		output: RenderEndpointOutputSchemas.updateEnvironment,
+	},
+	'services.environments.delete': {
+		input: RenderEndpointInputSchemas.deleteEnvironment,
+		output: RenderEndpointOutputSchemas.deleteEnvironment,
+	},
+	'services.environments.removeResources': {
+		input: RenderEndpointInputSchemas.removeResourcesFromEnvironment,
+		output: RenderEndpointOutputSchemas.removeResourcesFromEnvironment,
+	},
+	'services.envGroups.list': {
+		input: RenderEndpointInputSchemas.listEnvGroups,
+		output: RenderEndpointOutputSchemas.listEnvGroups,
+	},
+	'services.envGroups.create': {
+		input: RenderEndpointInputSchemas.createEnvGroup,
+		output: RenderEndpointOutputSchemas.createEnvGroup,
+	},
+	'services.envGroups.retrieve': {
+		input: RenderEndpointInputSchemas.retrieveEnvGroup,
+		output: RenderEndpointOutputSchemas.retrieveEnvGroup,
+	},
+	'services.envGroups.update': {
+		input: RenderEndpointInputSchemas.updateEnvGroup,
+		output: RenderEndpointOutputSchemas.updateEnvGroup,
+	},
+	'services.envGroups.delete': {
+		input: RenderEndpointInputSchemas.deleteEnvGroup,
+		output: RenderEndpointOutputSchemas.deleteEnvGroup,
+	},
+	'services.envGroups.unlinkService': {
+		input: RenderEndpointInputSchemas.unlinkServiceFromEnvGroup,
+		output: RenderEndpointOutputSchemas.unlinkServiceFromEnvGroup,
+	},
+	'projects.list': {
+		input: RenderEndpointInputSchemas.listProjects,
+		output: RenderEndpointOutputSchemas.listProjects,
+	},
+	'projects.create': {
+		input: RenderEndpointInputSchemas.createProject,
+		output: RenderEndpointOutputSchemas.createProject,
+	},
+	'projects.retrieve': {
+		input: RenderEndpointInputSchemas.retrieveProject,
+		output: RenderEndpointOutputSchemas.retrieveProject,
+	},
+	'projects.update': {
+		input: RenderEndpointInputSchemas.updateProject,
+		output: RenderEndpointOutputSchemas.updateProject,
+	},
+	'projects.delete': {
+		input: RenderEndpointInputSchemas.deleteProject,
+		output: RenderEndpointOutputSchemas.deleteProject,
+	},
+	'postgres.list': {
+		input: RenderEndpointInputSchemas.listPostgres,
+		output: RenderEndpointOutputSchemas.listPostgres,
+	},
+	'postgres.create': {
+		input: RenderEndpointInputSchemas.createPostgres,
+		output: RenderEndpointOutputSchemas.createPostgres,
+	},
+	'postgres.retrieve': {
+		input: RenderEndpointInputSchemas.retrievePostgres,
+		output: RenderEndpointOutputSchemas.retrievePostgres,
+	},
+	'postgres.update': {
+		input: RenderEndpointInputSchemas.updatePostgres,
+		output: RenderEndpointOutputSchemas.updatePostgres,
+	},
+	'postgres.restart': {
+		input: RenderEndpointInputSchemas.restartPostgres,
+		output: RenderEndpointOutputSchemas.restartPostgres,
+	},
+	'postgres.suspend': {
+		input: RenderEndpointInputSchemas.suspendPostgres,
+		output: RenderEndpointOutputSchemas.suspendPostgres,
+	},
+	'postgres.resume': {
+		input: RenderEndpointInputSchemas.resumePostgres,
+		output: RenderEndpointOutputSchemas.resumePostgres,
+	},
+	'postgres.failover': {
+		input: RenderEndpointInputSchemas.failoverPostgres,
+		output: RenderEndpointOutputSchemas.failoverPostgres,
+	},
+	'postgres.connectionInfo': {
+		input: RenderEndpointInputSchemas.retrievePostgresConnectionInfo,
+		output: RenderEndpointOutputSchemas.retrievePostgresConnectionInfo,
+	},
+	'postgres.recoveryInfo': {
+		input: RenderEndpointInputSchemas.retrievePostgresRecoveryInfo,
+		output: RenderEndpointOutputSchemas.retrievePostgresRecoveryInfo,
+	},
+	'postgres.recover': {
+		input: RenderEndpointInputSchemas.recoverPostgres,
+		output: RenderEndpointOutputSchemas.recoverPostgres,
+	},
+	'postgres.deleteUser': {
+		input: RenderEndpointInputSchemas.deletePostgresUser,
+		output: RenderEndpointOutputSchemas.deletePostgresUser,
+	},
+	'registryCredentials.list': {
+		input: RenderEndpointInputSchemas.listRegistryCredentials,
+		output: RenderEndpointOutputSchemas.listRegistryCredentials,
+	},
+	'registryCredentials.create': {
+		input: RenderEndpointInputSchemas.createRegistryCredential,
+		output: RenderEndpointOutputSchemas.createRegistryCredential,
+	},
+	'registryCredentials.retrieve': {
+		input: RenderEndpointInputSchemas.retrieveRegistryCredential,
+		output: RenderEndpointOutputSchemas.retrieveRegistryCredential,
+	},
+	'registryCredentials.update': {
+		input: RenderEndpointInputSchemas.updateRegistryCredential,
+		output: RenderEndpointOutputSchemas.updateRegistryCredential,
+	},
+	'registryCredentials.delete': {
+		input: RenderEndpointInputSchemas.deleteRegistryCredential,
+		output: RenderEndpointOutputSchemas.deleteRegistryCredential,
+	},
+	'owners.list': {
+		input: RenderEndpointInputSchemas.listOwners,
+		output: RenderEndpointOutputSchemas.listOwners,
+	},
+	'owners.retrieve': {
+		input: RenderEndpointInputSchemas.retrieveOwner,
+		output: RenderEndpointOutputSchemas.retrieveOwner,
+	},
+	'owners.members': {
+		input: RenderEndpointInputSchemas.listOwnerMembers,
+		output: RenderEndpointOutputSchemas.listOwnerMembers,
+	},
+	'owners.updateMember': {
+		input: RenderEndpointInputSchemas.updateWorkspaceMember,
+		output: RenderEndpointOutputSchemas.updateWorkspaceMember,
+	},
+	'owners.removeMember': {
+		input: RenderEndpointInputSchemas.removeWorkspaceMember,
+		output: RenderEndpointOutputSchemas.removeWorkspaceMember,
+	},
+	'owners.auditLogs': {
+		input: RenderEndpointInputSchemas.listOwnerAuditLogs,
+		output: RenderEndpointOutputSchemas.listOwnerAuditLogs,
+	},
+	'organizations.auditLogs': {
+		input: RenderEndpointInputSchemas.listOrganizationAuditLogs,
+		output: RenderEndpointOutputSchemas.listOrganizationAuditLogs,
+	},
+	'user.get': {
+		input: RenderEndpointInputSchemas.getUser,
+		output: RenderEndpointOutputSchemas.getUser,
+	},
+	'logs.list': {
+		input: RenderEndpointInputSchemas.listLogs,
+		output: RenderEndpointOutputSchemas.listLogs,
+	},
+	'logs.values': {
+		input: RenderEndpointInputSchemas.listLogsValues,
+		output: RenderEndpointOutputSchemas.listLogsValues,
+	},
+	'logs.resourceStreams': {
+		input: RenderEndpointInputSchemas.listResourceLogStreams,
+		output: RenderEndpointOutputSchemas.listResourceLogStreams,
+	},
+	'logs.deleteOwnerStream': {
+		input: RenderEndpointInputSchemas.deleteOwnerLogStream,
+		output: RenderEndpointOutputSchemas.deleteOwnerLogStream,
+	},
+	'logs.updateOwnerStream': {
+		input: RenderEndpointInputSchemas.updateOwnerLogStream,
+		output: RenderEndpointOutputSchemas.updateOwnerLogStream,
+	},
+	'logs.retrieveOwnerStream': {
+		input: RenderEndpointInputSchemas.retrieveOwnerLogStream,
+		output: RenderEndpointOutputSchemas.retrieveOwnerLogStream,
+	},
+	'logs.retrieveResourceStream': {
+		input: RenderEndpointInputSchemas.retrieveResourceLogStream,
+		output: RenderEndpointOutputSchemas.retrieveResourceLogStream,
+	},
+	'logs.deleteResourceStream': {
+		input: RenderEndpointInputSchemas.deleteResourceLogStream,
+		output: RenderEndpointOutputSchemas.deleteResourceLogStream,
+	},
+	'metrics.activeConnections': {
+		input: RenderEndpointInputSchemas.getActiveConnections,
+		output: RenderEndpointOutputSchemas.getActiveConnections,
+	},
+	'metrics.bandwidthSources': {
+		input: RenderEndpointInputSchemas.getBandwidthSources,
+		output: RenderEndpointOutputSchemas.getBandwidthSources,
+	},
+	'metrics.cpu': {
+		input: RenderEndpointInputSchemas.getCpu,
+		output: RenderEndpointOutputSchemas.getCpu,
+	},
+	'metrics.cpuLimit': {
+		input: RenderEndpointInputSchemas.getCpuLimit,
+		output: RenderEndpointOutputSchemas.getCpuLimit,
+	},
+	'metrics.cpuTarget': {
+		input: RenderEndpointInputSchemas.getCpuTarget,
+		output: RenderEndpointOutputSchemas.getCpuTarget,
+	},
+	'metrics.httpRequests': {
+		input: RenderEndpointInputSchemas.getHttpRequests,
+		output: RenderEndpointOutputSchemas.getHttpRequests,
+	},
+	'metrics.httpLatency': {
+		input: RenderEndpointInputSchemas.getHttpLatency,
+		output: RenderEndpointOutputSchemas.getHttpLatency,
+	},
+	'metrics.bandwidth': {
+		input: RenderEndpointInputSchemas.getBandwidth,
+		output: RenderEndpointOutputSchemas.getBandwidth,
+	},
+	'metrics.replicationLag': {
+		input: RenderEndpointInputSchemas.getReplicationLag,
+		output: RenderEndpointOutputSchemas.getReplicationLag,
+	},
+	'metrics.diskCapacity': {
+		input: RenderEndpointInputSchemas.getDiskCapacity,
+		output: RenderEndpointOutputSchemas.getDiskCapacity,
+	},
+	'metrics.diskUsage': {
+		input: RenderEndpointInputSchemas.getDiskUsage,
+		output: RenderEndpointOutputSchemas.getDiskUsage,
+	},
+	'metrics.instanceCount': {
+		input: RenderEndpointInputSchemas.getInstanceCount,
+		output: RenderEndpointOutputSchemas.getInstanceCount,
+	},
+	'metrics.memory': {
+		input: RenderEndpointInputSchemas.getMemory,
+		output: RenderEndpointOutputSchemas.getMemory,
+	},
+	'metrics.memoryLimit': {
+		input: RenderEndpointInputSchemas.getMemoryLimit,
+		output: RenderEndpointOutputSchemas.getMemoryLimit,
+	},
+	'metrics.memoryTarget': {
+		input: RenderEndpointInputSchemas.getMemoryTarget,
+		output: RenderEndpointOutputSchemas.getMemoryTarget,
+	},
+	'metrics.applicationFilterValues': {
+		input: RenderEndpointInputSchemas.listApplicationFilterValues,
+		output: RenderEndpointOutputSchemas.listApplicationFilterValues,
+	},
+	'metrics.httpFilterValues': {
+		input: RenderEndpointInputSchemas.listHttpFilterValues,
+		output: RenderEndpointOutputSchemas.listHttpFilterValues,
+	},
+	'metrics.pathFilterValues': {
+		input: RenderEndpointInputSchemas.listPathFilterValues,
+		output: RenderEndpointOutputSchemas.listPathFilterValues,
+	},
+	'metrics.taskRunsQueued': {
+		input: RenderEndpointInputSchemas.getTaskRunsQueued,
+		output: RenderEndpointOutputSchemas.getTaskRunsQueued,
+	},
+	'metrics.taskRunsCompleted': {
+		input: RenderEndpointInputSchemas.getTaskRunsCompleted,
+		output: RenderEndpointOutputSchemas.getTaskRunsCompleted,
+	},
+	'automation.listDisks': {
+		input: RenderEndpointInputSchemas.listDisks,
+		output: RenderEndpointOutputSchemas.listDisks,
+	},
+	'automation.listMaintenance': {
+		input: RenderEndpointInputSchemas.listMaintenance,
+		output: RenderEndpointOutputSchemas.listMaintenance,
+	},
+	'automation.listTaskRuns': {
+		input: RenderEndpointInputSchemas.listTaskRuns,
+		output: RenderEndpointOutputSchemas.listTaskRuns,
+	},
+	'automation.listTasks': {
+		input: RenderEndpointInputSchemas.listTasks,
+		output: RenderEndpointOutputSchemas.listTasks,
+	},
+	'automation.listWorkflows': {
+		input: RenderEndpointInputSchemas.listWorkflows,
+		output: RenderEndpointOutputSchemas.listWorkflows,
+	},
+	'automation.listWorkflowVersions': {
+		input: RenderEndpointInputSchemas.listWorkflowVersions,
+		output: RenderEndpointOutputSchemas.listWorkflowVersions,
+	},
+	'automation.listWebhooks': {
+		input: RenderEndpointInputSchemas.listWebhooks,
+		output: RenderEndpointOutputSchemas.listWebhooks,
+	},
+	'automation.listWebhookEvents': {
+		input: RenderEndpointInputSchemas.listWebhookEvents,
+		output: RenderEndpointOutputSchemas.listWebhookEvents,
+	},
+	'events.retrieve': {
+		input: RenderEndpointInputSchemas.retrieveEvent,
+		output: RenderEndpointOutputSchemas.retrieveEvent,
+	},
+	'automation.createDisk': {
+		input: RenderEndpointInputSchemas.createDisk,
+		output: RenderEndpointOutputSchemas.createDisk,
+	},
+	'automation.retrieveDisk': {
+		input: RenderEndpointInputSchemas.retrieveDisk,
+		output: RenderEndpointOutputSchemas.retrieveDisk,
+	},
+	'automation.updateDisk': {
+		input: RenderEndpointInputSchemas.updateDisk,
+		output: RenderEndpointOutputSchemas.updateDisk,
+	},
+	'automation.deleteDisk': {
+		input: RenderEndpointInputSchemas.deleteDisk,
+		output: RenderEndpointOutputSchemas.deleteDisk,
+	},
+	'automation.listDiskSnapshots': {
+		input: RenderEndpointInputSchemas.listDiskSnapshots,
+		output: RenderEndpointOutputSchemas.listDiskSnapshots,
+	},
+	'automation.restoreDiskSnapshot': {
+		input: RenderEndpointInputSchemas.restoreDiskSnapshot,
+		output: RenderEndpointOutputSchemas.restoreDiskSnapshot,
+	},
+	'automation.retrieveMaintenance': {
+		input: RenderEndpointInputSchemas.retrieveMaintenance,
+		output: RenderEndpointOutputSchemas.retrieveMaintenance,
+	},
+	'automation.updateMaintenance': {
+		input: RenderEndpointInputSchemas.updateMaintenance,
+		output: RenderEndpointOutputSchemas.updateMaintenance,
+	},
+	'automation.triggerMaintenance': {
+		input: RenderEndpointInputSchemas.triggerMaintenance,
+		output: RenderEndpointOutputSchemas.triggerMaintenance,
+	},
+	'automation.triggerCronJobRun': {
+		input: RenderEndpointInputSchemas.triggerCronJobRun,
+		output: RenderEndpointOutputSchemas.triggerCronJobRun,
+	},
+	'automation.cancelCronJobRun': {
+		input: RenderEndpointInputSchemas.cancelCronJobRun,
+		output: RenderEndpointOutputSchemas.cancelCronJobRun,
+	},
+	'automation.createWebhook': {
+		input: RenderEndpointInputSchemas.createWebhook,
+		output: RenderEndpointOutputSchemas.createWebhook,
+	},
+	'automation.retrieveWebhook': {
+		input: RenderEndpointInputSchemas.retrieveWebhook,
+		output: RenderEndpointOutputSchemas.retrieveWebhook,
+	},
+	'automation.updateWebhook': {
+		input: RenderEndpointInputSchemas.updateWebhook,
+		output: RenderEndpointOutputSchemas.updateWebhook,
+	},
+	'automation.deleteWebhook': {
+		input: RenderEndpointInputSchemas.deleteWebhook,
+		output: RenderEndpointOutputSchemas.deleteWebhook,
+	},
+	'final.addHeaders': {
+		input: RenderEndpointInputSchemas.addHeaders,
+		output: RenderEndpointOutputSchemas.addHeaders,
+	},
+	'final.addOrUpdateSecretFile': {
+		input: RenderEndpointInputSchemas.addOrUpdateSecretFile,
+		output: RenderEndpointOutputSchemas.addOrUpdateSecretFile,
+	},
+	'final.addResourcesToEnvironment': {
+		input: RenderEndpointInputSchemas.addResourcesToEnvironment,
+		output: RenderEndpointOutputSchemas.addResourcesToEnvironment,
+	},
+	'final.addRoute': {
+		input: RenderEndpointInputSchemas.addRoute,
+		output: RenderEndpointOutputSchemas.addRoute,
+	},
+	'final.createCustomDomain': {
+		input: RenderEndpointInputSchemas.createCustomDomain,
+		output: RenderEndpointOutputSchemas.createCustomDomain,
+	},
+	'final.deleteEnvGroupEnvVar': {
+		input: RenderEndpointInputSchemas.deleteEnvGroupEnvVar,
+		output: RenderEndpointOutputSchemas.deleteEnvGroupEnvVar,
+	},
+	'final.deleteEnvGroupSecretFile': {
+		input: RenderEndpointInputSchemas.deleteEnvGroupSecretFile,
+		output: RenderEndpointOutputSchemas.deleteEnvGroupSecretFile,
+	},
+	'final.deleteKeyValue': {
+		input: RenderEndpointInputSchemas.deleteKeyValue,
+		output: RenderEndpointOutputSchemas.deleteKeyValue,
+	},
+	'final.deleteSecretFile': {
+		input: RenderEndpointInputSchemas.deleteSecretFile,
+		output: RenderEndpointOutputSchemas.deleteSecretFile,
+	},
+	'final.disconnectBlueprint': {
+		input: RenderEndpointInputSchemas.disconnectBlueprint,
+		output: RenderEndpointOutputSchemas.disconnectBlueprint,
+	},
+	'final.linkServiceToEnvGroup': {
+		input: RenderEndpointInputSchemas.linkServiceToEnvGroup,
+		output: RenderEndpointOutputSchemas.linkServiceToEnvGroup,
+	},
+	'final.listBlueprints': {
+		input: RenderEndpointInputSchemas.listBlueprints,
+		output: RenderEndpointOutputSchemas.listBlueprints,
+	},
+	'final.listInstances': {
+		input: RenderEndpointInputSchemas.listInstances,
+		output: RenderEndpointOutputSchemas.listInstances,
+	},
+	'final.listKeyValue': {
+		input: RenderEndpointInputSchemas.listKeyValue,
+		output: RenderEndpointOutputSchemas.listKeyValue,
+	},
+	'keyValue.suspend': {
+		input: RenderEndpointInputSchemas.suspendKeyValue,
+		output: RenderEndpointOutputSchemas.suspendKeyValue,
+	},
+	'keyValue.create': {
+		input: RenderEndpointInputSchemas.createKeyValue,
+		output: RenderEndpointOutputSchemas.createKeyValue,
+	},
+	'keyValue.retrieve': {
+		input: RenderEndpointInputSchemas.retrieveKeyValue,
+		output: RenderEndpointOutputSchemas.retrieveKeyValue,
+	},
+	'keyValue.update': {
+		input: RenderEndpointInputSchemas.updateKeyValue,
+		output: RenderEndpointOutputSchemas.updateKeyValue,
+	},
+	'keyValue.resume': {
+		input: RenderEndpointInputSchemas.resumeKeyValue,
+		output: RenderEndpointOutputSchemas.resumeKeyValue,
+	},
+	'keyValue.connectionInfo': {
+		input: RenderEndpointInputSchemas.retrieveKeyValueConnectionInfo,
+		output: RenderEndpointOutputSchemas.retrieveKeyValueConnectionInfo,
+	},
+	'blueprints.listSyncs': {
+		input: RenderEndpointInputSchemas.listBlueprintSyncs,
+		output: RenderEndpointOutputSchemas.listBlueprintSyncs,
+	},
+	'final.listNotificationOverrides': {
+		input: RenderEndpointInputSchemas.listNotificationOverrides,
+		output: RenderEndpointOutputSchemas.listNotificationOverrides,
+	},
+	'final.retrieveServiceNotificationOverrides': {
+		input: RenderEndpointInputSchemas.retrieveServiceNotificationOverrides,
+		output: RenderEndpointOutputSchemas.retrieveServiceNotificationOverrides,
+	},
+	'final.updateServiceNotificationOverrides': {
+		input: RenderEndpointInputSchemas.updateServiceNotificationOverrides,
+		output: RenderEndpointOutputSchemas.updateServiceNotificationOverrides,
+	},
+	'final.listPostgresExport': {
+		input: RenderEndpointInputSchemas.listPostgresExport,
+		output: RenderEndpointOutputSchemas.listPostgresExport,
+	},
+	'final.listPostgresUsers': {
+		input: RenderEndpointInputSchemas.listPostgresUsers,
+		output: RenderEndpointOutputSchemas.listPostgresUsers,
+	},
+	'final.listRoutes': {
+		input: RenderEndpointInputSchemas.listRoutes,
+		output: RenderEndpointOutputSchemas.listRoutes,
+	},
+	'final.listSecretFiles': {
+		input: RenderEndpointInputSchemas.listSecretFiles,
+		output: RenderEndpointOutputSchemas.listSecretFiles,
+	},
+	'final.retrieveCustomDomain': {
+		input: RenderEndpointInputSchemas.retrieveCustomDomain,
+		output: RenderEndpointOutputSchemas.retrieveCustomDomain,
+	},
+	'final.retrieveDeploy': {
+		input: RenderEndpointInputSchemas.retrieveDeploy,
+		output: RenderEndpointOutputSchemas.retrieveDeploy,
+	},
+	'final.retrieveEnvGroupEnvVar': {
+		input: RenderEndpointInputSchemas.retrieveEnvGroupEnvVar,
+		output: RenderEndpointOutputSchemas.retrieveEnvGroupEnvVar,
+	},
+	'final.retrieveEnvGroupSecretFile': {
+		input: RenderEndpointInputSchemas.retrieveEnvGroupSecretFile,
+		output: RenderEndpointOutputSchemas.retrieveEnvGroupSecretFile,
+	},
+	'final.retrieveEnvVar': {
+		input: RenderEndpointInputSchemas.retrieveEnvVar,
+		output: RenderEndpointOutputSchemas.retrieveEnvVar,
+	},
+	'final.retrieveOwnerNotificationSettings': {
+		input: RenderEndpointInputSchemas.retrieveOwnerNotificationSettings,
+		output: RenderEndpointOutputSchemas.retrieveOwnerNotificationSettings,
+	},
+	'final.retrieveSecretFile': {
+		input: RenderEndpointInputSchemas.retrieveSecretFile,
+		output: RenderEndpointOutputSchemas.retrieveSecretFile,
+	},
+	'final.updateEnvGroupEnvVar': {
+		input: RenderEndpointInputSchemas.updateEnvGroupEnvVar,
+		output: RenderEndpointOutputSchemas.updateEnvGroupEnvVar,
+	},
+	'final.updateEnvGroupSecretFile': {
+		input: RenderEndpointInputSchemas.updateEnvGroupSecretFile,
+		output: RenderEndpointOutputSchemas.updateEnvGroupSecretFile,
+	},
+	'final.updateEnvVar': {
+		input: RenderEndpointInputSchemas.updateEnvVar,
+		output: RenderEndpointOutputSchemas.updateEnvVar,
+	},
+	'final.updateEnvVarsForService': {
+		input: RenderEndpointInputSchemas.updateEnvVarsForService,
+		output: RenderEndpointOutputSchemas.updateEnvVarsForService,
+	},
+	'final.updateHeaders': {
+		input: RenderEndpointInputSchemas.updateHeaders,
+		output: RenderEndpointOutputSchemas.updateHeaders,
+	},
+	'final.updateResourceLogStream': {
+		input: RenderEndpointInputSchemas.updateResourceLogStream,
+		output: RenderEndpointOutputSchemas.updateResourceLogStream,
+	},
+	'final.updateSecretFilesForService': {
+		input: RenderEndpointInputSchemas.updateSecretFilesForService,
+		output: RenderEndpointOutputSchemas.updateSecretFilesForService,
+	},
+	'final.verifyCustomDomain': {
+		input: RenderEndpointInputSchemas.verifyCustomDomain,
+		output: RenderEndpointOutputSchemas.verifyCustomDomain,
+	},
+	'final.deleteOwnerMetricsStream': {
+		input: RenderEndpointInputSchemas.deleteOwnerMetricsStream,
+		output: RenderEndpointOutputSchemas.deleteOwnerMetricsStream,
+	},
+	'final.retrieveOwnerMetricsStream': {
+		input: RenderEndpointInputSchemas.retrieveOwnerMetricsStream,
+		output: RenderEndpointOutputSchemas.retrieveOwnerMetricsStream,
+	},
+	'final.upsertOwnerMetricsStream': {
+		input: RenderEndpointInputSchemas.upsertOwnerMetricsStream,
+		output: RenderEndpointOutputSchemas.upsertOwnerMetricsStream,
+	},
+	'final.updateOwnerNotificationSettings': {
+		input: RenderEndpointInputSchemas.updateOwnerNotificationSettings,
+		output: RenderEndpointOutputSchemas.updateOwnerNotificationSettings,
+	},
+	'final.updateRoutes': {
+		input: RenderEndpointInputSchemas.updateRoutes,
+		output: RenderEndpointOutputSchemas.updateRoutes,
+	},
+	'buildSources.create': {
+		input: RenderEndpointInputSchemas.createBuildSource,
+		output: RenderEndpointOutputSchemas.createBuildSource,
+	},
+	'buildSources.list': {
+		input: RenderEndpointInputSchemas.listBuildSources,
+		output: RenderEndpointOutputSchemas.listBuildSources,
+	},
+	'buildSources.retrieve': {
+		input: RenderEndpointInputSchemas.retrieveBuildSource,
+		output: RenderEndpointOutputSchemas.retrieveBuildSource,
+	},
+	'buildSources.update': {
+		input: RenderEndpointInputSchemas.updateBuildSource,
+		output: RenderEndpointOutputSchemas.updateBuildSource,
+	},
+	'buildSources.delete': {
+		input: RenderEndpointInputSchemas.deleteBuildSource,
+		output: RenderEndpointOutputSchemas.deleteBuildSource,
+	},
+	'buildSources.builds.list': {
+		input: RenderEndpointInputSchemas.listBuildSourceBuilds,
+		output: RenderEndpointOutputSchemas.listBuildSourceBuilds,
+	},
+	'buildSources.builds.trigger': {
+		input: RenderEndpointInputSchemas.triggerBuildSourceBuild,
+		output: RenderEndpointOutputSchemas.triggerBuildSourceBuild,
+	},
+	'buildSources.builds.retrieve': {
+		input: RenderEndpointInputSchemas.retrieveBuildSourceBuild,
+		output: RenderEndpointOutputSchemas.retrieveBuildSourceBuild,
+	},
+	'buildSources.envVars.list': {
+		input: RenderEndpointInputSchemas.listBuildSourceEnvVars,
+		output: RenderEndpointOutputSchemas.listBuildSourceEnvVars,
+	},
+	'buildSources.envVars.update': {
+		input: RenderEndpointInputSchemas.updateBuildSourceEnvVars,
+		output: RenderEndpointOutputSchemas.updateBuildSourceEnvVars,
+	},
+	'buildSources.envVars.retrieve': {
+		input: RenderEndpointInputSchemas.retrieveBuildSourceEnvVar,
+		output: RenderEndpointOutputSchemas.retrieveBuildSourceEnvVar,
+	},
+	'buildSources.envVars.upsert': {
+		input: RenderEndpointInputSchemas.updateBuildSourceEnvVar,
+		output: RenderEndpointOutputSchemas.updateBuildSourceEnvVar,
+	},
+	'buildSources.envVars.delete': {
+		input: RenderEndpointInputSchemas.deleteBuildSourceEnvVar,
+		output: RenderEndpointOutputSchemas.deleteBuildSourceEnvVar,
+	},
+	'buildSources.secretFiles.list': {
+		input: RenderEndpointInputSchemas.listBuildSourceSecretFiles,
+		output: RenderEndpointOutputSchemas.listBuildSourceSecretFiles,
+	},
+	'buildSources.secretFiles.update': {
+		input: RenderEndpointInputSchemas.updateBuildSourceSecretFiles,
+		output: RenderEndpointOutputSchemas.updateBuildSourceSecretFiles,
+	},
+	'buildSources.secretFiles.retrieve': {
+		input: RenderEndpointInputSchemas.retrieveBuildSourceSecretFile,
+		output: RenderEndpointOutputSchemas.retrieveBuildSourceSecretFile,
+	},
+	'buildSources.secretFiles.upsert': {
+		input: RenderEndpointInputSchemas.updateBuildSourceSecretFile,
+		output: RenderEndpointOutputSchemas.updateBuildSourceSecretFile,
+	},
+	'buildSources.secretFiles.delete': {
+		input: RenderEndpointInputSchemas.deleteBuildSourceSecretFile,
+		output: RenderEndpointOutputSchemas.deleteBuildSourceSecretFile,
+	},
+	'buildSources.envGroups.link': {
+		input: RenderEndpointInputSchemas.linkEnvGroupToBuildSource,
+		output: RenderEndpointOutputSchemas.linkEnvGroupToBuildSource,
+	},
+	'buildSources.envGroups.unlink': {
+		input: RenderEndpointInputSchemas.unlinkEnvGroupFromBuildSource,
+		output: RenderEndpointOutputSchemas.unlinkEnvGroupFromBuildSource,
+	},
+	'blueprints.validate': {
+		input: RenderEndpointInputSchemas.validateBlueprint,
+		output: RenderEndpointOutputSchemas.validateBlueprint,
+	},
+	'blueprints.retrieve': {
+		input: RenderEndpointInputSchemas.retrieveBlueprint,
+		output: RenderEndpointOutputSchemas.retrieveBlueprint,
+	},
+	'blueprints.update': {
+		input: RenderEndpointInputSchemas.updateBlueprint,
+		output: RenderEndpointOutputSchemas.updateBlueprint,
+	},
+	'dedicatedIps.list': {
+		input: RenderEndpointInputSchemas.listDedicatedIps,
+		output: RenderEndpointOutputSchemas.listDedicatedIps,
+	},
+	'dedicatedIps.create': {
+		input: RenderEndpointInputSchemas.createDedicatedIp,
+		output: RenderEndpointOutputSchemas.createDedicatedIp,
+	},
+	'dedicatedIps.retrieve': {
+		input: RenderEndpointInputSchemas.retrieveDedicatedIp,
+		output: RenderEndpointOutputSchemas.retrieveDedicatedIp,
+	},
+	'dedicatedIps.update': {
+		input: RenderEndpointInputSchemas.updateDedicatedIp,
+		output: RenderEndpointOutputSchemas.updateDedicatedIp,
+	},
+	'dedicatedIps.delete': {
+		input: RenderEndpointInputSchemas.deleteDedicatedIp,
+		output: RenderEndpointOutputSchemas.deleteDedicatedIp,
+	},
+	'postgres.delete': {
+		input: RenderEndpointInputSchemas.deletePostgres,
+		output: RenderEndpointOutputSchemas.deletePostgres,
+	},
+	'postgres.createExport': {
+		input: RenderEndpointInputSchemas.createPostgresExport,
+		output: RenderEndpointOutputSchemas.createPostgresExport,
+	},
+	'postgres.createUser': {
+		input: RenderEndpointInputSchemas.createPostgresUser,
+		output: RenderEndpointOutputSchemas.createPostgresUser,
+	},
+	'postgres.processes': {
+		input: RenderEndpointInputSchemas.listPostgresProcesses,
+		output: RenderEndpointOutputSchemas.listPostgresProcesses,
+	},
+	'postgres.topQueries': {
+		input: RenderEndpointInputSchemas.listPostgresTopQueries,
+		output: RenderEndpointOutputSchemas.listPostgresTopQueries,
+	},
+	'postgres.sizes': {
+		input: RenderEndpointInputSchemas.listPostgresSizes,
+		output: RenderEndpointOutputSchemas.listPostgresSizes,
+	},
+	'postgres.tableScans': {
+		input: RenderEndpointInputSchemas.listPostgresTableScans,
+		output: RenderEndpointOutputSchemas.listPostgresTableScans,
+	},
+	'automation.createWorkflow': {
+		input: RenderEndpointInputSchemas.createWorkflow,
+		output: RenderEndpointOutputSchemas.createWorkflow,
+	},
+	'automation.retrieveWorkflow': {
+		input: RenderEndpointInputSchemas.retrieveWorkflow,
+		output: RenderEndpointOutputSchemas.retrieveWorkflow,
+	},
+	'automation.updateWorkflow': {
+		input: RenderEndpointInputSchemas.updateWorkflow,
+		output: RenderEndpointOutputSchemas.updateWorkflow,
+	},
+	'automation.deleteWorkflow': {
+		input: RenderEndpointInputSchemas.deleteWorkflow,
+		output: RenderEndpointOutputSchemas.deleteWorkflow,
+	},
+	'automation.createWorkflowVersion': {
+		input: RenderEndpointInputSchemas.createWorkflowVersion,
+		output: RenderEndpointOutputSchemas.createWorkflowVersion,
+	},
+	'automation.retrieveWorkflowVersion': {
+		input: RenderEndpointInputSchemas.retrieveWorkflowVersion,
+		output: RenderEndpointOutputSchemas.retrieveWorkflowVersion,
+	},
+	'automation.retrieveTask': {
+		input: RenderEndpointInputSchemas.retrieveTask,
+		output: RenderEndpointOutputSchemas.retrieveTask,
+	},
+	'automation.createTaskRun': {
+		input: RenderEndpointInputSchemas.createTaskRun,
+		output: RenderEndpointOutputSchemas.createTaskRun,
+	},
+	'automation.retrieveTaskRun': {
+		input: RenderEndpointInputSchemas.retrieveTaskRun,
+		output: RenderEndpointOutputSchemas.retrieveTaskRun,
+	},
+	'automation.cancelTaskRun': {
+		input: RenderEndpointInputSchemas.cancelTaskRun,
+		output: RenderEndpointOutputSchemas.cancelTaskRun,
+	},
+} as const satisfies RequiredPluginEndpointSchemas<
+	typeof renderEndpointsNested
+>;
+
+// unknown: endpoint trees mix nested groups and handlers; narrowed by typeof checks.
+type RenderEndpointTree = Record<string, unknown>;
+// unknown: wrappers receive core context/input before Zod parsing and re-parse output.
+type RenderEndpointHandler = (ctx: unknown, input: unknown) => Promise<unknown>;
+
+/**
+ * Binds every Render endpoint to its declared input and output schemas.
+ * `endpointSchemas` is also exposed for introspection, but the shared Corsair
+ * binder does not execute those metadata schemas. Validation here prevents
+ * malformed requests from reaching Render and rejects incompatible responses.
+ */
+function withRenderSchemas<T extends RenderEndpointTree>(
+	tree: T,
+	prefix = '',
+): T {
+	const validatedEntries = Object.entries(tree).map(([key, value]) => {
+		const operation = prefix ? `${prefix}.${key}` : key;
+		if (typeof value === 'function') {
+			const schema =
+				renderEndpointSchemas[operation as keyof typeof renderEndpointSchemas];
+			if (!schema) {
+				throw new Error(`Missing Render endpoint schema for ${operation}`);
+			}
+			const endpoint = value as RenderEndpointHandler;
+			const validated: RenderEndpointHandler = async (ctx, input) => {
+				const parsedInput = schema.input.parse(input ?? {});
+				const result = await endpoint(ctx, parsedInput);
+				return schema.output.parse(result);
+			};
+			return [key, validated];
+		}
+		if (value && typeof value === 'object') {
+			return [key, withRenderSchemas(value as RenderEndpointTree, operation)];
+		}
+		return [key, value];
+	});
+	return Object.fromEntries(validatedEntries) as T;
+}
+
+const validatedRenderEndpointsNested = withRenderSchemas(renderEndpointsNested);
+
+const renderEndpointMeta = {
+	'services.create': {
+		riskLevel: 'write',
+		description: 'Create a Render service',
+	},
+	'services.envVars.list': {
+		riskLevel: 'read',
+		description: 'List environment variables for a Render service',
+	},
+	'services.envVars.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete an environment variable from a Render service',
+	},
+	'services.headers.list': {
+		riskLevel: 'read',
+		description: 'List headers for a Render service',
+	},
+	'services.customDomains.list': {
+		riskLevel: 'read',
+		description: 'List custom domains for a Render service',
+	},
+	'services.customDomains.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a custom domain from a Render service',
+	},
+	'services.environments.removeResources': {
+		riskLevel: 'destructive',
+		description: 'Remove resources from a Render environment',
+	},
+	'services.envGroups.unlinkService': {
+		riskLevel: 'destructive',
+		description: 'Unlink a Render service from an environment group',
+	},
+	'projects.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a Render project',
+	},
+	'keyValue.create': {
+		riskLevel: 'write',
+		description: 'Create a Render Key Value instance',
+	},
+	'keyValue.retrieve': {
+		riskLevel: 'read',
+		description: 'Retrieve a Render Key Value instance',
+	},
+	'keyValue.update': {
+		riskLevel: 'write',
+		description: 'Update a Render Key Value instance',
+	},
+	'services.list': {
+		riskLevel: 'read',
+		description: 'List Render services accessible to the authenticated owner',
+	},
+	'services.retrieve': {
+		riskLevel: 'read',
+		description: 'Retrieve a Render service',
+	},
+	'services.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a Render service',
+	},
+	'services.update': {
+		riskLevel: 'write',
+		description: 'Update a Render service',
+	},
+	'services.triggerDeploy': {
+		riskLevel: 'write',
+		description: 'Trigger a Render deployment',
+	},
+	'services.listDeploys': {
+		riskLevel: 'read',
+		description: 'List deployments for a Render service',
+	},
+	'services.purgeCache': {
+		riskLevel: 'write',
+		description: 'Purge the cache for a Render service',
+	},
+	'services.cancelDeploy': {
+		riskLevel: 'write',
+		description: 'Cancel a Render deployment',
+	},
+	'services.rollbackDeploy': {
+		riskLevel: 'write',
+		description: 'Roll back a Render service deployment',
+	},
+	'services.listEvents': {
+		riskLevel: 'read',
+		description: 'List events for a Render service',
+	},
+	'services.listOutboundIps': {
+		riskLevel: 'read',
+		description: 'List outbound IPs for a Render service',
+	},
+	'services.jobs.list': {
+		riskLevel: 'read',
+		description: 'List jobs for a Render service',
+	},
+	'services.jobs.retrieve': {
+		riskLevel: 'read',
+		description: 'Retrieve a Render service job',
+	},
+	'services.jobs.create': {
+		riskLevel: 'write',
+		description: 'Create a job run for a Render service',
+	},
+	'services.jobs.cancel': {
+		riskLevel: 'write',
+		description: 'Cancel a running job on a Render service',
+	},
+	'services.restart': {
+		riskLevel: 'write',
+		description: 'Restart a Render service',
+	},
+	'services.suspend': {
+		riskLevel: 'write',
+		description: 'Suspend a Render service',
+	},
+	'services.resume': {
+		riskLevel: 'write',
+		description: 'Resume a Render service',
+	},
+	'services.scale': {
+		riskLevel: 'write',
+		description: 'Scale a Render service to a fixed instance count',
+	},
+	'services.updateAutoscaling': {
+		riskLevel: 'write',
+		description: 'Update autoscaling for a Render service',
+	},
+	'services.deleteAutoscaling': {
+		riskLevel: 'destructive',
+		description: 'Delete autoscaling configuration for a Render service',
+	},
+	'services.createPreview': {
+		riskLevel: 'write',
+		description: 'Create an image-backed preview for a Render service',
+	},
+	'services.deleteHeader': {
+		riskLevel: 'destructive',
+		description: 'Delete a header from a Render service',
+	},
+	'services.patchRoute': {
+		riskLevel: 'write',
+		description: 'Update a route on a Render service',
+	},
+	'services.deleteRoute': {
+		riskLevel: 'destructive',
+		description: 'Delete a route from a Render service',
+	},
+	'services.environments.list': {
+		riskLevel: 'read',
+		description: 'List Render environments',
+	},
+	'services.environments.create': {
+		riskLevel: 'write',
+		description: 'Create a Render environment',
+	},
+	'services.environments.retrieve': {
+		riskLevel: 'read',
+		description: 'Retrieve a Render environment',
+	},
+	'services.environments.update': {
+		riskLevel: 'write',
+		description: 'Update a Render environment',
+	},
+	'services.environments.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a Render environment',
+	},
+	'services.envGroups.list': {
+		riskLevel: 'read',
+		description: 'List Render environment groups',
+	},
+	'services.envGroups.create': {
+		riskLevel: 'write',
+		description: 'Create a Render environment group',
+	},
+	'services.envGroups.retrieve': {
+		riskLevel: 'read',
+		description: 'Retrieve a Render environment group',
+	},
+	'services.envGroups.update': {
+		riskLevel: 'write',
+		description: 'Update a Render environment group',
+	},
+	'services.envGroups.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a Render environment group',
+	},
+	'projects.list': { riskLevel: 'read', description: 'List Render projects' },
+	'projects.create': {
+		riskLevel: 'write',
+		description: 'Create a Render project',
+	},
+	'projects.retrieve': {
+		riskLevel: 'read',
+		description: 'Retrieve a Render project',
+	},
+	'projects.update': {
+		riskLevel: 'write',
+		description: 'Update a Render project',
+	},
+	'postgres.list': {
+		riskLevel: 'read',
+		description: 'List Render Postgres databases',
+	},
+	'postgres.create': {
+		riskLevel: 'write',
+		description: 'Create a Render Postgres database',
+	},
+	'postgres.retrieve': {
+		riskLevel: 'read',
+		description: 'Retrieve a Render Postgres database',
+	},
+	'postgres.update': {
+		riskLevel: 'write',
+		description: 'Update a Render Postgres database',
+	},
+	'postgres.restart': {
+		riskLevel: 'write',
+		description: 'Restart a Render Postgres instance',
+	},
+	'postgres.suspend': {
+		riskLevel: 'write',
+		description: 'Suspend a Render Postgres instance',
+	},
+	'postgres.resume': {
+		riskLevel: 'write',
+		description: 'Resume a Render Postgres instance',
+	},
+	'postgres.failover': {
+		riskLevel: 'write',
+		description: 'Trigger a failover for a Render Postgres instance',
+	},
+	'postgres.connectionInfo': {
+		riskLevel: 'read',
+		description: 'Retrieve connection info for a Render Postgres instance',
+	},
+	'postgres.recoveryInfo': {
+		riskLevel: 'read',
+		description:
+			'Retrieve point-in-time recovery status for a Render Postgres instance',
+	},
+	'postgres.recover': {
+		riskLevel: 'write',
+		description:
+			'Trigger point-in-time recovery for a Render Postgres instance',
+	},
+	'postgres.deleteUser': {
+		riskLevel: 'destructive',
+		description: 'Delete a user on a Render Postgres instance',
+	},
+	'registryCredentials.list': {
+		riskLevel: 'read',
+		description: 'List registry credentials',
+	},
+	'registryCredentials.create': {
+		riskLevel: 'write',
+		description: 'Create registry credentials',
+	},
+	'registryCredentials.retrieve': {
+		riskLevel: 'read',
+		description: 'Retrieve registry credentials',
+	},
+	'registryCredentials.update': {
+		riskLevel: 'write',
+		description: 'Update registry credentials',
+	},
+	'registryCredentials.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete registry credentials',
+	},
+	'owners.list': { riskLevel: 'read', description: 'List Render owners' },
+	'owners.retrieve': {
+		riskLevel: 'read',
+		description: 'Retrieve a Render owner',
+	},
+	'owners.members': {
+		riskLevel: 'read',
+		description: 'List Render owner members',
+	},
+	'owners.updateMember': {
+		riskLevel: 'write',
+		description: 'Update a Render workspace member role',
+	},
+	'owners.removeMember': {
+		riskLevel: 'destructive',
+		description: 'Remove a member from a Render workspace',
+	},
+	'owners.auditLogs': {
+		riskLevel: 'read',
+		description: 'List audit logs for a Render owner',
+	},
+	'organizations.auditLogs': {
+		riskLevel: 'read',
+		description: 'List audit logs for a Render organization',
+	},
+	'user.get': {
+		riskLevel: 'read',
+		description: 'Retrieve the authenticated Render user',
+	},
+	'logs.list': { riskLevel: 'read', description: 'List Render logs' },
+	'logs.values': { riskLevel: 'read', description: 'List Render log values' },
+	'logs.resourceStreams': {
+		riskLevel: 'read',
+		description: 'List resource log streams',
+	},
+	'logs.deleteOwnerStream': {
+		riskLevel: 'destructive',
+		description: 'Delete an owner log stream',
+	},
+	'logs.updateOwnerStream': {
+		riskLevel: 'write',
+		description: 'Update an owner log stream',
+	},
+	'logs.retrieveOwnerStream': {
+		riskLevel: 'read',
+		description: 'Retrieve a Render owner log stream',
+	},
+	'logs.retrieveResourceStream': {
+		riskLevel: 'read',
+		description: 'Retrieve a Render resource log stream',
+	},
+	'logs.deleteResourceStream': {
+		riskLevel: 'destructive',
+		description: 'Delete a Render resource log stream',
+	},
+	'metrics.activeConnections': {
+		riskLevel: 'read',
+		description: 'Read active Render connections',
+	},
+	'metrics.bandwidthSources': {
+		riskLevel: 'read',
+		description: 'Read Render bandwidth sources',
+	},
+	'metrics.cpu': { riskLevel: 'read', description: 'Read Render CPU metrics' },
+	'metrics.cpuLimit': {
+		riskLevel: 'read',
+		description: 'Read Render CPU limits',
+	},
+	'metrics.cpuTarget': {
+		riskLevel: 'read',
+		description: 'Read Render CPU target metrics',
+	},
+	'metrics.httpRequests': {
+		riskLevel: 'read',
+		description: 'Read Render HTTP request metrics',
+	},
+	'metrics.httpLatency': {
+		riskLevel: 'read',
+		description: 'Read Render HTTP latency metrics',
+	},
+	'metrics.bandwidth': {
+		riskLevel: 'read',
+		description: 'Read Render bandwidth metrics',
+	},
+	'metrics.replicationLag': {
+		riskLevel: 'read',
+		description: 'Read Render replication lag metrics',
+	},
+	'metrics.diskCapacity': {
+		riskLevel: 'read',
+		description: 'Read Render disk capacity',
+	},
+	'metrics.diskUsage': {
+		riskLevel: 'read',
+		description: 'Read Render disk usage',
+	},
+	'metrics.instanceCount': {
+		riskLevel: 'read',
+		description: 'Read Render instance counts',
+	},
+	'metrics.memory': {
+		riskLevel: 'read',
+		description: 'Read Render memory metrics',
+	},
+	'metrics.memoryLimit': {
+		riskLevel: 'read',
+		description: 'Read Render memory limits',
+	},
+	'metrics.memoryTarget': {
+		riskLevel: 'read',
+		description: 'Read Render memory targets',
+	},
+	'metrics.applicationFilterValues': {
+		riskLevel: 'read',
+		description: 'List Render application metric filter values',
+	},
+	'metrics.httpFilterValues': {
+		riskLevel: 'read',
+		description: 'List Render HTTP metric filter values',
+	},
+	'metrics.pathFilterValues': {
+		riskLevel: 'read',
+		description: 'List Render path metric filter values',
+	},
+	'metrics.taskRunsQueued': {
+		riskLevel: 'read',
+		description: 'Read queued Render task run metrics',
+	},
+	'metrics.taskRunsCompleted': {
+		riskLevel: 'read',
+		description: 'Read completed Render task run metrics',
+	},
+	'automation.listDisks': {
+		riskLevel: 'read',
+		description: 'List Render disks',
+	},
+	'automation.listMaintenance': {
+		riskLevel: 'read',
+		description: 'List Render maintenance windows',
+	},
+	'automation.listTaskRuns': {
+		riskLevel: 'read',
+		description: 'List Render task runs',
+	},
+	'automation.listTasks': {
+		riskLevel: 'read',
+		description: 'List Render tasks',
+	},
+	'automation.listWorkflows': {
+		riskLevel: 'read',
+		description: 'List Render workflows',
+	},
+	'automation.listWorkflowVersions': {
+		riskLevel: 'read',
+		description: 'List Render workflow versions',
+	},
+	'automation.listWebhooks': {
+		riskLevel: 'read',
+		description: 'List Render webhooks',
+	},
+	'automation.listWebhookEvents': {
+		riskLevel: 'read',
+		description: 'List delivery events for a Render webhook',
+	},
+	'events.retrieve': {
+		riskLevel: 'read',
+		description: 'Retrieve a Render event',
+	},
+	'automation.createDisk': {
+		riskLevel: 'write',
+		description: 'Create a disk for a Render service',
+	},
+	'automation.retrieveDisk': {
+		riskLevel: 'read',
+		description: 'Retrieve a Render disk',
+	},
+	'automation.updateDisk': {
+		riskLevel: 'write',
+		description: 'Update a Render disk',
+	},
+	'automation.deleteDisk': {
+		riskLevel: 'destructive',
+		description: 'Delete a Render disk',
+	},
+	'automation.listDiskSnapshots': {
+		riskLevel: 'read',
+		description: 'List snapshots for a Render disk',
+	},
+	'automation.restoreDiskSnapshot': {
+		riskLevel: 'write',
+		description: 'Restore a snapshot to a Render disk',
+	},
+	'automation.retrieveMaintenance': {
+		riskLevel: 'read',
+		description: 'Retrieve a Render maintenance run',
+	},
+	'automation.updateMaintenance': {
+		riskLevel: 'write',
+		description: 'Update a Render maintenance run',
+	},
+	'automation.triggerMaintenance': {
+		riskLevel: 'write',
+		description: 'Trigger a Render maintenance run',
+	},
+	'automation.triggerCronJobRun': {
+		riskLevel: 'write',
+		description: 'Trigger a run of a Render cron job',
+	},
+	'automation.cancelCronJobRun': {
+		riskLevel: 'destructive',
+		description: 'Cancel a run of a Render cron job',
+	},
+	'automation.createWebhook': {
+		riskLevel: 'write',
+		description: 'Create a webhook for a Render owner',
+	},
+	'automation.retrieveWebhook': {
+		riskLevel: 'read',
+		description: 'Retrieve a Render webhook',
+	},
+	'automation.updateWebhook': {
+		riskLevel: 'write',
+		description: 'Update a Render webhook',
+	},
+	'automation.deleteWebhook': {
+		riskLevel: 'destructive',
+		description: 'Delete a Render webhook',
+	},
+	'final.addHeaders': { riskLevel: 'write', description: 'Render addHeaders' },
+	'final.addOrUpdateSecretFile': {
+		riskLevel: 'write',
+		description: 'Render addOrUpdateSecretFile',
+	},
+	'final.addResourcesToEnvironment': {
+		riskLevel: 'write',
+		description: 'Render addResourcesToEnvironment',
+	},
+	'final.addRoute': { riskLevel: 'write', description: 'Render addRoute' },
+	'final.createCustomDomain': {
+		riskLevel: 'write',
+		description: 'Render createCustomDomain',
+	},
+	'final.deleteEnvGroupEnvVar': {
+		riskLevel: 'destructive',
+		description: 'Render deleteEnvGroupEnvVar',
+	},
+	'final.deleteEnvGroupSecretFile': {
+		riskLevel: 'destructive',
+		description: 'Render deleteEnvGroupSecretFile',
+	},
+	'final.deleteKeyValue': {
+		riskLevel: 'destructive',
+		description: 'Render deleteKeyValue',
+	},
+	'final.deleteSecretFile': {
+		riskLevel: 'destructive',
+		description: 'Render deleteSecretFile',
+	},
+	'final.disconnectBlueprint': {
+		riskLevel: 'destructive',
+		description: 'Render disconnectBlueprint',
+	},
+	'final.linkServiceToEnvGroup': {
+		riskLevel: 'write',
+		description: 'Render linkServiceToEnvGroup',
+	},
+	'final.listBlueprints': {
+		riskLevel: 'read',
+		description: 'Render listBlueprints',
+	},
+	'final.listInstances': {
+		riskLevel: 'read',
+		description: 'Render listInstances',
+	},
+	'final.listKeyValue': {
+		riskLevel: 'read',
+		description: 'Render listKeyValue',
+	},
+	'keyValue.suspend': {
+		riskLevel: 'write',
+		description: 'Suspend a Render Key Value instance',
+	},
+	'keyValue.resume': {
+		riskLevel: 'write',
+		description: 'Resume a Render Key Value instance',
+	},
+	'keyValue.connectionInfo': {
+		riskLevel: 'read',
+		description: 'Retrieve connection info for a Render Key Value instance',
+	},
+	'blueprints.listSyncs': {
+		riskLevel: 'read',
+		description: 'List syncs for a Render blueprint',
+	},
+	'final.listNotificationOverrides': {
+		riskLevel: 'read',
+		description: 'Render listNotificationOverrides',
+	},
+	'final.retrieveServiceNotificationOverrides': {
+		riskLevel: 'read',
+		description: 'Retrieve notification overrides for a Render service',
+	},
+	'final.updateServiceNotificationOverrides': {
+		riskLevel: 'write',
+		description: 'Update notification overrides for a Render service',
+	},
+	'final.listPostgresExport': {
+		riskLevel: 'read',
+		description: 'Render listPostgresExport',
+	},
+	'final.listPostgresUsers': {
+		riskLevel: 'read',
+		description: 'Render listPostgresUsers',
+	},
+	'final.listRoutes': { riskLevel: 'read', description: 'Render listRoutes' },
+	'final.listSecretFiles': {
+		riskLevel: 'read',
+		description: 'Render listSecretFiles',
+	},
+	'final.retrieveCustomDomain': {
+		riskLevel: 'read',
+		description: 'Render retrieveCustomDomain',
+	},
+	'final.retrieveDeploy': {
+		riskLevel: 'read',
+		description: 'Render retrieveDeploy',
+	},
+	'final.retrieveEnvGroupEnvVar': {
+		riskLevel: 'read',
+		description: 'Render retrieveEnvGroupEnvVar',
+	},
+	'final.retrieveEnvGroupSecretFile': {
+		riskLevel: 'read',
+		description: 'Render retrieveEnvGroupSecretFile',
+	},
+	'final.retrieveEnvVar': {
+		riskLevel: 'read',
+		description: 'Render retrieveEnvVar',
+	},
+	'final.retrieveOwnerNotificationSettings': {
+		riskLevel: 'read',
+		description: 'Render retrieveOwnerNotificationSettings',
+	},
+	'final.retrieveSecretFile': {
+		riskLevel: 'read',
+		description: 'Render retrieveSecretFile',
+	},
+	'final.updateEnvGroupEnvVar': {
+		riskLevel: 'write',
+		description: 'Render updateEnvGroupEnvVar',
+	},
+	'final.updateEnvGroupSecretFile': {
+		riskLevel: 'write',
+		description: 'Render updateEnvGroupSecretFile',
+	},
+	'final.updateEnvVar': {
+		riskLevel: 'write',
+		description: 'Render updateEnvVar',
+	},
+	'final.updateEnvVarsForService': {
+		riskLevel: 'write',
+		description: 'Render updateEnvVarsForService',
+	},
+	'final.updateHeaders': {
+		riskLevel: 'write',
+		description: 'Render updateHeaders',
+	},
+	'final.updateResourceLogStream': {
+		riskLevel: 'write',
+		description: 'Render updateResourceLogStream',
+	},
+	'final.updateSecretFilesForService': {
+		riskLevel: 'write',
+		description: 'Render updateSecretFilesForService',
+	},
+	'final.verifyCustomDomain': {
+		riskLevel: 'write',
+		description: 'Render verifyCustomDomain',
+	},
+	'final.deleteOwnerMetricsStream': {
+		riskLevel: 'destructive',
+		description: 'Render deleteOwnerMetricsStream',
+	},
+	'final.retrieveOwnerMetricsStream': {
+		riskLevel: 'read',
+		description: 'Retrieve metrics stream settings for a Render owner',
+	},
+	'final.upsertOwnerMetricsStream': {
+		riskLevel: 'write',
+		description: 'Create or update metrics stream settings for a Render owner',
+	},
+	'final.updateOwnerNotificationSettings': {
+		riskLevel: 'write',
+		description: 'Render updateOwnerNotificationSettings',
+	},
+	'final.updateRoutes': {
+		riskLevel: 'write',
+		description: 'Render updateRoutes',
+	},
+	'buildSources.create': {
+		riskLevel: 'write',
+		description: 'Create a Render build source',
+	},
+	'buildSources.list': {
+		riskLevel: 'read',
+		description: 'List Render build sources',
+	},
+	'buildSources.retrieve': {
+		riskLevel: 'read',
+		description: 'Retrieve a Render build source',
+	},
+	'buildSources.update': {
+		riskLevel: 'write',
+		description: 'Update a Render build source',
+	},
+	'buildSources.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a Render build source',
+	},
+	'buildSources.builds.list': {
+		riskLevel: 'read',
+		description: 'List builds for a Render build source',
+	},
+	'buildSources.builds.trigger': {
+		riskLevel: 'write',
+		description: 'Trigger a Render build source build',
+	},
+	'buildSources.builds.retrieve': {
+		riskLevel: 'read',
+		description: 'Retrieve a Render build source build',
+	},
+	'buildSources.envVars.list': {
+		riskLevel: 'read',
+		description: 'List environment variables for a Render build source',
+	},
+	'buildSources.envVars.update': {
+		riskLevel: 'write',
+		description: 'Replace environment variables for a Render build source',
+	},
+	'buildSources.envVars.retrieve': {
+		riskLevel: 'read',
+		description: 'Retrieve an environment variable for a Render build source',
+	},
+	'buildSources.envVars.upsert': {
+		riskLevel: 'write',
+		description:
+			'Add or update an environment variable for a Render build source',
+	},
+	'buildSources.envVars.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete an environment variable from a Render build source',
+	},
+	'buildSources.secretFiles.list': {
+		riskLevel: 'read',
+		description: 'List secret files for a Render build source',
+	},
+	'buildSources.secretFiles.update': {
+		riskLevel: 'write',
+		description: 'Replace secret files for a Render build source',
+	},
+	'buildSources.secretFiles.retrieve': {
+		riskLevel: 'read',
+		description: 'Retrieve a secret file for a Render build source',
+	},
+	'buildSources.secretFiles.upsert': {
+		riskLevel: 'write',
+		description: 'Add or update a secret file for a Render build source',
+	},
+	'buildSources.secretFiles.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a secret file from a Render build source',
+	},
+	'buildSources.envGroups.link': {
+		riskLevel: 'write',
+		description: 'Link an environment group to a Render build source',
+	},
+	'buildSources.envGroups.unlink': {
+		riskLevel: 'destructive',
+		description: 'Unlink an environment group from a Render build source',
+	},
+	'blueprints.validate': {
+		riskLevel: 'read',
+		description: 'Validate a Render Blueprint configuration',
+	},
+	'blueprints.retrieve': {
+		riskLevel: 'read',
+		description: 'Retrieve a Render Blueprint',
+	},
+	'blueprints.update': {
+		riskLevel: 'write',
+		description: 'Update a Render Blueprint',
+	},
+	'dedicatedIps.list': {
+		riskLevel: 'read',
+		description: 'List Render dedicated IP sets',
+	},
+	'dedicatedIps.create': {
+		riskLevel: 'write',
+		description: 'Create a Render dedicated IP set',
+	},
+	'dedicatedIps.retrieve': {
+		riskLevel: 'read',
+		description: 'Retrieve a Render dedicated IP set',
+	},
+	'dedicatedIps.update': {
+		riskLevel: 'write',
+		description: 'Update a Render dedicated IP set',
+	},
+	'dedicatedIps.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a Render dedicated IP set',
+	},
+	'postgres.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a Render Postgres database',
+	},
+	'postgres.createExport': {
+		riskLevel: 'write',
+		description: 'Create an export of a Render Postgres database',
+	},
+	'postgres.createUser': {
+		riskLevel: 'write',
+		description: 'Create a user for a Render Postgres database',
+	},
+	'postgres.processes': {
+		riskLevel: 'read',
+		description: 'List active queries for a Render Postgres database',
+	},
+	'postgres.topQueries': {
+		riskLevel: 'read',
+		description: 'List top queries for a Render Postgres database',
+	},
+	'postgres.sizes': {
+		riskLevel: 'read',
+		description: 'List database sizes for a Render Postgres database',
+	},
+	'postgres.tableScans': {
+		riskLevel: 'read',
+		description: 'List table scans for a Render Postgres database',
+	},
+	'automation.createWorkflow': {
+		riskLevel: 'write',
+		description: 'Create a Render workflow',
+	},
+	'automation.retrieveWorkflow': {
+		riskLevel: 'read',
+		description: 'Retrieve a Render workflow',
+	},
+	'automation.updateWorkflow': {
+		riskLevel: 'write',
+		description: 'Update a Render workflow',
+	},
+	'automation.deleteWorkflow': {
+		riskLevel: 'destructive',
+		description: 'Delete a Render workflow',
+	},
+	'automation.createWorkflowVersion': {
+		riskLevel: 'write',
+		description: 'Create and deploy a Render workflow version',
+	},
+	'automation.retrieveWorkflowVersion': {
+		riskLevel: 'read',
+		description: 'Retrieve a Render workflow version',
+	},
+	'automation.retrieveTask': {
+		riskLevel: 'read',
+		description: 'Retrieve a Render workflow task',
+	},
+	'automation.createTaskRun': {
+		riskLevel: 'write',
+		description: 'Start a Render workflow task run',
+	},
+	'automation.retrieveTaskRun': {
+		riskLevel: 'read',
+		description: 'Retrieve a Render workflow task run',
+	},
+	'automation.cancelTaskRun': {
+		riskLevel: 'destructive',
+		description: 'Cancel a Render workflow task run',
+	},
+} as const satisfies RequiredPluginEndpointMeta<typeof renderEndpointsNested>;
+
+const defaultAuthType: AuthTypes = 'api_key';
+export const renderAuthConfig = {
+	api_key: { account: ['tenant_external_id'] as const },
+} as const satisfies PluginAuthConfig;
+
+export type BaseRenderPlugin<T extends RenderPluginOptions> = CorsairPlugin<
+	'render',
+	typeof RenderSchema,
+	typeof renderEndpointsNested,
+	Record<string, never>,
+	T,
+	typeof defaultAuthType
+>;
+export type InternalRenderPlugin = BaseRenderPlugin<RenderPluginOptions>;
+export type ExternalRenderPlugin<T extends RenderPluginOptions> =
+	BaseRenderPlugin<T>;
+
+export function render<const T extends RenderPluginOptions>(
+	incomingOptions: RenderPluginOptions & T = {} as RenderPluginOptions & T,
+): ExternalRenderPlugin<T> {
+	const options = {
+		...incomingOptions,
+		authType: incomingOptions.authType ?? defaultAuthType,
+	};
+
+	return {
+		id: 'render',
+		authConfig: renderAuthConfig,
+		schema: RenderSchema,
+		options,
+		hooks: options.hooks,
+		// Every public endpoint is the schema-bound tree. endpointSchemas remains
+		// introspection metadata; calls use this validated tree at runtime.
+		endpoints: validatedRenderEndpointsNested,
+		webhooks: {},
+		endpointMeta: renderEndpointMeta,
+		endpointSchemas: renderEndpointSchemas,
+		pluginWebhookMatcher: undefined,
+		errorHandlers: { ...errorHandlers, ...options.errorHandlers },
+		keyBuilder: async (ctx: RenderKeyBuilderContext, source) => {
+			if (source === 'endpoint' && options.key) return options.key;
+			if (source === 'endpoint' && ctx.authType === 'api_key') {
+				const key = await ctx.keys.get_api_key();
+				if (key) return key;
+			}
+			throw new AuthMissingError('render', 'api_key');
+		},
+	} satisfies InternalRenderPlugin;
+}
+
+export type {
+	RenderEndpointInputs,
+	RenderEndpointOutputs,
+} from './endpoints/types';
