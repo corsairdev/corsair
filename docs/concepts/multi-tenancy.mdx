@@ -50,6 +50,15 @@ When you call `withTenant('user_abc123')`, Corsair:
 
 No middleware, no manual filtering. Corsair handles it inside the database adapter.
 
+## Concurrent requests for one tenant
+
+Call `withTenant()` as often as you like — once per request handler, or once
+per parallel tool call in an agent workflow. Clients for the same tenant share
+one credential manager, so concurrent OAuth refreshes collapse into a single
+token request instead of spending the same rotating refresh token twice (which
+would revoke the connection). Tenants never share refresh state with each
+other.
+
 ## Per-user credential setup
 
 Each user connects their own accounts. Store credentials when they authenticate:
