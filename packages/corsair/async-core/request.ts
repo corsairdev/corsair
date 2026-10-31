@@ -316,10 +316,16 @@ const catchErrorCodes = (
 			}
 		})();
 
+		// Only strings make a usable message. APIs often nest the text
+		// ({ error: { message } }) or send arrays (FastAPI's detail), which
+		// would otherwise stringify to "[object Object]".
 		const errorMessage =
-			result.body?.message ||
-			result.body?.error ||
-			result.body?.detail ||
+			[
+				result.body?.message,
+				result.body?.error,
+				result.body?.error?.message,
+				result.body?.detail,
+			].find(isStringWithValue) ??
 			`Generic Error: status: ${errorStatus}; status text: ${errorStatusText}; body: ${errorBody}`;
 
 		throw new ApiError(options, result, errorMessage, rateLimitInfo);
