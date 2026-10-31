@@ -7,7 +7,8 @@
 // 2026-10-31 after corsairdev/hub#268 went live. `unit_credits` is what a call
 // holds; with `credits_per_unit` set, the call settles to what it used
 // (Reducto per page, TinyFish per step, Exa and Context.dev at the provider's
-// cost). A provider that isn't enabled there shows "Soon" and no price.
+// cost). List a provider only once it is enabled there; `live: false` shows
+// "Soon" with no price, if one ever needs announcing early.
 
 export const CREDITS_PER_USD = 100;
 export const MONTHLY_FREE_CREDITS = 100;
@@ -138,20 +139,6 @@ export const MANAGED_TOOLS: ManagedTool[] = [
 				price: { kind: 'upTo', credits: 1 },
 			},
 		],
-	},
-	{
-		app: 'dataforseo',
-		name: 'DataForSEO',
-		live: false,
-		calls: [
-			{ label: 'Google results for a keyword', tool: 'serp.googleOrganic' },
-		],
-	},
-	{
-		app: 'typesafe',
-		name: 'TypeSafe',
-		live: false,
-		calls: [{ label: 'Ask Jev a typed question', tool: 'systemOne.ask' }],
 	},
 ];
 
