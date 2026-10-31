@@ -1,5 +1,5 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
-import { request } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 
 export class DiscordAPIError extends Error {
 	constructor(
@@ -50,6 +50,10 @@ export async function makeDiscordRequest<T>(
 		const response = await request<T>(config, requestOptions);
 		return response;
 	} catch (error) {
+		// Preserve ApiError so error-handlers can read status / Retry-After
+		if (error instanceof ApiError) {
+			throw error;
+		}
 		if (error instanceof Error) {
 			throw new DiscordAPIError(error.message);
 		}
