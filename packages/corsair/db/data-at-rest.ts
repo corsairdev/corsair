@@ -102,6 +102,47 @@ export async function reencryptSealedAccountData(
 	}
 }
 
+/**
+ * Delete one account's sealed entity documents and event payloads. Used when
+ * the account's DEK can't be opened, so nothing can read those rows again.
+ * Unsealed rows are left as they are. Runs on the caller's transaction so the
+ * replacement DEK and the deletes commit together.
+ */
+export async function dropSealedAccountData(
+	db: Kysely<CorsairKyselyDatabase>,
+	accountId: string,
+): Promise<void> {
+	const entities = await db
+		.selectFrom('corsair_entities')
+		.select(['id', 'data'])
+		.where('account_id', '=', accountId)
+		.execute();
+	const sealedEntities = entities
+		.filter((row) => isSealed(parseJsonLike(row.data)))
+		.map((row) => row.id);
+	if (sealedEntities.length > 0) {
+		await db
+			.deleteFrom('corsair_entities')
+			.where('id', 'in', sealedEntities)
+			.execute();
+	}
+
+	const events = await db
+		.selectFrom('corsair_events')
+		.select(['id', 'payload'])
+		.where('account_id', '=', accountId)
+		.execute();
+	const sealedEvents = events
+		.filter((row) => isSealed(parseJsonLike(row.payload)))
+		.map((row) => row.id);
+	if (sealedEvents.length > 0) {
+		await db
+			.deleteFrom('corsair_events')
+			.where('id', 'in', sealedEvents)
+			.execute();
+	}
+}
+
 function reseal(
 	// unknown: JSONB cell. A sealed cell is an envelope; anything else stays plaintext.
 	value: unknown,

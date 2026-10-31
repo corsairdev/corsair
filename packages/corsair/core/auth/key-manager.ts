@@ -1,4 +1,7 @@
-import { reencryptSealedAccountData } from '../../db/data-at-rest';
+import {
+	dropSealedAccountData,
+	reencryptSealedAccountData,
+} from '../../db/data-at-rest';
 import type { CorsairDatabase } from '../../db/kysely/database';
 import type { AuthTypes } from '../constants';
 import {
@@ -17,6 +20,58 @@ import type {
 	OAuth2IntegrationCredentials,
 } from './types';
 import { BASE_AUTH_FIELDS } from './types';
+
+// ─────────────────────────────────────────────────────────────────────────────
+// DEKs this kek cannot open
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * A stored DEK was wrapped under another kek (one retired by a key change), so
+ * nothing this instance holds opens it, nor the credentials and rows under it.
+ * Reads fail with this; a credential write replaces the DEK instead.
+ */
+export class UnreadableDekError extends Error {
+	constructor(owner: string, app: string) {
+		super(
+			`The stored key for ${owner} was sealed under a key this instance no longer has, so its credentials can't be read. Reconnect ${app} to replace them.`,
+		);
+		this.name = 'UnreadableDekError';
+	}
+}
+
+// What AES-GCM throws when the auth tag fails, i.e. the wrong kek.
+const WRONG_KEY = 'Unsupported state or unable to authenticate data';
+
+/**
+ * The DEK, or null when this kek is not the one that wrapped it. Only a failed
+ * auth tag under a non-empty kek counts: a missing kek or a malformed value
+ * still throws, so a misconfigured instance never replaces a good DEK.
+ */
+async function openDekOrNull(
+	wrapped: string,
+	kek: string,
+): Promise<string | null> {
+	try {
+		return await decryptDEK(wrapped, kek);
+	} catch (err) {
+		// By message, not instanceof: crypto's errors come from Node's own realm,
+		// which a test VM's Error doesn't match.
+		const message = (err as { message?: unknown } | null)?.message;
+		if (kek && message === WRONG_KEY) return null;
+		throw err;
+	}
+}
+
+async function openDek(
+	wrapped: string,
+	kek: string,
+	owner: string,
+	app: string,
+): Promise<string> {
+	const dek = await openDekOrNull(wrapped, kek);
+	if (dek === null) throw new UnreadableDekError(owner, app);
+	return dek;
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Field Accessor Generator
@@ -168,7 +223,12 @@ export function createIntegrationKeyManager<T extends AuthTypes>(
 			);
 		}
 
-		cachedDek = await decryptDEK(integration.dek, kek);
+		cachedDek = await openDek(
+			integration.dek,
+			kek,
+			`integration "${integrationName}"`,
+			integrationName,
+		);
 		return cachedDek;
 	};
 
@@ -201,16 +261,30 @@ export function createIntegrationKeyManager<T extends AuthTypes>(
 	const doUpdateConfig = async (
 		updates: Record<string, string | null>,
 	): Promise<void> => {
-		const dek = await getDecryptedDek();
-		let currentConfig: Record<string, string>;
+		let dek: string;
+		// Set when the stored DEK can't be opened: the write starts over under a
+		// new one, since nothing under the old one is readable.
+		let replacementDek: string | undefined;
 		try {
-			currentConfig = await getDecryptedConfig();
+			dek = await getDecryptedDek();
 		} catch (err) {
-			console.error(
-				`[corsair] Failed to decrypt config for integration "${integrationName}", starting fresh:`,
-				err,
+			if (!(err instanceof UnreadableDekError)) throw err;
+			console.warn(
+				`[corsair] Integration "${integrationName}" has a DEK this kek can't open; replacing it and its config.`,
 			);
-			currentConfig = {};
+			dek = generateDEK();
+			replacementDek = await encryptDEK(dek, kek);
+		}
+		let currentConfig: Record<string, string> = {};
+		if (!replacementDek) {
+			try {
+				currentConfig = await getDecryptedConfig();
+			} catch (err) {
+				console.error(
+					`[corsair] Failed to decrypt config for integration "${integrationName}", starting fresh:`,
+					err,
+				);
+			}
 		}
 
 		const newConfig = { ...currentConfig };
@@ -223,7 +297,11 @@ export function createIntegrationKeyManager<T extends AuthTypes>(
 		}
 
 		const encryptedConfig = encryptConfig(newConfig, dek);
-		await ctx.updateIntegration({ config: encryptedConfig });
+		await ctx.updateIntegration({
+			config: encryptedConfig,
+			...(replacementDek ? { dek: replacementDek } : {}),
+		});
+		if (replacementDek) cachedDek = dek;
 	};
 
 	// Build the key manager
@@ -234,10 +312,13 @@ export function createIntegrationKeyManager<T extends AuthTypes>(
 			const integration = await ctx.getIntegration();
 			const newDek = generateDEK();
 
-			// If there's an existing DEK, re-encrypt config; otherwise start fresh
+			// If there's an existing DEK this kek opens, re-encrypt config;
+			// otherwise start fresh
 			let newConfig: Record<string, string> = {};
-			if (integration.dek) {
-				const oldDek = await decryptDEK(integration.dek, kek);
+			const oldDek = integration.dek
+				? await openDekOrNull(integration.dek, kek)
+				: null;
+			if (oldDek) {
 				const config = integration.config as Record<string, string>;
 				if (config && Object.keys(config).length > 0) {
 					newConfig = reEncryptConfig(config, oldDek, newDek);
@@ -407,6 +488,37 @@ export function createAccountKeyManager<T extends AuthTypes>(
 	let cachedDekSource: string | null = null;
 	let cachedIntegrationDek: string | null = null;
 
+	const accountLabel = `account (tenant: "${tenantId}", integration: "${integrationName}")`;
+
+	// A DEK this kek can't open leaves the account's config and sealed rows
+	// unreadable for good. The replacement drops those rows and writes the new
+	// DEK with its config in one transaction, so reads work again right after.
+	const replaceUnreadableDek = async (
+		accountId: string,
+		config: Record<string, string>,
+	): Promise<string> => {
+		console.warn(
+			`[corsair] ${accountLabel} has a DEK this kek can't open; replacing it, its config and its sealed rows.`,
+		);
+		const newDek = generateDEK();
+		const encryptedNewDek = await encryptDEK(newDek, kek);
+		await database.db.transaction().execute(async (trx) => {
+			await dropSealedAccountData(trx, accountId);
+			await trx
+				.updateTable('corsair_accounts')
+				.set({
+					config: encryptConfig(config, newDek),
+					dek: encryptedNewDek,
+					updated_at: new Date(),
+				})
+				.where('id', '=', accountId)
+				.execute();
+		});
+		cachedDek = newDek;
+		cachedDekSource = encryptedNewDek;
+		return newDek;
+	};
+
 	const getDecryptedDek = async (): Promise<string> => {
 		const account = await ctx.getAccount();
 		if (!account.dek) {
@@ -417,7 +529,7 @@ export function createAccountKeyManager<T extends AuthTypes>(
 
 		if (cachedDek && cachedDekSource === account.dek) return cachedDek;
 
-		cachedDek = await decryptDEK(account.dek, kek);
+		cachedDek = await openDek(account.dek, kek, accountLabel, integrationName);
 		cachedDekSource = account.dek;
 		return cachedDek;
 	};
@@ -432,7 +544,12 @@ export function createAccountKeyManager<T extends AuthTypes>(
 			);
 		}
 
-		cachedIntegrationDek = await decryptDEK(integration.dek, kek);
+		cachedIntegrationDek = await openDek(
+			integration.dek,
+			kek,
+			`integration "${integrationName}"`,
+			integrationName,
+		);
 		return cachedIntegrationDek;
 	};
 
@@ -488,20 +605,21 @@ export function createAccountKeyManager<T extends AuthTypes>(
 				`No DEK found for account (tenant: "${tenantId}", integration: "${integrationName}"). Initialize the account first.`,
 			);
 		}
-		const dek = await decryptDEK(account.dek, kek);
-		let currentConfig: Record<string, string>;
-		try {
-			const config = account.config as Record<string, string>;
-			currentConfig =
-				!config || Object.keys(config).length === 0
-					? {}
-					: decryptConfig(config, dek);
-		} catch (err) {
-			console.error(
-				`[corsair] Failed to decrypt config for account (tenant: "${tenantId}", integration: "${integrationName}"), starting fresh:`,
-				err,
-			);
-			currentConfig = {};
+		const dek = await openDekOrNull(account.dek, kek);
+		let currentConfig: Record<string, string> = {};
+		if (dek) {
+			try {
+				const config = account.config as Record<string, string>;
+				currentConfig =
+					!config || Object.keys(config).length === 0
+						? {}
+						: decryptConfig(config, dek);
+			} catch (err) {
+				console.error(
+					`[corsair] Failed to decrypt config for ${accountLabel}, starting fresh:`,
+					err,
+				);
+			}
 		}
 
 		const newConfig = { ...currentConfig };
@@ -513,6 +631,10 @@ export function createAccountKeyManager<T extends AuthTypes>(
 			}
 		}
 
+		if (!dek) {
+			await replaceUnreadableDek(account.id, newConfig);
+			return;
+		}
 		const encryptedConfig = encryptConfig(newConfig, dek);
 		await ctx.updateAccount({ config: encryptedConfig });
 	};
@@ -523,13 +645,16 @@ export function createAccountKeyManager<T extends AuthTypes>(
 
 		issue_new_dek: async () => {
 			const account = await ctx.getAccount();
+			let oldDek: string | null = null;
+			if (account.dek) {
+				oldDek = await openDekOrNull(account.dek, kek);
+				if (!oldDek) return replaceUnreadableDek(account.id, {});
+			}
 			const newDek = generateDEK();
 
 			// If there's an existing DEK, re-encrypt config and sealed rows; otherwise start fresh
 			let newConfig: Record<string, string> = {};
-			let oldDek: string | null = null;
-			if (account.dek) {
-				oldDek = await decryptDEK(account.dek, kek);
+			if (oldDek) {
 				const config = account.config as Record<string, string>;
 				if (config && Object.keys(config).length > 0) {
 					newConfig = reEncryptConfig(config, oldDek, newDek);
