@@ -97,7 +97,12 @@ export const list: GmailEndpoints['messagesList'] = async (ctx, input) => {
 	if (result.messages && ctx.db.messages) {
 		try {
 			for (const message of result.messages) {
-				if (message.id) {
+				// List entries carry only id and threadId, and upsert replaces the
+				// stored row, so only insert messages that are not stored yet.
+				if (
+					message.id &&
+					!(await ctx.db.messages.existsByEntityId(message.id))
+				) {
 					await ctx.db.messages.upsertByEntityId(message.id, {
 						...message,
 						id: message.id,
