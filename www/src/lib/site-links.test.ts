@@ -3,8 +3,10 @@ import { describe, it } from 'node:test';
 
 import {
 	CURSOR_INSTALL_URL,
+	hubLugClaimUrl,
 	hubMcpConnectUrl,
 	hubWwwPluginsLoginUrl,
+	lugHandleProblem,
 	MCP_URL,
 } from './site-links';
 
@@ -37,5 +39,25 @@ describe('CURSOR_INSTALL_URL', () => {
 		assert.equal(url.searchParams.get('name'), 'corsair');
 		const config = JSON.parse(atob(url.searchParams.get('config') ?? ''));
 		assert.deepEqual(config, { url: MCP_URL });
+	});
+});
+
+describe('lug handles', () => {
+	it('accepts what lug.dev accepts and rejects the rest', () => {
+		assert.equal(lugHandleProblem('pranay'), null);
+		assert.equal(lugHandleProblem('a-b-9'), null);
+		assert.equal(lugHandleProblem('-pranay'), 'format');
+		assert.equal(lugHandleProblem('Pranay'), 'format');
+		assert.equal(lugHandleProblem('xn--abc'), 'format');
+		assert.equal(lugHandleProblem('a'.repeat(33)), 'format');
+		assert.equal(lugHandleProblem('admin'), 'reserved');
+	});
+
+	it('signs in through Lug and opens /me with the handle filled in', () => {
+		const url = new URL(hubLugClaimUrl(' Pranay '));
+		assert.equal(url.origin + url.pathname, 'https://hub.corsair.dev/login');
+		assert.equal(url.searchParams.get('mode'), 'lug');
+		assert.equal(url.searchParams.get('handle'), 'pranay');
+		assert.equal(url.searchParams.get('redirect'), '/me?handle=pranay');
 	});
 });
