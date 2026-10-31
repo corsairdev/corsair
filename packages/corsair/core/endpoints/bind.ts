@@ -1,8 +1,11 @@
 import type { CorsairDatabase } from '../../db/kysely/database';
 import type { HubConfig } from '../../hub';
+import type { ManagedPricingFailedWhen } from '../../hub/contracts/managed-pricing-api';
 import type { ManagedPricingCall } from '../../hub/managed-pricing-auth';
 import {
+	answeredFailed,
 	createManagedPricingCredentialCache,
+	describeAnsweredFailure,
 	readUsageUnits,
 	reportManagedPricingCallFailed,
 	reportManagedPricingCallUsage,
@@ -321,6 +324,9 @@ export function bindEndpointsRecursively({
 				// Set when Hub prices the call per unit: where the result says how
 				// many units it used.
 				let usagePath: string | undefined;
+				// Set for a provider that answers some failures with a success
+				// status: how its result says the call failed.
+				let failedWhen: ManagedPricingFailedWhen | undefined;
 				// Set when the call starts a provider job or reads one back on
 				// Corsair's key (managed-pricing-jobs.ts).
 				let managedJob: ManagedJobKind | undefined;
@@ -359,10 +365,19 @@ export function bindEndpointsRecursively({
 					startedJob = reported.startedJob;
 				};
 				// unknown: each plugin's result has its own shape; only the path is known.
-				// A job call reports nothing here: its usage is settled once, when a
-				// read sees the job end (reportJob).
+				// A result that says the call failed is given back like a call that
+				// threw, and still returned as it came. A job call reports no usage
+				// here: its usage is settled once, when a read sees the job end
+				// (reportJob).
 				const reportUsage = async (result: unknown) => {
-					if (!meteredCall || !hubConfig || !usagePath || managedJob) return;
+					if (!meteredCall || !hubConfig) return;
+					if (failedWhen && answeredFailed(result, failedWhen)) {
+						await reportIfCharged(
+							new Error(describeAnsweredFailure(result, failedWhen)),
+						);
+						return;
+					}
+					if (!usagePath || managedJob) return;
 					const units = readUsageUnits(result, usagePath);
 					if (units !== undefined) {
 						await reportManagedPricingCallUsage(hubConfig, meteredCall, units);
@@ -408,6 +423,7 @@ export function bindEndpointsRecursively({
 						key = resolved.apiKey;
 						meteredCall = resolved.call;
 						usagePath = resolved.usagePath;
+						failedWhen = resolved.failedWhen;
 					} else if (keyBuilder) {
 						key = await keyBuilder(endpointCtx, 'endpoint');
 					}

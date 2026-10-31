@@ -63,7 +63,12 @@ type Sent = { url: string; body: Record<string, unknown>; headers: Headers };
 
 // Hub answers the key request (asking for usage at `usagePath`, if given);
 // the outcome report gets `outcomeStatus`.
-function mockHub(outcomeStatus = 200, usagePath?: string) {
+function mockHub(
+	outcomeStatus = 200,
+	usagePath?: string,
+	// unknown: the failed_when Hub's answer carries, as JSON.
+	failedWhen?: Record<string, unknown>,
+) {
 	const sent: Sent[] = [];
 	jest.spyOn(globalThis, 'fetch').mockImplementation(async (input, init) => {
 		const url = String(input);
@@ -73,7 +78,12 @@ function mockHub(outcomeStatus = 200, usagePath?: string) {
 			headers: new Headers(init?.headers),
 		});
 		const body = url.endsWith('/managed-pricing/credentials')
-			? { api_key: 'rd-test-key', expires_in: 300, usage_path: usagePath }
+			? {
+					api_key: 'rd-test-key',
+					expires_in: 300,
+					usage_path: usagePath,
+					failed_when: failedWhen,
+				}
 			: { status: 'released', creditsReturned: 20 };
 		return new Response(JSON.stringify(body), {
 			status: url.endsWith('/managed-pricing/credentials')
@@ -92,6 +102,58 @@ function mockHub(outcomeStatus = 200, usagePath?: string) {
 
 afterEach(() => {
 	jest.restoreAllMocks();
+});
+
+describe('a call whose answer says it failed', () => {
+	const FIRECRAWL = { path: 'success', equals: false };
+	const dnsFailure = {
+		success: false,
+		code: 'SCRAPE_DNS_RESOLUTION_ERROR',
+		error: 'DNS resolution failed for hostname',
+	};
+
+	it('is reported under its key, and comes back as the provider sent it', async () => {
+		const hubCalls = mockHub(200, undefined, FIRECRAWL);
+		const api = bind(async () => dnsFailure);
+
+		await expect(api.parse.parse({})).resolves.toEqual(dnsFailure);
+
+		const [credentials] = hubCalls.credentials();
+		expect(hubCalls.outcomes()[0]?.body).toMatchObject({
+			operation: 'parse.parse',
+			idempotencyKey: credentials?.body.idempotencyKey,
+			outcome: 'failed',
+			error: 'Error: success was false: SCRAPE_DNS_RESOLUTION_ERROR',
+		});
+	});
+
+	it('is not reported when the answer says it worked', async () => {
+		const hubCalls = mockHub(200, undefined, FIRECRAWL);
+		const api = bind(async () => ({ success: true, data: {} }));
+
+		await api.parse.parse({});
+
+		expect(hubCalls.outcomes()).toHaveLength(0);
+	});
+
+	it("is not reported when Hub doesn't say how the provider marks a failure", async () => {
+		const hubCalls = mockHub();
+		const api = bind(async () => dnsFailure);
+
+		await api.parse.parse({});
+
+		expect(hubCalls.outcomes()).toHaveLength(0);
+	});
+
+	it('reports no usage for it, only the failure', async () => {
+		const hubCalls = mockHub(200, 'creditsUsed', FIRECRAWL);
+		const api = bind(async () => ({ ...dnsFailure, creditsUsed: 1 }));
+
+		await api.parse.parse({});
+
+		expect(hubCalls.outcomes()).toHaveLength(1);
+		expect(hubCalls.outcomes()[0]?.body).toMatchObject({ outcome: 'failed' });
+	});
 });
 
 describe('a key request Hub never answers', () => {

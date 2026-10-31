@@ -23,6 +23,17 @@ export type HubManagedPricingCredentialsResponse = {
 	 * not read Hub's job table.
 	 */
 	job?: { role: 'start'; id_path: string; status_operation?: string };
+	/**
+	 * Set for a provider that answers some failures with a success status:
+	 * the call failed when the value at `path` in its result equals `equals`
+	 * (Firecrawl: `success` is false), and is reported like one that threw.
+	 */
+	failed_when?: ManagedPricingFailedWhen;
+};
+
+export type ManagedPricingFailedWhen = {
+	path: string;
+	equals: boolean | number | string;
 };
 
 const USAGE_PATH = /^[A-Za-z_][A-Za-z0-9_]*(\.[A-Za-z_][A-Za-z0-9_]*)*$/;
@@ -77,6 +88,19 @@ export function parseManagedPricingCredentialsResponse(
 				? { status_operation: job.status_operation }
 				: {}),
 		};
+	}
+
+	const failedWhen = body.failed_when as Record<string, unknown> | undefined;
+	if (
+		failedWhen &&
+		typeof failedWhen.path === 'string' &&
+		USAGE_PATH.test(failedWhen.path) &&
+		(typeof failedWhen.equals === 'boolean' ||
+			typeof failedWhen.equals === 'string' ||
+			(typeof failedWhen.equals === 'number' &&
+				Number.isFinite(failedWhen.equals)))
+	) {
+		result.failed_when = { path: failedWhen.path, equals: failedWhen.equals };
 	}
 
 	return result;
