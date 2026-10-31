@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 import { AuthMissingError } from '../core/auth/errors/auth-missing';
 import { singleFlight } from '../core/auth/single-flight';
 import { hubApiPost, normalizeHubApiUrl } from './client/http';
+import type { ManagedPricingFailedWhen } from './contracts/managed-pricing-api';
 import { parseManagedPricingCredentialsResponse } from './contracts/managed-pricing-api';
 import { runtimeProofHeaders } from './runtime-proof';
 import type { HubConfig } from './types';
@@ -53,6 +54,8 @@ export type ManagedPricingApiKeyResult = {
 	usagePath?: string;
 	/** Set when the call starts a provider job on Corsair's key. */
 	startedJobIdPath?: string;
+	/** How the provider says the call failed in a successful answer. */
+	failedWhen?: ManagedPricingFailedWhen;
 };
 
 type CachedManagedPricingCredential = {
@@ -215,6 +218,7 @@ export async function getManagedPricingApiKey(
 			fromCache: false,
 			...(response.usage_path ? { usagePath: response.usage_path } : {}),
 			...(response.job ? { startedJobIdPath: response.job.id_path } : {}),
+			...(response.failed_when ? { failedWhen: response.failed_when } : {}),
 		};
 	});
 }
@@ -255,6 +259,7 @@ export async function resolveManagedPricingCall(
 	call: ManagedPricingCall;
 	usagePath?: string;
 	startedJobIdPath?: string;
+	failedWhen?: ManagedPricingFailedWhen;
 }> {
 	requireHubForManagedPricing(input.plugin, ctx.hub);
 	const tenantId = ctx.tenantId?.trim();
@@ -294,6 +299,7 @@ export async function resolveManagedPricingCall(
 			...(result.startedJobIdPath
 				? { startedJobIdPath: result.startedJobIdPath }
 				: {}),
+			...(result.failedWhen ? { failedWhen: result.failedWhen } : {}),
 		};
 	} catch (error) {
 		// Hub may have charged a key request whose answer never arrived (it
@@ -402,6 +408,42 @@ export function readUsageUnits(
 	return typeof node === 'number' && Number.isFinite(node) && node >= 0
 		? node
 		: undefined;
+}
+
+/**
+ * Whether a result says the call failed, as Hub described for the provider
+ * (failed_when). A value that isn't there, or isn't exactly `equals`, reads as
+ * success, so the call keeps its charge as before.
+ */
+export function answeredFailed(
+	// unknown: endpoint results differ per plugin; only the path is known.
+	result: unknown,
+	failedWhen: ManagedPricingFailedWhen,
+): boolean {
+	let node: unknown = result;
+	for (const key of failedWhen.path.split('.')) {
+		if (!node || typeof node !== 'object') return false;
+		node = (node as Record<string, unknown>)[key];
+	}
+	return node === failedWhen.equals;
+}
+
+/** What Hub records as the reason: the flag, and the provider's own code or
+ *  message when the result has one. */
+export function describeAnsweredFailure(
+	// unknown: endpoint results differ per plugin.
+	result: unknown,
+	failedWhen: ManagedPricingFailedWhen,
+): string {
+	const flag = `${failedWhen.path} was ${JSON.stringify(failedWhen.equals)}`;
+	const body =
+		result && typeof result === 'object'
+			? (result as Record<string, unknown>)
+			: {};
+	const detail = [body.code, body.error].find(
+		(value): value is string => typeof value === 'string' && value.length > 0,
+	);
+	return detail ? `${flag}: ${detail}` : flag;
 }
 
 /**

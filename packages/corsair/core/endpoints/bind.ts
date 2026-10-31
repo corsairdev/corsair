@@ -1,8 +1,11 @@
 import type { CorsairDatabase } from '../../db/kysely/database';
 import type { HubConfig } from '../../hub';
+import type { ManagedPricingFailedWhen } from '../../hub/contracts/managed-pricing-api';
 import type { ManagedPricingCall } from '../../hub/managed-pricing-auth';
 import {
+	answeredFailed,
 	createManagedPricingCredentialCache,
+	describeAnsweredFailure,
 	readUsageUnits,
 	reportManagedPricingCallFailed,
 	reportManagedPricingCallUsage,
@@ -321,6 +324,9 @@ export function bindEndpointsRecursively({
 				// Set when Hub prices the call per unit: where the result says how
 				// many units it used.
 				let usagePath: string | undefined;
+				// Set for a provider that answers some failures with a success
+				// status: how its result says the call failed.
+				let failedWhen: ManagedPricingFailedWhen | undefined;
 				// Set when the call starts a provider job or reads one back on
 				// Corsair's key (managed-pricing-jobs.ts).
 				let managedJob: ManagedJobKind | undefined;
@@ -358,15 +364,41 @@ export function bindEndpointsRecursively({
 					);
 					startedJob = reported.startedJob;
 				};
-				// unknown: each plugin's result has its own shape; only the path is known.
-				// A job call reports nothing here: its usage is settled once, when a
+				// What the provider's answer said, read the moment it arrives: an
+				// after hook may change the result in place, and the charge follows
+				// the provider, not the hook.
+				let answer: { failure?: string; units?: number } = {};
+				// unknown: each plugin's result has its own shape; only the paths are known.
+				const readAnswer = (result: unknown) => {
+					const failure =
+						failedWhen && answeredFailed(result, failedWhen)
+							? describeAnsweredFailure(result, failedWhen)
+							: undefined;
+					const units = usagePath
+						? readUsageUnits(result, usagePath)
+						: undefined;
+					answer = {
+						...(failure !== undefined ? { failure } : {}),
+						...(units !== undefined ? { units } : {}),
+					};
+				};
+				// Sent once the hooks are done, so a hook that throws still takes the
+				// thrown-error path. An answer that says the call failed is given back
+				// like a call that threw; the result still comes back as it came. A
+				// job call reports no usage here: its usage is settled once, when a
 				// read sees the job end (reportJob).
-				const reportUsage = async (result: unknown) => {
-					if (!meteredCall || !hubConfig || !usagePath || managedJob) return;
-					const units = readUsageUnits(result, usagePath);
-					if (units !== undefined) {
-						await reportManagedPricingCallUsage(hubConfig, meteredCall, units);
+				const reportUsage = async () => {
+					if (!meteredCall || !hubConfig) return;
+					if (answer.failure !== undefined) {
+						await reportIfCharged(new Error(answer.failure));
+						return;
 					}
+					if (!usagePath || managedJob || answer.units === undefined) return;
+					await reportManagedPricingCallUsage(
+						hubConfig,
+						meteredCall,
+						answer.units,
+					);
 				};
 				const endpointCtx = { ...ctx, meteredOperationId: operationPath };
 				const ctxTenantId =
@@ -408,6 +440,7 @@ export function bindEndpointsRecursively({
 						key = resolved.apiKey;
 						meteredCall = resolved.call;
 						usagePath = resolved.usagePath;
+						failedWhen = resolved.failedWhen;
 					} else if (keyBuilder) {
 						key = await keyBuilder(endpointCtx, 'endpoint');
 					}
@@ -483,13 +516,14 @@ export function bindEndpointsRecursively({
 					// caller gets an error, so the call is refunded like any other.
 					try {
 						res = await call(0, { ...ctx, key }, args);
+						readAnswer(res);
 						await reportJob(args, res);
 						await onPermissionComplete?.();
 					} catch (error) {
 						await reportIfCharged(error);
 						throw error;
 					}
-					await reportUsage(res);
+					await reportUsage();
 					if (plugin && hubConfig) {
 						reportPluginConnectionStatusFromBinding({
 							hub: hubConfig,
@@ -537,6 +571,7 @@ export function bindEndpointsRecursively({
 						}
 					}
 					res = await call(0, beforeResult.ctx, beforeResult.args);
+					readAnswer(res);
 					await reportJob(beforeResult.args, res);
 					await endpointHooks.after?.(
 						beforeResult.ctx,
@@ -548,7 +583,7 @@ export function bindEndpointsRecursively({
 					await reportIfCharged(error);
 					throw error;
 				}
-				await reportUsage(res);
+				await reportUsage();
 				if (plugin && hubConfig) {
 					reportPluginConnectionStatusFromBinding({
 						hub: hubConfig,
