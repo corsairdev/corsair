@@ -206,6 +206,7 @@ export const BaseProviders = [
 	'dreamstudio',
 	'dripcel',
 	'dropbox',
+	'esputnik',
 	'dropboxsign',
 	'dynapictures',
 	'emelia',
@@ -619,6 +620,7 @@ export const ProviderDisplayNames = {
 	dreamstudio: 'DreamStudio',
 	dripcel: 'Dripcel',
 	dropbox: 'Dropbox',
+	esputnik: 'Esputnik',
 	dropboxsign: 'Dropbox Sign',
 	dynapictures: 'Dynapictures',
 	emelia: 'Emelia',
@@ -1037,6 +1039,7 @@ export type AllProviders =
 	| 'dreamstudio'
 	| 'dripcel'
 	| 'dropbox'
+	| 'esputnik'
 	| 'dropboxsign'
 	| 'dynapictures'
 	| 'emelia'
