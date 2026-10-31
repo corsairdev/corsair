@@ -7,7 +7,8 @@ const steps = [
 	},
 	{
 		title: 'Build',
-		description: 'Open an issue, ship the plugin PR following the guide.',
+		description:
+			'Open an integration issue (you are assigned), then ship the plugin PR following the guide.',
 	},
 	{
 		title: 'Earn',

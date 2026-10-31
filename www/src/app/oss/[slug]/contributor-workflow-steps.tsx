@@ -238,7 +238,17 @@ pnpm test`;
 								existing issues
 							</a>{' '}
 							and file an integration request if needed. Include API docs,
-							endpoints, webhook needs, and auth constraints.
+							endpoints, webhook needs, and auth constraints. Opening an
+							integration issue assigns it to you. For any other issue, comment{' '}
+							<code className="rounded-md bg-[#1c1c1c]/5 px-1.5 py-0.5 font-mono text-xs">
+								/assign
+							</code>{' '}
+							to get it assigned. Do not open a PR until you are assigned. One
+							assigned issue at a time across every issue type. Issues marked{' '}
+							<code className="rounded-md bg-[#1c1c1c]/5 px-1.5 py-0.5 font-mono text-xs">
+								good first issue
+							</code>{' '}
+							are first-time contributors only and will not be merged otherwise.
 						</p>
 						<IntegrationUrlFieldForm
 							integrationId={integrationId}

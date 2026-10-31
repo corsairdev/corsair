@@ -12,6 +12,14 @@ Issues labeled **Good First Issue** are reserved for first-time contributors to 
 
 If you want to contribute a new integration, check the [OSS Integrations page](https://corsair.dev/oss) first. It shows which integrations are available, which are already claimed, and who is working on them. Claim an integration there before you start so two people do not work on the same plugin.
 
+## Claiming an issue
+
+Opening an **integration request** assigns it to you. For any other issue, comment `/assign` to take it. Do not open a pull request until you are assigned.
+
+- One person may have only one assigned issue at a time. That cap is shared across integration requests, `good first issue`, bugs, and everything else. You cannot hold one of each.
+- Issues labeled `good first issue` are reserved for **first-time contributors**. If you have already had a PR merged in this repo, do not take those issues — we will not merge them.
+- A pull request that is not assigned, or that is opened by someone who is not a first-time contributor on a `good first issue`, is closed automatically.
+
 Before opening a new issue:
 
 - Check [corsair.dev/oss](https://corsair.dev/oss) for new integrations.
@@ -150,7 +158,7 @@ If you are adding a new plugin, follow the official guide:
 That guide covers the expected scaffold and generator flow. In practice, the normal path is:
 
 1. Check [corsair.dev/oss](https://corsair.dev/oss) to make sure the integration is not already claimed or in progress, then claim it if it is available.
-2. Open an issue first and align on the integration.
+2. Open an integration issue first (it assigns to you) and align on the integration.
 3. Generate the plugin scaffold from the repo root.
 4. Implement endpoints, auth, schemas, and webhooks.
 5. Register the plugin in `demo/testing/src/server/corsair.ts`.
@@ -240,7 +248,8 @@ Building plugin infrastructure that fits every API and webhook model is hard, an
 
 When you open a pull request:
 
-- link the issue it addresses
+- be assigned to the issue first (integration issues assign on open; otherwise comment `/assign`)
+- link the issue it addresses (`Fixes #…`)
 - describe the API surface or behavior you added or changed
 - explain how you tested it
 - call out any schema, webhook, or infrastructure decisions that reviewers should pay attention to

@@ -5,10 +5,12 @@ body:
   - type: markdown
     attributes:
       value: |
+        <!-- corsair-integration-request -->
         Interested in using a new API with Corsair? Let us know!
 
         **Before submitting:**
-        - If you plan to build this integration, check [corsair.dev/oss](https://corsair.dev/oss) first to see whether it is already claimed or in progress. Claim it there before you start so two people do not work on the same plugin.
+        - If you plan to build this integration, check [corsair.dev/oss](https://corsair.dev/oss) first to see whether it is already claimed or in progress. Claim it there before you start so two people do not work on the same plugin. Opening this issue assigns it to you. Do not open a PR until you are assigned. One issue per person at a time. If you only want to request the integration and not build it, unassign yourself after it opens.
+        - If this issue is labeled `good first issue`, it is reserved for first-time contributors. We will not merge a PR from someone who already has a merged contribution here.
         - Check if this integration has already been [requested](https://github.com/corsairdev/corsair/issues?q=is%3Aissue+label%3Aenhancement) or [implemented](https://github.com/corsairdev/corsair/issues?q=is%3Aissue+label%3Aenhancement+is%3Aclosed). If it has, please add a 👍 reaction instead of creating a duplicate.
         - For general feature requests, please use the [feature request template](https://github.com/corsairdev/corsair/issues/new?assignees=&labels=&projects=&template=feature_request.yml&title=) instead.
   - type: input
