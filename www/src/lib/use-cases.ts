@@ -62,7 +62,16 @@ const ROUTINE_FAQ: UseCaseFaq = {
 	id: 'routine-runs-when',
 	question: 'Does my chat have to stay open for it to run?',
 	answer:
-		'No. When a prompt says when to run, your agent hands it to Corsair as a routine. Corsair builds it, tests it once and runs it on its own at that time. Ask your agent to list your routines to see it, or to pause or remove it.',
+		'No. When a prompt says when to run, your agent hands it to Corsair as a routine. Corsair builds and tests it, then runs it on its own. Ask your agent to list your routines, to pause or remove one, or whether one ran ("did the Slack summary run this morning?").',
+};
+
+// Hub runs routine schedules as UTC cron and stores no time zone
+// (packages/api/src/workflows/schedule.ts), so the prompts name one.
+const TIME_ZONE_FAQ: UseCaseFaq = {
+	id: 'routine-time-zone',
+	question: 'What time zone does the schedule use?',
+	answer:
+		"Corsair runs schedules in UTC. Name your city or time zone in the prompt, as these prompts do with New York, and ask your agent to list your routines to check the time: Corsair shows it in UTC. A UTC schedule doesn't move when daylight saving time starts or ends, so update the routine then if the hour matters.",
 };
 
 export const USE_CASES: UseCase[] = [
@@ -76,8 +85,8 @@ export const USE_CASES: UseCase[] = [
 			"Have your agent post a Slack reminder every morning with the day's meetings, who's attending and what to prepare. Set it once in plain words.",
 		apps: ['slack', 'googlecalendar'],
 		prompt:
-			"Using Corsair, every weekday at 9am send me a Slack message with today's meetings from my Google Calendar: the time, the title and who's attending. Mark any meeting with someone outside my company.",
-		runs: 'Every weekday at 9:00',
+			"Using Corsair, every weekday at 9am New York time send me a Slack message with today's meetings from my Google Calendar: the time, the title and who's attending. Mark any meeting with someone outside my company.",
+		runs: 'Every weekday at 9:00 New York time',
 		operations: [
 			{
 				app: 'googlecalendar',
@@ -93,7 +102,7 @@ export const USE_CASES: UseCase[] = [
 		notes: [
 			{
 				title: 'Say when, in your words',
-				body: '"Every weekday at 9am" is enough. Corsair turns it into a schedule and asks you only if something is unclear, such as your time zone.',
+				body: '"Every weekday at 9am New York time" is enough. Use your own city: Corsair runs schedules in UTC, so the time zone is what makes 9am your 9am.',
 			},
 			{
 				title: 'Say where it goes',
@@ -110,6 +119,7 @@ export const USE_CASES: UseCase[] = [
 		],
 		faqs: [
 			ROUTINE_FAQ,
+			TIME_ZONE_FAQ,
 			{
 				id: 'slack-reminder-vs-remind',
 				question: "How is this different from Slack's /remind?",
@@ -128,8 +138,8 @@ export const USE_CASES: UseCase[] = [
 			"Get one Slack message each morning with yesterday's open questions, decisions and anything waiting on you, read from the channels you pick.",
 		apps: ['slack'],
 		prompt:
-			"Using Corsair, every weekday at 8:30am read yesterday's messages and threads in #support and #product, then send me one Slack message with: open questions and who asked them, decisions that were made, and anything waiting on me. Link each item to its message.",
-		runs: 'Every weekday at 8:30',
+			"Using Corsair, every weekday at 8:30am New York time read yesterday's messages and threads in #support and #product, then send me one Slack message with: open questions and who asked them, decisions that were made, and anything waiting on me. Link each item to its message.",
+		runs: 'Every weekday at 8:30 New York time',
 		operations: [
 			{ app: 'slack', id: 'channels.list', why: 'Finds the channels by name' },
 			{
@@ -165,6 +175,7 @@ export const USE_CASES: UseCase[] = [
 		],
 		faqs: [
 			ROUTINE_FAQ,
+			TIME_ZONE_FAQ,
 			{
 				id: 'summary-where',
 				question: 'Can the summary go to a channel instead of me?',
@@ -184,8 +195,8 @@ export const USE_CASES: UseCase[] = [
 			"An email draft waiting for you each morning: today's meetings, the emails that need a reply today, and what changed overnight.",
 		apps: ['gmail', 'googlecalendar'],
 		prompt:
-			"Using Corsair, every weekday at 7:30am write me a briefing and save it as a Gmail draft to myself. Include today's meetings with who's attending, unread emails that need a reply today, and anything from people I'm meeting today. Keep it under 200 words.",
-		runs: 'Every weekday at 7:30',
+			"Using Corsair, every weekday at 7:30am New York time write me a briefing and save it as a Gmail draft to myself. Include today's meetings with who's attending, unread emails that need a reply today, and anything from people I'm meeting today. Keep it under 200 words.",
+		runs: 'Every weekday at 7:30 New York time',
 		operations: [
 			{
 				app: 'googlecalendar',
@@ -220,6 +231,7 @@ export const USE_CASES: UseCase[] = [
 		],
 		faqs: [
 			ROUTINE_FAQ,
+			TIME_ZONE_FAQ,
 			{
 				id: 'briefing-slack',
 				question: 'Can I get the briefing in Slack instead?',
@@ -277,7 +289,7 @@ export const USE_CASES: UseCase[] = [
 				id: 'gmail-every-day',
 				question: 'Can it do this every morning?',
 				answer:
-					'Yes. Start the prompt with "Every weekday at 8am," and Corsair saves it as a routine that runs on its own.',
+					'Yes. Start the prompt with "Every weekday at 8am New York time," and Corsair saves it as a routine that runs on its own.',
 			},
 		],
 	},
@@ -292,8 +304,8 @@ export const USE_CASES: UseCase[] = [
 			"Before each external meeting, a short prep note: who you're meeting, the company and open deals in HubSpot, and your last emails with them.",
 		apps: ['hubspot', 'googlecalendar', 'gmail'],
 		prompt:
-			"Using Corsair, every weekday at 8am look at today's meetings in my Google Calendar with people outside my company. For each one, find the contact and company in HubSpot, any open deals, and my last email thread with them in Gmail. Save one prep note per meeting as a Gmail draft to myself: who they are, where the deal stands, and what we last talked about.",
-		runs: 'Every weekday at 8:00',
+			"Using Corsair, every weekday at 8am New York time look at today's meetings in my Google Calendar with people outside my company. For each one, find the contact and company in HubSpot, any open deals, and my last email thread with them in Gmail. Save one prep note per meeting as a Gmail draft to myself: who they are, where the deal stands, and what we last talked about.",
+		runs: 'Every weekday at 8:00 New York time',
 		operations: [
 			{
 				app: 'googlecalendar',
@@ -329,8 +341,8 @@ export const USE_CASES: UseCase[] = [
 				body: 'Who they are, where the deal stands, what you last discussed. That fits on one screen before the call.',
 			},
 			{
-				title: 'Read only in HubSpot',
-				body: 'This prompt only reads HubSpot, so it is safe to run on a Read link.',
+				title: 'Only reads HubSpot',
+				body: 'Its one write is the Gmail draft, so nothing changes in your CRM.',
 			},
 		],
 		limits: [
@@ -339,6 +351,7 @@ export const USE_CASES: UseCase[] = [
 		],
 		faqs: [
 			ROUTINE_FAQ,
+			TIME_ZONE_FAQ,
 			{
 				id: 'hubspot-log',
 				question: 'Can it also log the meeting in HubSpot afterwards?',
@@ -412,8 +425,8 @@ export const USE_CASES: UseCase[] = [
 			"Every Monday, one Slack post with last week's merged pull requests and the ones waiting on review for too long.",
 		apps: ['github', 'slack'],
 		prompt:
-			'Using Corsair, every Monday at 9am list the pull requests in acme/web that were merged last week and the ones that have been open for more than three days. Post them in #engineering in Slack, grouped as "Shipped" and "Waiting on review", with links and authors.',
-		runs: 'Every Monday at 9:00',
+			'Using Corsair, every Monday at 9am New York time list the pull requests in acme/web that were merged last week and the ones that have been open for more than three days. Post them in #engineering in Slack, grouped as "Shipped" and "Waiting on review", with links and authors.',
+		runs: 'Every Monday at 9:00 New York time',
 		operations: [
 			{
 				app: 'github',
@@ -447,6 +460,7 @@ export const USE_CASES: UseCase[] = [
 		],
 		faqs: [
 			ROUTINE_FAQ,
+			TIME_ZONE_FAQ,
 			{
 				id: 'pr-digest-dm',
 				question: 'Can each author get their own reminder instead?',
@@ -517,8 +531,8 @@ export const USE_CASES: UseCase[] = [
 			'Every Friday, a new Notion page with what the team finished, started and is blocked on this week, grouped by Linear project.',
 		apps: ['linear', 'notion'],
 		prompt:
-			'Using Corsair, every Friday at 4pm write this week\'s update for the Platform team from Linear: issues completed, issues started, and anything blocked, grouped by project. Add it as a new page called "Week of <date>" under the "Weekly updates" page in Notion.',
-		runs: 'Every Friday at 16:00',
+			'Using Corsair, every Friday at 4pm New York time write this week\'s update for the Platform team from Linear: issues completed, issues started, and anything blocked, grouped by project. Add it as a new page called "Week of <date>" under the "Weekly updates" page in Notion.',
+		runs: 'Every Friday at 16:00 New York time',
 		operations: [
 			{ app: 'linear', id: 'issues.list', why: "Reads the week's issues" },
 			{ app: 'linear', id: 'projects.list', why: 'Groups them by project' },
@@ -550,6 +564,7 @@ export const USE_CASES: UseCase[] = [
 		],
 		faqs: [
 			ROUTINE_FAQ,
+			TIME_ZONE_FAQ,
 			{
 				id: 'notion-slack-too',
 				question: 'Can it also post the link in Slack?',

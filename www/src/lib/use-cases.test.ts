@@ -81,6 +81,27 @@ describe('use case data', () => {
 	});
 });
 
+describe('scheduled use cases', () => {
+	// Hub runs routine schedules as UTC cron with no time zone, so a prompt that
+	// says "9am" without one runs at 9am UTC.
+	it('name a time zone and answer the time zone question', () => {
+		const scheduled = USE_CASES.filter((u) => u.runs?.startsWith('Every'));
+		assert.ok(scheduled.length > 0);
+		for (const u of scheduled) {
+			assert.match(
+				u.prompt,
+				/\b(\d{1,2}(:\d{2})?(am|pm)) [A-Z][a-z]+( [A-Z][a-z]+)* time\b/,
+				`${u.slug}: no time zone in the prompt`,
+			);
+			assert.match(u.runs ?? '', / time$/, `${u.slug}: no time zone in runs`);
+			assert.ok(
+				u.faqs.some((f) => f.id === 'routine-time-zone'),
+				`${u.slug}: no time zone question`,
+			);
+		}
+	});
+});
+
 describe('use case lookups', () => {
 	it('finds a use case by slug', () => {
 		assert.equal(getUseCase('slack-reminders')?.apps[0], 'slack');

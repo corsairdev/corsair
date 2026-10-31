@@ -229,9 +229,10 @@ export default async function UseCaseRoute({ params }: PageProps) {
 						<Step number={3} title="Paste the prompt">
 							<p>
 								{useCase.runs
-									? `Your agent hands it to Corsair as a routine. Corsair builds it, tests it once, and then runs it on its own: ${useCase.runs.charAt(0).toLowerCase()}${useCase.runs.slice(1)}.`
+									? `Your agent hands it to Corsair as a routine. Corsair builds and tests it, then runs it on its own: ${useCase.runs.charAt(0).toLowerCase()}${useCase.runs.slice(1)}.`
 									: 'Your agent runs it right away and tells you what it did.'}{' '}
-								Change the names in it (channels, repos, teams) to your own.
+								Change the names in it (channels, repos, teams, time zone) to
+								your own.
 							</p>
 						</Step>
 					</ol>

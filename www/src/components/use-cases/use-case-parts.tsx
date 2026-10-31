@@ -86,7 +86,9 @@ export function UseCaseCard({
 				<div className="flex items-center justify-between gap-3">
 					<UseCaseAppIcons apps={useCase.apps} />
 					{useCase.runs ? (
-						<span className="text-[12px] text-[#1c1c1c66]">{useCase.runs}</span>
+						<span className="text-right text-[12px] leading-snug text-[#1c1c1c66]">
+							{useCase.runs}
+						</span>
 					) : null}
 				</div>
 				<h3 className="mt-3 text-[15px] font-semibold leading-snug text-[#1c1c1c]">
