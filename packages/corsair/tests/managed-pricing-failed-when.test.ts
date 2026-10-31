@@ -49,6 +49,87 @@ describe("Hub's failed_when", () => {
 			equals: false,
 		});
 	});
+
+	it('keeps an empty-list rule', () => {
+		expect(parse({ path: 'results', empty: true })).toEqual({
+			path: 'results',
+			empty: true,
+		});
+	});
+
+	it.each([
+		['empty set to false', { path: 'results', empty: false }],
+		['empty as text', { path: 'results', empty: 'true' }],
+		['empty with no path', { empty: true }],
+		['empty with a bad path', { path: 'res ults', empty: true }],
+		[
+			'empty beside a value that is not allowed',
+			{ path: 'results', equals: null, empty: true },
+		],
+	])('drops one with %s', (_label, value) => {
+		expect(parse(value)).toBeUndefined();
+	});
+
+	it('reads equals when a rule has both', () => {
+		expect(parse({ path: 'success', equals: false, empty: true })).toEqual({
+			path: 'success',
+			equals: false,
+		});
+	});
+});
+
+describe('a result whose list came back empty', () => {
+	const tinyfish = { path: 'results', empty: true } as const;
+
+	it.each([
+		[
+			'an empty list',
+			{ results: [], errors: [{ error: 'invalid_url' }] },
+			true,
+		],
+		['a list with one item', { results: [{ url: 'a' }], errors: [] }, false],
+		['no list at all', { data: {} }, false],
+		['null where the list goes', { results: null }, false],
+		['an empty string', { results: '' }, false],
+		['an empty object', { results: {} }, false],
+		['no result', null, false],
+	])('reads %s', (_label, result, failed) => {
+		expect(answeredFailed(result, tinyfish)).toBe(failed);
+	});
+
+	it('reads a nested empty list', () => {
+		expect(
+			answeredFailed(
+				{ data: { items: [] } },
+				{ path: 'data.items', empty: true },
+			),
+		).toBe(true);
+	});
+
+	it.each([
+		[
+			'the first listed error',
+			{ results: [], errors: [{ url: 'x', error: 'invalid_url' }] },
+			'results was empty: invalid_url',
+		],
+		[
+			'a listed message',
+			{ results: [], errors: [{ message: 'blocked' }] },
+			'results was empty: blocked',
+		],
+		[
+			'the flag alone with no errors',
+			{ results: [], errors: [] },
+			'results was empty',
+		],
+		[
+			'a top-level code before listed errors',
+			{ results: [], code: 'E1', errors: [{ error: 'invalid_url' }] },
+			'results was empty: E1',
+		],
+	])('names %s', (_label, result, reason) => {
+		expect(describeAnsweredFailure(result, tinyfish)).toBe(reason);
+	});
 });
 
 describe('a result that says the call failed', () => {
