@@ -20,6 +20,7 @@ export {
 	AuthMissingError,
 	CloudApiError,
 	CorsairKekMissingError,
+	assertReadonlyAllowed,
 	corsairCloud,
 	createCorsair,
 	ManagementApiError,
