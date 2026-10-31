@@ -61,7 +61,7 @@ export async function getHubAccessToken(
 		path: '/oauth/refresh',
 		body: { plugin, tenantId, refresh_token: refreshToken },
 		parseResponse: parseOAuthRefreshResponse,
-		timeoutMs: TOKEN_REFRESH_TIMEOUT_MS,
+		signal: AbortSignal.timeout(TOKEN_REFRESH_TIMEOUT_MS),
 	});
 
 	const nextExpiresAt = await cacheRefreshedTokens(keys, tokens, expiresAt);

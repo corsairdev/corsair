@@ -108,7 +108,23 @@ function throwHubApiError(
 			reason: reconnect.reason ?? undefined,
 		});
 	}
-	throw new Error(parseHubApiError(payload, status, notFoundMessage));
+	// The status rides along so a caller can tell a refusal from a Hub that
+	// is down.
+	throw Object.assign(
+		new Error(parseHubApiError(payload, status, notFoundMessage)),
+		{ status },
+	);
+}
+
+/** The HTTP status Hub answered a failed request with, if it answered. */
+// unknown: whatever the request threw.
+export function hubErrorStatus(error: unknown): number | undefined {
+	return typeof error === 'object' &&
+		error !== null &&
+		'status' in error &&
+		typeof error.status === 'number'
+		? error.status
+		: undefined;
 }
 
 export async function hubApiPost<T>(input: {
@@ -118,14 +134,12 @@ export async function hubApiPost<T>(input: {
 	notFoundMessage?: string;
 	parseResponse: (payload: unknown) => T;
 	extraHeaders?: Record<string, string>;
-	timeoutMs?: number;
+	signal?: AbortSignal;
 }): Promise<T> {
 	const apiUrl = normalizeHubApiUrl(input.hub.apiUrl);
 	const response = await fetch(`${apiUrl}${input.path}`, {
 		method: 'POST',
-		...(input.timeoutMs
-			? { signal: AbortSignal.timeout(input.timeoutMs) }
-			: {}),
+		signal: input.signal,
 		headers: {
 			'content-type': 'application/json',
 			authorization: `Bearer ${input.hub.projectApiKey}`,
@@ -151,10 +165,12 @@ export async function hubApiGet<T>(input: {
 	path: string;
 	notFoundMessage?: string;
 	parseResponse: (payload: unknown) => T;
+	signal?: AbortSignal;
 }): Promise<T> {
 	const apiUrl = normalizeHubApiUrl(input.hub.apiUrl);
 	const response = await fetch(`${apiUrl}${input.path}`, {
 		method: 'GET',
+		...(input.signal ? { signal: input.signal } : {}),
 		headers: {
 			authorization: `Bearer ${input.hub.projectApiKey}`,
 			...appDeliveryUrlHeader(input.hub),
