@@ -145,6 +145,48 @@ describe('a call whose answer says it failed', () => {
 		expect(hubCalls.outcomes()).toHaveLength(0);
 	});
 
+	it('follows what the provider answered, not what an after hook made of it', async () => {
+		const hubCalls = mockHub(200, undefined, FIRECRAWL);
+		// unknown: the hook gets whatever the endpoint returned.
+		const flip = (result: unknown) => {
+			const body = result as { success: boolean };
+			body.success = !body.success;
+		};
+		const hooks = {
+			parse: {
+				parse: { after: async (_ctx: unknown, res: unknown) => flip(res) },
+			},
+		};
+
+		await bind(async () => ({ ...dnsFailure }), hooks).parse.parse({});
+		expect(hubCalls.outcomes()).toHaveLength(1);
+
+		await bind(async () => ({ success: true, data: {} }), hooks).parse.parse(
+			{},
+		);
+		expect(hubCalls.outcomes()).toHaveLength(1);
+	});
+
+	it('reports the units the provider answered, not ones an after hook changed', async () => {
+		const hubCalls = mockHub(200, 'creditsUsed');
+		const api = bind(async () => ({ success: true, creditsUsed: 3 }), {
+			parse: {
+				parse: {
+					after: async (_ctx: unknown, res: unknown) => {
+						(res as { creditsUsed: number }).creditsUsed = 0;
+					},
+				},
+			},
+		});
+
+		await api.parse.parse({});
+
+		expect(hubCalls.outcomes()[0]?.body).toMatchObject({
+			outcome: 'succeeded',
+			usage: { units: 3 },
+		});
+	});
+
 	it('reports no usage for it, only the failure', async () => {
 		const hubCalls = mockHub(200, 'creditsUsed', FIRECRAWL);
 		const api = bind(async () => ({ ...dnsFailure, creditsUsed: 1 }));
