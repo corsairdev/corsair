@@ -95,12 +95,22 @@ describe('eSputnik endpoint registry', () => {
 			expect(endpoint).toEqual(expect.any(Function));
 			if (typeof endpoint !== 'function')
 				throw new Error(`Missing endpoint ${operation}`);
+			const callsBefore = request.mock.calls.length;
 			await endpoint({ key: 'test-api-key' }, input);
-			expect(request).toHaveBeenLastCalledWith(
-				expect.any(String),
-				'test-api-key',
-				expect.any(Object),
-			);
+			expect(request.mock.calls).toHaveLength(callsBefore + 1);
+			const [path, key, options] = request.mock.calls.at(-1) ?? [];
+			expect(typeof path).toBe('string');
+			expect(path).toMatch(/^\/api\/(v1|v2|v3)\//);
+			expect(key).toBe('test-api-key');
+			if (
+				operation.toLowerCase().includes('delete') &&
+				options?.method === 'DELETE'
+			) {
+				expect(options.method).toBe('DELETE');
+			}
+			for (const option of Object.keys(options ?? {})) {
+				expect(['method', 'body', 'query', 'mediaType']).toContain(option);
+			}
 		}
 
 		expect(request).toHaveBeenCalledTimes(110);
