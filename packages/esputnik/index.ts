@@ -666,6 +666,9 @@ export const esputnikEndpointSchemas = {
 	typeof esputnikEndpointsNested
 >;
 
+// The endpoint tree mixes nested groups with callable leaves whose input and
+// output types differ per operation. Traversal therefore sees `unknown` and
+// every leaf is schema-validated before and after invocation.
 type EndpointTree = Record<string, unknown>;
 type EndpointHandler = (
 	context: EsputnikContext,

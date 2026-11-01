@@ -20,6 +20,8 @@ export async function makeEsputnikRequest<T>(
 	apiKey: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+		// Bodies reach transport only after the endpoint Zod schema has parsed
+		// them; provider extension keys are preserved as opaque JSON values.
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | undefined>;
 	} = {},

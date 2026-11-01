@@ -318,6 +318,10 @@ export const mobilePushEndpoints = {
 		),
 };
 
+// Generated message families share one route shape, so each operation key is
+// passed as a type parameter to keep its exact declared response type. Bodies
+// stay `Record<string, unknown>` because the schema parsing boundary accepts
+// provider extension fields before transport.
 const messageFamily = <
 	SearchKey extends keyof EsputnikEndpointOutputs,
 	AddKey extends keyof EsputnikEndpointOutputs,

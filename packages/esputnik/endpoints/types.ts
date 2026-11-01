@@ -1,5 +1,17 @@
 import { z } from 'zod';
 
+type JsonValue =
+	| string
+	| number
+	| boolean
+	| null
+	| JsonValue[]
+	| { [key: string]: JsonValue };
+
+// eSputnik documents these responses as provider-defined JSON without stable
+// envelopes, so expose a JSON-safe contract instead of leaking `unknown`.
+const ProviderJsonSchema: z.ZodType<JsonValue> = z.json();
+
 const EmptyInputSchema = z.object({});
 const ContactIdSchema = z.object({ id: z.number().int().positive() });
 const ContactBodySchema = z.object({
@@ -11,8 +23,10 @@ const ContactBodySchema = z.object({
 	languageCode: z.string().optional(),
 	timeZone: z.string().optional(),
 	marketId: z.string().optional(),
-	address: z.record(z.string(), z.unknown()).optional(),
-	fields: z.record(z.string(), z.unknown()).optional(),
+	// Contact address and custom fields are provider-defined key/value bags;
+	// accept any JSON value so create/update does not drop caller extensions.
+	address: z.record(z.string(), ProviderJsonSchema).optional(),
+	fields: z.record(z.string(), ProviderJsonSchema).optional(),
 });
 const SearchContactsSchema = z.object({
 	externalCustomerId: z.string().optional(),
@@ -68,20 +82,9 @@ const TokenPathSchema = z.object({
 // eSputnik does not publish a closed schema for these payloads.
 const GenericObjectSchema = z.record(z.string(), z.unknown());
 
-type JsonValue =
-	| string
-	| number
-	| boolean
-	| null
-	| JsonValue[]
-	| { [key: string]: JsonValue };
-
 const EmptyOutputSchema = z.undefined();
 const TextOrEmptyOutputSchema = z.string().or(EmptyOutputSchema);
 
-// eSputnik documents these responses as provider-defined JSON without stable
-// envelopes, so expose a JSON-safe contract instead of leaking `unknown`.
-const ProviderJsonSchema: z.ZodType<JsonValue> = z.json();
 const EmailListSchema = z.object({
 	emails: z.array(z.string().email()).min(1),
 });
@@ -282,8 +285,9 @@ export type EsputnikEndpointInputs = {
 };
 
 export type EsputnikEndpointOutputs = {
-	// ProviderJsonValue fields below are intentionally broad because eSputnik
-	// publishes no stable response envelope for these operations.
+	// JsonValue fields below are intentionally broad because eSputnik publishes
+	// no stable response envelope for these operations; they remain JSON-safe
+	// instead of exposing `unknown` to callers.
 	getAccountInfo: z.infer<typeof AccountInfoSchema>;
 	getBalance: z.infer<typeof BalanceSchema>;
 	addContact: { id: number };
@@ -296,10 +300,10 @@ export type EsputnikEndpointOutputs = {
 	subscribeContact: z.infer<typeof ContactSubscriptionResultSchema>;
 	// Bulk/import response envelopes vary by provider validation outcome and are
 	// not stable enough in the public OpenAPI contract for a narrower type.
-	contactsBulkUpdate: z.infer<typeof GenericObjectSchema>;
-	fileContactsBulkUpdate: z.infer<typeof GenericObjectSchema>;
-	getImportSessionStatus: z.infer<typeof GenericObjectSchema>;
-	getContactEmails: z.infer<typeof GenericObjectSchema>;
+	contactsBulkUpdate: Record<string, JsonValue>;
+	fileContactsBulkUpdate: Record<string, JsonValue>;
+	getImportSessionStatus: Record<string, JsonValue>;
+	getContactEmails: Record<string, JsonValue>;
 	addToUnsubscribed: JsonValue;
 	deleteFromUnsubscribed: JsonValue;
 	getGroupContacts: JsonValue[];
@@ -312,51 +316,51 @@ export type EsputnikEndpointOutputs = {
 	changeContactSubscriptionCategories: string;
 	deleteContactById: undefined;
 	contactRecoms: JsonValue[];
-	getAdditionalFields: z.infer<typeof GenericObjectSchema>;
-	getOrganisationBalanceHistory: z.infer<typeof GenericObjectSchema>;
-	ordersBulkInsert: z.infer<typeof GenericObjectSchema>;
+	getAdditionalFields: Record<string, JsonValue>;
+	getOrganisationBalanceHistory: Record<string, JsonValue>;
+	ordersBulkInsert: Record<string, JsonValue>;
 	registerEvent: JsonValue;
-	sendHistoryEvents: z.infer<typeof GenericObjectSchema>;
+	sendHistoryEvents: Record<string, JsonValue>;
 	removeHistoryEvents: JsonValue;
 	searchEmails: JsonValue[];
-	getEmailMessageViewLink: z.infer<typeof GenericObjectSchema>;
+	getEmailMessageViewLink: Record<string, JsonValue>;
 	sendPreparedMessage: JsonValue;
 	addEmail: { id: number };
-	getEmail: z.infer<typeof GenericObjectSchema>;
+	getEmail: Record<string, JsonValue>;
 	updateMessage: string | undefined;
 	deleteEmail: undefined;
 	updateTranslatedMessage: string | undefined;
 	deleteTranslatedEmail: undefined;
-	sendEmail: z.infer<typeof GenericObjectSchema>;
+	sendEmail: Record<string, JsonValue>;
 	searchMobilePushMessages: JsonValue[];
 	addMobilePushMessage: { id: number };
-	getMobilePushMessage: z.infer<typeof GenericObjectSchema>;
+	getMobilePushMessage: Record<string, JsonValue>;
 	updateBaseMobilePushMessage: string | undefined;
 	deleteMobilePushMessage: undefined;
 	updateTranslatedMobilePushMessage: string | undefined;
 	deleteTranslatedMobilePushMessage: undefined;
 	searchViberMessages: JsonValue[];
 	addViberMessage: { id: number };
-	getViberMessage: z.infer<typeof GenericObjectSchema>;
+	getViberMessage: Record<string, JsonValue>;
 	updateBaseViberMessage: string | undefined;
 	deleteViberMessage: undefined;
 	searchAppInboxMessages: JsonValue[];
 	addAppInboxMessage: { id: number };
-	getAppInboxMessage: z.infer<typeof GenericObjectSchema>;
+	getAppInboxMessage: Record<string, JsonValue>;
 	updateBaseAppInboxMessage: string | undefined;
 	deleteAppInboxMessage: undefined;
 	searchTelegramBotMessages: JsonValue[];
 	addTelegramBotMessage: { id: number };
-	getTelegramBotMessage: z.infer<typeof GenericObjectSchema>;
+	getTelegramBotMessage: Record<string, JsonValue>;
 	updateBaseTelegramBotMessage: string | undefined;
 	deleteTelegramBotMessage: undefined;
 	searchSmsMessages: JsonValue[];
-	getSms: z.infer<typeof GenericObjectSchema>;
+	getSms: Record<string, JsonValue>;
 	updateBaseSmsMessage: string | undefined;
 	deleteSmsMessage: undefined;
 	getBroadcasts: JsonValue[];
 	createBroadcast: { id: number };
-	getBroadcast: z.infer<typeof GenericObjectSchema>;
+	getBroadcast: Record<string, JsonValue>;
 	getSmsInterfaces: JsonValue[];
 	getEmailInterfaces: JsonValue[];
 	updateTranslatedViberMessage: string | undefined;
@@ -366,20 +370,20 @@ export type EsputnikEndpointOutputs = {
 	updateTranslatedTelegramMessage: string | undefined;
 	deleteTranslatedTelegramMessage: undefined;
 	addSmsMessage: { id: number };
-	sendSms: z.infer<typeof GenericObjectSchema>;
+	sendSms: Record<string, JsonValue>;
 	cancelBroadcast: undefined;
 	contactActivity: JsonValue[];
 	contactMessages: JsonValue[];
 	getTokenActivated: { active: boolean };
 	changeTokenActivated: { active: boolean };
 	getDomains: JsonValue[];
-	createDomain: Record<string, unknown>;
+	createDomain: Record<string, JsonValue>;
 	getScript: string;
-	getWebPushDomains: Record<string, unknown>;
-	addWebPushDomain: Record<string, unknown>;
+	getWebPushDomains: Record<string, JsonValue>;
+	addWebPushDomain: Record<string, JsonValue>;
 	deleteWebPushDomain: undefined;
-	getWebPushScript: Record<string, unknown>;
-	getProductFeedsConfiguration: Record<string, unknown>;
+	getWebPushScript: Record<string, JsonValue>;
+	getProductFeedsConfiguration: Record<string, JsonValue>;
 	configureProductFeeds: JsonValue;
 	addAppTokens: JsonValue;
 	muteAppToken: JsonValue;
@@ -388,12 +392,12 @@ export type EsputnikEndpointOutputs = {
 	getPromocodes: JsonValue;
 	getPromocodesCount: JsonValue;
 	insertPromocodes: JsonValue;
-	getPreprocessorFileStatus: Record<string, unknown>;
+	getPreprocessorFileStatus: Record<string, JsonValue>;
 	updatePreprocessorFile: JsonValue;
 	uploadPreprocessorFile: JsonValue;
-	generateApiToken: Record<string, unknown>;
+	generateApiToken: Record<string, JsonValue>;
 	getInteractionStatus: JsonValue;
-	sendViber: z.infer<typeof GenericObjectSchema>;
+	sendViber: Record<string, JsonValue>;
 	sendAppInbox: JsonValue;
 	sendTelegramBot: JsonValue;
 	updateTranslatedSmsMessage: string | undefined;
