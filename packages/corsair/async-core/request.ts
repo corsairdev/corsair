@@ -86,9 +86,11 @@ const getQueryString = (params: Record<string, any>): string => {
 	return '';
 };
 
+// OpenAPI path values are unconstrained by the generated client, so accept
+// unknown and stringify only the parameters referenced in the template.
 const replacePathParameters = (
 	path: string,
-	parameters: Record<string, any> | undefined,
+	parameters: Record<string, unknown> | undefined,
 	encoder: (value: string) => string,
 ): string => {
 	if (!parameters) return path;
@@ -104,9 +106,8 @@ const replacePathParameters = (
 
 		const closingBrace = path.indexOf('}', index + 1);
 		if (closingBrace === -1) {
-			result += path[index];
-			index += 1;
-			continue;
+			result += path.slice(index);
+			break;
 		}
 
 		const placeholder = path.slice(index, closingBrace + 1);
