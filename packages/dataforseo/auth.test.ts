@@ -8,6 +8,8 @@ const PASSWORD = 'p4ss:w0rd';
 const WHOLE = `${LOGIN}:${PASSWORD}`;
 const ENCODED = Buffer.from(WHOLE).toString('base64');
 
+// unknown: the tests pass a hand-built context holding only `keys`, not the
+// full KeyBuilderContext the plugin's own types expect.
 type KeyBuilder = (ctx: unknown, source: string) => Promise<string>;
 
 function keyBuilder(): KeyBuilder {
@@ -15,6 +17,8 @@ function keyBuilder(): KeyBuilder {
 	if (typeof plugin.keyBuilder !== 'function') {
 		throw new Error('keyBuilder is not registered');
 	}
+	// Safe: the plugin's keyBuilder reads only `authType` and `keys`, which
+	// `stored()` provides.
 	return plugin.keyBuilder as KeyBuilder;
 }
 
@@ -39,6 +43,12 @@ describe('keyBuilder', () => {
 		await expect(keyBuilder()(stored(WHOLE, null), 'endpoint')).resolves.toBe(
 			WHOLE,
 		);
+	});
+
+	it('uses a stored password even when the key field holds a whole credential', async () => {
+		await expect(
+			keyBuilder()(stored(WHOLE, PASSWORD), 'endpoint'),
+		).resolves.toBe(`${WHOLE}:${PASSWORD}`);
 	});
 
 	it("takes the dashboard's base64 credential from the key field", async () => {
