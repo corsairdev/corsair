@@ -26,15 +26,17 @@ export type HubManagedPricingCredentialsResponse = {
 	/**
 	 * Set for a provider that answers some failures with a success status:
 	 * the call failed when the value at `path` in its result equals `equals`
-	 * (Firecrawl: `success` is false), and is reported like one that threw.
+	 * (Firecrawl: `success` is false), or, with `empty`, is a list with
+	 * nothing in it (TinyFish fetch: no `results`). It is then reported like
+	 * a call that threw.
 	 */
 	failed_when?: ManagedPricingFailedWhen;
 };
 
-export type ManagedPricingFailedWhen = {
-	path: string;
-	equals: boolean | number | string;
-};
+export type ManagedPricingFailedWhen =
+	| { path: string; equals: boolean | number | string }
+	/** A list at `path` that is there and empty. A missing one is not. */
+	| { path: string; empty: true };
 
 const USAGE_PATH = /^[A-Za-z_][A-Za-z0-9_]*(\.[A-Za-z_][A-Za-z0-9_]*)*$/;
 
@@ -95,13 +97,18 @@ export function parseManagedPricingCredentialsResponse(
 	if (
 		failedWhen &&
 		typeof failedWhen.path === 'string' &&
-		USAGE_PATH.test(failedWhen.path) &&
-		(typeof failedWhen.equals === 'boolean' ||
+		USAGE_PATH.test(failedWhen.path)
+	) {
+		if (
+			typeof failedWhen.equals === 'boolean' ||
 			typeof failedWhen.equals === 'string' ||
 			(typeof failedWhen.equals === 'number' &&
-				Number.isFinite(failedWhen.equals)))
-	) {
-		result.failed_when = { path: failedWhen.path, equals: failedWhen.equals };
+				Number.isFinite(failedWhen.equals))
+		) {
+			result.failed_when = { path: failedWhen.path, equals: failedWhen.equals };
+		} else if (failedWhen.equals === undefined && failedWhen.empty === true) {
+			result.failed_when = { path: failedWhen.path, empty: true };
+		}
 	}
 
 	return result;

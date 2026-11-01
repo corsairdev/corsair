@@ -136,6 +136,34 @@ describe('a call whose answer says it failed', () => {
 		expect(hubCalls.outcomes()).toHaveLength(0);
 	});
 
+	it('is reported when the list Hub names came back empty', async () => {
+		const hubCalls = mockHub(200, undefined, { path: 'results', empty: true });
+		const badHost = {
+			results: [],
+			errors: [{ url: 'https://nope.invalid', error: 'invalid_url' }],
+		};
+		const api = bind(async () => badHost);
+
+		await expect(api.parse.parse({})).resolves.toEqual(badHost);
+
+		expect(hubCalls.outcomes()[0]?.body).toMatchObject({
+			outcome: 'failed',
+			error: 'Error: results was empty: invalid_url',
+		});
+	});
+
+	it('is not reported when that list has something in it', async () => {
+		const hubCalls = mockHub(200, undefined, { path: 'results', empty: true });
+		const api = bind(async () => ({
+			results: [{ url: 'https://example.com' }],
+			errors: [{ url: 'https://nope.invalid', error: 'invalid_url' }],
+		}));
+
+		await api.parse.parse({});
+
+		expect(hubCalls.outcomes()).toHaveLength(0);
+	});
+
 	it("is not reported when Hub doesn't say how the provider marks a failure", async () => {
 		const hubCalls = mockHub();
 		const api = bind(async () => dnsFailure);
