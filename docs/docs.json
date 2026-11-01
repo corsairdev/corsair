@@ -3367,7 +3367,7 @@
                 ]
               },
               {
-                "group": "Whoisfreaks",
+                "group": "WhoisFreaks",
                 "pages": [
                   "plugins/whoisfreaks/overview",
                   "plugins/whoisfreaks/api",
