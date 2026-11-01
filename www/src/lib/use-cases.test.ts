@@ -82,8 +82,8 @@ describe('use case data', () => {
 });
 
 describe('scheduled use cases', () => {
-	// Hub runs routine schedules as UTC cron with no time zone, so a prompt that
-	// says "9am" without one runs at 9am UTC.
+	// Hub runs a schedule in the time zone the request names and asks when
+	// none is named, so each prompt names one and runs without that question.
 	it('name a time zone and answer the time zone question', () => {
 		const scheduled = USE_CASES.filter((u) => u.runs?.startsWith('Every'));
 		assert.ok(scheduled.length > 0);

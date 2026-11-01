@@ -65,13 +65,14 @@ const ROUTINE_FAQ: UseCaseFaq = {
 		'No. When a prompt says when to run, your agent hands it to Corsair as a routine. Corsair builds and tests it, then runs it on its own. Ask your agent to list your routines, to pause or remove one, or whether one ran ("did the Slack summary run this morning?").',
 };
 
-// Hub runs routine schedules as UTC cron and stores no time zone
-// (packages/api/src/workflows/schedule.ts), so the prompts name one.
+// Hub runs a schedule in the time zone the request names, daylight saving
+// included, and asks once when none is named (corsairdev/hub#361). The
+// prompts name one so they run as written without that question.
 const TIME_ZONE_FAQ: UseCaseFaq = {
 	id: 'routine-time-zone',
 	question: 'What time zone does the schedule use?',
 	answer:
-		"Corsair runs schedules in UTC. Name your city or time zone in the prompt, as these prompts do with New York, and ask your agent to list your routines to check the time: Corsair shows it in UTC. A UTC schedule doesn't move when daylight saving time starts or ends, so update the routine then if the hour matters.",
+		'The one you name. Put your city or time zone in the prompt, as these prompts do with New York, and Corsair runs the routine at that local time, daylight saving time included. If you leave it out, your agent asks once. To check, ask your agent to list your routines: each one shows its time and time zone.',
 };
 
 export const USE_CASES: UseCase[] = [
@@ -102,7 +103,7 @@ export const USE_CASES: UseCase[] = [
 		notes: [
 			{
 				title: 'Say when, in your words',
-				body: '"Every weekday at 9am New York time" is enough. Use your own city: Corsair runs schedules in UTC, so the time zone is what makes 9am your 9am.',
+				body: '"Every weekday at 9am New York time" is enough. Use your own city: Corsair runs the routine at 9am there, daylight saving time included.',
 			},
 			{
 				title: 'Say where it goes',
