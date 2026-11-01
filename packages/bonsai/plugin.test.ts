@@ -55,6 +55,20 @@ describe('bonsai plugin registration', () => {
 		expect(JSON.parse(token)).toEqual({ apiKey: 'k', apiSecret: 's' });
 	});
 
+	it('keeps later colons in the secret', async () => {
+		const token = await keyBuilderOf(bonsai())(
+			{
+				authType: 'api_key',
+				keys: {
+					get_api_key: async () => 'k:s:more',
+					get_api_secret: async () => null,
+				},
+			},
+			'endpoint',
+		);
+		expect(JSON.parse(token)).toEqual({ apiKey: 'k', apiSecret: 's:more' });
+	});
+
 	it('keeps a stored secret over a colon in the key', async () => {
 		const token = await keyBuilderOf(bonsai())(
 			{
