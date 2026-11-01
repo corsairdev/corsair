@@ -8,7 +8,7 @@ export const get: PagerdutyEndpoints['usersGet'] = async (ctx, input) => {
 		PagerdutyEndpointOutputs['usersGet']
 	>(`users/${input.id}`, ctx.key, {
 		query: {
-			...(input.include && { 'include[]': input.include.join(',') }),
+			...(input.include && { 'include[]': input.include }),
 		},
 	});
 
