@@ -105,7 +105,7 @@
     "path": "/api/v1/contacts/email",
     "options": {
       "query": {
-        "email": "person@example.com"
+        "ids": "1,2"
       }
     }
   },
@@ -176,14 +176,16 @@
     "options": {
       "method": "PUT",
       "body": {
-        "categories": ["newsletter"]
+        "subscriptions": ["newsletter"]
       }
     }
   },
   "contacts.contactRecoms": {
-    "path": "/api/v2/contacts/recoms/data-source-1",
+    "path": "/api/v2/contacts/recoms/1",
     "options": {
-      "query": {}
+      "query": {
+        "contactId": 1
+      }
     }
   },
   "contacts.getAdditionalFields": {
@@ -238,7 +240,7 @@
     "path": "/api/v1/messages/email",
     "options": {
       "query": {
-        "search": "welcome"
+        "name": "welcome"
       }
     }
   },
@@ -260,7 +262,10 @@
     "options": {
       "method": "POST",
       "body": {
-        "name": "email-name"
+        "name": "email-name",
+        "from": "sender@example.com",
+        "subject": "Subject",
+        "htmlText": "<p>Body</p>"
       }
     }
   },
@@ -273,7 +278,10 @@
     "options": {
       "method": "PUT",
       "body": {
-        "name": "updated-email"
+        "name": "updated-email",
+        "from": "sender@example.com",
+        "subject": "Subject",
+        "htmlText": "<p>Body</p>"
       }
     }
   },
@@ -288,7 +296,10 @@
     "options": {
       "method": "PUT",
       "body": {
-        "name": "updated-email"
+        "name": "updated-email",
+        "from": "sender@example.com",
+        "subject": "Subject",
+        "htmlText": "<p>Body</p>"
       }
     }
   },
@@ -320,7 +331,9 @@
     "options": {
       "method": "POST",
       "body": {
-        "name": "push-name"
+        "name": "push-name",
+        "title": "Title",
+        "text": "Body"
       }
     }
   },
@@ -333,7 +346,9 @@
     "options": {
       "method": "PUT",
       "body": {
-        "name": "updated-push"
+        "name": "updated-push",
+        "title": "Title",
+        "text": "Body"
       }
     }
   },
@@ -348,7 +363,9 @@
     "options": {
       "method": "PUT",
       "body": {
-        "name": "updated-push"
+        "name": "updated-push",
+        "title": "Title",
+        "text": "Body"
       }
     }
   },

@@ -1,11 +1,20 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { makeEsputnikRequest } from './client';
-import { esputnikEndpointsNested } from './index';
+import { EsputnikEndpointOutputSchemas } from './endpoints/types';
+import type { EsputnikContext } from './index';
+import { esputnik } from './index';
 
 jest.mock('./client', () => ({ makeEsputnikRequest: jest.fn() }));
 
 const request = jest.mocked(makeEsputnikRequest);
+const wrappedEndpoints = esputnik().endpoints as unknown as Record<
+	string,
+	unknown
+>;
+// Endpoint handlers only read the API key from context; the schema wrapper
+// does not require the remaining runtime fields.
+const context = { key: 'test-api-key' } as unknown as EsputnikContext;
 
 // Provider request bodies are schema-validated before transport, so the
 // contract test treats extension fields as opaque values.
@@ -42,7 +51,7 @@ const fixtures: Record<string, Record<string, unknown>> = {
 	contactsBulkUpdate: { contacts: [] },
 	fileContactsBulkUpdate: { contacts: [] },
 	getImportSessionStatus: { sessionId: 'session-1' },
-	getContactEmails: { email: 'person@example.com' },
+	getContactEmails: { ids: '1,2' },
 	addToUnsubscribed: { emails: ['person@example.com'] },
 	deleteFromUnsubscribed: { emails: ['person@example.com'] },
 	getGroupContacts: { id: 1 },
@@ -52,33 +61,62 @@ const fixtures: Record<string, Record<string, unknown>> = {
 	getContactSubscriptionCategories: { id: 1 },
 	changeContactSubscriptionCategories: {
 		id: 1,
-		categories: ['newsletter'],
+		subscriptions: ['newsletter'],
 	},
-	contactRecoms: { dataSourceId: 'data-source-1' },
+	contactRecoms: { dataSourceId: 1, contactId: 1 },
 	getOrganisationBalanceHistory: { dateFrom: '2026-01-01' },
 	ordersBulkInsert: { orders: [] },
 	registerEvent: { name: 'event-name' },
 	sendHistoryEvents: { events: [] },
 	removeHistoryEvents: { events: [] },
-	searchEmails: { search: 'welcome' },
+	searchEmails: { name: 'welcome' },
 	getEmailMessageViewLink: { id: 1 },
 	sendPreparedMessage: { id: 1 },
-	addEmail: { name: 'email-name' },
+	addEmail: {
+		name: 'email-name',
+		from: 'sender@example.com',
+		subject: 'Subject',
+		htmlText: '<p>Body</p>',
+	},
 	getEmail: { id: 1 },
-	updateMessage: { id: 1, name: 'updated-email' },
+	updateMessage: {
+		id: 1,
+		name: 'updated-email',
+		from: 'sender@example.com',
+		subject: 'Subject',
+		htmlText: '<p>Body</p>',
+	},
 	deleteEmail: { id: 1 },
-	updateTranslatedMessage: { id: 1, language: 'en', name: 'updated-email' },
+	updateTranslatedMessage: {
+		id: 1,
+		language: 'en',
+		name: 'updated-email',
+		from: 'sender@example.com',
+		subject: 'Subject',
+		htmlText: '<p>Body</p>',
+	},
 	deleteTranslatedEmail: { id: 1, language: 'en' },
 	sendEmail: { name: 'email-name' },
 	searchMobilePushMessages: { search: 'welcome' },
-	addMobilePushMessage: { name: 'push-name' },
+	addMobilePushMessage: {
+		name: 'push-name',
+		title: 'Title',
+		text: 'Body',
+	},
 	getMobilePushMessage: { id: 1 },
-	updateBaseMobilePushMessage: { id: 1, name: 'updated-push' },
+	updateBaseMobilePushMessage: {
+		id: 1,
+		name: 'updated-push',
+		title: 'Title',
+		text: 'Body',
+	},
 	deleteMobilePushMessage: { id: 1 },
 	updateTranslatedMobilePushMessage: {
 		id: 1,
 		language: 'en',
 		name: 'updated-push',
+		title: 'Title',
+		text: 'Body',
 	},
 	deleteTranslatedMobilePushMessage: { id: 1, language: 'en' },
 	searchViberMessages: { search: 'welcome' },
@@ -176,21 +214,44 @@ function operationNames(tree: Record<string, unknown>, prefix = ''): string[] {
 	});
 }
 
+// The wrapper validates responses after transport, so mock a value accepted
+// by each operation's output schema instead of a generic undefined.
+function validOutput(operation: string): unknown {
+	const schema =
+		EsputnikEndpointOutputSchemas[
+			operation as keyof typeof EsputnikEndpointOutputSchemas
+		];
+	for (const candidate of [
+		undefined,
+		'ok',
+		[],
+		{},
+		{ id: 1 },
+		{ active: true },
+	]) {
+		if (schema.safeParse(candidate).success) return candidate;
+	}
+	throw new Error(`No valid response fixture for ${operation}`);
+}
+
 describe('eSputnik request contracts', () => {
+	let response: unknown;
+
 	beforeEach(() => {
-		request.mockImplementation(async () => undefined);
+		response = undefined;
+		request.mockImplementation(async () => response);
 	});
 
 	afterEach(() => jest.clearAllMocks());
 
 	it('matches the registered operation set', () => {
 		expect(Object.keys(expectedContracts).sort()).toEqual(
-			operationNames(esputnikEndpointsNested).sort(),
+			operationNames(wrappedEndpoints).sort(),
 		);
 	});
 
 	it('sends the documented method, route, query, and body for every operation', async () => {
-		for (const operation of operationNames(esputnikEndpointsNested)) {
+		for (const operation of operationNames(wrappedEndpoints)) {
 			const name = operation.split('.').pop() as string;
 			const expected = expectedContracts[operation];
 			const input = fixtures[name] ?? {};
@@ -198,21 +259,28 @@ describe('eSputnik request contracts', () => {
 				.split('.')
 				.reduce<unknown>(
 					(tree, part) => (tree as Record<string, unknown>)[part],
-					esputnikEndpointsNested,
+					wrappedEndpoints,
 				);
 			if (!expected)
 				throw new Error(`Missing expected contract for ${operation}`);
 			if (typeof endpoint !== 'function')
 				throw new Error(`Missing endpoint ${operation}`);
 
+			response = validOutput(name);
 			const callsBefore = request.mock.calls.length;
-			await endpoint({ key: 'test-api-key' }, input);
+			await endpoint(context, input);
 			expect(request.mock.calls).toHaveLength(callsBefore + 1);
 
 			const [path, key, options] = request.mock.calls.at(-1) ?? [];
-			expect(path).toBe(expected.path);
+			expect({ operation, path }).toEqual({
+				operation,
+				path: expected.path,
+			});
 			expect(key).toBe('test-api-key');
-			expect(options).toEqual(expected.options);
+			expect({ operation, options }).toEqual({
+				operation,
+				options: expected.options,
+			});
 		}
 
 		expect(request).toHaveBeenCalledTimes(110);
