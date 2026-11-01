@@ -24,6 +24,8 @@ describe('eSputnik endpoint schemas', () => {
 	it.each(Object.keys(EsputnikEndpointInputSchemas))(
 		'%s has a valid input',
 		(name) => {
+			// Fixtures are keyed by operation and intentionally opaque because
+			// each schema narrows this shared map during parsing.
 			const inputs: Record<string, unknown> = {
 				getAccountInfo: {},
 				getBalance: {},
