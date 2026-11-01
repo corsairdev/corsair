@@ -347,7 +347,7 @@
                 ]
               },
               {
-                "group": "Alibaba",
+                "group": "Alibaba Cloud Model Studio",
                 "pages": [
                   "plugins/alibaba/overview",
                   "plugins/alibaba/api",
@@ -699,7 +699,7 @@
                 ]
               },
               {
-                "group": "BenchmarkEmail",
+                "group": "Benchmark Email",
                 "pages": [
                   "plugins/benchmarkemail/overview",
                   "plugins/benchmarkemail/api",
@@ -715,7 +715,7 @@
                 ]
               },
               {
-                "group": "Best Buy Remix API",
+                "group": "Best Buy",
                 "pages": [
                   "plugins/bestbuy/overview",
                   "plugins/bestbuy/api",
@@ -981,19 +981,19 @@
                 ]
               },
               {
+                "group": "Browser Tool",
+                "pages": [
+                  "plugins/browsertool/overview",
+                  "plugins/browsertool/api",
+                  "plugins/browsertool/database"
+                ]
+              },
+              {
                 "group": "Browserless",
                 "pages": [
                   "plugins/browserless/overview",
                   "plugins/browserless/api",
                   "plugins/browserless/database"
-                ]
-              },
-              {
-                "group": "BrowserTool",
-                "pages": [
-                  "plugins/browsertool/overview",
-                  "plugins/browsertool/api",
-                  "plugins/browsertool/database"
                 ]
               },
               {
@@ -1089,7 +1089,7 @@
                 ]
               },
               {
-                "group": "CampaignCleaner",
+                "group": "Campaign Cleaner",
                 "pages": [
                   "plugins/campaigncleaner/overview",
                   "plugins/campaigncleaner/api",
@@ -1147,7 +1147,7 @@
                 ]
               },
               {
-                "group": "Castingwords",
+                "group": "CastingWords",
                 "pages": [
                   "plugins/castingwords/overview",
                   "plugins/castingwords/api",
@@ -1243,7 +1243,7 @@
                 ]
               },
               {
-                "group": "Classmarker",
+                "group": "ClassMarker",
                 "pages": [
                   "plugins/classmarker/overview",
                   "plugins/classmarker/api",
@@ -1307,7 +1307,7 @@
                 ]
               },
               {
-                "group": "Cloro",
+                "group": "cloro",
                 "pages": [
                   "plugins/cloro/overview",
                   "plugins/cloro/api",
@@ -1324,7 +1324,7 @@
                 ]
               },
               {
-                "group": "Cloudcart",
+                "group": "CloudCart",
                 "pages": [
                   "plugins/cloudcart/overview",
                   "plugins/cloudcart/api",
@@ -1342,7 +1342,7 @@
                 ]
               },
               {
-                "group": "Cloudflare API token",
+                "group": "Cloudflare API Token",
                 "pages": [
                   "plugins/cloudflareapikey/overview",
                   "plugins/cloudflareapikey/api",
@@ -1376,7 +1376,7 @@
                 ]
               },
               {
-                "group": "CodeInterpreter",
+                "group": "Code Interpreter",
                 "pages": [
                   "plugins/codeinterpreter/overview",
                   "plugins/codeinterpreter/api",
@@ -1497,7 +1497,7 @@
                 ]
               },
               {
-                "group": "CountdownApi",
+                "group": "Countdown API",
                 "pages": [
                   "plugins/countdownapi/overview",
                   "plugins/countdownapi/api",
@@ -1514,7 +1514,7 @@
                 ]
               },
               {
-                "group": "CurrentsApi",
+                "group": "Currents API",
                 "pages": [
                   "plugins/currentsapi/overview",
                   "plugins/currentsapi/api",
@@ -1587,7 +1587,7 @@
                 ]
               },
               {
-                "group": "DataForSeo",
+                "group": "DataForSEO",
                 "pages": [
                   "plugins/dataforseo/overview",
                   "plugins/dataforseo/api",
@@ -1669,7 +1669,7 @@
                 ]
               },
               {
-                "group": "Docupost",
+                "group": "DocuPost",
                 "pages": [
                   "plugins/docupost/overview",
                   "plugins/docupost/api",
@@ -1803,7 +1803,7 @@
                 ]
               },
               {
-                "group": "Extractaai",
+                "group": "Extracta.ai",
                 "pages": [
                   "plugins/extractaai/overview",
                   "plugins/extractaai/api",
@@ -2191,7 +2191,7 @@
                 ]
               },
               {
-                "group": "Imejisio",
+                "group": "Imejis.io",
                 "pages": [
                   "plugins/imejisio/overview",
                   "plugins/imejisio/api",
@@ -2749,7 +2749,7 @@
                 ]
               },
               {
-                "group": "RevAI",
+                "group": "Rev AI",
                 "pages": [
                   "plugins/revai/overview",
                   "plugins/revai/api",
@@ -2884,7 +2884,7 @@
                 ]
               },
               {
-                "group": "Slackbot",
+                "group": "Slack Bot",
                 "pages": [
                   "plugins/slackbot/overview",
                   "plugins/slackbot/api",
@@ -3310,7 +3310,7 @@
                 ]
               },
               {
-                "group": "Waboxapp",
+                "group": "waboxapp",
                 "pages": [
                   "plugins/waboxapp/overview",
                   "plugins/waboxapp/api",

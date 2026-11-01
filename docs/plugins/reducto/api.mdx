@@ -1179,7 +1179,7 @@ string | string[] | {
         extract_confidence?: number | null
       },
       image_url?: string | null,
-      chart_data?: string[],
+      chart_data?: string[] | null,
       merged_tables?: any[],
       extra?: {
       }
@@ -1216,7 +1216,7 @@ string | string[] | {
       chunk_index?: number,
       rotation?: number
     }[]
-  },
+  } | null,
   custom?: any | null
 } | {
   type: url,

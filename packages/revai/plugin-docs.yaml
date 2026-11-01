@@ -1,0 +1,3 @@
+displayName: Rev AI
+description: Speech-to-text API for submitting transcription jobs and retrieving job status and transcripts.
+domain: rev.ai

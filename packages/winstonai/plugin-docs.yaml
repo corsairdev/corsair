@@ -1,0 +1,3 @@
+displayName: Winston AI
+description: AI content detection API that scores text and images for AI generation, scans text for plagiarism, and compares two texts.
+domain: gowinston.ai

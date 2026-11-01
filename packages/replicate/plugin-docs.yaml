@@ -1,0 +1,3 @@
+displayName: Replicate
+description: Hosted machine learning model API for running predictions, managing models and versions, deployments, trainings, and uploaded files.
+domain: replicate.com

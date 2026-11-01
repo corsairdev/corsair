@@ -1,0 +1,3 @@
+displayName: Veriphone
+description: Phone number validation API for verifying numbers, listing supported countries, checking credit usage, and fetching example numbers.
+domain: veriphone.io

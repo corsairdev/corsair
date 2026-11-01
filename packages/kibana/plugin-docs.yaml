@@ -1,0 +1,3 @@
+displayName: Kibana
+description: Elastic's data exploration and management interface, with endpoints for saved objects, data views, dashboards, alerting rules, cases, connectors, security detections, and Fleet.
+domain: elastic.co

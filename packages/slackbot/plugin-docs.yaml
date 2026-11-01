@@ -1,0 +1,3 @@
+displayName: Slack Bot
+description: Slack workspace access with a bot token for messages, conversations, files, users, user groups, reminders, calls, canvases, and team info, plus Events API webhooks.
+domain: slack.com

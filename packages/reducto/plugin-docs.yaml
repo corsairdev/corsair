@@ -1,0 +1,3 @@
+displayName: Reducto
+description: Document processing API that parses, extracts fields from, classifies, splits, and edits documents, and runs Studio pipelines, with async jobs and file uploads.
+domain: reducto.ai

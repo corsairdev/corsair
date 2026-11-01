@@ -1,0 +1,3 @@
+displayName: Cloudflare API Token
+description: Cloudflare API access with an API token. Manage zones, DNS records, DNSSEC, rulesets, lockdowns, and cache settings.
+domain: cloudflare.com

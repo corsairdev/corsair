@@ -1,0 +1,3 @@
+displayName: Currents API
+description: News API that returns latest news, searches articles, and lists the available categories, languages, and regions.
+domain: currentsapi.services
