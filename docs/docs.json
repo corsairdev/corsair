@@ -827,7 +827,7 @@
                 ]
               },
               {
-                "group": "Boldsign",
+                "group": "BoldSign",
                 "pages": [
                   "plugins/boldsign/overview",
                   "plugins/boldsign/api",
