@@ -1,7 +1,8 @@
 import { logEventFromContext } from 'corsair/core';
 import { z } from 'zod';
-import type { RecallaiContext } from '..';
 import { makeRecallaiContextRequest } from '../client';
+import type { RecallaiContext } from '../index';
+import type { RecallaiJsonValue } from '../json';
 
 const idSchema = z.string().uuid();
 const loginModeSchema = z.enum(['always', 'only_if_required']);
@@ -205,10 +206,14 @@ const send = async <T>(
 	options: NonNullable<Parameters<typeof makeRecallaiContextRequest>[2]> = {},
 	outputSchema: z.ZodType<T>,
 ): Promise<T> => {
-	const response = await makeRecallaiContextRequest<unknown>(ctx, path, {
-		...options,
-		headers: { ...options.headers, Authorization: `Token ${ctx.key}` },
-	});
+	const response = await makeRecallaiContextRequest<RecallaiJsonValue>(
+		ctx,
+		path,
+		{
+			...options,
+			headers: { ...options.headers, Authorization: `Token ${ctx.key}` },
+		},
+	);
 	const parsed = outputSchema.parse(response);
 	await logEventFromContext(
 		ctx,

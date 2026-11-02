@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { RecallaiEndpoints } from '..';
 import { makeRecallaiContextRequest } from '../client';
+import type { RecallaiEndpoints } from '../index';
 import {
 	CalendarAuthenticateInputSchema,
 	CalendarDisconnectInputSchema,

@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { RecallaiEndpointOutputs, RecallaiEndpoints } from '..';
 import { makeRecallaiContextRequest } from '../client';
+import type { RecallaiEndpointOutputs, RecallaiEndpoints } from '../index';
 import type {
 	ArtifactListInput,
 	ArtifactListResponse,

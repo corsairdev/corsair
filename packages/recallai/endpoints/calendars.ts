@@ -1,7 +1,8 @@
 import { logEventFromContext } from 'corsair/core';
 import { z } from 'zod';
-import type { RecallaiContext } from '..';
 import { makeRecallaiContextRequest } from '../client';
+import type { RecallaiContext } from '../index';
+import type { RecallaiJsonValue } from '../json';
 
 const calendarId = z.string().uuid();
 const platform = z.enum(['google_calendar', 'microsoft_outlook']);
@@ -86,7 +87,7 @@ export const listCalendars = async (
 	input: z.input<typeof ListCalendarsInputSchema>,
 ) => {
 	const query = ListCalendarsInputSchema.parse(input);
-	const response = await makeRecallaiContextRequest<unknown>(
+	const response = await makeRecallaiContextRequest<RecallaiJsonValue>(
 		ctx,
 		'/api/v2/calendars/',
 		{
@@ -105,7 +106,7 @@ export const createCalendar = async (
 	input: z.input<typeof CreateCalendarInputSchema>,
 ) => {
 	const body = CreateCalendarInputSchema.parse(input);
-	const response = await makeRecallaiContextRequest<unknown>(
+	const response = await makeRecallaiContextRequest<RecallaiJsonValue>(
 		ctx,
 		'/api/v2/calendars/',
 		{
@@ -124,7 +125,7 @@ export const retrieveCalendar = async (
 	input: z.input<typeof CalendarIdInputSchema>,
 ) => {
 	const { id } = CalendarIdInputSchema.parse(input);
-	const response = await makeRecallaiContextRequest<unknown>(
+	const response = await makeRecallaiContextRequest<RecallaiJsonValue>(
 		ctx,
 		`/api/v2/calendars/${encodeURIComponent(id)}/`,
 		{ method: 'GET', headers: { Authorization: `Token ${ctx.key}` } },
@@ -144,7 +145,7 @@ export const updateCalendar = async (
 	input: z.input<typeof UpdateCalendarInputSchema>,
 ) => {
 	const { id, ...body } = UpdateCalendarInputSchema.parse(input);
-	const response = await makeRecallaiContextRequest<unknown>(
+	const response = await makeRecallaiContextRequest<RecallaiJsonValue>(
 		ctx,
 		`/api/v2/calendars/${encodeURIComponent(id)}/`,
 		{
@@ -168,7 +169,7 @@ export const deleteCalendar = async (
 	input: z.input<typeof CalendarIdInputSchema>,
 ) => {
 	const { id } = CalendarIdInputSchema.parse(input);
-	const response = await makeRecallaiContextRequest<unknown>(
+	const response = await makeRecallaiContextRequest<RecallaiJsonValue>(
 		ctx,
 		`/api/v2/calendars/${encodeURIComponent(id)}/`,
 		{
@@ -191,7 +192,7 @@ export const createCalendarAccessToken = async (
 	input: z.input<typeof CalendarIdInputSchema>,
 ) => {
 	const { id } = CalendarIdInputSchema.parse(input);
-	const response = await makeRecallaiContextRequest<unknown>(
+	const response = await makeRecallaiContextRequest<RecallaiJsonValue>(
 		ctx,
 		`/api/v2/calendars/${encodeURIComponent(id)}/access-token/`,
 		{
