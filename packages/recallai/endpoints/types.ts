@@ -72,6 +72,10 @@ export type RecallaiEndpointInputs = ArtifactEndpointInputs & {
 	retrieveBot: RetrieveBotInput;
 	updateBot: UpdateBotInput;
 	deleteBot: RetrieveBotInput;
+	deleteBotMedia: BotActionInput; leaveBotCall: BotActionInput; outputAudio: AudioOutputInput; stopOutputAudio: BotActionInput;
+	outputMedia: OutputMediaInput; stopOutputMedia: BotActionInput; startScreenshare: AudioOutputInput; stopScreenshare: BotActionInput;
+	outputVideo: AudioOutputInput; stopOutputVideo: BotActionInput; pauseRecording: BotActionInput; pinParticipant: PinParticipantInput;
+	resumeRecording: BotActionInput; sendChatMessage: SendChatMessageInput; startRecording: BotActionInput; stopRecording: BotActionInput;
 };
 
 export type RecallaiEndpointOutputs = ArtifactEndpointOutputs & {
@@ -80,6 +84,11 @@ export type RecallaiEndpointOutputs = ArtifactEndpointOutputs & {
 	retrieveBot: BotResponse;
 	updateBot: BotResponse;
 	deleteBot: undefined;
+	deleteBotMedia: undefined; leaveBotCall: undefined; outputAudio: Record<string, unknown>; stopOutputAudio: undefined;
+	outputMedia: Record<string, unknown>; stopOutputMedia: undefined; startScreenshare: Record<string, unknown>;
+	stopScreenshare: undefined; outputVideo: Record<string, unknown>; stopOutputVideo: undefined;
+	pauseRecording: undefined; pinParticipant: undefined; resumeRecording: undefined; sendChatMessage: undefined;
+	startRecording: undefined; stopRecording: undefined;
 };
 
 export const RecallaiEndpointInputSchemas = {
@@ -96,6 +105,11 @@ export const RecallaiEndpointOutputSchemas = {
 	retrieveBot: BotSchema,
 	updateBot: BotSchema,
 	deleteBot: z.undefined(),
+	deleteBotMedia: z.undefined(), leaveBotCall: z.undefined(), outputAudio: z.record(z.string(), z.unknown()).optional(),
+	stopOutputAudio: z.undefined(), outputMedia: z.record(z.string(), z.unknown()).optional(), stopOutputMedia: z.undefined(),
+	startScreenshare: z.record(z.string(), z.unknown()).optional(), stopScreenshare: z.undefined(),
+	outputVideo: z.record(z.string(), z.unknown()).optional(), stopOutputVideo: z.undefined(), pauseRecording: z.undefined(),
+	pinParticipant: z.undefined(), resumeRecording: z.undefined(), sendChatMessage: z.undefined(), startRecording: z.undefined(), stopRecording: z.undefined(),
 } as const;
 
 const BotActionInputSchema = z.object({ id });
