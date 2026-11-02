@@ -126,6 +126,40 @@ describe('zohodesk plugin definition', () => {
 		expect(errorHandlers?.RATE_LIMIT_ERROR).toBeDefined();
 		expect(errorHandlers?.NETWORK_ERROR).toBe(custom);
 	});
+
+	it('runs an added handler before the catch-all DEFAULT', () => {
+		const custom = {
+			match: (error: Error) => error.message === 'socket hang up',
+			handler: async () => ({ maxRetries: 1 }),
+		};
+		const handlers = zohodesk({
+			errorHandlers: { NETWORK_ERROR: custom },
+		}).errorHandlers;
+		const context = {
+			pluginId: 'zohodesk',
+			operation: 'tickets.list',
+			input: {},
+			originalError: new Error('socket hang up'),
+		};
+
+		// Mirrors corsair core: the first handler whose match() passes.
+		const first = Object.keys(handlers ?? {}).find((name) =>
+			handlers?.[name]?.match(context.originalError, context),
+		);
+
+		expect(first).toBe('NETWORK_ERROR');
+		expect(Object.keys(handlers ?? {}).at(-1)).toBe('DEFAULT');
+	});
+
+	it('lets options replace DEFAULT, and keeps it last', () => {
+		const custom = { match: () => true, handler: async () => ({}) };
+		const handlers = zohodesk({
+			errorHandlers: { DEFAULT: custom, NETWORK_ERROR: custom },
+		}).errorHandlers;
+
+		expect(handlers?.DEFAULT).toBe(custom);
+		expect(Object.keys(handlers ?? {}).at(-1)).toBe('DEFAULT');
+	});
 });
 
 describe('zohodesk OAuth config', () => {

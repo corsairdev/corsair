@@ -111,3 +111,21 @@ export const errorHandlers = {
 		},
 	},
 } satisfies CorsairErrorHandler;
+
+/**
+ * Adds a caller's handlers. DEFAULT stays last because core takes the first
+ * match in key order and DEFAULT matches everything, so a handler placed after
+ * it would never run.
+ */
+export function mergeErrorHandlers(
+	builtin: CorsairErrorHandler,
+	user: CorsairErrorHandler | undefined,
+): CorsairErrorHandler {
+	if (!user) return builtin;
+	const { DEFAULT: builtinDefault, ...builtinRest } = builtin;
+	const { DEFAULT: userDefault, ...userRest } = user;
+	const fallback = userDefault ?? builtinDefault;
+	return fallback
+		? { ...builtinRest, ...userRest, DEFAULT: fallback }
+		: { ...builtinRest, ...userRest };
+}

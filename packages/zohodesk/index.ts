@@ -36,7 +36,7 @@ import {
 	ZohoDeskEndpointInputSchemas,
 	ZohoDeskEndpointOutputSchemas,
 } from './endpoints/types';
-import { errorHandlers } from './error-handlers';
+import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 import { resolveZohoDeskOAuthTenantLink } from './oauth-tenant-link';
 import { ZohoDeskSchema } from './schema';
 
@@ -288,10 +288,7 @@ export function zohodesk<const T extends ZohoDeskPluginOptions>(
 		webhookSchemas: zohoDeskWebhookSchemas,
 		oauthWebhookTenantLinkResolver: (tokens) =>
 			resolveZohoDeskOAuthTenantLink(tokens, region),
-		errorHandlers: {
-			...errorHandlers,
-			...options.errorHandlers,
-		},
+		errorHandlers: mergeErrorHandlers(errorHandlers, options.errorHandlers),
 		keyBuilder: async (ctx: ZohoDeskKeyBuilderContext, source) => {
 			if (source === 'endpoint' && options.key) {
 				return options.key;
