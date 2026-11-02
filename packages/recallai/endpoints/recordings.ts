@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import type { RecallaiEndpointOutputs, RecallaiEndpoints } from '..';
+import type { RecallaiContext, RecallaiEndpointOutputs, RecallaiEndpoints } from '..';
 import { makeRecallaiRequest } from '../client';
 import { z } from 'zod';
 
@@ -61,8 +61,10 @@ export const updateRealtimeEndpoints: RecallaiEndpoints['updateRealtimeEndpoints
 	await logEventFromContext(ctx, 'recallai.realtimeEndpoint.update', { id: resourceId }, 'completed');
 	return result;
 };
+export const listSdkUploads = async (ctx: RecallaiContext, input: z.infer<typeof listInput>): Promise<{ count?: number; next?: string | null; previous?: string | null; results: Record<string, unknown>[] }> => list(ctx, input, 'sdk_upload', 'recallai.sdkUpload.list');
 
 export const recordingSchemas = {
 	listRecording: { input: listInput, output: page }, retrieveRecording: { input: itemInput, output: artifact }, updateRecording: { input: updateInput, output: artifact }, deleteRecording: { input: itemInput, output: z.undefined() }, createAsyncTranscript: { input: transcriptInput, output: artifact },
 	listRealtimeEndpoints: { input: listInput, output: page }, retrieveRealtimeEndpoints: { input: itemInput, output: artifact }, updateRealtimeEndpoints: { input: updateInput, output: artifact },
+	listSdkUploads: { input: listInput, output: page },
 } as const;

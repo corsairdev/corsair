@@ -38,4 +38,12 @@ describe('Recall.ai recording operations', () => {
 		expect(request).toHaveBeenNthCalledWith(2, `/api/v1/realtime_endpoint/${id}/`, 'recall-key', { method: 'GET' });
 		expect(request).toHaveBeenNthCalledWith(3, `/api/v1/realtime_endpoint/${id}/`, 'recall-key', { method: 'PATCH', body: { metadata: { source: 'test' } } });
 	});
+	it('lists Desktop SDK uploads through the current route', async () => {
+		const request = jest.mocked(makeRecallaiRequest);
+		request.mockResolvedValue({ next: null, previous: null, results: [] });
+		const plugin = recallai({ key: 'recall-key' });
+		if (!plugin.endpoints) throw new Error('Recall.ai endpoints are missing');
+		await plugin.endpoints.sdkUploads.list({ key: 'recall-key' } as never, {});
+		expect(request).toHaveBeenCalledWith('/api/v1/sdk_upload/', 'recall-key', { method: 'GET', query: {} });
+	});
 });

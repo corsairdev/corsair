@@ -9,4 +9,4 @@ export {
 	retrieveTranscript,
 } from './artifacts';
 export * from './types';
-export { createAsyncTranscript, deleteRecording, listRecording, retrieveRecording, updateRecording, listRealtimeEndpoints, retrieveRealtimeEndpoints, updateRealtimeEndpoints, recordingSchemas } from './recordings';
+export { createAsyncTranscript, deleteRecording, listRecording, retrieveRecording, updateRecording, listRealtimeEndpoints, retrieveRealtimeEndpoints, updateRealtimeEndpoints, listSdkUploads, recordingSchemas } from './recordings';

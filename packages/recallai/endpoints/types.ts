@@ -72,6 +72,7 @@ export type RecallaiEndpointInputs = ArtifactEndpointInputs & {
 	createAsyncTranscript: { id: string; provider?: string };
 	listRealtimeEndpoints: { cursor?: string; created_at_after?: string; created_at_before?: string; recording_id?: string; status_code?: 'processing' | 'done' | 'failed' | 'deleted' };
 	retrieveRealtimeEndpoints: { id: string }; updateRealtimeEndpoints: { id: string; metadata: Record<string, unknown> };
+	listSdkUploads: { cursor?: string; created_at_after?: string; created_at_before?: string; recording_id?: string; status_code?: 'processing' | 'done' | 'failed' | 'deleted' };
 	listBots: ListBotsInput;
 	createBot: CreateBotInput;
 	retrieveBot: RetrieveBotInput;
@@ -88,6 +89,7 @@ export type RecallaiEndpointOutputs = ArtifactEndpointOutputs & {
 	retrieveRecording: Record<string, unknown>; updateRecording: Record<string, unknown>; deleteRecording: undefined; createAsyncTranscript: Record<string, unknown>;
 	listRealtimeEndpoints: { count?: number; next?: string | null; previous?: string | null; results: Record<string, unknown>[] };
 	retrieveRealtimeEndpoints: Record<string, unknown>; updateRealtimeEndpoints: Record<string, unknown>;
+	listSdkUploads: { count?: number; next?: string | null; previous?: string | null; results: Record<string, unknown>[] };
 	listBots: ListBotsResponse;
 	createBot: BotResponse;
 	retrieveBot: BotResponse;
