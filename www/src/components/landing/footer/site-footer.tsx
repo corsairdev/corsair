@@ -221,6 +221,12 @@ export function SiteFooter() {
 						</p>
 						<div className="flex items-center gap-4">
 							<Link
+								href="/security"
+								className="text-xs text-[#1c1c1c66] no-underline transition-colors hover:text-[#1c1c1c]"
+							>
+								Security
+							</Link>
+							<Link
 								href="/privacy-policy"
 								className="text-xs text-[#1c1c1c66] no-underline transition-colors hover:text-[#1c1c1c]"
 							>
