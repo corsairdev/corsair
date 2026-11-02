@@ -1,5 +1,6 @@
 // "Turn Claude into a sales rep": a job title, the apps it needs connected in
-// Corsair, and the steps an agent runs with them. Shown on the homepage.
+// Corsair, and the steps an agent runs with them. The homepage shows the apps
+// and the prompt; tests check that each step uses an app listed for the role.
 //
 // Every step names the catalog tool it uses (`_integration_operations`), so
 // the page never claims a job Corsair can't do. Ads roles (media buyer) are
