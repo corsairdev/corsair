@@ -6,7 +6,7 @@ const FAQ_ITEMS = [
 		question: 'How is this different from existing integration products?',
 		answer: `Most are closed source. If they're missing an integration, you wait for them to add it. Corsair is open source. Add any integration yourself.
 
-			Also, if you're using Corsair Hub, none of your credentials stay with us. We are a relay between you and your integration. If our database is hacked tomorrow, it has none of your data.`,
+			Also, with the SDK your users' credentials stay in your own database, encrypted with a key only you hold. Hub relays the connect flows and doesn't keep those tokens.`,
 	},
 	{
 		id: 'vibe-code',
@@ -41,7 +41,7 @@ const FAQ_ITEMS = [
 		id: 'hosted-security',
 		question: 'Is the hosted version secure?',
 		answer:
-			"The hosted version holds none of your credentials or data. All of that lives in your own database. That means if our database was suddenly opened up tomorrow, your data (and your customers' data) and credentials would not be compromised.",
+			"With the SDK, credentials live in your own database, encrypted with a key only you hold. On Corsair Cloud we store them for you: each account's credentials and synced data are encrypted with its own key, those keys are held in AWS KMS, and the servers that run your tools can't decrypt them without a short-lived grant for your workspace. Scripts run in a sandbox with no network access, and every action is checked against your link's mode. Details at corsair.dev/security.",
 	},
 ] as const;
 
