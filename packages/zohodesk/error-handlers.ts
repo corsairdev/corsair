@@ -21,9 +21,11 @@ function hasCode(error: Error, codes: readonly string[]): boolean {
 	return code !== undefined && codes.includes(code);
 }
 
-function isServerError(error: Error): boolean {
-	const status = apiError(error)?.status;
-	return status !== undefined && status >= 500;
+// No status means no response came back: a dropped connection or a timeout.
+function isTransientFailure(error: Error): boolean {
+	const failure = apiError(error);
+	if (!failure) return false;
+	return failure.status === undefined || failure.status >= 500;
 }
 
 export const errorHandlers = {
@@ -94,8 +96,9 @@ export const errorHandlers = {
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	SERVER_ERROR: {
-		match: isServerError,
-		// A 5xx does not say whether a write landed, so only reads repeat.
+		match: isTransientFailure,
+		// Neither a 5xx nor a lost connection says whether a write landed, so only
+		// reads repeat.
 		handler: async (_error, context) =>
 			WRITE_OPERATIONS.has(context.operation)
 				? { maxRetries: 0 }

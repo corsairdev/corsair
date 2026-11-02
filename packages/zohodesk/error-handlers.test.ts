@@ -76,7 +76,7 @@ describe('Zoho Desk error classification', () => {
 		['invalid data', failure(422, 'INVALID_DATA'), 'VALIDATION_ERROR'],
 		['server error', failure(500, 'INTERNAL_SERVER_ERROR'), 'SERVER_ERROR'],
 		['bad gateway', failure(502), 'SERVER_ERROR'],
-		['a network failure', new ZohoDeskAPIError('fetch failed'), 'DEFAULT'],
+		['a network failure', new ZohoDeskAPIError('fetch failed'), 'SERVER_ERROR'],
 		['anything else', new Error('boom'), 'DEFAULT'],
 	])('files %s under the right handler', (_name, error, expected) => {
 		expect(classify(error)).toBe(expected);
@@ -130,6 +130,24 @@ describe('Zoho Desk retry strategy', () => {
 			retryStrategy: 'exponential_backoff',
 		});
 	});
+
+	it('retries a read after a lost connection', async () => {
+		await expect(
+			strategy(new ZohoDeskAPIError('fetch failed')),
+		).resolves.toEqual({
+			maxRetries: 2,
+			retryStrategy: 'exponential_backoff',
+		});
+	});
+
+	it.each(['tasks.updateMany', 'departments.uploadLogo'])(
+		'does not repeat %s after a lost connection, which may have landed',
+		async (operation) => {
+			await expect(
+				strategy(new ZohoDeskAPIError('fetch failed'), operation),
+			).resolves.toEqual({ maxRetries: 0 });
+		},
+	);
 
 	it.each(['tasks.updateMany', 'departments.uploadLogo'])(
 		'does not repeat %s after a 5xx, which may have landed',
