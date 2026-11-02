@@ -66,7 +66,10 @@ jobs:
   build:
     name: Build & static checks
     needs: scope
-    if: needs.scope.outputs.skip_heavy != 'true'
+    # plugin-gate runs only on pull requests. On a push to main it is skipped,
+    # and GitHub skips every job downstream of a skipped job unless the job's
+    # `if` checks status itself, so check the scope result directly.
+    if: ${{ !cancelled() && needs.scope.result == 'success' && needs.scope.outputs.skip_heavy != 'true' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     steps:
@@ -94,7 +97,6 @@ jobs:
         run: pnpm run validate:plugins
 
       - name: Check plugin READMEs and npm metadata
-        if: steps.scope.outputs.skip_heavy != 'true'
         run: pnpm generate:readmes:all --check
 
       - name: Validate Docs
@@ -113,7 +115,10 @@ jobs:
   test:
     name: Test
     needs: scope
-    if: needs.scope.outputs.skip_heavy != 'true'
+    # plugin-gate runs only on pull requests. On a push to main it is skipped,
+    # and GitHub skips every job downstream of a skipped job unless the job's
+    # `if` checks status itself, so check the scope result directly.
+    if: ${{ !cancelled() && needs.scope.result == 'success' && needs.scope.outputs.skip_heavy != 'true' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     strategy:
@@ -135,8 +140,11 @@ jobs:
         uses: actions/cache@v4
         with:
           path: .turbo
-          key: turbo-test-${{ runner.os }}-${{ github.event_name == 'pull_request' && format('pr-{0}-', github.event.pull_request.number) || '' }}${{ github.sha }}-${{ matrix.shard }}
-          restore-keys: turbo-test-${{ runner.os }}-
+          # Shard goes before the sha: restore-keys match on a prefix, and turbo
+          # hashes the --shard argument, so each shard can only reuse its own
+          # entries.
+          key: turbo-test-${{ runner.os }}-shard${{ matrix.shard }}-${{ github.event_name == 'pull_request' && format('pr-{0}-', github.event.pull_request.number) || '' }}${{ github.sha }}
+          restore-keys: turbo-test-${{ runner.os }}-shard${{ matrix.shard }}-
 
       # Only the full lane's filter is pure jest packages, so --shard applies
       # there; www runs its node:test suite separately below, never sharded.
