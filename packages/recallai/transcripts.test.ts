@@ -52,10 +52,9 @@ describe('Recall.ai transcript and participant-event endpoints', () => {
 		const plugin = recallai({ key: 'recall-key' });
 		if (!plugin.endpoints) throw new Error('Recall.ai endpoints are missing');
 
-		await plugin.endpoints.transcripts.retrieve(
-			recallaiTestContext,
-			{ id: artifact.id },
-		);
+		await plugin.endpoints.transcripts.retrieve(recallaiTestContext, {
+			id: artifact.id,
+		});
 		expect(request).toHaveBeenCalledWith(
 			`/api/v1/transcript/${artifact.id}/`,
 			'recall-key',

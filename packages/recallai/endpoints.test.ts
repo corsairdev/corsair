@@ -38,10 +38,11 @@ describe('Recall.ai bot endpoints', () => {
 		const request = jest.mocked(makeRecallaiRequest);
 		request.mockResolvedValue(undefined);
 		await deleteBotMedia(recallaiTestContext, { id: 'bot-1' });
-		await outputAudio(
-			recallaiTestContext,
-			{ id: 'bot-1', kind: 'mp3', b64_data: 'YQ==' },
-		);
+		await outputAudio(recallaiTestContext, {
+			id: 'bot-1',
+			kind: 'mp3',
+			b64_data: 'YQ==',
+		});
 		await stopOutputVideo(recallaiTestContext, { id: 'bot-1' });
 		expect(request).toHaveBeenNthCalledWith(
 			1,
@@ -66,14 +67,15 @@ describe('Recall.ai bot endpoints', () => {
 	it('sends participant and chat payloads without mixing bot and participant IDs', async () => {
 		const request = jest.mocked(makeRecallaiRequest);
 		request.mockResolvedValue(undefined);
-		await pinParticipant(
-			recallaiTestContext,
-			{ bot_id: 'bot-1', participant_id: 42 },
-		);
-		await sendChatMessage(
-			recallaiTestContext,
-			{ id: 'bot-1', message: 'hello', pin: true },
-		);
+		await pinParticipant(recallaiTestContext, {
+			bot_id: 'bot-1',
+			participant_id: 42,
+		});
+		await sendChatMessage(recallaiTestContext, {
+			id: 'bot-1',
+			message: 'hello',
+			pin: true,
+		});
 		expect(request).toHaveBeenNthCalledWith(
 			1,
 			'/api/v1/bot/bot-1/pin_participant/',
