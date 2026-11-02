@@ -454,18 +454,48 @@ export async function resolveOrgId(
 	return stored || discoverOrgId(ctx, token);
 }
 
+// unknown: whatever the request rejected with.
+function isOrgMismatchError(error: unknown): boolean {
+	return (
+		error instanceof ZohoDeskAPIError && error.code === 'OAUTH_ORG_MISMATCH'
+	);
+}
+
+async function forgetOrgId(ctx: ZohoDeskContext): Promise<void> {
+	discoveredOrgs.delete(ctx.keys ?? ctx.options);
+	// Only spares later calls this retry, so a failed write must not fail this one.
+	await ctx.keys?.set_tenant_external_id('').catch(() => undefined);
+}
+
 /**
  * Runs `send` with the current token and org, and once more with a new token if
  * Zoho rejects it. The new token goes back on `ctx` because a rate limit retry
  * re-runs the endpoint with this same context.
+ *
+ * A remembered org can outlive its connection: reconnecting to another org
+ * leaves the old ID stored when `soleOrganizationId` can't name the new one, and
+ * core gives the plugin no way to clear it then. So a mismatch on a remembered
+ * ID drops it and retries without the header, letting Zoho read the org from
+ * the token. A mismatch on the `orgId` option is a config error and surfaces.
  */
 export async function withZohoDeskAuth<T>(
 	ctx: ZohoDeskContext,
 	req: ZohoDeskRequest,
 	send: (token: string, orgId: string | undefined) => Promise<T>,
 ): Promise<T> {
-	const attempt = async (token: string) =>
-		send(token, req.withoutOrg ? undefined : await resolveOrgId(ctx, token));
+	const attempt = async (token: string) => {
+		if (req.withoutOrg) return send(token, undefined);
+
+		const orgId = await resolveOrgId(ctx, token);
+		try {
+			return await send(token, orgId);
+		} catch (error) {
+			if (!orgId || ctx.options.orgId || !isOrgMismatchError(error))
+				throw error;
+			await forgetOrgId(ctx);
+			return send(token, undefined);
+		}
+	};
 
 	try {
 		return await attempt(ctx.key);

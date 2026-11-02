@@ -525,6 +525,73 @@ describe('withZohoDeskAuth', () => {
 		expect(ctx.keys.get_tenant_external_id).not.toHaveBeenCalled();
 	});
 
+	it('drops a remembered org that no longer matches, and sends none', async () => {
+		const ctx = fakeCtx(ORG_ID);
+		const mismatch = new ZohoDeskAPIError('org', {
+			status: 401,
+			body: errorBody('OAUTH_ORG_MISMATCH'),
+		});
+		const send = jest
+			.fn()
+			.mockRejectedValueOnce(mismatch)
+			.mockResolvedValueOnce('ok');
+
+		await expect(
+			withZohoDeskAuth(ctx as never, { path: '/tickets' }, send),
+		).resolves.toBe('ok');
+
+		expect(send).toHaveBeenNthCalledWith(1, TOKEN, ORG_ID);
+		expect(send).toHaveBeenNthCalledWith(2, TOKEN, undefined);
+		expect(ctx.keys.set_tenant_external_id).toHaveBeenCalledWith('');
+	});
+
+	it('still retries when forgetting the org fails to save', async () => {
+		const ctx = fakeCtx(ORG_ID);
+		ctx.keys.set_tenant_external_id.mockRejectedValueOnce(new Error('disk'));
+		const send = jest
+			.fn()
+			.mockRejectedValueOnce(
+				new ZohoDeskAPIError('org', {
+					status: 401,
+					body: errorBody('OAUTH_ORG_MISMATCH'),
+				}),
+			)
+			.mockResolvedValueOnce('ok');
+
+		await expect(
+			withZohoDeskAuth(ctx as never, { path: '/tickets' }, send),
+		).resolves.toBe('ok');
+	});
+
+	it('surfaces a mismatch on the orgId option, which is a config error', async () => {
+		const ctx = fakeCtx(null, { orgId: ORG_ID });
+		const mismatch = new ZohoDeskAPIError('org', {
+			status: 401,
+			body: errorBody('OAUTH_ORG_MISMATCH'),
+		});
+		const send = jest.fn().mockRejectedValue(mismatch);
+
+		await expect(
+			withZohoDeskAuth(ctx as never, { path: '/tickets' }, send),
+		).rejects.toBe(mismatch);
+		expect(send).toHaveBeenCalledTimes(1);
+		expect(ctx.keys.set_tenant_external_id).not.toHaveBeenCalled();
+	});
+
+	it('does not loop when a call without an org is also refused', async () => {
+		const ctx = fakeCtx(ORG_ID);
+		const mismatch = new ZohoDeskAPIError('org', {
+			status: 401,
+			body: errorBody('OAUTH_ORG_MISMATCH'),
+		});
+		const send = jest.fn().mockRejectedValue(mismatch);
+
+		await expect(
+			withZohoDeskAuth(ctx as never, { path: '/tickets' }, send),
+		).rejects.toBe(mismatch);
+		expect(send).toHaveBeenCalledTimes(2);
+	});
+
 	it('rethrows a 401 when a static key cannot be refreshed', async () => {
 		const ctx = fakeCtx(ORG_ID, { key: TOKEN });
 		const expired = new ZohoDeskAPIError('expired', {
