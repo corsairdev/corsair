@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-10-26T12:52:11.250Z",
+  "generatedAt": "2026-11-02T05:26:11.231Z",
   "primarySource": "https://twenty-icons.com",
   "fallbackSource": "https://www.google.com/s2/favicons",
   "size": 128,
   "format": "png",
-  "total": 407,
-  "succeeded": 407,
+  "total": 409,
+  "succeeded": 409,
   "failed": 0,
   "domains": {
     "ably": "ably.io",
@@ -207,6 +207,7 @@
     "epicgames": "epicgames.com",
     "everhour": "everhour.com",
     "exa": "exa.ai",
+    "excel": "graph.microsoft.com",
     "exist": "exist.com",
     "extractaai": "extractaai.com",
     "facebook": "facebook.com",
@@ -227,6 +228,7 @@
     "gitlab": "gitlab.com",
     "gladia": "gladia.com",
     "gmail": "gmail.com",
+    "gmicloud": "gmicloud.ai",
     "googleaddressvalidation": "googleaddressvalidation.com",
     "googleanalytics": "googleanalytics.com",
     "googlebigquery": "googlebigquery.com",
@@ -823,7 +825,9 @@
     "zohoinventory": "twenty-icons",
     "zohomail": "twenty-icons",
     "zoom": "twenty-icons",
-    "zoominfo": "twenty-icons"
+    "zoominfo": "twenty-icons",
+    "excel": "url-override",
+    "gmicloud": "twenty-icons"
   },
   "failures": []
 }
