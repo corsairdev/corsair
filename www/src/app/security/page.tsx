@@ -35,7 +35,7 @@ const ENVELOPE_ENCRYPTION_URL =
 const ENCRYPTION_SOURCE_URL = `${GITHUB_URL}/blob/main/packages/corsair/core/auth/encryption.ts`;
 
 const SUMMARY = [
-	'Every API key, OAuth token and record we sync is encrypted, and each account has its own key.',
+	'Corsair Cloud encrypts every API key, OAuth token and record it syncs, and each account has its own key.',
 	'The keys that unlock them are held in AWS Key Management Service and rotate automatically. Our database only ever stores them encrypted.',
 	'If our database were copied tomorrow, your API keys and app data would stay unreadable.',
 	'No cross-tenant contamination: one customer’s requests can’t open another customer’s data.',
@@ -183,9 +183,12 @@ export default function SecurityPage() {
 						that key lives in your environment; Corsair never has it.
 					</li>
 					<li>
-						With <code className={code}>encryptDataAtRest</code> on, the records
-						it syncs are sealed with the same per-account keys. Corsair Cloud
-						turns this on for every workspace.
+						Synced records are sealed with the same per-account keys when{' '}
+						<code className={code}>encryptDataAtRest</code> is on. It&apos;s off
+						by default in the SDK: set{' '}
+						<code className={code}>encryptDataAtRest: true</code> in your
+						Corsair config to turn it on. Corsair Cloud turns it on for every
+						workspace.
 					</li>
 					<li>
 						The{' '}
@@ -218,10 +221,19 @@ export default function SecurityPage() {
 					never appears in a tool result or in the model&apos;s context.
 				</p>
 				<p>
-					Scripts an agent writes (<code className={code}>run_script</code> and{' '}
+					On Corsair Cloud, scripts an agent writes (
+					<code className={code}>run_script</code> and{' '}
 					<code className={code}>read_data</code>) run in an isolated sandbox
 					with no network, filesystem or process access. The only thing a script
 					can reach is the person&apos;s own connected apps, through Corsair.
+				</p>
+				<p>
+					The SDK&apos;s MCP adapter works differently. When you host it in your
+					own app, <code className={code}>run_script</code> runs the
+					agent&apos;s code in your process. It isn&apos;t a sandbox, so connect
+					only agents you trust. <code className={code}>readonly: true</code>{' '}
+					blocks write and destructive Corsair calls, but not other side effects
+					of the script.
 				</p>
 			</LegalSection>
 
