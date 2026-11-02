@@ -45,11 +45,13 @@ function changedFilesForPullRequest(repo: string, pr: string): string[] {
 		`repos/${repo}/pulls/${pr}/files`,
 		'--paginate',
 		'--jq',
-		'.[] | .filename, (.previous_filename // empty)',
+		// One JSON string per line, so a path keeps its exact bytes: no trim,
+		// and a newline inside a filename cannot split it.
+		'.[] | .filename, (.previous_filename // empty) | @json',
 	])
-		.trim()
 		.split('\n')
-		.filter(Boolean);
+		.filter(Boolean)
+		.map((line) => JSON.parse(line) as string);
 }
 
 function gitDiffNameOnly(before: string, after: string): string[] {
