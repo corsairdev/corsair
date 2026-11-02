@@ -56,6 +56,9 @@ const PLUGIN_ICON_URL_OVERRIDES: Record<string, string> = {
 	starton: 'https://github.com/starton-io.png?size=200',
 	// twenty-icons only has a 32px blur; the site apple touch icon is 180px.
 	turso: 'https://turso.tech/apple-touch-icon.png',
+	// plugin-docs.yaml names graph.microsoft.com (the API host), whose icon is the
+	// Microsoft logo; excel.cloud.microsoft carries Excel's own mark.
+	excel: 'https://twenty-icons.com/excel.cloud.microsoft/128',
 	// twenty-icons returns a 32px blur; Google's favicon is the sharp site mark.
 	octen: 'https://www.google.com/s2/favicons?domain=octen.ai&sz=128',
 	// twenty-icons has an old blue and green mark; typesafe.ai's apple touch icon

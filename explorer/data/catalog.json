@@ -2398,8 +2398,8 @@
     },
     {
       "id": "contextdev",
-      "displayName": "ContextDev",
-      "description": "ContextDev plugin for Corsair",
+      "displayName": "Context.dev",
+      "description": "Web context API for agents that scrapes, crawls, searches, and extracts web pages, and looks up brands, company news, and people.",
       "npmPackageName": "@corsair-dev/contextdev",
       "authTypes": [
         "api_key"
@@ -3000,6 +3000,21 @@
       }
     },
     {
+      "id": "excel",
+      "displayName": "Excel",
+      "description": "Read and write Excel workbooks in OneDrive for Business or SharePoint through Microsoft Graph.",
+      "npmPackageName": "@corsair-dev/excel",
+      "authTypes": [
+        "oauth_2"
+      ],
+      "defaultAuthType": "oauth_2",
+      "counts": {
+        "api": 41,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
       "id": "exist",
       "displayName": "Exist",
       "description": "Exist plugin for Corsair",
@@ -3301,6 +3316,21 @@
         "api": 23,
         "webhooks": 1,
         "db": 4
+      }
+    },
+    {
+      "id": "gmicloud",
+      "displayName": "GMI Cloud",
+      "description": "GPU cloud for AI - serverless LLM, image, video, and audio inference, the GMI Router, GPU containers and bare-metal servers, and code sandboxes.",
+      "npmPackageName": "@corsair-dev/gmicloud",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 72,
+        "webhooks": 0,
+        "db": 8
       }
     },
     {
@@ -52552,6 +52582,252 @@
       "haystack": "webset.websetsearchcompleted exa.webhooks.webset.websetsearchcompleted a webset search has completed"
     },
     {
+      "pluginId": "excel",
+      "kind": "api",
+      "shortPath": "charts.add",
+      "haystack": "charts.add excel.api.charts.add add a chart from a cell range write"
+    },
+    {
+      "pluginId": "excel",
+      "kind": "api",
+      "shortPath": "charts.delete",
+      "haystack": "charts.delete excel.api.charts.delete delete a chart destructive"
+    },
+    {
+      "pluginId": "excel",
+      "kind": "api",
+      "shortPath": "charts.get",
+      "haystack": "charts.get excel.api.charts.get get one chart by name or id read"
+    },
+    {
+      "pluginId": "excel",
+      "kind": "api",
+      "shortPath": "charts.list",
+      "haystack": "charts.list excel.api.charts.list list charts on a worksheet read"
+    },
+    {
+      "pluginId": "excel",
+      "kind": "api",
+      "shortPath": "charts.setData",
+      "haystack": "charts.setdata excel.api.charts.setdata point a chart at a different cell range write"
+    },
+    {
+      "pluginId": "excel",
+      "kind": "api",
+      "shortPath": "charts.update",
+      "haystack": "charts.update excel.api.charts.update rename a chart or move and resize it write"
+    },
+    {
+      "pluginId": "excel",
+      "kind": "api",
+      "shortPath": "comments.get",
+      "haystack": "comments.get excel.api.comments.get get one comment read"
+    },
+    {
+      "pluginId": "excel",
+      "kind": "api",
+      "shortPath": "comments.list",
+      "haystack": "comments.list excel.api.comments.list list comments in a workbook read"
+    },
+    {
+      "pluginId": "excel",
+      "kind": "api",
+      "shortPath": "comments.listReplies",
+      "haystack": "comments.listreplies excel.api.comments.listreplies list replies on a comment read"
+    },
+    {
+      "pluginId": "excel",
+      "kind": "api",
+      "shortPath": "comments.reply",
+      "haystack": "comments.reply excel.api.comments.reply reply to a comment write"
+    },
+    {
+      "pluginId": "excel",
+      "kind": "api",
+      "shortPath": "files.create",
+      "haystack": "files.create excel.api.files.create upload a blank .xlsx workbook to onedrive or sharepoint write"
+    },
+    {
+      "pluginId": "excel",
+      "kind": "api",
+      "shortPath": "files.find",
+      "haystack": "files.find excel.api.files.find search onedrive or sharepoint for .xlsx files read"
+    },
+    {
+      "pluginId": "excel",
+      "kind": "api",
+      "shortPath": "functions.calculate",
+      "haystack": "functions.calculate excel.api.functions.calculate run an excel worksheet function such as sum or vlookup read"
+    },
+    {
+      "pluginId": "excel",
+      "kind": "api",
+      "shortPath": "names.add",
+      "haystack": "names.add excel.api.names.add define a named range write"
+    },
+    {
+      "pluginId": "excel",
+      "kind": "api",
+      "shortPath": "names.get",
+      "haystack": "names.get excel.api.names.get get one named range read"
+    },
+    {
+      "pluginId": "excel",
+      "kind": "api",
+      "shortPath": "names.list",
+      "haystack": "names.list excel.api.names.list list named ranges in a workbook or worksheet read"
+    },
+    {
+      "pluginId": "excel",
+      "kind": "api",
+      "shortPath": "names.range",
+      "haystack": "names.range excel.api.names.range read the cells a named range points at read"
+    },
+    {
+      "pluginId": "excel",
+      "kind": "api",
+      "shortPath": "names.update",
+      "haystack": "names.update excel.api.names.update change a named range comment or visibility write"
+    },
+    {
+      "pluginId": "excel",
+      "kind": "api",
+      "shortPath": "ranges.clear",
+      "haystack": "ranges.clear excel.api.ranges.clear clear values or formatting in a range write"
+    },
+    {
+      "pluginId": "excel",
+      "kind": "api",
+      "shortPath": "ranges.get",
+      "haystack": "ranges.get excel.api.ranges.get read a cell range read"
+    },
+    {
+      "pluginId": "excel",
+      "kind": "api",
+      "shortPath": "ranges.update",
+      "haystack": "ranges.update excel.api.ranges.update write values, formulas, or number formats into a range write"
+    },
+    {
+      "pluginId": "excel",
+      "kind": "api",
+      "shortPath": "ranges.usedRange",
+      "haystack": "ranges.usedrange excel.api.ranges.usedrange read the used range of a worksheet read"
+    },
+    {
+      "pluginId": "excel",
+      "kind": "api",
+      "shortPath": "sessions.close",
+      "haystack": "sessions.close excel.api.sessions.close close an excel workbook session write"
+    },
+    {
+      "pluginId": "excel",
+      "kind": "api",
+      "shortPath": "sessions.create",
+      "haystack": "sessions.create excel.api.sessions.create open a persistent or temporary excel workbook session write"
+    },
+    {
+      "pluginId": "excel",
+      "kind": "api",
+      "shortPath": "sessions.refresh",
+      "haystack": "sessions.refresh excel.api.sessions.refresh keep an excel workbook session alive write"
+    },
+    {
+      "pluginId": "excel",
+      "kind": "api",
+      "shortPath": "tables.add",
+      "haystack": "tables.add excel.api.tables.add create a table from a range write"
+    },
+    {
+      "pluginId": "excel",
+      "kind": "api",
+      "shortPath": "tables.addColumn",
+      "haystack": "tables.addcolumn excel.api.tables.addcolumn insert a column into a table write"
+    },
+    {
+      "pluginId": "excel",
+      "kind": "api",
+      "shortPath": "tables.addRows",
+      "haystack": "tables.addrows excel.api.tables.addrows insert one or more rows into a table write"
+    },
+    {
+      "pluginId": "excel",
+      "kind": "api",
+      "shortPath": "tables.delete",
+      "haystack": "tables.delete excel.api.tables.delete delete a table destructive"
+    },
+    {
+      "pluginId": "excel",
+      "kind": "api",
+      "shortPath": "tables.deleteColumn",
+      "haystack": "tables.deletecolumn excel.api.tables.deletecolumn delete a table column destructive"
+    },
+    {
+      "pluginId": "excel",
+      "kind": "api",
+      "shortPath": "tables.deleteRow",
+      "haystack": "tables.deleterow excel.api.tables.deleterow delete a table row by index destructive"
+    },
+    {
+      "pluginId": "excel",
+      "kind": "api",
+      "shortPath": "tables.get",
+      "haystack": "tables.get excel.api.tables.get get one table by name or id read"
+    },
+    {
+      "pluginId": "excel",
+      "kind": "api",
+      "shortPath": "tables.list",
+      "haystack": "tables.list excel.api.tables.list list tables in a workbook or worksheet read"
+    },
+    {
+      "pluginId": "excel",
+      "kind": "api",
+      "shortPath": "tables.listColumns",
+      "haystack": "tables.listcolumns excel.api.tables.listcolumns list columns in a table read"
+    },
+    {
+      "pluginId": "excel",
+      "kind": "api",
+      "shortPath": "tables.listRows",
+      "haystack": "tables.listrows excel.api.tables.listrows list rows in a table read"
+    },
+    {
+      "pluginId": "excel",
+      "kind": "api",
+      "shortPath": "tables.update",
+      "haystack": "tables.update excel.api.tables.update rename a table or change its header, total, or style write"
+    },
+    {
+      "pluginId": "excel",
+      "kind": "api",
+      "shortPath": "worksheets.add",
+      "haystack": "worksheets.add excel.api.worksheets.add add a worksheet write"
+    },
+    {
+      "pluginId": "excel",
+      "kind": "api",
+      "shortPath": "worksheets.delete",
+      "haystack": "worksheets.delete excel.api.worksheets.delete delete a worksheet destructive"
+    },
+    {
+      "pluginId": "excel",
+      "kind": "api",
+      "shortPath": "worksheets.get",
+      "haystack": "worksheets.get excel.api.worksheets.get get one worksheet by name or id read"
+    },
+    {
+      "pluginId": "excel",
+      "kind": "api",
+      "shortPath": "worksheets.list",
+      "haystack": "worksheets.list excel.api.worksheets.list list worksheets in a workbook read"
+    },
+    {
+      "pluginId": "excel",
+      "kind": "api",
+      "shortPath": "worksheets.update",
+      "haystack": "worksheets.update excel.api.worksheets.update rename a worksheet or change its position write"
+    },
+    {
       "pluginId": "exist",
       "kind": "api",
       "shortPath": "attributes.acquire",
@@ -57032,6 +57308,438 @@
       "kind": "webhook",
       "shortPath": "messageChanged",
       "haystack": "messagechanged gmail.webhooks.messagechanged a gmail message was received, deleted, or had its labels changed"
+    },
+    {
+      "pluginId": "gmicloud",
+      "kind": "api",
+      "shortPath": "apiKeys.getCurrent",
+      "haystack": "apikeys.getcurrent gmicloud.api.apikeys.getcurrent verify the configured api key and return its details, including the organization it belongs to read"
+    },
+    {
+      "pluginId": "gmicloud",
+      "kind": "api",
+      "shortPath": "baremetals.action",
+      "haystack": "baremetals.action gmicloud.api.baremetals.action start, stop, power-cycle, or reboot a bare-metal server write"
+    },
+    {
+      "pluginId": "gmicloud",
+      "kind": "api",
+      "shortPath": "baremetals.create",
+      "haystack": "baremetals.create gmicloud.api.baremetals.create provision bare-metal gpu servers (billed while they exist) write"
+    },
+    {
+      "pluginId": "gmicloud",
+      "kind": "api",
+      "shortPath": "baremetals.delete",
+      "haystack": "baremetals.delete gmicloud.api.baremetals.delete delete a bare-metal server and release its resources destructive"
+    },
+    {
+      "pluginId": "gmicloud",
+      "kind": "api",
+      "shortPath": "baremetals.get",
+      "haystack": "baremetals.get gmicloud.api.baremetals.get get a bare-metal server by id read"
+    },
+    {
+      "pluginId": "gmicloud",
+      "kind": "api",
+      "shortPath": "baremetals.list",
+      "haystack": "baremetals.list gmicloud.api.baremetals.list list bare-metal gpu servers, optionally filtered by data center read"
+    },
+    {
+      "pluginId": "gmicloud",
+      "kind": "api",
+      "shortPath": "baremetals.listProducts",
+      "haystack": "baremetals.listproducts gmicloud.api.baremetals.listproducts list bare-metal server products (gpu types and specs) in a data center read"
+    },
+    {
+      "pluginId": "gmicloud",
+      "kind": "api",
+      "shortPath": "baremetals.update",
+      "haystack": "baremetals.update gmicloud.api.baremetals.update rename a bare-metal server write"
+    },
+    {
+      "pluginId": "gmicloud",
+      "kind": "api",
+      "shortPath": "chat.createCompletion",
+      "haystack": "chat.createcompletion gmicloud.api.chat.createcompletion generate a chat completion with an llm through the openai-compatible api (billed per token) write"
+    },
+    {
+      "pluginId": "gmicloud",
+      "kind": "api",
+      "shortPath": "containers.create",
+      "haystack": "containers.create gmicloud.api.containers.create launch gpu container workloads from a template (billed while they run) write"
+    },
+    {
+      "pluginId": "gmicloud",
+      "kind": "api",
+      "shortPath": "containers.createShell",
+      "haystack": "containers.createshell gmicloud.api.containers.createshell generate a web shell url path for a running container write"
+    },
+    {
+      "pluginId": "gmicloud",
+      "kind": "api",
+      "shortPath": "containers.delete",
+      "haystack": "containers.delete gmicloud.api.containers.delete delete a container workload; its local data is lost destructive"
+    },
+    {
+      "pluginId": "gmicloud",
+      "kind": "api",
+      "shortPath": "containers.get",
+      "haystack": "containers.get gmicloud.api.containers.get get a container workload by id, including status and ip addresses read"
+    },
+    {
+      "pluginId": "gmicloud",
+      "kind": "api",
+      "shortPath": "containers.getLogs",
+      "haystack": "containers.getlogs gmicloud.api.containers.getlogs download the logs of a container workload as text read"
+    },
+    {
+      "pluginId": "gmicloud",
+      "kind": "api",
+      "shortPath": "containers.list",
+      "haystack": "containers.list gmicloud.api.containers.list list container workloads in the organization read"
+    },
+    {
+      "pluginId": "gmicloud",
+      "kind": "api",
+      "shortPath": "containers.listProducts",
+      "haystack": "containers.listproducts gmicloud.api.containers.listproducts list container products (gpu types and specs) in a data center read"
+    },
+    {
+      "pluginId": "gmicloud",
+      "kind": "api",
+      "shortPath": "containers.restart",
+      "haystack": "containers.restart gmicloud.api.containers.restart restart a container workload write"
+    },
+    {
+      "pluginId": "gmicloud",
+      "kind": "api",
+      "shortPath": "containers.update",
+      "haystack": "containers.update gmicloud.api.containers.update update a container's name, template, command, arguments, environment, ports, or ssh keys write"
+    },
+    {
+      "pluginId": "gmicloud",
+      "kind": "api",
+      "shortPath": "elasticIps.allocate",
+      "haystack": "elasticips.allocate gmicloud.api.elasticips.allocate allocate a static public ipv4 address for the organization write"
+    },
+    {
+      "pluginId": "gmicloud",
+      "kind": "api",
+      "shortPath": "elasticIps.associate",
+      "haystack": "elasticips.associate gmicloud.api.elasticips.associate attach an elastic ip to a bare-metal server or container write"
+    },
+    {
+      "pluginId": "gmicloud",
+      "kind": "api",
+      "shortPath": "elasticIps.disassociate",
+      "haystack": "elasticips.disassociate gmicloud.api.elasticips.disassociate detach an elastic ip from its instance write"
+    },
+    {
+      "pluginId": "gmicloud",
+      "kind": "api",
+      "shortPath": "elasticIps.get",
+      "haystack": "elasticips.get gmicloud.api.elasticips.get get an elastic ip by id read"
+    },
+    {
+      "pluginId": "gmicloud",
+      "kind": "api",
+      "shortPath": "elasticIps.list",
+      "haystack": "elasticips.list gmicloud.api.elasticips.list list elastic ips allocated to the organization read"
+    },
+    {
+      "pluginId": "gmicloud",
+      "kind": "api",
+      "shortPath": "elasticIps.listProducts",
+      "haystack": "elasticips.listproducts gmicloud.api.elasticips.listproducts list elastic ip products in a data center read"
+    },
+    {
+      "pluginId": "gmicloud",
+      "kind": "api",
+      "shortPath": "elasticIps.release",
+      "haystack": "elasticips.release gmicloud.api.elasticips.release release an elastic ip; the address cannot be reclaimed destructive"
+    },
+    {
+      "pluginId": "gmicloud",
+      "kind": "api",
+      "shortPath": "firewalls.associate",
+      "haystack": "firewalls.associate gmicloud.api.firewalls.associate apply a firewall to bare-metal servers or containers write"
+    },
+    {
+      "pluginId": "gmicloud",
+      "kind": "api",
+      "shortPath": "firewalls.create",
+      "haystack": "firewalls.create gmicloud.api.firewalls.create create a firewall with inbound rules in a data center write"
+    },
+    {
+      "pluginId": "gmicloud",
+      "kind": "api",
+      "shortPath": "firewalls.delete",
+      "haystack": "firewalls.delete gmicloud.api.firewalls.delete delete a firewall destructive"
+    },
+    {
+      "pluginId": "gmicloud",
+      "kind": "api",
+      "shortPath": "firewalls.disassociate",
+      "haystack": "firewalls.disassociate gmicloud.api.firewalls.disassociate remove a firewall from bare-metal servers or containers write"
+    },
+    {
+      "pluginId": "gmicloud",
+      "kind": "api",
+      "shortPath": "firewalls.get",
+      "haystack": "firewalls.get gmicloud.api.firewalls.get get a firewall and its rules by id read"
+    },
+    {
+      "pluginId": "gmicloud",
+      "kind": "api",
+      "shortPath": "firewalls.list",
+      "haystack": "firewalls.list gmicloud.api.firewalls.list list firewalls, optionally filtered by data center read"
+    },
+    {
+      "pluginId": "gmicloud",
+      "kind": "api",
+      "shortPath": "firewalls.update",
+      "haystack": "firewalls.update gmicloud.api.firewalls.update replace a firewall's name, description, and inbound rules write"
+    },
+    {
+      "pluginId": "gmicloud",
+      "kind": "api",
+      "shortPath": "idcs.list",
+      "haystack": "idcs.list gmicloud.api.idcs.list list the data centers (idcs) available for gpu compute resources read"
+    },
+    {
+      "pluginId": "gmicloud",
+      "kind": "api",
+      "shortPath": "images.get",
+      "haystack": "images.get gmicloud.api.images.get get an os image by id read"
+    },
+    {
+      "pluginId": "gmicloud",
+      "kind": "api",
+      "shortPath": "images.list",
+      "haystack": "images.list gmicloud.api.images.list list os images for bare-metal servers, optionally filtered by data center and product read"
+    },
+    {
+      "pluginId": "gmicloud",
+      "kind": "api",
+      "shortPath": "mediaModels.get",
+      "haystack": "mediamodels.get gmicloud.api.mediamodels.get get a media model's description and the payload parameters its requests accept read"
+    },
+    {
+      "pluginId": "gmicloud",
+      "kind": "api",
+      "shortPath": "mediaModels.list",
+      "haystack": "mediamodels.list gmicloud.api.mediamodels.list list the video, image, and audio model ids served by the gmi request queue read"
+    },
+    {
+      "pluginId": "gmicloud",
+      "kind": "api",
+      "shortPath": "mediaRequests.create",
+      "haystack": "mediarequests.create gmicloud.api.mediarequests.create queue a video, image, or audio generation request; poll mediarequests.get for the outcome (billed) write"
+    },
+    {
+      "pluginId": "gmicloud",
+      "kind": "api",
+      "shortPath": "mediaRequests.get",
+      "haystack": "mediarequests.get gmicloud.api.mediarequests.get get the status of a queued media request and, once it succeeds, its output file urls read"
+    },
+    {
+      "pluginId": "gmicloud",
+      "kind": "api",
+      "shortPath": "models.list",
+      "haystack": "models.list gmicloud.api.models.list list the llms available on gmi cloud serverless inference read"
+    },
+    {
+      "pluginId": "gmicloud",
+      "kind": "api",
+      "shortPath": "router.autoroute",
+      "haystack": "router.autoroute gmicloud.api.router.autoroute let the gmi router pick the best model for a conversation by cost, balance, or quality and return its completion write"
+    },
+    {
+      "pluginId": "gmicloud",
+      "kind": "api",
+      "shortPath": "sandboxes.connect",
+      "haystack": "sandboxes.connect gmicloud.api.sandboxes.connect connect to a running sandbox and return its data-plane domain and access token; a timeout extends its lifetime write"
+    },
+    {
+      "pluginId": "gmicloud",
+      "kind": "api",
+      "shortPath": "sandboxes.create",
+      "haystack": "sandboxes.create gmicloud.api.sandboxes.create create a sandbox from a template; returns the data-plane host and access token used by sandboxexec and sandboxfiles write"
+    },
+    {
+      "pluginId": "gmicloud",
+      "kind": "api",
+      "shortPath": "sandboxes.delete",
+      "haystack": "sandboxes.delete gmicloud.api.sandboxes.delete kill a sandbox; it moves to deleting and then deleted once resources are released destructive"
+    },
+    {
+      "pluginId": "gmicloud",
+      "kind": "api",
+      "shortPath": "sandboxes.get",
+      "haystack": "sandboxes.get gmicloud.api.sandboxes.get get sandbox details, including state, resources, and failure reason read"
+    },
+    {
+      "pluginId": "gmicloud",
+      "kind": "api",
+      "shortPath": "sandboxes.list",
+      "haystack": "sandboxes.list gmicloud.api.sandboxes.list list active sandboxes (provisioning, running, updating, checkpointing, failed) with pagination read"
+    },
+    {
+      "pluginId": "gmicloud",
+      "kind": "api",
+      "shortPath": "sandboxes.setTimeout",
+      "haystack": "sandboxes.settimeout gmicloud.api.sandboxes.settimeout reset a running sandbox's time-to-live relative to now (300 seconds when omitted) write"
+    },
+    {
+      "pluginId": "gmicloud",
+      "kind": "api",
+      "shortPath": "sandboxes.updateMetadata",
+      "haystack": "sandboxes.updatemetadata gmicloud.api.sandboxes.updatemetadata replace a sandbox's metadata as a whole (an empty object clears it) write"
+    },
+    {
+      "pluginId": "gmicloud",
+      "kind": "api",
+      "shortPath": "sandboxExec.cancel",
+      "haystack": "sandboxexec.cancel gmicloud.api.sandboxexec.cancel cancel a running sandbox command write"
+    },
+    {
+      "pluginId": "gmicloud",
+      "kind": "api",
+      "shortPath": "sandboxExec.get",
+      "haystack": "sandboxexec.get gmicloud.api.sandboxexec.get get the status, exit code, and output of a sandbox command read"
+    },
+    {
+      "pluginId": "gmicloud",
+      "kind": "api",
+      "shortPath": "sandboxExec.run",
+      "haystack": "sandboxexec.run gmicloud.api.sandboxexec.run run a shell command inside a sandbox; with wait it returns the result, otherwise poll sandboxexec.get write"
+    },
+    {
+      "pluginId": "gmicloud",
+      "kind": "api",
+      "shortPath": "sandboxFiles.download",
+      "haystack": "sandboxfiles.download gmicloud.api.sandboxfiles.download download a file from a sandbox by absolute path; returns base64 content read"
+    },
+    {
+      "pluginId": "gmicloud",
+      "kind": "api",
+      "shortPath": "sandboxFiles.upload",
+      "haystack": "sandboxfiles.upload gmicloud.api.sandboxfiles.upload write a file to an absolute path inside a sandbox, overwriting any existing file write"
+    },
+    {
+      "pluginId": "gmicloud",
+      "kind": "api",
+      "shortPath": "sandboxProducts.list",
+      "haystack": "sandboxproducts.list gmicloud.api.sandboxproducts.list list the sandbox product catalog (cpu, memory, disk) in a data center read"
+    },
+    {
+      "pluginId": "gmicloud",
+      "kind": "api",
+      "shortPath": "sandboxTemplates.create",
+      "haystack": "sandboxtemplates.create gmicloud.api.sandboxtemplates.create create a sandbox template from an image or another template and start its first build write"
+    },
+    {
+      "pluginId": "gmicloud",
+      "kind": "api",
+      "shortPath": "sandboxTemplates.delete",
+      "haystack": "sandboxtemplates.delete gmicloud.api.sandboxtemplates.delete delete a sandbox template; existing sandboxes keep running destructive"
+    },
+    {
+      "pluginId": "gmicloud",
+      "kind": "api",
+      "shortPath": "sandboxTemplates.get",
+      "haystack": "sandboxtemplates.get gmicloud.api.sandboxtemplates.get get a sandbox template with its current and latest build read"
+    },
+    {
+      "pluginId": "gmicloud",
+      "kind": "api",
+      "shortPath": "sandboxTemplates.getBuild",
+      "haystack": "sandboxtemplates.getbuild gmicloud.api.sandboxtemplates.getbuild get a sandbox template build status and artifact availability read"
+    },
+    {
+      "pluginId": "gmicloud",
+      "kind": "api",
+      "shortPath": "sandboxTemplates.getBuildLogs",
+      "haystack": "sandboxtemplates.getbuildlogs gmicloud.api.sandboxtemplates.getbuildlogs get build logs for a sandbox template build, paged by offset read"
+    },
+    {
+      "pluginId": "gmicloud",
+      "kind": "api",
+      "shortPath": "sandboxTemplates.list",
+      "haystack": "sandboxtemplates.list gmicloud.api.sandboxtemplates.list list sandbox templates with pagination read"
+    },
+    {
+      "pluginId": "gmicloud",
+      "kind": "api",
+      "shortPath": "sandboxTemplates.listBuilds",
+      "haystack": "sandboxtemplates.listbuilds gmicloud.api.sandboxtemplates.listbuilds list the builds of a sandbox template, newest first, with pagination read"
+    },
+    {
+      "pluginId": "gmicloud",
+      "kind": "api",
+      "shortPath": "sandboxTemplates.update",
+      "haystack": "sandboxtemplates.update gmicloud.api.sandboxtemplates.update update a sandbox template's name, description, or labels write"
+    },
+    {
+      "pluginId": "gmicloud",
+      "kind": "api",
+      "shortPath": "templates.create",
+      "haystack": "templates.create gmicloud.api.templates.create create a custom container template write"
+    },
+    {
+      "pluginId": "gmicloud",
+      "kind": "api",
+      "shortPath": "templates.delete",
+      "haystack": "templates.delete gmicloud.api.templates.delete delete a custom container template destructive"
+    },
+    {
+      "pluginId": "gmicloud",
+      "kind": "api",
+      "shortPath": "templates.get",
+      "haystack": "templates.get gmicloud.api.templates.get get a container template by id read"
+    },
+    {
+      "pluginId": "gmicloud",
+      "kind": "api",
+      "shortPath": "templates.list",
+      "haystack": "templates.list gmicloud.api.templates.list list container templates (official and custom) used to launch containers read"
+    },
+    {
+      "pluginId": "gmicloud",
+      "kind": "api",
+      "shortPath": "templates.update",
+      "haystack": "templates.update gmicloud.api.templates.update update a custom container template write"
+    },
+    {
+      "pluginId": "gmicloud",
+      "kind": "api",
+      "shortPath": "uploads.createUrl",
+      "haystack": "uploads.createurl gmicloud.api.uploads.createurl get a pre-signed upload url and the stable public url to reference an image, video, or audio file in media requests write"
+    },
+    {
+      "pluginId": "gmicloud",
+      "kind": "api",
+      "shortPath": "vpcs.allocate",
+      "haystack": "vpcs.allocate gmicloud.api.vpcs.allocate allocate the default vpc for the organization in a data center write"
+    },
+    {
+      "pluginId": "gmicloud",
+      "kind": "api",
+      "shortPath": "vpcs.get",
+      "haystack": "vpcs.get gmicloud.api.vpcs.get get a vpc and its subnets by id read"
+    },
+    {
+      "pluginId": "gmicloud",
+      "kind": "api",
+      "shortPath": "vpcs.list",
+      "haystack": "vpcs.list gmicloud.api.vpcs.list list vpcs, optionally filtered by data center read"
+    },
+    {
+      "pluginId": "gmicloud",
+      "kind": "api",
+      "shortPath": "vpcs.release",
+      "haystack": "vpcs.release gmicloud.api.vpcs.release release the default vpc destructive"
     },
     {
       "pluginId": "googleaddressvalidation",
