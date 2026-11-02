@@ -28,7 +28,7 @@ describe('Recall.ai bot endpoints', () => {
 		request.mockResolvedValue(undefined);
 		await deleteBotMedia({ key: 'recall-key' }, { id: 'bot-1' });
 		await outputAudio({ key: 'recall-key' }, { id: 'bot-1', kind: 'mp3', b64_data: 'YQ==' });
-		await stopOutputVideo({ key: 'recall-key' }, { id: 'bot-1' });
+		await stopOutputVideo({ key: 'recall-key' }, { id: 'bot-1', kind: 'mp4', b64_data: 'YQ==' });
 		expect(request).toHaveBeenNthCalledWith(1, '/api/v1/bot/bot-1/delete_media/', 'recall-key', { method: 'POST' });
 		expect(request).toHaveBeenNthCalledWith(2, '/api/v1/bot/bot-1/output_audio/', 'recall-key', { method: 'POST', body: { kind: 'mp3', b64_data: 'YQ==' } });
 		expect(request).toHaveBeenNthCalledWith(3, '/api/v1/bot/bot-1/output_video/', 'recall-key', { method: 'DELETE' });
@@ -113,6 +113,7 @@ describe('Recall.ai bot endpoints', () => {
 
 describe('Recall.ai artifact endpoints', () => {
 	const ctx = { key: 'recall-key' } as never;
+	beforeEach(() => jest.mocked(makeRecallaiRequest).mockReset());
 
 	it('lists transcripts with exact filters and path', async () => {
 		const request = jest.mocked(makeRecallaiRequest);
@@ -177,6 +178,7 @@ describe('Recall.ai artifact endpoints', () => {
 
 	it('rejects unsafe artifact ids before making a request', async () => {
 		const request = jest.mocked(makeRecallaiRequest);
+		request.mockReset();
 		const plugin = recallai({ key: 'recall-key' });
 		if (!plugin.endpoints) throw new Error('Recall.ai endpoints are missing');
 
