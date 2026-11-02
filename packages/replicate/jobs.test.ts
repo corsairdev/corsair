@@ -1,4 +1,5 @@
 import type { EndpointJob } from 'corsair/core';
+import { z } from 'zod';
 import { ReplicateEndpointOutputSchemas } from './endpoints/types';
 import { replicate } from './index';
 
@@ -21,11 +22,16 @@ const OUTPUT_FOR: Record<string, keyof typeof ReplicateEndpointOutputSchemas> =
 		'trainings.get': 'trainingsGet',
 	};
 
+// The fields of an operation's output schema; none when it isn't an object,
+// which then fails the assertions below instead of passing quietly.
+const shapeOf = (op: string): Record<string, z.ZodType> => {
+	const schema = ReplicateEndpointOutputSchemas[OUTPUT_FOR[op]!];
+	return schema instanceof z.ZodObject ? schema.shape : {};
+};
+
 const statusValues = (op: string): string[] => {
-	const schema = ReplicateEndpointOutputSchemas[OUTPUT_FOR[op]!] as unknown as {
-		shape: Record<string, { options?: string[] }>;
-	};
-	return schema.shape.status?.options ?? [];
+	const status = shapeOf(op).status;
+	return status instanceof z.ZodEnum ? status.options.map(String) : [];
 };
 
 const jobs = Object.entries(meta).filter(
@@ -47,12 +53,7 @@ describe('Replicate jobs', () => {
 		(op, { job }) => {
 			expect(meta[job.status.op]).toBeDefined();
 			if (job.cancel) expect(meta[job.cancel.op]).toBeDefined();
-			const startShape = (
-				ReplicateEndpointOutputSchemas[OUTPUT_FOR[op]!] as unknown as {
-					shape: Record<string, unknown>;
-				}
-			).shape;
-			expect(startShape[job.idPath]).toBeDefined();
+			expect(shapeOf(op)[job.idPath]).toBeDefined();
 		},
 	);
 
