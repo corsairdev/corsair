@@ -138,8 +138,15 @@ users connect their own apps), that's the open-source SDK, not this MCP server:
 npm install corsair
 ```
 
-Start at https://docs.corsair.dev/getting-started/set-up-with-your-agent. The
-`@corsair-dev/cli` package sets up the database, credentials and OAuth for an
+Install the SDK skill, which walks an agent from an empty app to a working
+integration:
+
+```bash
+npx skills add corsairdev/corsair
+```
+
+The guide is at https://docs.corsair.dev/getting-started/set-up-with-your-agent.
+The `@corsair-dev/cli` package sets up the database, credentials and OAuth for an
 SDK project, with JSON output on every command.
 
 ## Links
