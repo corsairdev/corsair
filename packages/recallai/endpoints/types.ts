@@ -1,9 +1,9 @@
-import { z } from 'zod';
 import type {
 	ArtifactEndpointInputs,
 	ArtifactEndpointOutputs,
 } from './artifact-types';
 export { UpdateParticipantEventsInputSchema } from './artifact-types';
+import { z } from 'zod';
 
 const id = z
 	.string()

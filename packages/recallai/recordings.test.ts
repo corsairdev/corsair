@@ -1,7 +1,7 @@
 import { recallai } from './index';
+import { makeRecallaiRequest } from './client';
 
 jest.mock('./client', () => ({ makeRecallaiRequest: jest.fn() }));
-import { makeRecallaiRequest } from './client';
 
 const id = '550e8400-e29b-41d4-a716-446655440000';
 const response = { id, metadata: {}, status: { code: 'done' } };

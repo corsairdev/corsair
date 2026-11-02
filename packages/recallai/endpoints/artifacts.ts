@@ -1,5 +1,5 @@
-import { logEventFromContext } from 'corsair/core';
 import type { RecallaiEndpoints } from '..';
+import { logEventFromContext } from 'corsair/core';
 import { makeRecallaiRequest } from '../client';
 import { UpdateParticipantEventsInputSchema } from './artifact-types';
 import type {

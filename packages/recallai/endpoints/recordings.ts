@@ -1,9 +1,9 @@
-import { logEventFromContext } from 'corsair/core';
 import type {
 	RecallaiContext,
 	RecallaiEndpointOutputs,
 	RecallaiEndpoints,
 } from '..';
+import { logEventFromContext } from 'corsair/core';
 import { makeRecallaiRequest } from '../client';
 import { z } from 'zod';
 
