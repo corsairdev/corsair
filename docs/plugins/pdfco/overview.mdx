@@ -88,7 +88,7 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`accountBalance`**
+**Check the account balance**
 
 ```ts
 const tenant = corsair.withTenant('acme');
@@ -96,11 +96,11 @@ await tenant.pdfco.api.accountBalance({});
 ```
 
 
-**`barcodeGenerate`**
+**Convert a PDF to text**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.pdfco.api.barcodeGenerate({});
+await tenant.pdfco.api.pdfToText({ url: 'https://example.com/invoice.pdf' });
 ```
 
 
