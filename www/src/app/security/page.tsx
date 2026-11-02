@@ -113,10 +113,10 @@ export default function SecurityPage() {
 						>
 							envelope encryption
 						</a>
-						. Your data is encrypted with a data key, and that data key is
-						itself encrypted with a separate key that is kept somewhere else.
-						Reading anything takes both, so a stolen data key or a stolen copy
-						of the data is useless on its own.
+						. Your data is encrypted with a data key, and that data key is only
+						ever stored encrypted, locked by a separate key kept somewhere else.
+						A copy of the database holds the data and its locked keys, but not
+						the key that unlocks them.
 					</p>
 					<ul className="list-disc space-y-2 pl-6">
 						<li>
@@ -187,8 +187,9 @@ export default function SecurityPage() {
 						<code className={code}>encryptDataAtRest</code> is on. It&apos;s off
 						by default in the SDK: set{' '}
 						<code className={code}>encryptDataAtRest: true</code> in your
-						Corsair config to turn it on. Corsair Cloud turns it on for every
-						workspace.
+						Corsair config before the first sync, because it seals records as
+						they&apos;re written and leaves records already stored as they were.
+						Corsair Cloud turns it on for every workspace.
 					</li>
 					<li>
 						The{' '}
@@ -216,12 +217,13 @@ export default function SecurityPage() {
 
 			<LegalSection title="Your agent never sees your credentials">
 				<p>
-					An agent works with tool names, arguments and results. Corsair
-					attaches the credential when it calls the app, so a token or API key
-					never appears in a tool result or in the model&apos;s context.
+					On Corsair Cloud, an agent works with tool names, arguments and
+					results. Corsair attaches the credential when it calls the app, so a
+					token or API key never appears in a tool result or in the model&apos;s
+					context.
 				</p>
 				<p>
-					On Corsair Cloud, scripts an agent writes (
+					Scripts the agent writes there (
 					<code className={code}>run_script</code> and{' '}
 					<code className={code}>read_data</code>) run in an isolated sandbox
 					with no network, filesystem or process access. The only thing a script
@@ -230,10 +232,13 @@ export default function SecurityPage() {
 				<p>
 					The SDK&apos;s MCP adapter works differently. When you host it in your
 					own app, <code className={code}>run_script</code> runs the
-					agent&apos;s code in your process. It isn&apos;t a sandbox, so connect
-					only agents you trust. <code className={code}>readonly: true</code>{' '}
-					blocks write and destructive Corsair calls, but not other side effects
-					of the script.
+					agent&apos;s code in your process with the full{' '}
+					<code className={code}>corsair</code> instance, including the methods
+					that read and set an account&apos;s credentials. It isn&apos;t a
+					sandbox, and a script there can read a token, so connect only agents
+					you trust. <code className={code}>readonly: true</code> blocks write
+					and destructive Corsair calls, not credential methods or other side
+					effects of the script.
 				</p>
 			</LegalSection>
 
