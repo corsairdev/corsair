@@ -18,7 +18,7 @@ const artifact = {
 describe('Recall.ai transcript and participant-event endpoints', () => {
 	it('lists transcripts with documented filters', async () => {
 		const request = jest.mocked(makeRecallaiRequest);
-		request.mockResolvedValue({ next: null, previous: null, results: [artifact] });
+		request.mockResolvedValueOnce({ next: null, previous: null, results: [artifact] });
 		const plugin = recallai({ key: 'recall-key' });
 		if (!plugin.endpoints) throw new Error('Recall.ai endpoints are missing');
 
@@ -44,7 +44,8 @@ describe('Recall.ai transcript and participant-event endpoints', () => {
 
 	it('lists, retrieves, and updates participant-event artifacts', async () => {
 		const request = jest.mocked(makeRecallaiRequest);
-		request.mockResolvedValue({ next: null, previous: null, results: [artifact] });
+		request.mockClear();
+		request.mockResolvedValueOnce({ next: null, previous: null, results: [artifact] }).mockResolvedValue(artifact);
 		const plugin = recallai({ key: 'recall-key' });
 		if (!plugin.endpoints) throw new Error('Recall.ai endpoints are missing');
 		const ctx = { key: 'recall-key' } as never;
