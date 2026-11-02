@@ -89,26 +89,37 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`news.search`**
+**Search organizations**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.apollo.api.news.search({});
+await tenant.apollo.api.organizations.search({ q_organization_name: 'Stripe' });
 ```
 
 
-**Write**
+**Enrich a person**
 
-_No write-style endpoint inferred; pick any operation from the [API](/plugins/apollo/api) reference._
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.apollo.api.people.enrich({ email: 'you@example.com' });
+```
 
 
 See the full list on the [API](/plugins/apollo/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.apollo.db.<entity>.search()` and `.list()`: `newsArticles`, `organizations`, `people`.
+Search synced people without hitting Apollo.
 
-See [Database](/plugins/apollo/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.apollo.db.people.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `newsArticles`, `organizations`, `people`. See [Database](/plugins/apollo/database) for filters and operators.
 
 ## What's next
 
