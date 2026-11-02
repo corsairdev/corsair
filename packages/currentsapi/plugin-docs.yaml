@@ -5,6 +5,8 @@ examples:
   read:
     path: latest.get
     title: Get the latest news
+    args:
+      language: en
   write:
     path: search.get
     title: Search news articles

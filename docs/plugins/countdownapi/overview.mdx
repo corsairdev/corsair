@@ -92,7 +92,7 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.countdownapi.api.search.get({ query: 'vintage camera' });
+await tenant.countdownapi.api.search.get({ query: 'vintage camera', ebay_domain: 'ebay.com' });
 ```
 
 
@@ -100,7 +100,7 @@ await tenant.countdownapi.api.search.get({ query: 'vintage camera' });
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.countdownapi.api.product.get({ url: 'https://www.ebay.com/itm/123456789012' });
+await tenant.countdownapi.api.product.get({ url: 'https://www.ebay.com/itm/123456789012', ebay_domain: 'ebay.com' });
 ```
 
 

@@ -92,7 +92,7 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.currentsapi.api.latest.get({});
+await tenant.currentsapi.api.latest.get({ language: 'en' });
 ```
 
 
