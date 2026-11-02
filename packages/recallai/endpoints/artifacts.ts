@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { RecallaiEndpointOutputs, RecallaiEndpoints } from '..';
-import { makeRecallaiRequest } from '../client';
+import { makeRecallaiContextRequest } from '../client';
 import type {
 	ArtifactListInput,
 	ArtifactListResponse,
@@ -24,9 +24,9 @@ const listArtifact = async <T extends ArtifactListResponse>(
 	input: ArtifactListInput,
 	operation: string,
 ) => {
-	const response = await makeRecallaiRequest<T>(
+	const response = await makeRecallaiContextRequest<T>(
+		ctx,
 		`/api/v1/${resource}/`,
-		ctx.key,
 		{ method: 'GET', query: input },
 	);
 	await logEventFromContext(ctx, operation, {}, 'completed');
@@ -39,9 +39,9 @@ const retrieveArtifact = async <T extends ArtifactResponse>(
 	input: RetrieveArtifactInput,
 	operation: string,
 ) => {
-	const response = await makeRecallaiRequest<T>(
+	const response = await makeRecallaiContextRequest<T>(
+		ctx,
 		artifactPath(resource, input.id),
-		ctx.key,
 		{ method: 'GET' },
 	);
 	await logEventFromContext(ctx, operation, { id: input.id }, 'completed');
@@ -65,9 +65,9 @@ export const retrieveMeetingMetadata: RecallaiEndpoints['retrieveMeetingMetadata
 export const updateMeetingMetadata: RecallaiEndpoints['updateMeetingMetadata'] =
 	async (ctx, input) => {
 		const { id, ...body } = UpdateArtifactInputSchema.parse(input);
-		const result = await makeRecallaiRequest<
+		const result = await makeRecallaiContextRequest<
 			RecallaiEndpointOutputs['updateMeetingMetadata']
-		>(artifactPath('meeting_metadata', id), ctx.key, { method: 'PATCH', body });
+		>(ctx, artifactPath('meeting_metadata', id), { method: 'PATCH', body });
 		await logEventFromContext(
 			ctx,
 			'recallai.meetingMetadata.update',
@@ -79,9 +79,9 @@ export const updateMeetingMetadata: RecallaiEndpoints['updateMeetingMetadata'] =
 export const deleteMeetingMetadata: RecallaiEndpoints['deleteMeetingMetadata'] =
 	async (ctx, input) => {
 		const parsed = RetrieveArtifactInputSchema.parse(input);
-		await makeRecallaiRequest(
+		await makeRecallaiContextRequest(
+			ctx,
 			artifactPath('meeting_metadata', parsed.id),
-			ctx.key,
 			{ method: 'DELETE' },
 		);
 		await logEventFromContext(
@@ -113,9 +113,9 @@ export const updateParticipantEvents: RecallaiEndpoints['updateParticipantEvents
 			input,
 		) as UpdateParticipantEventsInput;
 		const { id, ...body } = parsed;
-		const response = await makeRecallaiRequest<ArtifactResponse>(
+		const response = await makeRecallaiContextRequest<ArtifactResponse>(
+			ctx,
 			artifactPath('participant_events', id),
-			ctx.key,
 			{
 				method: 'PATCH',
 				body,
@@ -132,9 +132,9 @@ export const updateParticipantEvents: RecallaiEndpoints['updateParticipantEvents
 export const deleteParticipantEvents: RecallaiEndpoints['deleteParticipantEvents'] =
 	async (ctx, input) => {
 		const parsed = RetrieveArtifactInputSchema.parse(input);
-		await makeRecallaiRequest(
+		await makeRecallaiContextRequest(
+			ctx,
 			artifactPath('participant_events', parsed.id),
-			ctx.key,
 			{ method: 'DELETE' },
 		);
 		await logEventFromContext(
@@ -159,9 +159,9 @@ export const updateTranscript: RecallaiEndpoints['updateTranscript'] = async (
 	input,
 ) => {
 	const { id, ...body } = UpdateArtifactInputSchema.parse(input);
-	const result = await makeRecallaiRequest<
+	const result = await makeRecallaiContextRequest<
 		RecallaiEndpointOutputs['updateTranscript']
-	>(artifactPath('transcript', id), ctx.key, { method: 'PATCH', body });
+	>(ctx, artifactPath('transcript', id), { method: 'PATCH', body });
 	await logEventFromContext(
 		ctx,
 		'recallai.transcripts.update',
@@ -175,7 +175,7 @@ export const deleteTranscript: RecallaiEndpoints['deleteTranscript'] = async (
 	input,
 ) => {
 	const parsed = RetrieveArtifactInputSchema.parse(input);
-	await makeRecallaiRequest(artifactPath('transcript', parsed.id), ctx.key, {
+	await makeRecallaiContextRequest(ctx, artifactPath('transcript', parsed.id), {
 		method: 'DELETE',
 	});
 	await logEventFromContext(

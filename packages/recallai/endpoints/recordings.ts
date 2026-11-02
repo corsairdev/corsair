@@ -6,7 +6,7 @@ import type {
 	RecallaiEndpoints,
 } from '..';
 
-import { makeRecallaiRequest } from '../client';
+import { makeRecallaiContextRequest } from '../client';
 
 const id = z.string().uuid();
 const opaque = z.record(z.string(), z.unknown());
@@ -50,9 +50,9 @@ const list = async (
 	resource: string,
 	event: string,
 ) => {
-	const result = await makeRecallaiRequest<
+	const result = await makeRecallaiContextRequest<
 		RecallaiEndpointOutputs['listRecording']
-	>(path(resource), ctx.key, { method: 'GET', query: input });
+	>(ctx, path(resource), { method: 'GET', query: input });
 	await logEventFromContext(ctx, event, {}, 'completed');
 	return result;
 };
@@ -64,9 +64,9 @@ export const retrieveRecording: RecallaiEndpoints['retrieveRecording'] = async (
 	input,
 ) => {
 	const parsed = itemInput.parse(input);
-	const result = await makeRecallaiRequest<
+	const result = await makeRecallaiContextRequest<
 		RecallaiEndpointOutputs['retrieveRecording']
-	>(path('recording', parsed.id), ctx.key, { method: 'GET' });
+	>(ctx, path('recording', parsed.id), { method: 'GET' });
 	await logEventFromContext(
 		ctx,
 		'recallai.recording.retrieve',
@@ -81,9 +81,9 @@ export const updateRecording: RecallaiEndpoints['updateRecording'] = async (
 ) => {
 	const parsed = updateInput.parse(input);
 	const { id: resourceId, ...body } = parsed;
-	const result = await makeRecallaiRequest<
+	const result = await makeRecallaiContextRequest<
 		RecallaiEndpointOutputs['updateRecording']
-	>(path('recording', resourceId), ctx.key, { method: 'PATCH', body });
+	>(ctx, path('recording', resourceId), { method: 'PATCH', body });
 	await logEventFromContext(
 		ctx,
 		'recallai.recording.update',
@@ -97,7 +97,7 @@ export const deleteRecording: RecallaiEndpoints['deleteRecording'] = async (
 	input,
 ) => {
 	const parsed = itemInput.parse(input);
-	await makeRecallaiRequest(path('recording', parsed.id), ctx.key, {
+	await makeRecallaiContextRequest(ctx, path('recording', parsed.id), {
 		method: 'DELETE',
 	});
 	await logEventFromContext(
@@ -111,9 +111,9 @@ export const createAsyncTranscript: RecallaiEndpoints['createAsyncTranscript'] =
 	async (ctx, input) => {
 		const parsed = transcriptInput.parse(input);
 		const { id: recordingId, ...body } = parsed;
-		const result = await makeRecallaiRequest<
+		const result = await makeRecallaiContextRequest<
 			RecallaiEndpointOutputs['createAsyncTranscript']
-		>(path('recording', recordingId) + 'create_transcript/', ctx.key, {
+		>(ctx, path('recording', recordingId) + 'create_transcript/', {
 			method: 'POST',
 			body,
 		});
@@ -132,9 +132,9 @@ export const listRealtimeEndpoints: RecallaiEndpoints['listRealtimeEndpoints'] =
 export const retrieveRealtimeEndpoints: RecallaiEndpoints['retrieveRealtimeEndpoints'] =
 	async (ctx, input) => {
 		const parsed = itemInput.parse(input);
-		const result = await makeRecallaiRequest<
+		const result = await makeRecallaiContextRequest<
 			RecallaiEndpointOutputs['retrieveRealtimeEndpoints']
-		>(path('realtime_endpoint', parsed.id), ctx.key, { method: 'GET' });
+		>(ctx, path('realtime_endpoint', parsed.id), { method: 'GET' });
 		await logEventFromContext(
 			ctx,
 			'recallai.realtimeEndpoint.retrieve',
@@ -147,9 +147,9 @@ export const updateRealtimeEndpoints: RecallaiEndpoints['updateRealtimeEndpoints
 	async (ctx, input) => {
 		const parsed = updateInput.parse(input);
 		const { id: resourceId, ...body } = parsed;
-		const result = await makeRecallaiRequest<
+		const result = await makeRecallaiContextRequest<
 			RecallaiEndpointOutputs['updateRealtimeEndpoints']
-		>(path('realtime_endpoint', resourceId), ctx.key, {
+		>(ctx, path('realtime_endpoint', resourceId), {
 			method: 'PATCH',
 			body,
 		});
@@ -182,9 +182,9 @@ export const createSdkUpload: RecallaiEndpoints['createSdkUpload'] = async (
 	input,
 ) => {
 	const parsed = createSdkUploadInput.parse(input);
-	const result = await makeRecallaiRequest<
+	const result = await makeRecallaiContextRequest<
 		RecallaiEndpointOutputs['createSdkUpload']
-	>('/api/v1/sdk_upload/', ctx.key, { method: 'POST', body: parsed });
+	>(ctx, '/api/v1/sdk_upload/', { method: 'POST', body: parsed });
 	await logEventFromContext(ctx, 'recallai.sdkUpload.create', {}, 'completed');
 	return result;
 };
@@ -194,9 +194,9 @@ export const retrieveSdkUpload: RecallaiEndpoints['retrieveSdkUpload'] = async (
 	input,
 ) => {
 	const parsed = itemInput.parse(input);
-	const result = await makeRecallaiRequest<
+	const result = await makeRecallaiContextRequest<
 		RecallaiEndpointOutputs['retrieveSdkUpload']
-	>(path('sdk_upload', parsed.id), ctx.key, { method: 'GET' });
+	>(ctx, path('sdk_upload', parsed.id), { method: 'GET' });
 	await logEventFromContext(
 		ctx,
 		'recallai.sdkUpload.retrieve',

@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { RecallaiEndpoints } from '..';
-import { makeRecallaiRequest } from '../client';
+import { makeRecallaiContextRequest } from '../client';
 import {
 	CalendarAuthenticateInputSchema,
 	CalendarDisconnectInputSchema,
@@ -19,10 +19,10 @@ const request = async <T>(
 	ctx: Parameters<RecallaiEndpoints['authenticateCalendar']>[0],
 	endpoint: string,
 	operation: string,
-	options: Parameters<typeof makeRecallaiRequest>[2] = {},
+	options: Parameters<typeof makeRecallaiContextRequest>[2] = {},
 	calendarAuthToken?: string,
 ) => {
-	const result = await makeRecallaiRequest<T>(endpoint, ctx.key, {
+	const result = await makeRecallaiContextRequest<T>(ctx, endpoint, {
 		...options,
 		...(calendarAuthToken
 			? { headers: { 'x-recallcalendarauthtoken': calendarAuthToken } }

@@ -5,7 +5,7 @@ import type {
 	RecallaiEndpointOutputs,
 	RecallaiEndpoints,
 } from '..';
-import { makeRecallaiRequest } from '../client';
+import { makeRecallaiContextRequest } from '../client';
 
 const id = z.string().uuid();
 // Recall returns provider-specific media metadata, so the known artifact
@@ -46,9 +46,9 @@ const list = async (
 	resource: string,
 	operation: string,
 ) => {
-	const result = await makeRecallaiRequest<
+	const result = await makeRecallaiContextRequest<
 		RecallaiEndpointOutputs['listAudioMixed']
-	>(path(resource), ctx.key, {
+	>(ctx, path(resource), {
 		method: 'GET',
 		query: input,
 	});
@@ -63,9 +63,9 @@ const retrieve = async (
 	operation: string,
 ) => {
 	const parsed = itemInput.parse(input);
-	const result = await makeRecallaiRequest<
+	const result = await makeRecallaiContextRequest<
 		RecallaiEndpointOutputs['retrieveAudioMixed']
-	>(path(resource, parsed.id), ctx.key, { method: 'GET' });
+	>(ctx, path(resource, parsed.id), { method: 'GET' });
 	await logEventFromContext(ctx, operation, { id: parsed.id }, 'completed');
 	return result;
 };
@@ -77,9 +77,9 @@ const update = async (
 	operation: string,
 ) => {
 	const { id: resourceId, ...body } = updateInput.parse(input);
-	const result = await makeRecallaiRequest<
+	const result = await makeRecallaiContextRequest<
 		RecallaiEndpointOutputs['updateAudioMixed']
-	>(path(resource, resourceId), ctx.key, {
+	>(ctx, path(resource, resourceId), {
 		method: 'PATCH',
 		body,
 	});
@@ -94,7 +94,7 @@ const remove = async (
 	operation: string,
 ) => {
 	const parsed = itemInput.parse(input);
-	await makeRecallaiRequest(path(resource, parsed.id), ctx.key, {
+	await makeRecallaiContextRequest(ctx, path(resource, parsed.id), {
 		method: 'DELETE',
 	});
 	await logEventFromContext(ctx, operation, { id: parsed.id }, 'completed');
