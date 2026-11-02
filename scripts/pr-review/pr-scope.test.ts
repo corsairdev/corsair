@@ -105,6 +105,14 @@ test('keeps the full lane when a docs PR also changes a script', () => {
 	);
 });
 
+test('keeps the full lane when a package file moves into docs', () => {
+	// The collectors list a rename as both its old and new path.
+	assert.deepEqual(
+		classifyPrScope(['docs/examples/index.ts', 'packages/corsair/index.ts']),
+		{ lane: 'full', includeWww: false },
+	);
+});
+
 test('uses the www lane for www-only changes', () => {
 	assert.deepEqual(classifyPrScope(['www/src/app/page.tsx']), {
 		lane: 'www',

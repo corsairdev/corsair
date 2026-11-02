@@ -63,6 +63,11 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      # Docs-only PRs skip the build job and its lint, so check here that the
+      # docs nav still parses; generate:docs and the docs site both read it.
+      - name: Check docs/docs.json parses
+        run: node -e "JSON.parse(require('node:fs').readFileSync('docs/docs.json', 'utf8'))"
+
   build:
     name: Build & static checks
     needs: scope

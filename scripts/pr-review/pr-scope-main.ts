@@ -37,13 +37,15 @@ function pullRequestNumber(event: unknown): string {
 	return String(event.pull_request.number);
 }
 
+// A rename counts as both paths, so moving a file out of a package into a
+// docs-only folder still classifies by where it came from.
 function changedFilesForPullRequest(repo: string, pr: string): string[] {
 	return gh([
 		'api',
 		`repos/${repo}/pulls/${pr}/files`,
 		'--paginate',
 		'--jq',
-		'.[].filename',
+		'.[] | .filename, (.previous_filename // empty)',
 	])
 		.trim()
 		.split('\n')
@@ -52,10 +54,14 @@ function changedFilesForPullRequest(repo: string, pr: string): string[] {
 
 function gitDiffNameOnly(before: string, after: string): string[] {
 	const diff = (): string[] =>
-		execFileSync('git', ['diff', '--name-only', before, after], {
-			encoding: 'utf8',
-			maxBuffer: 64 * 1024 * 1024,
-		})
+		execFileSync(
+			'git',
+			['diff', '--name-only', '--no-renames', before, after],
+			{
+				encoding: 'utf8',
+				maxBuffer: 64 * 1024 * 1024,
+			},
+		)
 			.trim()
 			.split('\n')
 			.filter(Boolean);
