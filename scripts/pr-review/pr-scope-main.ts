@@ -53,17 +53,18 @@ function changedFilesForPullRequest(repo: string, pr: string): string[] {
 }
 
 function gitDiffNameOnly(before: string, after: string): string[] {
+	// -z: NUL-separated and unquoted, so a path with non-ASCII characters
+	// comes back as itself instead of a quoted, octal-escaped string.
 	const diff = (): string[] =>
 		execFileSync(
 			'git',
-			['diff', '--name-only', '--no-renames', before, after],
+			['diff', '--name-only', '--no-renames', '-z', before, after],
 			{
 				encoding: 'utf8',
 				maxBuffer: 64 * 1024 * 1024,
 			},
 		)
-			.trim()
-			.split('\n')
+			.split('\0')
 			.filter(Boolean);
 	try {
 		return diff();
