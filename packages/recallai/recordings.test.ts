@@ -10,7 +10,7 @@ describe('Recall.ai recording operations', () => {
 	beforeEach(() => jest.mocked(makeRecallaiRequest).mockReset());
 	it('asserts the recording lifecycle routes and methods', async () => {
 		const request = jest.mocked(makeRecallaiRequest);
-		request.mockResolvedValue(response);
+		request.mockResolvedValueOnce({ next: null, previous: null, results: [response] }).mockResolvedValue(response);
 		const plugin = recallai({ key: 'recall-key' });
 		if (!plugin.endpoints) throw new Error('Recall.ai endpoints are missing');
 		const ctx = { key: 'recall-key' } as never;
@@ -27,7 +27,7 @@ describe('Recall.ai recording operations', () => {
 	});
 	it('asserts real-time endpoint routes', async () => {
 		const request = jest.mocked(makeRecallaiRequest);
-		request.mockResolvedValue(response);
+		request.mockResolvedValueOnce({ next: null, previous: null, results: [response] }).mockResolvedValue(response);
 		const plugin = recallai({ key: 'recall-key' });
 		if (!plugin.endpoints) throw new Error('Recall.ai endpoints are missing');
 		const ctx = { key: 'recall-key' } as never;

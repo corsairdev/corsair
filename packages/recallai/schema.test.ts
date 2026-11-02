@@ -14,20 +14,18 @@ describe('Recall.ai schema', () => {
 	});
 
 	it('registers every implemented operation with executable contracts', () => {
-		expect(Object.keys(recallaiEndpointSchemas)).toEqual([
-		'bots.list',
-		'bots.create',
-		'bots.retrieve',
-		'bots.update',
-		'bots.delete',
-			'meetingMetadata.list',
-			'meetingMetadata.retrieve',
-			'participantEvents.list',
-			'participantEvents.retrieve',
-			'participantEvents.update',
-			'transcripts.list',
-			'transcripts.retrieve',
-		]);
+		expect(Object.keys(recallaiEndpointSchemas)).toHaveLength(37);
+		expect(Object.keys(recallaiEndpointSchemas)).toEqual(expect.arrayContaining([
+		'bots.list', 'bots.create', 'bots.retrieve', 'bots.update', 'bots.delete',
+		'botActions.deleteBotMedia', 'botActions.leaveBotCall', 'botActions.outputAudio', 'botActions.stopOutputAudio',
+		'botActions.outputMedia', 'botActions.stopOutputMedia', 'botActions.startScreenshare', 'botActions.stopScreenshare',
+		'botActions.outputVideo', 'botActions.stopOutputVideo', 'botActions.pauseRecording', 'botActions.pinParticipant',
+		'botActions.resumeRecording', 'botActions.sendChatMessage', 'botActions.startRecording', 'botActions.stopRecording',
+		'recordings.list', 'recordings.retrieve', 'recordings.update', 'recordings.delete', 'recordings.createTranscript',
+		'realtimeEndpoints.list', 'realtimeEndpoints.retrieve', 'realtimeEndpoints.update', 'sdkUploads.list',
+		'meetingMetadata.list', 'meetingMetadata.retrieve', 'participantEvents.list', 'participantEvents.retrieve',
+		'participantEvents.update', 'transcripts.list', 'transcripts.retrieve',
+		]));
 		for (const contract of Object.values(recallaiEndpointSchemas)) {
 			expect(typeof contract.input.safeParse).toBe('function');
 			expect(typeof contract.output.safeParse).toBe('function');
