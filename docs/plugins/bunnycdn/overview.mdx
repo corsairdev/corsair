@@ -88,19 +88,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`apiKeys.list`**
+**List pull zones**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.bunnycdn.api.apiKeys.list({});
+await tenant.bunnycdn.api.pullZone.list({});
 ```
 
 
-**`containers.registryDelete`**
+**Purge a URL from the cache**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.bunnycdn.api.containers.registryDelete({});
+await tenant.bunnycdn.api.purge.url({ url: 'https://example.b-cdn.net/image.png' });
 ```
 
 
