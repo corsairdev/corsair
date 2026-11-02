@@ -88,19 +88,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`chat.channelsFollowers`**
+**List tasks in a list**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.clickup.api.chat.channelsFollowers({});
+await tenant.clickup.api.tasks.list({ list_id: '901234567' });
 ```
 
 
-**`chat.channelsCreate`**
+**Create a task**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.clickup.api.chat.channelsCreate({});
+await tenant.clickup.api.tasks.create({ list_id: '901234567', name: 'Review the launch checklist' });
 ```
 
 
