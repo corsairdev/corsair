@@ -38,6 +38,22 @@ describe('Recall.ai regional request routing', () => {
 		);
 	});
 
+	it('sends Recall token auth without triggering the shared bearer-token path', async () => {
+		await makeRecallaiContextRequest(
+			{ key: 'recall-key', options: {} },
+			'/api/v1/bot/',
+		);
+
+		expect(request).toHaveBeenCalledWith(
+			expect.objectContaining({
+				TOKEN: undefined,
+				HEADERS: expect.objectContaining({ Authorization: 'Token recall-key' }),
+			}),
+			expect.any(Object),
+			expect.any(Object),
+		);
+	});
+
 	it('rejects inherited property names instead of treating them as regions', () => {
 		expect(() =>
 			makeRecallaiContextRequest(

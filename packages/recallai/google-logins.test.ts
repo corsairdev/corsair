@@ -157,7 +157,7 @@ describe('Recall.ai Google login endpoints', () => {
 		expect(calls).toEqual([
 			{
 				base: 'https://eu-central-1.recall.ai',
-				apiKey: 'Token recall-key',
+				apiKey: undefined,
 				authorization: 'Token recall-key',
 				method: 'GET',
 				path: '/api/v2/google-login-groups/',
@@ -171,7 +171,7 @@ describe('Recall.ai Google login endpoints', () => {
 			},
 			{
 				base: 'https://eu-central-1.recall.ai',
-				apiKey: 'Token recall-key',
+				apiKey: undefined,
 				authorization: 'Token recall-key',
 				method: 'POST',
 				path: '/api/v2/google-login-groups/',
@@ -180,7 +180,7 @@ describe('Recall.ai Google login endpoints', () => {
 			},
 			{
 				base: 'https://eu-central-1.recall.ai',
-				apiKey: 'Token recall-key',
+				apiKey: undefined,
 				authorization: 'Token recall-key',
 				method: 'GET',
 				path: `/api/v2/google-login-groups/${groupId}/`,
@@ -189,7 +189,7 @@ describe('Recall.ai Google login endpoints', () => {
 			},
 			{
 				base: 'https://eu-central-1.recall.ai',
-				apiKey: 'Token recall-key',
+				apiKey: undefined,
 				authorization: 'Token recall-key',
 				method: 'PUT',
 				path: `/api/v2/google-login-groups/${groupId}/`,
@@ -198,7 +198,7 @@ describe('Recall.ai Google login endpoints', () => {
 			},
 			{
 				base: 'https://eu-central-1.recall.ai',
-				apiKey: 'Token recall-key',
+				apiKey: undefined,
 				authorization: 'Token recall-key',
 				method: 'PATCH',
 				path: `/api/v2/google-login-groups/${groupId}/`,
@@ -207,7 +207,7 @@ describe('Recall.ai Google login endpoints', () => {
 			},
 			{
 				base: 'https://eu-central-1.recall.ai',
-				apiKey: 'Token recall-key',
+				apiKey: undefined,
 				authorization: 'Token recall-key',
 				method: 'DELETE',
 				path: `/api/v2/google-login-groups/${groupId}/`,
@@ -216,7 +216,7 @@ describe('Recall.ai Google login endpoints', () => {
 			},
 			{
 				base: 'https://eu-central-1.recall.ai',
-				apiKey: 'Token recall-key',
+				apiKey: undefined,
 				authorization: 'Token recall-key',
 				method: 'GET',
 				path: '/api/v2/google-logins/',
@@ -232,7 +232,7 @@ describe('Recall.ai Google login endpoints', () => {
 			},
 			{
 				base: 'https://eu-central-1.recall.ai',
-				apiKey: 'Token recall-key',
+				apiKey: undefined,
 				authorization: 'Token recall-key',
 				method: 'POST',
 				path: '/api/v2/google-logins/',
@@ -248,7 +248,7 @@ describe('Recall.ai Google login endpoints', () => {
 			},
 			{
 				base: 'https://eu-central-1.recall.ai',
-				apiKey: 'Token recall-key',
+				apiKey: undefined,
 				authorization: 'Token recall-key',
 				method: 'GET',
 				path: `/api/v2/google-logins/${loginId}/`,
@@ -257,7 +257,7 @@ describe('Recall.ai Google login endpoints', () => {
 			},
 			{
 				base: 'https://eu-central-1.recall.ai',
-				apiKey: 'Token recall-key',
+				apiKey: undefined,
 				authorization: 'Token recall-key',
 				method: 'PUT',
 				path: `/api/v2/google-logins/${loginId}/`,
@@ -272,7 +272,7 @@ describe('Recall.ai Google login endpoints', () => {
 			},
 			{
 				base: 'https://eu-central-1.recall.ai',
-				apiKey: 'Token recall-key',
+				apiKey: undefined,
 				authorization: 'Token recall-key',
 				method: 'PATCH',
 				path: `/api/v2/google-logins/${loginId}/`,
@@ -281,7 +281,7 @@ describe('Recall.ai Google login endpoints', () => {
 			},
 			{
 				base: 'https://eu-central-1.recall.ai',
-				apiKey: 'Token recall-key',
+				apiKey: undefined,
 				authorization: 'Token recall-key',
 				method: 'DELETE',
 				path: `/api/v2/google-logins/${loginId}/`,

@@ -53,6 +53,8 @@ export async function makeRecallaiRequest<T>(
 	apiKey: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+		// Endpoint schemas validate provider-specific JSON bodies before transport;
+		// their open-ended nested fields cannot share a narrower static shape.
 		body?: Record<string, unknown> | unknown[];
 		query?: Record<string, string | string[] | number | boolean | undefined>;
 		baseUrl?: string;
@@ -66,17 +68,20 @@ export async function makeRecallaiRequest<T>(
 		baseUrl = RECALLAI_API_BASE,
 		headers,
 	} = options;
+	const authorization = apiKey.startsWith('Token ')
+		? apiKey
+		: `Token ${apiKey}`;
 
 	const config: OpenAPIConfig = {
 		BASE: baseUrl,
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		TOKEN: apiKey,
+		TOKEN: undefined,
 		HEADERS: {
 			'Content-Type': 'application/json',
-			Authorization: apiKey,
 			...headers,
+			Authorization: authorization,
 		},
 	};
 
@@ -87,22 +92,10 @@ export async function makeRecallaiRequest<T>(
 		mediaType: 'application/json; charset=utf-8',
 		query,
 	};
-	const authorization = apiKey.startsWith('Token ')
-		? apiKey
-		: `Token ${apiKey}`;
-
 	try {
-		return await request<T>(
-			{
-				...config,
-				TOKEN: authorization,
-				HEADERS: { ...config.HEADERS, Authorization: authorization },
-			},
-			requestOptions,
-			{
-				rateLimitConfig: RATE_LIMIT_CONFIG,
-			},
-		);
+		return await request<T>(config, requestOptions, {
+			rateLimitConfig: RATE_LIMIT_CONFIG,
+		});
 	} catch (error) {
 		if (error instanceof ApiError) {
 			throw new RecallaiAPIError(
