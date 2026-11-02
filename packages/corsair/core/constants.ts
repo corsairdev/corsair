@@ -114,19 +114,19 @@ export const BaseProviders = [
 	'brex',
 	'brightdata',
 	'browseai',
-	'builtwith',
 	'browserless',
 	'browsertool',
 	'bubble',
 	'bugsnag',
 	'buildkite',
+	'builtwith',
 	'bunnycdn',
 	'bytedance',
 	'byteforms',
 	'cal',
-	'callpage',
 	'calendly',
 	'callingly',
+	'callpage',
 	'campaigncleaner',
 	'campayn',
 	'canny',
@@ -150,19 +150,19 @@ export const BaseProviders = [
 	'clay',
 	'clickhouse',
 	'clickmeeting',
-	'clickup',
 	'clicksend',
+	'clickup',
 	'clientary',
 	'clockify',
-	'close',
 	'cloro',
+	'close',
 	'cloudcart',
 	'cloudflare',
 	'cloudflareapikey',
 	'cloudinary',
 	'coassemble',
-	'codeinterpreter',
 	'coda',
+	'codeinterpreter',
 	'cody',
 	'coinbase',
 	'coinmarketcal',
@@ -197,8 +197,8 @@ export const BaseProviders = [
 	'discord',
 	'dockerhub',
 	'docmosis',
-	'docupost',
 	'docsumo',
+	'docupost',
 	'docusign',
 	'dodopayments',
 	'doppler',
@@ -318,10 +318,10 @@ export const BaseProviders = [
 	'prisma',
 	'pushbullet',
 	'razorpay',
+	'recallai',
 	'reddit',
 	'reducto',
 	'remoet',
-	'replicate',
 	'removebg',
 	'replicate',
 	'replyio',
@@ -355,8 +355,8 @@ export const BaseProviders = [
 	'studiobyai21labs',
 	'supabase',
 	'supadata',
-	'suzanne',
 	'surf',
+	'suzanne',
 	'synthflowai',
 	'tally',
 	'tavily',
@@ -368,8 +368,8 @@ export const BaseProviders = [
 	'tikhub',
 	'timecamp',
 	'timelink',
-	'tinypng',
 	'tinyfish',
+	'tinypng',
 	'tinyurl',
 	'tisane',
 	'todoist',
@@ -527,19 +527,19 @@ export const ProviderDisplayNames = {
 	brex: 'Brex',
 	brightdata: 'Bright Data',
 	browseai: 'Browse AI',
-	builtwith: 'BuiltWith',
 	browserless: 'Browserless',
 	browsertool: 'Browser Tool',
 	bubble: 'Bubble',
 	bugsnag: 'BugSnag',
 	buildkite: 'Buildkite',
+	builtwith: 'BuiltWith',
 	bunnycdn: 'Bunnycdn',
 	bytedance: 'ByteDance',
 	byteforms: 'ByteForms',
 	cal: 'Cal',
-	callpage: 'CallPage',
 	calendly: 'Calendly',
 	callingly: 'Callingly',
+	callpage: 'CallPage',
 	campaigncleaner: 'Campaign Cleaner',
 	campayn: 'Campayn',
 	canny: 'Canny',
@@ -563,19 +563,19 @@ export const ProviderDisplayNames = {
 	clay: 'Clay',
 	clickhouse: 'Clickhouse',
 	clickmeeting: 'ClickMeeting',
-	clickup: 'ClickUp',
 	clicksend: 'ClickSend',
+	clickup: 'ClickUp',
 	clientary: 'Clientary',
 	clockify: 'Clockify',
-	close: 'Close',
 	cloro: 'cloro',
+	close: 'Close',
 	cloudcart: 'CloudCart',
 	cloudflare: 'Cloudflare',
 	cloudflareapikey: 'Cloudflare API Key',
 	cloudinary: 'Cloudinary',
 	coassemble: 'Coassemble',
-	codeinterpreter: 'CodeInterpreter',
 	coda: 'Coda',
+	codeinterpreter: 'CodeInterpreter',
 	cody: 'Cody',
 	coinbase: 'Coinbase',
 	coinmarketcal: 'Coinmarketcal',
@@ -610,8 +610,8 @@ export const ProviderDisplayNames = {
 	discord: 'Discord',
 	dockerhub: 'Docker Hub',
 	docmosis: 'Docmosis',
-	docupost: 'Docupost',
 	docsumo: 'Docsumo',
+	docupost: 'Docupost',
 	docusign: 'DocuSign',
 	dodopayments: 'Dodo Payments',
 	doppler: 'Doppler',
@@ -731,6 +731,7 @@ export const ProviderDisplayNames = {
 	prisma: 'Prisma',
 	pushbullet: 'Pushbullet',
 	razorpay: 'Razorpay',
+	recallai: 'Recallai',
 	reddit: 'Reddit',
 	reducto: 'Reducto',
 	remoet: 'Remoet',
@@ -767,8 +768,8 @@ export const ProviderDisplayNames = {
 	studiobyai21labs: 'StudioByAI21Labs',
 	supabase: 'Supabase',
 	supadata: 'Supadata',
-	suzanne: 'Suzanne',
 	surf: 'Surf',
+	suzanne: 'Suzanne',
 	synthflowai: 'Synthflow AI',
 	tally: 'Tally',
 	tavily: 'Tavily',
@@ -780,8 +781,8 @@ export const ProviderDisplayNames = {
 	tikhub: 'TikHub',
 	timecamp: 'TimeCamp',
 	timelink: 'Timelink',
-	tinypng: 'TinyPNG',
 	tinyfish: 'TinyFish',
+	tinypng: 'TinyPNG',
 	tinyurl: 'TinyURL',
 	tisane: 'Tisane',
 	todoist: 'Todoist',
@@ -955,9 +956,9 @@ export type AllProviders =
 	| 'bytedance'
 	| 'byteforms'
 	| 'cal'
-	| 'callpage'
 	| 'calendly'
 	| 'callingly'
+	| 'callpage'
 	| 'campaigncleaner'
 	| 'campayn'
 	| 'canny'
@@ -981,19 +982,19 @@ export type AllProviders =
 	| 'clay'
 	| 'clickhouse'
 	| 'clickmeeting'
-	| 'clickup'
 	| 'clicksend'
+	| 'clickup'
 	| 'clientary'
 	| 'clockify'
-	| 'close'
 	| 'cloro'
+	| 'close'
 	| 'cloudcart'
 	| 'cloudflare'
 	| 'cloudflareapikey'
 	| 'cloudinary'
 	| 'coassemble'
-	| 'codeinterpreter'
 	| 'coda'
+	| 'codeinterpreter'
 	| 'cody'
 	| 'coinbase'
 	| 'coinmarketcal'
@@ -1028,8 +1029,8 @@ export type AllProviders =
 	| 'discord'
 	| 'dockerhub'
 	| 'docmosis'
-	| 'docupost'
 	| 'docsumo'
+	| 'docupost'
 	| 'docusign'
 	| 'dodopayments'
 	| 'doppler'
@@ -1149,10 +1150,10 @@ export type AllProviders =
 	| 'prisma'
 	| 'pushbullet'
 	| 'razorpay'
+	| 'recallai'
 	| 'reddit'
 	| 'reducto'
 	| 'remoet'
-	| 'replicate'
 	| 'removebg'
 	| 'replicate'
 	| 'replyio'
@@ -1186,8 +1187,8 @@ export type AllProviders =
 	| 'studiobyai21labs'
 	| 'supabase'
 	| 'supadata'
-	| 'suzanne'
 	| 'surf'
+	| 'suzanne'
 	| 'synthflowai'
 	| 'tally'
 	| 'tavily'
@@ -1199,8 +1200,8 @@ export type AllProviders =
 	| 'tikhub'
 	| 'timecamp'
 	| 'timelink'
-	| 'tinypng'
 	| 'tinyfish'
+	| 'tinypng'
 	| 'tinyurl'
 	| 'tisane'
 	| 'todoist'
