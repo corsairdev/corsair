@@ -1,3 +1,4 @@
+import * as vm from 'node:vm';
 import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import type { AnyCorsairInstance } from 'corsair';
 import { listOperations, runReadonly } from 'corsair';
@@ -21,6 +22,100 @@ export type CorsairToolDef = {
 	shape: z.ZodRawShape;
 	handler: (args: Record<string, unknown>) => Promise<CallToolResult>;
 };
+
+const BLOCKED_KEYS = new Set<PropertyKey>([
+	'constructor',
+	'prototype',
+	'__proto__',
+]);
+
+export function harden(value: unknown, thisArg?: unknown): unknown {
+	if (value === null || value === undefined) return value;
+	const type = typeof value;
+	if (type === 'function') {
+		return hardenFunction(value as (...args: unknown[]) => unknown, thisArg);
+	}
+	if (type === 'object') return hardenObject(value as object);
+	return value;
+}
+
+function hardenObject(target: object): object {
+	return new Proxy(target, {
+		get(t, key) {
+			if (BLOCKED_KEYS.has(key)) return undefined;
+			return harden(Reflect.get(t, key, t), t);
+		},
+		getPrototypeOf: () => null,
+		setPrototypeOf: () => false,
+		defineProperty: () => false,
+		set: () => false,
+		deleteProperty: () => false,
+	});
+}
+
+function hardenFunction(
+	target: (...args: unknown[]) => unknown,
+	thisArg: unknown,
+): (...args: unknown[]) => unknown {
+	return new Proxy(target, {
+		apply: (fn, _thisArg, args) =>
+			hardenResult(Reflect.apply(fn, thisArg, args)),
+		construct() {
+			throw new Error('Script execution may not construct host objects');
+		},
+		get(fn, key) {
+			if (BLOCKED_KEYS.has(key)) return undefined;
+			return harden(Reflect.get(fn, key, fn), fn);
+		},
+		getPrototypeOf: () => null,
+		setPrototypeOf: () => false,
+		defineProperty: () => false,
+		set: () => false,
+		deleteProperty: () => false,
+	});
+}
+
+function hardenResult(result: unknown): unknown {
+	if (
+		result !== null &&
+		typeof result === 'object' &&
+		typeof (result as { then?: unknown }).then === 'function'
+	) {
+		return Promise.resolve(result as Promise<unknown>).then(
+			(value) => harden(value, undefined),
+			(error) => {
+				throw harden(error, undefined);
+			},
+		);
+	}
+	return harden(result, undefined);
+}
+
+const MCP_SCRIPT_TIMEOUT_MS = 30_000;
+
+export async function runScriptInSandbox(
+	code: string,
+	corsair: unknown,
+	timeoutMs = MCP_SCRIPT_TIMEOUT_MS,
+): Promise<unknown> {
+	const sandbox = Object.create(null) as Record<string, unknown>;
+	const context = vm.createContext(sandbox, {
+		name: 'corsair-mcp-sandbox',
+		codeGeneration: { strings: false, wasm: false },
+	});
+
+	const wrappedCode = `(async function(corsair) { ${code} })`;
+	const script = new vm.Script(wrappedCode, {
+		filename: 'corsair:mcp:script',
+	});
+
+	const fn = script.runInContext(context, {
+		timeout: timeoutMs,
+	}) as (c: unknown) => Promise<unknown>;
+
+	const hardenedCorsair = harden(corsair);
+	return await fn(hardenedCorsair);
+}
 
 export function buildCorsairToolDefs(
 	options: BaseMcpOptions,
@@ -87,12 +182,8 @@ export function buildCorsairToolDefs(
 			handler: async ({ code }) => {
 				const readonly = runOptions?.readonly || false;
 				try {
-					const fn = new Function(
-						'corsair',
-						`return (async () => { ${code} })()`,
-					);
 					const invoke = () =>
-						(fn as (c: unknown) => Promise<unknown>)(corsair);
+						runScriptInSandbox(code as string, corsair);
 					// When readonly is required, run the whole script inside a readonly
 					// scope that takes precedence over the developer's permission config.
 					// Any write/destructive endpoint throws and aborts the script.
@@ -107,3 +198,4 @@ export function buildCorsairToolDefs(
 
 	return defs;
 }
+
