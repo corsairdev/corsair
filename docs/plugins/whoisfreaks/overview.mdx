@@ -88,17 +88,20 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`asnWhois.lookup`**
+**Look up live DNS records**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.whoisfreaks.api.asnWhois.lookup({});
+await tenant.whoisfreaks.api.dns.live({ domainName: 'example.com' });
 ```
 
 
-**Write**
+**Check domain availability**
 
-_No write-style endpoint inferred; pick any operation from the [API](/plugins/whoisfreaks/api) reference._
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.whoisfreaks.api.availability.check({ domain: 'example.com' });
+```
 
 
 See the full list on the [API](/plugins/whoisfreaks/api) page.
