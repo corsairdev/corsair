@@ -1,6 +1,5 @@
 'use client';
 
-import { Check } from '@phosphor-icons/react';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 
@@ -12,8 +11,8 @@ import { cn } from '@/lib/utils';
 const ROTATE_MS = 7000;
 
 /**
- * "Turn Claude into a sales rep": one role at a time, the steps an agent runs
- * and the apps it uses. Rotates until the visitor picks a role, and never with
+ * "Turn Claude into a sales rep": one role at a time, the apps it uses and a
+ * prompt to copy. Rotates until the visitor picks a role, and never with
  * reduced motion; every role's content is in the page for search engines.
  */
 export function AgentRolesSection() {
@@ -111,55 +110,36 @@ export function AgentRolesSection() {
 						hidden={active !== index}
 						className="mt-6 overflow-hidden rounded-xl border border-[#1c1c1c]/10 bg-white shadow-[0_8px_32px_rgba(28,28,28,0.06)]"
 					>
-						<div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]">
-							<div className="min-w-0 border-b border-[#1c1c1c]/8 px-5 py-6 sm:px-7 lg:border-r lg:border-b-0">
-								<p className="text-[13px] font-medium text-[#1c1c1c99]">
-									What your agent does
-								</p>
-								<ol className="mt-3 space-y-3">
-									{item.steps.map((step) => (
-										<li key={step.text} className="flex gap-3">
-											<span className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-[#4a38f5]/10 text-[#4a38f5]">
-												<Check size={12} weight="bold" aria-hidden />
-											</span>
-											<span className="min-w-0">
-												<span className="block text-[15px] leading-snug text-[#1c1c1c]">
-													{step.text.charAt(0).toUpperCase()}
-													{step.text.slice(1)}
-												</span>
-												<span className="font-[family-name:var(--landing-font-mono)] text-[11px] text-[#1c1c1c66] [overflow-wrap:anywhere]">
-													corsair.{step.app}.api.{step.tool}
-												</span>
-											</span>
-										</li>
-									))}
-								</ol>
-							</div>
-							<div className="min-w-0 px-5 py-6 sm:px-7">
-								<p className="text-[13px] font-medium text-[#1c1c1c99]">
-									Apps it uses
-								</p>
-								<ul className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3">
-									{item.apps.map((app) => (
-										<li key={app.id}>
-											<Link
-												href={`/integrations/${app.id}`}
-												className="flex min-w-0 items-center gap-2 rounded-md border border-[#1c1c1c]/10 px-2.5 py-2 text-[13px] font-medium text-[#1c1c1c] no-underline transition-colors hover:border-[#4a38f5]/35"
-											>
-												<IntegrationLogo
-													id={app.id}
-													displayName={app.name}
-													size={22}
-													className="rounded-[4px]"
-												/>
-												<span className="min-w-0 leading-tight">
-													{app.name}
-												</span>
-											</Link>
-										</li>
-									))}
-								</ul>
-							</div>
+						<div className="px-5 py-6 sm:px-7 sm:py-7">
+							<p className="text-center font-[family-name:var(--landing-font-mono)] text-[11px] font-medium uppercase tracking-[0.08em] text-[#4a38f5]">
+								The {item.title.replace(/^an? /, '')} toolbelt
+							</p>
+							<ul className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+								{item.apps.map((app) => (
+									<li key={app.id}>
+										<Link
+											href={`/integrations/${app.id}`}
+											className="flex h-full min-w-0 flex-col items-center justify-center gap-2.5 rounded-xl border border-[#1c1c1c]/10 bg-[#fafafa] px-3 py-5 text-center text-[14px] font-medium text-[#1c1c1c] no-underline transition-colors hover:border-[#4a38f5]/35 hover:bg-white"
+										>
+											<IntegrationLogo
+												id={app.id}
+												displayName={app.name}
+												size={36}
+												className="rounded-md"
+											/>
+											<span className="min-w-0 leading-tight">{app.name}</span>
+										</Link>
+									</li>
+								))}
+							</ul>
+							<p className="mt-4 text-center text-[13px] text-[#1c1c1c99]">
+								<Link
+									href="/integrations"
+									className="text-[#1c1c1c99] no-underline hover:text-[#4a38f5]"
+								>
+									+400 more apps
+								</Link>
+							</p>
 						</div>
 						<div className="flex flex-col gap-3 border-t border-[#1c1c1c]/8 bg-[#fafafa] px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-7">
 							<p className="min-w-0 text-[14px] leading-relaxed text-[#1c1c1c]">
