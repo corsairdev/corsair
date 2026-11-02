@@ -89,19 +89,24 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`brands.get`**
+**List documents**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.boldsign.api.brands.get({});
+await tenant.boldsign.api.documents.list({ page: 1 });
 ```
 
 
-**`customFields.create`**
+**Send a document for signature**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.boldsign.api.customFields.create({});
+await tenant.boldsign.api.documents.send({
+	title: 'Service agreement',
+	message: 'Please review and sign.',
+	fileUrls: ['https://example.com/agreement.pdf'],
+	signers: [{ name: 'Octo Cat', emailAddress: 'you@example.com' }],
+});
 ```
 
 
@@ -109,9 +114,17 @@ See the full list on the [API](/plugins/boldsign/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.boldsign.db.<entity>.search()` and `.list()`: `brands`, `custom_fields`, `documents`.
+These tables exist, but BoldSign calls don't fill them yet. This returns only rows you have written yourself.
 
-See [Database](/plugins/boldsign/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.boldsign.db.documents.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `brands`, `custom_fields`, `documents`. See [Database](/plugins/boldsign/database) for filters and operators.
 
 ## What's next
 
