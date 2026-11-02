@@ -179,6 +179,44 @@ describe('Recall.ai schema', () => {
 		});
 	});
 
+	it('accepts ID-only inputs for every stop-output operation', async () => {
+		const request = jest.mocked(makeRecallaiRequest);
+		request.mockClear();
+		request.mockResolvedValue(undefined);
+		const plugin = recallai({ key: 'recall-key' });
+		const ctx = recallaiTestContext;
+		if (!plugin.endpoints) throw new Error('Recall.ai endpoints are missing');
+
+		await expect(
+			plugin.endpoints.botActions.stopOutputAudio(ctx, { id: 'bot-1' }),
+		).resolves.toBeUndefined();
+		await expect(
+			plugin.endpoints.botActions.stopScreenshare(ctx, { id: 'bot-1' }),
+		).resolves.toBeUndefined();
+		await expect(
+			plugin.endpoints.botActions.stopOutputVideo(ctx, { id: 'bot-1' }),
+		).resolves.toBeUndefined();
+
+		expect(request).toHaveBeenNthCalledWith(
+			1,
+			'/api/v1/bot/bot-1/output_audio/',
+			'recall-key',
+			{ method: 'DELETE' },
+		);
+		expect(request).toHaveBeenNthCalledWith(
+			2,
+			'/api/v1/bot/bot-1/output_screenshare/',
+			'recall-key',
+			{ method: 'DELETE' },
+		);
+		expect(request).toHaveBeenNthCalledWith(
+			3,
+			'/api/v1/bot/bot-1/output_video/',
+			'recall-key',
+			{ method: 'DELETE' },
+		);
+	});
+
 	it('validates calendar and media inputs before calling Recall', async () => {
 		const request = jest.mocked(makeRecallaiRequest);
 		request.mockReset();

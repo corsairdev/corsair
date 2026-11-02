@@ -549,7 +549,7 @@ export const recallaiEndpointSchemas = {
 		output: RecallaiEndpointOutputSchemas.outputAudio,
 	},
 	'botActions.stopOutputAudio': {
-		input: RecallaiBotActionInputSchemas.outputAudio,
+		input: RecallaiBotActionInputSchemas.deleteBotMedia,
 		output: RecallaiEndpointOutputSchemas.stopOutputAudio,
 	},
 	'botActions.outputMedia': {
@@ -557,7 +557,7 @@ export const recallaiEndpointSchemas = {
 		output: RecallaiEndpointOutputSchemas.outputMedia,
 	},
 	'botActions.stopOutputMedia': {
-		input: RecallaiBotActionInputSchemas.outputMedia,
+		input: RecallaiBotActionInputSchemas.deleteBotMedia,
 		output: RecallaiEndpointOutputSchemas.stopOutputMedia,
 	},
 	'botActions.startScreenshare': {
@@ -565,7 +565,7 @@ export const recallaiEndpointSchemas = {
 		output: RecallaiEndpointOutputSchemas.startScreenshare,
 	},
 	'botActions.stopScreenshare': {
-		input: RecallaiBotActionInputSchemas.outputScreenshare,
+		input: RecallaiBotActionInputSchemas.deleteBotMedia,
 		output: RecallaiEndpointOutputSchemas.stopScreenshare,
 	},
 	'botActions.outputVideo': {
@@ -573,7 +573,7 @@ export const recallaiEndpointSchemas = {
 		output: RecallaiEndpointOutputSchemas.outputVideo,
 	},
 	'botActions.stopOutputVideo': {
-		input: RecallaiBotActionInputSchemas.outputVideo,
+		input: RecallaiBotActionInputSchemas.deleteBotMedia,
 		output: RecallaiEndpointOutputSchemas.stopOutputVideo,
 	},
 	'botActions.pauseRecording': {
@@ -816,11 +816,11 @@ export const recallaiEndpointSchemas = {
 	typeof recallaiEndpointsNested
 >;
 
-// unknown: endpoint trees contain nested groups and callable handlers, so the
-// wrapper narrows each branch before applying its public Zod contract.
+// unknown: endpoint trees contain heterogeneous nested groups and handlers.
+// Their concrete shape is only known after the wrapper resolves each path.
 type RecallaiEndpointTree = Record<string, unknown>;
-// unknown: the core invokes endpoint handlers with a context and input whose
-// concrete types are recovered by the endpoint's public contract.
+// unknown: this dispatcher bridges heterogeneous endpoint signatures. Each
+// handler's context and input are validated against its path-specific schema.
 type RecallaiEndpointHandler = (
 	ctx: unknown,
 	input: unknown,
