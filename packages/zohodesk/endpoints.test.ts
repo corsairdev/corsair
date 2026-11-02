@@ -123,6 +123,7 @@ afterEach(() => {
 type Case = {
 	name: string;
 	endpoint: AnyEndpoint;
+	// unknown: each endpoint takes its own input shape.
 	input: Record<string, unknown>;
 	path: string;
 	query?: Record<string, string>;

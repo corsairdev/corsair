@@ -24,6 +24,7 @@ type ZohoDeskCall<I extends InputSchema, O extends z.ZodType> = {
 	/** What a 204 means here. Without it an empty answer fails validation. */
 	empty?: z.input<O>;
 	/** Input fields worth logging, when the full input should not be stored. */
+	// unknown: logged fields differ per operation and are only serialized.
 	logFields?: (input: z.output<I>) => Record<string, unknown>;
 	/** Runs on the validated result, before it is returned. */
 	sync?: (result: z.output<O>, input: z.output<I>) => Promise<void>;
@@ -78,6 +79,7 @@ export async function zohoDeskDownload<
  */
 export async function syncBestEffort(
 	entity: string,
+	// unknown: each entity's save returns its own row, and this discards it.
 	save: () => Promise<unknown>,
 ): Promise<void> {
 	try {
