@@ -8,6 +8,17 @@ Recallai plugin for Corsair.
 pnpm add @corsair-dev/recallai
 ```
 
+## Region
+
+Recall.ai API keys are region-specific. Set the matching region when creating
+the plugin. Supported regions are `us-east-1`, `us-west-2`, `eu-central-1`,
+and `ap-northeast-1`; omitting the option keeps the existing `us-west-2`
+default.
+
+```ts
+recallai({ key: process.env.RECALLAI_API_KEY, region: 'eu-central-1' });
+```
+
 ## Endpoints
 
 | Operation | Operation ID | Risk | Description |
@@ -20,6 +31,7 @@ pnpm add @corsair-dev/recallai
 | `audioSeparate.list` | `recallai.api.audioSeparate.list` | `read` | List separate audio artifacts |
 | `audioSeparate.retrieve` | `recallai.api.audioSeparate.retrieve` | `read` | Retrieve a separate audio artifact |
 | `audioSeparate.update` | `recallai.api.audioSeparate.update` | `write` | Update separate audio artifact metadata |
+| `billing.retrieveUsage` | `recallai.api.billing.retrieveUsage` | `read` | Retrieve Recall.ai billing usage |
 | `botActions.deleteBotMedia` | `recallai.api.botActions.deleteBotMedia` | `destructive` | Delete stored media for a Recall.ai bot |
 | `botActions.leaveBotCall` | `recallai.api.botActions.leaveBotCall` | `destructive` | Remove a Recall.ai bot from its meeting |
 | `botActions.outputAudio` | `recallai.api.botActions.outputAudio` | `write` | Output audio from a Recall.ai bot |
@@ -55,6 +67,27 @@ pnpm add @corsair-dev/recallai
 | `calendar.unscheduleBot` | `recallai.api.calendar.unscheduleBot` | `destructive` | Remove a scheduled Recall.ai bot from a calendar event |
 | `calendar.updateMeeting` | `recallai.api.calendar.updateMeeting` | `write` | Update a Recall.ai calendar meeting |
 | `calendar.updateUser` | `recallai.api.calendar.updateUser` | `write` | Update a Recall.ai calendar user |
+| `calendars.create` | `recallai.api.calendars.create` | `write` | Create a Recall.ai calendar |
+| `calendars.createAccessToken` | `recallai.api.calendars.createAccessToken` | `write` | Create a Recall.ai calendar access token |
+| `calendars.delete` | `recallai.api.calendars.delete` | `destructive` | Delete a Recall.ai calendar |
+| `calendars.list` | `recallai.api.calendars.list` | `read` | List Recall.ai calendars |
+| `calendars.retrieve` | `recallai.api.calendars.retrieve` | `read` | Retrieve a Recall.ai calendar |
+| `calendars.update` | `recallai.api.calendars.update` | `write` | Update a Recall.ai calendar |
+| `googleLoginGroups.create` | `recallai.api.googleLoginGroups.create` | `write` | Create a Recall.ai Google login group |
+| `googleLoginGroups.delete` | `recallai.api.googleLoginGroups.delete` | `destructive` | Delete a Recall.ai Google login group |
+| `googleLoginGroups.list` | `recallai.api.googleLoginGroups.list` | `read` | List Recall.ai Google login groups |
+| `googleLoginGroups.partialUpdate` | `recallai.api.googleLoginGroups.partialUpdate` | `write` | Update fields on a Recall.ai Google login group |
+| `googleLoginGroups.retrieve` | `recallai.api.googleLoginGroups.retrieve` | `read` | Retrieve a Recall.ai Google login group |
+| `googleLoginGroups.update` | `recallai.api.googleLoginGroups.update` | `write` | Replace a Recall.ai Google login group |
+| `googleLogins.create` | `recallai.api.googleLogins.create` | `write` | Create a Recall.ai Google login |
+| `googleLogins.delete` | `recallai.api.googleLogins.delete` | `destructive` | Delete a Recall.ai Google login |
+| `googleLogins.list` | `recallai.api.googleLogins.list` | `read` | List Recall.ai Google logins |
+| `googleLogins.partialUpdate` | `recallai.api.googleLogins.partialUpdate` | `write` | Update fields on a Recall.ai Google login |
+| `googleLogins.retrieve` | `recallai.api.googleLogins.retrieve` | `read` | Retrieve a Recall.ai Google login |
+| `googleLogins.update` | `recallai.api.googleLogins.update` | `write` | Replace a Recall.ai Google login |
+| `meetingDirectConnects.create` | `recallai.api.meetingDirectConnects.create` | `write` | Create a Recall.ai direct connection |
+| `meetingDirectConnects.list` | `recallai.api.meetingDirectConnects.list` | `read` | List Recall.ai direct connections |
+| `meetingDirectConnects.retrieve` | `recallai.api.meetingDirectConnects.retrieve` | `read` | Retrieve a Recall.ai direct connection |
 | `meetingMetadata.delete` | `recallai.api.meetingMetadata.delete` | `destructive` | Delete a Recall.ai meeting metadata artifact |
 | `meetingMetadata.list` | `recallai.api.meetingMetadata.list` | `read` | List Recall.ai meeting metadata artifacts |
 | `meetingMetadata.retrieve` | `recallai.api.meetingMetadata.retrieve` | `read` | Retrieve a Recall.ai meeting metadata artifact |
@@ -86,6 +119,21 @@ pnpm add @corsair-dev/recallai
 | `videoSeparate.list` | `recallai.api.videoSeparate.list` | `read` | List separate video artifacts |
 | `videoSeparate.retrieve` | `recallai.api.videoSeparate.retrieve` | `read` | Retrieve a separate video artifact |
 | `videoSeparate.update` | `recallai.api.videoSeparate.update` | `write` | Update separate video artifact metadata |
+| `zoomMeetingsToCredentials.list` | `recallai.api.zoomMeetingsToCredentials.list` | `read` | List Zoom meeting credential mappings |
+| `zoomOAuthAppLogs.list` | `recallai.api.zoomOAuthAppLogs.list` | `read` | List Recall.ai Zoom OAuth app logs |
+| `zoomOAuthApps.create` | `recallai.api.zoomOAuthApps.create` | `write` | Create a Recall.ai Zoom OAuth app |
+| `zoomOAuthApps.delete` | `recallai.api.zoomOAuthApps.delete` | `destructive` | Delete a Recall.ai Zoom OAuth app |
+| `zoomOAuthApps.list` | `recallai.api.zoomOAuthApps.list` | `read` | List Recall.ai Zoom OAuth apps |
+| `zoomOAuthApps.retrieve` | `recallai.api.zoomOAuthApps.retrieve` | `read` | Retrieve a Recall.ai Zoom OAuth app |
+| `zoomOAuthApps.update` | `recallai.api.zoomOAuthApps.update` | `write` | Update a Recall.ai Zoom OAuth app |
+| `zoomOAuthCredentialLogs.list` | `recallai.api.zoomOAuthCredentialLogs.list` | `read` | List Recall.ai Zoom OAuth credential logs |
+| `zoomOAuthCredentials.create` | `recallai.api.zoomOAuthCredentials.create` | `write` | Create a Recall.ai Zoom OAuth credential |
+| `zoomOAuthCredentials.delete` | `recallai.api.zoomOAuthCredentials.delete` | `destructive` | Delete a Recall.ai Zoom OAuth credential |
+| `zoomOAuthCredentials.list` | `recallai.api.zoomOAuthCredentials.list` | `read` | List Recall.ai Zoom OAuth credentials |
+| `zoomOAuthCredentials.retrieve` | `recallai.api.zoomOAuthCredentials.retrieve` | `read` | Retrieve a Recall.ai Zoom OAuth credential |
+| `zoomOAuthCredentials.retrieveAccessToken` | `recallai.api.zoomOAuthCredentials.retrieveAccessToken` | `read` | Retrieve a Zoom OAuth access token |
+| `zoomOAuthCredentials.syncMeetings` | `recallai.api.zoomOAuthCredentials.syncMeetings` | `write` | Synchronize Zoom OAuth credential meetings |
+| `zoomOAuthCredentials.validate` | `recallai.api.zoomOAuthCredentials.validate` | `write` | Validate a Recall.ai Zoom OAuth credential |
 
 ## Auth
 
