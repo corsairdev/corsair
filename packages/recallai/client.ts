@@ -38,7 +38,13 @@ export async function makeRecallaiRequest<T>(
 		headers?: Record<string, string>;
 	} = {},
 ): Promise<T> {
-	const { method = 'GET', body, query, baseUrl = RECALLAI_API_BASE, headers } = options;
+	const {
+		method = 'GET',
+		body,
+		query,
+		baseUrl = RECALLAI_API_BASE,
+		headers,
+	} = options;
 
 	const config: OpenAPIConfig = {
 		BASE: baseUrl,
