@@ -1,7 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { RecallaiEndpoints } from '..';
 import { makeRecallaiRequest } from '../client';
-import { UpdateParticipantEventsInputSchema } from './artifact-types';
 import type {
 	ArtifactListInput,
 	ArtifactListResponse,
@@ -9,6 +8,8 @@ import type {
 	RetrieveArtifactInput,
 	UpdateParticipantEventsInput,
 } from './artifact-types';
+
+import { UpdateParticipantEventsInputSchema } from './artifact-types';
 
 const artifactPath = (resource: string, id: string) =>
 	`/api/v1/${resource}/${encodeURIComponent(id)}/`;

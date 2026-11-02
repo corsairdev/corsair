@@ -1,11 +1,12 @@
 import { logEventFromContext } from 'corsair/core';
+import { z } from 'zod';
 import type {
 	RecallaiContext,
 	RecallaiEndpointOutputs,
 	RecallaiEndpoints,
 } from '..';
+
 import { makeRecallaiRequest } from '../client';
-import { z } from 'zod';
 
 const id = z.string().uuid();
 const opaque = z.record(z.string(), z.unknown());

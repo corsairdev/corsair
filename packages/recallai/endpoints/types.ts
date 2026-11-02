@@ -3,6 +3,7 @@ import type {
 	ArtifactEndpointInputs,
 	ArtifactEndpointOutputs,
 } from './artifact-types';
+
 export { UpdateParticipantEventsInputSchema } from './artifact-types';
 
 const id = z
