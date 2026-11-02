@@ -1,21 +1,17 @@
 import type {
-	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
-	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import { Example } from './endpoints';
+import { AuthMissingError } from 'corsair/core';
+import { Campaigns, Prospects, Webhooks } from './endpoints';
 import type {
 	WoodpeckerCoEndpointInputs,
 	WoodpeckerCoEndpointOutputs,
@@ -24,23 +20,13 @@ import {
 	WoodpeckerCoEndpointInputSchemas,
 	WoodpeckerCoEndpointOutputSchemas,
 } from './endpoints/types';
-import { errorHandlers } from './error-handlers';
+import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 import { WoodpeckerCoSchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
-import { resolveWoodpeckerCoOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
-import { matchWoodpeckerCoTenantWebhook } from './webhooks/tenant-matcher';
-import type {
-	ExampleEvent,
-	WoodpeckerCoWebhookOutputs,
-} from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
 
 export type WoodpeckerCoPluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'api_key'>;
 	key?: string;
-	webhookSecret?: string;
 	hooks?: InternalWoodpeckerCoPlugin['hooks'];
-	webhookHooks?: InternalWoodpeckerCoPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof woodpeckerCoEndpointsNested>;
 };
@@ -65,77 +51,123 @@ type WoodpeckerCoEndpoint<K extends keyof WoodpeckerCoEndpointOutputs> =
 	>;
 
 export type WoodpeckerCoEndpoints = {
-	exampleGet: WoodpeckerCoEndpoint<'exampleGet'>;
+	campaignsList: WoodpeckerCoEndpoint<'campaignsList'>;
+	campaignsRun: WoodpeckerCoEndpoint<'campaignsRun'>;
+	campaignsPause: WoodpeckerCoEndpoint<'campaignsPause'>;
+	campaignsStop: WoodpeckerCoEndpoint<'campaignsStop'>;
+	campaignsDeleteStep: WoodpeckerCoEndpoint<'campaignsDeleteStep'>;
+	prospectsAddToCampaign: WoodpeckerCoEndpoint<'prospectsAddToCampaign'>;
+	prospectsListInCampaigns: WoodpeckerCoEndpoint<'prospectsListInCampaigns'>;
+	webhooksListEvents: WoodpeckerCoEndpoint<'webhooksListEvents'>;
 };
-
-type WoodpeckerCoWebhook<
-	K extends keyof WoodpeckerCoWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<WoodpeckerCoContext, TEvent, WoodpeckerCoWebhookOutputs[K]>;
-
-export type WoodpeckerCoWebhooks = {
-	example: WoodpeckerCoWebhook<'example', ExampleEvent>;
-};
-
-export type WoodpeckerCoBoundWebhooks = BindWebhooks<WoodpeckerCoWebhooks>;
 
 const woodpeckerCoEndpointsNested = {
-	example: {
-		get: Example.get,
+	campaigns: {
+		list: Campaigns.list,
+		run: Campaigns.run,
+		pause: Campaigns.pause,
+		stop: Campaigns.stop,
+		deleteStep: Campaigns.deleteStep,
 	},
-} as const;
-
-const woodpeckerCoWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
+	prospects: {
+		addToCampaign: Prospects.addToCampaign,
+		listInCampaigns: Prospects.listInCampaigns,
+	},
+	webhooks: {
+		listEvents: Webhooks.listEvents,
 	},
 } as const;
 
 export const woodpeckerCoEndpointSchemas = {
-	'example.get': {
-		input: WoodpeckerCoEndpointInputSchemas.exampleGet,
-		output: WoodpeckerCoEndpointOutputSchemas.exampleGet,
+	'campaigns.list': {
+		input: WoodpeckerCoEndpointInputSchemas.campaignsList,
+		output: WoodpeckerCoEndpointOutputSchemas.campaignsList,
+	},
+	'campaigns.run': {
+		input: WoodpeckerCoEndpointInputSchemas.campaignsRun,
+		output: WoodpeckerCoEndpointOutputSchemas.campaignsRun,
+	},
+	'campaigns.pause': {
+		input: WoodpeckerCoEndpointInputSchemas.campaignsPause,
+		output: WoodpeckerCoEndpointOutputSchemas.campaignsPause,
+	},
+	'campaigns.stop': {
+		input: WoodpeckerCoEndpointInputSchemas.campaignsStop,
+		output: WoodpeckerCoEndpointOutputSchemas.campaignsStop,
+	},
+	'campaigns.deleteStep': {
+		input: WoodpeckerCoEndpointInputSchemas.campaignsDeleteStep,
+		output: WoodpeckerCoEndpointOutputSchemas.campaignsDeleteStep,
+	},
+	'prospects.addToCampaign': {
+		input: WoodpeckerCoEndpointInputSchemas.prospectsAddToCampaign,
+		output: WoodpeckerCoEndpointOutputSchemas.prospectsAddToCampaign,
+	},
+	'prospects.listInCampaigns': {
+		input: WoodpeckerCoEndpointInputSchemas.prospectsListInCampaigns,
+		output: WoodpeckerCoEndpointOutputSchemas.prospectsListInCampaigns,
+	},
+	'webhooks.listEvents': {
+		input: WoodpeckerCoEndpointInputSchemas.webhooksListEvents,
+		output: WoodpeckerCoEndpointOutputSchemas.webhooksListEvents,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof woodpeckerCoEndpointsNested
 >;
 
-const woodpeckerCoWebhookSchemas = {
-	'example.example': {
-		description: 'An example webhook event',
-		payload: ExampleEventSchema,
-		response: ExampleEventSchema,
-	},
-} as const satisfies RequiredPluginWebhookSchemas<
-	typeof woodpeckerCoWebhooksNested
->;
-
-const defaultAuthType: AuthTypes = 'api_key' as const;
+const defaultAuthType = 'api_key' as const;
 
 const woodpeckerCoEndpointMeta = {
-	'example.get': {
+	'campaigns.list': {
 		riskLevel: 'read',
-		description: 'Get an example resource by ID',
+		description:
+			'List campaigns, optionally filtered by status or ID; asking for exactly one ID also returns its statistics',
+	},
+	'campaigns.run': {
+		riskLevel: 'write',
+		description:
+			'Start or resume a campaign: it becomes RUNNING and Woodpecker starts contacting its prospects',
+	},
+	'campaigns.pause': {
+		riskLevel: 'write',
+		description:
+			'Pause a campaign: no further contact with prospects until it is run again',
+	},
+	'campaigns.stop': {
+		riskLevel: 'write',
+		description:
+			'Stop a campaign: no further contact with prospects until it is run again',
+	},
+	'campaigns.deleteStep': {
+		riskLevel: 'destructive',
+		description:
+			'Permanently delete an unused EMAIL or LINKEDIN step that is not the first step; the campaign must be DRAFT or EDITED',
+	},
+	'prospects.addToCampaign': {
+		riskLevel: 'write',
+		description:
+			'Add up to 20,000 prospects to a campaign, also creating them in the global list; each result says if that prospect was a duplicate or rejected',
+	},
+	'prospects.listInCampaigns': {
+		riskLevel: 'read',
+		description:
+			'List the prospects in one or more campaigns with their campaign status and interest level, with filters, sorting and paging',
+	},
+	'webhooks.listEvents': {
+		riskLevel: 'read',
+		description:
+			"List the event types Woodpecker can send to a webhook, from Woodpecker's docs; makes no API call",
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof woodpeckerCoEndpointsNested
 >;
-
-export const woodpeckerCoAuthConfig = {
-	api_key: {
-		account: ['tenant_external_id'] as const,
-	},
-	oauth_2: {
-		account: ['tenant_external_id'] as const,
-	},
-} as const satisfies PluginAuthConfig;
 
 export type BaseWoodpeckerCoPlugin<T extends WoodpeckerCoPluginOptions> =
 	CorsairPlugin<
 		'woodpeckerco',
 		typeof WoodpeckerCoSchema,
 		typeof woodpeckerCoEndpointsNested,
-		typeof woodpeckerCoWebhooksNested,
+		{},
 		T,
 		typeof defaultAuthType
 	>;
@@ -156,63 +188,47 @@ export function woodpeckerco<const T extends WoodpeckerCoPluginOptions>(
 	};
 	return {
 		id: 'woodpeckerco',
-		authConfig: woodpeckerCoAuthConfig,
 		schema: WoodpeckerCoSchema,
 		options: options,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
 		endpoints: woodpeckerCoEndpointsNested,
-		webhooks: woodpeckerCoWebhooksNested,
+		webhooks: {},
 		endpointMeta: woodpeckerCoEndpointMeta,
 		endpointSchemas: woodpeckerCoEndpointSchemas,
-		webhookSchemas: woodpeckerCoWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			// TODO: Update to match your webhook signature headers
-			return 'x-woodpeckerco-signature' in headers;
-		},
-		pluginTenantWebhookMatcher: matchWoodpeckerCoTenantWebhook,
-		oauthWebhookTenantLinkResolver: resolveWoodpeckerCoOAuthWebhookTenantLink,
-		errorHandlers: {
-			...errorHandlers,
-			...options.errorHandlers,
-		},
+		pluginWebhookMatcher: () => false,
+		errorHandlers: mergeErrorHandlers(errorHandlers, options.errorHandlers),
 		keyBuilder: async (ctx: WoodpeckerCoKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
-			}
-
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				return res ?? '';
+				if (res) return res;
 			}
 
-			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const res = await ctx.keys.get_access_token();
-				return res ?? '';
-			}
-
-			return '';
+			throw new AuthMissingError('woodpeckerco', ctx.authType ?? 'api_key');
 		},
 	} satisfies InternalWoodpeckerCoPlugin;
 }
 
 export type {
-	ExampleGetInput,
-	ExampleGetResponse,
+	CampaignActionInput,
+	CampaignActionResponse,
+	CampaignsDeleteStepInput,
+	CampaignsDeleteStepResponse,
+	CampaignsListInput,
+	CampaignsListResponse,
+	ProspectsAddToCampaignInput,
+	ProspectsAddToCampaignResponse,
+	ProspectsListInCampaignsInput,
+	ProspectsListInCampaignsResponse,
+	WebhooksListEventsInput,
+	WebhooksListEventsResponse,
+	WoodpeckerCoCampaign,
 	WoodpeckerCoEndpointInputs,
 	WoodpeckerCoEndpointOutputs,
+	WoodpeckerCoProspect,
+	WoodpeckerCoProspectInput,
+	WoodpeckerCoWebhookEvent,
 } from './endpoints/types';
-export type {
-	ExampleEvent,
-	WoodpeckerCoWebhookOutputs,
-} from './webhooks/types';

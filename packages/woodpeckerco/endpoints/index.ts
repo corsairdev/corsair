@@ -1,7 +1,6 @@
-import { get as exampleGet } from './example';
+import * as Campaigns from './campaigns';
+import * as Prospects from './prospects';
+import * as Webhooks from './webhooks';
 
-export const Example = {
-	get: exampleGet,
-};
-
+export { Campaigns, Prospects, Webhooks };
 export * from './types';
