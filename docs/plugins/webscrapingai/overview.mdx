@@ -88,7 +88,7 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`account.getInfo`**
+**Get account info**
 
 ```ts
 const tenant = corsair.withTenant('acme');
@@ -96,9 +96,12 @@ await tenant.webscrapingai.api.account.getInfo({});
 ```
 
 
-**Write**
+**Ask a question about a page**
 
-_No write-style endpoint inferred; pick any operation from the [API](/plugins/webscrapingai/api) reference._
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.webscrapingai.api.ai.askQuestion({ url: 'https://example.com', question: 'What is this page about?' });
+```
 
 
 See the full list on the [API](/plugins/webscrapingai/api) page.

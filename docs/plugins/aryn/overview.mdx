@@ -88,7 +88,7 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`asyncTasks.list`**
+**List async tasks**
 
 ```ts
 const tenant = corsair.withTenant('acme');
@@ -96,11 +96,11 @@ await tenant.aryn.api.asyncTasks.list({});
 ```
 
 
-**`docset.create`**
+**Create a DocSet**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.aryn.api.docset.create({});
+await tenant.aryn.api.docset.create({ name: 'Quarterly reports' });
 ```
 
 

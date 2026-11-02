@@ -102,19 +102,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`jobs.getJob`**
+**Get a transcription job**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.revai.api.jobs.getJob({});
+await tenant.revai.api.jobs.getJob({ id: 'Umx5c6F7pH7r' });
 ```
 
 
-**`jobs.submitJob`**
+**Submit a transcription job**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.revai.api.jobs.submitJob({});
+await tenant.revai.api.jobs.submitJob({ media_url: 'https://example.com/interview.mp3' });
 ```
 
 
@@ -122,9 +122,17 @@ See the full list on the [API](/plugins/revai/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.revai.db.<entity>.search()` and `.list()`: `job`.
+Search synced jobs without hitting Rev AI.
 
-See [Database](/plugins/revai/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.revai.db.job.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `job`. See [Database](/plugins/revai/database) for filters and operators.
 
 ## What's next
 

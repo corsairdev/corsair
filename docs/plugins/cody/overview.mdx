@@ -89,7 +89,7 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`bots.list`**
+**List bots**
 
 ```ts
 const tenant = corsair.withTenant('acme');
@@ -97,11 +97,11 @@ await tenant.cody.api.bots.list({});
 ```
 
 
-**`conversations.create`**
+**Send a message**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.cody.api.conversations.create({});
+await tenant.cody.api.messages.send({ conversation_id: 'conv_0123456789', content: 'What can you help me with?' });
 ```
 
 
@@ -109,9 +109,17 @@ See the full list on the [API](/plugins/cody/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.cody.db.<entity>.search()` and `.list()`: `bots`, `conversations`, `documents`, `folders`, `messages`, `usage`.
+This table exists, but Cody calls don't fill it yet. This returns only rows you have written yourself.
 
-See [Database](/plugins/cody/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.cody.db.bots.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `bots`, `conversations`, `documents`, `folders`, `messages`, `usage`. See [Database](/plugins/cody/database) for filters and operators.
 
 ## What's next
 

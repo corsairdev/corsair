@@ -89,19 +89,25 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`account.credits`**
+**Get your account**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.clay.api.account.credits({});
+await tenant.clay.api.account.me({});
 ```
 
 
-**`routines.run`**
+**Run a routine**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.clay.api.routines.run({});
+await tenant.clay.api.routines.run({
+	routine_id: 'rt_0123456789',
+	items: [{
+		id: 'item-1',
+		inputs: { domain: 'example.com' },
+	}],
+});
 ```
 
 
@@ -109,9 +115,17 @@ See the full list on the [API](/plugins/clay/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.clay.db.<entity>.search()` and `.list()`: `companies`, `people`, `routineRuns`.
+Search synced routineRuns without hitting Clay.
 
-See [Database](/plugins/clay/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.clay.db.routineRuns.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `companies`, `people`, `routineRuns`. See [Database](/plugins/clay/database) for filters and operators.
 
 ## What's next
 

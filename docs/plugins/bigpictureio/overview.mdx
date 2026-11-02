@@ -88,17 +88,20 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`company.find`**
+**Find a company by IP**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.bigpictureio.api.company.find({});
+await tenant.bigpictureio.api.ip.find({ ip: '8.8.8.8' });
 ```
 
 
-**Write**
+**Find a company by domain**
 
-_No write-style endpoint inferred; pick any operation from the [API](/plugins/bigpictureio/api) reference._
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.bigpictureio.api.company.find({ domain: 'stripe.com' });
+```
 
 
 See the full list on the [API](/plugins/bigpictureio/api) page.

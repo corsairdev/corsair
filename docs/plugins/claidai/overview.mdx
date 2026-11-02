@@ -89,19 +89,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`storageDetails`**
+**List storage connections**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.claidai.api.storageDetails({});
+await tenant.claidai.api.storageList({});
 ```
 
 
-**`backgroundGenerate`**
+**Remove an image background**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.claidai.api.backgroundGenerate({});
+await tenant.claidai.api.backgroundRemove({ input: 'https://example.com/photo.jpg' });
 ```
 
 
@@ -109,9 +109,17 @@ See the full list on the [API](/plugins/claidai/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.claidai.db.<entity>.search()` and `.list()`: `editedImages`, `generatedImages`, `imageTasks`, `storages`, `storageTypes`.
+Search synced storages without hitting Claid.ai.
 
-See [Database](/plugins/claidai/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.claidai.db.storages.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `editedImages`, `generatedImages`, `imageTasks`, `storages`, `storageTypes`. See [Database](/plugins/claidai/database) for filters and operators.
 
 ## What's next
 

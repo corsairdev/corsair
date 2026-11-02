@@ -89,19 +89,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`utility.countries`**
+**Check your credits**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.cloro.api.utility.countries({});
+await tenant.cloro.api.utility.credits({});
 ```
 
 
-**`monitor.chatgpt`**
+**Monitor a ChatGPT answer**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.cloro.api.monitor.chatgpt({});
+await tenant.cloro.api.monitor.chatgpt({ prompt: 'What are the best project management tools?', country: 'US' });
 ```
 
 
@@ -109,9 +109,17 @@ See the full list on the [API](/plugins/cloro/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.cloro.db.<entity>.search()` and `.list()`: `snapshots`.
+Search synced snapshots without hitting Cloro.
 
-See [Database](/plugins/cloro/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.cloro.db.snapshots.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `snapshots`. See [Database](/plugins/cloro/database) for filters and operators.
 
 ## What's next
 

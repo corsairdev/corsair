@@ -88,19 +88,22 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`account.get`**
+**List models**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.replicate.api.account.get({});
+await tenant.replicate.api.models.list({});
 ```
 
 
-**`deployments.create`**
+**Run a prediction**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.replicate.api.deployments.create({});
+await tenant.replicate.api.predictions.create({
+	version: '5c7d5dc6dd8bf75c1acaa8565735e7986bc5b66206b55cca93cb72c9bf15ccaa',
+	input: { prompt: 'A watercolor painting of a lighthouse' },
+});
 ```
 
 

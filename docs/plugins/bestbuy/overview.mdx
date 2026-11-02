@@ -89,26 +89,37 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`categories.get`**
+**List products**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.bestbuy.api.categories.get({});
+await tenant.bestbuy.api.products.list({});
 ```
 
 
-**Write**
+**Get a product**
 
-_No write-style endpoint inferred; pick any operation from the [API](/plugins/bestbuy/api) reference._
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.bestbuy.api.products.get({ sku: '6428324' });
+```
 
 
 See the full list on the [API](/plugins/bestbuy/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.bestbuy.db.<entity>.search()` and `.list()`: `categories`, `products`, `reviews`, `stores`.
+These tables exist, but Best Buy calls don't fill them yet. This returns only rows you have written yourself.
 
-See [Database](/plugins/bestbuy/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.bestbuy.db.products.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `categories`, `products`, `reviews`, `stores`. See [Database](/plugins/bestbuy/database) for filters and operators.
 
 ## What's next
 

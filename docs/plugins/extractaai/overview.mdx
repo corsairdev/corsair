@@ -89,19 +89,25 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`classification.view`**
+**Check remaining credits**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.extractaai.api.classification.view({});
+await tenant.extractaai.api.credits.get({});
 ```
 
 
-**`classification.create`**
+**Create an extraction**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.extractaai.api.classification.create({});
+await tenant.extractaai.api.extraction.create({
+	extractionDetails: {
+		name: 'Invoice extraction',
+		language: 'English',
+		fields: [{ key: 'invoice_number', description: 'The invoice number.' }],
+	},
+});
 ```
 
 
@@ -109,9 +115,17 @@ See the full list on the [API](/plugins/extractaai/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.extractaai.db.<entity>.search()` and `.list()`: `classifications`, `extractions`.
+These tables exist, but Extracta.ai calls don't fill them yet. This returns only rows you have written yourself.
 
-See [Database](/plugins/extractaai/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.extractaai.db.extractions.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `classifications`, `extractions`. See [Database](/plugins/extractaai/database) for filters and operators.
 
 ## What's next
 

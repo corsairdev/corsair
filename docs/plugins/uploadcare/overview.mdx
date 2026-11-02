@@ -89,19 +89,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`addons.clamavStatus`**
+**List files**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.uploadcare.api.addons.clamavStatus({});
+await tenant.uploadcare.api.files.list({});
 ```
 
 
-**`addons.executeClamav`**
+**Upload a file from a URL**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.uploadcare.api.addons.executeClamav({});
+await tenant.uploadcare.api.upload.fromUrl({ source_url: 'https://example.com/photo.jpg' });
 ```
 
 
@@ -109,9 +109,17 @@ See the full list on the [API](/plugins/uploadcare/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.uploadcare.db.<entity>.search()` and `.list()`: `UploadcareFile`, `UploadcareGroup`.
+This table exists, but Uploadcare calls don't fill it yet. This returns only rows you have written yourself.
 
-See [Database](/plugins/uploadcare/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.uploadcare.db.UploadcareFile.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `UploadcareFile`, `UploadcareGroup`. See [Database](/plugins/uploadcare/database) for filters and operators.
 
 ## What's next
 

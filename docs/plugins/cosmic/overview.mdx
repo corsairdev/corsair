@@ -88,19 +88,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`media.find`**
+**Find objects**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.cosmic.api.media.find({});
+await tenant.cosmic.api.objects.find({});
 ```
 
 
-**`media.delete`**
+**Create an object**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.cosmic.api.media.delete({});
+await tenant.cosmic.api.objects.insert({ title: 'Hello world', type: 'posts' });
 ```
 
 

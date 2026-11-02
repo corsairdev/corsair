@@ -89,19 +89,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`alerting.listRules`**
+**Find saved objects**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.kibana.api.alerting.listRules({});
+await tenant.kibana.api.savedObjects.find({ type: 'dashboard' });
 ```
 
 
-**`alerting.createRule`**
+**Create a dashboard**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.kibana.api.alerting.createRule({});
+await tenant.kibana.api.dashboards.create({ title: 'Service overview' });
 ```
 
 
@@ -109,9 +109,17 @@ See the full list on the [API](/plugins/kibana/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.kibana.db.<entity>.search()` and `.list()`: `dataViews`, `savedObjects`, `spaces`.
+These tables exist, but Kibana calls don't fill them yet. This returns only rows you have written yourself.
 
-See [Database](/plugins/kibana/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.kibana.db.savedObjects.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `dataViews`, `savedObjects`, `spaces`. See [Database](/plugins/kibana/database) for filters and operators.
 
 ## What's next
 

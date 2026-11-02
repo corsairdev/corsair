@@ -102,19 +102,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`chats.list`**
+**List pushes**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.pushbullet.api.chats.list({});
+await tenant.pushbullet.api.pushes.list({});
 ```
 
 
-**`chats.create`**
+**Start a chat**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.pushbullet.api.chats.create({});
+await tenant.pushbullet.api.chats.create({ email: 'you@example.com' });
 ```
 
 
@@ -122,9 +122,17 @@ See the full list on the [API](/plugins/pushbullet/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.pushbullet.db.<entity>.search()` and `.list()`: `devices`, `pushes`.
+Search synced pushes without hitting Pushbullet.
 
-See [Database](/plugins/pushbullet/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.pushbullet.db.pushes.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `devices`, `pushes`. See [Database](/plugins/pushbullet/database) for filters and operators.
 
 ## What's next
 

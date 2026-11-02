@@ -89,19 +89,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`account.myself`**
+**List Pods**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.runpod.api.account.myself({});
+await tenant.runpod.api.pods.list({});
 ```
 
 
-**`account.updateSettings`**
+**Create a secret**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.runpod.api.account.updateSettings({});
+await tenant.runpod.api.secrets.create({ name: 'HF_TOKEN', value: 'replace-with-your-token' });
 ```
 
 
@@ -109,9 +109,17 @@ See the full list on the [API](/plugins/runpod/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.runpod.db.<entity>.search()` and `.list()`: `clusters`, `endpoints`, `pods`, `registryAuths`, `secrets`, `templates`, `users`.
+This table exists, but Runpod calls don't fill it yet. This returns only rows you have written yourself.
 
-See [Database](/plugins/runpod/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.runpod.db.pods.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `clusters`, `endpoints`, `pods`, `registryAuths`, `secrets`, `templates`, `users`. See [Database](/plugins/runpod/database) for filters and operators.
 
 ## What's next
 

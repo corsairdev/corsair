@@ -89,19 +89,22 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`companies.fetch`**
+**List customers**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.plain.api.companies.fetch({});
+await tenant.plain.api.customers.list({});
 ```
 
 
-**`companies.update`**
+**Create a thread**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.plain.api.companies.update({});
+await tenant.plain.api.threads.create({
+	customerIdentifier: { customerId: 'c_01ABCDEF' },
+	title: 'Need help with billing',
+});
 ```
 
 
@@ -109,9 +112,17 @@ See the full list on the [API](/plugins/plain/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.plain.db.<entity>.search()` and `.list()`: `companies`, `customer_groups`, `customers`, `threads`, `tiers`.
+These tables exist, but Plain calls don't fill them yet. This returns only rows you have written yourself.
 
-See [Database](/plugins/plain/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.plain.db.customers.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `companies`, `customer_groups`, `customers`, `threads`, `tiers`. See [Database](/plugins/plain/database) for filters and operators.
 
 ## What's next
 

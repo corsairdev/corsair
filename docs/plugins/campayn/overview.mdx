@@ -89,19 +89,24 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`contacts.getContact`**
+**List contact lists**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.campayn.api.contacts.getContact({});
+await tenant.campayn.api.lists.getLists({});
 ```
 
 
-**`contacts.createContact`**
+**Create a contact**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.campayn.api.contacts.createContact({});
+await tenant.campayn.api.contacts.createContact({
+	listId: '12345',
+	email: 'you@example.com',
+	first_name: 'Octo',
+	last_name: 'Cat',
+});
 ```
 
 
@@ -109,9 +114,17 @@ See the full list on the [API](/plugins/campayn/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.campayn.db.<entity>.search()` and `.list()`: `contacts`, `lists`, `messages`, `reports`, `webforms`.
+These tables exist, but Campayn calls don't fill them yet. This returns only rows you have written yourself.
 
-See [Database](/plugins/campayn/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.campayn.db.contacts.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `contacts`, `lists`, `messages`, `reports`, `webforms`. See [Database](/plugins/campayn/database) for filters and operators.
 
 ## What's next
 

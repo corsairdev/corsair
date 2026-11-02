@@ -89,19 +89,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`file.download`**
+**List files**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.codeinterpreter.api.file.download({});
+await tenant.codeinterpreter.api.file.list({});
 ```
 
 
-**`code.execute`**
+**Run code**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.codeinterpreter.api.code.execute({});
+await tenant.codeinterpreter.api.code.execute({ code: 'print(\'hello\')', language: 'python' });
 ```
 
 
@@ -109,9 +109,17 @@ See the full list on the [API](/plugins/codeinterpreter/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.codeinterpreter.db.<entity>.search()` and `.list()`: `executions`, `files`, `sessions`.
+This table exists, but Code Interpreter calls don't fill it yet. This returns only rows you have written yourself.
 
-See [Database](/plugins/codeinterpreter/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.codeinterpreter.db.sessions.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `executions`, `files`, `sessions`. See [Database](/plugins/codeinterpreter/database) for filters and operators.
 
 ## What's next
 

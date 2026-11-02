@@ -89,19 +89,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`account.checkIfResponsive`**
+**List contact lists**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.benchmarkemail.api.account.checkIfResponsive({});
+await tenant.benchmarkemail.api.lists.getContactLists({});
 ```
 
 
-**`account.addRemoveInboxTestsFromSubAccount`**
+**Find a contact by email**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.benchmarkemail.api.account.addRemoveInboxTestsFromSubAccount({});
+await tenant.benchmarkemail.api.contacts.searchContactDetailsByEmail({ search: 'you@example.com' });
 ```
 
 
@@ -109,9 +109,17 @@ See the full list on the [API](/plugins/benchmarkemail/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.benchmarkemail.db.<entity>.search()` and `.list()`: `campaigns`, `contactLists`, `contacts`.
+These tables exist, but Benchmark Email calls don't fill them yet. This returns only rows you have written yourself.
 
-See [Database](/plugins/benchmarkemail/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.benchmarkemail.db.contacts.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `campaigns`, `contactLists`, `contacts`. See [Database](/plugins/benchmarkemail/database) for filters and operators.
 
 ## What's next
 

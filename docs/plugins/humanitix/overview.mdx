@@ -89,26 +89,37 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`events.get`**
+**List events**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.humanitix.api.events.get({});
+await tenant.humanitix.api.events.list({ page: 1 });
 ```
 
 
-**Write**
+**Get an event**
 
-_No write-style endpoint inferred; pick any operation from the [API](/plugins/humanitix/api) reference._
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.humanitix.api.events.get({ eventId: '64f0c0ffee0000000000abcd' });
+```
 
 
 See the full list on the [API](/plugins/humanitix/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.humanitix.db.<entity>.search()` and `.list()`: `events`, `tags`.
+These tables exist, but Humanitix calls don't fill them yet. This returns only rows you have written yourself.
 
-See [Database](/plugins/humanitix/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.humanitix.db.events.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `events`, `tags`. See [Database](/plugins/humanitix/database) for filters and operators.
 
 ## What's next
 

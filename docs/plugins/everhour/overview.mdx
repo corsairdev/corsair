@@ -103,19 +103,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`clients.getClient`**
+**List projects**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.everhour.api.clients.getClient({});
+await tenant.everhour.api.projects.listProjects({});
 ```
 
 
-**`clients.createClient`**
+**Create a task**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.everhour.api.clients.createClient({});
+await tenant.everhour.api.tasks.createTask({ projectId: 'ev:1234567890', name: 'Write the release notes' });
 ```
 
 
@@ -123,15 +123,37 @@ See the full list on the [API](/plugins/everhour/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.everhour.db.<entity>.search()` and `.list()`: `clients`, `expenseCategories`, `expenses`, `invoices`, `platforms`, `projects`, `sections`, `tags`, `tasks`, `timecards`, `timeEntries`, `users`, `webhooks`.
+These tables exist, but Everhour calls don't fill them yet. This returns only rows you have written yourself.
 
-See [Database](/plugins/everhour/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.everhour.db.projects.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `clients`, `expenseCategories`, `expenses`, `invoices`, `platforms`, `projects`, `sections`, `tags`, `tasks`, `timecards`, `timeEntries`, `users`, `webhooks`. See [Database](/plugins/everhour/database) for filters and operators.
 
 ## Webhooks
 
-This plugin registers **20** webhook event types. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
+Fires when a task is created.
 
-See [Webhooks](/plugins/everhour/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
+```ts
+everhour({
+    webhookHooks: {
+        task: {
+            created: {
+                after: async (ctx, result) => {
+                    console.log('Everhour task created:', result.data);
+                }
+            },
+        },
+    },
+})
+```
+
+Mount your framework handler once (see [Frameworks](/frameworks/next)), then point the provider at that URL. Full event list: [Webhooks](/plugins/everhour/webhooks). Concepts: [Webhooks](/concepts/webhooks), [Hooks](/concepts/hooks).
 
 ## What's next
 

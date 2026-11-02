@@ -88,17 +88,20 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`market.getPrice`**
+**List top tokens by market cap**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.tokenmetrics.api.market.getPrice({});
+await tenant.tokenmetrics.api.market.getTopMarketCap({ top_k: 10 });
 ```
 
 
-**Write**
+**Get trading signals**
 
-_No write-style endpoint inferred; pick any operation from the [API](/plugins/tokenmetrics/api) reference._
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.tokenmetrics.api.trading.getSignals({ symbol: 'BTC' });
+```
 
 
 See the full list on the [API](/plugins/tokenmetrics/api) page.

@@ -88,19 +88,22 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`attachments.download`**
+**List contacts**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.zohobigin.api.attachments.download({});
+await tenant.zohobigin.api.records.get({ module: 'Contacts' });
 ```
 
 
-**`attachments.delete`**
+**Add a contact**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.zohobigin.api.attachments.delete({});
+await tenant.zohobigin.api.records.add({
+	module: 'Contacts',
+	data: [{ Last_Name: 'Doe', Email: 'jane@example.com' }],
+});
 ```
 
 

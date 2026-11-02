@@ -89,19 +89,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`account.get`**
+**List contacts**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.brevo.api.account.get({});
+await tenant.brevo.api.contacts.list({});
 ```
 
 
-**`contacts.create`**
+**Create a contact**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.brevo.api.contacts.create({});
+await tenant.brevo.api.contacts.create({ email: 'you@example.com' });
 ```
 
 
@@ -109,9 +109,17 @@ See the full list on the [API](/plugins/brevo/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.brevo.db.<entity>.search()` and `.list()`: `campaigns`, `contacts`.
+Search synced contacts without hitting Brevo.
 
-See [Database](/plugins/brevo/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.brevo.db.contacts.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `campaigns`, `contacts`. See [Database](/plugins/brevo/database) for filters and operators.
 
 ## What's next
 
