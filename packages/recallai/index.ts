@@ -30,6 +30,7 @@ import {
 	updateBot,
 	deleteBotMedia, leaveBotCall, outputAudio, stopOutputAudio, outputMedia, stopOutputMedia, startScreenshare, stopScreenshare,
 	outputVideo, stopOutputVideo, pauseRecording, pinParticipant, resumeRecording, sendChatMessage, startRecording, stopRecording,
+	createAsyncTranscript, deleteRecording, listRecording, retrieveRecording, updateRecording, listRealtimeEndpoints, retrieveRealtimeEndpoints, updateRealtimeEndpoints, recordingSchemas,
 } from './endpoints';
 import {
 	ArtifactListInputSchema,
@@ -69,6 +70,8 @@ export type RecallaiEndpoints = {
 	outputMedia: RecallaiEndpoint<'outputMedia'>; stopOutputMedia: RecallaiEndpoint<'stopOutputMedia'>; startScreenshare: RecallaiEndpoint<'startScreenshare'>; stopScreenshare: RecallaiEndpoint<'stopScreenshare'>;
 	outputVideo: RecallaiEndpoint<'outputVideo'>; stopOutputVideo: RecallaiEndpoint<'stopOutputVideo'>; pauseRecording: RecallaiEndpoint<'pauseRecording'>; pinParticipant: RecallaiEndpoint<'pinParticipant'>;
 	resumeRecording: RecallaiEndpoint<'resumeRecording'>; sendChatMessage: RecallaiEndpoint<'sendChatMessage'>; startRecording: RecallaiEndpoint<'startRecording'>; stopRecording: RecallaiEndpoint<'stopRecording'>;
+	listRecording: RecallaiEndpoint<'listRecording'>; retrieveRecording: RecallaiEndpoint<'retrieveRecording'>; updateRecording: RecallaiEndpoint<'updateRecording'>; deleteRecording: RecallaiEndpoint<'deleteRecording'>; createAsyncTranscript: RecallaiEndpoint<'createAsyncTranscript'>;
+	listRealtimeEndpoints: RecallaiEndpoint<'listRealtimeEndpoints'>; retrieveRealtimeEndpoints: RecallaiEndpoint<'retrieveRealtimeEndpoints'>; updateRealtimeEndpoints: RecallaiEndpoint<'updateRealtimeEndpoints'>;
 	listMeetingMetadata: RecallaiEndpoint<'listMeetingMetadata'>;
 	retrieveMeetingMetadata: RecallaiEndpoint<'retrieveMeetingMetadata'>;
 	listParticipantEvents: RecallaiEndpoint<'listParticipantEvents'>;
@@ -87,6 +90,8 @@ const recallaiEndpointsNested = {
 		delete: deleteBot,
 	},
 	botActions: { deleteBotMedia, leaveBotCall, outputAudio, stopOutputAudio, outputMedia, stopOutputMedia, startScreenshare, stopScreenshare, outputVideo, stopOutputVideo, pauseRecording, pinParticipant, resumeRecording, sendChatMessage, startRecording, stopRecording },
+	recordings: { list: listRecording, retrieve: retrieveRecording, update: updateRecording, delete: deleteRecording, createTranscript: createAsyncTranscript },
+	realtimeEndpoints: { list: listRealtimeEndpoints, retrieve: retrieveRealtimeEndpoints, update: updateRealtimeEndpoints },
 	meetingMetadata: { list: listMeetingMetadata, retrieve: retrieveMeetingMetadata },
 	participantEvents: { list: listParticipantEvents, retrieve: retrieveParticipantEvents, update: updateParticipantEvents },
 	transcripts: { list: listTranscripts, retrieve: retrieveTranscript },
@@ -114,6 +119,14 @@ export const recallaiEndpointSchemas = {
 	'botActions.sendChatMessage': { input: RecallaiBotActionInputSchemas.sendChatMessage, output: RecallaiEndpointOutputSchemas.sendChatMessage },
 	'botActions.startRecording': { input: RecallaiBotActionInputSchemas.startRecording, output: RecallaiEndpointOutputSchemas.startRecording },
 	'botActions.stopRecording': { input: RecallaiBotActionInputSchemas.stopRecording, output: RecallaiEndpointOutputSchemas.stopRecording },
+	'recordings.list': { input: recordingSchemas.listRecording.input, output: recordingSchemas.listRecording.output },
+	'recordings.retrieve': { input: recordingSchemas.retrieveRecording.input, output: recordingSchemas.retrieveRecording.output },
+	'recordings.update': { input: recordingSchemas.updateRecording.input, output: recordingSchemas.updateRecording.output },
+	'recordings.delete': { input: recordingSchemas.deleteRecording.input, output: recordingSchemas.deleteRecording.output },
+	'recordings.createTranscript': { input: recordingSchemas.createAsyncTranscript.input, output: recordingSchemas.createAsyncTranscript.output },
+	'realtimeEndpoints.list': { input: recordingSchemas.listRealtimeEndpoints.input, output: recordingSchemas.listRealtimeEndpoints.output },
+	'realtimeEndpoints.retrieve': { input: recordingSchemas.retrieveRealtimeEndpoints.input, output: recordingSchemas.retrieveRealtimeEndpoints.output },
+	'realtimeEndpoints.update': { input: recordingSchemas.updateRealtimeEndpoints.input, output: recordingSchemas.updateRealtimeEndpoints.output },
 	'meetingMetadata.list': { input: ArtifactListInputSchema, output: ArtifactListResponseSchema },
 	'meetingMetadata.retrieve': { input: RetrieveArtifactInputSchema, output: ArtifactResponseSchema },
 	'participantEvents.list': { input: ArtifactListInputSchema, output: ArtifactListResponseSchema },
@@ -176,6 +189,14 @@ const recallaiEndpointMeta = {
 	'botActions.sendChatMessage': { riskLevel: 'write', description: 'Send a chat message from a Recall.ai bot' },
 	'botActions.startRecording': { riskLevel: 'write', description: 'Start a Recall.ai bot recording' },
 	'botActions.stopRecording': { riskLevel: 'write', description: 'Stop a Recall.ai bot recording' },
+	'recordings.list': { riskLevel: 'read', description: 'List Recall.ai recording artifacts' },
+	'recordings.retrieve': { riskLevel: 'read', description: 'Retrieve a Recall.ai recording artifact' },
+	'recordings.update': { riskLevel: 'write', description: 'Update Recall.ai recording metadata' },
+	'recordings.delete': { riskLevel: 'destructive', description: 'Delete a Recall.ai recording artifact' },
+	'recordings.createTranscript': { riskLevel: 'write', description: 'Create an asynchronous Recall.ai transcript' },
+	'realtimeEndpoints.list': { riskLevel: 'read', description: 'List Recall.ai real-time endpoints' },
+	'realtimeEndpoints.retrieve': { riskLevel: 'read', description: 'Retrieve a Recall.ai real-time endpoint' },
+	'realtimeEndpoints.update': { riskLevel: 'write', description: 'Update a Recall.ai real-time endpoint' },
 	'meetingMetadata.list': { riskLevel: 'read', description: 'List Recall.ai meeting metadata artifacts' },
 	'meetingMetadata.retrieve': { riskLevel: 'read', description: 'Retrieve a Recall.ai meeting metadata artifact' },
 	'participantEvents.list': { riskLevel: 'read', description: 'List Recall.ai participant event artifacts' },

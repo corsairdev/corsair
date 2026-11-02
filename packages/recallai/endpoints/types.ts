@@ -67,6 +67,11 @@ export type BotResponse = z.infer<typeof BotSchema>;
 export type ListBotsResponse = z.infer<typeof ListBotsResponseSchema>;
 
 export type RecallaiEndpointInputs = ArtifactEndpointInputs & {
+	listRecording: { cursor?: string; created_at_after?: string; created_at_before?: string; recording_id?: string; status_code?: 'processing' | 'done' | 'failed' | 'deleted' };
+	retrieveRecording: { id: string }; updateRecording: { id: string; metadata: Record<string, unknown> }; deleteRecording: { id: string };
+	createAsyncTranscript: { id: string; provider?: string };
+	listRealtimeEndpoints: { cursor?: string; created_at_after?: string; created_at_before?: string; recording_id?: string; status_code?: 'processing' | 'done' | 'failed' | 'deleted' };
+	retrieveRealtimeEndpoints: { id: string }; updateRealtimeEndpoints: { id: string; metadata: Record<string, unknown> };
 	listBots: ListBotsInput;
 	createBot: CreateBotInput;
 	retrieveBot: RetrieveBotInput;
@@ -79,6 +84,10 @@ export type RecallaiEndpointInputs = ArtifactEndpointInputs & {
 };
 
 export type RecallaiEndpointOutputs = ArtifactEndpointOutputs & {
+	listRecording: { count?: number; next?: string | null; previous?: string | null; results: Record<string, unknown>[] };
+	retrieveRecording: Record<string, unknown>; updateRecording: Record<string, unknown>; deleteRecording: undefined; createAsyncTranscript: Record<string, unknown>;
+	listRealtimeEndpoints: { count?: number; next?: string | null; previous?: string | null; results: Record<string, unknown>[] };
+	retrieveRealtimeEndpoints: Record<string, unknown>; updateRealtimeEndpoints: Record<string, unknown>;
 	listBots: ListBotsResponse;
 	createBot: BotResponse;
 	retrieveBot: BotResponse;
