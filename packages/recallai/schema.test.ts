@@ -2,9 +2,15 @@ import { recallai, recallaiEndpointSchemas } from './index';
 import { RecallaiSchema } from './schema';
 import { recallaiTestContext } from './test-context';
 
-jest.mock('./client', () => ({
-	makeRecallaiRequest: jest.fn(),
-}));
+jest.mock('./client', () => {
+	const makeRecallaiRequest = jest.fn();
+	return {
+		makeRecallaiRequest,
+		makeRecallaiContextRequest: jest.fn((ctx, path, options) =>
+			makeRecallaiRequest(path, ctx.key, options),
+		),
+	};
+});
 
 import { makeRecallaiRequest } from './client';
 
@@ -15,7 +21,7 @@ describe('Recall.ai schema', () => {
 	});
 
 	it('registers every implemented operation with executable contracts', () => {
-		expect(Object.keys(recallaiEndpointSchemas)).toHaveLength(74);
+		expect(Object.keys(recallaiEndpointSchemas)).toHaveLength(111);
 		expect(Object.keys(recallaiEndpointSchemas)).toEqual(
 			expect.arrayContaining([
 				'bots.list',
@@ -85,6 +91,43 @@ describe('Recall.ai schema', () => {
 				'calendar.retrieveEvent',
 				'calendar.scheduleBot',
 				'calendar.unscheduleBot',
+				'calendars.list',
+				'calendars.create',
+				'calendars.retrieve',
+				'calendars.update',
+				'calendars.delete',
+				'calendars.createAccessToken',
+				'googleLoginGroups.list',
+				'googleLoginGroups.create',
+				'googleLoginGroups.retrieve',
+				'googleLoginGroups.update',
+				'googleLoginGroups.partialUpdate',
+				'googleLoginGroups.delete',
+				'googleLogins.list',
+				'googleLogins.create',
+				'googleLogins.retrieve',
+				'googleLogins.update',
+				'googleLogins.partialUpdate',
+				'googleLogins.delete',
+				'billing.retrieveUsage',
+				'meetingDirectConnects.list',
+				'meetingDirectConnects.create',
+				'meetingDirectConnects.retrieve',
+				'zoomMeetingsToCredentials.list',
+				'zoomOAuthAppLogs.list',
+				'zoomOAuthApps.list',
+				'zoomOAuthApps.create',
+				'zoomOAuthApps.retrieve',
+				'zoomOAuthApps.update',
+				'zoomOAuthApps.delete',
+				'zoomOAuthCredentialLogs.list',
+				'zoomOAuthCredentials.list',
+				'zoomOAuthCredentials.create',
+				'zoomOAuthCredentials.retrieve',
+				'zoomOAuthCredentials.delete',
+				'zoomOAuthCredentials.retrieveAccessToken',
+				'zoomOAuthCredentials.syncMeetings',
+				'zoomOAuthCredentials.validate',
 				'sdkUploads.create',
 				'sdkUploads.retrieve',
 				'meetingMetadata.update',

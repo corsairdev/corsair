@@ -1,8 +1,14 @@
 import { recallai } from './index';
 
-jest.mock('./client', () => ({
-	makeRecallaiRequest: jest.fn(),
-}));
+jest.mock('./client', () => {
+	const makeRecallaiRequest = jest.fn();
+	return {
+		makeRecallaiRequest,
+		makeRecallaiContextRequest: jest.fn((ctx, path, options) =>
+			makeRecallaiRequest(path, ctx.key, options),
+		),
+	};
+});
 
 import { makeRecallaiRequest } from './client';
 import { recallaiTestContext } from './test-context';

@@ -2,7 +2,15 @@ import { makeRecallaiRequest } from './client';
 import { recallai } from './index';
 import { recallaiTestContext } from './test-context';
 
-jest.mock('./client', () => ({ makeRecallaiRequest: jest.fn() }));
+jest.mock('./client', () => {
+	const makeRecallaiRequest = jest.fn();
+	return {
+		makeRecallaiRequest,
+		makeRecallaiContextRequest: jest.fn((ctx, path, options) =>
+			makeRecallaiRequest(path, ctx.key, options),
+		),
+	};
+});
 
 const id = '550e8400-e29b-41d4-a716-446655440000';
 const response = { id, metadata: {}, status: { code: 'done' } };
