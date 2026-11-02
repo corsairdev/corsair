@@ -23,6 +23,8 @@ const n8nRequest = makeEnginemailerN8nRequest as jest.MockedFunction<
 const ctx = { key: 'test-api-key' } as EnginemailerContext;
 type RouteCase = {
 	name: string;
+	// The table intentionally compares heterogeneous endpoint return contracts;
+	// route assertions do not inspect provider response payloads.
 	run: () => Promise<unknown>;
 	transport: 'rest' | 'n8n';
 	method: string;
@@ -31,6 +33,8 @@ type RouteCase = {
 
 const routeCase = <Input>(
 	name: string,
+	// Each endpoint retains its concrete input type at this call site; the
+	// generic helper only erases it after the typed route has been constructed.
 	endpoint: (context: EnginemailerContext, input: Input) => Promise<unknown>,
 	input: Input,
 	transport: RouteCase['transport'],

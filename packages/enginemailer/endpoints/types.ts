@@ -9,6 +9,14 @@ const ResultSchema = z
 	})
 	.passthrough();
 
+// The official N8N Swagger contract does not publish response schemas. These
+// aliases keep that provider opacity explicit at the public type boundary
+// without spreading unexplained `unknown` declarations through the map.
+type N8nOpaqueResponse = unknown;
+type N8nOpaqueCollection = N8nOpaqueResponse[];
+const N8nOpaqueResponseSchema = z.unknown();
+const N8nOpaqueCollectionSchema = z.array(N8nOpaqueResponseSchema);
+
 const SubscriberBodySchema = z.object({
 	email: z.string().email(),
 	subcategories: z.array(z.number().int()).optional(),
@@ -160,27 +168,25 @@ export type EnginemailerEndpointOutputs = {
 	deleteRecipientList: z.infer<typeof ResultSchema>;
 	pauseCampaign: z.infer<typeof ResultSchema>;
 	sendCampaign: z.infer<typeof ResultSchema>;
-	// The official N8N API publishes no response schemas. Keep these values
-	// provider-opaque until its response contracts are documented.
-	addOrUpdateSubscriber: unknown;
-	findSubscriber: unknown;
-	deactivateSubscriber: unknown;
-	deleteN8nSubscriber: unknown;
-	sendEmail: unknown;
-	tagSubscriber: unknown;
-	untagSubscriber: unknown;
-	newSubscribers: unknown[];
-	unsubscribedSubscribers: unknown[];
-	taggedSubscribers: unknown[];
-	deletedSubscribers: unknown[];
-	untaggedSubscribers: unknown[];
-	modifiedSubscribers: unknown[];
-	autoresponderTriggered: unknown[];
-	autoresponderCompleted: unknown[];
-	connect: unknown;
-	listForms: unknown[];
-	listPages: unknown[];
-	listPopups: unknown[];
+	addOrUpdateSubscriber: N8nOpaqueResponse;
+	findSubscriber: N8nOpaqueResponse;
+	deactivateSubscriber: N8nOpaqueResponse;
+	deleteN8nSubscriber: N8nOpaqueResponse;
+	sendEmail: N8nOpaqueResponse;
+	tagSubscriber: N8nOpaqueResponse;
+	untagSubscriber: N8nOpaqueResponse;
+	newSubscribers: N8nOpaqueCollection;
+	unsubscribedSubscribers: N8nOpaqueCollection;
+	taggedSubscribers: N8nOpaqueCollection;
+	deletedSubscribers: N8nOpaqueCollection;
+	untaggedSubscribers: N8nOpaqueCollection;
+	modifiedSubscribers: N8nOpaqueCollection;
+	autoresponderTriggered: N8nOpaqueCollection;
+	autoresponderCompleted: N8nOpaqueCollection;
+	connect: N8nOpaqueResponse;
+	listForms: N8nOpaqueCollection;
+	listPages: N8nOpaqueCollection;
+	listPopups: N8nOpaqueCollection;
 };
 
 export const EnginemailerEndpointInputSchemas = {
@@ -261,25 +267,23 @@ export const EnginemailerEndpointOutputSchemas = {
 	deleteRecipientList: ResultSchema,
 	pauseCampaign: ResultSchema,
 	sendCampaign: ResultSchema,
-	// N8N response shapes are provider-defined and absent from its published
-	// Swagger contract, so these schemas intentionally validate any JSON value.
-	addOrUpdateSubscriber: z.unknown(),
-	findSubscriber: z.unknown(),
-	deactivateSubscriber: z.unknown(),
-	deleteN8nSubscriber: z.unknown(),
-	sendEmail: z.unknown(),
-	tagSubscriber: z.unknown(),
-	untagSubscriber: z.unknown(),
-	newSubscribers: z.array(z.unknown()),
-	unsubscribedSubscribers: z.array(z.unknown()),
-	taggedSubscribers: z.array(z.unknown()),
-	deletedSubscribers: z.array(z.unknown()),
-	untaggedSubscribers: z.array(z.unknown()),
-	modifiedSubscribers: z.array(z.unknown()),
-	autoresponderTriggered: z.array(z.unknown()),
-	autoresponderCompleted: z.array(z.unknown()),
-	connect: z.unknown(),
-	listForms: z.array(z.unknown()),
-	listPages: z.array(z.unknown()),
-	listPopups: z.array(z.unknown()),
+	addOrUpdateSubscriber: N8nOpaqueResponseSchema,
+	findSubscriber: N8nOpaqueResponseSchema,
+	deactivateSubscriber: N8nOpaqueResponseSchema,
+	deleteN8nSubscriber: N8nOpaqueResponseSchema,
+	sendEmail: N8nOpaqueResponseSchema,
+	tagSubscriber: N8nOpaqueResponseSchema,
+	untagSubscriber: N8nOpaqueResponseSchema,
+	newSubscribers: N8nOpaqueCollectionSchema,
+	unsubscribedSubscribers: N8nOpaqueCollectionSchema,
+	taggedSubscribers: N8nOpaqueCollectionSchema,
+	deletedSubscribers: N8nOpaqueCollectionSchema,
+	untaggedSubscribers: N8nOpaqueCollectionSchema,
+	modifiedSubscribers: N8nOpaqueCollectionSchema,
+	autoresponderTriggered: N8nOpaqueCollectionSchema,
+	autoresponderCompleted: N8nOpaqueCollectionSchema,
+	connect: N8nOpaqueResponseSchema,
+	listForms: N8nOpaqueCollectionSchema,
+	listPages: N8nOpaqueCollectionSchema,
+	listPopups: N8nOpaqueCollectionSchema,
 } as const;
