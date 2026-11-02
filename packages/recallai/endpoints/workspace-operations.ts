@@ -1,7 +1,9 @@
 import { logEventFromContext } from 'corsair/core';
 import { z } from 'zod';
-import type { RecallaiContext } from '..';
 import { makeRecallaiContextRequest } from '../client';
+import type { RecallaiContext } from '../index';
+import type { RecallaiJsonValue } from '../json';
+import { RecallaiJsonObjectSchema } from '../json';
 
 const uuid = z.string().uuid();
 const dateTime = z.string().datetime();
@@ -9,7 +11,7 @@ const dateTime = z.string().datetime();
 // Recall's meeting recording configuration is a large, extensible contract
 // shared with bot creation. Keep its known object envelope while preserving
 // provider-specific configuration fields that are not enumerated here.
-const opaqueObject = z.record(z.string(), z.unknown());
+const opaqueObject = RecallaiJsonObjectSchema;
 
 const PageSchema = <Item extends z.ZodType>(item: Item) =>
 	z.object({
@@ -387,6 +389,7 @@ export type RecallaiWorkspaceOperationOutputs = {
 type RequestOptions = {
 	method?: 'GET' | 'POST' | 'PATCH' | 'DELETE';
 	query?: Record<string, string | number | boolean | undefined>;
+	// Endpoint schemas validate provider-defined nested JSON before transport.
 	body?: Record<string, unknown>;
 };
 
@@ -397,7 +400,7 @@ const requestValidated = async <Output>(
 	options: RequestOptions,
 	outputSchema: z.ZodType<Output>,
 ): Promise<Output> => {
-	const response = await makeRecallaiContextRequest<unknown>(
+	const response = await makeRecallaiContextRequest<RecallaiJsonValue>(
 		ctx,
 		path,
 		options,

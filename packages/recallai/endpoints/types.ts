@@ -1,4 +1,6 @@
 import { z } from 'zod';
+import type { RecallaiJsonObject } from '../json';
+import { RecallaiJsonObjectSchema } from '../json';
 import type {
 	ArtifactEndpointInputs,
 	ArtifactEndpointOutputs,
@@ -58,7 +60,7 @@ const id = z
 
 // Recall returns provider-specific nested configuration objects. The known
 // envelope is validated while these opaque sections remain extensible.
-const opaqueObject = z.record(z.string(), z.unknown());
+const opaqueObject = RecallaiJsonObjectSchema;
 
 const BotSchema = z
 	.object({
@@ -140,7 +142,7 @@ export type RecallaiEndpointInputs = ArtifactEndpointInputs &
 			status_code?: 'processing' | 'done' | 'failed' | 'deleted';
 		};
 		retrieveRecording: { id: string };
-		updateRecording: { id: string; metadata: Record<string, unknown> };
+		updateRecording: { id: string; metadata: RecallaiJsonObject };
 		deleteRecording: { id: string };
 		createAsyncTranscript: { id: string; provider?: string };
 		listRealtimeEndpoints: {
@@ -151,7 +153,7 @@ export type RecallaiEndpointInputs = ArtifactEndpointInputs &
 			status_code?: 'processing' | 'done' | 'failed' | 'deleted';
 		};
 		retrieveRealtimeEndpoints: { id: string };
-		updateRealtimeEndpoints: { id: string; metadata: Record<string, unknown> };
+		updateRealtimeEndpoints: { id: string; metadata: RecallaiJsonObject };
 		listSdkUploads: {
 			cursor?: string;
 			created_at_after?: string;
@@ -160,15 +162,15 @@ export type RecallaiEndpointInputs = ArtifactEndpointInputs &
 			status_code?: 'processing' | 'done' | 'failed' | 'deleted';
 		};
 		createSdkUpload: {
-			recording_config?: Record<string, unknown>;
+			recording_config?: RecallaiJsonObject;
 			_1080p?: boolean;
-			metadata?: Record<string, unknown>;
+			metadata?: RecallaiJsonObject;
 		};
 		retrieveSdkUpload: { id: string };
-		updateMeetingMetadata: { id: string; metadata: Record<string, unknown> };
+		updateMeetingMetadata: { id: string; metadata: RecallaiJsonObject };
 		deleteMeetingMetadata: { id: string };
 		deleteParticipantEvents: { id: string };
-		updateTranscript: { id: string; metadata: Record<string, unknown> };
+		updateTranscript: { id: string; metadata: RecallaiJsonObject };
 		deleteTranscript: { id: string };
 		listAudioMixed: {
 			cursor?: string;
@@ -178,7 +180,7 @@ export type RecallaiEndpointInputs = ArtifactEndpointInputs &
 			status_code?: 'processing' | 'done' | 'failed' | 'deleted';
 		};
 		retrieveAudioMixed: { id: string };
-		updateAudioMixed: { id: string; metadata: Record<string, unknown> };
+		updateAudioMixed: { id: string; metadata: RecallaiJsonObject };
 		deleteAudioMixed: { id: string };
 		listAudioSeparate: {
 			cursor?: string;
@@ -188,7 +190,7 @@ export type RecallaiEndpointInputs = ArtifactEndpointInputs &
 			status_code?: 'processing' | 'done' | 'failed' | 'deleted';
 		};
 		retrieveAudioSeparate: { id: string };
-		updateAudioSeparate: { id: string; metadata: Record<string, unknown> };
+		updateAudioSeparate: { id: string; metadata: RecallaiJsonObject };
 		deleteAudioSeparate: { id: string };
 		listVideoMixed: {
 			cursor?: string;
@@ -198,7 +200,7 @@ export type RecallaiEndpointInputs = ArtifactEndpointInputs &
 			status_code?: 'processing' | 'done' | 'failed' | 'deleted';
 		};
 		retrieveVideoMixed: { id: string };
-		updateVideoMixed: { id: string; metadata: Record<string, unknown> };
+		updateVideoMixed: { id: string; metadata: RecallaiJsonObject };
 		deleteVideoMixed: { id: string };
 		listVideoSeparate: {
 			cursor?: string;
@@ -208,7 +210,7 @@ export type RecallaiEndpointInputs = ArtifactEndpointInputs &
 			status_code?: 'processing' | 'done' | 'failed' | 'deleted';
 		};
 		retrieveVideoSeparate: { id: string };
-		updateVideoSeparate: { id: string; metadata: Record<string, unknown> };
+		updateVideoSeparate: { id: string; metadata: RecallaiJsonObject };
 		deleteVideoSeparate: { id: string };
 		listBots: ListBotsInput;
 		createBot: CreateBotInput;
@@ -251,32 +253,32 @@ export type RecallaiEndpointOutputs = ArtifactEndpointOutputs &
 			count?: number;
 			next?: string | null;
 			previous?: string | null;
-			results: Record<string, unknown>[];
+			results: RecallaiJsonObject[];
 		};
-		retrieveRecording: Record<string, unknown>;
-		updateRecording: Record<string, unknown>;
+		retrieveRecording: RecallaiJsonObject;
+		updateRecording: RecallaiJsonObject;
 		deleteRecording: undefined;
-		createAsyncTranscript: Record<string, unknown>;
+		createAsyncTranscript: RecallaiJsonObject;
 		listRealtimeEndpoints: {
 			count?: number;
 			next?: string | null;
 			previous?: string | null;
-			results: Record<string, unknown>[];
+			results: RecallaiJsonObject[];
 		};
-		retrieveRealtimeEndpoints: Record<string, unknown>;
-		updateRealtimeEndpoints: Record<string, unknown>;
+		retrieveRealtimeEndpoints: RecallaiJsonObject;
+		updateRealtimeEndpoints: RecallaiJsonObject;
 		listSdkUploads: {
 			count?: number;
 			next?: string | null;
 			previous?: string | null;
-			results: Record<string, unknown>[];
+			results: RecallaiJsonObject[];
 		};
-		createSdkUpload: Record<string, unknown>;
-		retrieveSdkUpload: Record<string, unknown>;
-		updateMeetingMetadata: Record<string, unknown>;
+		createSdkUpload: RecallaiJsonObject;
+		retrieveSdkUpload: RecallaiJsonObject;
+		updateMeetingMetadata: RecallaiJsonObject;
 		deleteMeetingMetadata: undefined;
 		deleteParticipantEvents: undefined;
-		updateTranscript: Record<string, unknown>;
+		updateTranscript: RecallaiJsonObject;
 		deleteTranscript: undefined;
 		listAudioMixed: z.infer<typeof mediaSchemas.audioMixed.list.output>;
 		retrieveAudioMixed: z.infer<typeof mediaSchemas.audioMixed.retrieve.output>;
@@ -309,13 +311,13 @@ export type RecallaiEndpointOutputs = ArtifactEndpointOutputs &
 		deleteBot: undefined;
 		deleteBotMedia: undefined;
 		leaveBotCall: undefined;
-		outputAudio: Record<string, unknown>;
+		outputAudio: RecallaiJsonObject;
 		stopOutputAudio: undefined;
-		outputMedia: Record<string, unknown>;
+		outputMedia: RecallaiJsonObject;
 		stopOutputMedia: undefined;
-		startScreenshare: Record<string, unknown>;
+		startScreenshare: RecallaiJsonObject;
 		stopScreenshare: undefined;
-		outputVideo: Record<string, unknown>;
+		outputVideo: RecallaiJsonObject;
 		stopOutputVideo: undefined;
 		pauseRecording: undefined;
 		pinParticipant: undefined;
@@ -410,13 +412,13 @@ export const RecallaiEndpointOutputSchemas = {
 	deleteBot: z.undefined(),
 	deleteBotMedia: z.undefined(),
 	leaveBotCall: z.undefined(),
-	outputAudio: z.record(z.string(), z.unknown()).optional(),
+	outputAudio: RecallaiJsonObjectSchema.optional(),
 	stopOutputAudio: z.undefined(),
-	outputMedia: z.record(z.string(), z.unknown()).optional(),
+	outputMedia: RecallaiJsonObjectSchema.optional(),
 	stopOutputMedia: z.undefined(),
-	startScreenshare: z.record(z.string(), z.unknown()).optional(),
+	startScreenshare: RecallaiJsonObjectSchema.optional(),
 	stopScreenshare: z.undefined(),
-	outputVideo: z.record(z.string(), z.unknown()).optional(),
+	outputVideo: RecallaiJsonObjectSchema.optional(),
 	stopOutputVideo: z.undefined(),
 	pauseRecording: z.undefined(),
 	pinParticipant: z.undefined(),

@@ -1,10 +1,12 @@
 import { z } from 'zod';
+import type { RecallaiJsonObject } from '../json';
+import { RecallaiJsonObjectSchema } from '../json';
 
 const id = z.string().uuid();
-const opaque = z.record(z.string(), z.unknown());
+const opaque = RecallaiJsonObjectSchema;
 // Recall calendar responses include provider-specific fields, so preserve the
 // response payload while still requiring a JSON object or list of objects.
-const objectResponse = z.record(z.string(), z.unknown());
+const objectResponse = RecallaiJsonObjectSchema;
 const arrayResponse = z.array(opaque);
 
 export const CalendarAuthenticateInputSchema = z.object({
@@ -92,24 +94,24 @@ export type CalendarEndpointInputs = {
 };
 
 export type CalendarEndpointOutputs = {
-	authenticateCalendar: Record<string, unknown>;
-	listCalendarMeetings: Record<string, unknown>[];
-	retrieveCalendarMeeting: Record<string, unknown>;
-	updateCalendarMeeting: Record<string, unknown>;
-	refreshCalendarMeetings: Record<string, unknown>[];
-	retrieveCalendarUser: Record<string, unknown>;
-	updateCalendarUser: Record<string, unknown>;
+	authenticateCalendar: RecallaiJsonObject;
+	listCalendarMeetings: RecallaiJsonObject[];
+	retrieveCalendarMeeting: RecallaiJsonObject;
+	updateCalendarMeeting: RecallaiJsonObject;
+	refreshCalendarMeetings: RecallaiJsonObject[];
+	retrieveCalendarUser: RecallaiJsonObject;
+	updateCalendarUser: RecallaiJsonObject;
 	deleteCalendarUser: undefined;
-	disconnectCalendarPlatform: Record<string, unknown>;
+	disconnectCalendarPlatform: RecallaiJsonObject;
 	listCalendarUsers:
-		| Record<string, unknown>[]
+		| RecallaiJsonObject[]
 		| {
 				next?: string | null;
 				previous?: string | null;
-				results: Record<string, unknown>[];
+				results: RecallaiJsonObject[];
 		  };
-	listCalendarEvents: Record<string, unknown>;
-	retrieveCalendarEvent: Record<string, unknown>;
-	scheduleBotForCalendarEvent: Record<string, unknown>;
-	unscheduleBotForCalendarEvent: Record<string, unknown>;
+	listCalendarEvents: RecallaiJsonObject;
+	retrieveCalendarEvent: RecallaiJsonObject;
+	scheduleBotForCalendarEvent: RecallaiJsonObject;
+	unscheduleBotForCalendarEvent: RecallaiJsonObject;
 };

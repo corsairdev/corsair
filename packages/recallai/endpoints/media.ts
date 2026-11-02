@@ -1,11 +1,12 @@
 import { logEventFromContext } from 'corsair/core';
 import { z } from 'zod';
+import { makeRecallaiContextRequest } from '../client';
 import type {
 	RecallaiContext,
 	RecallaiEndpointOutputs,
 	RecallaiEndpoints,
-} from '..';
-import { makeRecallaiContextRequest } from '../client';
+} from '../index';
+import { RecallaiJsonObjectSchema } from '../json';
 
 const id = z.string().uuid();
 // Recall returns provider-specific media metadata, so the known artifact
@@ -13,10 +14,10 @@ const id = z.string().uuid();
 const media = z
 	.object({
 		id,
-		recording: z.record(z.string(), z.unknown()).optional(),
-		metadata: z.record(z.string(), z.unknown()).optional(),
-		status: z.record(z.string(), z.unknown()).optional(),
-		data: z.record(z.string(), z.unknown()).optional(),
+		recording: RecallaiJsonObjectSchema.optional(),
+		metadata: RecallaiJsonObjectSchema.optional(),
+		status: RecallaiJsonObjectSchema.optional(),
+		data: RecallaiJsonObjectSchema.optional(),
 	})
 	.passthrough();
 const page = z.object({
@@ -34,7 +35,7 @@ const listInput = z.object({
 });
 const itemInput = z.object({ id });
 const updateInput = z
-	.object({ id, metadata: z.record(z.string(), z.unknown()).optional() })
+	.object({ id, metadata: RecallaiJsonObjectSchema.optional() })
 	.refine(({ metadata }) => metadata !== undefined);
 
 const path = (resource: string, resourceId?: string) =>

@@ -1,7 +1,8 @@
 import { z } from 'zod';
+import { RecallaiJsonObjectSchema } from '../json';
 
 const id = z.string().uuid();
-const opaqueObject = z.record(z.string(), z.unknown());
+const opaqueObject = RecallaiJsonObjectSchema;
 const artifactStatus = z.object({
 	code: z.string(),
 	sub_code: z.string().nullable().optional(),

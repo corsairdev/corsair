@@ -1,15 +1,16 @@
 import { logEventFromContext } from 'corsair/core';
 import { z } from 'zod';
+import { makeRecallaiContextRequest } from '../client';
 import type {
 	RecallaiContext,
 	RecallaiEndpointOutputs,
 	RecallaiEndpoints,
-} from '..';
-
-import { makeRecallaiContextRequest } from '../client';
+} from '../index';
+import type { RecallaiJsonObject } from '../json';
+import { RecallaiJsonObjectSchema } from '../json';
 
 const id = z.string().uuid();
-const opaque = z.record(z.string(), z.unknown());
+const opaque = RecallaiJsonObjectSchema;
 const artifact = z
 	.object({
 		id,
@@ -168,7 +169,7 @@ export const listSdkUploads = async (
 	count?: number;
 	next?: string | null;
 	previous?: string | null;
-	results: Record<string, unknown>[];
+	results: RecallaiJsonObject[];
 }> => list(ctx, input, 'sdk_upload', 'recallai.sdkUpload.list');
 
 const createSdkUploadInput = z.object({
