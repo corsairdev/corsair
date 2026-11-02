@@ -1,5 +1,5 @@
-import { recallai } from './index';
 import { makeRecallaiRequest } from './client';
+import { recallai } from './index';
 
 jest.mock('./client', () => ({ makeRecallaiRequest: jest.fn() }));
 

@@ -1,4 +1,3 @@
-import { AuthMissingError } from 'corsair/core';
 import type {
 	AuthTypes,
 	BindEndpoints,
@@ -13,10 +12,13 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
+
+import { AuthMissingError } from 'corsair/core';
 import type {
 	RecallaiEndpointInputs,
 	RecallaiEndpointOutputs,
 } from './endpoints/types';
+
 import {
 	RecallaiEndpointInputSchemas,
 	RecallaiEndpointOutputSchemas,

@@ -33,12 +33,12 @@ export {
 export {
 	createAsyncTranscript,
 	deleteRecording,
-	listRecording,
 	listRealtimeEndpoints,
 	listSdkUploads,
+	listRecording,
 	recordingSchemas,
-	retrieveRecording,
 	retrieveRealtimeEndpoints,
+	retrieveRecording,
 	updateRealtimeEndpoints,
 	updateRecording,
 } from './recordings';
