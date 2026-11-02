@@ -6,6 +6,8 @@ export const APP_URL = 'https://hub.corsair.dev';
 /** The one hosted MCP address every client adds (docs/cloud/mcp.mdx). */
 export const MCP_URL = 'https://mcp.corsair.dev/mcp';
 export const MCP_DOCS_URL = `${DOCS_URL}/cloud/mcp`;
+/** The agent onboarding file (www/public/skill.md). */
+export const SKILL_URL = 'https://corsair.dev/skill.md';
 /**
  * Cursor's web install link: it opens Cursor's install prompt, and shows the
  * config to paste when Cursor isn't installed (cursor.com/docs/mcp/install-links).

@@ -1,36 +1,37 @@
 import { AgentRolesSection } from './agent-roles/agent-roles-section';
+import { DevelopersSection } from './developers/developers-section';
 import { FaqSection } from './faq/faq-section';
 import { SiteFooter } from './footer/site-footer';
 import { LandingHero } from './hero/landing-hero';
-import { LugIntroSection } from './lug/lug-intro-section';
+import { buildHomeMarkdown } from './home-markdown';
 import { ManagedToolsSection } from './managed-tools/managed-tools-section';
 import { SiteMenu } from './menu/site-menu';
+import { PillarsSection } from './pillars/pillars-section';
 import { PricingSection } from './pricing/pricing-section';
-import { ProblemStatementSection } from './problem-statement/problem-statement-section';
-import { SolutionFramingSection } from './solution-framing/solution-framing-section';
-import { TerminalTrioSection } from './terminal-trio/terminal-trio-section';
+import { ViewSwitch } from './view-switch/view-switch';
+
+export const LANDING_BACKGROUND = {
+	backgroundImage:
+		'radial-gradient(circle at 2px 2px, rgba(74, 56, 245, 0.12) 1px, transparent 0)',
+	backgroundSize: '12px 12px',
+};
 
 export function LandingPage({ starCount }: { starCount?: number | null }) {
 	return (
 		<div
 			className="landing min-h-screen overflow-x-clip bg-[#f4f4f4]"
-			style={{
-				backgroundImage:
-					'radial-gradient(circle at 2px 2px, rgba(74, 56, 245, 0.12) 1px, transparent 0)',
-				backgroundSize: '12px 12px',
-			}}
+			style={LANDING_BACKGROUND}
 		>
 			<SiteMenu />
-			<LandingHero starCount={starCount} />
-			<LugIntroSection />
-			<AgentRolesSection />
-			<TerminalTrioSection />
-			<ProblemStatementSection />
-			<SolutionFramingSection />
-			<ManagedToolsSection />
-			<PricingSection />
-			<FaqSection />
-			<SiteFooter />
+			<ViewSwitch markdown={buildHomeMarkdown()} footer={<SiteFooter />}>
+				<LandingHero />
+				<AgentRolesSection />
+				<PillarsSection />
+				<ManagedToolsSection />
+				<DevelopersSection starCount={starCount} />
+				<PricingSection />
+				<FaqSection />
+			</ViewSwitch>
 		</div>
 	);
 }

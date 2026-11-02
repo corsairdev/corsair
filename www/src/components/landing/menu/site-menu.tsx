@@ -7,6 +7,13 @@ import { useCallback, useEffect, useState } from 'react';
 import { APP_URL, DISCORD_URL, DOCS_URL, GITHUB_URL } from '@/lib/site-links';
 import { PlusCorner } from '../icons';
 
+const NAV_LINKS = [
+	{ href: '/use-cases', label: 'Use cases' },
+	{ href: '/integrations', label: 'Integrations' },
+	{ href: '/developers', label: 'Developers' },
+	{ href: '/#pricing', label: 'Pricing' },
+] as const;
+
 function MenuIcon() {
 	return (
 		<svg
@@ -108,12 +115,15 @@ export function SiteMenu() {
 
 					{/* Desktop center links */}
 					<div className="absolute left-1/2 hidden -translate-x-1/2 md:flex items-center gap-0.5">
-						<Link
-							href="/#pricing"
-							className="px-3 py-2 text-sm font-medium text-[#1c1c1c]/80 no-underline transition-colors duration-200 hover:text-[#1c1c1c] font-[family-name:var(--landing-font-sans)]"
-						>
-							Pricing
-						</Link>
+						{NAV_LINKS.map((link) => (
+							<Link
+								key={link.href}
+								href={link.href}
+								className="px-3 py-2 text-sm font-medium text-[#1c1c1c]/80 no-underline transition-colors duration-200 hover:text-[#1c1c1c] font-[family-name:var(--landing-font-sans)]"
+							>
+								{link.label}
+							</Link>
+						))}
 						<a
 							href={DOCS_URL}
 							target="_blank"
@@ -122,18 +132,6 @@ export function SiteMenu() {
 						>
 							Docs
 						</a>
-						<Link
-							href="/integrations"
-							className="px-3 py-2 text-sm font-medium text-[#1c1c1c]/80 no-underline transition-colors duration-200 hover:text-[#1c1c1c] font-[family-name:var(--landing-font-sans)]"
-						>
-							Integrations
-						</Link>
-						<Link
-							href="/use-cases"
-							className="px-3 py-2 text-sm font-medium text-[#1c1c1c]/80 no-underline transition-colors duration-200 hover:text-[#1c1c1c] font-[family-name:var(--landing-font-sans)]"
-						>
-							Use cases
-						</Link>
 					</div>
 
 					{/* Desktop right actions */}
@@ -224,6 +222,13 @@ export function SiteMenu() {
 							onClick={() => setIsMobileMenuOpen(false)}
 						>
 							Use cases
+						</Link>
+						<Link
+							href="/developers"
+							className="flex items-center justify-between rounded-lg border border-[#1c1c1c]/10 bg-white/60 px-4 py-3 text-sm font-medium text-[#1c1c1c] no-underline transition-colors hover:bg-white font-[family-name:var(--landing-font-sans)]"
+							onClick={() => setIsMobileMenuOpen(false)}
+						>
+							Developers
 						</Link>
 						<a
 							href={GITHUB_URL}
