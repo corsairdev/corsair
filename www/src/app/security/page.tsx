@@ -1,3 +1,4 @@
+import { ArrowDown } from '@phosphor-icons/react/dist/ssr';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 
@@ -12,7 +13,7 @@ import { socialMetadata } from '@/lib/social-metadata';
 
 const TITLE = 'Security';
 const DESCRIPTION =
-	'How Corsair protects the credentials and data your agents use: per-account encryption, keys in AWS KMS, sandboxed scripts, approvals, deletion, and how to report a vulnerability.';
+	'How Corsair keeps your API keys, tokens and app data safe: envelope encryption for every account, keys held in AWS KMS that rotate automatically, no cross-tenant access, sandboxed scripts and approvals.';
 
 export const metadata: Metadata = {
 	title: TITLE,
@@ -28,8 +29,17 @@ export const metadata: Metadata = {
 };
 
 const SECURITY_CONTACT_EMAIL = 'team@corsair.dev';
-const LAST_UPDATED = 'November 2, 2026';
+const LAST_UPDATED = 'November 3, 2026';
+const ENVELOPE_ENCRYPTION_URL =
+	'https://en.wikipedia.org/wiki/Hybrid_cryptosystem#Envelope_encryption';
 const ENCRYPTION_SOURCE_URL = `${GITHUB_URL}/blob/main/packages/corsair/core/auth/encryption.ts`;
+
+const SUMMARY = [
+	'Every API key, OAuth token and record we sync is encrypted, and each account has its own key.',
+	'The keys that unlock them are held in AWS Key Management Service and rotate automatically. Our database only ever stores them encrypted.',
+	'If our database were copied tomorrow, your API keys and app data would stay unreadable.',
+	'No cross-tenant contamination: one customer’s requests can’t open another customer’s data.',
+] as const;
 
 const MODES = [
 	{ mode: 'Read', allows: 'Reads only. Writes are refused.' },
@@ -46,6 +56,7 @@ const MODES = [
 ] as const;
 
 const strong = 'font-medium text-[#1c1c1c]';
+const code = 'text-sm';
 
 export default function SecurityPage() {
 	return (
@@ -55,101 +66,163 @@ export default function SecurityPage() {
 			lastUpdated={LAST_UPDATED}
 			relatedLink={{ href: '/privacy-policy', label: 'Privacy Policy' }}
 		>
-			<section className="space-y-4">
+			<section className="space-y-5">
 				<p>
 					Corsair holds the keys to your apps so your agent doesn&apos;t have
-					to. This page explains how we protect them. For what we collect and
-					how long we keep it, see the{' '}
-					<Link href="/privacy-policy" className={legalLinkClassName}>
-						Privacy Policy
-					</Link>
-					.
+					to. Here is how we keep them, and the data that comes with them, safe.
 				</p>
-				<p>
-					There are two ways to run Corsair, and they differ in who holds the
-					keys:
-				</p>
-				<ul className="list-disc space-y-2 pl-6">
-					<li>
-						<strong className={strong}>The SDK in your own app.</strong>{' '}
-						Credentials live in your database, encrypted with a key (
-						<code className="text-sm">CORSAIR_KEK</code>) that only you hold.
-						Corsair never has it.
-					</li>
-					<li>
-						<strong className={strong}>Corsair Cloud</strong>, which includes
-						your links at {APP_URL.replace('https://', '')}/me and your
-						yourname.lug.dev address. We store your credentials and the data
-						synced from your apps, encrypted, and run your tools for you. Most
-						of this page is about this case.
-					</li>
-				</ul>
+				<div className="rounded-xl border border-[#1c1c1c]/10 bg-white p-5 sm:p-6">
+					<ul className="space-y-3">
+						{SUMMARY.map((line) => (
+							<li key={line} className="flex gap-3 text-[#1c1c1c]">
+								<span
+									aria-hidden
+									className="mt-[9px] size-1.5 shrink-0 rounded-full bg-[#4a38f5]"
+								/>
+								<span>{line}</span>
+							</li>
+						))}
+					</ul>
+					<a
+						href="#corsair-cloud"
+						className="mt-5 inline-flex items-center gap-1.5 rounded-lg bg-[#1c1c1c] px-4 py-2.5 text-sm font-medium text-white no-underline transition-colors hover:bg-[#1c1c1c]/85"
+					>
+						Learn more
+						<ArrowDown size={14} weight="bold" aria-hidden />
+					</a>
+				</div>
 			</section>
 
 			<LegalDivider />
 
-			<LegalSection title="Your agent never sees your credentials">
+			<div id="corsair-cloud" className="scroll-mt-24">
+				<LegalSection title="How Corsair Cloud protects your data">
+					<p>
+						Corsair Cloud, including your links at{' '}
+						{APP_URL.replace('https://', '')}/me and your yourname.lug.dev
+						address, runs on the open-source Corsair SDK. Everything the SDK
+						does to protect data, Cloud does too, and adds the layers below.
+					</p>
+					<p>
+						The SDK uses{' '}
+						<a
+							href={ENVELOPE_ENCRYPTION_URL}
+							className={legalLinkClassName}
+							target="_blank"
+							rel="noopener noreferrer"
+						>
+							envelope encryption
+						</a>
+						. Your data is encrypted with a data key, and that data key is
+						itself encrypted with a separate key that is kept somewhere else.
+						Reading anything takes both, so a stolen data key or a stolen copy
+						of the data is useless on its own.
+					</p>
+					<ul className="list-disc space-y-2 pl-6">
+						<li>
+							<strong className={strong}>Encrypted at rest.</strong> OAuth
+							tokens, API keys, and the records we sync from your apps
+							(messages, issues, events) are stored encrypted with AES-256-GCM.
+							Every connected account has its own data key.
+						</li>
+						<li>
+							<strong className={strong}>
+								Keys held outside the database.
+							</strong>{' '}
+							The keys that unlock your workspace live in AWS Key Management
+							Service and rotate automatically. Only an encrypted copy is stored
+							with your data.
+						</li>
+						<li>
+							<strong className={strong}>
+								Zero trust inside our own system.
+							</strong>{' '}
+							The servers that run your tools have no standing permission to
+							decrypt anything. Each request carries a short-lived grant that
+							Corsair issues for one workspace, and the key service checks it
+							before it unlocks that workspace and nothing else.
+						</li>
+					</ul>
+					<p>
+						That is why a leak of our database wouldn&apos;t expose you. A copy
+						would hold encrypted values only, and the keys to read your API
+						keys, tokens and app data are not in it.
+					</p>
+				</LegalSection>
+			</div>
+
+			<LegalSection title="No cross-tenant contamination">
 				<p>
-					An agent works with tool names, arguments and results. Corsair
-					attaches the credential when it calls the app, so the token or API key
-					never appears in a tool result or in the model&apos;s context.
+					Every person and every customer is walled off from every other. Each
+					connected account&apos;s data is encrypted with its own key, each
+					person&apos;s records are kept apart by their tenant ID, and every
+					request is tied to one project and one person before anything runs.
 				</p>
 				<p>
-					Scripts an agent writes (<code className="text-sm">run_script</code>{' '}
-					and <code className="text-sm">read_data</code>) run in an isolated
-					sandbox with no network, filesystem or process access. The only thing
-					a script can reach is the person&apos;s own connected apps, through
-					Corsair.
+					The access tokens Corsair issues to MCP clients are signed, name the
+					one person and link they belong to, and expire after 15 minutes. A
+					grant opens one workspace, so a request for one customer can&apos;t
+					reach another customer&apos;s keys.
 				</p>
 			</LegalSection>
 
-			<LegalSection title="How credentials and data are stored">
+			<LegalSection title="Under the hood: the SDK">
 				<p>
-					Every connected account has its own data key. Its OAuth tokens and API
-					keys, and the records we sync from it (messages, issues, events), are
-					encrypted with that key using AES-256-GCM.
-				</p>
-				<p>
-					Data keys are encrypted in turn by a workspace key. On Corsair Cloud,
-					workspace keys are held in AWS Key Management Service. The servers
-					that run your tools can&apos;t decrypt them on their own: each request
-					carries a short-lived grant that Corsair issues for that one
-					workspace, and the key service checks it before it unlocks anything.
-				</p>
-				<p>
-					With the SDK, the workspace key is your{' '}
-					<code className="text-sm">CORSAIR_KEK</code>. The{' '}
-					<a
-						href={ENCRYPTION_SOURCE_URL}
-						className={legalLinkClassName}
-						target="_blank"
-						rel="noopener noreferrer"
-					>
-						encryption code
-					</a>{' '}
-					is open source, so you can read exactly how it works.
-				</p>
-			</LegalSection>
-
-			<LegalSection title="Can another customer reach your data?">
-				<p>
-					Every request is tied to one project and one person before anything
-					runs.
+					For more detail, here is what the SDK does, whether you run it in your
+					own app or use it through Corsair Cloud.
 				</p>
 				<ul className="list-disc space-y-2 pl-6">
 					<li>
-						The tokens Corsair issues to MCP clients are signed, expire, and
-						name the one person and link they belong to.
+						It stores everything in your database: connected accounts,
+						credentials, and the records it syncs from each app.
 					</li>
 					<li>
-						A grant unlocks one workspace, so a request for one customer
-						can&apos;t open another customer&apos;s keys.
+						Every credential is encrypted with that account&apos;s data key, and
+						data keys are wrapped by your key-encryption key,{' '}
+						<code className={code}>CORSAIR_KEK</code>. Run the SDK yourself and
+						that key lives in your environment; Corsair never has it.
 					</li>
 					<li>
-						Inside a project, each person&apos;s connections and synced records
-						are kept apart by their tenant ID.
+						With <code className={code}>encryptDataAtRest</code> on, the records
+						it syncs are sealed with the same per-account keys. Corsair Cloud
+						turns this on for every workspace.
+					</li>
+					<li>
+						The{' '}
+						<a
+							href={ENCRYPTION_SOURCE_URL}
+							className={legalLinkClassName}
+							target="_blank"
+							rel="noopener noreferrer"
+						>
+							encryption code
+						</a>{' '}
+						is open source under the Apache 2.0 license on{' '}
+						<a
+							href={GITHUB_URL}
+							className={legalLinkClassName}
+							target="_blank"
+							rel="noopener noreferrer"
+						>
+							GitHub
+						</a>
+						, so you can read exactly how it works.
 					</li>
 				</ul>
+			</LegalSection>
+
+			<LegalSection title="Your agent never sees your credentials">
+				<p>
+					An agent works with tool names, arguments and results. Corsair
+					attaches the credential when it calls the app, so a token or API key
+					never appears in a tool result or in the model&apos;s context.
+				</p>
+				<p>
+					Scripts an agent writes (<code className={code}>run_script</code> and{' '}
+					<code className={code}>read_data</code>) run in an isolated sandbox
+					with no network, filesystem or process access. The only thing a script
+					can reach is the person&apos;s own connected apps, through Corsair.
+				</p>
 			</LegalSection>
 
 			<LegalSection title="What an agent is allowed to do">
@@ -230,23 +303,6 @@ export default function SecurityPage() {
 					Optional AI steps in workflows go through a gateway we run to
 					Microsoft Azure OpenAI Service, under terms that don&apos;t allow it
 					to train on the data either.
-				</p>
-			</LegalSection>
-
-			<LegalSection title="Open source">
-				<p>
-					The SDK, every integration and the encryption code are open source
-					under the Apache 2.0 license on{' '}
-					<a
-						href={GITHUB_URL}
-						className={legalLinkClassName}
-						target="_blank"
-						rel="noopener noreferrer"
-					>
-						GitHub
-					</a>
-					. You can read how credentials are stored, or run all of it in your
-					own infrastructure.
 				</p>
 			</LegalSection>
 

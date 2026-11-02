@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 import { ChevronIcon, PlusCorner } from '../icons';
 
 const FAQ_ITEMS = [
@@ -41,7 +43,8 @@ const FAQ_ITEMS = [
 		id: 'hosted-security',
 		question: 'Is the hosted version secure?',
 		answer:
-			"With the SDK, credentials live in your own database, encrypted with a key only you hold. On Corsair Cloud we store them for you: each account's credentials and synced data are encrypted with its own key, those keys are held in AWS KMS, and the servers that run your tools can't decrypt them without a short-lived grant for your workspace. Scripts run in a sandbox with no network access, and every action is checked against your link's mode. Details at corsair.dev/security.",
+			"Yes. Corsair Cloud runs on the open-source SDK and uses envelope encryption: every account's API keys, tokens and synced data are encrypted with their own key, and the keys that unlock them are held in AWS KMS and rotate automatically. If our database leaked, your keys and data would stay unreadable. One customer can't reach another's data, and every action your agent takes is checked against your link's mode.",
+		link: { href: '/security', label: 'Learn more about security' },
 	},
 ] as const;
 
@@ -87,6 +90,14 @@ export function FaqSection() {
 									<p className="text-[15px] leading-[1.65] text-[#1c1c1c99] md:text-base md:leading-[1.7]">
 										{item.answer}
 									</p>
+									{'link' in item ? (
+										<Link
+											href={item.link.href}
+											className="mt-3 inline-block text-[15px] font-medium text-[#4a38f5] no-underline hover:underline"
+										>
+											{item.link.label} →
+										</Link>
+									) : null}
 								</div>
 							</details>
 						))}
