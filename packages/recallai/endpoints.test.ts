@@ -96,6 +96,96 @@ describe('Recall.ai bot endpoints', () => {
 		);
 	});
 
+	it('asserts the public routes for every bot action', async () => {
+		const request = jest.mocked(makeRecallaiRequest);
+		request.mockResolvedValue(undefined);
+		const plugin = recallai({ key: 'recall-key' });
+		if (!plugin.endpoints) throw new Error('Recall.ai endpoints are missing');
+		const actions = plugin.endpoints.botActions;
+		const ctx = recallaiTestContext;
+
+		const responses = await Promise.all([
+			actions.deleteBotMedia(ctx, { id: 'bot-1' }),
+			actions.leaveBotCall(ctx, { id: 'bot-1' }),
+			actions.outputAudio(ctx, {
+				id: 'bot-1',
+				kind: 'mp3',
+				b64_data: 'YQ==',
+			}),
+			actions.stopOutputAudio(ctx, { id: 'bot-1' }),
+			actions.outputMedia(ctx, { id: 'bot-1', camera: {} }),
+			actions.stopOutputMedia(ctx, { id: 'bot-1' }),
+			actions.startScreenshare(ctx, {
+				id: 'bot-1',
+				kind: 'jpeg',
+				b64_data: 'YQ==',
+			}),
+			actions.stopScreenshare(ctx, { id: 'bot-1' }),
+			actions.outputVideo(ctx, {
+				id: 'bot-1',
+				kind: 'mp4',
+				b64_data: 'YQ==',
+			}),
+			actions.stopOutputVideo(ctx, { id: 'bot-1' }),
+			actions.pauseRecording(ctx, { id: 'bot-1' }),
+			actions.pinParticipant(ctx, { bot_id: 'bot-1', participant_id: 42 }),
+			actions.resumeRecording(ctx, { id: 'bot-1' }),
+			actions.sendChatMessage(ctx, { id: 'bot-1', message: 'hello' }),
+			actions.startRecording(ctx, { id: 'bot-1' }),
+			actions.stopRecording(ctx, { id: 'bot-1' }),
+		]);
+		expect(responses).toEqual(Array.from({ length: 16 }, () => undefined));
+
+		const expectedRoutes = [
+			['/api/v1/bot/bot-1/delete_media/', { method: 'POST' }],
+			['/api/v1/bot/bot-1/leave_call/', { method: 'POST' }],
+			[
+				'/api/v1/bot/bot-1/output_audio/',
+				{ method: 'POST', body: { kind: 'mp3', b64_data: 'YQ==' } },
+			],
+			['/api/v1/bot/bot-1/output_audio/', { method: 'DELETE' }],
+			[
+				'/api/v1/bot/bot-1/output_media/',
+				{ method: 'POST', body: { camera: {}, screenshare: undefined } },
+			],
+			['/api/v1/bot/bot-1/output_media/', { method: 'DELETE' }],
+			[
+				'/api/v1/bot/bot-1/output_screenshare/',
+				{ method: 'POST', body: { kind: 'jpeg', b64_data: 'YQ==' } },
+			],
+			['/api/v1/bot/bot-1/output_screenshare/', { method: 'DELETE' }],
+			[
+				'/api/v1/bot/bot-1/output_video/',
+				{ method: 'POST', body: { kind: 'mp4', b64_data: 'YQ==' } },
+			],
+			['/api/v1/bot/bot-1/output_video/', { method: 'DELETE' }],
+			['/api/v1/bot/bot-1/pause_recording/', { method: 'POST' }],
+			[
+				'/api/v1/bot/bot-1/pin_participant/',
+				{ method: 'POST', body: { id: 42 } },
+			],
+			['/api/v1/bot/bot-1/resume_recording/', { method: 'POST' }],
+			[
+				'/api/v1/bot/bot-1/send_chat_message/',
+				{
+					method: 'POST',
+					body: { to: undefined, message: 'hello', pin: undefined },
+				},
+			],
+			['/api/v1/bot/bot-1/start_recording/', { method: 'POST' }],
+			['/api/v1/bot/bot-1/stop_recording/', { method: 'POST' }],
+		] as const;
+
+		for (const [index, [path, options]] of expectedRoutes.entries()) {
+			expect(request).toHaveBeenNthCalledWith(
+				index + 1,
+				path,
+				'recall-key',
+				options,
+			);
+		}
+	});
+
 	it('rejects unsafe action identifiers before transport', async () => {
 		const request = jest.mocked(makeRecallaiRequest);
 		request.mockClear();
@@ -223,6 +313,46 @@ describe('Recall.ai artifact endpoints', () => {
 				cursor: 'cursor-1',
 			},
 		});
+	});
+
+	it('reads meeting metadata with validated inputs and response assertions', async () => {
+		const request = jest.mocked(makeRecallaiRequest);
+		const response = {
+			next: null,
+			previous: null,
+			results: [artifact],
+		};
+		request.mockResolvedValueOnce(response).mockResolvedValueOnce(artifact);
+		const plugin = recallai({ key: 'recall-key' });
+		if (!plugin.endpoints) throw new Error('Recall.ai endpoints are missing');
+
+		await expect(
+			plugin.endpoints.meetingMetadata.list(ctx, {
+				recording_id: artifact.recording.id,
+				status_code: 'done',
+			}),
+		).resolves.toEqual(response);
+		await expect(
+			plugin.endpoints.meetingMetadata.retrieve(ctx, { id: artifact.id }),
+		).resolves.toEqual(artifact);
+		expect(request).toHaveBeenNthCalledWith(
+			1,
+			'/api/v1/meeting_metadata/',
+			'recall-key',
+			{
+				method: 'GET',
+				query: {
+					recording_id: artifact.recording.id,
+					status_code: 'done',
+				},
+			},
+		);
+		expect(request).toHaveBeenNthCalledWith(
+			2,
+			`/api/v1/meeting_metadata/${artifact.id}/`,
+			'recall-key',
+			{ method: 'GET' },
+		);
 	});
 
 	it('retrieves transcripts with an encoded artifact id', async () => {
