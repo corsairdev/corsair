@@ -212,6 +212,8 @@ export function woodpeckerco<const T extends WoodpeckerCoPluginOptions>(
 	} satisfies InternalWoodpeckerCoPlugin;
 }
 
+export { WoodpeckerCoAPIError } from './client';
+
 export type {
 	CampaignActionInput,
 	CampaignActionResponse,
