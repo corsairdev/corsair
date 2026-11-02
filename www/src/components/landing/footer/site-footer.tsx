@@ -59,6 +59,14 @@ export function SiteFooter() {
 								</Link>
 							</li>
 							<li>
+								<Link
+									href="/use-cases"
+									className="text-sm text-[#1c1c1c99] no-underline transition-colors hover:text-[#1c1c1c]"
+								>
+									Use cases
+								</Link>
+							</li>
+							<li>
 								<a
 									href={DOCS_URL}
 									target="_blank"
