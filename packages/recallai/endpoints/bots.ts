@@ -37,9 +37,10 @@ export const deleteBot: RecallaiEndpoints['deleteBot'] = async (ctx, input) => {
 };
 
 const botActionPath = (id: string, action: string) => `${botPath(id)}${action}/`;
-const action = (actionName: Exclude<keyof typeof RecallaiBotActionInputSchemas, 'pinParticipant'>, method: 'POST' | 'DELETE' = 'POST') => async (ctx: { key: string }, input: BotActionInput) => {
-	const parsed = RecallaiBotActionInputSchemas[actionName].parse(input);
-	await makeRecallaiRequest<undefined>(botActionPath(parsed.id, actionNameToPath[actionName]), ctx.key, { method });
+const action = (actionName: Exclude<keyof typeof RecallaiBotActionInputSchemas, 'pinParticipant'>, method: 'POST' | 'DELETE' = 'POST', schemaName: keyof typeof RecallaiBotActionInputSchemas = actionName) => async (ctx: { key: string }, input: BotActionInput) => {
+	const parsed = RecallaiBotActionInputSchemas[schemaName].parse(input);
+	const botId = 'id' in parsed ? parsed.id : parsed.bot_id;
+	await makeRecallaiRequest<undefined>(botActionPath(botId, actionNameToPath[actionName]), ctx.key, { method });
 };
 
 const actionNameToPath = {
@@ -55,22 +56,22 @@ export const outputAudio = async (ctx: { key: string }, input: AudioOutputInput)
 	const parsed = RecallaiBotActionInputSchemas.outputAudio.parse(input);
 	return makeRecallaiRequest(botActionPath(parsed.id, 'output_audio'), ctx.key, { method: 'POST', body: { kind: parsed.kind, b64_data: parsed.b64_data } });
 };
-export const stopOutputAudio = action('outputAudio', 'DELETE');
+export const stopOutputAudio = action('outputAudio', 'DELETE', 'deleteBotMedia');
 export const outputMedia = async (ctx: { key: string }, input: OutputMediaInput) => {
 	const parsed = RecallaiBotActionInputSchemas.outputMedia.parse(input);
 	return makeRecallaiRequest(botActionPath(parsed.id, 'output_media'), ctx.key, { method: 'POST', body: { camera: parsed.camera, screenshare: parsed.screenshare } });
 };
-export const stopOutputMedia = action('outputMedia', 'DELETE');
+export const stopOutputMedia = action('outputMedia', 'DELETE', 'deleteBotMedia');
 export const startScreenshare = async (ctx: { key: string }, input: AudioOutputInput) => {
 	const parsed = RecallaiBotActionInputSchemas.outputScreenshare.parse(input);
 	return makeRecallaiRequest(botActionPath(parsed.id, 'output_screenshare'), ctx.key, { method: 'POST', body: { kind: parsed.kind, b64_data: parsed.b64_data } });
 };
-export const stopScreenshare = action('outputScreenshare', 'DELETE');
+export const stopScreenshare = action('outputScreenshare', 'DELETE', 'deleteBotMedia');
 export const outputVideo = async (ctx: { key: string }, input: AudioOutputInput) => {
 	const parsed = RecallaiBotActionInputSchemas.outputVideo.parse(input);
 	return makeRecallaiRequest(botActionPath(parsed.id, 'output_video'), ctx.key, { method: 'POST', body: { kind: parsed.kind, b64_data: parsed.b64_data } });
 };
-export const stopOutputVideo = action('outputVideo', 'DELETE');
+export const stopOutputVideo = action('outputVideo', 'DELETE', 'deleteBotMedia');
 export const pauseRecording = action('pauseRecording');
 export const pinParticipant = async (ctx: { key: string }, input: PinParticipantInput) => {
 	const parsed = RecallaiBotActionInputSchemas.pinParticipant.parse(input);
