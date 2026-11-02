@@ -16,10 +16,11 @@ export const ArtifactListInputSchema = z.object({
 	status_code: z.enum(['processing', 'done', 'failed']).optional(),
 });
 export const RetrieveArtifactInputSchema = z.object({ id });
-export const UpdateParticipantEventsInputSchema = z.object({
+export const UpdateArtifactInputSchema = z.object({
 	id,
 	metadata: opaqueObject,
 });
+export const UpdateParticipantEventsInputSchema = UpdateArtifactInputSchema;
 
 const ArtifactSchema = z
 	.object({

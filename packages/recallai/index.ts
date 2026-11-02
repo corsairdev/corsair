@@ -14,33 +14,67 @@ import type {
 } from 'corsair/core';
 
 import { AuthMissingError } from 'corsair/core';
+import { z } from 'zod';
 import {
+	authenticateCalendar,
+	CalendarArrayResponseSchema,
+	CalendarObjectResponseSchema,
+	CalendarUndefinedResponseSchema,
+	CalendarUsersResponseSchema,
 	createAsyncTranscript,
 	createBot,
+	createSdkUpload,
+	deleteAudioMixed,
+	deleteAudioSeparate,
 	deleteBot,
 	deleteBotMedia,
+	deleteCalendarUser,
+	deleteMeetingMetadata,
+	deleteParticipantEvents,
 	deleteRecording,
+	deleteTranscript,
+	deleteVideoMixed,
+	deleteVideoSeparate,
+	disconnectCalendarPlatform,
 	leaveBotCall,
+	listAudioMixed,
+	listAudioSeparate,
 	listBots,
+	listCalendarEvents,
+	listCalendarMeetings,
+	listCalendarUsers,
 	listMeetingMetadata,
 	listParticipantEvents,
 	listRealtimeEndpoints,
 	listRecording,
 	listSdkUploads,
 	listTranscripts,
+	listVideoMixed,
+	listVideoSeparate,
+	mediaSchemas,
 	outputAudio,
 	outputMedia,
 	outputVideo,
 	pauseRecording,
 	pinParticipant,
 	recordingSchemas,
+	refreshCalendarMeetings,
 	resumeRecording,
+	retrieveAudioMixed,
+	retrieveAudioSeparate,
 	retrieveBot,
+	retrieveCalendarEvent,
+	retrieveCalendarMeeting,
+	retrieveCalendarUser,
 	retrieveMeetingMetadata,
 	retrieveParticipantEvents,
 	retrieveRealtimeEndpoints,
 	retrieveRecording,
+	retrieveSdkUpload,
 	retrieveTranscript,
+	retrieveVideoMixed,
+	retrieveVideoSeparate,
+	scheduleBotForCalendarEvent,
 	sendChatMessage,
 	startRecording,
 	startScreenshare,
@@ -49,10 +83,19 @@ import {
 	stopOutputVideo,
 	stopRecording,
 	stopScreenshare,
+	unscheduleBotForCalendarEvent,
+	updateAudioMixed,
+	updateAudioSeparate,
 	updateBot,
+	updateCalendarMeeting,
+	updateCalendarUser,
+	updateMeetingMetadata,
 	updateParticipantEvents,
 	updateRealtimeEndpoints,
 	updateRecording,
+	updateTranscript,
+	updateVideoMixed,
+	updateVideoSeparate,
 } from './endpoints';
 import {
 	ArtifactListInputSchema,
@@ -61,6 +104,19 @@ import {
 	RetrieveArtifactInputSchema,
 	UpdateParticipantEventsInputSchema,
 } from './endpoints/artifact-types';
+import {
+	CalendarAuthenticateInputSchema,
+	CalendarDisconnectInputSchema,
+	CalendarEventBotInputSchema,
+	CalendarEventInputSchema,
+	CalendarEventsListInputSchema,
+	CalendarMeetingInputSchema,
+	CalendarMeetingsListInputSchema,
+	CalendarMeetingUpdateInputSchema,
+	CalendarUserAuthInputSchema,
+	CalendarUsersListInputSchema,
+	CalendarUserUpdateInputSchema,
+} from './endpoints/calendar-types';
 import type {
 	RecallaiEndpointInputs,
 	RecallaiEndpointOutputs,
@@ -129,13 +185,50 @@ export type RecallaiEndpoints = {
 	retrieveRealtimeEndpoints: RecallaiEndpoint<'retrieveRealtimeEndpoints'>;
 	updateRealtimeEndpoints: RecallaiEndpoint<'updateRealtimeEndpoints'>;
 	listSdkUploads: RecallaiEndpoint<'listSdkUploads'>;
+	createSdkUpload: RecallaiEndpoint<'createSdkUpload'>;
+	retrieveSdkUpload: RecallaiEndpoint<'retrieveSdkUpload'>;
 	listMeetingMetadata: RecallaiEndpoint<'listMeetingMetadata'>;
 	retrieveMeetingMetadata: RecallaiEndpoint<'retrieveMeetingMetadata'>;
+	updateMeetingMetadata: RecallaiEndpoint<'updateMeetingMetadata'>;
+	deleteMeetingMetadata: RecallaiEndpoint<'deleteMeetingMetadata'>;
 	listParticipantEvents: RecallaiEndpoint<'listParticipantEvents'>;
 	retrieveParticipantEvents: RecallaiEndpoint<'retrieveParticipantEvents'>;
 	updateParticipantEvents: RecallaiEndpoint<'updateParticipantEvents'>;
+	deleteParticipantEvents: RecallaiEndpoint<'deleteParticipantEvents'>;
 	listTranscripts: RecallaiEndpoint<'listTranscripts'>;
 	retrieveTranscript: RecallaiEndpoint<'retrieveTranscript'>;
+	updateTranscript: RecallaiEndpoint<'updateTranscript'>;
+	deleteTranscript: RecallaiEndpoint<'deleteTranscript'>;
+	listAudioMixed: RecallaiEndpoint<'listAudioMixed'>;
+	retrieveAudioMixed: RecallaiEndpoint<'retrieveAudioMixed'>;
+	updateAudioMixed: RecallaiEndpoint<'updateAudioMixed'>;
+	deleteAudioMixed: RecallaiEndpoint<'deleteAudioMixed'>;
+	listAudioSeparate: RecallaiEndpoint<'listAudioSeparate'>;
+	retrieveAudioSeparate: RecallaiEndpoint<'retrieveAudioSeparate'>;
+	updateAudioSeparate: RecallaiEndpoint<'updateAudioSeparate'>;
+	deleteAudioSeparate: RecallaiEndpoint<'deleteAudioSeparate'>;
+	listVideoMixed: RecallaiEndpoint<'listVideoMixed'>;
+	retrieveVideoMixed: RecallaiEndpoint<'retrieveVideoMixed'>;
+	updateVideoMixed: RecallaiEndpoint<'updateVideoMixed'>;
+	deleteVideoMixed: RecallaiEndpoint<'deleteVideoMixed'>;
+	listVideoSeparate: RecallaiEndpoint<'listVideoSeparate'>;
+	retrieveVideoSeparate: RecallaiEndpoint<'retrieveVideoSeparate'>;
+	updateVideoSeparate: RecallaiEndpoint<'updateVideoSeparate'>;
+	deleteVideoSeparate: RecallaiEndpoint<'deleteVideoSeparate'>;
+	authenticateCalendar: RecallaiEndpoint<'authenticateCalendar'>;
+	listCalendarMeetings: RecallaiEndpoint<'listCalendarMeetings'>;
+	retrieveCalendarMeeting: RecallaiEndpoint<'retrieveCalendarMeeting'>;
+	updateCalendarMeeting: RecallaiEndpoint<'updateCalendarMeeting'>;
+	refreshCalendarMeetings: RecallaiEndpoint<'refreshCalendarMeetings'>;
+	retrieveCalendarUser: RecallaiEndpoint<'retrieveCalendarUser'>;
+	updateCalendarUser: RecallaiEndpoint<'updateCalendarUser'>;
+	deleteCalendarUser: RecallaiEndpoint<'deleteCalendarUser'>;
+	disconnectCalendarPlatform: RecallaiEndpoint<'disconnectCalendarPlatform'>;
+	listCalendarUsers: RecallaiEndpoint<'listCalendarUsers'>;
+	listCalendarEvents: RecallaiEndpoint<'listCalendarEvents'>;
+	retrieveCalendarEvent: RecallaiEndpoint<'retrieveCalendarEvent'>;
+	scheduleBotForCalendarEvent: RecallaiEndpoint<'scheduleBotForCalendarEvent'>;
+	unscheduleBotForCalendarEvent: RecallaiEndpoint<'unscheduleBotForCalendarEvent'>;
 };
 
 const recallaiEndpointsNested = {
@@ -176,17 +269,69 @@ const recallaiEndpointsNested = {
 		retrieve: retrieveRealtimeEndpoints,
 		update: updateRealtimeEndpoints,
 	},
-	sdkUploads: { list: listSdkUploads },
+	sdkUploads: {
+		list: listSdkUploads,
+		create: createSdkUpload,
+		retrieve: retrieveSdkUpload,
+	},
 	meetingMetadata: {
 		list: listMeetingMetadata,
 		retrieve: retrieveMeetingMetadata,
+		update: updateMeetingMetadata,
+		delete: deleteMeetingMetadata,
 	},
 	participantEvents: {
 		list: listParticipantEvents,
 		retrieve: retrieveParticipantEvents,
 		update: updateParticipantEvents,
+		delete: deleteParticipantEvents,
 	},
-	transcripts: { list: listTranscripts, retrieve: retrieveTranscript },
+	transcripts: {
+		list: listTranscripts,
+		retrieve: retrieveTranscript,
+		update: updateTranscript,
+		delete: deleteTranscript,
+	},
+	audioMixed: {
+		list: listAudioMixed,
+		retrieve: retrieveAudioMixed,
+		update: updateAudioMixed,
+		delete: deleteAudioMixed,
+	},
+	audioSeparate: {
+		list: listAudioSeparate,
+		retrieve: retrieveAudioSeparate,
+		update: updateAudioSeparate,
+		delete: deleteAudioSeparate,
+	},
+	videoMixed: {
+		list: listVideoMixed,
+		retrieve: retrieveVideoMixed,
+		update: updateVideoMixed,
+		delete: deleteVideoMixed,
+	},
+	videoSeparate: {
+		list: listVideoSeparate,
+		retrieve: retrieveVideoSeparate,
+		update: updateVideoSeparate,
+		delete: deleteVideoSeparate,
+	},
+	calendar: {
+		authenticate: authenticateCalendar,
+		listMeetings: listCalendarMeetings,
+		retrieveMeeting: retrieveCalendarMeeting,
+		updateMeeting: updateCalendarMeeting,
+		refreshMeetings: refreshCalendarMeetings,
+		retrieveUser: retrieveCalendarUser,
+		updateUser: updateCalendarUser,
+		deleteUser: deleteCalendarUser,
+		disconnectPlatform: disconnectCalendarPlatform,
+		listUsers: listCalendarUsers,
+		listEvents: listCalendarEvents,
+		retrieveEvent: retrieveCalendarEvent,
+		scheduleBot: scheduleBotForCalendarEvent,
+		unscheduleBot: unscheduleBotForCalendarEvent,
+	},
 } as const;
 
 export const recallaiEndpointSchemas = {
@@ -310,6 +455,14 @@ export const recallaiEndpointSchemas = {
 		input: recordingSchemas.listSdkUploads.input,
 		output: recordingSchemas.listSdkUploads.output,
 	},
+	'sdkUploads.create': {
+		input: recordingSchemas.createSdkUpload.input,
+		output: recordingSchemas.createSdkUpload.output,
+	},
+	'sdkUploads.retrieve': {
+		input: recordingSchemas.retrieveSdkUpload.input,
+		output: recordingSchemas.retrieveSdkUpload.output,
+	},
 	'meetingMetadata.list': {
 		input: ArtifactListInputSchema,
 		output: ArtifactListResponseSchema,
@@ -317,6 +470,14 @@ export const recallaiEndpointSchemas = {
 	'meetingMetadata.retrieve': {
 		input: RetrieveArtifactInputSchema,
 		output: ArtifactResponseSchema,
+	},
+	'meetingMetadata.update': {
+		input: RecallaiEndpointInputSchemas.updateMeetingMetadata,
+		output: ArtifactResponseSchema,
+	},
+	'meetingMetadata.delete': {
+		input: RecallaiEndpointInputSchemas.deleteMeetingMetadata,
+		output: z.undefined(),
 	},
 	'participantEvents.list': {
 		input: ArtifactListInputSchema,
@@ -330,6 +491,10 @@ export const recallaiEndpointSchemas = {
 		input: UpdateParticipantEventsInputSchema,
 		output: ArtifactResponseSchema,
 	},
+	'participantEvents.delete': {
+		input: RecallaiEndpointInputSchemas.deleteParticipantEvents,
+		output: z.undefined(),
+	},
 	'transcripts.list': {
 		input: ArtifactListInputSchema,
 		output: ArtifactListResponseSchema,
@@ -337,6 +502,134 @@ export const recallaiEndpointSchemas = {
 	'transcripts.retrieve': {
 		input: RetrieveArtifactInputSchema,
 		output: ArtifactResponseSchema,
+	},
+	'transcripts.update': {
+		input: RecallaiEndpointInputSchemas.updateTranscript,
+		output: ArtifactResponseSchema,
+	},
+	'transcripts.delete': {
+		input: RecallaiEndpointInputSchemas.deleteTranscript,
+		output: z.undefined(),
+	},
+	'audioMixed.list': {
+		input: mediaSchemas.audioMixed.list.input,
+		output: mediaSchemas.audioMixed.list.output,
+	},
+	'audioMixed.retrieve': {
+		input: mediaSchemas.audioMixed.retrieve.input,
+		output: mediaSchemas.audioMixed.retrieve.output,
+	},
+	'audioMixed.update': {
+		input: mediaSchemas.audioMixed.update.input,
+		output: mediaSchemas.audioMixed.update.output,
+	},
+	'audioMixed.delete': {
+		input: mediaSchemas.audioMixed.delete.input,
+		output: mediaSchemas.audioMixed.delete.output,
+	},
+	'audioSeparate.list': {
+		input: mediaSchemas.audioSeparate.list.input,
+		output: mediaSchemas.audioSeparate.list.output,
+	},
+	'audioSeparate.retrieve': {
+		input: mediaSchemas.audioSeparate.retrieve.input,
+		output: mediaSchemas.audioSeparate.retrieve.output,
+	},
+	'audioSeparate.update': {
+		input: mediaSchemas.audioSeparate.update.input,
+		output: mediaSchemas.audioSeparate.update.output,
+	},
+	'audioSeparate.delete': {
+		input: mediaSchemas.audioSeparate.delete.input,
+		output: mediaSchemas.audioSeparate.delete.output,
+	},
+	'videoMixed.list': {
+		input: mediaSchemas.videoMixed.list.input,
+		output: mediaSchemas.videoMixed.list.output,
+	},
+	'videoMixed.retrieve': {
+		input: mediaSchemas.videoMixed.retrieve.input,
+		output: mediaSchemas.videoMixed.retrieve.output,
+	},
+	'videoMixed.update': {
+		input: mediaSchemas.videoMixed.update.input,
+		output: mediaSchemas.videoMixed.update.output,
+	},
+	'videoMixed.delete': {
+		input: mediaSchemas.videoMixed.delete.input,
+		output: mediaSchemas.videoMixed.delete.output,
+	},
+	'videoSeparate.list': {
+		input: mediaSchemas.videoSeparate.list.input,
+		output: mediaSchemas.videoSeparate.list.output,
+	},
+	'videoSeparate.retrieve': {
+		input: mediaSchemas.videoSeparate.retrieve.input,
+		output: mediaSchemas.videoSeparate.retrieve.output,
+	},
+	'videoSeparate.update': {
+		input: mediaSchemas.videoSeparate.update.input,
+		output: mediaSchemas.videoSeparate.update.output,
+	},
+	'videoSeparate.delete': {
+		input: mediaSchemas.videoSeparate.delete.input,
+		output: mediaSchemas.videoSeparate.delete.output,
+	},
+	'calendar.authenticate': {
+		input: CalendarAuthenticateInputSchema,
+		output: CalendarObjectResponseSchema,
+	},
+	'calendar.listMeetings': {
+		input: CalendarMeetingsListInputSchema,
+		output: CalendarArrayResponseSchema,
+	},
+	'calendar.retrieveMeeting': {
+		input: CalendarMeetingInputSchema,
+		output: CalendarObjectResponseSchema,
+	},
+	'calendar.updateMeeting': {
+		input: CalendarMeetingUpdateInputSchema,
+		output: CalendarObjectResponseSchema,
+	},
+	'calendar.refreshMeetings': {
+		input: CalendarUserAuthInputSchema,
+		output: CalendarArrayResponseSchema,
+	},
+	'calendar.retrieveUser': {
+		input: CalendarUserAuthInputSchema,
+		output: CalendarObjectResponseSchema,
+	},
+	'calendar.updateUser': {
+		input: CalendarUserUpdateInputSchema,
+		output: CalendarObjectResponseSchema,
+	},
+	'calendar.deleteUser': {
+		input: CalendarUserAuthInputSchema,
+		output: CalendarUndefinedResponseSchema,
+	},
+	'calendar.disconnectPlatform': {
+		input: CalendarDisconnectInputSchema,
+		output: CalendarObjectResponseSchema,
+	},
+	'calendar.listUsers': {
+		input: CalendarUsersListInputSchema,
+		output: CalendarUsersResponseSchema,
+	},
+	'calendar.listEvents': {
+		input: CalendarEventsListInputSchema,
+		output: CalendarObjectResponseSchema,
+	},
+	'calendar.retrieveEvent': {
+		input: CalendarEventInputSchema,
+		output: CalendarObjectResponseSchema,
+	},
+	'calendar.scheduleBot': {
+		input: CalendarEventBotInputSchema,
+		output: CalendarObjectResponseSchema,
+	},
+	'calendar.unscheduleBot': {
+		input: CalendarEventInputSchema,
+		output: CalendarObjectResponseSchema,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof recallaiEndpointsNested
@@ -509,6 +802,14 @@ const recallaiEndpointMeta = {
 		riskLevel: 'read',
 		description: 'List Recall.ai Desktop SDK uploads',
 	},
+	'sdkUploads.create': {
+		riskLevel: 'write',
+		description: 'Create a Recall.ai Desktop SDK upload',
+	},
+	'sdkUploads.retrieve': {
+		riskLevel: 'read',
+		description: 'Retrieve a Recall.ai Desktop SDK upload',
+	},
 	'meetingMetadata.list': {
 		riskLevel: 'read',
 		description: 'List Recall.ai meeting metadata artifacts',
@@ -516,6 +817,14 @@ const recallaiEndpointMeta = {
 	'meetingMetadata.retrieve': {
 		riskLevel: 'read',
 		description: 'Retrieve a Recall.ai meeting metadata artifact',
+	},
+	'meetingMetadata.update': {
+		riskLevel: 'write',
+		description: 'Update Recall.ai meeting metadata',
+	},
+	'meetingMetadata.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a Recall.ai meeting metadata artifact',
 	},
 	'participantEvents.list': {
 		riskLevel: 'read',
@@ -529,6 +838,10 @@ const recallaiEndpointMeta = {
 		riskLevel: 'write',
 		description: 'Update Recall.ai participant event metadata',
 	},
+	'participantEvents.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a Recall.ai participant event artifact',
+	},
 	'transcripts.list': {
 		riskLevel: 'read',
 		description: 'List Recall.ai transcript artifacts',
@@ -536,6 +849,134 @@ const recallaiEndpointMeta = {
 	'transcripts.retrieve': {
 		riskLevel: 'read',
 		description: 'Retrieve a Recall.ai transcript artifact',
+	},
+	'transcripts.update': {
+		riskLevel: 'write',
+		description: 'Update Recall.ai transcript metadata',
+	},
+	'transcripts.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a Recall.ai transcript artifact',
+	},
+	'audioMixed.list': {
+		riskLevel: 'read',
+		description: 'List mixed audio artifacts',
+	},
+	'audioMixed.retrieve': {
+		riskLevel: 'read',
+		description: 'Retrieve a mixed audio artifact',
+	},
+	'audioMixed.update': {
+		riskLevel: 'write',
+		description: 'Update mixed audio artifact metadata',
+	},
+	'audioMixed.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a mixed audio artifact',
+	},
+	'audioSeparate.list': {
+		riskLevel: 'read',
+		description: 'List separate audio artifacts',
+	},
+	'audioSeparate.retrieve': {
+		riskLevel: 'read',
+		description: 'Retrieve a separate audio artifact',
+	},
+	'audioSeparate.update': {
+		riskLevel: 'write',
+		description: 'Update separate audio artifact metadata',
+	},
+	'audioSeparate.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a separate audio artifact',
+	},
+	'videoMixed.list': {
+		riskLevel: 'read',
+		description: 'List mixed video artifacts',
+	},
+	'videoMixed.retrieve': {
+		riskLevel: 'read',
+		description: 'Retrieve a mixed video artifact',
+	},
+	'videoMixed.update': {
+		riskLevel: 'write',
+		description: 'Update mixed video artifact metadata',
+	},
+	'videoMixed.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a mixed video artifact',
+	},
+	'videoSeparate.list': {
+		riskLevel: 'read',
+		description: 'List separate video artifacts',
+	},
+	'videoSeparate.retrieve': {
+		riskLevel: 'read',
+		description: 'Retrieve a separate video artifact',
+	},
+	'videoSeparate.update': {
+		riskLevel: 'write',
+		description: 'Update separate video artifact metadata',
+	},
+	'videoSeparate.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a separate video artifact',
+	},
+	'calendar.authenticate': {
+		riskLevel: 'write',
+		description: 'Create a Recall.ai calendar auth token',
+	},
+	'calendar.listMeetings': {
+		riskLevel: 'read',
+		description: 'List Recall.ai calendar meetings',
+	},
+	'calendar.retrieveMeeting': {
+		riskLevel: 'read',
+		description: 'Retrieve a Recall.ai calendar meeting',
+	},
+	'calendar.updateMeeting': {
+		riskLevel: 'write',
+		description: 'Update a Recall.ai calendar meeting',
+	},
+	'calendar.refreshMeetings': {
+		riskLevel: 'write',
+		description: 'Refresh Recall.ai calendar meetings',
+	},
+	'calendar.retrieveUser': {
+		riskLevel: 'read',
+		description: 'Retrieve a Recall.ai calendar user',
+	},
+	'calendar.updateUser': {
+		riskLevel: 'write',
+		description: 'Update a Recall.ai calendar user',
+	},
+	'calendar.deleteUser': {
+		riskLevel: 'destructive',
+		description: 'Delete a Recall.ai calendar user',
+	},
+	'calendar.disconnectPlatform': {
+		riskLevel: 'destructive',
+		description: 'Disconnect a Recall.ai calendar platform',
+	},
+	'calendar.listUsers': {
+		riskLevel: 'read',
+		description: 'List Recall.ai calendar users',
+	},
+	'calendar.listEvents': {
+		riskLevel: 'read',
+		description: 'List Recall.ai calendar events',
+	},
+	'calendar.retrieveEvent': {
+		riskLevel: 'read',
+		description: 'Retrieve a Recall.ai calendar event',
+	},
+	'calendar.scheduleBot': {
+		riskLevel: 'write',
+		description: 'Schedule a Recall.ai bot for a calendar event',
+	},
+	'calendar.unscheduleBot': {
+		riskLevel: 'destructive',
+		description: 'Remove a scheduled Recall.ai bot from a calendar event',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof recallaiEndpointsNested>;
 

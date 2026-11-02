@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import type { RecallaiEndpoints } from '..';
+import type { RecallaiEndpointOutputs, RecallaiEndpoints } from '..';
 import { makeRecallaiRequest } from '../client';
 import type {
 	ArtifactListInput,
@@ -9,7 +9,11 @@ import type {
 	UpdateParticipantEventsInput,
 } from './artifact-types';
 
-import { UpdateParticipantEventsInputSchema } from './artifact-types';
+import {
+	RetrieveArtifactInputSchema,
+	UpdateArtifactInputSchema,
+	UpdateParticipantEventsInputSchema,
+} from './artifact-types';
 
 const artifactPath = (resource: string, id: string) =>
 	`/api/v1/${resource}/${encodeURIComponent(id)}/`;
@@ -57,6 +61,36 @@ export const retrieveMeetingMetadata: RecallaiEndpoints['retrieveMeetingMetadata
 			input,
 			'recallai.meetingMetadata.retrieve',
 		);
+
+export const updateMeetingMetadata: RecallaiEndpoints['updateMeetingMetadata'] =
+	async (ctx, input) => {
+		const { id, ...body } = UpdateArtifactInputSchema.parse(input);
+		const result = await makeRecallaiRequest<
+			RecallaiEndpointOutputs['updateMeetingMetadata']
+		>(artifactPath('meeting_metadata', id), ctx.key, { method: 'PATCH', body });
+		await logEventFromContext(
+			ctx,
+			'recallai.meetingMetadata.update',
+			{ id },
+			'completed',
+		);
+		return result;
+	};
+export const deleteMeetingMetadata: RecallaiEndpoints['deleteMeetingMetadata'] =
+	async (ctx, input) => {
+		const parsed = RetrieveArtifactInputSchema.parse(input);
+		await makeRecallaiRequest(
+			artifactPath('meeting_metadata', parsed.id),
+			ctx.key,
+			{ method: 'DELETE' },
+		);
+		await logEventFromContext(
+			ctx,
+			'recallai.meetingMetadata.delete',
+			{ id: parsed.id },
+			'completed',
+		);
+	};
 export const listParticipantEvents: RecallaiEndpoints['listParticipantEvents'] =
 	(ctx, input) =>
 		listArtifact(
@@ -95,6 +129,21 @@ export const updateParticipantEvents: RecallaiEndpoints['updateParticipantEvents
 		);
 		return response;
 	};
+export const deleteParticipantEvents: RecallaiEndpoints['deleteParticipantEvents'] =
+	async (ctx, input) => {
+		const parsed = RetrieveArtifactInputSchema.parse(input);
+		await makeRecallaiRequest(
+			artifactPath('participant_events', parsed.id),
+			ctx.key,
+			{ method: 'DELETE' },
+		);
+		await logEventFromContext(
+			ctx,
+			'recallai.participantEvents.delete',
+			{ id: parsed.id },
+			'completed',
+		);
+	};
 export const listTranscripts: RecallaiEndpoints['listTranscripts'] = (
 	ctx,
 	input,
@@ -104,3 +153,35 @@ export const retrieveTranscript: RecallaiEndpoints['retrieveTranscript'] = (
 	input,
 ) =>
 	retrieveArtifact(ctx, 'transcript', input, 'recallai.transcripts.retrieve');
+
+export const updateTranscript: RecallaiEndpoints['updateTranscript'] = async (
+	ctx,
+	input,
+) => {
+	const { id, ...body } = UpdateArtifactInputSchema.parse(input);
+	const result = await makeRecallaiRequest<
+		RecallaiEndpointOutputs['updateTranscript']
+	>(artifactPath('transcript', id), ctx.key, { method: 'PATCH', body });
+	await logEventFromContext(
+		ctx,
+		'recallai.transcripts.update',
+		{ id },
+		'completed',
+	);
+	return result;
+};
+export const deleteTranscript: RecallaiEndpoints['deleteTranscript'] = async (
+	ctx,
+	input,
+) => {
+	const parsed = RetrieveArtifactInputSchema.parse(input);
+	await makeRecallaiRequest(artifactPath('transcript', parsed.id), ctx.key, {
+		method: 'DELETE',
+	});
+	await logEventFromContext(
+		ctx,
+		'recallai.transcripts.delete',
+		{ id: parsed.id },
+		'completed',
+	);
+};

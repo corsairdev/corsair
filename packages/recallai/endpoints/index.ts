@@ -1,11 +1,16 @@
 export {
+	deleteMeetingMetadata,
+	deleteParticipantEvents,
+	deleteTranscript,
 	listMeetingMetadata,
 	listParticipantEvents,
 	listTranscripts,
 	retrieveMeetingMetadata,
 	retrieveParticipantEvents,
 	retrieveTranscript,
+	updateMeetingMetadata,
 	updateParticipantEvents,
+	updateTranscript,
 } from './artifacts';
 export {
 	createBot,
@@ -31,7 +36,49 @@ export {
 	updateBot,
 } from './bots';
 export {
+	authenticateCalendar,
+	deleteCalendarUser,
+	disconnectCalendarPlatform,
+	listCalendarEvents,
+	listCalendarMeetings,
+	listCalendarUsers,
+	refreshCalendarMeetings,
+	retrieveCalendarEvent,
+	retrieveCalendarMeeting,
+	retrieveCalendarUser,
+	scheduleBotForCalendarEvent,
+	unscheduleBotForCalendarEvent,
+	updateCalendarMeeting,
+	updateCalendarUser,
+} from './calendar';
+export {
+	CalendarArrayResponseSchema,
+	CalendarObjectResponseSchema,
+	CalendarUndefinedResponseSchema,
+	CalendarUsersResponseSchema,
+} from './calendar-types';
+export {
+	deleteAudioMixed,
+	deleteAudioSeparate,
+	deleteVideoMixed,
+	deleteVideoSeparate,
+	listAudioMixed,
+	listAudioSeparate,
+	listVideoMixed,
+	listVideoSeparate,
+	mediaSchemas,
+	retrieveAudioMixed,
+	retrieveAudioSeparate,
+	retrieveVideoMixed,
+	retrieveVideoSeparate,
+	updateAudioMixed,
+	updateAudioSeparate,
+	updateVideoMixed,
+	updateVideoSeparate,
+} from './media';
+export {
 	createAsyncTranscript,
+	createSdkUpload,
 	deleteRecording,
 	listRealtimeEndpoints,
 	listRecording,
@@ -39,6 +86,7 @@ export {
 	recordingSchemas,
 	retrieveRealtimeEndpoints,
 	retrieveRecording,
+	retrieveSdkUpload,
 	updateRealtimeEndpoints,
 	updateRecording,
 } from './recordings';

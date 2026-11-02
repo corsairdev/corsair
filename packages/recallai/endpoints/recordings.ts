@@ -171,6 +171,41 @@ export const listSdkUploads = async (
 	results: Record<string, unknown>[];
 }> => list(ctx, input, 'sdk_upload', 'recallai.sdkUpload.list');
 
+const createSdkUploadInput = z.object({
+	recording_config: opaque.optional(),
+	_1080p: z.boolean().optional(),
+	metadata: opaque.optional(),
+});
+
+export const createSdkUpload: RecallaiEndpoints['createSdkUpload'] = async (
+	ctx,
+	input,
+) => {
+	const parsed = createSdkUploadInput.parse(input);
+	const result = await makeRecallaiRequest<
+		RecallaiEndpointOutputs['createSdkUpload']
+	>('/api/v1/sdk_upload/', ctx.key, { method: 'POST', body: parsed });
+	await logEventFromContext(ctx, 'recallai.sdkUpload.create', {}, 'completed');
+	return result;
+};
+
+export const retrieveSdkUpload: RecallaiEndpoints['retrieveSdkUpload'] = async (
+	ctx,
+	input,
+) => {
+	const parsed = itemInput.parse(input);
+	const result = await makeRecallaiRequest<
+		RecallaiEndpointOutputs['retrieveSdkUpload']
+	>(path('sdk_upload', parsed.id), ctx.key, { method: 'GET' });
+	await logEventFromContext(
+		ctx,
+		'recallai.sdkUpload.retrieve',
+		{ id: parsed.id },
+		'completed',
+	);
+	return result;
+};
+
 export const recordingSchemas = {
 	listRecording: { input: listInput, output: page },
 	retrieveRecording: { input: itemInput, output: artifact },
@@ -181,4 +216,6 @@ export const recordingSchemas = {
 	retrieveRealtimeEndpoints: { input: itemInput, output: artifact },
 	updateRealtimeEndpoints: { input: updateInput, output: artifact },
 	listSdkUploads: { input: listInput, output: page },
+	createSdkUpload: { input: createSdkUploadInput, output: artifact },
+	retrieveSdkUpload: { input: itemInput, output: artifact },
 } as const;
