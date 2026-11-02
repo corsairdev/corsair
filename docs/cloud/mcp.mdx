@@ -123,23 +123,44 @@ Some clients can't sign in to an MCP server, such as GitHub Copilot's coding age
 
 | Tool | What it does | Type |
 | --- | --- | --- |
-| `list_integrations` | Lists the apps on this link and whether each is ready, or checks whether Corsair can connect an app that isn't here yet | Read |
-| `get_connect_link` | Returns the sign-in link for an app, adding the app first if it isn't here. A few apps Corsair bills for directly come back ready, with no link | Write |
-| `list_operations` | Shows what connected apps can do, with each action's risk and the arguments it requires | Read |
+| `list_integrations` | Lists the apps on this link, whether each is ready and which account it's signed in as, with the Corsair credits left and spent this month. Also checks whether Corsair can connect an app that isn't here yet | Read |
+| `get_connect_link` | Returns the sign-in link for an app, adding the app first if it isn't here. A few apps Corsair bills for directly come back ready, with no link. Shows a [connect card](#cards) where the chat supports it | Write |
+| `list_operations` | Shows what connected apps can do, with each action's risk and price. Searched by what you want to do, it returns the matching actions with the arguments they require | Read |
 | `get_schema` | Shows the full arguments and return shape of one or more actions | Read |
 | `search` | Searches everything Corsair has synced from your apps in one call, such as email, chat, issues, docs and calendar, and opens results in full | Read |
 | `read_data` | Reads your apps live with a short script, for what `search` doesn't have or what must be current. It stops before any action that would change something | Read |
 | `run_script` | Makes changes in your apps with a short script: send, create, update or delete | Sensitive write |
+| `get_job` | Waits for a [long job](#long-jobs) a script started, such as a crawl or a document parse, and returns its result. Shows a [job card](#cards) where the chat supports it | Read |
 | `view_routines` | Lists the routines on this link and their recent runs, or shows one run step by step with its error | Read |
 | `update_routine` | Creates, changes, pauses or removes a routine, an automation that runs on an app event or a schedule. Describe it in plain words and Corsair writes and tests it | Sensitive write |
+| `submit_feedback` | Sends the Corsair team a short note about Corsair itself, such as a tool that failed or an app it lacks. The agent sends one only when you ask or agree, and never includes your app data | Write |
 
-Read tools never change anything. Write tools change only your Corsair setup, and you can undo them. Sensitive writes act in your apps, or set up a routine that will act later without asking, so a client should ask you before every call.
+Read tools never change anything. Write tools change only your Corsair setup, and you can undo them, or send Corsair a note. Sensitive writes act in your apps, or set up a routine that will act later without asking, so a client should ask you before every call.
 
 Scripts run in a sandbox that can only call your connected apps' actions. They have no network, filesystem or other system access, and the agent never sees your app credentials.
 
 Not every link shows every tool. A link that isn't allowed to add apps has no `get_connect_link`, and a link that can't change routines has no `update_routine`.
 
-`list_integrations`, `list_operations`, `get_schema`, `search`, `read_data` and `view_routines` are marked read-only, so most clients run them without asking. Clients usually ask you before running the others.
+`list_integrations`, `list_operations`, `get_schema`, `search`, `read_data`, `get_job` and `view_routines` are marked read-only, so most clients run them without asking. Clients usually ask you before running the others.
+
+## Long jobs
+
+Some actions start work that takes longer than one call: a site crawl, an async document parse, an agent run, an image or video prediction. Corsair notices when a script starts one and waits a few seconds. If the job finishes in that time, the result comes back with the script's. If not, the reply names the job, and the agent calls `get_job` to wait for it and get the result. The reply also gives a line to stop the job, where the app has one.
+
+This works whether the app is connected with your own account or runs on Corsair's.
+
+## Cards
+
+In chats that show MCP Apps, such as Claude, two tools add a small card to the conversation:
+
+- **Connect card** (`get_connect_link`): the app's logo, its name and one button. **Connect** opens the sign-in. The card shows when the sign-in has landed and offers **Continue** so the agent carries on. If the link runs out (after 10 minutes) it shows **New link** and gets a fresh one itself.
+- **Job card** (`get_job`): a job that is still running, which keeps checking until the job finishes, fails or is cancelled, then offers **Continue**.
+
+Clients without cards get the same information as text, so nothing is lost.
+
+## Apps on Corsair's account
+
+Some apps, such as Firecrawl, Exa, Reducto and TinyFish, can run on Corsair's own account with nothing to sign in to. Each call is billed to your organization's Corsair credits. `list_operations` and `get_schema` give each action's price, and `list_integrations` gives the credits left, what was spent this month and where to add more. A call that fails at the app is refunded. When credits run out or a spend limit is reached, the call doesn't run and nothing is charged, and the agent tells you.
 
 ## Modes and approvals
 
@@ -160,7 +181,13 @@ Change a link's mode at [hub.corsair.dev/me](https://hub.corsair.dev/me).
 
 <AccordionGroup>
   <Accordion title="The agent says an app isn't connected">
-    Ask it to connect the app. It calls `get_connect_link` and gives you a sign-in link. Open it, sign in to the app, then tell the agent you're done. A few apps Corsair provides directly come back ready with no link, and the agent can use them right away.
+    Ask it to connect the app. It calls `get_connect_link` and gives you a sign-in link, or in Claude a card with a **Connect** button. Open it, sign in to the app, then tell the agent you're done or press **Continue** on the card. A few apps Corsair provides directly come back ready with no link, and the agent can use them right away.
+  </Accordion>
+  <Accordion title="The sign-in link stopped working">
+    Links last 10 minutes. On the card, press **New link**. Without a card, ask the agent for a new link.
+  </Accordion>
+  <Accordion title="I want to tell Corsair something went wrong">
+    Ask the agent to send Corsair feedback. It calls `submit_feedback` with a short note in its own words and the error's reference code, without anything from your apps. Or email [primary@corsair.dev](mailto:primary@corsair.dev).
   </Accordion>
   <Accordion title="An app needs setting up before it can be connected">
     The project behind your link has to finish setting the app up first, for example by adding its OAuth credentials. Whoever manages the project does this in Corsair.
