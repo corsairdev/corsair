@@ -17,6 +17,9 @@ const JOB: EndpointJob = {
 const noop = async () => ({});
 
 // The smallest plugin introspection reads: an endpoint tree, its meta and its schemas.
+// Cast: a typed CorsairPlugin also needs a registered plugin id, keys, hooks and
+// an endpoint tree built through the plugin factory. Introspection reads none of
+// those, and the test needs a made-up id so no real plugin's meta leaks in.
 const plugin = {
 	id: 'jobdemo',
 	endpoints: { predictions: { create: noop, get: noop, cancel: noop } },
