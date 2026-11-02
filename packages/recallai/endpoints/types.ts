@@ -20,7 +20,32 @@ import {
 	CalendarUsersListInputSchema,
 	CalendarUserUpdateInputSchema,
 } from './calendar-types';
+import {
+	CalendarAccessTokenResponseSchema,
+	CalendarIdInputSchema,
+	CalendarResponseSchema,
+	CalendarUndefinedResponseSchema,
+	CreateCalendarInputSchema,
+	ListCalendarsInputSchema,
+	UpdateCalendarInputSchema,
+} from './calendars';
+import type {
+	GoogleLoginEndpointInputs,
+	GoogleLoginEndpointOutputs,
+} from './google-logins';
+import {
+	GoogleLoginInputSchemas,
+	GoogleLoginOutputSchemas,
+} from './google-logins';
 import { mediaSchemas } from './media';
+import type {
+	RecallaiWorkspaceOperationInputs,
+	RecallaiWorkspaceOperationOutputs,
+} from './workspace-operations';
+import {
+	RecallaiWorkspaceOperationInputSchemas,
+	RecallaiWorkspaceOperationOutputSchemas,
+} from './workspace-operations';
 
 export { UpdateParticipantEventsInputSchema } from './artifact-types';
 
@@ -98,7 +123,15 @@ export type BotResponse = z.infer<typeof BotSchema>;
 export type ListBotsResponse = z.infer<typeof ListBotsResponseSchema>;
 
 export type RecallaiEndpointInputs = ArtifactEndpointInputs &
-	CalendarEndpointInputs & {
+	CalendarEndpointInputs &
+	GoogleLoginEndpointInputs &
+	RecallaiWorkspaceOperationInputs & {
+		listCalendars: z.infer<typeof ListCalendarsInputSchema>;
+		createCalendar: z.infer<typeof CreateCalendarInputSchema>;
+		retrieveCalendar: z.infer<typeof CalendarIdInputSchema>;
+		updateCalendar: z.infer<typeof UpdateCalendarInputSchema>;
+		deleteCalendar: z.infer<typeof CalendarIdInputSchema>;
+		createCalendarAccessToken: z.infer<typeof CalendarIdInputSchema>;
 		listRecording: {
 			cursor?: string;
 			created_at_after?: string;
@@ -201,7 +234,19 @@ export type RecallaiEndpointInputs = ArtifactEndpointInputs &
 	};
 
 export type RecallaiEndpointOutputs = ArtifactEndpointOutputs &
-	CalendarEndpointOutputs & {
+	CalendarEndpointOutputs &
+	GoogleLoginEndpointOutputs &
+	RecallaiWorkspaceOperationOutputs & {
+		listCalendars: z.infer<
+			typeof import('./calendars').calendarsSchemas.list.output
+		>;
+		createCalendar: z.infer<typeof CalendarResponseSchema>;
+		retrieveCalendar: z.infer<typeof CalendarResponseSchema>;
+		updateCalendar: z.infer<typeof CalendarResponseSchema>;
+		deleteCalendar: undefined;
+		createCalendarAccessToken: z.infer<
+			typeof CalendarAccessTokenResponseSchema
+		>;
 		listRecording: {
 			count?: number;
 			next?: string | null;
@@ -281,6 +326,14 @@ export type RecallaiEndpointOutputs = ArtifactEndpointOutputs &
 	};
 
 export const RecallaiEndpointInputSchemas = {
+	...GoogleLoginInputSchemas,
+	...RecallaiWorkspaceOperationInputSchemas,
+	listCalendars: ListCalendarsInputSchema,
+	createCalendar: CreateCalendarInputSchema,
+	retrieveCalendar: CalendarIdInputSchema,
+	updateCalendar: UpdateCalendarInputSchema,
+	deleteCalendar: CalendarIdInputSchema,
+	createCalendarAccessToken: CalendarIdInputSchema,
 	listBots: ListBotsInputSchema,
 	createBot: CreateBotInputSchema,
 	retrieveBot: RetrieveBotInputSchema,
@@ -336,6 +389,20 @@ export const RecallaiEndpointInputSchemas = {
 } as const;
 
 export const RecallaiEndpointOutputSchemas = {
+	...GoogleLoginOutputSchemas,
+	...RecallaiWorkspaceOperationOutputSchemas,
+	listCalendars: z
+		.object({
+			next: z.string().nullable().optional(),
+			previous: z.string().nullable().optional(),
+			results: z.array(CalendarResponseSchema),
+		})
+		.passthrough(),
+	createCalendar: CalendarResponseSchema,
+	retrieveCalendar: CalendarResponseSchema,
+	updateCalendar: CalendarResponseSchema,
+	deleteCalendar: CalendarUndefinedResponseSchema,
+	createCalendarAccessToken: CalendarAccessTokenResponseSchema,
 	listBots: ListBotsResponseSchema,
 	createBot: BotSchema,
 	retrieveBot: BotSchema,

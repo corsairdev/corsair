@@ -15,34 +15,53 @@ import type {
 
 import { AuthMissingError } from 'corsair/core';
 import { z } from 'zod';
+import type { RecallaiRegion } from './client';
 import {
 	authenticateCalendar,
 	CalendarArrayResponseSchema,
 	CalendarObjectResponseSchema,
 	CalendarUndefinedResponseSchema,
 	CalendarUsersResponseSchema,
+	calendarsSchemas,
 	createAsyncTranscript,
 	createBot,
+	createCalendar,
+	createCalendarAccessToken,
+	createGoogleLogin,
+	createGoogleLoginGroup,
+	createMeetingDirectConnect,
 	createSdkUpload,
+	createZoomOAuthApp,
+	createZoomOAuthCredential,
 	deleteAudioMixed,
 	deleteAudioSeparate,
 	deleteBot,
 	deleteBotMedia,
+	deleteCalendar,
 	deleteCalendarUser,
+	deleteGoogleLogin,
+	deleteGoogleLoginGroup,
 	deleteMeetingMetadata,
 	deleteParticipantEvents,
 	deleteRecording,
 	deleteTranscript,
 	deleteVideoMixed,
 	deleteVideoSeparate,
+	deleteZoomOAuthApp,
+	deleteZoomOAuthCredential,
 	disconnectCalendarPlatform,
+	googleLoginSchemas,
 	leaveBotCall,
 	listAudioMixed,
 	listAudioSeparate,
 	listBots,
 	listCalendarEvents,
 	listCalendarMeetings,
+	listCalendars,
 	listCalendarUsers,
+	listGoogleLoginGroups,
+	listGoogleLogins,
+	listMeetingDirectConnects,
 	listMeetingMetadata,
 	listParticipantEvents,
 	listRealtimeEndpoints,
@@ -51,21 +70,34 @@ import {
 	listTranscripts,
 	listVideoMixed,
 	listVideoSeparate,
+	listZoomMeetingsToCredentials,
+	listZoomOAuthAppLogs,
+	listZoomOAuthApps,
+	listZoomOAuthCredentialLogs,
+	listZoomOAuthCredentials,
 	mediaSchemas,
 	outputAudio,
 	outputMedia,
 	outputVideo,
+	partialUpdateGoogleLogin,
+	partialUpdateGoogleLoginGroup,
 	pauseRecording,
 	pinParticipant,
+	RecallaiWorkspaceOperationSchemas,
 	recordingSchemas,
 	refreshCalendarMeetings,
 	resumeRecording,
 	retrieveAudioMixed,
 	retrieveAudioSeparate,
+	retrieveBillingUsage,
 	retrieveBot,
+	retrieveCalendar,
 	retrieveCalendarEvent,
 	retrieveCalendarMeeting,
 	retrieveCalendarUser,
+	retrieveGoogleLogin,
+	retrieveGoogleLoginGroup,
+	retrieveMeetingDirectConnect,
 	retrieveMeetingMetadata,
 	retrieveParticipantEvents,
 	retrieveRealtimeEndpoints,
@@ -74,6 +106,9 @@ import {
 	retrieveTranscript,
 	retrieveVideoMixed,
 	retrieveVideoSeparate,
+	retrieveZoomOAuthApp,
+	retrieveZoomOAuthCredential,
+	retrieveZoomOAuthCredentialAccessToken,
 	scheduleBotForCalendarEvent,
 	sendChatMessage,
 	startRecording,
@@ -83,12 +118,16 @@ import {
 	stopOutputVideo,
 	stopRecording,
 	stopScreenshare,
+	syncZoomOAuthCredentialMeetings,
 	unscheduleBotForCalendarEvent,
 	updateAudioMixed,
 	updateAudioSeparate,
 	updateBot,
+	updateCalendar,
 	updateCalendarMeeting,
 	updateCalendarUser,
+	updateGoogleLogin,
+	updateGoogleLoginGroup,
 	updateMeetingMetadata,
 	updateParticipantEvents,
 	updateRealtimeEndpoints,
@@ -96,6 +135,8 @@ import {
 	updateTranscript,
 	updateVideoMixed,
 	updateVideoSeparate,
+	updateZoomOAuthApp,
+	validateZoomOAuthCredential,
 } from './endpoints';
 import {
 	ArtifactListInputSchema,
@@ -132,6 +173,7 @@ import { RecallaiSchema } from './schema';
 export type RecallaiPluginOptions = {
 	authType?: PickAuth<'api_key'>;
 	key?: string;
+	region?: RecallaiRegion;
 	hooks?: InternalRecallaiPlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof recallaiEndpointsNested>;
@@ -229,6 +271,43 @@ export type RecallaiEndpoints = {
 	retrieveCalendarEvent: RecallaiEndpoint<'retrieveCalendarEvent'>;
 	scheduleBotForCalendarEvent: RecallaiEndpoint<'scheduleBotForCalendarEvent'>;
 	unscheduleBotForCalendarEvent: RecallaiEndpoint<'unscheduleBotForCalendarEvent'>;
+	listCalendars: RecallaiEndpoint<'listCalendars'>;
+	createCalendar: RecallaiEndpoint<'createCalendar'>;
+	retrieveCalendar: RecallaiEndpoint<'retrieveCalendar'>;
+	updateCalendar: RecallaiEndpoint<'updateCalendar'>;
+	deleteCalendar: RecallaiEndpoint<'deleteCalendar'>;
+	createCalendarAccessToken: RecallaiEndpoint<'createCalendarAccessToken'>;
+	listGoogleLoginGroups: RecallaiEndpoint<'listGoogleLoginGroups'>;
+	createGoogleLoginGroup: RecallaiEndpoint<'createGoogleLoginGroup'>;
+	retrieveGoogleLoginGroup: RecallaiEndpoint<'retrieveGoogleLoginGroup'>;
+	updateGoogleLoginGroup: RecallaiEndpoint<'updateGoogleLoginGroup'>;
+	partialUpdateGoogleLoginGroup: RecallaiEndpoint<'partialUpdateGoogleLoginGroup'>;
+	deleteGoogleLoginGroup: RecallaiEndpoint<'deleteGoogleLoginGroup'>;
+	listGoogleLogins: RecallaiEndpoint<'listGoogleLogins'>;
+	createGoogleLogin: RecallaiEndpoint<'createGoogleLogin'>;
+	retrieveGoogleLogin: RecallaiEndpoint<'retrieveGoogleLogin'>;
+	updateGoogleLogin: RecallaiEndpoint<'updateGoogleLogin'>;
+	partialUpdateGoogleLogin: RecallaiEndpoint<'partialUpdateGoogleLogin'>;
+	deleteGoogleLogin: RecallaiEndpoint<'deleteGoogleLogin'>;
+	retrieveBillingUsage: RecallaiEndpoint<'retrieveBillingUsage'>;
+	listMeetingDirectConnects: RecallaiEndpoint<'listMeetingDirectConnects'>;
+	createMeetingDirectConnect: RecallaiEndpoint<'createMeetingDirectConnect'>;
+	retrieveMeetingDirectConnect: RecallaiEndpoint<'retrieveMeetingDirectConnect'>;
+	listZoomMeetingsToCredentials: RecallaiEndpoint<'listZoomMeetingsToCredentials'>;
+	listZoomOAuthAppLogs: RecallaiEndpoint<'listZoomOAuthAppLogs'>;
+	listZoomOAuthApps: RecallaiEndpoint<'listZoomOAuthApps'>;
+	createZoomOAuthApp: RecallaiEndpoint<'createZoomOAuthApp'>;
+	retrieveZoomOAuthApp: RecallaiEndpoint<'retrieveZoomOAuthApp'>;
+	updateZoomOAuthApp: RecallaiEndpoint<'updateZoomOAuthApp'>;
+	deleteZoomOAuthApp: RecallaiEndpoint<'deleteZoomOAuthApp'>;
+	listZoomOAuthCredentialLogs: RecallaiEndpoint<'listZoomOAuthCredentialLogs'>;
+	listZoomOAuthCredentials: RecallaiEndpoint<'listZoomOAuthCredentials'>;
+	createZoomOAuthCredential: RecallaiEndpoint<'createZoomOAuthCredential'>;
+	retrieveZoomOAuthCredential: RecallaiEndpoint<'retrieveZoomOAuthCredential'>;
+	deleteZoomOAuthCredential: RecallaiEndpoint<'deleteZoomOAuthCredential'>;
+	retrieveZoomOAuthCredentialAccessToken: RecallaiEndpoint<'retrieveZoomOAuthCredentialAccessToken'>;
+	syncZoomOAuthCredentialMeetings: RecallaiEndpoint<'syncZoomOAuthCredentialMeetings'>;
+	validateZoomOAuthCredential: RecallaiEndpoint<'validateZoomOAuthCredential'>;
 };
 
 const recallaiEndpointsNested = {
@@ -332,9 +411,111 @@ const recallaiEndpointsNested = {
 		scheduleBot: scheduleBotForCalendarEvent,
 		unscheduleBot: unscheduleBotForCalendarEvent,
 	},
+	calendars: {
+		list: listCalendars,
+		create: createCalendar,
+		retrieve: retrieveCalendar,
+		update: updateCalendar,
+		delete: deleteCalendar,
+		createAccessToken: createCalendarAccessToken,
+	},
+	googleLoginGroups: {
+		list: listGoogleLoginGroups,
+		create: createGoogleLoginGroup,
+		retrieve: retrieveGoogleLoginGroup,
+		update: updateGoogleLoginGroup,
+		partialUpdate: partialUpdateGoogleLoginGroup,
+		delete: deleteGoogleLoginGroup,
+	},
+	googleLogins: {
+		list: listGoogleLogins,
+		create: createGoogleLogin,
+		retrieve: retrieveGoogleLogin,
+		update: updateGoogleLogin,
+		partialUpdate: partialUpdateGoogleLogin,
+		delete: deleteGoogleLogin,
+	},
+	billing: { retrieveUsage: retrieveBillingUsage },
+	meetingDirectConnects: {
+		list: listMeetingDirectConnects,
+		create: createMeetingDirectConnect,
+		retrieve: retrieveMeetingDirectConnect,
+	},
+	zoomMeetingsToCredentials: { list: listZoomMeetingsToCredentials },
+	zoomOAuthAppLogs: { list: listZoomOAuthAppLogs },
+	zoomOAuthApps: {
+		list: listZoomOAuthApps,
+		create: createZoomOAuthApp,
+		retrieve: retrieveZoomOAuthApp,
+		update: updateZoomOAuthApp,
+		delete: deleteZoomOAuthApp,
+	},
+	zoomOAuthCredentialLogs: { list: listZoomOAuthCredentialLogs },
+	zoomOAuthCredentials: {
+		list: listZoomOAuthCredentials,
+		create: createZoomOAuthCredential,
+		retrieve: retrieveZoomOAuthCredential,
+		delete: deleteZoomOAuthCredential,
+		retrieveAccessToken: retrieveZoomOAuthCredentialAccessToken,
+		syncMeetings: syncZoomOAuthCredentialMeetings,
+		validate: validateZoomOAuthCredential,
+	},
 } as const;
 
 export const recallaiEndpointSchemas = {
+	'calendars.list': calendarsSchemas.list,
+	'calendars.create': calendarsSchemas.create,
+	'calendars.retrieve': calendarsSchemas.retrieve,
+	'calendars.update': calendarsSchemas.update,
+	'calendars.delete': calendarsSchemas.delete,
+	'calendars.createAccessToken': calendarsSchemas.createAccessToken,
+	'googleLoginGroups.list': googleLoginSchemas.listGoogleLoginGroups,
+	'googleLoginGroups.create': googleLoginSchemas.createGoogleLoginGroup,
+	'googleLoginGroups.retrieve': googleLoginSchemas.retrieveGoogleLoginGroup,
+	'googleLoginGroups.update': googleLoginSchemas.updateGoogleLoginGroup,
+	'googleLoginGroups.partialUpdate':
+		googleLoginSchemas.partialUpdateGoogleLoginGroup,
+	'googleLoginGroups.delete': googleLoginSchemas.deleteGoogleLoginGroup,
+	'googleLogins.list': googleLoginSchemas.listGoogleLogins,
+	'googleLogins.create': googleLoginSchemas.createGoogleLogin,
+	'googleLogins.retrieve': googleLoginSchemas.retrieveGoogleLogin,
+	'googleLogins.update': googleLoginSchemas.updateGoogleLogin,
+	'googleLogins.partialUpdate': googleLoginSchemas.partialUpdateGoogleLogin,
+	'googleLogins.delete': googleLoginSchemas.deleteGoogleLogin,
+	'billing.retrieveUsage':
+		RecallaiWorkspaceOperationSchemas.retrieveBillingUsage,
+	'meetingDirectConnects.list':
+		RecallaiWorkspaceOperationSchemas.listMeetingDirectConnects,
+	'meetingDirectConnects.create':
+		RecallaiWorkspaceOperationSchemas.createMeetingDirectConnect,
+	'meetingDirectConnects.retrieve':
+		RecallaiWorkspaceOperationSchemas.retrieveMeetingDirectConnect,
+	'zoomMeetingsToCredentials.list':
+		RecallaiWorkspaceOperationSchemas.listZoomMeetingsToCredentials,
+	'zoomOAuthAppLogs.list':
+		RecallaiWorkspaceOperationSchemas.listZoomOAuthAppLogs,
+	'zoomOAuthApps.list': RecallaiWorkspaceOperationSchemas.listZoomOAuthApps,
+	'zoomOAuthApps.create': RecallaiWorkspaceOperationSchemas.createZoomOAuthApp,
+	'zoomOAuthApps.retrieve':
+		RecallaiWorkspaceOperationSchemas.retrieveZoomOAuthApp,
+	'zoomOAuthApps.update': RecallaiWorkspaceOperationSchemas.updateZoomOAuthApp,
+	'zoomOAuthApps.delete': RecallaiWorkspaceOperationSchemas.deleteZoomOAuthApp,
+	'zoomOAuthCredentialLogs.list':
+		RecallaiWorkspaceOperationSchemas.listZoomOAuthCredentialLogs,
+	'zoomOAuthCredentials.list':
+		RecallaiWorkspaceOperationSchemas.listZoomOAuthCredentials,
+	'zoomOAuthCredentials.create':
+		RecallaiWorkspaceOperationSchemas.createZoomOAuthCredential,
+	'zoomOAuthCredentials.retrieve':
+		RecallaiWorkspaceOperationSchemas.retrieveZoomOAuthCredential,
+	'zoomOAuthCredentials.delete':
+		RecallaiWorkspaceOperationSchemas.deleteZoomOAuthCredential,
+	'zoomOAuthCredentials.retrieveAccessToken':
+		RecallaiWorkspaceOperationSchemas.retrieveZoomOAuthCredentialAccessToken,
+	'zoomOAuthCredentials.syncMeetings':
+		RecallaiWorkspaceOperationSchemas.syncZoomOAuthCredentialMeetings,
+	'zoomOAuthCredentials.validate':
+		RecallaiWorkspaceOperationSchemas.validateZoomOAuthCredential,
 	'bots.list': {
 		input: RecallaiEndpointInputSchemas.listBots,
 		output: RecallaiEndpointOutputSchemas.listBots,
@@ -977,6 +1158,154 @@ const recallaiEndpointMeta = {
 	'calendar.unscheduleBot': {
 		riskLevel: 'destructive',
 		description: 'Remove a scheduled Recall.ai bot from a calendar event',
+	},
+	'calendars.list': {
+		riskLevel: 'read',
+		description: 'List Recall.ai calendars',
+	},
+	'calendars.create': {
+		riskLevel: 'write',
+		description: 'Create a Recall.ai calendar',
+	},
+	'calendars.retrieve': {
+		riskLevel: 'read',
+		description: 'Retrieve a Recall.ai calendar',
+	},
+	'calendars.update': {
+		riskLevel: 'write',
+		description: 'Update a Recall.ai calendar',
+	},
+	'calendars.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a Recall.ai calendar',
+	},
+	'calendars.createAccessToken': {
+		riskLevel: 'write',
+		description: 'Create a Recall.ai calendar access token',
+	},
+	'googleLoginGroups.list': {
+		riskLevel: 'read',
+		description: 'List Recall.ai Google login groups',
+	},
+	'googleLoginGroups.create': {
+		riskLevel: 'write',
+		description: 'Create a Recall.ai Google login group',
+	},
+	'googleLoginGroups.retrieve': {
+		riskLevel: 'read',
+		description: 'Retrieve a Recall.ai Google login group',
+	},
+	'googleLoginGroups.update': {
+		riskLevel: 'write',
+		description: 'Replace a Recall.ai Google login group',
+	},
+	'googleLoginGroups.partialUpdate': {
+		riskLevel: 'write',
+		description: 'Update fields on a Recall.ai Google login group',
+	},
+	'googleLoginGroups.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a Recall.ai Google login group',
+	},
+	'googleLogins.list': {
+		riskLevel: 'read',
+		description: 'List Recall.ai Google logins',
+	},
+	'googleLogins.create': {
+		riskLevel: 'write',
+		description: 'Create a Recall.ai Google login',
+	},
+	'googleLogins.retrieve': {
+		riskLevel: 'read',
+		description: 'Retrieve a Recall.ai Google login',
+	},
+	'googleLogins.update': {
+		riskLevel: 'write',
+		description: 'Replace a Recall.ai Google login',
+	},
+	'googleLogins.partialUpdate': {
+		riskLevel: 'write',
+		description: 'Update fields on a Recall.ai Google login',
+	},
+	'googleLogins.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a Recall.ai Google login',
+	},
+	'billing.retrieveUsage': {
+		riskLevel: 'read',
+		description: 'Retrieve Recall.ai billing usage',
+	},
+	'meetingDirectConnects.list': {
+		riskLevel: 'read',
+		description: 'List Recall.ai direct connections',
+	},
+	'meetingDirectConnects.create': {
+		riskLevel: 'write',
+		description: 'Create a Recall.ai direct connection',
+	},
+	'meetingDirectConnects.retrieve': {
+		riskLevel: 'read',
+		description: 'Retrieve a Recall.ai direct connection',
+	},
+	'zoomMeetingsToCredentials.list': {
+		riskLevel: 'read',
+		description: 'List Zoom meeting credential mappings',
+	},
+	'zoomOAuthAppLogs.list': {
+		riskLevel: 'read',
+		description: 'List Recall.ai Zoom OAuth app logs',
+	},
+	'zoomOAuthApps.list': {
+		riskLevel: 'read',
+		description: 'List Recall.ai Zoom OAuth apps',
+	},
+	'zoomOAuthApps.create': {
+		riskLevel: 'write',
+		description: 'Create a Recall.ai Zoom OAuth app',
+	},
+	'zoomOAuthApps.retrieve': {
+		riskLevel: 'read',
+		description: 'Retrieve a Recall.ai Zoom OAuth app',
+	},
+	'zoomOAuthApps.update': {
+		riskLevel: 'write',
+		description: 'Update a Recall.ai Zoom OAuth app',
+	},
+	'zoomOAuthApps.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a Recall.ai Zoom OAuth app',
+	},
+	'zoomOAuthCredentialLogs.list': {
+		riskLevel: 'read',
+		description: 'List Recall.ai Zoom OAuth credential logs',
+	},
+	'zoomOAuthCredentials.list': {
+		riskLevel: 'read',
+		description: 'List Recall.ai Zoom OAuth credentials',
+	},
+	'zoomOAuthCredentials.create': {
+		riskLevel: 'write',
+		description: 'Create a Recall.ai Zoom OAuth credential',
+	},
+	'zoomOAuthCredentials.retrieve': {
+		riskLevel: 'read',
+		description: 'Retrieve a Recall.ai Zoom OAuth credential',
+	},
+	'zoomOAuthCredentials.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a Recall.ai Zoom OAuth credential',
+	},
+	'zoomOAuthCredentials.retrieveAccessToken': {
+		riskLevel: 'read',
+		description: 'Retrieve a Zoom OAuth access token',
+	},
+	'zoomOAuthCredentials.syncMeetings': {
+		riskLevel: 'write',
+		description: 'Synchronize Zoom OAuth credential meetings',
+	},
+	'zoomOAuthCredentials.validate': {
+		riskLevel: 'write',
+		description: 'Validate a Recall.ai Zoom OAuth credential',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof recallaiEndpointsNested>;
 
