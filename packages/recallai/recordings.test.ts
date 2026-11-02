@@ -1,5 +1,6 @@
 import { makeRecallaiRequest } from './client';
 import { recallai } from './index';
+import { recallaiTestContext } from './test-context';
 
 jest.mock('./client', () => ({ makeRecallaiRequest: jest.fn() }));
 
@@ -19,7 +20,7 @@ describe('Recall.ai recording operations', () => {
 			.mockResolvedValue(response);
 		const plugin = recallai({ key: 'recall-key' });
 		if (!plugin.endpoints) throw new Error('Recall.ai endpoints are missing');
-		const ctx = { key: 'recall-key' } as never;
+		const ctx = recallaiTestContext;
 		await plugin.endpoints.recordings.list(ctx, { status_code: 'done' });
 		await plugin.endpoints.recordings.retrieve(ctx, { id });
 		await plugin.endpoints.recordings.update(ctx, {
@@ -73,7 +74,7 @@ describe('Recall.ai recording operations', () => {
 			.mockResolvedValue(response);
 		const plugin = recallai({ key: 'recall-key' });
 		if (!plugin.endpoints) throw new Error('Recall.ai endpoints are missing');
-		const ctx = { key: 'recall-key' } as never;
+		const ctx = recallaiTestContext;
 		await plugin.endpoints.realtimeEndpoints.list(ctx, {});
 		await plugin.endpoints.realtimeEndpoints.retrieve(ctx, { id });
 		await plugin.endpoints.realtimeEndpoints.update(ctx, {
@@ -104,7 +105,7 @@ describe('Recall.ai recording operations', () => {
 		request.mockResolvedValue({ next: null, previous: null, results: [] });
 		const plugin = recallai({ key: 'recall-key' });
 		if (!plugin.endpoints) throw new Error('Recall.ai endpoints are missing');
-		await plugin.endpoints.sdkUploads.list({ key: 'recall-key' } as never, {});
+		await plugin.endpoints.sdkUploads.list(recallaiTestContext, {});
 		expect(request).toHaveBeenCalledWith('/api/v1/sdk_upload/', 'recall-key', {
 			method: 'GET',
 			query: {},

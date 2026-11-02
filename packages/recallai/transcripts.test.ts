@@ -5,6 +5,7 @@ jest.mock('./client', () => ({
 }));
 
 import { makeRecallaiRequest } from './client';
+import { recallaiTestContext } from './test-context';
 
 const artifact = {
 	id: '550e8400-e29b-41d4-a716-446655440000',
@@ -31,7 +32,7 @@ describe('Recall.ai transcript and participant-event endpoints', () => {
 		if (!plugin.endpoints) throw new Error('Recall.ai endpoints are missing');
 
 		await expect(
-			plugin.endpoints.transcripts.list({ key: 'recall-key' } as never, {
+			plugin.endpoints.transcripts.list(recallaiTestContext, {
 				recording_id: '550e8400-e29b-41d4-a716-446655440001',
 				status_code: 'done',
 			}),
@@ -52,7 +53,7 @@ describe('Recall.ai transcript and participant-event endpoints', () => {
 		if (!plugin.endpoints) throw new Error('Recall.ai endpoints are missing');
 
 		await plugin.endpoints.transcripts.retrieve(
-			{ key: 'recall-key' } as never,
+			recallaiTestContext,
 			{ id: artifact.id },
 		);
 		expect(request).toHaveBeenCalledWith(
@@ -74,7 +75,7 @@ describe('Recall.ai transcript and participant-event endpoints', () => {
 			.mockResolvedValue(artifact);
 		const plugin = recallai({ key: 'recall-key' });
 		if (!plugin.endpoints) throw new Error('Recall.ai endpoints are missing');
-		const ctx = { key: 'recall-key' } as never;
+		const ctx = recallaiTestContext;
 
 		await plugin.endpoints.participantEvents.list(ctx, {
 			cursor: 'next',
@@ -118,7 +119,7 @@ describe('Recall.ai transcript and participant-event endpoints', () => {
 		const plugin = recallai({ key: 'recall-key' });
 		if (!plugin.endpoints) throw new Error('Recall.ai endpoints are missing');
 		await expect(
-			plugin.endpoints.transcripts.retrieve({ key: 'recall-key' } as never, {
+			plugin.endpoints.transcripts.retrieve(recallaiTestContext, {
 				id: '../secret',
 			}),
 		).rejects.toThrow();

@@ -12,6 +12,7 @@ import {
 	sendChatMessage,
 	stopOutputVideo,
 } from './endpoints/bots';
+import { recallaiTestContext } from './test-context';
 
 const bot = {
 	id: '550e8400-e29b-41d4-a716-446655440000',
@@ -36,12 +37,12 @@ describe('Recall.ai bot endpoints', () => {
 	it('routes bot media and output actions to the documented paths', async () => {
 		const request = jest.mocked(makeRecallaiRequest);
 		request.mockResolvedValue(undefined);
-		await deleteBotMedia({ key: 'recall-key' }, { id: 'bot-1' });
+		await deleteBotMedia(recallaiTestContext, { id: 'bot-1' });
 		await outputAudio(
-			{ key: 'recall-key' },
+			recallaiTestContext,
 			{ id: 'bot-1', kind: 'mp3', b64_data: 'YQ==' },
 		);
-		await stopOutputVideo({ key: 'recall-key' }, { id: 'bot-1' });
+		await stopOutputVideo(recallaiTestContext, { id: 'bot-1' });
 		expect(request).toHaveBeenNthCalledWith(
 			1,
 			'/api/v1/bot/bot-1/delete_media/',
@@ -66,11 +67,11 @@ describe('Recall.ai bot endpoints', () => {
 		const request = jest.mocked(makeRecallaiRequest);
 		request.mockResolvedValue(undefined);
 		await pinParticipant(
-			{ key: 'recall-key' },
+			recallaiTestContext,
 			{ bot_id: 'bot-1', participant_id: 42 },
 		);
 		await sendChatMessage(
-			{ key: 'recall-key' },
+			recallaiTestContext,
 			{ id: 'bot-1', message: 'hello', pin: true },
 		);
 		expect(request).toHaveBeenNthCalledWith(
@@ -91,7 +92,7 @@ describe('Recall.ai bot endpoints', () => {
 		const request = jest.mocked(makeRecallaiRequest);
 		request.mockClear();
 		await expect(
-			deleteBotMedia({ key: 'recall-key' }, { id: '../secret' }),
+			deleteBotMedia(recallaiTestContext, { id: '../secret' }),
 		).rejects.toThrow();
 		expect(request).not.toHaveBeenCalled();
 	});
@@ -102,7 +103,7 @@ describe('Recall.ai bot endpoints', () => {
 		request.mockResolvedValue({ count: 1, results: [bot] });
 
 		const plugin = recallai({ key: 'recall-key' });
-		const ctx = { key: 'recall-key' } as never;
+		const ctx = recallaiTestContext;
 		if (!plugin.endpoints) throw new Error('Recall.ai endpoints are missing');
 		await expect(
 			plugin.endpoints.bots.list(ctx, { page: 2, status: ['done'] }),
@@ -127,7 +128,7 @@ describe('Recall.ai bot endpoints', () => {
 		const plugin = recallai({ key: 'recall-key' });
 		if (!plugin.endpoints) throw new Error('Recall.ai endpoints are missing');
 		await expect(
-			plugin.endpoints.bots.create({ key: 'recall-key' } as never, input),
+			plugin.endpoints.bots.create(recallaiTestContext, input),
 		).resolves.toEqual(bot);
 		expect(request).toHaveBeenCalledWith('/api/v1/bot/', 'recall-key', {
 			method: 'POST',
@@ -139,7 +140,7 @@ describe('Recall.ai bot endpoints', () => {
 		const request = jest.mocked(makeRecallaiRequest);
 		request.mockResolvedValue(bot);
 		const plugin = recallai({ key: 'recall-key' });
-		const ctx = { key: 'recall-key' } as never;
+		const ctx = recallaiTestContext;
 		if (!plugin.endpoints) throw new Error('Recall.ai endpoints are missing');
 
 		await plugin.endpoints.bots.retrieve(ctx, {
@@ -189,7 +190,7 @@ describe('Recall.ai bot endpoints', () => {
 });
 
 describe('Recall.ai artifact endpoints', () => {
-	const ctx = { key: 'recall-key' } as never;
+	const ctx = recallaiTestContext;
 	beforeEach(() => jest.mocked(makeRecallaiRequest).mockReset());
 
 	it('lists transcripts with exact filters and path', async () => {

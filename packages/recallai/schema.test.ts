@@ -1,5 +1,6 @@
 import { recallai, recallaiEndpointSchemas } from './index';
 import { RecallaiSchema } from './schema';
+import { recallaiTestContext } from './test-context';
 
 jest.mock('./client', () => ({
 	makeRecallaiRequest: jest.fn(),
@@ -66,7 +67,7 @@ describe('Recall.ai schema', () => {
 		const request = jest.mocked(makeRecallaiRequest);
 		request.mockResolvedValue({ count: 0, results: [] });
 		const plugin = recallai({ key: 'recall-key' });
-		const ctx = { key: 'recall-key' } as never;
+		const ctx = recallaiTestContext;
 		if (!plugin.endpoints) throw new Error('Recall.ai endpoints are missing');
 
 		await expect(
