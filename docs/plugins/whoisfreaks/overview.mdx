@@ -92,7 +92,7 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.whoisfreaks.api.dns.live({ domainName: 'example.com' });
+await tenant.whoisfreaks.api.dns.live({ domainName: 'example.com', type: 'all' });
 ```
 
 
@@ -100,7 +100,7 @@ await tenant.whoisfreaks.api.dns.live({ domainName: 'example.com' });
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.whoisfreaks.api.availability.check({ domain: 'example.com' });
+await tenant.whoisfreaks.api.availability.check({ domain: 'example.com', sug: false, count: 5 });
 ```
 
 

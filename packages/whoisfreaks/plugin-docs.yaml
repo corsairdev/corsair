@@ -7,8 +7,11 @@ examples:
     title: Look up live DNS records
     args:
       domainName: example.com
+      type: all
   write:
     path: availability.check
     title: Check domain availability
     args:
       domain: example.com
+      sug: false
+      count: 5
