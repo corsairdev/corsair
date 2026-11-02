@@ -55,21 +55,21 @@ import {
 	updateRecording,
 } from './endpoints';
 import {
-	RecallaiBotActionInputSchemas,
-	RecallaiEndpointInputSchemas,
-	RecallaiEndpointOutputSchemas,
-} from './endpoints/types';
-import type {
-	RecallaiEndpointInputs,
-	RecallaiEndpointOutputs,
-} from './endpoints/types';
-import {
 	ArtifactListInputSchema,
 	ArtifactListResponseSchema,
 	ArtifactResponseSchema,
 	RetrieveArtifactInputSchema,
 	UpdateParticipantEventsInputSchema,
 } from './endpoints/artifact-types';
+import type {
+	RecallaiEndpointInputs,
+	RecallaiEndpointOutputs,
+} from './endpoints/types';
+import {
+	RecallaiBotActionInputSchemas,
+	RecallaiEndpointInputSchemas,
+	RecallaiEndpointOutputSchemas,
+} from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { RecallaiSchema } from './schema';
 
