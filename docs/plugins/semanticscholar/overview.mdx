@@ -89,26 +89,37 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`authors.batchGet`**
+**Search papers**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.semanticscholar.api.authors.batchGet({});
+await tenant.semanticscholar.api.papers.search({ query: 'attention is all you need' });
 ```
 
 
-**Write**
+**Search authors**
 
-_No write-style endpoint inferred; pick any operation from the [API](/plugins/semanticscholar/api) reference._
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.semanticscholar.api.authors.search({ query: 'Geoffrey Hinton' });
+```
 
 
 See the full list on the [API](/plugins/semanticscholar/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.semanticscholar.db.<entity>.search()` and `.list()`: `author`, `authorSummary`, `autocompleteMatch`, `citation`, `dataset`, `datasetDiff`, `datasetRelease`, `paper`, `reference`, `snippet`.
+This table exists, but Semantic Scholar calls don't fill it yet. This returns only rows you have written yourself.
 
-See [Database](/plugins/semanticscholar/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.semanticscholar.db.paper.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `author`, `authorSummary`, `autocompleteMatch`, `citation`, `dataset`, `datasetDiff`, `datasetRelease`, `paper`, `reference`, `snippet`. See [Database](/plugins/semanticscholar/database) for filters and operators.
 
 ## What's next
 
