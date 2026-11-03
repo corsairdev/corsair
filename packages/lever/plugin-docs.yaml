@@ -1,0 +1,124 @@
+displayName: Lever
+description: Applicant tracking system for sourcing, managing, and hiring candidates with postings, interviews, and pipeline management.
+domain: lever.co
+recommendedAuth: api_key
+examples:
+  read:
+    path: opportunities.list
+    args: {}
+  write:
+    path: opportunities.create
+    args:
+      name: Jane Doe
+      headline: Backend engineer
+apiExamples:
+  opportunities.list:
+    offset: 0
+  opportunities.retrieve:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+    include: applications
+  opportunities.listDeleted:
+    offset: 0
+  opportunities.listFileActions:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+  opportunities.create:
+    name: Jane Doe
+    headline: Backend engineer
+    emails:
+      - jane@example.com
+  opportunities.updateStage:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+    stageID: 5ce4c8b0-cb6b-4b53-b5c2-6f34b7bb4d9c
+  opportunities.updateArchivedState:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+    archived: true
+    reasonID: 62ba8e5c-cf83-4d14-a86a-1d1f8f1f4b13
+  opportunities.addLinks:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+    contactIDs:
+      - c38e60e9-5992-45e5-8f81-d4b2d65c95b1
+  opportunities.removeLinks:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+    contactIDs:
+      - c38e60e9-5992-45e5-8f81-d4b2d65c95b1
+  opportunities.addTags:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+    tags:
+      - remote
+  opportunities.removeTags:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+    tags:
+      - remote
+  opportunities.addSources:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+    sourceIDs:
+      - 4f7b1a2e-0d8c-4b0a-9e2b-9f1b7b2f3a4b
+  opportunities.removeSources:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+    sourceIDs:
+      - 4f7b1a2e-0d8c-4b0a-9e2b-9f1b7b2f3a4b
+  applications.list:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+  applications.retrieve:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+    applicationId: 6ffe4153-60bb-4e30-bfbe-bd9b9775879c
+  applications.listDeleted:
+    offset: 0
+  postings.list:
+    offset: 0
+  postings.retrieve:
+    postingId: 5d0f2f8a-1b2c-4d3e-9f4a-5b6c7d8e9f0a
+  postings.listDeleted:
+    offset: 0
+  postings.create:
+    text: Senior Backend Engineer
+  postings.update:
+    postingId: 5d0f2f8a-1b2c-4d3e-9f4a-5b6c7d8e9f0a
+    text: Staff Backend Engineer
+  postings.retrieveApplicationQuestions:
+    postingId: 5d0f2f8a-1b2c-4d3e-9f4a-5b6c7d8e9f0a
+  postings.listUsers:
+    postingId: 5d0f2f8a-1b2c-4d3e-9f4a-5b6c7d8e9f0a
+  postings.apply:
+    postingId: 5d0f2f8a-1b2c-4d3e-9f4a-5b6c7d8e9f0a
+    name: Jane Doe
+    email: jane@example.com
+  interviews.list:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+  interviews.retrieve:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+    interviewId: 6ff55c8e-fe04-4eb4-835a-630b1c0da421
+  interviews.create:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+    date: 1700000000000
+    duration: 60
+  interviews.update:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+    interviewId: 6ff55c8e-fe04-4eb4-835a-630b1c0da421
+    date: 1700100000000
+  interviews.delete:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+    interviewId: 6ff55c8e-fe04-4eb4-835a-630b1c0da421
+  notes.list:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+  notes.retrieve:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+    noteId: b1dbbcfe-281c-46a0-8f51-57049158d3f3
+  notes.create:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+    value: Strong backend background
+  notes.update:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+    noteId: b1dbbcfe-281c-46a0-8f51-57049158d3f3
+    value: Updated note
+  notes.delete:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+    noteId: b1dbbcfe-281c-46a0-8f51-57049158d3f3
+  archiveReasons.list:
+    offset: 0
+  archiveReasons.retrieve:
+    archiveReasonId: 63dd55b2-a99f-4e7b-985f-22c7bf80ab42
+  stages.list:
+    offset: 0
+  stages.retrieve:
+    stageId: 4a2b1c3d-5e6f-4a7b-8c9d-0e1f2a3b4c5d
