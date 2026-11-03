@@ -1,19 +1,16 @@
 import type {
 	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
 import {
 	addOpportunityLinks,
@@ -131,18 +128,11 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { LeverSchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
-import { resolveLeverOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
-import { matchLeverTenantWebhook } from './webhooks/tenant-matcher';
-import type { ExampleEvent, LeverWebhookOutputs } from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
 
 export type LeverPluginOptions = {
 	authType?: PickAuth<'api_key' | 'oauth_2'>;
 	key?: string;
-	webhookSecret?: string;
 	hooks?: InternalLeverPlugin['hooks'];
-	webhookHooks?: InternalLeverPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof leverEndpointsNested>;
 };
@@ -268,18 +258,6 @@ export type LeverEndpoints = {
 	replaceRequisitionFieldOptions: LeverEndpoint<'replaceRequisitionFieldOptions'>;
 	deleteRequisitionFieldOptions: LeverEndpoint<'deleteRequisitionFieldOptions'>;
 };
-
-type LeverWebhook<K extends keyof LeverWebhookOutputs, TEvent> = CorsairWebhook<
-	LeverContext,
-	TEvent,
-	LeverWebhookOutputs[K]
->;
-
-export type LeverWebhooks = {
-	example: LeverWebhook<'example', ExampleEvent>;
-};
-
-export type LeverBoundWebhooks = BindWebhooks<LeverWebhooks>;
 
 const leverEndpointsNested = {
 	opportunities: {
@@ -439,12 +417,6 @@ const leverEndpointsNested = {
 	offers: {
 		list: listOpportunityOffers,
 		download: downloadOpportunityOffer,
-	},
-} as const;
-
-const leverWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
 	},
 } as const;
 
@@ -868,14 +840,6 @@ export const leverEndpointSchemas: RequiredPluginEndpointSchemas<
 		output: LeverEndpointOutputSchemas.downloadOpportunityOffer,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<typeof leverEndpointsNested>;
-
-const leverWebhookSchemas = {
-	'example.example': {
-		description: 'An example webhook event',
-		payload: ExampleEventSchema,
-		response: ExampleEventSchema,
-	},
-} as const satisfies RequiredPluginWebhookSchemas<typeof leverWebhooksNested>;
 
 type LeverEndpointTree = Record<string, unknown>;
 // unknown: wrappers receive core context/input before Zod parsing and re-parse output.
@@ -1355,7 +1319,7 @@ export type BaseLeverPlugin<T extends LeverPluginOptions> = CorsairPlugin<
 	'lever',
 	typeof LeverSchema,
 	typeof leverEndpointsNested,
-	typeof leverWebhooksNested,
+	{},
 	T,
 	typeof defaultAuthType
 >;
@@ -1378,34 +1342,14 @@ export function lever<const T extends LeverPluginOptions>(
 		schema: LeverSchema,
 		options: options,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
 		endpoints: validatedLeverEndpointsNested,
-		webhooks: leverWebhooksNested,
-		endpointMeta: leverEndpointMeta,
+		webhooks: {},		endpointMeta: leverEndpointMeta,
 		endpointSchemas: leverEndpointSchemas,
-		webhookSchemas: leverWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			// Lever signs webhook payloads with a signature header; refined with
-			// the webhook family in a later part.
-			return 'x-lever-signature' in headers;
-		},
-		pluginTenantWebhookMatcher: matchLeverTenantWebhook,
-		oauthWebhookTenantLinkResolver: resolveLeverOAuthWebhookTenantLink,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: LeverKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
-			}
-
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
@@ -1429,7 +1373,3 @@ export type {
 	LeverEndpointInputs,
 	LeverEndpointOutputs,
 } from './endpoints/types';
-export type {
-	ExampleEvent,
-	LeverWebhookOutputs,
-} from './webhooks/types';
