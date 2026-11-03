@@ -61,6 +61,9 @@ describe('Lever schema', () => {
 			'listApplications',
 			'listInterviews',
 			'listNotes',
+			'listPanels',
+			'listFeedback',
+			'listFiles',
 		] as const;
 		for (const operation of opportunityOperations) {
 			const schema =
@@ -79,6 +82,8 @@ describe('Lever schema', () => {
 			'retrieveNote',
 			'updateNote',
 			'deleteNote',
+			'retrievePanel',
+			'retrieveFeedback',
 		] as const;
 		for (const operation of twoIdOperations) {
 			const schema =
@@ -141,6 +146,50 @@ describe('Lever schema', () => {
 			],
 			['createPosting', { text: 'Software Engineer' }],
 			['createInterview', { opportunityId: 'opp-1', date: 1700000000000 }],
+			['createPanel', { opportunityId: 'opp-1', note: 'Panel for Rachel' }],
+			[
+				'updatePanel',
+				{ opportunityId: 'opp-1', panelId: 'panel-1', note: 'Updated panel' },
+			],
+			[
+				'createFeedback',
+				{ opportunityId: 'opp-1', fieldValues: [{ id: 'fv-1', value: '4' }] },
+			],
+			[
+				'updateFeedback',
+				{
+					opportunityId: 'opp-1',
+					feedbackId: 'fb-1',
+					completedAt: 1600275449372,
+				},
+			],
+			['createFeedbackTemplate', { text: 'Phone Screen Feedback Form' }],
+			[
+				'updateFeedbackTemplate',
+				{ feedbackTemplateId: 'ft-1', text: 'Updated form' },
+			],
+			['updateFormTemplate', { formTemplateId: 'f-1', title: 'Application' }],
+			['createFormTemplate', { title: 'Application' }],
+			['createRequisitionField', { text: 'Work type', type: 'dropdown' }],
+			[
+				'updateRequisitionField',
+				{ requisitionFieldId: 'rf-1', text: 'Work type', type: 'dropdown' },
+			],
+			[
+				'addRequisitionFieldOptions',
+				{ requisitionFieldId: 'rf-1', values: [{ text: 'hourly' }] },
+			],
+			[
+				'replaceRequisitionFieldOptions',
+				{
+					requisitionFieldId: 'rf-1',
+					values: [{ id: 'opt-1', text: 'remote' }],
+				},
+			],
+			[
+				'deleteRequisitionFieldOptions',
+				{ requisitionFieldId: 'rf-1', values: ['opt-1'] },
+			],
 		] as const;
 		for (const [operation, validInput] of bodyRequiredOperations) {
 			const schema =
@@ -166,6 +215,20 @@ describe('Lever schema', () => {
 			LeverEndpointInputSchemas.retrieveStage.safeParse({ stageId: 'stage-1' })
 				.success,
 		).toBe(true);
+		const singleIdOperations = [
+			['retrieveFeedbackTemplate', { feedbackTemplateId: 'ft-1' }],
+			['retrieveFormTemplate', { formTemplateId: 'form-1' }],
+			['retrieveRequisitionField', { requisitionFieldId: 'rf-1' }],
+		] as const;
+		for (const [operation, validInput] of singleIdOperations) {
+			const schema =
+				LeverEndpointInputSchemas[
+					operation as keyof typeof LeverEndpointInputSchemas
+				];
+			expect(schema.safeParse({}).success).toBe(false);
+			expect(schema.safeParse(validInput).success).toBe(true);
+		}
+
 		expect(
 			LeverEndpointInputSchemas.retrieveArchiveReason.safeParse({}).success,
 		).toBe(false);
@@ -178,6 +241,9 @@ describe('Lever schema', () => {
 
 	it('provides executable input and output contracts for every operation', () => {
 		for (const schemas of Object.values(leverEndpointSchemas)) {
+			if (!schemas.input || !schemas.output) {
+				throw new Error('Missing input or output schema');
+			}
 			expect(typeof schemas.input.safeParse).toBe('function');
 			expect(typeof schemas.output.safeParse).toBe('function');
 		}
@@ -240,6 +306,18 @@ describe('Lever schema', () => {
 			{ opportunityId: 'opp-1', noteId: 'note-1', value: 'note text' },
 			{ postingId: 'post-1', name: 'Jane Doe', email: 'jane@example.com' },
 			{ opportunityId: 'opp-1', date: 1700000000000 },
+			{ opportunityId: 'opp-1', panelId: 'panel-1' },
+			{ opportunityId: 'opp-1', feedbackId: 'fb-1' },
+			{ feedbackTemplateId: 'ft-1' },
+			{ opportunityId: 'opp-1', fileId: 'file-1' },
+			{ formTemplateId: 'form-1' },
+			{ requisitionFieldId: 'rf-1' },
+			{ requisitionFieldId: 'rf-1', values: [{ text: 'hourly' }] },
+			{ requisitionFieldId: 'rf-1', values: ['opt-1'] },
+			{ opportunityId: 'opp-1', note: 'Panel for Rachel' },
+			{ text: 'Phone Screen Feedback Form' },
+			{ title: 'Application' },
+			{ text: 'Work type', type: 'dropdown' },
 		];
 		const outputCandidates = [{ data: [] }, {}, undefined];
 		let invokedOperations = 0;
@@ -249,12 +327,19 @@ describe('Lever schema', () => {
 				const path = prefix.join('.') as keyof typeof leverEndpointSchemas;
 				const contract = leverEndpointSchemas[path];
 				if (!contract) throw new Error(`Missing contract for ${path}`);
+				if (!contract.input || !contract.output) {
+					throw new Error(`Missing input or output contract for ${path}`);
+				}
+				const { input: inputSchema, output: outputSchema } = contract;
+				if (!inputSchema || !outputSchema) {
+					throw new Error(`Missing input or output contract for ${path}`);
+				}
 				const input = inputCandidates.find(
-					(candidate) => contract.input.safeParse(candidate).success,
+					(candidate) => inputSchema.safeParse(candidate).success,
 				);
 				if (!input) throw new Error(`No valid test input for ${path}`);
 				const output = outputCandidates.find(
-					(candidate) => contract.output.safeParse(candidate).success,
+					(candidate) => outputSchema.safeParse(candidate).success,
 				);
 				request.mockResolvedValue(output);
 				await (value as (context: unknown, args: unknown) => Promise<unknown>)(

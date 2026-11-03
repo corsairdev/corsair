@@ -3,41 +3,73 @@ import {
 	addOpportunityLinks,
 	addOpportunitySources,
 	addOpportunityTags,
+	addRequisitionFieldOptions,
 	applyToPosting,
+	createFeedback,
+	createFeedbackTemplate,
+	createFormTemplate,
 	createInterview,
 	createNote,
 	createOpportunity,
+	createPanel,
 	createPosting,
+	createRequisitionField,
+	deleteFeedback,
+	deleteFeedbackTemplate,
+	deleteFile,
+	deleteFormTemplate,
 	deleteInterview,
 	deleteNote,
+	deletePanel,
+	deleteRequisitionField,
+	deleteRequisitionFieldOptions,
+	downloadFile,
 	listApplications,
 	listArchiveReasons,
 	listDeletedApplications,
 	listDeletedOpportunities,
 	listDeletedPostings,
+	listFeedback,
+	listFeedbackTemplates,
+	listFiles,
+	listFormTemplates,
 	listInterviews,
 	listNotes,
 	listOpportunities,
 	listOpportunityFileActions,
+	listPanels,
 	listPostings,
 	listPostingUsers,
+	listRequisitionFields,
 	listStages,
 	removeOpportunityLinks,
 	removeOpportunitySources,
 	removeOpportunityTags,
+	replaceRequisitionFieldOptions,
 	retrieveApplication,
 	retrieveArchiveReason,
+	retrieveFeedback,
+	retrieveFeedbackTemplate,
+	retrieveFile,
+	retrieveFormTemplate,
 	retrieveInterview,
 	retrieveNote,
 	retrieveOpportunity,
+	retrievePanel,
 	retrievePosting,
 	retrievePostingApplicationQuestions,
+	retrieveRequisitionField,
 	retrieveStage,
+	updateFeedback,
+	updateFeedbackTemplate,
+	updateFormTemplate,
 	updateInterview,
 	updateNote,
 	updateOpportunityArchivedState,
 	updateOpportunityStage,
+	updatePanel,
 	updatePosting,
+	updateRequisitionField,
 } from './endpoints';
 
 jest.mock('./client', () => ({
@@ -434,6 +466,277 @@ describe('Lever endpoint request seams', () => {
 		});
 	});
 
+	it('covers the panel routes for an opportunity', async () => {
+		const ctx = {
+			key: 'secret',
+			options: {},
+			$getAccountId: jest.fn().mockResolvedValue('account-1'),
+		} as never;
+		request.mockResolvedValue({});
+		await listPanels(ctx, { opportunityId: 'opp-1' });
+		await retrievePanel(ctx, { opportunityId: 'opp-1', panelId: 'panel-1' });
+		await createPanel(ctx, {
+			opportunityId: 'opp-1',
+			note: 'Panel for Rachel',
+		});
+		await updatePanel(ctx, {
+			opportunityId: 'opp-1',
+			panelId: 'panel-1',
+			note: 'Updated panel',
+		});
+		await deletePanel(ctx, { opportunityId: 'opp-1', panelId: 'panel-1' });
+
+		expect(request).toHaveBeenCalledWith(ctx, '/opportunities/opp-1/panels', {
+			method: 'GET',
+		});
+		expect(request).toHaveBeenCalledWith(
+			ctx,
+			'/opportunities/opp-1/panels/panel-1',
+			{ method: 'GET' },
+		);
+		expect(request).toHaveBeenCalledWith(ctx, '/opportunities/opp-1/panels', {
+			method: 'POST',
+			body: { note: 'Panel for Rachel' },
+		});
+		expect(request).toHaveBeenCalledWith(
+			ctx,
+			'/opportunities/opp-1/panels/panel-1',
+			{ method: 'PUT', body: { note: 'Updated panel' } },
+		);
+		expect(request).toHaveBeenCalledWith(
+			ctx,
+			'/opportunities/opp-1/panels/panel-1',
+			{ method: 'DELETE' },
+		);
+	});
+
+	it('covers the feedback routes for an opportunity', async () => {
+		const ctx = {
+			key: 'secret',
+			options: {},
+			$getAccountId: jest.fn().mockResolvedValue('account-1'),
+		} as never;
+		request.mockResolvedValue({});
+		await listFeedback(ctx, { opportunityId: 'opp-1' });
+		await retrieveFeedback(ctx, { opportunityId: 'opp-1', feedbackId: 'fb-1' });
+		await createFeedback(ctx, {
+			opportunityId: 'opp-1',
+			fieldValues: [{ id: 'fv-1', value: '4' }],
+		});
+		await updateFeedback(ctx, {
+			opportunityId: 'opp-1',
+			feedbackId: 'fb-1',
+			completedAt: 1600275449372,
+		});
+		await deleteFeedback(ctx, { opportunityId: 'opp-1', feedbackId: 'fb-1' });
+
+		expect(request).toHaveBeenCalledWith(ctx, '/opportunities/opp-1/feedback', {
+			method: 'GET',
+		});
+		expect(request).toHaveBeenCalledWith(
+			ctx,
+			'/opportunities/opp-1/feedback/fb-1',
+			{ method: 'GET' },
+		);
+		expect(request).toHaveBeenCalledWith(ctx, '/opportunities/opp-1/feedback', {
+			method: 'POST',
+			body: { fieldValues: [{ id: 'fv-1', value: '4' }] },
+		});
+		expect(request).toHaveBeenCalledWith(
+			ctx,
+			'/opportunities/opp-1/feedback/fb-1',
+			{ method: 'PUT', body: { completedAt: 1600275449372 } },
+		);
+		expect(request).toHaveBeenCalledWith(
+			ctx,
+			'/opportunities/opp-1/feedback/fb-1',
+			{ method: 'DELETE' },
+		);
+	});
+
+	it('covers the feedback template routes', async () => {
+		const ctx = {
+			key: 'secret',
+			options: {},
+			$getAccountId: jest.fn().mockResolvedValue('account-1'),
+		} as never;
+		request.mockResolvedValue({});
+		await listFeedbackTemplates(ctx, {});
+		await retrieveFeedbackTemplate(ctx, { feedbackTemplateId: 'ft-1' });
+		await createFeedbackTemplate(ctx, { text: 'Phone Screen Feedback Form' });
+		await updateFeedbackTemplate(ctx, {
+			feedbackTemplateId: 'ft-1',
+			text: 'Updated form',
+		});
+		await deleteFeedbackTemplate(ctx, { feedbackTemplateId: 'ft-1' });
+
+		expect(request).toHaveBeenCalledWith(ctx, '/feedback_templates', {
+			method: 'GET',
+			query: {},
+		});
+		expect(request).toHaveBeenCalledWith(ctx, '/feedback_templates/ft-1', {
+			method: 'GET',
+		});
+		expect(request).toHaveBeenCalledWith(ctx, '/feedback_templates', {
+			method: 'POST',
+			body: { text: 'Phone Screen Feedback Form' },
+		});
+		expect(request).toHaveBeenCalledWith(ctx, '/feedback_templates/ft-1', {
+			method: 'PUT',
+			body: { text: 'Updated form' },
+		});
+		expect(request).toHaveBeenCalledWith(ctx, '/feedback_templates/ft-1', {
+			method: 'DELETE',
+		});
+	});
+
+	it('covers the file routes for an opportunity', async () => {
+		const ctx = {
+			key: 'secret',
+			options: {},
+			$getAccountId: jest.fn().mockResolvedValue('account-1'),
+		} as never;
+		await listFiles(ctx, { opportunityId: 'opp-1' });
+		await retrieveFile(ctx, { opportunityId: 'opp-1', fileId: 'file-1' });
+		await downloadFile(ctx, { opportunityId: 'opp-1', fileId: 'file-1' });
+		await deleteFile(ctx, { opportunityId: 'opp-1', fileId: 'file-1' });
+
+		expect(request).toHaveBeenCalledWith(ctx, '/opportunities/opp-1/files', {
+			method: 'GET',
+			query: {},
+		});
+		expect(request).toHaveBeenCalledWith(
+			ctx,
+			'/opportunities/opp-1/files/file-1',
+			{ method: 'GET' },
+		);
+		expect(request).toHaveBeenCalledWith(
+			ctx,
+			'/opportunities/opp-1/files/file-1/download',
+			{
+				method: 'GET',
+				headers: { Accept: 'application/octet-stream' },
+			},
+		);
+		expect(request).toHaveBeenCalledWith(
+			ctx,
+			'/opportunities/opp-1/files/file-1',
+			{ method: 'DELETE' },
+		);
+	});
+
+	it('covers the form template routes', async () => {
+		const ctx = {
+			key: 'secret',
+			options: {},
+			$getAccountId: jest.fn().mockResolvedValue('account-1'),
+		} as never;
+		request.mockResolvedValue({});
+		await listFormTemplates(ctx, {});
+		await retrieveFormTemplate(ctx, { formTemplateId: 'form-1' });
+		await createFormTemplate(ctx, { title: 'Application' });
+		await updateFormTemplate(ctx, {
+			formTemplateId: 'form-1',
+			title: 'Updated application',
+		});
+		await deleteFormTemplate(ctx, { formTemplateId: 'form-1' });
+
+		expect(request).toHaveBeenCalledWith(ctx, '/form_templates', {
+			method: 'GET',
+			query: {},
+		});
+		expect(request).toHaveBeenCalledWith(ctx, '/form_templates/form-1', {
+			method: 'GET',
+		});
+		expect(request).toHaveBeenCalledWith(ctx, '/form_templates', {
+			method: 'POST',
+			body: { title: 'Application' },
+		});
+		expect(request).toHaveBeenCalledWith(ctx, '/form_templates/form-1', {
+			method: 'PUT',
+			body: { title: 'Updated application' },
+		});
+		expect(request).toHaveBeenCalledWith(ctx, '/form_templates/form-1', {
+			method: 'DELETE',
+		});
+	});
+
+	it('covers the requisition field routes including option management', async () => {
+		const ctx = {
+			key: 'secret',
+			options: {},
+			$getAccountId: jest.fn().mockResolvedValue('account-1'),
+		} as never;
+		request.mockResolvedValue({});
+		await listRequisitionFields(ctx, {});
+		await retrieveRequisitionField(ctx, { requisitionFieldId: 'rf-1' });
+		await createRequisitionField(ctx, {
+			text: 'Work type',
+			type: 'dropdown',
+		});
+		await updateRequisitionField(ctx, {
+			requisitionFieldId: 'rf-1',
+			text: 'Work type',
+			type: 'dropdown',
+		});
+		await deleteRequisitionField(ctx, { requisitionFieldId: 'rf-1' });
+		await addRequisitionFieldOptions(ctx, {
+			requisitionFieldId: 'rf-1',
+			values: [{ text: 'hourly' }],
+		});
+		await replaceRequisitionFieldOptions(ctx, {
+			requisitionFieldId: 'rf-1',
+			values: [{ id: 'opt-1', text: 'remote' }],
+		});
+		await deleteRequisitionFieldOptions(ctx, {
+			requisitionFieldId: 'rf-1',
+			values: ['opt-1'],
+		});
+
+		expect(request).toHaveBeenCalledWith(ctx, '/requisition_fields', {
+			method: 'GET',
+			query: {},
+		});
+		expect(request).toHaveBeenCalledWith(ctx, '/requisition_fields/rf-1', {
+			method: 'GET',
+		});
+		expect(request).toHaveBeenCalledWith(ctx, '/requisition_fields', {
+			method: 'POST',
+			body: { text: 'Work type', type: 'dropdown' },
+		});
+		expect(request).toHaveBeenCalledWith(ctx, '/requisition_fields/rf-1', {
+			method: 'PUT',
+			body: { text: 'Work type', type: 'dropdown' },
+		});
+		expect(request).toHaveBeenCalledWith(ctx, '/requisition_fields/rf-1', {
+			method: 'DELETE',
+		});
+		expect(request).toHaveBeenCalledWith(
+			ctx,
+			'/requisition_fields/rf-1/options',
+			{
+				method: 'POST',
+				body: { values: [{ text: 'hourly' }] },
+			},
+		);
+		expect(request).toHaveBeenCalledWith(
+			ctx,
+			'/requisition_fields/rf-1/options',
+			{
+				method: 'PUT',
+				body: { values: [{ id: 'opt-1', text: 'remote' }] },
+			},
+		);
+		expect(request).toHaveBeenCalledWith(
+			ctx,
+			'/requisition_fields/rf-1/options',
+			{
+				method: 'DELETE',
+				body: { values: ['opt-1'] },
+			},
+		);
+	});
+
 	it('rejects missing and unsafe path identifiers before any request', async () => {
 		const ctx = {
 			key: 'secret',
@@ -441,13 +744,13 @@ describe('Lever endpoint request seams', () => {
 			$getAccountId: jest.fn().mockResolvedValue('account-1'),
 		} as never;
 		await expect(
-			retrieveOpportunity(ctx, { include: 'applications' }),
+			retrieveOpportunity(ctx, { include: 'applications' } as never),
 		).rejects.toThrow('Invalid Lever opportunityId');
 		await expect(
 			retrieveOpportunity(ctx, { opportunityId: '../users' }),
 		).rejects.toThrow('Invalid Lever opportunityId');
 		await expect(
-			retrieveApplication(ctx, { opportunityId: 'opp-1' }),
+			retrieveApplication(ctx, { opportunityId: 'opp-1' } as never),
 		).rejects.toThrow('Invalid Lever applicationId');
 		await expect(retrievePosting(ctx, {} as never)).rejects.toThrow(
 			'Invalid Lever postingId',
