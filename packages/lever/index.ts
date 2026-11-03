@@ -1343,7 +1343,8 @@ export function lever<const T extends LeverPluginOptions>(
 		options: options,
 		hooks: options.hooks,
 		endpoints: validatedLeverEndpointsNested,
-		webhooks: {},		endpointMeta: leverEndpointMeta,
+		webhooks: {},
+		endpointMeta: leverEndpointMeta,
 		endpointSchemas: leverEndpointSchemas,
 		errorHandlers: {
 			...errorHandlers,
