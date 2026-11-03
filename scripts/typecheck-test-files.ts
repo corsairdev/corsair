@@ -21,17 +21,32 @@ const NOT_RUN_IN_CI = /(^|\/)(api|integration)\.test\.tsx?$/;
 // ts-jest's default diagnostics.ignoreCodes.
 const TS_JEST_IGNORED_CODES = [6059, 18002, 18003];
 
+// Every jest config format in packages/ and adapters/ (400 .cjs, 11 .json).
+const JEST_CONFIG_FILES = [
+	'jest.config.cjs',
+	'jest.config.js',
+	'jest.config.json',
+];
+
 type TsJestOptions = {
 	diagnostics?: boolean | { ignoreCodes?: number[] };
 	isolatedModules?: boolean;
+	// Raw compilerOptions JSON from a jest config, read as untyped data;
+	// ts.convertCompilerOptionsFromJson validates it below, so a stricter
+	// type here would only restate TypeScript's own option list.
 	tsconfig?: string | Record<string, unknown>;
 };
 
-function tsJestOptions(dir: string): TsJestOptions | null {
-	const configFile = ['jest.config.cjs', 'jest.config.js']
-		.map((name) => path.join(dir, name))
-		.find((file) => fs.existsSync(file));
-	if (!configFile) return null;
+/**
+ * The ts-jest options a package's jest config passes for .ts files: null when
+ * its tests don't go through ts-jest, undefined when it has no jest config
+ * file this script can read.
+ */
+function tsJestOptions(dir: string): TsJestOptions | null | undefined {
+	const configFile = JEST_CONFIG_FILES.map((name) => path.join(dir, name)).find(
+		(file) => fs.existsSync(file),
+	);
+	if (!configFile) return undefined;
 	const config = require(path.resolve(configFile));
 	for (const [pattern, transformer] of Object.entries(config.transform ?? {})) {
 		if (!new RegExp(pattern).test('x.ts')) continue;
@@ -61,13 +76,7 @@ function testFiles(dir: string): string[] {
 
 function checkPackage(dir: string): ts.Diagnostic[] | null {
 	const tsconfigFile = path.resolve(dir, 'tsconfig.json');
-	const options = tsJestOptions(dir);
-	if (!options || !fs.existsSync(tsconfigFile)) return null;
-	if (options.diagnostics === false || options.isolatedModules === true)
-		return null;
-	const inline = typeof options.tsconfig === 'object' ? options.tsconfig : {};
-	if (inline.isolatedModules === true) return null;
-
+	if (!fs.existsSync(tsconfigFile)) return null;
 	const raw = ts.readConfigFile(tsconfigFile, ts.sys.readFile);
 	const parsed = ts.parseJsonConfigFileContent(
 		raw.config,
@@ -79,6 +88,27 @@ function checkPackage(dir: string): ts.Diagnostic[] | null {
 	const covered = new Set(parsed.fileNames.map((file) => path.resolve(file)));
 	const unchecked = testFiles(dir).filter((file) => !covered.has(file));
 	if (unchecked.length === 0) return null;
+
+	const options = tsJestOptions(dir);
+	if (options === undefined) {
+		// Fail rather than skip: this package's tests would otherwise go
+		// unchecked without anyone noticing.
+		return [
+			{
+				category: ts.DiagnosticCategory.Error,
+				code: 0,
+				file: undefined,
+				start: undefined,
+				length: undefined,
+				messageText: `${dir}: its tsconfig leaves out ${unchecked.length} test file(s) and it has no ${JEST_CONFIG_FILES.join('/')} to read ts-jest's options from.`,
+			},
+		];
+	}
+	if (options === null) return null;
+	if (options.diagnostics === false || options.isolatedModules === true)
+		return null;
+	const inline = typeof options.tsconfig === 'object' ? options.tsconfig : {};
+	if (inline.isolatedModules === true) return null;
 
 	const overrides = ts.convertCompilerOptionsFromJson(
 		inline,
