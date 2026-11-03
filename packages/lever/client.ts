@@ -80,10 +80,9 @@ export async function makeLeverRequest<T>(
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: endpoint,
-		body:
-			method === 'POST' || method === 'PUT' || method === 'PATCH'
-				? body
-				: undefined,
+		// Lever accepts JSON bodies on DELETE too (e.g. requisition field
+		// option removal), so bodies are sent for every non-GET method.
+		body: method === 'GET' ? undefined : body,
 		mediaType: 'application/json; charset=utf-8',
 		query: method === 'GET' ? query : undefined,
 	};
