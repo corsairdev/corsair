@@ -137,6 +137,8 @@ writeOutput('skip_heavy', String(filters.skipHeavy));
 writeOutput('include_www', String(filters.includeWww));
 writeOutput('www_install_filter', filters.wwwInstallFilter);
 writeOutput('www_test_filter', filters.wwwTestFilter);
+// The plugin's folder under packages/, for steps that take a path.
+writeOutput('plugin', scope.lane === 'plugin' ? scope.plugin : '');
 console.log(
 	scope.lane === 'plugin'
 		? `CI lane: plugin (${scope.plugin}, filter ${filters.turboFilter})`
