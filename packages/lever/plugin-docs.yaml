@@ -217,3 +217,77 @@ apiExamples:
     requisitionFieldId: work_type
     values:
       - 5dc3d8e7-db49-44e5-99e9-fec13a305533
+  requisitions.list:
+    offset: 0
+  requisitions.create:
+    title: Senior Engineer requisition
+  requisitions.retrieve:
+    requisitionId: req-1
+  requisitions.update:
+    requisitionId: req-1
+    title: Updated requisition
+  requisitions.delete:
+    requisitionId: req-1
+  forms.list:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+  forms.retrieve:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+    formId: 8f1c2d3e-4a5b-4c6d-8e9f-0a1b2c3d4e5f
+  forms.create:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+    formTemplateId: 8f1c2d3e-4a5b-4c6d-8e9f-0a1b2c3d4e5f
+  resumes.list:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+  resumes.retrieve:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+    resumeId: b02a3b97-dc41-48e3-b003-44d211ed2a4c
+  resumes.download:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+    resumeId: b02a3b97-dc41-48e3-b003-44d211ed2a4c
+  users.list:
+    offset: 0
+  users.retrieve:
+    userId: 8d49b010-cc6a-4f40-ace5-e86061c677ed
+  users.create:
+    name: Chandler Bing
+    email: chandler@example.com
+  users.update:
+    userId: 8d49b010-cc6a-4f40-ace5-e86061c677ed
+    name: Chandler Bing
+  users.deactivate:
+    userId: 8d49b010-cc6a-4f40-ace5-e86061c677ed
+  users.reactivate:
+    userId: 8d49b010-cc6a-4f40-ace5-e86061c677ed
+  referrals.list:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+  referrals.retrieve:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+    referralId: 4f7b1a2e-0d8c-4b0a-9e2b-9f1b7b2f3a4b
+  contacts.retrieve:
+    contactId: c38e60e9-5992-45e5-8f81-d4b2d65c95b1
+  contacts.update:
+    contactId: c38e60e9-5992-45e5-8f81-d4b2d65c95b1
+    name: Jane Doe
+  eeo.retrieveWithPii: {}
+  eeo.retrieveAnonymous: {}
+  dispositionStages.list: {}
+  surveys.retrieveDiversity:
+    postingId: 5d0f2f8a-1b2c-4d3e-9f4a-5b6c7d8e9f0a
+  webhooks.list: {}
+  webhooks.create:
+    url: https://example.test/hook
+    event: candidateStageChange
+  webhooks.update:
+    webhookId: 7988b225-3cc1-44f3-8fcb-bae013cc490d
+    url: https://example.test/hook
+  webhooks.delete:
+    webhookId: 7988b225-3cc1-44f3-8fcb-bae013cc490d
+  auditEvents.list:
+    offset: 0
+  sources.list: {}
+  tags.list: {}
+  offers.list:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+  offers.download:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+    offerId: a72d66c0-0fd7-4bf8-99ce-dc5979358862

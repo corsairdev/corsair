@@ -17,6 +17,12 @@ pnpm add @corsair-dev/lever
 | `applications.retrieve` | `lever.api.applications.retrieve` | `read` | Retrieve a single application of a pipeline opportunity |
 | `archiveReasons.list` | `lever.api.archiveReasons.list` | `read` | List archive reasons configured for the workspace |
 | `archiveReasons.retrieve` | `lever.api.archiveReasons.retrieve` | `read` | Retrieve a single archive reason by ID |
+| `auditEvents.list` | `lever.api.auditEvents.list` | `read` | List workspace audit events |
+| `contacts.retrieve` | `lever.api.contacts.retrieve` | `read` | Retrieve a single contact by ID |
+| `contacts.update` | `lever.api.contacts.update` | `write` | Update a contact |
+| `dispositionStages.list` | `lever.api.dispositionStages.list` | `read` | List disposition stages configured for the workspace |
+| `eeo.retrieveAnonymous` | `lever.api.eeo.retrieveAnonymous` | `read` | Retrieve anonymized EEO responses |
+| `eeo.retrieveWithPii` | `lever.api.eeo.retrieveWithPii` | `read` | Retrieve EEO responses including personally identifiable information |
 | `feedback.create` | `lever.api.feedback.create` | `write` | Submit a feedback form for a pipeline opportunity |
 | `feedback.delete` | `lever.api.feedback.delete` | `destructive` | Delete a feedback form from a pipeline opportunity |
 | `feedback.list` | `lever.api.feedback.list` | `read` | List feedback forms on a pipeline opportunity |
@@ -31,6 +37,9 @@ pnpm add @corsair-dev/lever
 | `files.download` | `lever.api.files.download` | `read` | Download the raw bytes of an opportunity file |
 | `files.list` | `lever.api.files.list` | `read` | List files attached to a pipeline opportunity |
 | `files.retrieve` | `lever.api.files.retrieve` | `read` | Retrieve a single file attached to a pipeline opportunity |
+| `forms.create` | `lever.api.forms.create` | `write` | Submit a form for a pipeline opportunity |
+| `forms.list` | `lever.api.forms.list` | `read` | List form submissions on a pipeline opportunity |
+| `forms.retrieve` | `lever.api.forms.retrieve` | `read` | Retrieve a single form submission by ID |
 | `formTemplates.create` | `lever.api.formTemplates.create` | `write` | Create a form template for the workspace |
 | `formTemplates.delete` | `lever.api.formTemplates.delete` | `destructive` | Delete a form template |
 | `formTemplates.list` | `lever.api.formTemplates.list` | `read` | List form templates configured for the workspace |
@@ -46,6 +55,8 @@ pnpm add @corsair-dev/lever
 | `notes.list` | `lever.api.notes.list` | `read` | List notes on a pipeline opportunity |
 | `notes.retrieve` | `lever.api.notes.retrieve` | `read` | Retrieve a single note on a pipeline opportunity |
 | `notes.update` | `lever.api.notes.update` | `write` | Update a note on a pipeline opportunity |
+| `offers.download` | `lever.api.offers.download` | `read` | Download the raw bytes of an offer file |
+| `offers.list` | `lever.api.offers.list` | `read` | List offers for a pipeline opportunity |
 | `opportunities.addLinks` | `lever.api.opportunities.addLinks` | `write` | Link contacts to a pipeline opportunity |
 | `opportunities.addSources` | `lever.api.opportunities.addSources` | `write` | Add sourcing sources to a pipeline opportunity |
 | `opportunities.addTags` | `lever.api.opportunities.addTags` | `write` | Add tags to a pipeline opportunity |
@@ -72,6 +83,8 @@ pnpm add @corsair-dev/lever
 | `postings.retrieve` | `lever.api.postings.retrieve` | `read` | Retrieve a single job posting by ID |
 | `postings.retrieveApplicationQuestions` | `lever.api.postings.retrieveApplicationQuestions` | `read` | Retrieve the application questions configured for a posting |
 | `postings.update` | `lever.api.postings.update` | `write` | Update an existing job posting |
+| `referrals.list` | `lever.api.referrals.list` | `read` | List referrals on a pipeline opportunity |
+| `referrals.retrieve` | `lever.api.referrals.retrieve` | `read` | Retrieve a single referral by ID |
 | `requisitionFields.addOptions` | `lever.api.requisitionFields.addOptions` | `write` | Add dropdown options to a requisition field |
 | `requisitionFields.create` | `lever.api.requisitionFields.create` | `write` | Create a requisition field for the workspace |
 | `requisitionFields.delete` | `lever.api.requisitionFields.delete` | `destructive` | Delete a requisition field |
@@ -80,8 +93,29 @@ pnpm add @corsair-dev/lever
 | `requisitionFields.replaceOptions` | `lever.api.requisitionFields.replaceOptions` | `write` | Replace the dropdown options of a requisition field |
 | `requisitionFields.retrieve` | `lever.api.requisitionFields.retrieve` | `read` | Retrieve a single requisition field by ID |
 | `requisitionFields.update` | `lever.api.requisitionFields.update` | `write` | Update a requisition field |
+| `requisitions.create` | `lever.api.requisitions.create` | `write` | Create a requisition |
+| `requisitions.delete` | `lever.api.requisitions.delete` | `destructive` | Delete a requisition |
+| `requisitions.list` | `lever.api.requisitions.list` | `read` | List requisitions |
+| `requisitions.retrieve` | `lever.api.requisitions.retrieve` | `read` | Retrieve a single requisition by ID |
+| `requisitions.update` | `lever.api.requisitions.update` | `write` | Update a requisition |
+| `resumes.download` | `lever.api.resumes.download` | `read` | Download the raw bytes of an opportunity resume |
+| `resumes.list` | `lever.api.resumes.list` | `read` | List resumes attached to a pipeline opportunity |
+| `resumes.retrieve` | `lever.api.resumes.retrieve` | `read` | Retrieve a single resume by ID |
+| `sources.list` | `lever.api.sources.list` | `read` | List sourcing sources configured for the workspace |
 | `stages.list` | `lever.api.stages.list` | `read` | List hiring stages configured for the workspace |
 | `stages.retrieve` | `lever.api.stages.retrieve` | `read` | Retrieve a single hiring stage by ID |
+| `surveys.retrieveDiversity` | `lever.api.surveys.retrieveDiversity` | `read` | Retrieve the diversity survey for a job posting |
+| `tags.list` | `lever.api.tags.list` | `read` | List tags configured for the workspace |
+| `users.create` | `lever.api.users.create` | `write` | Create a workspace user |
+| `users.deactivate` | `lever.api.users.deactivate` | `write` | Deactivate a workspace user |
+| `users.list` | `lever.api.users.list` | `read` | List workspace users |
+| `users.reactivate` | `lever.api.users.reactivate` | `write` | Reactivate a workspace user |
+| `users.retrieve` | `lever.api.users.retrieve` | `read` | Retrieve a single workspace user by ID |
+| `users.update` | `lever.api.users.update` | `write` | Update a workspace user |
+| `webhooks.create` | `lever.api.webhooks.create` | `write` | Register a webhook |
+| `webhooks.delete` | `lever.api.webhooks.delete` | `destructive` | Delete a registered webhook |
+| `webhooks.list` | `lever.api.webhooks.list` | `read` | List registered webhooks |
+| `webhooks.update` | `lever.api.webhooks.update` | `write` | Update a registered webhook |
 
 ## Auth
 
