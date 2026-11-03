@@ -20,7 +20,12 @@ export const example: LeverWebhooks['example'] = {
 			return { success: true, data: undefined };
 		}
 
-		await logEventFromContext(ctx, 'lever.webhook.example', { ...event }, 'completed');
+		await logEventFromContext(
+			ctx,
+			'lever.webhook.example',
+			{ ...event },
+			'completed',
+		);
 
 		return { success: true, data: event };
 	},
