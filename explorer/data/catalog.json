@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-10-20T17:39:57.607Z",
-  "corsairVersion": "0.1.149",
+  "generatedAt": "2026-11-03T19:13:54.026Z",
+  "corsairVersion": "0.1.157",
   "catalogVersion": 2,
   "plugins": [
     {
@@ -1553,6 +1553,21 @@
       }
     },
     {
+      "id": "browseruse",
+      "displayName": "Browser Use",
+      "description": "Stealth cloud browsers you drive over CDP with Playwright or Puppeteer, plus hosted browser agent runs, behind one API key.",
+      "npmPackageName": "@corsair-dev/browseruse",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 8,
+        "webhooks": 0,
+        "db": 2
+      }
+    },
+    {
       "id": "bubble",
       "displayName": "Bubble",
       "description": "No-code app builder with data and workflow APIs for custom web applications.",
@@ -2082,8 +2097,8 @@
     },
     {
       "id": "clickup",
-      "displayName": "Clickup",
-      "description": "Clickup plugin for Corsair",
+      "displayName": "ClickUp",
+      "description": "Work management platform. Manage workspaces, spaces, folders, lists, tasks, comments, goals, time entries, docs, chat, views, and custom fields.",
       "npmPackageName": "@corsair-dev/clickup",
       "authTypes": [
         "api_key"
@@ -30518,6 +30533,54 @@
       "kind": "api",
       "shortPath": "tasks.watch",
       "haystack": "tasks.watch browsertool.api.tasks.watch poll a browser task for progress and results read"
+    },
+    {
+      "pluginId": "browseruse",
+      "kind": "api",
+      "shortPath": "browsers.create",
+      "haystack": "browsers.create browseruse.api.browsers.create post /browsers — start a cloud browser; returns cdpurl for playwright/puppeteer and a liveurl write"
+    },
+    {
+      "pluginId": "browseruse",
+      "kind": "api",
+      "shortPath": "browsers.get",
+      "haystack": "browsers.get browseruse.api.browsers.get get /browsers/{id} — browser status, urls, cost, recording read"
+    },
+    {
+      "pluginId": "browseruse",
+      "kind": "api",
+      "shortPath": "browsers.list",
+      "haystack": "browsers.list browseruse.api.browsers.list get /browsers — paginated browsers, filter by active/stopped read"
+    },
+    {
+      "pluginId": "browseruse",
+      "kind": "api",
+      "shortPath": "browsers.stop",
+      "haystack": "browsers.stop browseruse.api.browsers.stop patch /browsers/{id} — stop a browser and refund unused time write"
+    },
+    {
+      "pluginId": "browseruse",
+      "kind": "api",
+      "shortPath": "runs.cancel",
+      "haystack": "runs.cancel browseruse.api.runs.cancel post /runs/{id}/cancel — cancel an in-flight run write"
+    },
+    {
+      "pluginId": "browseruse",
+      "kind": "api",
+      "shortPath": "runs.create",
+      "haystack": "runs.create browseruse.api.runs.create post /runs — start a browser agent run for a natural-language task write"
+    },
+    {
+      "pluginId": "browseruse",
+      "kind": "api",
+      "shortPath": "runs.get",
+      "haystack": "runs.get browseruse.api.runs.get get /runs/{id} — full run once status is terminal: result, tokens, cost read"
+    },
+    {
+      "pluginId": "browseruse",
+      "kind": "api",
+      "shortPath": "runs.getStatus",
+      "haystack": "runs.getstatus browseruse.api.runs.getstatus get /runs/{id}/status — cheap poll until completed, failed, or cancelled read"
     },
     {
       "pluginId": "bubble",
