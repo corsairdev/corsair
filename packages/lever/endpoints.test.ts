@@ -7,13 +7,18 @@ import {
 	applyToPosting,
 	createFeedback,
 	createFeedbackTemplate,
+	createForm,
 	createFormTemplate,
 	createInterview,
 	createNote,
 	createOpportunity,
 	createPanel,
 	createPosting,
+	createRequisition,
 	createRequisitionField,
+	createUser,
+	createWebhook,
+	deactivateUser,
 	deleteFeedback,
 	deleteFeedbackTemplate,
 	deleteFile,
@@ -21,36 +26,57 @@ import {
 	deleteInterview,
 	deleteNote,
 	deletePanel,
+	deleteRequisition,
 	deleteRequisitionField,
 	deleteRequisitionFieldOptions,
+	deleteWebhook,
 	downloadFile,
+	downloadOpportunityOffer,
+	downloadResume,
 	listApplications,
 	listArchiveReasons,
+	listAuditEvents,
 	listDeletedApplications,
 	listDeletedOpportunities,
 	listDeletedPostings,
+	listDispositionStages,
 	listFeedback,
 	listFeedbackTemplates,
 	listFiles,
+	listForms,
 	listFormTemplates,
 	listInterviews,
 	listNotes,
 	listOpportunities,
 	listOpportunityFileActions,
+	listOpportunityOffers,
 	listPanels,
 	listPostings,
 	listPostingUsers,
+	listReferrals,
 	listRequisitionFields,
+	listRequisitions,
+	listResumes,
+	listSources,
 	listStages,
+	listTags,
+	listUsers,
+	listWebhooks,
+	reactivateUser,
 	removeOpportunityLinks,
 	removeOpportunitySources,
 	removeOpportunityTags,
 	replaceRequisitionFieldOptions,
 	retrieveApplication,
 	retrieveArchiveReason,
+	retrieveContact,
+	retrieveDiversitySurvey,
+	retrieveEeoResponsesAnonymous,
+	retrieveEeoResponsesWithPii,
 	retrieveFeedback,
 	retrieveFeedbackTemplate,
 	retrieveFile,
+	retrieveForm,
 	retrieveFormTemplate,
 	retrieveInterview,
 	retrieveNote,
@@ -58,8 +84,13 @@ import {
 	retrievePanel,
 	retrievePosting,
 	retrievePostingApplicationQuestions,
+	retrieveReferral,
+	retrieveRequisition,
 	retrieveRequisitionField,
+	retrieveResume,
 	retrieveStage,
+	retrieveUser,
+	updateContact,
 	updateFeedback,
 	updateFeedbackTemplate,
 	updateFormTemplate,
@@ -69,7 +100,10 @@ import {
 	updateOpportunityStage,
 	updatePanel,
 	updatePosting,
+	updateRequisition,
 	updateRequisitionField,
+	updateUser,
+	updateWebhook,
 } from './endpoints';
 
 jest.mock('./client', () => ({
@@ -734,6 +768,245 @@ describe('Lever endpoint request seams', () => {
 				method: 'DELETE',
 				body: { values: ['opt-1'] },
 			},
+		);
+	});
+
+	it('covers the requisitions routes', async () => {
+		const ctx = {
+			key: 'secret',
+			options: {},
+			$getAccountId: jest.fn().mockResolvedValue('account-1'),
+		} as never;
+		request.mockResolvedValue({});
+		await listRequisitions(ctx, {});
+		expect(request).toHaveBeenCalledWith(ctx, '/requisitions', {
+			method: 'GET',
+			query: {},
+		});
+		await retrieveRequisition(ctx, { requisitionId: 'req-1' });
+		expect(request).toHaveBeenCalledWith(ctx, '/requisitions/req-1', {
+			method: 'GET',
+		});
+		await createRequisition(ctx, { title: 'Senior Engineer requisition' });
+		expect(request).toHaveBeenCalledWith(ctx, '/requisitions', {
+			method: 'POST',
+			body: { title: 'Senior Engineer requisition' },
+		});
+		await updateRequisition(ctx, {
+			requisitionId: 'req-1',
+			title: 'Updated requisition',
+		});
+		expect(request).toHaveBeenCalledWith(ctx, '/requisitions/req-1', {
+			method: 'PUT',
+			body: { title: 'Updated requisition' },
+		});
+		await deleteRequisition(ctx, { requisitionId: 'req-1' });
+		expect(request).toHaveBeenCalledWith(ctx, '/requisitions/req-1', {
+			method: 'DELETE',
+		});
+	});
+
+	it('covers the forms routes', async () => {
+		const ctx = {
+			key: 'secret',
+			options: {},
+			$getAccountId: jest.fn().mockResolvedValue('account-1'),
+		} as never;
+		request.mockResolvedValue({});
+		await listForms(ctx, { opportunityId: 'opp-1' });
+		expect(request).toHaveBeenCalledWith(ctx, '/opportunities/opp-1/forms', {
+			method: 'GET',
+		});
+		await retrieveForm(ctx, { opportunityId: 'opp-1', formId: 'form-1' });
+		expect(request).toHaveBeenCalledWith(
+			ctx,
+			'/opportunities/opp-1/forms/form-1',
+			{ method: 'GET' },
+		);
+		await createForm(ctx, { opportunityId: 'opp-1', formTemplateId: 'form-1' });
+		expect(request).toHaveBeenCalledWith(ctx, '/opportunities/opp-1/forms', {
+			method: 'POST',
+			body: { formTemplateId: 'form-1' },
+		});
+	});
+
+	it('covers the resumes routes', async () => {
+		const ctx = {
+			key: 'secret',
+			options: {},
+			$getAccountId: jest.fn().mockResolvedValue('account-1'),
+		} as never;
+		request.mockResolvedValue({});
+		await listResumes(ctx, { opportunityId: 'opp-1' });
+		expect(request).toHaveBeenCalledWith(ctx, '/opportunities/opp-1/resumes', {
+			method: 'GET',
+		});
+		await retrieveResume(ctx, { opportunityId: 'opp-1', resumeId: 'res-1' });
+		expect(request).toHaveBeenCalledWith(
+			ctx,
+			'/opportunities/opp-1/resumes/res-1',
+			{ method: 'GET' },
+		);
+		await downloadResume(ctx, { opportunityId: 'opp-1', resumeId: 'res-1' });
+		expect(request).toHaveBeenCalledWith(
+			ctx,
+			'/opportunities/opp-1/resumes/res-1/download',
+			{ method: 'GET', headers: { Accept: 'application/octet-stream' } },
+		);
+	});
+
+	it('covers the users routes', async () => {
+		const ctx = {
+			key: 'secret',
+			options: {},
+			$getAccountId: jest.fn().mockResolvedValue('account-1'),
+		} as never;
+		request.mockResolvedValue({});
+		await listUsers(ctx, {});
+		expect(request).toHaveBeenCalledWith(ctx, '/users', {
+			method: 'GET',
+			query: {},
+		});
+		await retrieveUser(ctx, { userId: 'user-1' });
+		expect(request).toHaveBeenCalledWith(ctx, '/users/user-1', {
+			method: 'GET',
+		});
+		await createUser(ctx, {
+			name: 'Chandler Bing',
+			email: 'chandler@example.com',
+		});
+		expect(request).toHaveBeenCalledWith(ctx, '/users', {
+			method: 'POST',
+			body: { name: 'Chandler Bing', email: 'chandler@example.com' },
+		});
+		await updateUser(ctx, { userId: 'user-1', name: 'Chandler Bing' });
+		expect(request).toHaveBeenCalledWith(ctx, '/users/user-1', {
+			method: 'PUT',
+			body: { name: 'Chandler Bing' },
+		});
+		await deactivateUser(ctx, { userId: 'user-1' });
+		expect(request).toHaveBeenCalledWith(ctx, '/users/user-1/deactivate', {
+			method: 'POST',
+			body: undefined,
+		});
+		await reactivateUser(ctx, { userId: 'user-1' });
+		expect(request).toHaveBeenCalledWith(ctx, '/users/user-1/reactivate', {
+			method: 'POST',
+			body: undefined,
+		});
+	});
+
+	it('covers the referrals and contacts routes', async () => {
+		const ctx = {
+			key: 'secret',
+			options: {},
+			$getAccountId: jest.fn().mockResolvedValue('account-1'),
+		} as never;
+		request.mockResolvedValue({});
+		await listReferrals(ctx, { opportunityId: 'opp-1' });
+		expect(request).toHaveBeenCalledWith(
+			ctx,
+			'/opportunities/opp-1/referrals',
+			{ method: 'GET' },
+		);
+		await retrieveReferral(ctx, {
+			opportunityId: 'opp-1',
+			referralId: 'ref-1',
+		});
+		expect(request).toHaveBeenCalledWith(
+			ctx,
+			'/opportunities/opp-1/referrals/ref-1',
+			{ method: 'GET' },
+		);
+		await retrieveContact(ctx, { contactId: 'con-1' });
+		expect(request).toHaveBeenCalledWith(ctx, '/contacts/con-1', {
+			method: 'GET',
+		});
+		await updateContact(ctx, { contactId: 'con-1', name: 'Jane Doe' });
+		expect(request).toHaveBeenCalledWith(ctx, '/contacts/con-1', {
+			method: 'PUT',
+			body: { name: 'Jane Doe' },
+		});
+	});
+
+	it('covers the webhooks and workspace reference reads routes', async () => {
+		const ctx = {
+			key: 'secret',
+			options: {},
+			$getAccountId: jest.fn().mockResolvedValue('account-1'),
+		} as never;
+		request.mockResolvedValue({});
+		await listWebhooks(ctx, {});
+		expect(request).toHaveBeenCalledWith(ctx, '/webhooks', {
+			method: 'GET',
+			query: {},
+		});
+		await createWebhook(ctx, {
+			url: 'https://example.test/hook',
+			event: 'candidateStageChange',
+		});
+		expect(request).toHaveBeenCalledWith(ctx, '/webhooks', {
+			method: 'POST',
+			body: { url: 'https://example.test/hook', event: 'candidateStageChange' },
+		});
+		await updateWebhook(ctx, {
+			webhookId: 'wh-1',
+			url: 'https://example.test/hook',
+		});
+		expect(request).toHaveBeenCalledWith(ctx, '/webhooks/wh-1', {
+			method: 'PUT',
+			body: { url: 'https://example.test/hook' },
+		});
+		await deleteWebhook(ctx, { webhookId: 'wh-1' });
+		expect(request).toHaveBeenCalledWith(ctx, '/webhooks/wh-1', {
+			method: 'DELETE',
+		});
+		await listAuditEvents(ctx, {});
+		expect(request).toHaveBeenCalledWith(ctx, '/audit_events', {
+			method: 'GET',
+			query: {},
+		});
+		await listSources(ctx, {});
+		expect(request).toHaveBeenCalledWith(ctx, '/sources', {
+			method: 'GET',
+			query: {},
+		});
+		await listTags(ctx, {});
+		expect(request).toHaveBeenCalledWith(ctx, '/tags', {
+			method: 'GET',
+			query: {},
+		});
+		await listDispositionStages(ctx, {});
+		expect(request).toHaveBeenCalledWith(ctx, '/disposition_stages', {
+			method: 'GET',
+			query: {},
+		});
+		await retrieveDiversitySurvey(ctx, { postingId: 'post-1' });
+		expect(request).toHaveBeenCalledWith(ctx, '/surveys/diversity/post-1', {
+			method: 'GET',
+		});
+		await retrieveEeoResponsesWithPii(ctx, {});
+		expect(request).toHaveBeenCalledWith(ctx, '/eeo/responses/pii', {
+			method: 'GET',
+			query: {},
+		});
+		await retrieveEeoResponsesAnonymous(ctx, {});
+		expect(request).toHaveBeenCalledWith(ctx, '/eeo/responses', {
+			method: 'GET',
+			query: {},
+		});
+		await listOpportunityOffers(ctx, { opportunityId: 'opp-1' });
+		expect(request).toHaveBeenCalledWith(ctx, '/opportunities/opp-1/offers', {
+			method: 'GET',
+		});
+		await downloadOpportunityOffer(ctx, {
+			opportunityId: 'opp-1',
+			offerId: 'offer-1',
+		});
+		expect(request).toHaveBeenCalledWith(
+			ctx,
+			'/opportunities/opp-1/offers/offer-1/download',
+			{ method: 'GET', headers: { Accept: 'application/octet-stream' } },
 		);
 	});
 

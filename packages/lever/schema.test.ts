@@ -190,6 +190,19 @@ describe('Lever schema', () => {
 				'deleteRequisitionFieldOptions',
 				{ requisitionFieldId: 'rf-1', values: ['opt-1'] },
 			],
+			['createRequisition', { title: 'Senior Engineer requisition' }],
+			['createForm', { opportunityId: 'opp-1', formTemplateId: 'form-1' }],
+			['createUser', { name: 'Chandler Bing', email: 'chandler@example.com' }],
+			['updateUser', { userId: 'user-1', name: 'Chandler Bing' }],
+			['updateContact', { contactId: 'con-1', name: 'Jane Doe' }],
+			[
+				'createWebhook',
+				{ url: 'https://example.test/hook', event: 'candidateStageChange' },
+			],
+			[
+				'updateWebhook',
+				{ webhookId: 'wh-1', url: 'https://example.test/hook' },
+			],
 		] as const;
 		for (const [operation, validInput] of bodyRequiredOperations) {
 			const schema =
@@ -197,7 +210,7 @@ describe('Lever schema', () => {
 					operation as keyof typeof LeverEndpointInputSchemas
 				];
 			expect(schema.safeParse({}).success).toBe(false);
-			expect(schema.safeParse(validInput).success).toBe(true);
+			expect(schema.safeParse(validInput as never).success).toBe(true);
 		}
 
 		expect(
@@ -219,6 +232,10 @@ describe('Lever schema', () => {
 			['retrieveFeedbackTemplate', { feedbackTemplateId: 'ft-1' }],
 			['retrieveFormTemplate', { formTemplateId: 'form-1' }],
 			['retrieveRequisitionField', { requisitionFieldId: 'rf-1' }],
+			['retrieveUser', { userId: 'user-1' }],
+			['retrieveContact', { contactId: 'con-1' }],
+			['retrieveDiversitySurvey', { postingId: 'post-1' }],
+			['retrieveRequisition', { requisitionId: 'req-1' }],
 		] as const;
 		for (const [operation, validInput] of singleIdOperations) {
 			const schema =
@@ -226,7 +243,7 @@ describe('Lever schema', () => {
 					operation as keyof typeof LeverEndpointInputSchemas
 				];
 			expect(schema.safeParse({}).success).toBe(false);
-			expect(schema.safeParse(validInput).success).toBe(true);
+			expect(schema.safeParse(validInput as never).success).toBe(true);
 		}
 
 		expect(
@@ -318,6 +335,17 @@ describe('Lever schema', () => {
 			{ text: 'Phone Screen Feedback Form' },
 			{ title: 'Application' },
 			{ text: 'Work type', type: 'dropdown' },
+			{ title: 'Senior Engineer requisition' },
+			{ opportunityId: 'opp-1', formId: 'form-1' },
+			{ opportunityId: 'opp-1', resumeId: 'res-1' },
+			{ userId: 'user-1' },
+			{ contactId: 'con-1' },
+			{ opportunityId: 'opp-1', referralId: 'ref-1' },
+			{ requisitionId: 'req-1' },
+			{ webhookId: 'wh-1' },
+			{ opportunityId: 'opp-1', offerId: 'offer-1' },
+			{ name: 'Chandler Bing', email: 'chandler@example.com' },
+			{ url: 'https://example.test/hook', event: 'candidateStageChange' },
 		];
 		const outputCandidates = [{ data: [] }, {}, undefined];
 		let invokedOperations = 0;
