@@ -19,41 +19,73 @@ import {
 	addOpportunityLinks,
 	addOpportunitySources,
 	addOpportunityTags,
+	addRequisitionFieldOptions,
 	applyToPosting,
+	createFeedback,
+	createFeedbackTemplate,
+	createFormTemplate,
 	createInterview,
 	createNote,
 	createOpportunity,
+	createPanel,
 	createPosting,
+	createRequisitionField,
+	deleteFeedback,
+	deleteFeedbackTemplate,
+	deleteFile,
+	deleteFormTemplate,
 	deleteInterview,
 	deleteNote,
+	deletePanel,
+	deleteRequisitionField,
+	deleteRequisitionFieldOptions,
+	downloadFile,
 	listApplications,
 	listArchiveReasons,
 	listDeletedApplications,
 	listDeletedOpportunities,
 	listDeletedPostings,
+	listFeedback,
+	listFeedbackTemplates,
+	listFiles,
+	listFormTemplates,
 	listInterviews,
 	listNotes,
 	listOpportunities,
 	listOpportunityFileActions,
+	listPanels,
 	listPostings,
 	listPostingUsers,
+	listRequisitionFields,
 	listStages,
 	removeOpportunityLinks,
 	removeOpportunitySources,
 	removeOpportunityTags,
+	replaceRequisitionFieldOptions,
 	retrieveApplication,
 	retrieveArchiveReason,
+	retrieveFeedback,
+	retrieveFeedbackTemplate,
+	retrieveFile,
+	retrieveFormTemplate,
 	retrieveInterview,
 	retrieveNote,
 	retrieveOpportunity,
+	retrievePanel,
 	retrievePosting,
 	retrievePostingApplicationQuestions,
+	retrieveRequisitionField,
 	retrieveStage,
+	updateFeedback,
+	updateFeedbackTemplate,
+	updateFormTemplate,
 	updateInterview,
 	updateNote,
 	updateOpportunityArchivedState,
 	updateOpportunityStage,
+	updatePanel,
 	updatePosting,
+	updateRequisitionField,
 } from './endpoints';
 import type {
 	LeverEndpointInputs,
@@ -135,6 +167,38 @@ export type LeverEndpoints = {
 	retrieveArchiveReason: LeverEndpoint<'retrieveArchiveReason'>;
 	listStages: LeverEndpoint<'listStages'>;
 	retrieveStage: LeverEndpoint<'retrieveStage'>;
+	listPanels: LeverEndpoint<'listPanels'>;
+	retrievePanel: LeverEndpoint<'retrievePanel'>;
+	createPanel: LeverEndpoint<'createPanel'>;
+	updatePanel: LeverEndpoint<'updatePanel'>;
+	deletePanel: LeverEndpoint<'deletePanel'>;
+	listFeedback: LeverEndpoint<'listFeedback'>;
+	retrieveFeedback: LeverEndpoint<'retrieveFeedback'>;
+	createFeedback: LeverEndpoint<'createFeedback'>;
+	updateFeedback: LeverEndpoint<'updateFeedback'>;
+	deleteFeedback: LeverEndpoint<'deleteFeedback'>;
+	listFeedbackTemplates: LeverEndpoint<'listFeedbackTemplates'>;
+	retrieveFeedbackTemplate: LeverEndpoint<'retrieveFeedbackTemplate'>;
+	createFeedbackTemplate: LeverEndpoint<'createFeedbackTemplate'>;
+	updateFeedbackTemplate: LeverEndpoint<'updateFeedbackTemplate'>;
+	deleteFeedbackTemplate: LeverEndpoint<'deleteFeedbackTemplate'>;
+	listFiles: LeverEndpoint<'listFiles'>;
+	retrieveFile: LeverEndpoint<'retrieveFile'>;
+	downloadFile: LeverEndpoint<'downloadFile'>;
+	deleteFile: LeverEndpoint<'deleteFile'>;
+	listFormTemplates: LeverEndpoint<'listFormTemplates'>;
+	retrieveFormTemplate: LeverEndpoint<'retrieveFormTemplate'>;
+	createFormTemplate: LeverEndpoint<'createFormTemplate'>;
+	updateFormTemplate: LeverEndpoint<'updateFormTemplate'>;
+	deleteFormTemplate: LeverEndpoint<'deleteFormTemplate'>;
+	listRequisitionFields: LeverEndpoint<'listRequisitionFields'>;
+	retrieveRequisitionField: LeverEndpoint<'retrieveRequisitionField'>;
+	createRequisitionField: LeverEndpoint<'createRequisitionField'>;
+	updateRequisitionField: LeverEndpoint<'updateRequisitionField'>;
+	deleteRequisitionField: LeverEndpoint<'deleteRequisitionField'>;
+	addRequisitionFieldOptions: LeverEndpoint<'addRequisitionFieldOptions'>;
+	replaceRequisitionFieldOptions: LeverEndpoint<'replaceRequisitionFieldOptions'>;
+	deleteRequisitionFieldOptions: LeverEndpoint<'deleteRequisitionFieldOptions'>;
 };
 
 type LeverWebhook<K extends keyof LeverWebhookOutputs, TEvent> = CorsairWebhook<
@@ -201,6 +265,50 @@ const leverEndpointsNested = {
 	stages: {
 		list: listStages,
 		retrieve: retrieveStage,
+	},
+	panels: {
+		list: listPanels,
+		retrieve: retrievePanel,
+		create: createPanel,
+		update: updatePanel,
+		delete: deletePanel,
+	},
+	feedback: {
+		list: listFeedback,
+		retrieve: retrieveFeedback,
+		create: createFeedback,
+		update: updateFeedback,
+		delete: deleteFeedback,
+	},
+	feedbackTemplates: {
+		list: listFeedbackTemplates,
+		retrieve: retrieveFeedbackTemplate,
+		create: createFeedbackTemplate,
+		update: updateFeedbackTemplate,
+		delete: deleteFeedbackTemplate,
+	},
+	files: {
+		list: listFiles,
+		retrieve: retrieveFile,
+		download: downloadFile,
+		delete: deleteFile,
+	},
+	formTemplates: {
+		list: listFormTemplates,
+		retrieve: retrieveFormTemplate,
+		create: createFormTemplate,
+		update: updateFormTemplate,
+		delete: deleteFormTemplate,
+	},
+	requisitionFields: {
+		list: listRequisitionFields,
+		retrieve: retrieveRequisitionField,
+		create: createRequisitionField,
+		update: updateRequisitionField,
+		delete: deleteRequisitionField,
+		addOptions: addRequisitionFieldOptions,
+		replaceOptions: replaceRequisitionFieldOptions,
+		deleteOptions: deleteRequisitionFieldOptions,
 	},
 } as const;
 
@@ -365,6 +473,134 @@ export const leverEndpointSchemas: RequiredPluginEndpointSchemas<
 		input: LeverEndpointInputSchemas.retrieveStage,
 		output: LeverEndpointOutputSchemas.retrieveStage,
 	},
+	'panels.list': {
+		input: LeverEndpointInputSchemas.listPanels,
+		output: LeverEndpointOutputSchemas.listPanels,
+	},
+	'panels.retrieve': {
+		input: LeverEndpointInputSchemas.retrievePanel,
+		output: LeverEndpointOutputSchemas.retrievePanel,
+	},
+	'panels.create': {
+		input: LeverEndpointInputSchemas.createPanel,
+		output: LeverEndpointOutputSchemas.createPanel,
+	},
+	'panels.update': {
+		input: LeverEndpointInputSchemas.updatePanel,
+		output: LeverEndpointOutputSchemas.updatePanel,
+	},
+	'panels.delete': {
+		input: LeverEndpointInputSchemas.deletePanel,
+		output: LeverEndpointOutputSchemas.deletePanel,
+	},
+	'feedback.list': {
+		input: LeverEndpointInputSchemas.listFeedback,
+		output: LeverEndpointOutputSchemas.listFeedback,
+	},
+	'feedback.retrieve': {
+		input: LeverEndpointInputSchemas.retrieveFeedback,
+		output: LeverEndpointOutputSchemas.retrieveFeedback,
+	},
+	'feedback.create': {
+		input: LeverEndpointInputSchemas.createFeedback,
+		output: LeverEndpointOutputSchemas.createFeedback,
+	},
+	'feedback.update': {
+		input: LeverEndpointInputSchemas.updateFeedback,
+		output: LeverEndpointOutputSchemas.updateFeedback,
+	},
+	'feedback.delete': {
+		input: LeverEndpointInputSchemas.deleteFeedback,
+		output: LeverEndpointOutputSchemas.deleteFeedback,
+	},
+	'feedbackTemplates.list': {
+		input: LeverEndpointInputSchemas.listFeedbackTemplates,
+		output: LeverEndpointOutputSchemas.listFeedbackTemplates,
+	},
+	'feedbackTemplates.retrieve': {
+		input: LeverEndpointInputSchemas.retrieveFeedbackTemplate,
+		output: LeverEndpointOutputSchemas.retrieveFeedbackTemplate,
+	},
+	'feedbackTemplates.create': {
+		input: LeverEndpointInputSchemas.createFeedbackTemplate,
+		output: LeverEndpointOutputSchemas.createFeedbackTemplate,
+	},
+	'feedbackTemplates.update': {
+		input: LeverEndpointInputSchemas.updateFeedbackTemplate,
+		output: LeverEndpointOutputSchemas.updateFeedbackTemplate,
+	},
+	'feedbackTemplates.delete': {
+		input: LeverEndpointInputSchemas.deleteFeedbackTemplate,
+		output: LeverEndpointOutputSchemas.deleteFeedbackTemplate,
+	},
+	'files.list': {
+		input: LeverEndpointInputSchemas.listFiles,
+		output: LeverEndpointOutputSchemas.listFiles,
+	},
+	'files.retrieve': {
+		input: LeverEndpointInputSchemas.retrieveFile,
+		output: LeverEndpointOutputSchemas.retrieveFile,
+	},
+	'files.download': {
+		input: LeverEndpointInputSchemas.downloadFile,
+		output: LeverEndpointOutputSchemas.downloadFile,
+	},
+	'files.delete': {
+		input: LeverEndpointInputSchemas.deleteFile,
+		output: LeverEndpointOutputSchemas.deleteFile,
+	},
+	'formTemplates.list': {
+		input: LeverEndpointInputSchemas.listFormTemplates,
+		output: LeverEndpointOutputSchemas.listFormTemplates,
+	},
+	'formTemplates.retrieve': {
+		input: LeverEndpointInputSchemas.retrieveFormTemplate,
+		output: LeverEndpointOutputSchemas.retrieveFormTemplate,
+	},
+	'formTemplates.create': {
+		input: LeverEndpointInputSchemas.createFormTemplate,
+		output: LeverEndpointOutputSchemas.createFormTemplate,
+	},
+	'formTemplates.update': {
+		input: LeverEndpointInputSchemas.updateFormTemplate,
+		output: LeverEndpointOutputSchemas.updateFormTemplate,
+	},
+	'formTemplates.delete': {
+		input: LeverEndpointInputSchemas.deleteFormTemplate,
+		output: LeverEndpointOutputSchemas.deleteFormTemplate,
+	},
+	'requisitionFields.list': {
+		input: LeverEndpointInputSchemas.listRequisitionFields,
+		output: LeverEndpointOutputSchemas.listRequisitionFields,
+	},
+	'requisitionFields.retrieve': {
+		input: LeverEndpointInputSchemas.retrieveRequisitionField,
+		output: LeverEndpointOutputSchemas.retrieveRequisitionField,
+	},
+	'requisitionFields.create': {
+		input: LeverEndpointInputSchemas.createRequisitionField,
+		output: LeverEndpointOutputSchemas.createRequisitionField,
+	},
+	'requisitionFields.update': {
+		input: LeverEndpointInputSchemas.updateRequisitionField,
+		output: LeverEndpointOutputSchemas.updateRequisitionField,
+	},
+	'requisitionFields.delete': {
+		input: LeverEndpointInputSchemas.deleteRequisitionField,
+		output: LeverEndpointOutputSchemas.deleteRequisitionField,
+	},
+	'requisitionFields.addOptions': {
+		input: LeverEndpointInputSchemas.addRequisitionFieldOptions,
+		output: LeverEndpointOutputSchemas.addRequisitionFieldOptions,
+	},
+	'requisitionFields.replaceOptions': {
+		input: LeverEndpointInputSchemas.replaceRequisitionFieldOptions,
+		output: LeverEndpointOutputSchemas.replaceRequisitionFieldOptions,
+	},
+	'requisitionFields.deleteOptions': {
+		input: LeverEndpointInputSchemas.deleteRequisitionFieldOptions,
+		output: LeverEndpointOutputSchemas.deleteRequisitionFieldOptions,
+	},
 } as const satisfies RequiredPluginEndpointSchemas<typeof leverEndpointsNested>;
 
 const leverWebhookSchemas = {
@@ -397,10 +633,14 @@ function withLeverSchemas<T extends LeverEndpointTree>(
 				throw new Error(`Missing Lever endpoint schema for ${operation}`);
 			}
 			const endpoint = value as LeverEndpointHandler;
+			const { input: inputSchema, output: outputSchema } = schema;
+			if (!inputSchema || !outputSchema) {
+				throw new Error();
+			}
 			const validated: LeverEndpointHandler = async (ctx, input) => {
-				const parsedInput = schema.input.parse(input ?? {});
+				const parsedInput = inputSchema.parse(input ?? {});
 				const result = await endpoint(ctx, parsedInput);
-				return schema.output.parse(result);
+				return outputSchema.parse(result);
 			};
 			return [key, validated];
 		}
@@ -568,6 +808,134 @@ const leverEndpointMeta = {
 	'stages.retrieve': {
 		riskLevel: 'read',
 		description: 'Retrieve a single hiring stage by ID',
+	},
+	'panels.list': {
+		riskLevel: 'read',
+		description: 'List interview panels for a pipeline opportunity',
+	},
+	'panels.retrieve': {
+		riskLevel: 'read',
+		description: 'Retrieve a single interview panel by ID',
+	},
+	'panels.create': {
+		riskLevel: 'write',
+		description: 'Create an interview panel for a pipeline opportunity',
+	},
+	'panels.update': {
+		riskLevel: 'write',
+		description: 'Update an interview panel',
+	},
+	'panels.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete an interview panel',
+	},
+	'feedback.list': {
+		riskLevel: 'read',
+		description: 'List feedback forms on a pipeline opportunity',
+	},
+	'feedback.retrieve': {
+		riskLevel: 'read',
+		description: 'Retrieve a single feedback form by ID',
+	},
+	'feedback.create': {
+		riskLevel: 'write',
+		description: 'Submit a feedback form for a pipeline opportunity',
+	},
+	'feedback.update': {
+		riskLevel: 'write',
+		description: 'Update a feedback form on a pipeline opportunity',
+	},
+	'feedback.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a feedback form from a pipeline opportunity',
+	},
+	'feedbackTemplates.list': {
+		riskLevel: 'read',
+		description: 'List feedback templates configured for the workspace',
+	},
+	'feedbackTemplates.retrieve': {
+		riskLevel: 'read',
+		description: 'Retrieve a single feedback template by ID',
+	},
+	'feedbackTemplates.create': {
+		riskLevel: 'write',
+		description: 'Create a feedback template for the workspace',
+	},
+	'feedbackTemplates.update': {
+		riskLevel: 'write',
+		description: 'Update a feedback template',
+	},
+	'feedbackTemplates.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a feedback template',
+	},
+	'files.list': {
+		riskLevel: 'read',
+		description: 'List files attached to a pipeline opportunity',
+	},
+	'files.retrieve': {
+		riskLevel: 'read',
+		description: 'Retrieve a single file attached to a pipeline opportunity',
+	},
+	'files.download': {
+		riskLevel: 'read',
+		description: 'Download the raw bytes of an opportunity file',
+	},
+	'files.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a file from a pipeline opportunity',
+	},
+	'formTemplates.list': {
+		riskLevel: 'read',
+		description: 'List form templates configured for the workspace',
+	},
+	'formTemplates.retrieve': {
+		riskLevel: 'read',
+		description: 'Retrieve a single form template by ID',
+	},
+	'formTemplates.create': {
+		riskLevel: 'write',
+		description: 'Create a form template for the workspace',
+	},
+	'formTemplates.update': {
+		riskLevel: 'write',
+		description: 'Update a form template',
+	},
+	'formTemplates.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a form template',
+	},
+	'requisitionFields.list': {
+		riskLevel: 'read',
+		description: 'List requisition fields configured for the workspace',
+	},
+	'requisitionFields.retrieve': {
+		riskLevel: 'read',
+		description: 'Retrieve a single requisition field by ID',
+	},
+	'requisitionFields.create': {
+		riskLevel: 'write',
+		description: 'Create a requisition field for the workspace',
+	},
+	'requisitionFields.update': {
+		riskLevel: 'write',
+		description: 'Update a requisition field',
+	},
+	'requisitionFields.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a requisition field',
+	},
+	'requisitionFields.addOptions': {
+		riskLevel: 'write',
+		description: 'Add dropdown options to a requisition field',
+	},
+	'requisitionFields.replaceOptions': {
+		riskLevel: 'write',
+		description: 'Replace the dropdown options of a requisition field',
+	},
+	'requisitionFields.deleteOptions': {
+		riskLevel: 'write',
+		description: 'Remove dropdown option values from a requisition field',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof leverEndpointsNested>;
 

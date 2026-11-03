@@ -135,6 +135,71 @@ const UpdateNoteInputSchema = NoteIdInputSchema.extend({
 	value: z.string().min(1),
 });
 
+// ── Panels ───────────────────────────────────────────────────────────────────
+const PanelBodySchema = z
+	.object({
+		applications: z.array(z.string().min(1)).optional(),
+		timezone: z.string().optional(),
+		feedbackReminder: z.string().optional(),
+		note: z.string().optional(),
+		externalUrl: z.string().optional(),
+		interviews: z.array(LeverRecordSchema).optional(),
+	})
+	.passthrough();
+
+// ── Feedback ─────────────────────────────────────────────────────────────────
+const FeedbackBodySchema = z
+	.object({
+		baseTemplateId: z.string().min(1).optional(),
+		panel: z.string().min(1).optional(),
+		interview: z.string().min(1).optional(),
+		fieldValues: z
+			.array(z.object({ id: z.string().min(1), value: z.string() }))
+			.optional(),
+		completedAt: z.number().int().optional(),
+	})
+	.passthrough();
+
+// ── Feedback templates ───────────────────────────────────────────────────────
+const FeedbackTemplateBodySchema = z.object({
+	text: z.string().min(1),
+	instructions: z.string().optional(),
+	group: z.string().optional(),
+	fields: z
+		.array(z.object({ type: z.string(), text: z.string() }).passthrough())
+		.optional(),
+});
+
+// ── Files (the multipart upload is excluded from the shared client) ──────────
+const FilesListInputSchema = OpportunityIdInputSchema.extend({
+	offset: OffsetSchema,
+});
+
+// ── Form templates ───────────────────────────────────────────────────────────
+const FormTemplateBodySchema = z.object({
+	title: z.string().min(1),
+	formFields: z.array(z.record(z.string(), z.unknown())).optional(),
+});
+
+// ── Requisition fields and their dropdown options ────────────────────────────
+const RequisitionFieldBodySchema = z.object({
+	id: z.string().min(1).optional(),
+	text: z.string().min(1),
+	type: z.string().min(1),
+	isRequired: z.boolean().optional(),
+	description: z.string().optional(),
+	subfields: z
+		.array(
+			z.object({
+				id: z.string().optional(),
+				text: z.string(),
+				type: z.string().optional(),
+			}),
+		)
+		.optional(),
+	options: z.array(z.object({ text: z.string() })).optional(),
+});
+
 export const LeverEndpointInputSchemas = {
 	listOpportunities: ListOpportunitiesInputSchema,
 	retrieveOpportunity: OpportunityIdInputSchema.extend({
@@ -176,6 +241,59 @@ export const LeverEndpointInputSchemas = {
 	retrieveArchiveReason: ArchiveReasonIdInputSchema,
 	listStages: z.object({ offset: OffsetSchema }),
 	retrieveStage: z.object({ stageId: IdSchema }),
+	listPanels: OpportunityIdInputSchema,
+	retrievePanel: z.object({ opportunityId: IdSchema, panelId: IdSchema }),
+	createPanel: PanelBodySchema.extend({ opportunityId: IdSchema }),
+	updatePanel: z
+		.object({ opportunityId: IdSchema, panelId: IdSchema })
+		.extend(PanelBodySchema.shape),
+	deletePanel: z.object({ opportunityId: IdSchema, panelId: IdSchema }),
+	listFeedback: OpportunityIdInputSchema,
+	retrieveFeedback: z.object({ opportunityId: IdSchema, feedbackId: IdSchema }),
+	createFeedback: FeedbackBodySchema.extend({ opportunityId: IdSchema }),
+	updateFeedback: z
+		.object({ opportunityId: IdSchema, feedbackId: IdSchema })
+		.extend(FeedbackBodySchema.shape),
+	deleteFeedback: z.object({ opportunityId: IdSchema, feedbackId: IdSchema }),
+	listFeedbackTemplates: z.object({ offset: OffsetSchema }),
+	retrieveFeedbackTemplate: z.object({ feedbackTemplateId: IdSchema }),
+	createFeedbackTemplate: FeedbackTemplateBodySchema,
+	updateFeedbackTemplate: FeedbackTemplateBodySchema.partial().extend({
+		feedbackTemplateId: IdSchema,
+	}),
+	deleteFeedbackTemplate: z.object({ feedbackTemplateId: IdSchema }),
+	listFiles: FilesListInputSchema,
+	retrieveFile: z.object({ opportunityId: IdSchema, fileId: IdSchema }),
+	downloadFile: z.object({ opportunityId: IdSchema, fileId: IdSchema }),
+	deleteFile: z.object({ opportunityId: IdSchema, fileId: IdSchema }),
+	listFormTemplates: z.object({ offset: OffsetSchema }),
+	retrieveFormTemplate: z.object({ formTemplateId: IdSchema }),
+	createFormTemplate: FormTemplateBodySchema,
+	updateFormTemplate: FormTemplateBodySchema.partial().extend({
+		formTemplateId: IdSchema,
+	}),
+	deleteFormTemplate: z.object({ formTemplateId: IdSchema }),
+	listRequisitionFields: z.object({ offset: OffsetSchema }),
+	retrieveRequisitionField: z.object({ requisitionFieldId: IdSchema }),
+	createRequisitionField: RequisitionFieldBodySchema,
+	updateRequisitionField: RequisitionFieldBodySchema.partial().extend({
+		requisitionFieldId: IdSchema,
+	}),
+	deleteRequisitionField: z.object({ requisitionFieldId: IdSchema }),
+	addRequisitionFieldOptions: z.object({
+		requisitionFieldId: IdSchema,
+		values: z.array(z.object({ text: z.string().min(1) })),
+	}),
+	replaceRequisitionFieldOptions: z.object({
+		requisitionFieldId: IdSchema,
+		values: z.array(
+			z.object({ id: z.string().optional(), text: z.string().min(1) }),
+		),
+	}),
+	deleteRequisitionFieldOptions: z.object({
+		requisitionFieldId: IdSchema,
+		values: z.array(z.string().min(1)),
+	}),
 } as const;
 
 export const LeverEndpointOutputSchemas = {
@@ -217,6 +335,38 @@ export const LeverEndpointOutputSchemas = {
 	retrieveArchiveReason: LeverResourceOutputSchema,
 	listStages: LeverListOutputSchema,
 	retrieveStage: LeverResourceOutputSchema,
+	listPanels: LeverListOutputSchema,
+	retrievePanel: LeverResourceOutputSchema,
+	createPanel: LeverResourceOutputSchema,
+	updatePanel: LeverResourceOutputSchema,
+	deletePanel: LeverEmptyOutputSchema,
+	listFeedback: LeverListOutputSchema,
+	retrieveFeedback: LeverResourceOutputSchema,
+	createFeedback: LeverResourceOutputSchema,
+	updateFeedback: LeverResourceOutputSchema,
+	deleteFeedback: LeverEmptyOutputSchema,
+	listFeedbackTemplates: LeverListOutputSchema,
+	retrieveFeedbackTemplate: LeverResourceOutputSchema,
+	createFeedbackTemplate: LeverResourceOutputSchema,
+	updateFeedbackTemplate: LeverResourceOutputSchema,
+	deleteFeedbackTemplate: LeverEmptyOutputSchema,
+	listFiles: LeverListOutputSchema,
+	retrieveFile: LeverResourceOutputSchema,
+	downloadFile: z.unknown(),
+	deleteFile: LeverEmptyOutputSchema,
+	listFormTemplates: LeverListOutputSchema,
+	retrieveFormTemplate: LeverResourceOutputSchema,
+	createFormTemplate: LeverResourceOutputSchema,
+	updateFormTemplate: LeverResourceOutputSchema,
+	deleteFormTemplate: LeverEmptyOutputSchema,
+	listRequisitionFields: LeverListOutputSchema,
+	retrieveRequisitionField: LeverResourceOutputSchema,
+	createRequisitionField: LeverResourceOutputSchema,
+	updateRequisitionField: LeverResourceOutputSchema,
+	deleteRequisitionField: LeverEmptyOutputSchema,
+	addRequisitionFieldOptions: LeverResourceOutputSchema,
+	replaceRequisitionFieldOptions: LeverResourceOutputSchema,
+	deleteRequisitionFieldOptions: LeverEmptyOutputSchema,
 } as const;
 
 export type LeverEndpointInputs = {

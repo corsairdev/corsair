@@ -122,3 +122,98 @@ apiExamples:
     offset: 0
   stages.retrieve:
     stageId: 4a2b1c3d-5e6f-4a7b-8c9d-0e1f2a3b4c5d
+  panels.list:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+  panels.retrieve:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+    panelId: a402cff4-ecca-4e40-8a89-9f21d374aea3
+  panels.create:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+    note: Panel for Rachel
+  panels.update:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+    panelId: a402cff4-ecca-4e40-8a89-9f21d374aea3
+    note: Updated panel
+  panels.delete:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+    panelId: a402cff4-ecca-4e40-8a89-9f21d374aea3
+  feedback.list:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+  feedback.retrieve:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+    feedbackId: c64fb192-d6d8-42dc-ac82-47cb87e9839c
+  feedback.create:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+    fieldValues:
+      - id: 6ee25ace-dae2-4aa1-a1d2-9687464a691f
+        value: '4'
+  feedback.update:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+    feedbackId: c64fb192-d6d8-42dc-ac82-47cb87e9839c
+    completedAt: 1600275449372
+  feedback.delete:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+    feedbackId: c64fb192-d6d8-42dc-ac82-47cb87e9839c
+  feedbackTemplates.list:
+    offset: 0
+  feedbackTemplates.retrieve:
+    feedbackTemplateId: 5b0f589c-b0c2-4e84-bf83-0f2ca48fc48a
+  feedbackTemplates.create:
+    text: Phone Screen Feedback Form
+    instructions: Please fill out all required fields.
+  feedbackTemplates.update:
+    feedbackTemplateId: 5b0f589c-b0c2-4e84-bf83-0f2ca48fc48a
+    text: Updated feedback form
+  feedbackTemplates.delete:
+    feedbackTemplateId: 5b0f589c-b0c2-4e84-bf83-0f2ca48fc48a
+  files.list:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+  files.retrieve:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+    fileId: b02a3b97-dc41-48e3-b003-44d211ed2a4c
+  files.download:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+    fileId: b02a3b97-dc41-48e3-b003-44d211ed2a4c
+  files.delete:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+    fileId: b02a3b97-dc41-48e3-b003-44d211ed2a4c
+  formTemplates.list:
+    offset: 0
+  formTemplates.retrieve:
+    formTemplateId: 8f1c2d3e-4a5b-4c6d-8e9f-0a1b2c3d4e5f
+  formTemplates.create:
+    title: Application form
+  formTemplates.update:
+    formTemplateId: 8f1c2d3e-4a5b-4c6d-8e9f-0a1b2c3d4e5f
+    title: Updated application form
+  formTemplates.delete:
+    formTemplateId: 8f1c2d3e-4a5b-4c6d-8e9f-0a1b2c3d4e5f
+  requisitionFields.list:
+    offset: 0
+  requisitionFields.retrieve:
+    requisitionFieldId: work_type
+  requisitionFields.create:
+    text: Work type
+    type: dropdown
+    options:
+      - text: full time
+      - text: part time
+  requisitionFields.update:
+    requisitionFieldId: work_type
+    text: Work type
+    type: dropdown
+  requisitionFields.delete:
+    requisitionFieldId: work_type
+  requisitionFields.addOptions:
+    requisitionFieldId: work_type
+    values:
+      - text: hourly
+  requisitionFields.replaceOptions:
+    requisitionFieldId: work_type
+    values:
+      - id: 401cac37-a8a2-40b8-b175-b45fa0d69301
+        text: remote - part time
+  requisitionFields.deleteOptions:
+    requisitionFieldId: work_type
+    values:
+      - 5dc3d8e7-db49-44e5-99e9-fec13a305533
