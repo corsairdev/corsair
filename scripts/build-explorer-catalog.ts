@@ -200,6 +200,8 @@ function toApiEndpoint(ep: CoreApiEndpoint, pluginId: string): DocsApiEndpoint {
 		...(ep.description !== undefined ? { description: ep.description } : {}),
 		...(ep.riskLevel !== undefined ? { riskLevel: ep.riskLevel } : {}),
 		...(ep.irreversible !== undefined ? { irreversible: ep.irreversible } : {}),
+		// Read by Hub's routine author, so a routine can follow a plugin's job.
+		...(ep.job !== undefined ? { job: ep.job } : {}),
 		input: ep.input,
 		output: ep.output,
 	};

@@ -32,6 +32,7 @@
               "introduction",
               "quick-start",
               "cloud/overview",
+              "cloud/mcp",
               {
                 "group": "Use cases",
                 "pages": [
@@ -449,6 +450,14 @@
                   "plugins/anthropicadministrator/overview",
                   "plugins/anthropicadministrator/api",
                   "plugins/anthropicadministrator/database"
+                ]
+              },
+              {
+                "group": "AnyAPI",
+                "pages": [
+                  "plugins/anyapi/overview",
+                  "plugins/anyapi/api",
+                  "plugins/anyapi/database"
                 ]
               },
               {
@@ -1282,7 +1291,7 @@
                 ]
               },
               {
-                "group": "Clickup",
+                "group": "ClickUp",
                 "pages": [
                   "plugins/clickup/overview",
                   "plugins/clickup/api",
@@ -1355,6 +1364,14 @@
                   "plugins/cloudinary/api",
                   "plugins/cloudinary/database",
                   "plugins/cloudinary/webhooks"
+                ]
+              },
+              {
+                "group": "Coassemble",
+                "pages": [
+                  "plugins/coassemble/overview",
+                  "plugins/coassemble/api",
+                  "plugins/coassemble/database"
                 ]
               },
               {
@@ -1448,19 +1465,19 @@
                 ]
               },
               {
+                "group": "Context.dev",
+                "pages": [
+                  "plugins/contextdev/overview",
+                  "plugins/contextdev/api",
+                  "plugins/contextdev/database"
+                ]
+              },
+              {
                 "group": "Context7",
                 "pages": [
                   "plugins/contextsevenmcp/overview",
                   "plugins/contextsevenmcp/api",
                   "plugins/contextsevenmcp/database"
-                ]
-              },
-              {
-                "group": "ContextDev",
-                "pages": [
-                  "plugins/contextdev/overview",
-                  "plugins/contextdev/api",
-                  "plugins/contextdev/database"
                 ]
               },
               {
@@ -1956,6 +1973,14 @@
                 ]
               },
               {
+                "group": "GMI Cloud",
+                "pages": [
+                  "plugins/gmicloud/overview",
+                  "plugins/gmicloud/api",
+                  "plugins/gmicloud/database"
+                ]
+              },
+              {
                 "group": "Google Address Validation",
                 "pages": [
                   "plugins/googleaddressvalidation/overview",
@@ -2204,6 +2229,15 @@
                   "plugins/instagram/api",
                   "plugins/instagram/database",
                   "plugins/instagram/webhooks"
+                ]
+              },
+              {
+                "group": "Instantly",
+                "pages": [
+                  "plugins/instantly/overview",
+                  "plugins/instantly/api",
+                  "plugins/instantly/database",
+                  "plugins/instantly/webhooks"
                 ]
               },
               {
@@ -2883,7 +2917,7 @@
                 ]
               },
               {
-                "group": "Spoki integration for Corsair",
+                "group": "Spoki",
                 "pages": [
                   "plugins/spoki/overview",
                   "plugins/spoki/api",
@@ -3025,6 +3059,14 @@
                   "plugins/ticktick/overview",
                   "plugins/ticktick/api",
                   "plugins/ticktick/database"
+                ]
+              },
+              {
+                "group": "TikHub",
+                "pages": [
+                  "plugins/tikhub/overview",
+                  "plugins/tikhub/api",
+                  "plugins/tikhub/database"
                 ]
               },
               {
@@ -3182,12 +3224,29 @@
                 ]
               },
               {
+                "group": "TypeSafe",
+                "pages": [
+                  "plugins/typesafe/overview",
+                  "plugins/typesafe/api",
+                  "plugins/typesafe/database"
+                ]
+              },
+              {
                 "group": "UniOne",
                 "pages": [
                   "plugins/unione/overview",
                   "plugins/unione/api",
                   "plugins/unione/database",
                   "plugins/unione/webhooks"
+                ]
+              },
+              {
+                "group": "Unipile",
+                "pages": [
+                  "plugins/unipile/overview",
+                  "plugins/unipile/api",
+                  "plugins/unipile/database",
+                  "plugins/unipile/webhooks"
                 ]
               },
               {

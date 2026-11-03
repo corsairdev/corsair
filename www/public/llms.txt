@@ -40,7 +40,8 @@ The full agent index lives at [docs.corsair.dev/llms.txt](https://docs.corsair.d
 - [MCP adapters](https://docs.corsair.dev/mcp-adapters/mcp-adapters): Anthropic, OpenAI, Vercel AI SDK, Mastra, and coding agents over MCP.
 
 ### Hub
-- [Overview](https://docs.corsair.dev/hub/overview): The hosted relay for connect flows and approvals — stores none of your credentials.
+- [Overview](https://docs.corsair.dev/hub/overview): The hosted relay for connect flows and approvals. With the SDK, your users' tokens stay in your own database.
+- [Security](https://corsair.dev/security): How credentials and synced data are encrypted, who can decrypt them, approvals, deletion, and how to report a vulnerability.
 
 ### Plugins & integrations
 - [Plugins](https://docs.corsair.dev/guides/plugins): Hundreds of integrations (GitHub, Slack, HubSpot, Zendesk, Calendly, Zoom, and more).
