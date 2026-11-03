@@ -10,6 +10,14 @@ export {
 	retrieveStage,
 } from './archive-reasons';
 export {
+	retrieveContact,
+	updateContact,
+} from './contacts';
+export {
+	retrieveEeoResponsesAnonymous,
+	retrieveEeoResponsesWithPii,
+} from './eeo';
+export {
 	createFeedback,
 	deleteFeedback,
 	listFeedback,
@@ -51,6 +59,10 @@ export {
 	updateNote,
 } from './notes';
 export {
+	downloadOpportunityOffer,
+	listOpportunityOffers,
+} from './offers';
+export {
 	addOpportunityLinks,
 	addOpportunitySources,
 	addOpportunityTags,
@@ -83,6 +95,22 @@ export {
 	updatePosting,
 } from './postings';
 export {
+	createForm,
+	listForms,
+	retrieveForm,
+} from './profile-forms';
+export {
+	listAuditEvents,
+	listDispositionStages,
+	listSources,
+	listTags,
+	retrieveDiversitySurvey,
+} from './reference';
+export {
+	listReferrals,
+	retrieveReferral,
+} from './referrals';
+export {
 	addRequisitionFieldOptions,
 	createRequisitionField,
 	deleteRequisitionField,
@@ -92,4 +120,30 @@ export {
 	retrieveRequisitionField,
 	updateRequisitionField,
 } from './requisition-fields';
+export {
+	createRequisition,
+	deleteRequisition,
+	listRequisitions,
+	retrieveRequisition,
+	updateRequisition,
+} from './requisitions';
+export {
+	downloadResume,
+	listResumes,
+	retrieveResume,
+} from './resumes';
 export * from './types';
+export {
+	createUser,
+	deactivateUser,
+	listUsers,
+	reactivateUser,
+	retrieveUser,
+	updateUser,
+} from './users';
+export {
+	createWebhook,
+	deleteWebhook,
+	listWebhooks,
+	updateWebhook,
+} from './webhooks';

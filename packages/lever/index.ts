@@ -23,13 +23,18 @@ import {
 	applyToPosting,
 	createFeedback,
 	createFeedbackTemplate,
+	createForm,
 	createFormTemplate,
 	createInterview,
 	createNote,
 	createOpportunity,
 	createPanel,
 	createPosting,
+	createRequisition,
 	createRequisitionField,
+	createUser,
+	createWebhook,
+	deactivateUser,
 	deleteFeedback,
 	deleteFeedbackTemplate,
 	deleteFile,
@@ -37,36 +42,57 @@ import {
 	deleteInterview,
 	deleteNote,
 	deletePanel,
+	deleteRequisition,
 	deleteRequisitionField,
 	deleteRequisitionFieldOptions,
+	deleteWebhook,
 	downloadFile,
+	downloadOpportunityOffer,
+	downloadResume,
 	listApplications,
 	listArchiveReasons,
+	listAuditEvents,
 	listDeletedApplications,
 	listDeletedOpportunities,
 	listDeletedPostings,
+	listDispositionStages,
 	listFeedback,
 	listFeedbackTemplates,
 	listFiles,
+	listForms,
 	listFormTemplates,
 	listInterviews,
 	listNotes,
 	listOpportunities,
 	listOpportunityFileActions,
+	listOpportunityOffers,
 	listPanels,
 	listPostings,
 	listPostingUsers,
+	listReferrals,
 	listRequisitionFields,
+	listRequisitions,
+	listResumes,
+	listSources,
 	listStages,
+	listTags,
+	listUsers,
+	listWebhooks,
+	reactivateUser,
 	removeOpportunityLinks,
 	removeOpportunitySources,
 	removeOpportunityTags,
 	replaceRequisitionFieldOptions,
 	retrieveApplication,
 	retrieveArchiveReason,
+	retrieveContact,
+	retrieveDiversitySurvey,
+	retrieveEeoResponsesAnonymous,
+	retrieveEeoResponsesWithPii,
 	retrieveFeedback,
 	retrieveFeedbackTemplate,
 	retrieveFile,
+	retrieveForm,
 	retrieveFormTemplate,
 	retrieveInterview,
 	retrieveNote,
@@ -74,8 +100,13 @@ import {
 	retrievePanel,
 	retrievePosting,
 	retrievePostingApplicationQuestions,
+	retrieveReferral,
+	retrieveRequisition,
 	retrieveRequisitionField,
+	retrieveResume,
 	retrieveStage,
+	retrieveUser,
+	updateContact,
 	updateFeedback,
 	updateFeedbackTemplate,
 	updateFormTemplate,
@@ -85,7 +116,10 @@ import {
 	updateOpportunityStage,
 	updatePanel,
 	updatePosting,
+	updateRequisition,
 	updateRequisitionField,
+	updateUser,
+	updateWebhook,
 } from './endpoints';
 import type {
 	LeverEndpointInputs,
@@ -167,6 +201,40 @@ export type LeverEndpoints = {
 	retrieveArchiveReason: LeverEndpoint<'retrieveArchiveReason'>;
 	listStages: LeverEndpoint<'listStages'>;
 	retrieveStage: LeverEndpoint<'retrieveStage'>;
+	listRequisitions: LeverEndpoint<'listRequisitions'>;
+	createRequisition: LeverEndpoint<'createRequisition'>;
+	retrieveRequisition: LeverEndpoint<'retrieveRequisition'>;
+	updateRequisition: LeverEndpoint<'updateRequisition'>;
+	deleteRequisition: LeverEndpoint<'deleteRequisition'>;
+	listForms: LeverEndpoint<'listForms'>;
+	retrieveForm: LeverEndpoint<'retrieveForm'>;
+	createForm: LeverEndpoint<'createForm'>;
+	listResumes: LeverEndpoint<'listResumes'>;
+	retrieveResume: LeverEndpoint<'retrieveResume'>;
+	downloadResume: LeverEndpoint<'downloadResume'>;
+	listUsers: LeverEndpoint<'listUsers'>;
+	retrieveUser: LeverEndpoint<'retrieveUser'>;
+	createUser: LeverEndpoint<'createUser'>;
+	updateUser: LeverEndpoint<'updateUser'>;
+	deactivateUser: LeverEndpoint<'deactivateUser'>;
+	reactivateUser: LeverEndpoint<'reactivateUser'>;
+	listReferrals: LeverEndpoint<'listReferrals'>;
+	retrieveReferral: LeverEndpoint<'retrieveReferral'>;
+	retrieveContact: LeverEndpoint<'retrieveContact'>;
+	updateContact: LeverEndpoint<'updateContact'>;
+	retrieveEeoResponsesWithPii: LeverEndpoint<'retrieveEeoResponsesWithPii'>;
+	retrieveEeoResponsesAnonymous: LeverEndpoint<'retrieveEeoResponsesAnonymous'>;
+	listDispositionStages: LeverEndpoint<'listDispositionStages'>;
+	retrieveDiversitySurvey: LeverEndpoint<'retrieveDiversitySurvey'>;
+	listWebhooks: LeverEndpoint<'listWebhooks'>;
+	createWebhook: LeverEndpoint<'createWebhook'>;
+	updateWebhook: LeverEndpoint<'updateWebhook'>;
+	deleteWebhook: LeverEndpoint<'deleteWebhook'>;
+	listAuditEvents: LeverEndpoint<'listAuditEvents'>;
+	listSources: LeverEndpoint<'listSources'>;
+	listTags: LeverEndpoint<'listTags'>;
+	listOpportunityOffers: LeverEndpoint<'listOpportunityOffers'>;
+	downloadOpportunityOffer: LeverEndpoint<'downloadOpportunityOffer'>;
 	listPanels: LeverEndpoint<'listPanels'>;
 	retrievePanel: LeverEndpoint<'retrievePanel'>;
 	createPanel: LeverEndpoint<'createPanel'>;
@@ -309,6 +377,68 @@ const leverEndpointsNested = {
 		addOptions: addRequisitionFieldOptions,
 		replaceOptions: replaceRequisitionFieldOptions,
 		deleteOptions: deleteRequisitionFieldOptions,
+	},
+	requisitions: {
+		list: listRequisitions,
+		create: createRequisition,
+		retrieve: retrieveRequisition,
+		update: updateRequisition,
+		delete: deleteRequisition,
+	},
+	forms: {
+		list: listForms,
+		retrieve: retrieveForm,
+		create: createForm,
+	},
+	resumes: {
+		list: listResumes,
+		retrieve: retrieveResume,
+		download: downloadResume,
+	},
+	users: {
+		list: listUsers,
+		retrieve: retrieveUser,
+		create: createUser,
+		update: updateUser,
+		deactivate: deactivateUser,
+		reactivate: reactivateUser,
+	},
+	referrals: {
+		list: listReferrals,
+		retrieve: retrieveReferral,
+	},
+	contacts: {
+		retrieve: retrieveContact,
+		update: updateContact,
+	},
+	eeo: {
+		retrieveWithPii: retrieveEeoResponsesWithPii,
+		retrieveAnonymous: retrieveEeoResponsesAnonymous,
+	},
+	dispositionStages: {
+		list: listDispositionStages,
+	},
+	surveys: {
+		retrieveDiversity: retrieveDiversitySurvey,
+	},
+	webhooks: {
+		list: listWebhooks,
+		create: createWebhook,
+		update: updateWebhook,
+		delete: deleteWebhook,
+	},
+	auditEvents: {
+		list: listAuditEvents,
+	},
+	sources: {
+		list: listSources,
+	},
+	tags: {
+		list: listTags,
+	},
+	offers: {
+		list: listOpportunityOffers,
+		download: downloadOpportunityOffer,
 	},
 } as const;
 
@@ -600,6 +730,142 @@ export const leverEndpointSchemas: RequiredPluginEndpointSchemas<
 	'requisitionFields.deleteOptions': {
 		input: LeverEndpointInputSchemas.deleteRequisitionFieldOptions,
 		output: LeverEndpointOutputSchemas.deleteRequisitionFieldOptions,
+	},
+	'requisitions.list': {
+		input: LeverEndpointInputSchemas.listRequisitions,
+		output: LeverEndpointOutputSchemas.listRequisitions,
+	},
+	'requisitions.create': {
+		input: LeverEndpointInputSchemas.createRequisition,
+		output: LeverEndpointOutputSchemas.createRequisition,
+	},
+	'requisitions.retrieve': {
+		input: LeverEndpointInputSchemas.retrieveRequisition,
+		output: LeverEndpointOutputSchemas.retrieveRequisition,
+	},
+	'requisitions.update': {
+		input: LeverEndpointInputSchemas.updateRequisition,
+		output: LeverEndpointOutputSchemas.updateRequisition,
+	},
+	'requisitions.delete': {
+		input: LeverEndpointInputSchemas.deleteRequisition,
+		output: LeverEndpointOutputSchemas.deleteRequisition,
+	},
+	'forms.list': {
+		input: LeverEndpointInputSchemas.listForms,
+		output: LeverEndpointOutputSchemas.listForms,
+	},
+	'forms.retrieve': {
+		input: LeverEndpointInputSchemas.retrieveForm,
+		output: LeverEndpointOutputSchemas.retrieveForm,
+	},
+	'forms.create': {
+		input: LeverEndpointInputSchemas.createForm,
+		output: LeverEndpointOutputSchemas.createForm,
+	},
+	'resumes.list': {
+		input: LeverEndpointInputSchemas.listResumes,
+		output: LeverEndpointOutputSchemas.listResumes,
+	},
+	'resumes.retrieve': {
+		input: LeverEndpointInputSchemas.retrieveResume,
+		output: LeverEndpointOutputSchemas.retrieveResume,
+	},
+	'resumes.download': {
+		input: LeverEndpointInputSchemas.downloadResume,
+		output: LeverEndpointOutputSchemas.downloadResume,
+	},
+	'users.list': {
+		input: LeverEndpointInputSchemas.listUsers,
+		output: LeverEndpointOutputSchemas.listUsers,
+	},
+	'users.retrieve': {
+		input: LeverEndpointInputSchemas.retrieveUser,
+		output: LeverEndpointOutputSchemas.retrieveUser,
+	},
+	'users.create': {
+		input: LeverEndpointInputSchemas.createUser,
+		output: LeverEndpointOutputSchemas.createUser,
+	},
+	'users.update': {
+		input: LeverEndpointInputSchemas.updateUser,
+		output: LeverEndpointOutputSchemas.updateUser,
+	},
+	'users.deactivate': {
+		input: LeverEndpointInputSchemas.deactivateUser,
+		output: LeverEndpointOutputSchemas.deactivateUser,
+	},
+	'users.reactivate': {
+		input: LeverEndpointInputSchemas.reactivateUser,
+		output: LeverEndpointOutputSchemas.reactivateUser,
+	},
+	'referrals.list': {
+		input: LeverEndpointInputSchemas.listReferrals,
+		output: LeverEndpointOutputSchemas.listReferrals,
+	},
+	'referrals.retrieve': {
+		input: LeverEndpointInputSchemas.retrieveReferral,
+		output: LeverEndpointOutputSchemas.retrieveReferral,
+	},
+	'contacts.retrieve': {
+		input: LeverEndpointInputSchemas.retrieveContact,
+		output: LeverEndpointOutputSchemas.retrieveContact,
+	},
+	'contacts.update': {
+		input: LeverEndpointInputSchemas.updateContact,
+		output: LeverEndpointOutputSchemas.updateContact,
+	},
+	'eeo.retrieveWithPii': {
+		input: LeverEndpointInputSchemas.retrieveEeoResponsesWithPii,
+		output: LeverEndpointOutputSchemas.retrieveEeoResponsesWithPii,
+	},
+	'eeo.retrieveAnonymous': {
+		input: LeverEndpointInputSchemas.retrieveEeoResponsesAnonymous,
+		output: LeverEndpointOutputSchemas.retrieveEeoResponsesAnonymous,
+	},
+	'dispositionStages.list': {
+		input: LeverEndpointInputSchemas.listDispositionStages,
+		output: LeverEndpointOutputSchemas.listDispositionStages,
+	},
+	'surveys.retrieveDiversity': {
+		input: LeverEndpointInputSchemas.retrieveDiversitySurvey,
+		output: LeverEndpointOutputSchemas.retrieveDiversitySurvey,
+	},
+	'webhooks.list': {
+		input: LeverEndpointInputSchemas.listWebhooks,
+		output: LeverEndpointOutputSchemas.listWebhooks,
+	},
+	'webhooks.create': {
+		input: LeverEndpointInputSchemas.createWebhook,
+		output: LeverEndpointOutputSchemas.createWebhook,
+	},
+	'webhooks.update': {
+		input: LeverEndpointInputSchemas.updateWebhook,
+		output: LeverEndpointOutputSchemas.updateWebhook,
+	},
+	'webhooks.delete': {
+		input: LeverEndpointInputSchemas.deleteWebhook,
+		output: LeverEndpointOutputSchemas.deleteWebhook,
+	},
+	'auditEvents.list': {
+		input: LeverEndpointInputSchemas.listAuditEvents,
+		output: LeverEndpointOutputSchemas.listAuditEvents,
+	},
+	'sources.list': {
+		input: LeverEndpointInputSchemas.listSources,
+		output: LeverEndpointOutputSchemas.listSources,
+	},
+	'tags.list': {
+		input: LeverEndpointInputSchemas.listTags,
+		output: LeverEndpointOutputSchemas.listTags,
+	},
+	'offers.list': {
+		input: LeverEndpointInputSchemas.listOpportunityOffers,
+		output: LeverEndpointOutputSchemas.listOpportunityOffers,
+	},
+	'offers.download': {
+		input: LeverEndpointInputSchemas.downloadOpportunityOffer,
+		output: LeverEndpointOutputSchemas.downloadOpportunityOffer,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<typeof leverEndpointsNested>;
 
@@ -936,6 +1202,143 @@ const leverEndpointMeta = {
 	'requisitionFields.deleteOptions': {
 		riskLevel: 'write',
 		description: 'Remove dropdown option values from a requisition field',
+	},
+	'requisitions.list': {
+		riskLevel: 'read',
+		description: 'List requisitions',
+	},
+	'requisitions.create': {
+		riskLevel: 'write',
+		description: 'Create a requisition',
+	},
+	'requisitions.retrieve': {
+		riskLevel: 'read',
+		description: 'Retrieve a single requisition by ID',
+	},
+	'requisitions.update': {
+		riskLevel: 'write',
+		description: 'Update a requisition',
+	},
+	'requisitions.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a requisition',
+	},
+	'forms.list': {
+		riskLevel: 'read',
+		description: 'List form submissions on a pipeline opportunity',
+	},
+	'forms.retrieve': {
+		riskLevel: 'read',
+		description: 'Retrieve a single form submission by ID',
+	},
+	'forms.create': {
+		riskLevel: 'write',
+		description: 'Submit a form for a pipeline opportunity',
+	},
+	'resumes.list': {
+		riskLevel: 'read',
+		description: 'List resumes attached to a pipeline opportunity',
+	},
+	'resumes.retrieve': {
+		riskLevel: 'read',
+		description: 'Retrieve a single resume by ID',
+	},
+	'resumes.download': {
+		riskLevel: 'read',
+		description: 'Download the raw bytes of an opportunity resume',
+	},
+	'users.list': {
+		riskLevel: 'read',
+		description: 'List workspace users',
+	},
+	'users.retrieve': {
+		riskLevel: 'read',
+		description: 'Retrieve a single workspace user by ID',
+	},
+	'users.create': {
+		riskLevel: 'write',
+		description: 'Create a workspace user',
+	},
+	'users.update': {
+		riskLevel: 'write',
+		description: 'Update a workspace user',
+	},
+	'users.deactivate': {
+		riskLevel: 'write',
+		description: 'Deactivate a workspace user',
+	},
+	'users.reactivate': {
+		riskLevel: 'write',
+		description: 'Reactivate a workspace user',
+	},
+	'referrals.list': {
+		riskLevel: 'read',
+		description: 'List referrals on a pipeline opportunity',
+	},
+	'referrals.retrieve': {
+		riskLevel: 'read',
+		description: 'Retrieve a single referral by ID',
+	},
+	'contacts.retrieve': {
+		riskLevel: 'read',
+		description: 'Retrieve a single contact by ID',
+	},
+	'contacts.update': {
+		riskLevel: 'write',
+		description: 'Update a contact',
+	},
+	'eeo.retrieveWithPii': {
+		riskLevel: 'read',
+		description:
+			'Retrieve EEO responses including personally identifiable information',
+	},
+	'eeo.retrieveAnonymous': {
+		riskLevel: 'read',
+		description: 'Retrieve anonymized EEO responses',
+	},
+	'dispositionStages.list': {
+		riskLevel: 'read',
+		description: 'List disposition stages configured for the workspace',
+	},
+	'surveys.retrieveDiversity': {
+		riskLevel: 'read',
+		description: 'Retrieve the diversity survey for a job posting',
+	},
+	'webhooks.list': {
+		riskLevel: 'read',
+		description: 'List registered webhooks',
+	},
+	'webhooks.create': {
+		riskLevel: 'write',
+		description: 'Register a webhook',
+	},
+	'webhooks.update': {
+		riskLevel: 'write',
+		description: 'Update a registered webhook',
+	},
+	'webhooks.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a registered webhook',
+	},
+	'auditEvents.list': {
+		riskLevel: 'read',
+		description: 'List workspace audit events',
+	},
+	'sources.list': {
+		riskLevel: 'read',
+		description: 'List sourcing sources configured for the workspace',
+	},
+	'tags.list': {
+		riskLevel: 'read',
+		description: 'List tags configured for the workspace',
+	},
+	'offers.list': {
+		riskLevel: 'read',
+		description: 'List offers for a pipeline opportunity',
+	},
+	'offers.download': {
+		riskLevel: 'read',
+		description: 'Download the raw bytes of an offer file',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof leverEndpointsNested>;
 

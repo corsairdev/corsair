@@ -200,6 +200,63 @@ const RequisitionFieldBodySchema = z.object({
 	options: z.array(z.object({ text: z.string() })).optional(),
 });
 
+// ── Requisitions ─────────────────────────────────────────────────────────────
+const RequisitionBodySchema = z
+	.object({
+		title: z.string().min(1),
+		hiringManagerId: z.string().optional(),
+	})
+	.passthrough();
+
+// ── Profile form submissions ─────────────────────────────────────────────────
+const CreateProfileFormInputSchema = OpportunityIdInputSchema.extend({
+	formTemplateId: z.string().min(1).optional(),
+	values: z
+		.array(z.object({ id: z.string().min(1), value: z.string() }))
+		.optional(),
+});
+
+// ── Users ────────────────────────────────────────────────────────────────────
+const CreateUserInputSchema = z.object({
+	name: z.string().min(1),
+	email: z.string().min(1),
+	accessRole: z.string().optional(),
+	externalDirectoryId: z.string().optional(),
+	jobTitle: z.string().optional(),
+	managerId: z.string().optional(),
+});
+const UpdateUserInputSchema = z.object({
+	userId: IdSchema,
+	name: z.string().min(1).optional(),
+	email: z.string().min(1).optional(),
+	accessRole: z.string().optional(),
+	externalDirectoryId: z.string().optional(),
+	jobTitle: z.string().optional(),
+	managerId: z.string().optional(),
+});
+
+// ── Contacts ─────────────────────────────────────────────────────────────────
+const UpdateContactInputSchema = z.object({
+	contactId: IdSchema,
+	name: z.string().min(1).optional(),
+	phones: z.array(z.string()).optional(),
+	emails: z.array(z.string()).optional(),
+	links: z.array(z.string()).optional(),
+});
+
+// ── Webhooks ─────────────────────────────────────────────────────────────────
+const CreateWebhookInputSchema = z.object({
+	url: z.string().min(1),
+	event: z.string().min(1),
+	configuration: LeverRecordSchema.optional(),
+});
+const UpdateWebhookInputSchema = z.object({
+	webhookId: IdSchema,
+	url: z.string().min(1).optional(),
+	event: z.string().min(1).optional(),
+	configuration: LeverRecordSchema.optional(),
+});
+
 export const LeverEndpointInputSchemas = {
 	listOpportunities: ListOpportunitiesInputSchema,
 	retrieveOpportunity: OpportunityIdInputSchema.extend({
@@ -294,6 +351,43 @@ export const LeverEndpointInputSchemas = {
 		requisitionFieldId: IdSchema,
 		values: z.array(z.string().min(1)),
 	}),
+	listRequisitions: z.object({ offset: OffsetSchema }),
+	createRequisition: z.object({ title: z.string().min(1) }).passthrough(),
+	retrieveRequisition: z.object({ requisitionId: IdSchema }),
+	updateRequisition: z.object({ requisitionId: IdSchema }).passthrough(),
+	deleteRequisition: z.object({ requisitionId: IdSchema }),
+	listForms: OpportunityIdInputSchema,
+	retrieveForm: z.object({ opportunityId: IdSchema, formId: IdSchema }),
+	createForm: CreateProfileFormInputSchema,
+	listResumes: OpportunityIdInputSchema,
+	retrieveResume: z.object({ opportunityId: IdSchema, resumeId: IdSchema }),
+	downloadResume: z.object({ opportunityId: IdSchema, resumeId: IdSchema }),
+	listUsers: z.object({ offset: OffsetSchema, include: z.string().optional() }),
+	retrieveUser: z.object({ userId: IdSchema }),
+	createUser: CreateUserInputSchema,
+	updateUser: UpdateUserInputSchema,
+	deactivateUser: z.object({ userId: IdSchema }),
+	reactivateUser: z.object({ userId: IdSchema }),
+	listReferrals: OpportunityIdInputSchema,
+	retrieveReferral: z.object({ opportunityId: IdSchema, referralId: IdSchema }),
+	retrieveContact: z.object({ contactId: IdSchema }),
+	updateContact: UpdateContactInputSchema,
+	retrieveEeoResponsesWithPii: z.object({}),
+	retrieveEeoResponsesAnonymous: z.object({}),
+	listDispositionStages: z.object({}),
+	retrieveDiversitySurvey: z.object({ postingId: IdSchema }),
+	listWebhooks: z.object({}),
+	createWebhook: CreateWebhookInputSchema,
+	updateWebhook: UpdateWebhookInputSchema,
+	deleteWebhook: z.object({ webhookId: IdSchema }),
+	listAuditEvents: z.object({ offset: OffsetSchema }),
+	listSources: z.object({}),
+	listTags: z.object({}),
+	listOpportunityOffers: OpportunityIdInputSchema,
+	downloadOpportunityOffer: z.object({
+		opportunityId: IdSchema,
+		offerId: IdSchema,
+	}),
 } as const;
 
 export const LeverEndpointOutputSchemas = {
@@ -367,6 +461,40 @@ export const LeverEndpointOutputSchemas = {
 	addRequisitionFieldOptions: LeverResourceOutputSchema,
 	replaceRequisitionFieldOptions: LeverResourceOutputSchema,
 	deleteRequisitionFieldOptions: LeverEmptyOutputSchema,
+	listRequisitions: LeverListOutputSchema,
+	createRequisition: LeverResourceOutputSchema,
+	retrieveRequisition: LeverResourceOutputSchema,
+	updateRequisition: LeverResourceOutputSchema,
+	deleteRequisition: LeverEmptyOutputSchema,
+	listForms: LeverListOutputSchema,
+	retrieveForm: LeverResourceOutputSchema,
+	createForm: LeverResourceOutputSchema,
+	listResumes: LeverListOutputSchema,
+	retrieveResume: LeverResourceOutputSchema,
+	downloadResume: z.unknown(),
+	listUsers: LeverListOutputSchema,
+	retrieveUser: LeverResourceOutputSchema,
+	createUser: LeverResourceOutputSchema,
+	updateUser: LeverResourceOutputSchema,
+	deactivateUser: z.unknown(),
+	reactivateUser: z.unknown(),
+	listReferrals: LeverListOutputSchema,
+	retrieveReferral: LeverResourceOutputSchema,
+	retrieveContact: LeverResourceOutputSchema,
+	updateContact: LeverResourceOutputSchema,
+	retrieveEeoResponsesWithPii: LeverListOutputSchema,
+	retrieveEeoResponsesAnonymous: LeverListOutputSchema,
+	listDispositionStages: LeverListOutputSchema,
+	retrieveDiversitySurvey: LeverResourceOutputSchema,
+	listWebhooks: LeverListOutputSchema,
+	createWebhook: LeverResourceOutputSchema,
+	updateWebhook: LeverResourceOutputSchema,
+	deleteWebhook: LeverEmptyOutputSchema,
+	listAuditEvents: LeverListOutputSchema,
+	listSources: LeverListOutputSchema,
+	listTags: LeverListOutputSchema,
+	listOpportunityOffers: LeverListOutputSchema,
+	downloadOpportunityOffer: z.unknown(),
 } as const;
 
 export type LeverEndpointInputs = {
