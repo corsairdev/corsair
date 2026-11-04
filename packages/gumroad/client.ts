@@ -18,7 +18,7 @@ const GUMROAD_RATE_LIMIT_CONFIG: RateLimitConfig = {
 };
 
 export type GumroadQuery = Record<string, string | undefined>;
-export type GumroadForm = Record<string, string>;
+export type GumroadForm = Record<string, string | undefined>;
 
 /**
  * Gumroad documents JSON error bodies of `{ success: false, message }`, but
@@ -107,8 +107,17 @@ export async function makeGumroadRequest(
 	};
 
 	// The licenses endpoints take form-encoded bodies per the docs' cURL;
-	// pre-encode so the shared client sends the string verbatim.
-	const body = form ? new URLSearchParams(form).toString() : undefined;
+	// values are pre-encoded here so the shared client sends the string
+	// verbatim. Undefined (unset) fields never reach the wire.
+	const bodyParts: string[] = [];
+	for (const [key, value] of Object.entries(form ?? {})) {
+		if (value !== undefined) {
+			bodyParts.push(
+				`${encodeURIComponent(key)}=${encodeURIComponent(value)}`,
+			);
+		}
+	}
+	const body = bodyParts.length > 0 ? bodyParts.join('&') : undefined;
 
 	const requestOptions: ApiRequestOptions = {
 		method,
