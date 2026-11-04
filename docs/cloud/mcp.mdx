@@ -135,7 +135,7 @@ Some clients can't sign in to an MCP server, such as GitHub Copilot's coding age
 | `update_routine` | Creates, changes, pauses or removes a routine, an automation that runs on an app event or a schedule. Describe it in plain words and Corsair writes and tests it | Sensitive write |
 | `submit_feedback` | Sends the Corsair team a short note about Corsair itself. The agent sends one on its own when Corsair lacks an app or action you asked for, or when a reply says the fault is on Corsair's side, and tells you it did. For a wrong or confusing answer it asks you first. A note never includes your app data | Write |
 
-Read tools never change anything in your apps. A read can still use credits: `read_data` on an app that runs on [Corsair's account](#apps-on-corsairs-account) is billed like any other call there. Write tools change only your Corsair setup, which you can undo, or send Corsair a note. Sensitive writes act in your apps, or set up a routine that will act later without asking, so a client should ask you before every call.
+Read tools never change anything in your apps. A read can still use [credits](#corsair-credits): `read_data` on an app that runs on Corsair's account is billed like any other call there. Write tools change only your Corsair setup, which you can undo, or send Corsair a note. Sensitive writes act in your apps, or set up a routine that will act later without asking, so a client should ask you before every call.
 
 Scripts run in a sandbox that can only call your connected apps' actions. They have no network, filesystem or other system access, and the agent never sees your app credentials.
 
@@ -160,7 +160,15 @@ Clients without cards get the same information as text, so nothing is lost.
 
 ## Apps on Corsair's account
 
-Some apps, such as Firecrawl, Exa, Reducto and TinyFish, can run on Corsair's own account with nothing to sign in to. Each call is billed to your organization's Corsair credits. `list_operations` and `get_schema` give each action's price, and `list_integrations` gives the credits left, what was spent this month and where to add more. When a call fails at the app, Corsair gives its credits back. That refund is best effort: if it can't be recorded, the charge stays, so email [primary@corsair.dev](mailto:primary@corsair.dev) about a failed call you were charged for. When credits run out or a spend limit is reached, the call doesn't run and nothing is charged, and the agent tells you.
+Some apps, such as Firecrawl, Exa, Reducto and TinyFish, can run on Corsair's own account with nothing to sign in to. Each call is billed to your organization's Corsair credits. `list_operations` and `get_schema` give each action's price.
+
+## Corsair credits
+
+Each organization gets free credits. To add more, open **Upgrade** in your Corsair account at [hub.corsair.dev/upgrade](https://hub.corsair.dev/upgrade). The agent doesn't link you there itself.
+
+`list_integrations` gives the credits left, when the free ones come back and what this project spent this month. When credits run low, the agent says so in its next reply. When they run out or a spend limit is reached, the call doesn't run, nothing is charged and the agent tells you.
+
+When a call fails at the app, Corsair gives its credits back. That refund is best effort: if it can't be recorded, the charge stays, so email [primary@corsair.dev](mailto:primary@corsair.dev) about a failed call you were charged for.
 
 ## Modes and approvals
 
