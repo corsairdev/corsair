@@ -1,33 +1,38 @@
-// Response fixtures copied from the Elasticsearch OpenAPI spec examples:
-// https://www.elastic.co/docs/api/doc/elasticsearch.json
+// Wire-format response fixtures, trimmed from the Elasticsearch OpenAPI
+// spec examples: https://www.elastic.co/docs/api/doc/elasticsearch.json
+// Each one satisfies the operation's output schema.
+import type {
+	CatIndexRow,
+	ClusterGetHealthResponse,
+	DocumentsGetResponse,
+	IndicesGetResponse,
+	IndicesListResponse,
+	SearchHit,
+	SearchRunResponse,
+} from './endpoints/types';
 
-export function clusterHealth(
-	overrides: Record<string, unknown> = {},
-): Record<string, unknown> {
-	return {
-		cluster_name: 'es-test-cluster',
-		status: 'green',
-		timed_out: false,
-		number_of_nodes: 3,
-		number_of_data_nodes: 2,
-		active_primary_shards: 12,
-		active_shards: 24,
-		unassigned_shards: 0,
-		unassigned_primary_shards: 0,
-		initializing_shards: 0,
-		relocating_shards: 0,
-		delayed_unassigned_shards: 0,
-		number_of_pending_tasks: 0,
-		number_of_in_flight_fetch: 0,
-		task_max_waiting_in_queue_millis: 0,
-		active_shards_percent_as_number: 100,
-		active_shards_percent: '100.0%',
-		task_max_waiting_in_queue: '0s',
-		...overrides,
-	};
-}
+export const clusterHealth: ClusterGetHealthResponse = {
+	cluster_name: 'es-test-cluster',
+	status: 'green',
+	timed_out: false,
+	number_of_nodes: 3,
+	number_of_data_nodes: 2,
+	active_primary_shards: 12,
+	active_shards: 24,
+	unassigned_shards: 0,
+	unassigned_primary_shards: 0,
+	initializing_shards: 0,
+	relocating_shards: 0,
+	delayed_unassigned_shards: 0,
+	number_of_pending_tasks: 0,
+	number_of_in_flight_fetch: 0,
+	task_max_waiting_in_queue_millis: 0,
+	active_shards_percent_as_number: 100,
+	active_shards_percent: '100.0%',
+	task_max_waiting_in_queue: '0s',
+};
 
-export const catIndexRow: Record<string, unknown> = {
+export const catIndexRow: CatIndexRow = {
 	health: 'green',
 	status: 'open',
 	index: 'logs-2026-11',
@@ -41,13 +46,11 @@ export const catIndexRow: Record<string, unknown> = {
 	'pri.store.size': '600kb',
 };
 
-export function catIndices(
-	rows: Record<string, unknown>[] = [catIndexRow],
-): Record<string, unknown>[] {
-	return rows;
+export function catIndices(rows: CatIndexRow[] = [catIndexRow]) {
+	return rows satisfies IndicesListResponse;
 }
 
-export const indexInfo: Record<string, unknown> = {
+export const indexInfo: IndicesGetResponse = {
 	'logs-2026-11': {
 		aliases: {},
 		mappings: {
@@ -59,17 +62,17 @@ export const indexInfo: Record<string, unknown> = {
 		settings: {
 			index: {
 				'creation.date': '1761955200000',
-				'number_of_shards': '1',
-				'number_of_replicas': '1',
+				number_of_shards: '1',
+				number_of_replicas: '1',
 				uuid: 'AxNuG5LbQs6tS3D4f9C-Rw',
-				'version': { created: '9020000' },
+				version: { created: '9020000' },
 				provided_name: 'logs-2026-11',
 			},
 		},
 	},
 };
 
-export const searchHit: Record<string, unknown> = {
+export const searchHit: SearchHit = {
 	_index: 'logs-2026-11',
 	_id: 'tZ0GinMB6Y5qFuDylF8J',
 	_score: 1.3862942,
@@ -81,9 +84,12 @@ export const searchHit: Record<string, unknown> = {
 };
 
 export function searchResponse(
-	hits: Record<string, unknown>[] = [searchHit],
-	total: Record<string, unknown> | number = { value: hits.length, relation: 'eq' },
-): Record<string, unknown> {
+	hits: SearchHit[] = [searchHit],
+	total: SearchRunResponse['hits']['total'] = {
+		value: hits.length,
+		relation: 'eq',
+	},
+): SearchRunResponse {
 	return {
 		took: 5,
 		timed_out: false,
@@ -96,7 +102,7 @@ export function searchResponse(
 	};
 }
 
-export const documentFound: Record<string, unknown> = {
+export const documentFound: DocumentsGetResponse = {
 	_index: 'logs-2026-11',
 	_id: 'tZ0GinMB6Y5qFuDylF8J',
 	_version: 1,
@@ -110,7 +116,7 @@ export const documentFound: Record<string, unknown> = {
 	},
 };
 
-export const documentMissing: Record<string, unknown> = {
+export const documentMissing: DocumentsGetResponse = {
 	_index: 'logs-2026-11',
 	_id: 'does-not-exist',
 	found: false,
@@ -120,6 +126,6 @@ export function esErrorBody(
 	status: number,
 	type: string,
 	reason: string,
-): Record<string, unknown> {
+): { error: { type: string; reason: string }; status: number } {
 	return { error: { type, reason }, status };
 }

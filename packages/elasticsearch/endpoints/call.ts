@@ -1,10 +1,10 @@
 import { logEventFromContext } from 'corsair/core';
 import type { ElasticsearchContext } from '..';
+import type { ElasticsearchQuery } from '../client';
 import {
 	ElasticsearchAPIError,
 	makeElasticsearchRequest,
 	resolveBaseUrl,
-	type ElasticsearchQuery,
 } from '../client';
 import type {
 	ElasticsearchEndpointInputs,
@@ -45,18 +45,18 @@ function notFoundFoundFalse(body: unknown): boolean {
 function logFields(event: string, parsed: unknown, result: unknown) {
 	const inputRecord =
 		parsed !== null && typeof parsed === 'object' && !Array.isArray(parsed)
-		? (parsed as Record<string, unknown>)
-		: undefined;
+			? (parsed as Record<string, unknown>)
+			: undefined;
 	const outputRecord =
 		result !== null && typeof result === 'object' && !Array.isArray(result)
-		? (result as Record<string, unknown>)
-		: undefined;
+			? (result as Record<string, unknown>)
+			: undefined;
 	const hits =
 		outputRecord?.hits !== null &&
 		typeof outputRecord?.hits === 'object' &&
 		!Array.isArray(outputRecord?.hits)
-		? (outputRecord.hits as Record<string, unknown>)
-		: undefined;
+			? (outputRecord.hits as Record<string, unknown>)
+			: undefined;
 	return {
 		operation: event,
 		// Identifiers and counts only; search terms never reach the log.

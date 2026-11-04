@@ -1,6 +1,6 @@
-import { ZodError } from 'zod';
-import { errorHandlers } from './error-handlers';
+import { z } from 'zod';
 import { ElasticsearchAPIError } from './client';
+import { errorHandlers } from './error-handlers';
 
 type HandlerResult = {
 	maxRetries: number;
@@ -50,9 +50,9 @@ describe('error handler strategies', () => {
 	});
 
 	it('fails fast on a ZodError before the wire', async () => {
-		await expect(
-			dispatch(new ZodError([{ code: 'invalid_type', path: ['index'] }])),
-		).resolves.toEqual({ maxRetries: 0 });
+		const failed = z.object({ a: z.string() }).safeParse({});
+		if (!failed.error) throw new Error('unreachable: parse should fail');
+		await expect(dispatch(failed.error)).resolves.toEqual({ maxRetries: 0 });
 	});
 
 	it('fails fast on a client timeout with no status', async () => {

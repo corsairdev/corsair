@@ -32,7 +32,7 @@ describe('cluster.getHealth schemas', () => {
 	});
 
 	it('parses the documented health body', () => {
-		const result = ClusterGetHealthResponseSchema.parse(clusterHealth());
+		const result = ClusterGetHealthResponseSchema.parse(clusterHealth);
 		expect(result.status).toBe('green');
 		expect(result.cluster_name).toBe('es-test-cluster');
 		expect(result.number_of_nodes).toBe(3);
@@ -78,7 +78,7 @@ describe('indices.list schemas', () => {
 		const result = IndicesListResponseSchema.parse(
 			catIndices([{ ...catIndexRow, 'docs.count': null }]),
 		);
-		expect(result[0]['docs.count']).toBeNull();
+		expect(result[0]?.['docs.count']).toBeNull();
 	});
 });
 
@@ -86,8 +86,9 @@ describe('indices.get schemas', () => {
 	it('requires an index and rejects extras', () => {
 		expect(IndicesGetInputSchema.safeParse({}).success).toBe(false);
 		expect(IndicesGetInputSchema.safeParse({ index: '' }).success).toBe(false);
-		expect(IndicesGetInputSchema.safeParse({ index: 'a', local: true }).success)
-			.toBe(false);
+		expect(
+			IndicesGetInputSchema.safeParse({ index: 'a', local: true }).success,
+		).toBe(false);
 	});
 
 	it('parses the index-name-keyed info map', () => {
@@ -216,7 +217,9 @@ describe('search.run output', () => {
 	});
 
 	it('accepts zero hits as a valid result', () => {
-		const result = SearchRunResponseSchema.parse(searchResponse([], { value: 0, relation: 'eq' }));
+		const result = SearchRunResponseSchema.parse(
+			searchResponse([], { value: 0, relation: 'eq' }),
+		);
 		expect(result.hits.hits).toEqual([]);
 		expect(result.hits.max_score).toBeNull();
 	});

@@ -82,7 +82,7 @@ describe('elasticsearch plugin through createCorsair', () => {
 			await corsair.elasticsearch.keys.issue_new_dek();
 			await corsair.elasticsearch.keys.set_api_key('encoded-key');
 			await corsair.elasticsearch.keys.set_baseUrl('http://tenant-es:9200/');
-			respond(clusterHealth());
+			respond(clusterHealth);
 
 			const result = await corsair.elasticsearch.api.cluster.getHealth({});
 
@@ -103,7 +103,7 @@ describe('elasticsearch plugin through createCorsair', () => {
 			key: 'my-id:my-secret',
 		});
 		try {
-			respond(clusterHealth());
+			respond(clusterHealth);
 
 			await corsair.elasticsearch.api.cluster.getHealth({});
 
@@ -245,9 +245,7 @@ describe('elasticsearch plugin through createCorsair', () => {
 			expect(result.found).toBe(true);
 			expect(result._source).toEqual(documentFound._source);
 			const [url] = fetchMock.mock.calls[0] as [string];
-			expect(url).toBe(
-				'http://es:9200/logs-2026-11/_doc/tZ0GinMB6Y5qFuDylF8J',
-			);
+			expect(url).toBe('http://es:9200/logs-2026-11/_doc/tZ0GinMB6Y5qFuDylF8J');
 		} finally {
 			testDb.cleanup();
 		}
@@ -259,10 +257,14 @@ describe('elasticsearch plugin through createCorsair', () => {
 			key: 'encoded-key',
 		});
 		try {
-			respond(esErrorBody(429, 'es_rejected_execution_exception', 'busy'), 429, {
-				'Retry-After': '0',
-			});
-			respond(clusterHealth());
+			respond(
+				esErrorBody(429, 'es_rejected_execution_exception', 'busy'),
+				429,
+				{
+					'Retry-After': '0',
+				},
+			);
+			respond(clusterHealth);
 
 			const result = await corsair.elasticsearch.api.cluster.getHealth({});
 
@@ -279,7 +281,10 @@ describe('elasticsearch plugin through createCorsair', () => {
 			key: 'encoded-key',
 		});
 		try {
-			respond(esErrorBody(401, 'security_exception', 'unable to authenticate'), 401);
+			respond(
+				esErrorBody(401, 'security_exception', 'unable to authenticate'),
+				401,
+			);
 
 			await expect(
 				corsair.elasticsearch.api.cluster.getHealth({}),

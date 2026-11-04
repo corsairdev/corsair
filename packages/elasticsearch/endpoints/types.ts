@@ -11,12 +11,14 @@ import { z } from 'zod';
 // the leaf queries an agent needs, documented in README.md.
 const QueryFieldValue = z.union([z.string(), z.number(), z.boolean()]);
 
-const FieldMap = (value: z.ZodType) =>
-	z.record(z.string().min(1), value);
+const FieldMap = (value: z.ZodType) => z.record(z.string().min(1), value);
 
 // Index names and document ids are caller-controlled path segments; blank
 // strings are never valid targets.
-const NonBlankString = z.string().min(1).regex(/\S/, 'Expected a non-blank string');
+const NonBlankString = z
+	.string()
+	.min(1)
+	.regex(/\S/, 'Expected a non-blank string');
 
 const MatchAllQuerySchema = z.strictObject({
 	match_all: z.looseObject({}),
@@ -171,8 +173,7 @@ export const SearchRunInputSchema = z.strictObject({
 	query: QuerySchema.optional(),
 	from: z.number().int().min(0).default(0),
 	size: z.number().int().min(0).max(10_000).default(10),
-	_source: z.union([z.boolean(), z.array(z.string().min(1)).min(1)])
-		.optional(),
+	_source: z.union([z.boolean(), z.array(z.string().min(1)).min(1)]).optional(),
 });
 export type SearchRunInput = z.input<typeof SearchRunInputSchema>;
 
@@ -180,9 +181,12 @@ const SearchHitSchema = z.looseObject({
 	_index: z.string(),
 	_id: z.string(),
 	_score: z.number().nullable().optional(),
+	// z.unknown(): _source is whatever the caller indexed; any stricter value
+	// type would reject valid documents.
 	_source: z.record(z.string(), z.unknown()).optional(),
 	_ignored: z.array(z.string()).optional(),
-	sort: z.array(z.union([z.string(), z.number(), z.boolean(), z.null()]))
+	sort: z
+		.array(z.union([z.string(), z.number(), z.boolean(), z.null()]))
 		.optional(),
 });
 export type SearchHit = z.infer<typeof SearchHitSchema>;
@@ -227,6 +231,8 @@ export const DocumentsGetResponseSchema = z.looseObject({
 	_index: z.string().optional(),
 	_id: z.string().optional(),
 	found: z.boolean(),
+	// z.unknown(): the document source is caller-indexed JSON; no stricter
+	// value type can hold it.
 	_source: z.record(z.string(), z.unknown()).optional(),
 	_version: z.number().optional(),
 	_seq_no: z.number().optional(),

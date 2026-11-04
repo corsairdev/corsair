@@ -1,11 +1,11 @@
+import { AuthMissingError } from 'corsair/core';
 import {
 	buildAuthorizationHeader,
-	encodeIndexTarget,
 	ElasticsearchAPIError,
+	encodeIndexTarget,
 	makeElasticsearchRequest,
 	resolveBaseUrl,
 } from './client';
-import { AuthMissingError } from 'corsair/core';
 import { clusterHealth, esErrorBody } from './test-fixtures';
 
 const BASE = 'http://es.local:9200';
@@ -111,14 +111,13 @@ describe('encodeIndexTarget', () => {
 
 describe('makeElasticsearchRequest', () => {
 	it('sends an authenticated GET to the cluster endpoint', async () => {
-		const body = clusterHealth();
+		const body = clusterHealth;
 		respond(body, 200);
 
-		const result = await makeElasticsearchRequest(
-			BASE,
-			'ApiKey encoded-key',
-			{ method: 'GET', path: '/_cluster/health' },
-		);
+		const result = await makeElasticsearchRequest(BASE, 'ApiKey encoded-key', {
+			method: 'GET',
+			path: '/_cluster/health',
+		});
 
 		expect(result).toEqual(body);
 		const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
@@ -184,9 +183,13 @@ describe('makeElasticsearchRequest', () => {
 	});
 
 	it('makes exactly one fetch attempt on a 429 and reads Retry-After', async () => {
-		respond(esErrorBody(429, 'es_rejected_execution_exception', 'rejected'), 429, {
-			'Retry-After': '2',
-		});
+		respond(
+			esErrorBody(429, 'es_rejected_execution_exception', 'rejected'),
+			429,
+			{
+				'Retry-After': '2',
+			},
+		);
 
 		const error = await failure(
 			makeElasticsearchRequest(BASE, 'ApiKey k', { path: '/_search' }),

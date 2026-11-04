@@ -188,8 +188,8 @@ function mergeErrorHandlers(
 }
 
 export function elasticsearch<const T extends ElasticsearchPluginOptions>(
-	incomingOptions: ElasticsearchPluginOptions & T = {} as ElasticsearchPluginOptions &
-		T,
+	incomingOptions: ElasticsearchPluginOptions &
+		T = {} as ElasticsearchPluginOptions & T,
 ): ExternalElasticsearchPlugin<T> {
 	const options = {
 		...incomingOptions,
