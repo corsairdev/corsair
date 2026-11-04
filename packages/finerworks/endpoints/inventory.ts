@@ -1,5 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeFinerWorksRequest } from '../client';
+import { deleteInventoryProducts, saveInventoryProducts } from './save';
 import type { FinerWorksEndpoint } from './shared';
 import { resolveCredentials } from './shared';
 import {
@@ -39,7 +40,9 @@ export const list: FinerWorksEndpoint<'inventory.list'> = async (
 		},
 		'completed',
 	);
-	return InventoryListOutputSchema.parse(res);
+	const result = InventoryListOutputSchema.parse(res);
+	await saveInventoryProducts(ctx, result.products);
+	return result;
 };
 
 /**
@@ -65,7 +68,9 @@ export const update: FinerWorksEndpoint<'inventory.update'> = async (
 		{ count: validated.virtual_inventory.length },
 		'completed',
 	);
-	return InventoryUpdateOutputSchema.parse(res);
+	const result = InventoryUpdateOutputSchema.parse(res);
+	await saveInventoryProducts(ctx, result.products);
+	return result;
 };
 
 /**
@@ -92,7 +97,12 @@ export const remove: FinerWorksEndpoint<'inventory.delete'> = async (
 		{ count: validated.skus.length },
 		'completed',
 	);
-	return InventoryDeleteOutputSchema.parse(res);
+	const result = InventoryDeleteOutputSchema.parse(res);
+	// Drop the local rows only once FinerWorks confirms the delete.
+	if (result.status?.success !== false) {
+		await deleteInventoryProducts(ctx, validated.skus);
+	}
+	return result;
 };
 
 /**

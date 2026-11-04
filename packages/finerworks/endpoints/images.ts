@@ -1,5 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeFinerWorksRequest } from '../client';
+import { deleteImages, saveImages } from './save';
 import type { FinerWorksEndpoint } from './shared';
 import { resolveCredentials } from './shared';
 import {
@@ -40,7 +41,9 @@ export const add: FinerWorksEndpoint<'images.add'> = async (ctx, input) => {
 		{ count: validated.images.length, library: validated.library.name },
 		'completed',
 	);
-	return ImagesAddOutputSchema.parse(res);
+	const result = ImagesAddOutputSchema.parse(res);
+	await saveImages(ctx, result.images);
+	return result;
 };
 
 /**
@@ -68,7 +71,9 @@ export const list: FinerWorksEndpoint<'images.list'> = async (ctx, input) => {
 		},
 		'completed',
 	);
-	return ImagesListOutputSchema.parse(res);
+	const result = ImagesListOutputSchema.parse(res);
+	await saveImages(ctx, result.images);
+	return result;
 };
 
 /**
@@ -94,7 +99,9 @@ export const update: FinerWorksEndpoint<'images.update'> = async (
 		{ count: validated.images.length },
 		'completed',
 	);
-	return ImagesUpdateOutputSchema.parse(res);
+	const result = ImagesUpdateOutputSchema.parse(res);
+	await saveImages(ctx, result.images);
+	return result;
 };
 
 /**
@@ -121,7 +128,12 @@ export const remove: FinerWorksEndpoint<'images.delete'> = async (
 		{ count: validated.guids.length },
 		'completed',
 	);
-	return ImagesDeleteOutputSchema.parse(res);
+	const result = ImagesDeleteOutputSchema.parse(res);
+	// Drop the local rows only once FinerWorks confirms the delete.
+	if (result.status?.success !== false) {
+		await deleteImages(ctx, validated.guids);
+	}
+	return result;
 };
 
 /**

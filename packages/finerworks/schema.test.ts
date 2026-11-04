@@ -22,29 +22,9 @@ describe('FinerWorks schema', () => {
 		expect(FinerWorksSchema.version).toMatch(/^\d+\.\d+\.\d+$/);
 	});
 
-	it('declares an entity for every documented resource', () => {
+	it('syncs only the account records that endpoints store', () => {
 		const entities = Object.keys(FinerWorksSchema.entities).sort();
-		expect(entities).toEqual([
-			'addresses',
-			'companyInfo',
-			'frameCollections',
-			'frames',
-			'galleries',
-			'galleryThemes',
-			'glazing',
-			'images',
-			'mats',
-			'mediaTypes',
-			'orderStatusDefinitions',
-			'orders',
-			'prices',
-			'productTypes',
-			'shipments',
-			'shippingOptions',
-			'styleTypes',
-			'userAccounts',
-			'virtualInventoryProducts',
-		]);
+		expect(entities).toEqual(['images', 'orders', 'virtualInventoryProducts']);
 	});
 });
 

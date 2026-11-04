@@ -1,47 +1,21 @@
 import {
-	FinerWorksAddress,
-	FinerWorksCompanyInfo,
-	FinerWorksFrame,
-	FinerWorksFrameCollection,
-	FinerWorksGallery,
-	FinerWorksGalleryTheme,
-	FinerWorksGlazing,
 	FinerWorksImage,
-	FinerWorksMat,
-	FinerWorksMediaType,
 	FinerWorksOrder,
-	FinerWorksOrderStatusDefinition,
-	FinerWorksPrice,
-	FinerWorksProductType,
-	FinerWorksShipment,
-	FinerWorksShippingOption,
-	FinerWorksStyleType,
-	FinerWorksUserAccount,
 	FinerWorksVirtualInventoryProduct,
 } from './database';
 
+/**
+ * Only the account's own records are synced: image files, virtual inventory
+ * products and orders. The other models in `./database` describe catalog
+ * lookups (frames, mats, media types, prices, shipping options) and account
+ * details; endpoints return them, but they are not stored.
+ */
 export const FinerWorksSchema = {
 	version: '1.0.0',
 	entities: {
-		addresses: FinerWorksAddress,
 		images: FinerWorksImage,
 		virtualInventoryProducts: FinerWorksVirtualInventoryProduct,
 		orders: FinerWorksOrder,
-		shipments: FinerWorksShipment,
-		orderStatusDefinitions: FinerWorksOrderStatusDefinition,
-		prices: FinerWorksPrice,
-		galleries: FinerWorksGallery,
-		galleryThemes: FinerWorksGalleryTheme,
-		frames: FinerWorksFrame,
-		frameCollections: FinerWorksFrameCollection,
-		glazing: FinerWorksGlazing,
-		mats: FinerWorksMat,
-		mediaTypes: FinerWorksMediaType,
-		productTypes: FinerWorksProductType,
-		styleTypes: FinerWorksStyleType,
-		shippingOptions: FinerWorksShippingOption,
-		userAccounts: FinerWorksUserAccount,
-		companyInfo: FinerWorksCompanyInfo,
 	},
 } as const;
 

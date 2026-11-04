@@ -1,5 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeFinerWorksRequest } from '../client';
+import { saveOrders } from './save';
 import type { FinerWorksEndpoint } from './shared';
 import { resolveCredentials } from './shared';
 import {
@@ -124,7 +125,9 @@ export const fetchStatus: FinerWorksEndpoint<'orders.fetchStatus'> = async (
 		},
 		'completed',
 	);
-	return OrdersFetchStatusOutputSchema.parse(res);
+	const result = OrdersFetchStatusOutputSchema.parse(res);
+	await saveOrders(ctx, result.orders);
+	return result;
 };
 
 /**
