@@ -37,6 +37,7 @@ module.exports = {
 			{
 				useESM: true,
 				tsconfig: {
+					allowJs: true,
 					esModuleInterop: true,
 					allowSyntheticDefaultImports: true,
 				},
@@ -45,7 +46,10 @@ module.exports = {
 	},
 	moduleNameMapper: {
 		'^corsair/core$': '<rootDir>/../corsair/core.ts',
+		'^corsair/db$': '<rootDir>/../corsair/db.ts',
+		'^corsair/orm$': '<rootDir>/../corsair/orm.ts',
 		'^corsair/http$': '<rootDir>/../corsair/http.ts',
+		'^corsair/setup$': '<rootDir>/../corsair/setup.ts',
 		'^(\\.\\.?/.*)\\.js$': '$1',
 	},
 	transformIgnorePatterns: ['node_modules/(?!.*uuid.*)'],
