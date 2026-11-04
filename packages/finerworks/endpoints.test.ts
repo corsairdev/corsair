@@ -152,6 +152,29 @@ describe('account endpoints', () => {
 		expect(lastCall()[2].query).toBeUndefined();
 	});
 
+	it('getUser strips the echoed web_api_key and app keys', async () => {
+		makeFinerWorksRequest.mockResolvedValue({
+			status: okStatus,
+			user_account: {
+				web_api_key: '1eceb1a9-4f16-4789-9f32-213bd90d4efa',
+				account_id: 1,
+				account_username: 'bob_ross',
+				app_details: { app_key: 'secret-app-key', app_name: 'Corsair' },
+			},
+		});
+
+		const res = (await endpoint('account', 'getUser')(makeCtx(), {})) as {
+			user_account: Record<string, unknown>;
+		};
+
+		expect(res.user_account).toEqual({
+			account_id: 1,
+			account_username: 'bob_ross',
+		});
+		expect(JSON.stringify(res)).not.toContain('secret-app-key');
+		expect(JSON.stringify(res)).not.toContain('1eceb1a9');
+	});
+
 	it('updateUser PUTs /v3/update_user', async () => {
 		makeFinerWorksRequest.mockResolvedValue({ status: okStatus });
 

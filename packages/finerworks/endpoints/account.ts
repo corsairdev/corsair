@@ -39,6 +39,25 @@ export const getCompanyInfo: FinerWorksEndpoint<
 	return AccountGetCompanyInfoOutputSchema.parse(res);
 };
 
+type GetUserOutput = ReturnType<typeof AccountGetUserOutputSchema.parse>;
+
+/**
+ * `get_user` echoes the account's `web_api_key` and, under `app_details`, the
+ * app keys. Those are the credentials Corsair already holds; returning them
+ * would hand them to every caller and agent transcript, so they are removed.
+ * https://v2.api.finerworks.com/Help/Api/GET-v3-get_user_account_key
+ */
+function redactUserCredentials(output: GetUserOutput): GetUserOutput {
+	const account = output.user_account;
+	if (!account) return output;
+	const {
+		web_api_key: _webApiKey,
+		app_details: _appDetails,
+		...rest
+	} = account;
+	return { ...output, user_account: rest };
+}
+
 /**
  * The authenticated account profile, including billing and business addresses.
  * https://v2.api.finerworks.com/Help/Api/GET-v3-get_user_account_key
@@ -58,7 +77,7 @@ export const getUser: FinerWorksEndpoint<'account.getUser'> = async (
 	});
 
 	await logEventFromContext(ctx, 'finerworks.account.getUser', {}, 'completed');
-	return AccountGetUserOutputSchema.parse(res);
+	return redactUserCredentials(AccountGetUserOutputSchema.parse(res));
 };
 
 /**
