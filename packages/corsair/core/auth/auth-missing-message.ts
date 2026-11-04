@@ -134,6 +134,10 @@ export async function resolveAuthMissingEndpointMessage(input: {
 	const tenantId = input.tenantId ?? 'default';
 	const pluginId = input.error.pluginId;
 
+	if (input.error.authType === 'managed_pricing') {
+		return { message: input.error.message, connectUrl: null };
+	}
+
 	if (
 		input.manual &&
 		hasManualConnectConfig(input.manual) &&

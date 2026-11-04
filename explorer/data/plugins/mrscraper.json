@@ -1,0 +1,1500 @@
+{
+  "id": "mrscraper",
+  "displayName": "MrScraper",
+  "description": "Web scraping and AI extraction across account, scraper, result and analytics APIs, plus synchronous scrape operations.",
+  "npmPackageName": "@corsair-dev/mrscraper",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 19,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "mrscraper.api.account.get",
+      "shortPath": "account.get",
+      "description": "Get the subscription account and token usage",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, tokenLimit?: number, tokenUsage?: number, stripeSubscriptionId?: string | null, userId?: string, stripeStatus?: string | null, quantity?: number, endsAt?: string | null, isEnterprise?: boolean, rateLimit?: number, rateTtl?: number, isAutoRenew?: boolean, user?: { id?: string, name?: string | null, email?: string, latestApiToken?: string | null, isVerified?: boolean } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mrscraper.api.analytics.proxyBandwidth",
+      "shortPath": "analytics.proxyBandwidth",
+      "description": "Get proxy bandwidth usage for the account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "startDate",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "endDate",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ username: string, total_bandwidth_usage?: number | string }[]"
+      }
+    },
+    {
+      "path": "mrscraper.api.analytics.statuses",
+      "shortPath": "analytics.statuses",
+      "description": "Get per-domain request status analytics",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "startDate",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "endDate",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "action",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "apiTokenName",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ countAll?: number | string, successRate?: number | string, reqPerMinute?: number | string, avgLatency?: number | string, data: { key: string, value: number | string }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mrscraper.api.results.get",
+      "shortPath": "results.get",
+      "description": "Get a scrape result by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, createdAt?: string, userId?: string, scraperId?: string, type?: string, url?: string | null, status?: string, error?: string | null, tokenUsage?: number, runtime?: number | string | null, data?: any, htmlPath?: string | null, htmlContent?: string | null, recordingPath?: string | null, screenshotPath?: string | null, dataPath?: string | null, curl?: string | null, html?: string | null, markdown?: string | null, screenshot?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mrscraper.api.results.list",
+      "shortPath": "results.list",
+      "description": "List scrape results with pagination and filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sortField",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sortOrder",
+            "optional": true,
+            "type": "ASC | DESC"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dateRangeColumn",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "startAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "{ scraperId?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, createdAt?: string, userId?: string, scraperId?: string, type?: string, url?: string | null, status?: string, error?: string | null, tokenUsage?: number, runtime?: number | string | null, data?: any, htmlPath?: string | null, htmlContent?: string | null, recordingPath?: string | null, screenshotPath?: string | null, dataPath?: string | null, curl?: string | null, html?: string | null, markdown?: string | null, screenshot?: string | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ page?: number, pageSize?: number, total?: number, totalPage?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mrscraper.api.scrape.fetch",
+      "shortPath": "scrape.fetch",
+      "description": "Fetch a page and return its rendered HTML",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "html",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "super",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "browserRendering",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "waitUntil",
+            "optional": true,
+            "type": "domcontentloaded | load | networkidle0 | networkidle2"
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "blockResources",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "waitForSelector",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "returnCookie",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "geoCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "proxyCountry",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string"
+      }
+    },
+    {
+      "path": "mrscraper.api.scrape.json",
+      "shortPath": "scrape.json",
+      "description": "Scrape a page and extract structured JSON with an agent",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "prompt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "agent",
+            "optional": true,
+            "type": "general | map | listing"
+          },
+          {
+            "key": "tokenCap",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "maxRetries",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "html",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "browserRendering",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "waitUntil",
+            "optional": true,
+            "type": "domcontentloaded | load | networkidle0 | networkidle2"
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "screenshot",
+            "optional": true,
+            "type": "full | top"
+          },
+          {
+            "key": "super",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "geoCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "proxyCountry",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "saveResult",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "extractions",
+            "optional": true,
+            "type": "string | {}"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "runtime",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "token_usage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "screenshots",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "recording_path",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data_path",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "html_path",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "residential_proxy_usage",
+            "optional": true,
+            "type": "{ received?: number, sent?: number, total?: number }"
+          },
+          {
+            "key": "listen_network_data",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "html",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "markdown",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "screenshot",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mrscraper.api.scrape.listing",
+      "shortPath": "scrape.listing",
+      "description": "Scrape paginated listing pages and extract their items",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "prompt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "agent",
+            "optional": true,
+            "type": "general | map | listing"
+          },
+          {
+            "key": "maxPages",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "super",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "browserRendering",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "waitUntil",
+            "optional": true,
+            "type": "domcontentloaded | load | networkidle0 | networkidle2"
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "screenshot",
+            "optional": true,
+            "type": "full | top"
+          },
+          {
+            "key": "geoCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "proxyCountry",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "saveResult",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "tokenCap",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "maxRetries",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "extractions",
+            "optional": true,
+            "type": "string | {}"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "runtime",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "token_usage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "screenshots",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "recording_path",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data_path",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "html_path",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "residential_proxy_usage",
+            "optional": true,
+            "type": "{ received?: number, sent?: number, total?: number }"
+          },
+          {
+            "key": "listen_network_data",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "html",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "markdown",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "screenshot",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mrscraper.api.scrape.markdown",
+      "shortPath": "scrape.markdown",
+      "description": "Scrape a page and return its content as Markdown",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tokenCap",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "maxRetries",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "super",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "browserRendering",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "waitUntil",
+            "optional": true,
+            "type": "domcontentloaded | load | networkidle0 | networkidle2"
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "screenshot",
+            "optional": true,
+            "type": "full | top"
+          },
+          {
+            "key": "geoCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "proxyCountry",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "blockResources",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "waitForSelector",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "action",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "proxy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "returnCookie",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "saveResult",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "extractions",
+            "optional": true,
+            "type": "string | {}"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "runtime",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "token_usage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "screenshots",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "recording_path",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data_path",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "html_path",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "residential_proxy_usage",
+            "optional": true,
+            "type": "{ received?: number, sent?: number, total?: number }"
+          },
+          {
+            "key": "listen_network_data",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "html",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "markdown",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "screenshot",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mrscraper.api.scrape.screenshot",
+      "shortPath": "scrape.screenshot",
+      "description": "Scrape a page and capture a screenshot",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "screenshot",
+            "optional": true,
+            "type": "full | top"
+          },
+          {
+            "key": "record",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "browserRendering",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "waitUntil",
+            "optional": true,
+            "type": "domcontentloaded | load | networkidle0 | networkidle2"
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "html",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "markdown",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "super",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "geoCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "proxyCountry",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "saveResult",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "blockResources",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "waitForSelector",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "action",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "proxy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "returnCookie",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "tokenCap",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "maxRetries",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "extractions",
+            "optional": true,
+            "type": "string | {}"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "runtime",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "token_usage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "screenshots",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "recording_path",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data_path",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "html_path",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "residential_proxy_usage",
+            "optional": true,
+            "type": "{ received?: number, sent?: number, total?: number }"
+          },
+          {
+            "key": "listen_network_data",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "html",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "markdown",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "screenshot",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mrscraper.api.scrape.sitemap",
+      "shortPath": "scrape.sitemap",
+      "description": "Discover a site sitemap and map its URLs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "agent",
+            "optional": true,
+            "type": "general | map | listing"
+          },
+          {
+            "key": "maxDepth",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "maxPages",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "includePatterns",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "excludePatterns",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "browserRendering",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "waitUntil",
+            "optional": true,
+            "type": "domcontentloaded | load | networkidle0 | networkidle2"
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "screenshot",
+            "optional": true,
+            "type": "full | top"
+          },
+          {
+            "key": "super",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "geoCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "proxyCountry",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "saveResult",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "tokenCap",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "maxRetries",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "extractions",
+            "optional": true,
+            "type": "string | {}"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "runtime",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "token_usage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "screenshots",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "recording_path",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data_path",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "html_path",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "residential_proxy_usage",
+            "optional": true,
+            "type": "{ received?: number, sent?: number, total?: number }"
+          },
+          {
+            "key": "listen_network_data",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "html",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "markdown",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "screenshot",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mrscraper.api.scrapers.aiInit",
+      "shortPath": "scrapers.aiInit",
+      "description": "Start an AI scraper chat and return starter scrape code",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "prompt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "agent",
+            "optional": true,
+            "type": "general | map | listing"
+          },
+          {
+            "key": "proxyCountry",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, createdAt?: string, userId?: string, scraperId?: string, type?: string, url?: string | null, status?: string, error?: string | null, tokenUsage?: number, runtime?: number | string | null, data?: any, htmlPath?: string | null, htmlContent?: string | null, recordingPath?: string | null, screenshotPath?: string | null, dataPath?: string | null, curl?: string | null, html?: string | null, markdown?: string | null, screenshot?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mrscraper.api.scrapers.aiRerun",
+      "shortPath": "scrapers.aiRerun",
+      "description": "Re-run an AI scraper against a URL",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "scraperId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "maxDepth",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "maxPages",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "includePatterns",
+            "optional": true,
+            "type": "string | string[]"
+          },
+          {
+            "key": "excludePatterns",
+            "optional": true,
+            "type": "string | string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, createdAt?: string, userId?: string, scraperId?: string, type?: string, url?: string | null, status?: string, error?: string | null, tokenUsage?: number, runtime?: number | string | null, data?: any, htmlPath?: string | null, htmlContent?: string | null, recordingPath?: string | null, screenshotPath?: string | null, dataPath?: string | null, curl?: string | null, html?: string | null, markdown?: string | null, screenshot?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mrscraper.api.scrapers.aiRerunBulk",
+      "shortPath": "scrapers.aiRerunBulk",
+      "description": "Re-run an AI scraper against multiple URLs",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "scraperId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "urls",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, createdAt?: string, userId?: string, scraperId?: string, type?: string, url?: string | null, status?: string, error?: string | null, tokenUsage?: number, runtime?: number | string | null, data?: { mergedData?: any[], urlDetails?: { url: string, status?: string, error?: string | null }[], summary?: { totalUrls?: number, successfulUrls?: number, failedUrls?: number, scrapedCount?: number, totalTokenUsage?: number, estimatedFinishAt?: string | null } }, htmlPath?: string | null, htmlContent?: string | null, recordingPath?: string | null, screenshotPath?: string | null, dataPath?: string | null, curl?: string | null, html?: string | null, markdown?: string | null, screenshot?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mrscraper.api.scrapers.cancelBulkByResult",
+      "shortPath": "scrapers.cancelBulkByResult",
+      "description": "Cancel a queued bulk run by its result id",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "resultId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, bulkUrls?: string[], canceledUrls?: string[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mrscraper.api.scrapers.cancelBulkByScraper",
+      "shortPath": "scrapers.cancelBulkByScraper",
+      "description": "Cancel every queued bulk URL for a scraper",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "scraperId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, bulkUrls?: string[], canceledUrls?: string[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mrscraper.api.scrapers.manualHeal",
+      "shortPath": "scrapers.manualHeal",
+      "description": "Heal a broken manual scraper workflow",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "scraperId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ success: boolean, scraperId?: string, workflowUpdated?: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mrscraper.api.scrapers.manualRerun",
+      "shortPath": "scrapers.manualRerun",
+      "description": "Re-run a manual scraper against a URL",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "scraperId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workflow",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "record",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "paginator",
+            "optional": true,
+            "type": "{ type?: string, max_page?: number, enabled?: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, createdAt?: string, userId?: string, scraperId?: string, type?: string, url?: string | null, status?: string, error?: string | null, tokenUsage?: number, runtime?: number | string | null, data?: any, htmlPath?: string | null, htmlContent?: string | null, recordingPath?: string | null, screenshotPath?: string | null, dataPath?: string | null, curl?: string | null, html?: string | null, markdown?: string | null, screenshot?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mrscraper.api.scrapers.manualRerunBulk",
+      "shortPath": "scrapers.manualRerunBulk",
+      "description": "Re-run a manual scraper against multiple URLs",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "scraperId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "urls",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, createdAt?: string, userId?: string, scraperId?: string, type?: string, url?: string | null, status?: string, error?: string | null, tokenUsage?: number, runtime?: number | string | null, data?: { mergedData?: any[], urlDetails?: { url: string, status?: string, error?: string | null }[], summary?: { totalUrls?: number, successfulUrls?: number, failedUrls?: number, scrapedCount?: number, totalTokenUsage?: number, estimatedFinishAt?: string | null } }, htmlPath?: string | null, htmlContent?: string | null, recordingPath?: string | null, screenshotPath?: string | null, dataPath?: string | null, curl?: string | null, html?: string | null, markdown?: string | null, screenshot?: string | null }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

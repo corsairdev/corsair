@@ -27,11 +27,31 @@ Missing credentials throw `AuthMissingError` (never an empty string).
 | `listModels` | `GEMINI_LIST_MODELS` | `GET /models` |
 | `waitForVideo` | `GEMINI_WAIT_FOR_VIDEO` | Poll operation until done / error / timeout |
 
+## Multipart text behavior
+
+`generateContent` returns a convenience `text` field made by joining every
+non-thought text part from the first candidate. Gemini reasoning parts are
+typed with `thought?: boolean` and are excluded from this field. Markdown
+fences are preserved by default.
+
+The optional `stripFences` input changes only the convenience field and is
+never sent to Gemini:
+
+```ts
+const response = await corsair.gemini.api.content.generateContent({
+	model: 'gemini-2.5-flash',
+	contents: [{ role: 'user', parts: [{ text: 'Write a TypeScript function' }] }],
+	stripFences: true,
+});
+
+// response.text contains the joined answer text without one outer fence.
+```
+
 ## Quirks & caveats
 
 - **Model-scoped paths require `/models/`.** e.g. `/models/gemini-2.5-flash:generateContent` (not bare `/{model}:…`).
 - **Image generation forces `responseModalities: ['IMAGE']`** after merging caller `generationConfig`, so callers cannot accidentally drop the IMAGE modality.
-- **`generateContent` convenience field `text`** is the first candidate text with markdown fences stripped.
+- **`generateContent` convenience field `text`** concatenates non-thought text parts from the first candidate and preserves markdown fences by default. Pass `stripFences: true` to strip a single outer fence.
 - **Veo is long-running.** `generateVideos` returns an operation name; use `getVideosOperation` or `waitForVideo` to poll. Video models may require special access / billing.
 - **Image / Veo free-tier quotas** are strict; text ops (listModels, countTokens, generateContent) are the most reliable smoke path. Image/Veo may return HTTP 429 under free tier.
 

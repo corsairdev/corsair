@@ -1,0 +1,144 @@
+---
+title: Overview
+description: "B2B person and company data - enrichment, dataset search, identity resolution, IP lookups and cleaners from People Data Labs."
+---
+
+Use **People Data Labs** through Corsair: one client, typed API calls, local DB sync.
+
+**What you get:**
+
+- 12 typed API operations
+- 2 synced entities (`companies`, `people`) for fast `.search()` / `.list()`
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/pdl
+```
+```bash yarn
+yarn add corsair @corsair-dev/pdl
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/pdl
+```
+```bash bun
+bun add corsair @corsair-dev/pdl
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { pdl } from '@corsair-dev/pdl';
+
+export const corsair = createCorsair({
+	plugins: [
+		pdl(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+pdl()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'pdl',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Enrich a person profile**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.pdl.api.person.enrich({ profile: 'linkedin.com/in/gracehopper', min_likelihood: 8 });
+```
+
+
+**Search the person dataset**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.pdl.api.person.search({
+	query: {
+		term: { job_company_name: 'people data labs' },
+	},
+	size: 10,
+});
+```
+
+
+See the full list on the [API](/plugins/pdl/api) page.
+
+## Query synced data
+
+Matched people are stored by their PDL person id when a database is configured, so re-enriching the same profile refreshes the row instead of duplicating it.
+
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.pdl.db.people.search({
+	data: { pdlId: 'person_abc', name: 'grace hopper' },
+	limit: 50,
+});
+```
+
+Synced entities: `companies`, `people`. See [Database](/plugins/pdl/database) for filters and operators.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/pdl/api">
+    Every `pdl.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/pdl/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

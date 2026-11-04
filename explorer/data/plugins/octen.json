@@ -1,0 +1,1018 @@
+{
+  "id": "octen",
+  "displayName": "Octen",
+  "description": "Web search, scraping and structured data extraction API.",
+  "npmPackageName": "@corsair-dev/octen",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 14,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "octen.api.answer.create",
+      "shortPath": "answer.create",
+      "description": "Decompose messages into sub-queries, search, and synthesize an answer",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": true,
+            "type": "openai/gpt-6.1-sol | openai/gpt-6-astra | openai/gpt-5.6-sol | openai/gpt-5.6-terra | openai/gpt-5.6-luna | openai/gpt-5.4 | anthropic/claude-fable-5.1 | anthropic/claude-fable-5 | anthropic/claude-opus-5.5 | anthropic/claude-opus-5 | anthropic/claude-opus-4.8 | anthropic/claude-opus-4.6 | anthropic/claude-sonnet-5.5 | anthropic/claude-sonnet-5 | anthropic/claude-sonnet-4.6 | anthropic/claude-haiku-5.5 | anthropic/claude-haiku-4.5 | google/gemini-4-argon | google/gemini-3.8-flash | google/gemini-3.5-flash | google/gemini-3.5-flash-lite | google/gemini-3.1-pro-preview | google/gemini-3.1-flash-lite | google/gemini-3-flash-preview | moonshotai/kimi-k3 | moonshotai/kimi-k2.6 | moonshotai/kimi-k2.5 | minimax/minimax-m2.5 | qwen/qwen3.6-plus | deepseek/deepseek-v4-pro | deepseek/deepseek-v4-flash-0731"
+          },
+          {
+            "key": "messages",
+            "optional": false,
+            "type": "{ role: system | developer | user | assistant | tool }[]"
+          },
+          {
+            "key": "mode",
+            "optional": true,
+            "type": "queries_only | queries_and_search | full"
+          },
+          {
+            "key": "max_queries",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "web_search_options",
+            "optional": true,
+            "type": "{ count?: number, include_domains?: string[], exclude_domains?: string[], include_text?: string[], exclude_text?: string[], time_basis?: auto | published | crawled, time_range?: day | week | month | year | d | w | m | y, start_time?: string, end_time?: string, language?: ar | de | en | es | fr | hi | id | it | ja | ko | nl | pl | pt | ru | th | tr | vi | zh[], highlight?: { enable?: boolean, max_tokens?: number }, full_content?: { enable?: boolean, max_tokens?: number }, format?: markdown | text, safesearch?: off | strict, include_images?: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": false,
+            "type": "chat.completion"
+          },
+          {
+            "key": "created",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "choices",
+            "optional": false,
+            "type": "{ index?: number, finish_reason?: stop | length | tool_calls | content_filter | error, message?: { role?: assistant, content?: string | null } }[]"
+          },
+          {
+            "key": "queries",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "search_results",
+            "optional": true,
+            "type": "{ query?: string, results?: { title?: string, url?: string, highlight?: string, full_content?: string, authors?: string, time_published?: string, time_last_crawled?: string, favicon?: string, cover_image?: { url?: string, description?: string }, images?: { url?: string, description?: string }[] }[], latency?: number }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ usage?: { num_search_queries: number, prompt_tokens: number, completion_tokens: number, total_tokens: number }, latency?: number }"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "octen.api.broadSearch.post",
+      "shortPath": "broadSearch.post",
+      "description": "Expand one query into sub-queries and search each of them",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "max_queries",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "search_options",
+            "optional": true,
+            "type": "{ count?: number, include_domains?: string[], exclude_domains?: string[], include_text?: string[], exclude_text?: string[], time_basis?: auto | published | crawled, time_range?: day | week | month | year | d | w | m | y, start_time?: string, end_time?: string, language?: ar | de | en | es | fr | hi | id | it | ja | ko | nl | pl | pt | ru | th | tr | vi | zh[], highlight?: { enable?: boolean, max_tokens?: number }, full_content?: { enable?: boolean, max_tokens?: number }, format?: markdown | text, safesearch?: off | strict, include_images?: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "queries",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "search_results",
+            "optional": true,
+            "type": "{ query?: string, results?: { title?: string, url?: string, highlight?: string, full_content?: string, authors?: string, time_published?: string, time_last_crawled?: string, favicon?: string, cover_image?: { url?: string, description?: string }, images?: { url?: string, description?: string }[] }[], latency?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "octen.api.businessSearch.post",
+      "shortPath": "businessSearch.post",
+      "description": "Search business pages and return company and people cards",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "include_domains",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "exclude_domains",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "time_basis",
+            "optional": true,
+            "type": "auto | published | crawled"
+          },
+          {
+            "key": "time_range",
+            "optional": true,
+            "type": "day | week | month | year | d | w | m | y"
+          },
+          {
+            "key": "start_time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "end_time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "ar | de | en | es | fr | hi | id | it | ja | ko | nl | pl | pt | ru | th | tr | vi | zh[]"
+          },
+          {
+            "key": "highlight",
+            "optional": true,
+            "type": "{ enable?: boolean, max_tokens?: number }"
+          },
+          {
+            "key": "full_content",
+            "optional": true,
+            "type": "{ enable?: boolean, max_tokens?: number }"
+          },
+          {
+            "key": "entities",
+            "optional": true,
+            "type": "{ enable?: boolean, count?: number, max_activities?: number, max_news?: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ title?: string, url?: string, highlight?: string, full_content?: string, authors?: string, time_published?: string, time_last_crawled?: string, favicon?: string, cover_image?: { url?: string, description?: string }, images?: { url?: string, description?: string }[] }[]"
+          },
+          {
+            "key": "entities",
+            "optional": true,
+            "type": "{ type?: company | person, name?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "octen.api.embedding.create",
+      "shortPath": "embedding.create",
+      "description": "Create text embeddings with an Octen embedding model",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "input",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "octen-embedding-0.6b | octen-embedding-4b | octen-embedding-8b"
+          },
+          {
+            "key": "dimension",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "input_type",
+            "optional": true,
+            "type": "query | document"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ index?: number, embedding?: number[] }[]"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "octen.api.extract.post",
+      "shortPath": "extract.post",
+      "description": "Extract page content from up to 20 URLs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "urls",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "mode",
+            "optional": true,
+            "type": "standard | advanced | auto"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "max_age_seconds",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "markdown | text"
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "include_images",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_videos",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_audio",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_links",
+            "optional": true,
+            "type": "{ scope?: prefer_internal | prefer_external, max_links?: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ url?: string, status?: success | failed, resolved_mode?: standard | advanced, title?: string | null, full_content?: string | null, highlights?: string[] | null, time_published?: string | null, time_last_crawled?: string, page_structure?: { primary?: Index Page | Content Page | No Main Content, secondary?: string | null } | null, category?: { primary?: string, secondary?: string | null } | null, favicon?: string | null, cover_image?: { url?: string } | null, images?: { url?: string }[], videos?: { url?: string }[], audio?: { url?: string }[], links?: { url?: string, anchor_text?: string, is_external?: boolean }[], error_message?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "octen.api.groundedGeneration.create",
+      "shortPath": "groundedGeneration.create",
+      "description": "Queue a search-grounded image or video generation task",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "modality",
+            "optional": false,
+            "type": "image | video"
+          },
+          {
+            "key": "prompt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "google/gemini-3-pro-image | google/gemini-3.1-flash-image | minimax/hailuo-3"
+          },
+          {
+            "key": "aspect_ratio",
+            "optional": true,
+            "type": "16:9 | 1:1 | 9:16"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "generation_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "modality",
+            "optional": false,
+            "type": "image | video"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "queued"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "octen.api.groundedGeneration.get",
+      "shortPath": "groundedGeneration.get",
+      "description": "Get a grounded generation task and its output URL",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "generation_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "generation_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "modality",
+            "optional": false,
+            "type": "image | video"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "queued | running | succeeded | failed"
+          },
+          {
+            "key": "output_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "references",
+            "optional": true,
+            "type": "{ source_id?: string, url?: string, title?: string, cover_url?: string }[]"
+          },
+          {
+            "key": "search_results",
+            "optional": true,
+            "type": "{ query?: string, results?: { type?: image | video, title?: string, url?: string, source_page?: string, description?: string, cover_url?: string }[] }[]"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "{ code?: MM_GENERATION_CONTENT_POLICY | MM_GENERATION_INPUT_IMAGE_PRIVACY_BLOCKED | MM_GENERATION_CONTENT_NOT_SUPPORTED | MM_GENERATION_NO_REFERENCE_MATERIAL | MM_GENERATION_REJECTED | MM_GENERATION_TIMEOUT | MM_GENERATION_FAILED, message?: string }"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "updated_at",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "{ image_count?: number, video_count?: number, video_seconds?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "octen.api.imageSearch.post",
+      "shortPath": "imageSearch.post",
+      "description": "Search images by text query or by a reference image",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "inputs",
+            "optional": false,
+            "type": "{ type: text | image, url?: string, data?: string }[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "include_domains",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "exclude_domains",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "safesearch",
+            "optional": true,
+            "type": "off | strict"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ title?: string, url?: string, source_page?: string, description?: string, width?: number, height?: number, thumbnail?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "octen.api.newsSearch.post",
+      "shortPath": "newsSearch.post",
+      "description": "Search news articles, optionally grouped into events",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "include_domains",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "exclude_domains",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "time_basis",
+            "optional": true,
+            "type": "auto | published | crawled"
+          },
+          {
+            "key": "time_range",
+            "optional": true,
+            "type": "day | week | month | year | d | w | m | y"
+          },
+          {
+            "key": "start_time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "end_time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "ar | de | en | es | fr | hi | id | it | ja | ko | nl | pl | pt | ru | th | tr | vi | zh[]"
+          },
+          {
+            "key": "highlight",
+            "optional": true,
+            "type": "{ enable?: boolean, max_tokens?: number }"
+          },
+          {
+            "key": "full_content",
+            "optional": true,
+            "type": "{ enable?: boolean, max_tokens?: number }"
+          },
+          {
+            "key": "subjects",
+            "optional": true,
+            "type": "{ enable?: boolean, count?: number, max_sub_news?: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ title?: string, url?: string, summary?: string, highlight?: string, full_content?: string, authors?: string, time_published?: string, time_last_crawled?: string, favicon?: string, cover_image?: { url?: string, description?: string }, images?: { url?: string, description?: string }[] }[]"
+          },
+          {
+            "key": "subjects",
+            "optional": true,
+            "type": "{ name?: string, summary?: string, time_start?: string, time_latest?: string, top_news?: { title?: string, url?: string, summary?: string, highlight?: string, full_content?: string, authors?: string, time_published?: string, time_last_crawled?: string, favicon?: string, cover_image?: { url?: string, description?: string }, images?: { url?: string, description?: string }[] }, sub_news?: { title?: string, url?: string, summary?: string, highlight?: string, full_content?: string, authors?: string, time_published?: string, time_last_crawled?: string, favicon?: string, cover_image?: { url?: string, description?: string }, images?: { url?: string, description?: string }[] }[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "octen.api.search.post",
+      "shortPath": "search.post",
+      "description": "Search the web with ranked, highlightable results",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "include_domains",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "exclude_domains",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "include_text",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "exclude_text",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "time_basis",
+            "optional": true,
+            "type": "auto | published | crawled"
+          },
+          {
+            "key": "time_range",
+            "optional": true,
+            "type": "day | week | month | year | d | w | m | y"
+          },
+          {
+            "key": "start_time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "end_time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "ar | de | en | es | fr | hi | id | it | ja | ko | nl | pl | pt | ru | th | tr | vi | zh[]"
+          },
+          {
+            "key": "highlight",
+            "optional": true,
+            "type": "{ enable?: boolean, max_tokens?: number }"
+          },
+          {
+            "key": "full_content",
+            "optional": true,
+            "type": "{ enable?: boolean, max_tokens?: number }"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "markdown | text"
+          },
+          {
+            "key": "safesearch",
+            "optional": true,
+            "type": "off | strict"
+          },
+          {
+            "key": "include_images",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ title?: string, url?: string, highlight?: string, full_content?: string, authors?: string, time_published?: string, time_last_crawled?: string, favicon?: string, cover_image?: { url?: string, description?: string }, images?: { url?: string, description?: string }[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "octen.api.videoGeneration.create",
+      "shortPath": "videoGeneration.create",
+      "description": "Queue a text-to-video generation task",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "minimax/minimax-h3 | bytedance/seedance-2.5 | google/veo-3.1 | google/veo-3.1-fast | google/veo-3.1-lite"
+          },
+          {
+            "key": "prompt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "resolution",
+            "optional": true,
+            "type": "480p | 720p | 768p | 1080p | 2K"
+          },
+          {
+            "key": "aspect_ratio",
+            "optional": true,
+            "type": "16:9 | 4:3 | 1:1 | 3:4 | 9:16 | 21:9 | adaptive"
+          },
+          {
+            "key": "frame_images",
+            "optional": true,
+            "type": "{ image: string, frame_type: first_frame | last_frame }[]"
+          },
+          {
+            "key": "input_references",
+            "optional": true,
+            "type": "{ image: string }[]"
+          },
+          {
+            "key": "generate_audio",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "seed",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "extra_params",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "queued"
+          },
+          {
+            "key": "created",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "octen.api.videoGeneration.get",
+      "shortPath": "videoGeneration.get",
+      "description": "Get a video generation task and its download URL",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "queued | in_progress | completed | failed"
+          },
+          {
+            "key": "created",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "video_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expires_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "resolution",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "{ video_seconds?: number, video_tokens?: number, input_image_count?: number }"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "octen.api.videoSearch.post",
+      "shortPath": "videoSearch.post",
+      "description": "Search videos by a text query",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "inputs",
+            "optional": false,
+            "type": "{ type: text, data?: string }[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "time_range",
+            "optional": true,
+            "type": "day | week | month | year | d | w | m | y"
+          },
+          {
+            "key": "start_time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "end_time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "safesearch",
+            "optional": true,
+            "type": "off | strict"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ title?: string, url?: string, source_page?: string, description?: string, cover_url?: string, duration_seconds?: number, authors?: string, time_published?: string, time_last_crawled?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "octen.api.vlEmbedding.create",
+      "shortPath": "vlEmbedding.create",
+      "description": "Create multimodal embeddings from text, images and video",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "octen-vl-embedding | octen-vl-embedding-large"
+          },
+          {
+            "key": "input",
+            "optional": false,
+            "type": "{ contents: { text?: string, image?: string, video?: string }[] }"
+          },
+          {
+            "key": "enable_fusion",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "dimension",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "fps",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "instruct",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ index?: number, embedding?: number[], type?: vl | fusion }[]"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

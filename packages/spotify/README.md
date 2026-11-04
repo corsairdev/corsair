@@ -49,7 +49,7 @@ Auth: OAuth 2.0, API key, Managed OAuth (default OAuth 2.0). Set `authType` on t
 
 ## Webhooks
 
-Handles 1 webhook event. See the reference for payloads and `webhookHooks`.
+No webhooks. Spotify does not offer a public webhook API.
 
 ## Reference
 

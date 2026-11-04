@@ -1,0 +1,1868 @@
+{
+  "id": "kling",
+  "displayName": "Kling",
+  "description": "AI image and video generation from the Kling AI open platform.",
+  "npmPackageName": "@corsair-dev/kling",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 34,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "kling.api.imageGeneration.create",
+      "shortPath": "imageGeneration.create",
+      "description": "Create a text-to-image or image-to-image task",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model_name",
+            "optional": true,
+            "type": "kling-v2-1 | kling-v3"
+          },
+          {
+            "key": "prompt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "negative_prompt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "image",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "image_reference",
+            "optional": true,
+            "type": "subject | face"
+          },
+          {
+            "key": "image_fidelity",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "human_fidelity",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "element_list",
+            "optional": true,
+            "type": "{ element_id: number }[]"
+          },
+          {
+            "key": "resolution",
+            "optional": true,
+            "type": "1k | 2k"
+          },
+          {
+            "key": "n",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "aspect_ratio",
+            "optional": true,
+            "type": "16:9 | 9:16 | 1:1 | 4:3 | 3:4 | 3:2 | 2:3 | 21:9"
+          },
+          {
+            "key": "watermark_info",
+            "optional": true,
+            "type": "{ enabled: boolean }"
+          },
+          {
+            "key": "callback_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "external_task_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string, task_id?: string, status?: string, task_status?: string, create_time?: number, update_time?: number, created_at?: number, updated_at?: number, external_id?: string, task_info?: { external_task_id?: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kling.api.imageGeneration.get",
+      "shortPath": "imageGeneration.get",
+      "description": "Fetch an image generation task by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string, task_id?: string, status?: string, task_status?: string, message?: string, task_status_msg?: string, create_time?: number, update_time?: number, created_at?: number, updated_at?: number, external_id?: string, outputs?: { type: string, id?: string, url?: string, watermark_url?: string, duration?: string, group_id?: string, mp3_url?: string, wav_url?: string, mp3_duration?: string, wav_duration?: string, name?: string, owned_by?: string, status?: string }[], billing?: { charge_type?: string, cash_type?: string, amount?: string, currency?: string, package_type?: string, list_price?: string }[], final_unit_deduction?: string, final_balance_deduction?: { quota?: string, list_price?: string }, watermark_info?: { enabled: boolean }, task_info?: { external_task_id?: string }, task_result?: { images?: { index?: number, url?: string, watermark_url?: string }[], videos?: { id?: string, url?: string, watermark_url?: string, duration?: string }[] } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kling.api.imageGeneration.list",
+      "shortPath": "imageGeneration.list",
+      "description": "List image generation tasks by page",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageNum",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string, task_id?: string, status?: string, task_status?: string, message?: string, task_status_msg?: string, create_time?: number, update_time?: number, created_at?: number, updated_at?: number, external_id?: string, outputs?: { type: string, id?: string, url?: string, watermark_url?: string, duration?: string, group_id?: string, mp3_url?: string, wav_url?: string, mp3_duration?: string, wav_duration?: string, name?: string, owned_by?: string, status?: string }[], billing?: { charge_type?: string, cash_type?: string, amount?: string, currency?: string, package_type?: string, list_price?: string }[], final_unit_deduction?: string, final_balance_deduction?: { quota?: string, list_price?: string }, watermark_info?: { enabled: boolean }, task_info?: { external_task_id?: string }, task_result?: { images?: { index?: number, url?: string, watermark_url?: string }[], videos?: { id?: string, url?: string, watermark_url?: string, duration?: string }[] } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kling.api.imageToVideo.create",
+      "shortPath": "imageToVideo.create",
+      "description": "Create an image-to-video generation task",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "kling-2.5-turbo | kling-2.6 | kling-3.0 | kling-3.0-turbo"
+          },
+          {
+            "key": "contents",
+            "optional": false,
+            "type": "{ type: string, text?: string, url?: string, id?: string, voice_id?: string, element_id?: string }[]"
+          },
+          {
+            "key": "settings",
+            "optional": true,
+            "type": "{ resolution?: string, aspect_ratio?: string, duration?: number, audio?: string, multi_shot?: boolean }"
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{ callback_url?: string, external_task_id?: string, watermark_info?: { enabled: boolean } }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string, task_id?: string, status?: string, task_status?: string, create_time?: number, update_time?: number, created_at?: number, updated_at?: number, external_id?: string, task_info?: { external_task_id?: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kling.api.imageToVideo.get",
+      "shortPath": "imageToVideo.get",
+      "description": "Fetch an image-to-video task by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string, task_id?: string, status?: string, task_status?: string, message?: string, task_status_msg?: string, create_time?: number, update_time?: number, created_at?: number, updated_at?: number, external_id?: string, outputs?: { type: string, id?: string, url?: string, watermark_url?: string, duration?: string, group_id?: string, mp3_url?: string, wav_url?: string, mp3_duration?: string, wav_duration?: string, name?: string, owned_by?: string, status?: string }[], billing?: { charge_type?: string, cash_type?: string, amount?: string, currency?: string, package_type?: string, list_price?: string }[], final_unit_deduction?: string, final_balance_deduction?: { quota?: string, list_price?: string }, watermark_info?: { enabled: boolean }, task_info?: { external_task_id?: string }, task_result?: { images?: { index?: number, url?: string, watermark_url?: string }[], videos?: { id?: string, url?: string, watermark_url?: string, duration?: string }[] } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kling.api.imageToVideo.list",
+      "shortPath": "imageToVideo.list",
+      "description": "List image-to-video and other video tasks by cursor",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "start_time",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "end_time",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "{ key: status | product_type, values: string[] }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ result: { id?: string, task_id?: string, status?: string, task_status?: string, message?: string, task_status_msg?: string, create_time?: number, update_time?: number, created_at?: number, updated_at?: number, external_id?: string, outputs?: { type: string, id?: string, url?: string, watermark_url?: string, duration?: string, group_id?: string, mp3_url?: string, wav_url?: string, mp3_duration?: string, wav_duration?: string, name?: string, owned_by?: string, status?: string }[], billing?: { charge_type?: string, cash_type?: string, amount?: string, currency?: string, package_type?: string, list_price?: string }[], final_unit_deduction?: string, final_balance_deduction?: { quota?: string, list_price?: string }, watermark_info?: { enabled: boolean }, task_info?: { external_task_id?: string }, task_result?: { images?: { index?: number, url?: string, watermark_url?: string }[], videos?: { id?: string, url?: string, watermark_url?: string, duration?: string }[] } }[], count?: number, next_cursor?: string, has_more?: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kling.api.lipSync.create",
+      "shortPath": "lipSync.create",
+      "description": "Create a lip-sync task for a detected face",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "session_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "face_choose",
+            "optional": false,
+            "type": "{ face_id: string, audio_id?: string, sound_file?: string, sound_start_time: number, sound_end_time: number, sound_insert_time: number, sound_volume?: number, original_audio_volume?: number }[]"
+          },
+          {
+            "key": "watermark_info",
+            "optional": true,
+            "type": "{ enabled: boolean }"
+          },
+          {
+            "key": "callback_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "external_task_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string, task_id?: string, status?: string, task_status?: string, create_time?: number, update_time?: number, created_at?: number, updated_at?: number, external_id?: string, task_info?: { external_task_id?: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kling.api.lipSync.detectFace",
+      "shortPath": "lipSync.detectFace",
+      "description": "Identify faces in a video for lip-sync processing",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "video_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "video_url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ session_id: string, final_unit_deduction?: string, final_balance_deduction?: { quota?: string, list_price?: string }, face_data?: { face_id?: string, face_image?: string, start_time?: number, end_time?: number }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kling.api.lipSync.get",
+      "shortPath": "lipSync.get",
+      "description": "Fetch a lip-sync task by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string, task_id?: string, status?: string, task_status?: string, message?: string, task_status_msg?: string, create_time?: number, update_time?: number, created_at?: number, updated_at?: number, external_id?: string, outputs?: { type: string, id?: string, url?: string, watermark_url?: string, duration?: string, group_id?: string, mp3_url?: string, wav_url?: string, mp3_duration?: string, wav_duration?: string, name?: string, owned_by?: string, status?: string }[], billing?: { charge_type?: string, cash_type?: string, amount?: string, currency?: string, package_type?: string, list_price?: string }[], final_unit_deduction?: string, final_balance_deduction?: { quota?: string, list_price?: string }, watermark_info?: { enabled: boolean }, task_info?: { external_task_id?: string }, task_result?: { images?: { index?: number, url?: string, watermark_url?: string }[], videos?: { id?: string, url?: string, watermark_url?: string, duration?: string }[] } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kling.api.lipSync.list",
+      "shortPath": "lipSync.list",
+      "description": "List lip-sync tasks by page",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageNum",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string, task_id?: string, status?: string, task_status?: string, message?: string, task_status_msg?: string, create_time?: number, update_time?: number, created_at?: number, updated_at?: number, external_id?: string, outputs?: { type: string, id?: string, url?: string, watermark_url?: string, duration?: string, group_id?: string, mp3_url?: string, wav_url?: string, mp3_duration?: string, wav_duration?: string, name?: string, owned_by?: string, status?: string }[], billing?: { charge_type?: string, cash_type?: string, amount?: string, currency?: string, package_type?: string, list_price?: string }[], final_unit_deduction?: string, final_balance_deduction?: { quota?: string, list_price?: string }, watermark_info?: { enabled: boolean }, task_info?: { external_task_id?: string }, task_result?: { images?: { index?: number, url?: string, watermark_url?: string }[], videos?: { id?: string, url?: string, watermark_url?: string, duration?: string }[] } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kling.api.motionControl.create",
+      "shortPath": "motionControl.create",
+      "description": "Create a motion-control task from a motion reference",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "kling-2.6 | kling-3.0"
+          },
+          {
+            "key": "contents",
+            "optional": false,
+            "type": "{ type: string, text?: string, url?: string, id?: string, voice_id?: string, element_id?: string }[]"
+          },
+          {
+            "key": "settings",
+            "optional": false,
+            "type": "{ character_orientation: image | video, resolution?: string, aspect_ratio?: string, duration?: number, audio?: string, multi_shot?: boolean }"
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{ callback_url?: string, external_task_id?: string, watermark_info?: { enabled: boolean } }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string, task_id?: string, status?: string, task_status?: string, create_time?: number, update_time?: number, created_at?: number, updated_at?: number, external_id?: string, task_info?: { external_task_id?: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kling.api.motionControl.get",
+      "shortPath": "motionControl.get",
+      "description": "Fetch a motion-control task by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string, task_id?: string, status?: string, task_status?: string, message?: string, task_status_msg?: string, create_time?: number, update_time?: number, created_at?: number, updated_at?: number, external_id?: string, outputs?: { type: string, id?: string, url?: string, watermark_url?: string, duration?: string, group_id?: string, mp3_url?: string, wav_url?: string, mp3_duration?: string, wav_duration?: string, name?: string, owned_by?: string, status?: string }[], billing?: { charge_type?: string, cash_type?: string, amount?: string, currency?: string, package_type?: string, list_price?: string }[], final_unit_deduction?: string, final_balance_deduction?: { quota?: string, list_price?: string }, watermark_info?: { enabled: boolean }, task_info?: { external_task_id?: string }, task_result?: { images?: { index?: number, url?: string, watermark_url?: string }[], videos?: { id?: string, url?: string, watermark_url?: string, duration?: string }[] } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kling.api.motionControl.list",
+      "shortPath": "motionControl.list",
+      "description": "List motion-control and other video tasks by cursor",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "start_time",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "end_time",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "{ key: status | product_type, values: string[] }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ result: { id?: string, task_id?: string, status?: string, task_status?: string, message?: string, task_status_msg?: string, create_time?: number, update_time?: number, created_at?: number, updated_at?: number, external_id?: string, outputs?: { type: string, id?: string, url?: string, watermark_url?: string, duration?: string, group_id?: string, mp3_url?: string, wav_url?: string, mp3_duration?: string, wav_duration?: string, name?: string, owned_by?: string, status?: string }[], billing?: { charge_type?: string, cash_type?: string, amount?: string, currency?: string, package_type?: string, list_price?: string }[], final_unit_deduction?: string, final_balance_deduction?: { quota?: string, list_price?: string }, watermark_info?: { enabled: boolean }, task_info?: { external_task_id?: string }, task_result?: { images?: { index?: number, url?: string, watermark_url?: string }[], videos?: { id?: string, url?: string, watermark_url?: string, duration?: string }[] } }[], count?: number, next_cursor?: string, has_more?: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kling.api.multiImageToImage.create",
+      "shortPath": "multiImageToImage.create",
+      "description": "Create a multi-image (subject, scene, style) task",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model_name",
+            "optional": true,
+            "type": "kling-v2-1"
+          },
+          {
+            "key": "prompt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subject_image_list",
+            "optional": false,
+            "type": "{ subject_image: string }[]"
+          },
+          {
+            "key": "scene_image",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "style_image",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "n",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "aspect_ratio",
+            "optional": true,
+            "type": "16:9 | 9:16 | 1:1 | 4:3 | 3:4 | 3:2 | 2:3 | 21:9"
+          },
+          {
+            "key": "watermark_info",
+            "optional": true,
+            "type": "{ enabled: boolean }"
+          },
+          {
+            "key": "callback_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "external_task_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string, task_id?: string, status?: string, task_status?: string, create_time?: number, update_time?: number, created_at?: number, updated_at?: number, external_id?: string, task_info?: { external_task_id?: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kling.api.multiImageToImage.get",
+      "shortPath": "multiImageToImage.get",
+      "description": "Fetch a multi-image task by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string, task_id?: string, status?: string, task_status?: string, message?: string, task_status_msg?: string, create_time?: number, update_time?: number, created_at?: number, updated_at?: number, external_id?: string, outputs?: { type: string, id?: string, url?: string, watermark_url?: string, duration?: string, group_id?: string, mp3_url?: string, wav_url?: string, mp3_duration?: string, wav_duration?: string, name?: string, owned_by?: string, status?: string }[], billing?: { charge_type?: string, cash_type?: string, amount?: string, currency?: string, package_type?: string, list_price?: string }[], final_unit_deduction?: string, final_balance_deduction?: { quota?: string, list_price?: string }, watermark_info?: { enabled: boolean }, task_info?: { external_task_id?: string }, task_result?: { images?: { index?: number, url?: string, watermark_url?: string }[], videos?: { id?: string, url?: string, watermark_url?: string, duration?: string }[] } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kling.api.multiImageToImage.list",
+      "shortPath": "multiImageToImage.list",
+      "description": "List multi-image tasks by page",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageNum",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string, task_id?: string, status?: string, task_status?: string, message?: string, task_status_msg?: string, create_time?: number, update_time?: number, created_at?: number, updated_at?: number, external_id?: string, outputs?: { type: string, id?: string, url?: string, watermark_url?: string, duration?: string, group_id?: string, mp3_url?: string, wav_url?: string, mp3_duration?: string, wav_duration?: string, name?: string, owned_by?: string, status?: string }[], billing?: { charge_type?: string, cash_type?: string, amount?: string, currency?: string, package_type?: string, list_price?: string }[], final_unit_deduction?: string, final_balance_deduction?: { quota?: string, list_price?: string }, watermark_info?: { enabled: boolean }, task_info?: { external_task_id?: string }, task_result?: { images?: { index?: number, url?: string, watermark_url?: string }[], videos?: { id?: string, url?: string, watermark_url?: string, duration?: string }[] } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kling.api.omniImage.create",
+      "shortPath": "omniImage.create",
+      "description": "Create an omni-image generation task",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model_name",
+            "optional": true,
+            "type": "kling-image-o1 | kling-v3-omni"
+          },
+          {
+            "key": "prompt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "image_list",
+            "optional": true,
+            "type": "{ image: string }[]"
+          },
+          {
+            "key": "element_list",
+            "optional": true,
+            "type": "{ element_id: number }[]"
+          },
+          {
+            "key": "resolution",
+            "optional": true,
+            "type": "1k | 2k | 4k"
+          },
+          {
+            "key": "result_type",
+            "optional": true,
+            "type": "single | series"
+          },
+          {
+            "key": "n",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "series_amount",
+            "optional": true,
+            "type": "number | auto"
+          },
+          {
+            "key": "aspect_ratio",
+            "optional": true,
+            "type": "16:9 | 9:16 | 1:1 | 4:3 | 3:4 | 3:2 | 2:3 | 21:9 | auto"
+          },
+          {
+            "key": "watermark_info",
+            "optional": true,
+            "type": "{ enabled: boolean }"
+          },
+          {
+            "key": "callback_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "external_task_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string, task_id?: string, status?: string, task_status?: string, create_time?: number, update_time?: number, created_at?: number, updated_at?: number, external_id?: string, task_info?: { external_task_id?: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kling.api.omniImage.get",
+      "shortPath": "omniImage.get",
+      "description": "Fetch an omni-image task by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string, task_id?: string, status?: string, task_status?: string, message?: string, task_status_msg?: string, create_time?: number, update_time?: number, created_at?: number, updated_at?: number, external_id?: string, outputs?: { type: string, id?: string, url?: string, watermark_url?: string, duration?: string, group_id?: string, mp3_url?: string, wav_url?: string, mp3_duration?: string, wav_duration?: string, name?: string, owned_by?: string, status?: string }[], billing?: { charge_type?: string, cash_type?: string, amount?: string, currency?: string, package_type?: string, list_price?: string }[], final_unit_deduction?: string, final_balance_deduction?: { quota?: string, list_price?: string }, watermark_info?: { enabled: boolean }, task_info?: { external_task_id?: string }, task_result?: { images?: { index?: number, url?: string, watermark_url?: string }[], videos?: { id?: string, url?: string, watermark_url?: string, duration?: string }[] } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kling.api.omniImage.list",
+      "shortPath": "omniImage.list",
+      "description": "List omni-image tasks by page",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageNum",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string, task_id?: string, status?: string, task_status?: string, message?: string, task_status_msg?: string, create_time?: number, update_time?: number, created_at?: number, updated_at?: number, external_id?: string, outputs?: { type: string, id?: string, url?: string, watermark_url?: string, duration?: string, group_id?: string, mp3_url?: string, wav_url?: string, mp3_duration?: string, wav_duration?: string, name?: string, owned_by?: string, status?: string }[], billing?: { charge_type?: string, cash_type?: string, amount?: string, currency?: string, package_type?: string, list_price?: string }[], final_unit_deduction?: string, final_balance_deduction?: { quota?: string, list_price?: string }, watermark_info?: { enabled: boolean }, task_info?: { external_task_id?: string }, task_result?: { images?: { index?: number, url?: string, watermark_url?: string }[], videos?: { id?: string, url?: string, watermark_url?: string, duration?: string }[] } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kling.api.omniVideo.create",
+      "shortPath": "omniVideo.create",
+      "description": "Create an omni-video generation task",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "kling-3.0-omni | kling-o1"
+          },
+          {
+            "key": "contents",
+            "optional": false,
+            "type": "{ type: string, text?: string, url?: string, id?: string, voice_id?: string, element_id?: string }[]"
+          },
+          {
+            "key": "settings",
+            "optional": true,
+            "type": "{ resolution?: string, aspect_ratio?: string, duration?: number, audio?: string, multi_shot?: boolean }"
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{ callback_url?: string, external_task_id?: string, watermark_info?: { enabled: boolean } }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string, task_id?: string, status?: string, task_status?: string, create_time?: number, update_time?: number, created_at?: number, updated_at?: number, external_id?: string, task_info?: { external_task_id?: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kling.api.omniVideo.get",
+      "shortPath": "omniVideo.get",
+      "description": "Fetch an omni-video task by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string, task_id?: string, status?: string, task_status?: string, message?: string, task_status_msg?: string, create_time?: number, update_time?: number, created_at?: number, updated_at?: number, external_id?: string, outputs?: { type: string, id?: string, url?: string, watermark_url?: string, duration?: string, group_id?: string, mp3_url?: string, wav_url?: string, mp3_duration?: string, wav_duration?: string, name?: string, owned_by?: string, status?: string }[], billing?: { charge_type?: string, cash_type?: string, amount?: string, currency?: string, package_type?: string, list_price?: string }[], final_unit_deduction?: string, final_balance_deduction?: { quota?: string, list_price?: string }, watermark_info?: { enabled: boolean }, task_info?: { external_task_id?: string }, task_result?: { images?: { index?: number, url?: string, watermark_url?: string }[], videos?: { id?: string, url?: string, watermark_url?: string, duration?: string }[] } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kling.api.omniVideo.list",
+      "shortPath": "omniVideo.list",
+      "description": "List omni-video and other video tasks by cursor",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "start_time",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "end_time",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "{ key: status | product_type, values: string[] }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ result: { id?: string, task_id?: string, status?: string, task_status?: string, message?: string, task_status_msg?: string, create_time?: number, update_time?: number, created_at?: number, updated_at?: number, external_id?: string, outputs?: { type: string, id?: string, url?: string, watermark_url?: string, duration?: string, group_id?: string, mp3_url?: string, wav_url?: string, mp3_duration?: string, wav_duration?: string, name?: string, owned_by?: string, status?: string }[], billing?: { charge_type?: string, cash_type?: string, amount?: string, currency?: string, package_type?: string, list_price?: string }[], final_unit_deduction?: string, final_balance_deduction?: { quota?: string, list_price?: string }, watermark_info?: { enabled: boolean }, task_info?: { external_task_id?: string }, task_result?: { images?: { index?: number, url?: string, watermark_url?: string }[], videos?: { id?: string, url?: string, watermark_url?: string, duration?: string }[] } }[], count?: number, next_cursor?: string, has_more?: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kling.api.outpainting.create",
+      "shortPath": "outpainting.create",
+      "description": "Create an image outpainting (expand) task",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "image",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "up_expansion_ratio",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "down_expansion_ratio",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "left_expansion_ratio",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "right_expansion_ratio",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "prompt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "n",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "watermark_info",
+            "optional": true,
+            "type": "{ enabled: boolean }"
+          },
+          {
+            "key": "callback_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "external_task_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string, task_id?: string, status?: string, task_status?: string, create_time?: number, update_time?: number, created_at?: number, updated_at?: number, external_id?: string, task_info?: { external_task_id?: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kling.api.outpainting.get",
+      "shortPath": "outpainting.get",
+      "description": "Fetch an outpainting task by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string, task_id?: string, status?: string, task_status?: string, message?: string, task_status_msg?: string, create_time?: number, update_time?: number, created_at?: number, updated_at?: number, external_id?: string, outputs?: { type: string, id?: string, url?: string, watermark_url?: string, duration?: string, group_id?: string, mp3_url?: string, wav_url?: string, mp3_duration?: string, wav_duration?: string, name?: string, owned_by?: string, status?: string }[], billing?: { charge_type?: string, cash_type?: string, amount?: string, currency?: string, package_type?: string, list_price?: string }[], final_unit_deduction?: string, final_balance_deduction?: { quota?: string, list_price?: string }, watermark_info?: { enabled: boolean }, task_info?: { external_task_id?: string }, task_result?: { images?: { index?: number, url?: string, watermark_url?: string }[], videos?: { id?: string, url?: string, watermark_url?: string, duration?: string }[] } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kling.api.outpainting.list",
+      "shortPath": "outpainting.list",
+      "description": "List outpainting tasks by page",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageNum",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string, task_id?: string, status?: string, task_status?: string, message?: string, task_status_msg?: string, create_time?: number, update_time?: number, created_at?: number, updated_at?: number, external_id?: string, outputs?: { type: string, id?: string, url?: string, watermark_url?: string, duration?: string, group_id?: string, mp3_url?: string, wav_url?: string, mp3_duration?: string, wav_duration?: string, name?: string, owned_by?: string, status?: string }[], billing?: { charge_type?: string, cash_type?: string, amount?: string, currency?: string, package_type?: string, list_price?: string }[], final_unit_deduction?: string, final_balance_deduction?: { quota?: string, list_price?: string }, watermark_info?: { enabled: boolean }, task_info?: { external_task_id?: string }, task_result?: { images?: { index?: number, url?: string, watermark_url?: string }[], videos?: { id?: string, url?: string, watermark_url?: string, duration?: string }[] } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kling.api.textToVideo.create",
+      "shortPath": "textToVideo.create",
+      "description": "Create a text-to-video generation task",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "kling-2.5-turbo | kling-2.6 | kling-3.0 | kling-3.0-turbo"
+          },
+          {
+            "key": "prompt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "settings",
+            "optional": true,
+            "type": "{ resolution?: string, aspect_ratio?: string, duration?: number, audio?: string, multi_shot?: boolean }"
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{ callback_url?: string, external_task_id?: string, watermark_info?: { enabled: boolean } }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string, task_id?: string, status?: string, task_status?: string, create_time?: number, update_time?: number, created_at?: number, updated_at?: number, external_id?: string, task_info?: { external_task_id?: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kling.api.textToVideo.get",
+      "shortPath": "textToVideo.get",
+      "description": "Fetch a text-to-video task by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string, task_id?: string, status?: string, task_status?: string, message?: string, task_status_msg?: string, create_time?: number, update_time?: number, created_at?: number, updated_at?: number, external_id?: string, outputs?: { type: string, id?: string, url?: string, watermark_url?: string, duration?: string, group_id?: string, mp3_url?: string, wav_url?: string, mp3_duration?: string, wav_duration?: string, name?: string, owned_by?: string, status?: string }[], billing?: { charge_type?: string, cash_type?: string, amount?: string, currency?: string, package_type?: string, list_price?: string }[], final_unit_deduction?: string, final_balance_deduction?: { quota?: string, list_price?: string }, watermark_info?: { enabled: boolean }, task_info?: { external_task_id?: string }, task_result?: { images?: { index?: number, url?: string, watermark_url?: string }[], videos?: { id?: string, url?: string, watermark_url?: string, duration?: string }[] } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kling.api.textToVideo.list",
+      "shortPath": "textToVideo.list",
+      "description": "List text-to-video and other video tasks by cursor",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "start_time",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "end_time",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "{ key: status | product_type, values: string[] }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ result: { id?: string, task_id?: string, status?: string, task_status?: string, message?: string, task_status_msg?: string, create_time?: number, update_time?: number, created_at?: number, updated_at?: number, external_id?: string, outputs?: { type: string, id?: string, url?: string, watermark_url?: string, duration?: string, group_id?: string, mp3_url?: string, wav_url?: string, mp3_duration?: string, wav_duration?: string, name?: string, owned_by?: string, status?: string }[], billing?: { charge_type?: string, cash_type?: string, amount?: string, currency?: string, package_type?: string, list_price?: string }[], final_unit_deduction?: string, final_balance_deduction?: { quota?: string, list_price?: string }, watermark_info?: { enabled: boolean }, task_info?: { external_task_id?: string }, task_result?: { images?: { index?: number, url?: string, watermark_url?: string }[], videos?: { id?: string, url?: string, watermark_url?: string, duration?: string }[] } }[], count?: number, next_cursor?: string, has_more?: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kling.api.videoEffects.create",
+      "shortPath": "videoEffects.create",
+      "description": "Create a video effect task from a scene template",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "effect_scene",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "input",
+            "optional": false,
+            "type": "{ image?: string, images?: string[] }"
+          },
+          {
+            "key": "callback_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "external_task_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string, task_id?: string, status?: string, task_status?: string, create_time?: number, update_time?: number, created_at?: number, updated_at?: number, external_id?: string, task_info?: { external_task_id?: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kling.api.videoEffects.get",
+      "shortPath": "videoEffects.get",
+      "description": "Fetch a video effect task by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string, task_id?: string, status?: string, task_status?: string, message?: string, task_status_msg?: string, create_time?: number, update_time?: number, created_at?: number, updated_at?: number, external_id?: string, outputs?: { type: string, id?: string, url?: string, watermark_url?: string, duration?: string, group_id?: string, mp3_url?: string, wav_url?: string, mp3_duration?: string, wav_duration?: string, name?: string, owned_by?: string, status?: string }[], billing?: { charge_type?: string, cash_type?: string, amount?: string, currency?: string, package_type?: string, list_price?: string }[], final_unit_deduction?: string, final_balance_deduction?: { quota?: string, list_price?: string }, watermark_info?: { enabled: boolean }, task_info?: { external_task_id?: string }, task_result?: { images?: { index?: number, url?: string, watermark_url?: string }[], videos?: { id?: string, url?: string, watermark_url?: string, duration?: string }[] } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kling.api.videoEffects.list",
+      "shortPath": "videoEffects.list",
+      "description": "List video effect tasks by page",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageNum",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string, task_id?: string, status?: string, task_status?: string, message?: string, task_status_msg?: string, create_time?: number, update_time?: number, created_at?: number, updated_at?: number, external_id?: string, outputs?: { type: string, id?: string, url?: string, watermark_url?: string, duration?: string, group_id?: string, mp3_url?: string, wav_url?: string, mp3_duration?: string, wav_duration?: string, name?: string, owned_by?: string, status?: string }[], billing?: { charge_type?: string, cash_type?: string, amount?: string, currency?: string, package_type?: string, list_price?: string }[], final_unit_deduction?: string, final_balance_deduction?: { quota?: string, list_price?: string }, watermark_info?: { enabled: boolean }, task_info?: { external_task_id?: string }, task_result?: { images?: { index?: number, url?: string, watermark_url?: string }[], videos?: { id?: string, url?: string, watermark_url?: string, duration?: string }[] } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kling.api.virtualTryOn.create",
+      "shortPath": "virtualTryOn.create",
+      "description": "Create a virtual try-on task for a product and person",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contents",
+            "optional": false,
+            "type": "{ type: product_image | person_image, url: string }[]"
+          },
+          {
+            "key": "settings",
+            "optional": true,
+            "type": "{ keep_face?: boolean, keep_pose?: boolean, keep_background?: boolean }"
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{ callback_url?: string, external_task_id?: string, watermark?: { enabled: boolean } }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string, task_id?: string, status?: string, task_status?: string, create_time?: number, update_time?: number, created_at?: number, updated_at?: number, external_id?: string, task_info?: { external_task_id?: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kling.api.virtualTryOn.get",
+      "shortPath": "virtualTryOn.get",
+      "description": "Fetch a virtual try-on task by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string, task_id?: string, status?: string, task_status?: string, message?: string, task_status_msg?: string, create_time?: number, update_time?: number, created_at?: number, updated_at?: number, external_id?: string, outputs?: { type: string, id?: string, url?: string, watermark_url?: string, duration?: string, group_id?: string, mp3_url?: string, wav_url?: string, mp3_duration?: string, wav_duration?: string, name?: string, owned_by?: string, status?: string }[], billing?: { charge_type?: string, cash_type?: string, amount?: string, currency?: string, package_type?: string, list_price?: string }[], final_unit_deduction?: string, final_balance_deduction?: { quota?: string, list_price?: string }, watermark_info?: { enabled: boolean }, task_info?: { external_task_id?: string }, task_result?: { images?: { index?: number, url?: string, watermark_url?: string }[], videos?: { id?: string, url?: string, watermark_url?: string, duration?: string }[] } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kling.api.virtualTryOn.list",
+      "shortPath": "virtualTryOn.list",
+      "description": "List virtual try-on tasks by cursor",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "start_time",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "end_time",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "{ key: status, values: string[] }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ result: { id?: string, task_id?: string, status?: string, task_status?: string, message?: string, task_status_msg?: string, create_time?: number, update_time?: number, created_at?: number, updated_at?: number, external_id?: string, outputs?: { type: string, id?: string, url?: string, watermark_url?: string, duration?: string, group_id?: string, mp3_url?: string, wav_url?: string, mp3_duration?: string, wav_duration?: string, name?: string, owned_by?: string, status?: string }[], billing?: { charge_type?: string, cash_type?: string, amount?: string, currency?: string, package_type?: string, list_price?: string }[], final_unit_deduction?: string, final_balance_deduction?: { quota?: string, list_price?: string }, watermark_info?: { enabled: boolean }, task_info?: { external_task_id?: string }, task_result?: { images?: { index?: number, url?: string, watermark_url?: string }[], videos?: { id?: string, url?: string, watermark_url?: string, duration?: string }[] } }[], count?: number, next_cursor?: string, has_more?: boolean }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

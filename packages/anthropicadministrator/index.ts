@@ -23,11 +23,11 @@ import {
 import type {
 	AnthropicAdministratorEndpointInputs,
 	AnthropicAdministratorEndpointOutputs,
-} from './endpoints/types';
+} from './endpoints/types/index';
 import {
 	AnthropicAdministratorEndpointInputSchemas,
 	AnthropicAdministratorEndpointOutputSchemas,
-} from './endpoints/types';
+} from './endpoints/types/index';
 import { errorHandlers } from './error-handlers';
 import { AnthropicAdministratorSchema } from './schema';
 
@@ -40,14 +40,6 @@ export type AnthropicAdministratorPluginOptions = {
 		typeof anthropicAdministratorEndpointsNested
 	>;
 };
-
-export type AnthropicAdministratorContext = CorsairPluginContext<
-	typeof AnthropicAdministratorSchema,
-	AnthropicAdministratorPluginOptions
->;
-
-export type AnthropicAdministratorKeyBuilderContext =
-	KeyBuilderContext<AnthropicAdministratorPluginOptions>;
 
 export type AnthropicAdministratorBoundEndpoints = BindEndpoints<
 	typeof anthropicAdministratorEndpointsNested
@@ -169,9 +161,7 @@ export const anthropicAdministratorEndpointSchemas = {
 	typeof anthropicAdministratorEndpointsNested
 >;
 
-const defaultAuthType = 'api_key' as const;
-
-const anthropicAdministratorEndpointMeta = {
+export const anthropicAdministratorEndpointMeta = {
 	'organization.getOrganization': {
 		riskLevel: 'read',
 		description: 'Get the organization associated with the Admin API key',
@@ -269,10 +259,24 @@ const anthropicAdministratorEndpointMeta = {
 	typeof anthropicAdministratorEndpointsNested
 >;
 
+const defaultAuthType = 'api_key' as const;
+
 export const anthropicAdministratorAuthConfig = {
 	api_key: {},
 	oauth_2: {},
 } as const satisfies PluginAuthConfig;
+
+export type AnthropicAdministratorContext = CorsairPluginContext<
+	typeof AnthropicAdministratorSchema,
+	AnthropicAdministratorPluginOptions,
+	undefined,
+	typeof anthropicAdministratorAuthConfig
+>;
+
+export type AnthropicAdministratorKeyBuilderContext = KeyBuilderContext<
+	AnthropicAdministratorPluginOptions,
+	typeof anthropicAdministratorAuthConfig
+>;
 
 export type BaseAnthropicAdministratorPlugin<
 	T extends AnthropicAdministratorPluginOptions,
@@ -282,7 +286,8 @@ export type BaseAnthropicAdministratorPlugin<
 	typeof anthropicAdministratorEndpointsNested,
 	typeof anthropicAdministratorWebhooksNested,
 	T,
-	typeof defaultAuthType
+	typeof defaultAuthType,
+	typeof anthropicAdministratorAuthConfig
 >;
 
 export type InternalAnthropicAdministratorPlugin =
@@ -293,16 +298,17 @@ export type ExternalAnthropicAdministratorPlugin<
 > = BaseAnthropicAdministratorPlugin<T>;
 
 /**
- * Anthropic Admin API plugin — organization members, invites, workspaces,
+ * Anthropic Admin API plugin: organization members, invites, workspaces,
  * workspace members and API keys.
  *
- * Requires an Admin API key (`sk-ant-admin…`) or an OAuth token with the
- * `org:admin` scope. A standard Anthropic API key is rejected by these
- * endpoints.
+ * Operations require an Admin API key (`sk-ant-admin…`) or an OAuth token
+ * with the `org:admin` scope.
  */
 export function anthropicadministrator<
 	const T extends AnthropicAdministratorPluginOptions,
 >(
+	// Safe: every option is optional, so an empty object is a valid default.
+	// A narrower type is not practical because T is the caller's literal options type, unknown until the call site.
 	incomingOptions: AnthropicAdministratorPluginOptions &
 		T = {} as AnthropicAdministratorPluginOptions & T,
 ): ExternalAnthropicAdministratorPlugin<T> {
@@ -318,9 +324,15 @@ export function anthropicadministrator<
 		hooks: options.hooks,
 		webhookHooks: undefined,
 		endpoints: anthropicAdministratorEndpointsNested,
+		endpointMeta:
+			anthropicAdministratorEndpointMeta satisfies RequiredPluginEndpointMeta<
+				typeof anthropicAdministratorEndpointsNested
+			>,
 		webhooks: anthropicAdministratorWebhooksNested,
-		endpointMeta: anthropicAdministratorEndpointMeta,
-		endpointSchemas: anthropicAdministratorEndpointSchemas,
+		endpointSchemas:
+			anthropicAdministratorEndpointSchemas satisfies RequiredPluginEndpointSchemas<
+				typeof anthropicAdministratorEndpointsNested
+			>,
 		pluginWebhookMatcher: undefined,
 		errorHandlers: {
 			...errorHandlers,
@@ -335,19 +347,15 @@ export function anthropicadministrator<
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				const res = await ctx.keys.get_api_key();
-				if (!res) {
-					throw new AuthMissingError('anthropicadministrator', 'api_key');
-				}
-				return res;
+				const admin = await ctx.keys.get_api_key();
+				if (admin) return admin;
+				throw new AuthMissingError('anthropicadministrator', 'api_key');
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const res = await ctx.keys.get_access_token();
-				if (!res) {
-					throw new AuthMissingError('anthropicadministrator', 'oauth_2');
-				}
-				return res;
+				const admin = await ctx.keys.get_access_token();
+				if (admin) return admin;
+				throw new AuthMissingError('anthropicadministrator', 'oauth_2');
 			}
 
 			// Never fall through with an empty credential: an empty key would be
@@ -372,4 +380,4 @@ export type {
 	User,
 	Workspace,
 	WorkspaceMember,
-} from './endpoints/types';
+} from './endpoints/types/index';

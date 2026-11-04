@@ -14,6 +14,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import {
 	Clients,
 	Me,
@@ -862,6 +863,10 @@ export function toggl<const T extends TogglPluginOptions>(
 			...errorHandlers,
 			...options.errorHandlers,
 		},
+		/**
+		 * Resolves the Toggl API token. Throws AuthMissingError when the stored
+		 * key is missing, so the request is not sent as Basic auth of `:api_token`.
+		 */
 		keyBuilder: async (ctx: TogglKeyBuilderContext, source) => {
 			if (source === 'endpoint' && options.key) {
 				return options.key;
@@ -869,7 +874,10 @@ export function toggl<const T extends TogglPluginOptions>(
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				return res ?? '';
+				if (!res) {
+					throw new AuthMissingError('toggl', 'api_key');
+				}
+				return res;
 			}
 
 			return '';

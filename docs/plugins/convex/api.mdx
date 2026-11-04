@@ -1,0 +1,835 @@
+---
+title: API
+description: "API reference for Convex: every `convex.api.*` operation with input and output types."
+---
+
+Every `convex.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Custom Domains
+
+### delete
+
+`customDomains.delete`
+
+Remove a custom domain from a Convex deployment
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.convex.api.customDomains.delete({ deployment_name: 'happy-otter-123', requestDestination: 'convexSite', domain: 'api.example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deployment_name` | `string` | Yes | — |
+| `requestDestination` | `convexCloud \| convexSite` | Yes | — |
+| `domain` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+## Deploy Keys
+
+### create
+
+`deployKeys.create`
+
+Create a deploy key for a Convex deployment
+
+**Risk:** `write`
+
+```ts
+await corsair.convex.api.deployKeys.create({
+	deployment_name: 'happy-otter-123',
+	name: 'ci',
+	allowedActions: ['deployment:deploy'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deployment_name` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `allowedActions` | `deployment:deploy \| deployment:env:view \| deployment:env:write \| deployment:pause \| deployment:unpause \| deployment:logs:view \| deployment:metrics:view \| deployment:integrations:view \| deployment:integrations:write \| deployment:data:view \| deployment:data:write \| deployment:backups:view \| deployment:backups:create \| deployment:backups:download \| deployment:backups:delete \| deployment:backups:import \| deployment:functions:actAsUser \| deployment:functions:runInternalQueries \| deployment:functions:runInternalMutations \| deployment:functions:runInternalActions \| deployment:functions:runTestQuery \| deployment:auditLog:view \| deployment:usageLimits:view \| deployment:usageLimits:write \| deployment:usage:view \| deployment:aiGateway:use[]` | No | — |
+| `expiresAt` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deployKey` | `string` | Yes | — |
+
+
+
+---
+
+### list
+
+`deployKeys.list`
+
+List deploy keys for a Convex deployment
+
+**Risk:** `read`
+
+```ts
+await corsair.convex.api.deployKeys.list({ deployment_name: 'happy-otter-123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deployment_name` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  creationTime: number,
+  lastUsedTime?: number | null,
+  expiresAt?: number | null,
+  creator?: number | null,
+  managedBy?: vercel | {
+    oauthApp: string
+  } | null,
+  allowedActions: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Deployment
+
+### executeQueryBatch
+
+`deployment.executeQueryBatch`
+
+Execute a batch of Convex queries against a deployment
+
+**Risk:** `read`
+
+```ts
+await corsair.convex.api.deployment.executeQueryBatch({
+	subdomain: 'happy-otter-123',
+	queries: [{
+		path: 'messages:list',
+		args: { channel: 'general' },
+	}],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subdomain` | `string` | No | — |
+| `deploymentUrl` | `string` | No | — |
+| `deployKey` | `string` | No | — |
+| `queries` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="queries full type">
+
+```ts
+{
+  path: string,
+  args: {
+  },
+  format?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+(
+  {
+    status: success,
+    value: lazy,
+    logLines?: string[]
+  } | {
+    status: error,
+    errorMessage: string,
+    errorData?: lazy,
+    logLines?: string[]
+  }
+)[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getQueryTimestamp
+
+`deployment.getQueryTimestamp`
+
+Get the current query timestamp for a Convex deployment
+
+**Risk:** `read`
+
+```ts
+await corsair.convex.api.deployment.getQueryTimestamp({ subdomain: 'happy-otter-123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subdomain` | `string` | No | — |
+| `deploymentUrl` | `string` | No | — |
+| `deployKey` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ts` | `string` | Yes | — |
+
+
+
+---
+
+### listLogStreams
+
+`deployment.listLogStreams`
+
+List log streams configured for a Convex deployment
+
+**Risk:** `read`
+
+```ts
+await corsair.convex.api.deployment.listLogStreams({ subdomain: 'happy-otter-123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subdomain` | `string` | No | — |
+| `deploymentUrl` | `string` | No | — |
+| `deployKey` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  logStreamType: datadog | webhook | axiom | sentry | postHogLogs | postHogErrorTracking | s3Export,
+  status: {
+    type: pending | restarting | failed | active | deleting,
+    reason?: string
+  },
+  topics?: string[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Deployments
+
+### create
+
+`deployments.create`
+
+Create a new deployment for a Convex project
+
+**Risk:** `write`
+
+```ts
+await corsair.convex.api.deployments.create({ project_id: '123', type: 'prod', region: 'aws-us-east-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `type` | `dev \| prod \| preview \| custom` | Yes | — |
+| `class` | `string` | No | — |
+| `region` | `string` | No | — |
+| `reference` | `string` | No | — |
+| `isDefault` | `boolean` | No | — |
+| `expiresAt` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `name` | `string` | Yes | — |
+| `createTime` | `number` | Yes | — |
+| `lastDeployTime` | `number` | No | — |
+| `deploymentType` | `dev \| prod \| preview \| custom` | Yes | — |
+| `projectId` | `number` | Yes | — |
+| `creator` | `number` | No | — |
+| `previewIdentifier` | `string` | No | — |
+| `region` | `string` | No | — |
+| `isDefault` | `boolean` | No | — |
+| `reference` | `string` | No | — |
+| `dashboardEditConfirmation` | `boolean` | No | — |
+| `deploymentUrl` | `string` | No | — |
+| `expiresAt` | `number` | No | — |
+| `class` | `string` | No | — |
+| `sendLogsToClient` | `boolean` | No | — |
+| `kind` | `cloud \| local` | Yes | — |
+| `port` | `number` | No | — |
+| `deviceName` | `string` | No | — |
+| `isActive` | `boolean` | No | — |
+
+
+
+---
+
+### delete
+
+`deployments.delete`
+
+Delete a Convex deployment and all of its data and files
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.convex.api.deployments.delete({ deployment_name: 'happy-otter-123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deployment_name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### get
+
+`deployments.get`
+
+Get details about a Convex cloud deployment
+
+**Risk:** `read`
+
+```ts
+await corsair.convex.api.deployments.get({ deployment_name: 'happy-otter-123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deployment_name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `name` | `string` | Yes | — |
+| `createTime` | `number` | Yes | — |
+| `lastDeployTime` | `number` | No | — |
+| `deploymentType` | `dev \| prod \| preview \| custom` | Yes | — |
+| `projectId` | `number` | Yes | — |
+| `creator` | `number` | No | — |
+| `previewIdentifier` | `string` | No | — |
+| `region` | `string` | No | — |
+| `isDefault` | `boolean` | No | — |
+| `reference` | `string` | No | — |
+| `dashboardEditConfirmation` | `boolean` | No | — |
+| `deploymentUrl` | `string` | No | — |
+| `expiresAt` | `number` | No | — |
+| `class` | `string` | No | — |
+| `sendLogsToClient` | `boolean` | No | — |
+| `kind` | `cloud \| local` | Yes | — |
+| `port` | `number` | No | — |
+| `deviceName` | `string` | No | — |
+| `isActive` | `boolean` | No | — |
+
+
+
+---
+
+### list
+
+`deployments.list`
+
+List deployments for a Convex project
+
+**Risk:** `read`
+
+```ts
+await corsair.convex.api.deployments.list({ project_id: '123', deploymentType: 'prod' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `includeLocal` | `boolean` | No | — |
+| `isDefault` | `boolean` | No | — |
+| `deploymentType` | `dev \| prod \| preview \| custom` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: number,
+  name: string,
+  createTime: number,
+  lastDeployTime?: number | null,
+  deploymentType: dev | prod | preview | custom,
+  projectId: number,
+  creator?: number | null,
+  previewIdentifier?: string | null,
+  region?: string,
+  isDefault?: boolean,
+  reference?: string,
+  dashboardEditConfirmation?: boolean | null,
+  deploymentUrl?: string,
+  expiresAt?: number | null,
+  class?: string,
+  sendLogsToClient?: boolean | null,
+  kind: cloud | local,
+  port?: number,
+  deviceName?: string,
+  isActive?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`deployments.update`
+
+Update properties of an existing Convex deployment
+
+**Risk:** `write`
+
+```ts
+await corsair.convex.api.deployments.update({ deployment_name: 'happy-otter-123', reference: 'staging' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deployment_name` | `string` | Yes | — |
+| `reference` | `string` | No | — |
+| `dashboardEditConfirmation` | `boolean` | No | — |
+| `expiresAt` | `number` | No | — |
+| `sendLogsToClient` | `boolean` | No | — |
+| `class` | `string` | No | — |
+| `isDefault` | `boolean` | No | — |
+| `deploymentType` | `dev \| prod \| preview \| custom` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+## Platform
+
+### getTokenDetails
+
+`platform.getTokenDetails`
+
+Get details about the token used to authenticate
+
+**Risk:** `read`
+
+```ts
+await corsair.convex.api.platform.getTokenDetails({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `teamId` | `number` | No | — |
+| `projectId` | `number` | No | — |
+| `name` | `string` | Yes | — |
+| `createTime` | `number` | Yes | — |
+| `type` | `teamToken \| projectToken` | Yes | — |
+
+
+
+---
+
+### listDeploymentClasses
+
+`platform.listDeploymentClasses`
+
+List the deployment classes available to a Convex team
+
+**Risk:** `read`
+
+```ts
+await corsair.convex.api.platform.listDeploymentClasses({ team_id: '41' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  type: string,
+  available: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listDeploymentRegions
+
+`platform.listDeploymentRegions`
+
+List the deployment regions available to a Convex team
+
+**Risk:** `read`
+
+```ts
+await corsair.convex.api.platform.listDeploymentRegions({ team_id: '41' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  name: string,
+  displayName: string,
+  available: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Projects
+
+### create
+
+`projects.create`
+
+Create a new Convex project, optionally provisioning a deployment
+
+**Risk:** `write`
+
+```ts
+await corsair.convex.api.projects.create({ team_id: '41', projectName: 'My App', deploymentType: 'dev' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_id` | `string` | Yes | — |
+| `projectName` | `string` | Yes | — |
+| `deploymentType` | `dev \| prod \| preview \| custom` | No | — |
+| `deploymentClass` | `string` | No | — |
+| `deploymentRegion` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `number` | Yes | — |
+| `id` | `number` | Yes | — |
+| `slug` | `string` | Yes | — |
+| `deploymentName` | `string` | No | — |
+| `deploymentUrl` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`projects.delete`
+
+Delete a Convex project and all of its deployments
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.convex.api.projects.delete({ project_id: '123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### getById
+
+`projects.getById`
+
+Get a Convex project by its ID
+
+**Risk:** `read`
+
+```ts
+await corsair.convex.api.projects.getById({ project_id: '123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `slug` | `string` | Yes | — |
+| `teamId` | `number` | Yes | — |
+| `teamSlug` | `string` | Yes | — |
+| `createTime` | `number` | Yes | — |
+| `prodDeploymentName` | `string` | No | — |
+| `devDeploymentName` | `string` | No | — |
+
+
+
+---
+
+### getBySlug
+
+`projects.getBySlug`
+
+Get a Convex project by team identifier and project slug
+
+**Risk:** `read`
+
+```ts
+await corsair.convex.api.projects.getBySlug({ team_id_or_slug: 'acme', project_slug: 'my-app' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_id_or_slug` | `string` | Yes | — |
+| `project_slug` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `slug` | `string` | Yes | — |
+| `teamId` | `number` | Yes | — |
+| `teamSlug` | `string` | Yes | — |
+| `createTime` | `number` | Yes | — |
+| `prodDeploymentName` | `string` | No | — |
+| `devDeploymentName` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`projects.list`
+
+List projects in a Convex team
+
+**Risk:** `read`
+
+```ts
+await corsair.convex.api.projects.list({ team_id: '41', limit: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_id` | `string` | Yes | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `q` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `pagination` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  slug: string,
+  teamId: number,
+  teamSlug: string,
+  createTime: number,
+  prodDeploymentName?: string | null,
+  devDeploymentName?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  hasMore: boolean,
+  nextCursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

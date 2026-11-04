@@ -1,5 +1,23 @@
 import type { CorsairDatabase } from '../../db/kysely/database';
 import type { HubConfig } from '../../hub';
+import type { ManagedPricingFailedWhen } from '../../hub/contracts/managed-pricing-api';
+import type { ManagedPricingCall } from '../../hub/managed-pricing-auth';
+import {
+	answeredFailed,
+	createManagedPricingCredentialCache,
+	describeAnsweredFailure,
+	readUsageUnits,
+	reportManagedPricingCallFailed,
+	reportManagedPricingCallUsage,
+	resolveManagedPricingCall,
+} from '../../hub/managed-pricing-auth';
+import type { ManagedJobKind } from '../../hub/managed-pricing-jobs';
+import {
+	getManagedJobKinds,
+	managedJobKindFor,
+	managedJobRequestFields,
+	reportManagedJobCall,
+} from '../../hub/managed-pricing-jobs';
 import { reportPluginConnectionStatusFromBinding } from '../../hub/report-connection-status';
 import { throwAuthMissingEndpointError } from '../auth/auth-missing-message';
 import { AuthMissingError } from '../auth/errors/auth-missing';
@@ -9,10 +27,14 @@ import { recordConnectRequestBestEffort } from '../connect-request/store';
 import type { CorsairErrorHandler } from '../errors';
 import { handleCorsairError } from '../errors/handler';
 import {
+	activeMode,
 	assertReadonlyAllowed,
 	enforcePermission,
+	evaluatePermission,
 	parseDurationMs,
 	resolveAsyncApprovalMessage,
+	stricterMode,
+	stricterPolicy,
 } from '../permissions';
 import { PermissionRequiredError } from '../permissions/errors/permission-required';
 import type {
@@ -24,6 +46,18 @@ import type {
 	PermissionMode,
 	PermissionPolicy,
 } from '../plugins';
+import { getPluginAuthType } from '../utils/plugin-auth';
+
+const managedPricingCacheByPlugin = new Map<string, object>();
+
+function managedPricingCacheFor(pluginId: string): object {
+	let cache = managedPricingCacheByPlugin.get(pluginId);
+	if (!cache) {
+		cache = createManagedPricingCredentialCache();
+		managedPricingCacheByPlugin.set(pluginId, cache);
+	}
+	return cache;
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Endpoint Utilities
@@ -70,6 +104,7 @@ export function bindEndpointsRecursively({
 	kek,
 	allPlugins,
 	multiTenancy,
+	encryptDataAtRest,
 }: {
 	endpoints: Record<string, unknown>;
 	hooks: Record<string, unknown> | undefined;
@@ -79,7 +114,7 @@ export function bindEndpointsRecursively({
 	errorHandlers: CorsairErrorHandler;
 	currentPath: string[];
 	keyBuilder?: CorsairKeyBuilderBase;
-	/** Permission mode + per-endpoint overrides from plugin options. When set, every call is gated. */
+	/** Permission mode + per-endpoint overrides from plugin options. Composed with the caller's mode, if any. */
 	permissionsConfig?: {
 		mode: PermissionMode;
 		overrides?: Record<string, PermissionPolicy>;
@@ -99,6 +134,7 @@ export function bindEndpointsRecursively({
 	kek?: string;
 	allPlugins?: readonly CorsairPlugin[];
 	multiTenancy?: boolean;
+	encryptDataAtRest?: boolean;
 }): void {
 	for (const [key, value] of Object.entries(endpoints)) {
 		// we have to retype this now because it's nested webhooks
@@ -124,8 +160,30 @@ export function bindEndpointsRecursively({
 
 				// ── Permission guard ────────────────────────────────────────────────────────────────
 				let onPermissionComplete: (() => Promise<void>) | undefined;
-				if (permissionsConfig) {
+				// A mode only tightens, so a caller naming one cannot relax what the
+				// server configured.
+				const callerMode = activeMode();
+				const configMode = permissionsConfig?.mode;
+				const mode = stricterMode(callerMode, configMode);
+				if (mode) {
 					const meta = endpointMetaEntry;
+					const riskLevel = meta?.riskLevel ?? 'write';
+					const configured = permissionsConfig?.overrides?.[operationPath];
+					// An override is the plugin's exception to its own mode, so a
+					// caller that tightens past that mode overrules it. A caller that
+					// does not leaves it standing: judging it against `mode` instead
+					// would count the plugin's own mode twice and drop an exception
+					// nobody asked to withdraw.
+					const tightened =
+						callerMode !== undefined &&
+						callerMode !== configMode &&
+						mode === callerMode;
+					const override = tightened
+						? stricterPolicy(
+								configured,
+								evaluatePermission(riskLevel, callerMode),
+							)
+						: configured;
 					const {
 						result: permResult,
 						reason: permReason,
@@ -137,10 +195,9 @@ export function bindEndpointsRecursively({
 						pluginId,
 						endpointPath: operationPath,
 						args,
-						mode: permissionsConfig.mode,
-						override: permissionsConfig.overrides?.[operationPath],
-						// Default to 'write' when no meta declared — conservative fallback
-						riskLevel: meta?.riskLevel ?? 'write',
+						mode,
+						override,
+						riskLevel,
 						meta,
 						db: database,
 						timeoutMs: permissionsOptions
@@ -154,7 +211,10 @@ export function bindEndpointsRecursively({
 						if (permReason === 'denied') {
 							msg = `Action '${operationPath}' was denied by the user. Await further instructions before proceeding.`;
 						} else if (permReason === 'policy') {
-							msg = `Action '${operationPath}' is blocked by the permission policy. Update the corsair config to allow it.`;
+							// A scope has no config behind it to send the caller to.
+							msg = callerMode
+								? `Action '${operationPath}' is blocked by permission mode '${callerMode}'.`
+								: `Action '${operationPath}' is blocked by the permission policy. Update the corsair config to allow it.`;
 						} else if (permReason === 'timeout') {
 							msg = `Action '${operationPath}' timed out waiting for approval.`;
 						} else if (permToken && permId) {
@@ -258,8 +318,132 @@ export function bindEndpointsRecursively({
 				};
 
 				let key: string | undefined;
+				// Set once Hub has charged for this call; a failure from here on is
+				// reported so the charge is given back.
+				let meteredCall: ManagedPricingCall | undefined;
+				// Set when Hub prices the call per unit: where the result says how
+				// many units it used.
+				let usagePath: string | undefined;
+				// Set for a provider that answers some failures with a success
+				// status: how its result says the call failed.
+				let failedWhen: ManagedPricingFailedWhen | undefined;
+				// Set when the call starts a provider job or reads one back on
+				// Corsair's key (managed-pricing-jobs.ts).
+				let managedJob: ManagedJobKind | undefined;
+				// What the key request carried, kept rather than re-read: a before
+				// hook may change `args` in place.
+				let sentJobFields: { cap?: number; jobId?: string } = {};
+				// Set once a started job is reported: it is running at the provider,
+				// so a later local failure must not give its hold back.
+				let startedJob = false;
+				// unknown: whatever the call, a hook or the permission record threw.
+				const reportIfCharged = async (error: unknown) => {
+					// A job read or a call scoped to a job is never charged, so it has
+					// nothing to give back.
+					if (
+						meteredCall &&
+						hubConfig &&
+						managedJob?.role !== 'status' &&
+						managedJob?.role !== 'scoped' &&
+						!startedJob
+					) {
+						await reportManagedPricingCallFailed(hubConfig, meteredCall, error);
+					}
+				};
+				// Right after the provider answers, before any hook or approval
+				// record that could still throw: the job exists either way.
+				// unknown: the arguments the provider got and what it returned.
+				const reportJob = async (callArgs: unknown, result: unknown) => {
+					if (!managedJob || !hubConfig || !meteredCall) return;
+					const reported = await reportManagedJobCall(
+						hubConfig,
+						managedJob,
+						meteredCall,
+						callArgs,
+						result,
+					);
+					startedJob = reported.startedJob;
+				};
+				// What the provider's answer said, read the moment it arrives: an
+				// after hook may change the result in place, and the charge follows
+				// the provider, not the hook.
+				let answer: { failure?: string; units?: number } = {};
+				// unknown: each plugin's result has its own shape; only the paths are known.
+				const readAnswer = (result: unknown) => {
+					const failure =
+						failedWhen && answeredFailed(result, failedWhen)
+							? describeAnsweredFailure(result, failedWhen)
+							: undefined;
+					const units = usagePath
+						? readUsageUnits(result, usagePath)
+						: undefined;
+					answer = {
+						...(failure !== undefined ? { failure } : {}),
+						...(units !== undefined ? { units } : {}),
+					};
+				};
+				// Sent once the hooks are done, so a hook that throws still takes the
+				// thrown-error path. An answer that says the call failed is given back
+				// like a call that threw; the result still comes back as it came. A
+				// job call reports no usage here: its usage is settled once, when a
+				// read sees the job end (reportJob).
+				const reportUsage = async () => {
+					if (!meteredCall || !hubConfig) return;
+					if (answer.failure !== undefined) {
+						await reportIfCharged(new Error(answer.failure));
+						return;
+					}
+					if (!usagePath || managedJob || answer.units === undefined) return;
+					await reportManagedPricingCallUsage(
+						hubConfig,
+						meteredCall,
+						answer.units,
+					);
+				};
+				const endpointCtx = { ...ctx, meteredOperationId: operationPath };
+				const ctxTenantId =
+					typeof ctx.tenantId === 'string' ? ctx.tenantId : undefined;
+				const pluginAuthType = plugin ? getPluginAuthType(plugin) : undefined;
 				try {
-					key = keyBuilder ? await keyBuilder(ctx, 'endpoint') : undefined;
+					if (pluginAuthType === 'managed_pricing' && hubConfig) {
+						const cache = managedPricingCacheFor(pluginId);
+						managedJob = managedJobKindFor(
+							await getManagedJobKinds(hubConfig, cache),
+							pluginId,
+							operationPath,
+						);
+						sentJobFields = managedJobRequestFields(managedJob, args);
+						const resolved = await resolveManagedPricingCall(
+							{
+								hub: hubConfig,
+								tenantId: ctxTenantId ?? tenantId,
+								meteredOperationId: operationPath,
+							},
+							{
+								plugin: pluginId,
+								cache,
+								operation: operationPath,
+								...sentJobFields,
+							},
+						);
+						// Hub names a job start in its own answer too, so the job is
+						// recorded even when its table could not be read.
+						if (!managedJob && resolved.startedJobIdPath) {
+							managedJob = {
+								plugin: pluginId,
+								operation: operationPath,
+								role: 'start',
+								id_path: resolved.startedJobIdPath,
+								status_operation: '',
+							};
+						}
+						key = resolved.apiKey;
+						meteredCall = resolved.call;
+						usagePath = resolved.usagePath;
+						failedWhen = resolved.failedWhen;
+					} else if (keyBuilder) {
+						key = await keyBuilder(endpointCtx, 'endpoint');
+					}
 				} catch (err) {
 					// Hub already minted a scoped connect link and put it on the typed
 					// error — report the connection unverified and rethrow it intact.
@@ -279,6 +463,8 @@ export function bindEndpointsRecursively({
 							tenantId: err.tenantId ?? tenantId,
 							plugin: err.plugin,
 							connectUrl: err.connectUrl,
+							encryptDataAtRest,
+							kek: encryptDataAtRest ? kek : undefined,
 						});
 						throw err;
 					}
@@ -314,6 +500,8 @@ export function bindEndpointsRecursively({
 									tenantId: enriched.tenantId ?? tenantId,
 									plugin: enriched.pluginId,
 									connectUrl: enriched.connectUrl,
+									encryptDataAtRest,
+									kek: encryptDataAtRest ? kek : undefined,
 								});
 							}
 							throw enriched;
@@ -323,8 +511,19 @@ export function bindEndpointsRecursively({
 				}
 
 				if (!endpointHooks?.before && !endpointHooks?.after) {
-					const res = await call(0, { ...ctx, key }, args);
-					await onPermissionComplete?.();
+					let res: Awaited<ReturnType<typeof call>>;
+					// Recording a completed approval is inside: if it throws, the
+					// caller gets an error, so the call is refunded like any other.
+					try {
+						res = await call(0, { ...ctx, key }, args);
+						readAnswer(res);
+						await reportJob(args, res);
+						await onPermissionComplete?.();
+					} catch (error) {
+						await reportIfCharged(error);
+						throw error;
+					}
+					await reportUsage();
 					if (plugin && hubConfig) {
 						reportPluginConnectionStatusFromBinding({
 							hub: hubConfig,
@@ -340,22 +539,51 @@ export function bindEndpointsRecursively({
 				}
 
 				const ctxWithKey = { ...ctx, key };
-				const beforeResult = endpointHooks.before
-					? await endpointHooks.before(ctxWithKey, args)
-					: {
-							ctx: ctxWithKey,
-							args,
-							continue: true as const,
-							passToAfter: undefined,
-						};
-				if (beforeResult.continue === false) return;
-				const res = await call(0, beforeResult.ctx, beforeResult.args);
-				await endpointHooks.after?.(
-					beforeResult.ctx,
-					res,
-					beforeResult.passToAfter,
-				);
-				await onPermissionComplete?.();
+				let res: Awaited<ReturnType<typeof call>>;
+				try {
+					const beforeResult = endpointHooks.before
+						? await endpointHooks.before(ctxWithKey, args)
+						: {
+								ctx: ctxWithKey,
+								args,
+								continue: true as const,
+								passToAfter: undefined,
+							};
+					if (beforeResult.continue === false) {
+						// Charged for a call the hook then stopped: nothing ran.
+						await reportIfCharged(new Error('Stopped by a before hook'));
+						return;
+					}
+					// Hub held credits for the cap, or checked the job id, it was
+					// sent with the key request; a hook may not change either after.
+					if (managedJob) {
+						const final = managedJobRequestFields(
+							managedJob,
+							beforeResult.args,
+						);
+						if (
+							sentJobFields.cap !== final.cap ||
+							sentJobFields.jobId !== final.jobId
+						) {
+							throw new Error(
+								`A before hook changed ${operationPath}'s ${managedJob.role === 'start' ? 'cap' : 'job id'} after Corsair checked it, so the call did not run.`,
+							);
+						}
+					}
+					res = await call(0, beforeResult.ctx, beforeResult.args);
+					readAnswer(res);
+					await reportJob(beforeResult.args, res);
+					await endpointHooks.after?.(
+						beforeResult.ctx,
+						res,
+						beforeResult.passToAfter,
+					);
+					await onPermissionComplete?.();
+				} catch (error) {
+					await reportIfCharged(error);
+					throw error;
+				}
+				await reportUsage();
 				if (plugin && hubConfig) {
 					reportPluginConnectionStatusFromBinding({
 						hub: hubConfig,
@@ -395,6 +623,7 @@ export function bindEndpointsRecursively({
 				kek,
 				allPlugins,
 				multiTenancy,
+				encryptDataAtRest,
 			});
 
 			tree[key] = nestedTree;

@@ -1,9 +1,5 @@
 import * as crypto from 'node:crypto';
-import type {
-	CorsairWebhookMatcher,
-	RawWebhookRequest,
-	WebhookRequest,
-} from 'corsair/core';
+import type { WebhookRequest } from 'corsair/core';
 import { z } from 'zod';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -25,72 +21,14 @@ export const SpotifyWebhookPayloadSchema = z.object({
 export type SpotifyWebhookPayload = z.infer<typeof SpotifyWebhookPayloadSchema>;
 
 /**
- * Webhook Event Schemas
- *
- * CONFIGURATION:
- * - Replace ExampleEvent with your actual webhook event types
- * - Each event type should extend SpotifyWebhookPayload
- * - Add all event-specific fields in the data object
- *
- * Example:
- * export const UserCreatedEventSchema = SpotifyWebhookPayloadSchema.extend({
- *   type: z.literal('user.created'),
- *   data: z.object({
- *     user_id: z.string(),
- *     email: z.string(),
- *     name: z.string(),
- *   }),
- * });
- * export type UserCreatedEvent = z.infer<typeof UserCreatedEventSchema>;
+ * Spotify does not offer a public webhook API, so no webhook handlers are
+ * registered. See https://github.com/spotify/web-api/issues/538
  */
-export const ExampleEventSchema = SpotifyWebhookPayloadSchema.extend({
-	type: z.literal('example'),
-	data: z
-		.object({
-			id: z.string(),
-			// TODO: Add your event data fields here
-		})
-		.catchall(z.unknown()),
-});
-export type ExampleEvent = z.infer<typeof ExampleEventSchema>;
-
-/**
- * Webhook Outputs Type
- *
- * Maps each webhook key to its event type.
- * This is used by the plugin system for type inference.
- *
- * CONFIGURATION:
- * - Replace 'example' with your actual webhook keys
- * - Add all your webhooks here
- * - Each key should match a webhook in your webhooks/ directory
- */
-export type SpotifyWebhookOutputs = {
-	example: ExampleEvent;
-	// TODO: Add more webhooks as you implement them
-};
+export type SpotifyWebhookOutputs = Record<string, never>;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Utilities
 // ─────────────────────────────────────────────────────────────────────────────
-
-function parseBody(body: unknown): unknown {
-	return typeof body === 'string' ? JSON.parse(body) : body;
-}
-
-/**
- * Creates a matcher function for a specific event type
- *
- * CONFIGURATION:
- * This function is used to match incoming webhooks to the correct handler.
- * Most providers use a 'type' field, but you may need to customize this.
- */
-export function createSpotifyMatch(eventType: string): CorsairWebhookMatcher {
-	return (request: RawWebhookRequest) => {
-		const parsedBody = parseBody(request.body) as Record<string, unknown>;
-		return typeof parsedBody.type === 'string' && parsedBody.type === eventType;
-	};
-}
 
 /**
  * Webhook Signature Verification

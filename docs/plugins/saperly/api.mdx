@@ -1,0 +1,2003 @@
+---
+title: API
+description: "API reference for Saperly: every `saperly.api.*` operation with input and output types."
+---
+
+Every `saperly.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Assistant
+
+### answer
+
+`assistant.answer`
+
+Ask the workspace assistant a question
+
+**Risk:** `write`
+
+```ts
+await corsair.saperly.api.assistant.answer({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceSlug` | `string` | Yes | — |
+| `question` | `string` | Yes | — |
+| `idempotencyKey` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `answer` | `string` | Yes | — |
+| `provider` | `workers-ai \| openai-compatible \| mock` | Yes | — |
+| `modelId` | `string` | Yes | — |
+| `usedTools` | `string[]` | Yes | — |
+| `assistantConfigured` | `boolean` | Yes | — |
+
+
+
+---
+
+## Calls
+
+### end
+
+`calls.end`
+
+Hang up a live call
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.saperly.api.calls.end({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `idempotencyKey` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `numberId` | `string` | Yes | — |
+| `direction` | `inbound \| outbound` | Yes | — |
+| `to` | `string` | Yes | — |
+| `from` | `string` | Yes | — |
+| `status` | `string` | Yes | — |
+| `rateCentsPerMin` | `number` | No | — |
+| `durationSec` | `number` | No | — |
+| `costCents` | `number` | No | — |
+| `hasRecording` | `boolean` | Yes | — |
+| `hasTranscript` | `boolean` | Yes | — |
+| `createdAt` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`calls.get`
+
+Get a call by id
+
+**Risk:** `read`
+
+```ts
+await corsair.saperly.api.calls.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `numberId` | `string` | Yes | — |
+| `direction` | `inbound \| outbound` | Yes | — |
+| `to` | `string` | Yes | — |
+| `from` | `string` | Yes | — |
+| `status` | `string` | Yes | — |
+| `rateCentsPerMin` | `number` | No | — |
+| `durationSec` | `number` | No | — |
+| `costCents` | `number` | No | — |
+| `hasRecording` | `boolean` | Yes | — |
+| `hasTranscript` | `boolean` | Yes | — |
+| `createdAt` | `string` | Yes | — |
+
+
+
+---
+
+### list
+
+`calls.list`
+
+List calls
+
+**Risk:** `read`
+
+```ts
+await corsair.saperly.api.calls.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  numberId: string,
+  direction: inbound | outbound,
+  to: string,
+  from: string,
+  status: string,
+  rateCentsPerMin?: number | null,
+  durationSec?: number | null,
+  costCents?: number | null,
+  hasRecording: boolean,
+  hasTranscript: boolean,
+  createdAt: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### place
+
+`calls.place`
+
+Place an outbound call. Reserves prepaid balance
+
+**Risk:** `write`
+
+```ts
+await corsair.saperly.api.calls.place({ fromNumberId: 'num_01H', to: '+15555550123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fromNumberId` | `string` | Yes | — |
+| `to` | `string` | Yes | — |
+| `connectionId` | `string` | No | — |
+| `instructions` | `string` | No | — |
+| `idempotencyKey` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `numberId` | `string` | Yes | — |
+| `direction` | `inbound \| outbound` | Yes | — |
+| `to` | `string` | Yes | — |
+| `from` | `string` | Yes | — |
+| `status` | `string` | Yes | — |
+| `rateCentsPerMin` | `number` | No | — |
+| `durationSec` | `number` | No | — |
+| `costCents` | `number` | No | — |
+| `hasRecording` | `boolean` | Yes | — |
+| `hasTranscript` | `boolean` | Yes | — |
+| `createdAt` | `string` | Yes | — |
+
+
+
+---
+
+### recording
+
+`calls.recording`
+
+Read the call recording download URL
+
+**Risk:** `read`
+
+```ts
+await corsair.saperly.api.calls.recording({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+
+
+
+---
+
+### transcript
+
+`calls.transcript`
+
+Read a call transcript
+
+**Risk:** `read`
+
+```ts
+await corsair.saperly.api.calls.transcript({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### transfer
+
+`calls.transfer`
+
+Blind-transfer a live call
+
+**Risk:** `write`
+
+```ts
+await corsair.saperly.api.calls.transfer({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `to` | `string` | Yes | — |
+| `idempotencyKey` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `numberId` | `string` | Yes | — |
+| `direction` | `inbound \| outbound` | Yes | — |
+| `to` | `string` | Yes | — |
+| `from` | `string` | Yes | — |
+| `status` | `string` | Yes | — |
+| `rateCentsPerMin` | `number` | No | — |
+| `durationSec` | `number` | No | — |
+| `costCents` | `number` | No | — |
+| `hasRecording` | `boolean` | Yes | — |
+| `hasTranscript` | `boolean` | Yes | — |
+| `createdAt` | `string` | Yes | — |
+
+
+
+---
+
+## Connections
+
+### create
+
+`connections.create`
+
+Create a hosted or manual connection
+
+**Risk:** `write`
+
+```ts
+await corsair.saperly.api.connections.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `mode` | `hosted \| manual` | No | — |
+| `backend` | `network \| openai_realtime` | No | — |
+| `instructions` | `string` | No | — |
+| `llm` | `object` | No | — |
+| `tts` | `object` | No | — |
+| `backgroundAudio` | `object` | No | — |
+| `language` | `string` | No | — |
+| `mcpServers` | `object` | No | — |
+| `callControl` | `object` | No | — |
+| `complianceEnabled` | `boolean` | No | — |
+| `smsAutoReply` | `boolean` | No | — |
+| `disclosure` | `string` | No | — |
+| `openaiRealtime` | `object` | No | — |
+| `manualWebhookUrl` | `string` | No | — |
+| `idempotencyKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="llm full type">
+
+```ts
+{
+  kind: managed,
+  model: string
+} | null
+```
+</Accordion>
+
+<Accordion title="tts full type">
+
+```ts
+{
+  provider?: string | null,
+  voiceId: string
+} | null
+```
+</Accordion>
+
+<Accordion title="backgroundAudio full type">
+
+```ts
+{
+  type: off
+} | {
+  type: office,
+  volume: number
+} | null
+```
+</Accordion>
+
+<Accordion title="mcpServers full type">
+
+```ts
+{
+  url: string,
+  auth?: {
+    type: bearer | none,
+    token?: string | null
+  } | null,
+  allowedTools?: string[] | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="callControl full type">
+
+```ts
+{
+  endCall?: boolean | null,
+  sendDtmf?: boolean | null,
+  transfer?: {
+    targets: string[],
+    from?: string | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="openaiRealtime full type">
+
+```ts
+{
+  model: string,
+  voice?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `mode` | `hosted \| manual` | Yes | — |
+| `instructions` | `string` | Yes | — |
+| `llm` | `object` | No | — |
+| `backgroundAudio` | `object` | No | — |
+| `language` | `string` | No | — |
+| `mcpServers` | `object[]` | No | — |
+| `callControl` | `object` | No | — |
+| `complianceEnabled` | `boolean` | Yes | — |
+| `smsAutoReply` | `boolean` | Yes | — |
+| `disclosure` | `string` | Yes | — |
+| `recordingEnabled` | `boolean` | Yes | — |
+| `openaiRealtime` | `object` | No | — |
+| `manualSecret` | `string` | No | — |
+| `manualWebhookUrl` | `string` | No | — |
+| `createdAt` | `string` | Yes | — |
+| `backend` | `network \| openai_realtime` | Yes | — |
+| `tts` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="llm full type">
+
+```ts
+{
+  kind: managed,
+  model: string
+}
+```
+</Accordion>
+
+<Accordion title="backgroundAudio full type">
+
+```ts
+{
+  type: off
+} | {
+  type: office,
+  volume: number
+}
+```
+</Accordion>
+
+<Accordion title="mcpServers full type">
+
+```ts
+{
+  url: string,
+  auth?: {
+    type: bearer | none,
+    token?: string | null
+  } | null,
+  allowedTools?: string[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="callControl full type">
+
+```ts
+{
+  endCall?: boolean | null,
+  sendDtmf?: boolean | null,
+  transfer?: {
+    targets: string[],
+    from?: string | null
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="openaiRealtime full type">
+
+```ts
+{
+  model: string,
+  voice?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="tts full type">
+
+```ts
+{
+  voiceId: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`connections.delete`
+
+Delete a connection
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.saperly.api.connections.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`connections.get`
+
+Get a connection by id
+
+**Risk:** `read`
+
+```ts
+await corsair.saperly.api.connections.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `mode` | `hosted \| manual` | Yes | — |
+| `instructions` | `string` | Yes | — |
+| `llm` | `object` | No | — |
+| `backgroundAudio` | `object` | No | — |
+| `language` | `string` | No | — |
+| `mcpServers` | `object[]` | No | — |
+| `callControl` | `object` | No | — |
+| `complianceEnabled` | `boolean` | Yes | — |
+| `smsAutoReply` | `boolean` | Yes | — |
+| `disclosure` | `string` | Yes | — |
+| `recordingEnabled` | `boolean` | Yes | — |
+| `openaiRealtime` | `object` | No | — |
+| `manualSecret` | `string` | No | — |
+| `manualWebhookUrl` | `string` | No | — |
+| `createdAt` | `string` | Yes | — |
+| `backend` | `network \| openai_realtime` | Yes | — |
+| `tts` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="llm full type">
+
+```ts
+{
+  kind: managed,
+  model: string
+}
+```
+</Accordion>
+
+<Accordion title="backgroundAudio full type">
+
+```ts
+{
+  type: off
+} | {
+  type: office,
+  volume: number
+}
+```
+</Accordion>
+
+<Accordion title="mcpServers full type">
+
+```ts
+{
+  url: string,
+  auth?: {
+    type: bearer | none,
+    token?: string | null
+  } | null,
+  allowedTools?: string[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="callControl full type">
+
+```ts
+{
+  endCall?: boolean | null,
+  sendDtmf?: boolean | null,
+  transfer?: {
+    targets: string[],
+    from?: string | null
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="openaiRealtime full type">
+
+```ts
+{
+  model: string,
+  voice?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="tts full type">
+
+```ts
+{
+  voiceId: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`connections.list`
+
+List connections in the workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.saperly.api.connections.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  mode: hosted | manual,
+  instructions: string,
+  llm?: {
+    kind: managed,
+    model: string
+  } | null,
+  backgroundAudio?: {
+    type: off
+  } | {
+    type: office,
+    volume: number
+  } | null,
+  language?: string | null,
+  mcpServers?: {
+    url: string,
+    auth?: {
+      type: bearer | none,
+      token?: string | null
+    } | null,
+    allowedTools?: string[] | null
+  }[] | null,
+  callControl?: {
+    endCall?: boolean | null,
+    sendDtmf?: boolean | null,
+    transfer?: {
+      targets: string[],
+      from?: string | null
+    } | null
+  } | null,
+  complianceEnabled: boolean,
+  smsAutoReply: boolean,
+  disclosure: string,
+  recordingEnabled: boolean,
+  openaiRealtime?: {
+    model: string,
+    voice?: string | null
+  } | null,
+  manualSecret?: string | null,
+  manualWebhookUrl?: string | null,
+  createdAt: string,
+  backend: network | openai_realtime,
+  tts?: {
+    voiceId: string
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`connections.update`
+
+Update a connection
+
+**Risk:** `write`
+
+```ts
+await corsair.saperly.api.connections.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `mode` | `hosted \| manual` | No | — |
+| `backend` | `network \| openai_realtime` | No | — |
+| `instructions` | `string` | No | — |
+| `llm` | `object` | No | — |
+| `tts` | `object` | No | — |
+| `backgroundAudio` | `object` | No | — |
+| `language` | `string` | No | — |
+| `mcpServers` | `object` | No | — |
+| `callControl` | `object` | No | — |
+| `complianceEnabled` | `boolean` | No | — |
+| `smsAutoReply` | `boolean` | No | — |
+| `disclosure` | `string` | No | — |
+| `openaiRealtime` | `object` | No | — |
+| `manualWebhookUrl` | `string` | No | — |
+| `idempotencyKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="llm full type">
+
+```ts
+{
+  kind: managed,
+  model: string
+} | null
+```
+</Accordion>
+
+<Accordion title="tts full type">
+
+```ts
+{
+  provider?: string | null,
+  voiceId: string
+} | null
+```
+</Accordion>
+
+<Accordion title="backgroundAudio full type">
+
+```ts
+{
+  type: off
+} | {
+  type: office,
+  volume: number
+} | null
+```
+</Accordion>
+
+<Accordion title="mcpServers full type">
+
+```ts
+{
+  url: string,
+  auth?: {
+    type: bearer | none,
+    token?: string | null
+  } | null,
+  allowedTools?: string[] | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="callControl full type">
+
+```ts
+{
+  endCall?: boolean | null,
+  sendDtmf?: boolean | null,
+  transfer?: {
+    targets: string[],
+    from?: string | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="openaiRealtime full type">
+
+```ts
+{
+  model: string,
+  voice?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `mode` | `hosted \| manual` | Yes | — |
+| `instructions` | `string` | Yes | — |
+| `llm` | `object` | No | — |
+| `backgroundAudio` | `object` | No | — |
+| `language` | `string` | No | — |
+| `mcpServers` | `object[]` | No | — |
+| `callControl` | `object` | No | — |
+| `complianceEnabled` | `boolean` | Yes | — |
+| `smsAutoReply` | `boolean` | Yes | — |
+| `disclosure` | `string` | Yes | — |
+| `recordingEnabled` | `boolean` | Yes | — |
+| `openaiRealtime` | `object` | No | — |
+| `manualSecret` | `string` | No | — |
+| `manualWebhookUrl` | `string` | No | — |
+| `createdAt` | `string` | Yes | — |
+| `backend` | `network \| openai_realtime` | Yes | — |
+| `tts` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="llm full type">
+
+```ts
+{
+  kind: managed,
+  model: string
+}
+```
+</Accordion>
+
+<Accordion title="backgroundAudio full type">
+
+```ts
+{
+  type: off
+} | {
+  type: office,
+  volume: number
+}
+```
+</Accordion>
+
+<Accordion title="mcpServers full type">
+
+```ts
+{
+  url: string,
+  auth?: {
+    type: bearer | none,
+    token?: string | null
+  } | null,
+  allowedTools?: string[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="callControl full type">
+
+```ts
+{
+  endCall?: boolean | null,
+  sendDtmf?: boolean | null,
+  transfer?: {
+    targets: string[],
+    from?: string | null
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="openaiRealtime full type">
+
+```ts
+{
+  model: string,
+  voice?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="tts full type">
+
+```ts
+{
+  voiceId: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Consent
+
+### check
+
+`consent.check`
+
+Check whether a contact has active consent
+
+**Risk:** `read`
+
+```ts
+await corsair.saperly.api.consent.check({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `numberId` | `string` | Yes | — |
+| `peerNumber` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `hasConsent` | `boolean` | Yes | — |
+| `type` | `implied_inbound \| explicit_outbound` | No | — |
+
+
+
+---
+
+### list
+
+`consent.list`
+
+List consent records
+
+**Risk:** `read`
+
+```ts
+await corsair.saperly.api.consent.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  numberId: string,
+  peerNumber: string,
+  consentType: implied_inbound | explicit_outbound,
+  source: string,
+  grantedAt: string,
+  revokedAt?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### record
+
+`consent.record`
+
+Record consent for a contact
+
+**Risk:** `write`
+
+```ts
+await corsair.saperly.api.consent.record({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `numberId` | `string` | Yes | — |
+| `peerNumber` | `string` | Yes | — |
+| `consentType` | `implied_inbound \| explicit_outbound` | Yes | — |
+| `source` | `string` | Yes | — |
+| `idempotencyKey` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `numberId` | `string` | Yes | — |
+| `peerNumber` | `string` | Yes | — |
+| `consentType` | `implied_inbound \| explicit_outbound` | Yes | — |
+| `source` | `string` | Yes | — |
+| `grantedAt` | `string` | Yes | — |
+| `revokedAt` | `string` | No | — |
+
+
+
+---
+
+### revoke
+
+`consent.revoke`
+
+Revoke consent for a contact
+
+**Risk:** `destructive`
+
+```ts
+await corsair.saperly.api.consent.revoke({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `numberId` | `string` | Yes | — |
+| `peerNumber` | `string` | Yes | — |
+| `idempotencyKey` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+
+
+
+---
+
+## Custom Voices
+
+### create
+
+`customVoices.create`
+
+Upload a custom voice sample
+
+**Risk:** `write`
+
+```ts
+await corsair.saperly.api.customVoices.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `language` | `string` | Yes | — |
+| `gender` | `male \| female \| neutral` | Yes | — |
+| `audio` | `custom` | Yes | — |
+| `idempotencyKey` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `language` | `string` | Yes | — |
+| `gender` | `male \| female \| neutral` | Yes | — |
+| `status` | `pending \| active \| failed \| expired` | Yes | — |
+| `failureReason` | `string` | No | — |
+| `deletionPending` | `boolean` | No | — |
+| `createdAt` | `string` | Yes | — |
+| `updatedAt` | `string` | Yes | — |
+
+
+
+---
+
+### delete
+
+`customVoices.delete`
+
+Delete a custom voice
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.saperly.api.customVoices.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`customVoices.get`
+
+Get a custom voice by id
+
+**Risk:** `read`
+
+```ts
+await corsair.saperly.api.customVoices.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `language` | `string` | Yes | — |
+| `gender` | `male \| female \| neutral` | Yes | — |
+| `status` | `pending \| active \| failed \| expired` | Yes | — |
+| `failureReason` | `string` | No | — |
+| `deletionPending` | `boolean` | No | — |
+| `createdAt` | `string` | Yes | — |
+| `updatedAt` | `string` | Yes | — |
+
+
+
+---
+
+### list
+
+`customVoices.list`
+
+List custom voices
+
+**Risk:** `read`
+
+```ts
+await corsair.saperly.api.customVoices.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  language: string,
+  gender: male | female | neutral,
+  status: pending | active | failed | expired,
+  failureReason?: string | null,
+  deletionPending?: boolean | null,
+  createdAt: string,
+  updatedAt: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Health
+
+### check
+
+`health.check`
+
+Liveness probe
+
+**Risk:** `read`
+
+```ts
+await corsair.saperly.api.health.check({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `ok` | Yes | — |
+
+
+
+---
+
+## Keys
+
+### list
+
+`keys.list`
+
+List API keys. Requires the admin scope
+
+**Risk:** `read`
+
+```ts
+await corsair.saperly.api.keys.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  token: string,
+  prefix: string,
+  scopes: read | write | admin[],
+  lastUsedAt?: string | null,
+  createdAt: string,
+  numberScope?: string[] | null,
+  spendLimitCents?: number | null,
+  spendLimitResetPeriod?: monthly | null,
+  spentThisPeriodCents?: number | null,
+  canProvisionKeys?: boolean | null,
+  permissions?: string[] | null,
+  mintedByTokenId?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### mint
+
+`keys.mint`
+
+Mint a child API key. The plaintext token is returned once
+
+**Risk:** `write`
+
+```ts
+await corsair.saperly.api.keys.mint({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `scopes` | `read \| write \| admin[]` | Yes | — |
+| `numberScope` | `string[] \| null` | No | — |
+| `spendLimitCents` | `number \| null` | No | — |
+| `spendLimitResetPeriod` | `monthly \| null` | No | — |
+| `idempotencyKey` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `prefix` | `string` | Yes | — |
+| `scopes` | `read \| write \| admin[]` | Yes | — |
+| `lastUsedAt` | `string` | No | — |
+| `createdAt` | `string` | Yes | — |
+| `token` | `string` | Yes | — |
+
+
+
+---
+
+### revoke
+
+`keys.revoke`
+
+Revoke an API key
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.saperly.api.keys.revoke({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `idempotencyKey` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+
+
+
+---
+
+## Languages
+
+### list
+
+`languages.list`
+
+List supported spoken languages
+
+**Risk:** `read`
+
+```ts
+await corsair.saperly.api.languages.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  code: string,
+  name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Messages
+
+### list
+
+`messages.list`
+
+List SMS messages, optionally for one number
+
+**Risk:** `read`
+
+```ts
+await corsair.saperly.api.messages.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `numberId` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  numberId: string,
+  direction: inbound | outbound,
+  to: string,
+  from: string,
+  body: string,
+  segments: number,
+  status: string,
+  createdAt: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### send
+
+`messages.send`
+
+Send an SMS. Billed per segment
+
+**Risk:** `write`
+
+```ts
+await corsair.saperly.api.messages.send({ fromNumberId: 'num_01H', to: '+15555550123', body: 'Hello from Corsair' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fromNumberId` | `string` | Yes | — |
+| `to` | `string` | Yes | — |
+| `body` | `string` | Yes | — |
+| `idempotencyKey` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `numberId` | `string` | Yes | — |
+| `direction` | `inbound \| outbound` | Yes | — |
+| `to` | `string` | Yes | — |
+| `from` | `string` | Yes | — |
+| `body` | `string` | Yes | — |
+| `segments` | `number` | Yes | — |
+| `status` | `string` | Yes | — |
+| `createdAt` | `string` | Yes | — |
+
+
+
+---
+
+## Numbers
+
+### assignConnection
+
+`numbers.assignConnection`
+
+Bind a connection to a phone number
+
+**Risk:** `write`
+
+```ts
+await corsair.saperly.api.numbers.assignConnection({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `connectionId` | `string` | Yes | — |
+| `idempotencyKey` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `phoneNumber` | `string` | Yes | — |
+| `connectionId` | `string` | No | — |
+| `webhookUrl` | `string` | No | — |
+| `smsSenderId` | `string` | No | — |
+| `callerIdName` | `string` | No | — |
+| `country` | `string` | No | — |
+| `numberType` | `string` | No | — |
+| `monthlyPriceCents` | `number` | No | — |
+| `currency` | `string` | No | — |
+| `nextChargeAt` | `string` | No | — |
+| `releasedAt` | `string` | No | — |
+| `createdAt` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`numbers.get`
+
+Get a phone number by id
+
+**Risk:** `read`
+
+```ts
+await corsair.saperly.api.numbers.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `phoneNumber` | `string` | Yes | — |
+| `connectionId` | `string` | No | — |
+| `webhookUrl` | `string` | No | — |
+| `smsSenderId` | `string` | No | — |
+| `callerIdName` | `string` | No | — |
+| `country` | `string` | No | — |
+| `numberType` | `string` | No | — |
+| `monthlyPriceCents` | `number` | No | — |
+| `currency` | `string` | No | — |
+| `nextChargeAt` | `string` | No | — |
+| `releasedAt` | `string` | No | — |
+| `createdAt` | `string` | Yes | — |
+
+
+
+---
+
+### list
+
+`numbers.list`
+
+List phone numbers in the workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.saperly.api.numbers.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  phoneNumber: string,
+  connectionId?: string | null,
+  webhookUrl?: string | null,
+  smsSenderId?: string | null,
+  callerIdName?: string | null,
+  country?: string | null,
+  numberType?: string | null,
+  monthlyPriceCents?: number | null,
+  currency?: string | null,
+  nextChargeAt?: string | null,
+  releasedAt?: string | null,
+  createdAt: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### provision
+
+`numbers.provision`
+
+Provision a phone number. Reserves prepaid balance
+
+**Risk:** `write`
+
+```ts
+await corsair.saperly.api.numbers.provision({ areaCode: '415', idempotencyKey: '3f1d6c5e-2b7a-4f0e-9c2d-8a1b6e4f0c11' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `country` | `string` | No | — |
+| `numberType` | `string` | No | — |
+| `areaCode` | `string` | No | — |
+| `expectedMonthlyPriceCents` | `number` | No | — |
+| `expectedUpfrontPriceCents` | `number` | No | — |
+| `approveHigherPrice` | `boolean` | No | — |
+| `idempotencyKey` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `phoneNumber` | `string` | Yes | — |
+| `connectionId` | `string` | No | — |
+| `webhookUrl` | `string` | No | — |
+| `smsSenderId` | `string` | No | — |
+| `callerIdName` | `string` | No | — |
+| `country` | `string` | No | — |
+| `numberType` | `string` | No | — |
+| `monthlyPriceCents` | `number` | No | — |
+| `currency` | `string` | No | — |
+| `nextChargeAt` | `string` | No | — |
+| `releasedAt` | `string` | No | — |
+| `createdAt` | `string` | Yes | — |
+
+
+
+---
+
+### release
+
+`numbers.release`
+
+Release a phone number
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.saperly.api.numbers.release({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `idempotencyKey` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+
+
+
+---
+
+### setCallerId
+
+`numbers.setCallerId`
+
+Set or clear the outbound caller ID name
+
+**Risk:** `write`
+
+```ts
+await corsair.saperly.api.numbers.setCallerId({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `callerIdName` | `string \| null` | Yes | — |
+| `idempotencyKey` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `phoneNumber` | `string` | Yes | — |
+| `connectionId` | `string` | No | — |
+| `webhookUrl` | `string` | No | — |
+| `smsSenderId` | `string` | No | — |
+| `callerIdName` | `string` | No | — |
+| `country` | `string` | No | — |
+| `numberType` | `string` | No | — |
+| `monthlyPriceCents` | `number` | No | — |
+| `currency` | `string` | No | — |
+| `nextChargeAt` | `string` | No | — |
+| `releasedAt` | `string` | No | — |
+| `createdAt` | `string` | Yes | — |
+
+
+
+---
+
+### setSmsSender
+
+`numbers.setSmsSender`
+
+Set or clear the alphanumeric SMS sender id
+
+**Risk:** `write`
+
+```ts
+await corsair.saperly.api.numbers.setSmsSender({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `smsSenderId` | `string \| null` | Yes | — |
+| `idempotencyKey` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `phoneNumber` | `string` | Yes | — |
+| `connectionId` | `string` | No | — |
+| `webhookUrl` | `string` | No | — |
+| `smsSenderId` | `string` | No | — |
+| `callerIdName` | `string` | No | — |
+| `country` | `string` | No | — |
+| `numberType` | `string` | No | — |
+| `monthlyPriceCents` | `number` | No | — |
+| `currency` | `string` | No | — |
+| `nextChargeAt` | `string` | No | — |
+| `releasedAt` | `string` | No | — |
+| `createdAt` | `string` | Yes | — |
+
+
+
+---
+
+### setWebhook
+
+`numbers.setWebhook`
+
+Set the per-number manual-mode brain URL
+
+**Risk:** `write`
+
+```ts
+await corsair.saperly.api.numbers.setWebhook({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `url` | `string` | Yes | — |
+| `idempotencyKey` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `phoneNumber` | `string` | Yes | — |
+| `connectionId` | `string` | No | — |
+| `webhookUrl` | `string` | No | — |
+| `smsSenderId` | `string` | No | — |
+| `callerIdName` | `string` | No | — |
+| `country` | `string` | No | — |
+| `numberType` | `string` | No | — |
+| `monthlyPriceCents` | `number` | No | — |
+| `currency` | `string` | No | — |
+| `nextChargeAt` | `string` | No | — |
+| `releasedAt` | `string` | No | — |
+| `createdAt` | `string` | Yes | — |
+
+
+
+---
+
+## Pricing
+
+### quote
+
+`pricing.quote`
+
+Quote the monthly and upfront price of a number
+
+**Risk:** `read`
+
+```ts
+await corsair.saperly.api.pricing.quote({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `country` | `string` | Yes | — |
+| `numberType` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customerMonthlyCents` | `number` | Yes | — |
+| `customerUpfrontCents` | `number` | Yes | — |
+
+
+
+---
+
+## Usage
+
+### summary
+
+`usage.summary`
+
+Read usage and the prepaid balance
+
+**Risk:** `read`
+
+```ts
+await corsair.saperly.api.usage.summary({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `since` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `calls` | `object` | Yes | — |
+| `messages` | `object` | Yes | — |
+| `balanceCents` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="calls full type">
+
+```ts
+{
+  count: number,
+  totalCostCents: number,
+  totalDurationSec: number
+}
+```
+</Accordion>
+
+<Accordion title="messages full type">
+
+```ts
+{
+  count: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Voices
+
+### list
+
+`voices.list`
+
+List in-network voices
+
+**Risk:** `read`
+
+```ts
+await corsair.saperly.api.voices.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `language` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  gender: string,
+  language: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+

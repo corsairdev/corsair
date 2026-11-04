@@ -1,0 +1,160 @@
+---
+title: Database
+description: "Docmosis local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Docmosis plugin syncs data locally. Use `corsair.docmosis.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Batch Upload Jobs
+
+Path: `docmosis.db.batchUploadJobs.search`
+
+```ts
+const rows = await corsair.docmosis.db.batchUploadJobs.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `isEnded` | `boolean` | equals |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `processingMsg` | `string` | equals, contains, startsWith, endsWith, in |
+| `startedTime` | `number` | equals, gt, gte, lt, lte, in |
+| `finishedTime` | `number` | equals, gt, gte, lt, lte, in |
+| `duration` | `number` | equals, gt, gte, lt, lte, in |
+| `pctComplete` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Environments
+
+Path: `docmosis.db.environments.search`
+
+```ts
+const rows = await corsair.docmosis.db.environments.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `planName` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Images
+
+Path: `docmosis.db.images.search`
+
+```ts
+const rows = await corsair.docmosis.db.images.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `lastModifiedMillisSinceEpoch` | `number` | equals, gt, gte, lt, lte, in |
+| `lastModifiedISO8601` | `string` | equals, contains, startsWith, endsWith, in |
+| `sizeBytes` | `number` | equals, gt, gte, lt, lte, in |
+| `md5` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Renders
+
+Path: `docmosis.db.renders.search`
+
+```ts
+const rows = await corsair.docmosis.db.renders.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `templateName` | `string` | equals, contains, startsWith, endsWith, in |
+| `outputName` | `string` | equals, contains, startsWith, endsWith, in |
+| `outputFormat` | `string` | equals, contains, startsWith, endsWith, in |
+| `contentType` | `string` | equals, contains, startsWith, endsWith, in |
+| `byteLength` | `number` | equals, gt, gte, lt, lte, in |
+| `devMode` | `boolean` | equals |
+| `tags` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Templates
+
+Path: `docmosis.db.templates.search`
+
+```ts
+const rows = await corsair.docmosis.db.templates.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `lastModifiedMillisSinceEpoch` | `number` | equals, gt, gte, lt, lte, in |
+| `lastModifiedISO8601` | `string` | equals, contains, startsWith, endsWith, in |
+| `sizeBytes` | `number` | equals, gt, gte, lt, lte, in |
+| `templatePlainTextFieldPrefix` | `string` | equals, contains, startsWith, endsWith, in |
+| `templatePlainTextFieldSuffix` | `string` | equals, contains, startsWith, endsWith, in |
+| `templateDevMode` | `boolean` | equals |
+| `templateHasErrors` | `boolean` | equals |
+| `templateDescription` | `string` | equals, contains, startsWith, endsWith, in |
+| `md5` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

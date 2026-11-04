@@ -3,6 +3,7 @@ import type { CorsairPluginSchema } from '../../db/orm';
 import { BaseProviders } from '../constants';
 import type {
 	CorsairPlugin,
+	EndpointJob,
 	EndpointMetaEntry,
 	EndpointRiskLevel,
 } from '../plugins';
@@ -1009,6 +1010,8 @@ export type DocsApiEndpoint = {
 	description?: string;
 	riskLevel?: EndpointRiskLevel;
 	irreversible?: boolean;
+	/** The long job this operation starts, when its plugin declares one. */
+	job?: EndpointJob;
 	input: DocSchemaShape;
 	output: DocSchemaShape;
 };
@@ -1172,6 +1175,7 @@ export function introspectPluginForDocs(
 			description: meta?.description,
 			riskLevel: meta?.riskLevel,
 			irreversible: meta?.irreversible,
+			...(meta?.job ? { job: meta.job } : {}),
 			input: zodToDocSchemaShape(schemas?.input),
 			output: zodToDocSchemaShape(schemas?.output),
 		});
