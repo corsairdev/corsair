@@ -38,7 +38,9 @@ export type GumroadContext = CorsairPluginContext<
 
 export type GumroadKeyBuilderContext = KeyBuilderContext<GumroadPluginOptions>;
 
-export type GumroadBoundEndpoints = BindEndpoints<typeof gumroadEndpointsNested>;
+export type GumroadBoundEndpoints = BindEndpoints<
+	typeof gumroadEndpointsNested
+>;
 
 type GumroadEndpoint<K extends keyof GumroadEndpointOutputs> = CorsairEndpoint<
 	GumroadContext,
@@ -198,8 +200,8 @@ export function gumroad<const T extends GumroadPluginOptions>(
 	} satisfies InternalGumroadPlugin;
 }
 
-export { GumroadAPIError } from './client';
 export type { GumroadForm, GumroadQuery } from './client';
+export { GumroadAPIError } from './client';
 export type {
 	GumroadEndpointInputs,
 	GumroadEndpointOutputs,

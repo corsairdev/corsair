@@ -1,14 +1,14 @@
 import { logEventFromContext } from 'corsair/core';
 import { GumroadAPIError } from './client';
 import { Licenses, Products, Sales, Subscribers } from './endpoints';
-import {
-	GumroadEndpointInputSchemas,
-	GumroadEndpointOutputSchemas,
-} from './endpoints/types';
 import type {
 	GumroadEndpointInputs,
 	GumroadEndpointOutputs,
 	GumroadOperation,
+} from './endpoints/types';
+import {
+	GumroadEndpointInputSchemas,
+	GumroadEndpointOutputSchemas,
 } from './endpoints/types';
 import {
 	errorBody,
@@ -122,10 +122,11 @@ describe('endpoint dispatch', () => {
 		expect(url.searchParams.get('page_key')).toBe(
 			'20230119081040000000-123456',
 		);
-		expect(result).toMatchObject({
+		const parsed = GumroadEndpointOutputSchemas.salesList.parse(result);
+		expect(parsed).toMatchObject({
 			sales: [{ id: 'B28UKN-dvxYabdavG97Y-Q==' }],
 		});
-		expect(result.next_page_key).toBeUndefined();
+		expect(parsed.next_page_key).toBeUndefined();
 	});
 
 	it('sales.list omits unset filters from the query', async () => {
@@ -275,6 +276,9 @@ describe('endpoint dispatch', () => {
 });
 
 describe('input schemas: accept and reject', () => {
+	// The endpoint's real parameter types are contravariant-assignable to the
+	// never-based helper, which lets negative cases pass values no schema
+	// accepts.
 	const verify = Licenses.verify as AnyEndpoint;
 
 	it('accepts the documented date format and rejects others', () => {
@@ -323,8 +327,7 @@ describe('input schemas: accept and reject', () => {
 
 	it('rejects unknown filter keys on strict filter inputs', () => {
 		expect(
-			GumroadEndpointInputSchemas.salesList.safeParse({ product: 'x' })
-				.success,
+			GumroadEndpointInputSchemas.salesList.safeParse({ product: 'x' }).success,
 		).toBe(false);
 		expect(
 			GumroadEndpointInputSchemas.subscribersList.safeParse({

@@ -16,7 +16,10 @@ const SaleId = z.string().min(1).describe('Sale id from sales.list');
 // License keys look like "A1B2C3D4-E5F60718-9ABCDEF0-1234ABCD" in the docs
 // but the format is not documented as a constraint, so only non-emptiness is
 // pinned.
-const LicenseKey = z.string().min(1).describe('License key provided by the customer');
+const LicenseKey = z
+	.string()
+	.min(1)
+	.describe('License key provided by the customer');
 const Date10 = z
 	.string()
 	.regex(/^\d{4}-\d{2}-\d{2}$/, 'Expected a date as YYYY-MM-DD');
@@ -55,9 +58,7 @@ export const GumroadProductSchema = z
 		sales_usd_cents: num,
 		is_tiered_membership: bool,
 		recurrences: z.array(z.string()).nullish(),
-		purchasing_power_parity_prices: z
-			.record(z.string(), z.number())
-			.nullish(),
+		purchasing_power_parity_prices: z.record(z.string(), z.number()).nullish(),
 	})
 	.loose();
 
@@ -191,11 +192,9 @@ const SubscribersListInputSchema = z
 	.object({
 		product_id: ProductId,
 		email: z.string().min(1).optional().describe('Filter by subscriber email'),
-		paginated: StringFlag
-			.optional()
-			.describe(
-				'"true" to page 100 at a time and get next_page_key (default "false")',
-			),
+		paginated: StringFlag.optional().describe(
+			'"true" to page 100 at a time and get next_page_key (default "false")',
+		),
 		page_key: PageKey.optional(),
 	})
 	.strict();
@@ -204,9 +203,9 @@ const LicensesVerifyInputSchema = z
 	.object({
 		product_id: ProductId,
 		license_key: LicenseKey,
-		increment_uses_count: StringFlag
-			.default('true')
-			.describe('"false" to leave the license use counter unchanged'),
+		increment_uses_count: StringFlag.default('true').describe(
+			'"false" to leave the license use counter unchanged',
+		),
 	})
 	.strict();
 

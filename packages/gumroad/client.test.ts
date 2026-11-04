@@ -1,8 +1,8 @@
 import {
 	errorFromEnvelope,
 	GUMROAD_API_BASE,
-	makeGumroadRequest,
 	GumroadAPIError,
+	makeGumroadRequest,
 } from './client';
 import { errorBody } from './test-fixtures';
 

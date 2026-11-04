@@ -67,7 +67,8 @@ export function describeGumroadError(
 	fallback: string,
 ): string {
 	const message = asRecord(body)?.message;
-	const text = typeof message === 'string' && message.length > 0 ? message : fallback;
+	const text =
+		typeof message === 'string' && message.length > 0 ? message : fallback;
 	return status !== undefined ? `Gumroad ${status}: ${text}` : text;
 }
 
@@ -112,9 +113,7 @@ export async function makeGumroadRequest(
 	const bodyParts: string[] = [];
 	for (const [key, value] of Object.entries(form ?? {})) {
 		if (value !== undefined) {
-			bodyParts.push(
-				`${encodeURIComponent(key)}=${encodeURIComponent(value)}`,
-			);
+			bodyParts.push(`${encodeURIComponent(key)}=${encodeURIComponent(value)}`);
 		}
 	}
 	const body = bodyParts.length > 0 ? bodyParts.join('&') : undefined;

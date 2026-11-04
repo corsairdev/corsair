@@ -9,7 +9,9 @@ function statusOf(error: Error): number | undefined {
 // The framework sleeps headersRetryAfterMs verbatim with no cap or jitter, so
 // the Retry-After header is capped here and jitter is added before it is
 // returned.
-function cappedRetryAfterMs(retryAfter: number | undefined): number | undefined {
+function cappedRetryAfterMs(
+	retryAfter: number | undefined,
+): number | undefined {
 	if (retryAfter === undefined) return undefined;
 	return Math.min(retryAfter, 60_000) + Math.floor(Math.random() * 250);
 }

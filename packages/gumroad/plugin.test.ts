@@ -51,7 +51,9 @@ describe('gumroad plugin definition', () => {
 		const meta = plugin.endpointMeta ?? {};
 		expect(Object.keys(meta).sort()).toEqual([...operations].sort());
 		for (const [operation, entry] of Object.entries(meta)) {
-			expect(entry.riskLevel).toBe(operation === 'licenses.verify' ? 'write' : 'read');
+			expect(entry.riskLevel).toBe(
+				operation === 'licenses.verify' ? 'write' : 'read',
+			);
 			expect(entry.description?.length).toBeGreaterThan(10);
 		}
 	});
