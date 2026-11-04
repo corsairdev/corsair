@@ -23,8 +23,14 @@ export function TypewriterPlaceholder() {
 	const [text, setText] = useState('');
 	const [deleting, setDeleting] = useState(false);
 
+	// Follows the setting live: turning on reduced motion stops the typing
+	// (the effect below clears its timer) and shows the first name.
 	useEffect(() => {
-		setAnimate(!window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+		const query = window.matchMedia('(prefers-reduced-motion: reduce)');
+		const update = () => setAnimate(!query.matches);
+		update();
+		query.addEventListener('change', update);
+		return () => query.removeEventListener('change', update);
 	}, []);
 
 	useEffect(() => {

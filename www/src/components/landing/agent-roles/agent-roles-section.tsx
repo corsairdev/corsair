@@ -32,7 +32,7 @@ export function AgentRolesSection() {
 	const [inView, setInView] = useState(false);
 	const sectionRef = useRef<HTMLElement>(null);
 	const paused = hovered || focused || !inView;
-	const reduceMotion = useRef(false);
+	const [reduceMotion, setReduceMotion] = useState(false);
 
 	useEffect(() => {
 		const section = sectionRef.current;
@@ -45,20 +45,24 @@ export function AgentRolesSection() {
 		return () => observer.disconnect();
 	}, []);
 
+	// Follows the setting live, so turning on reduced motion stops rotation
+	// without a reload.
 	useEffect(() => {
-		reduceMotion.current = window.matchMedia(
-			'(prefers-reduced-motion: reduce)',
-		).matches;
+		const query = window.matchMedia('(prefers-reduced-motion: reduce)');
+		const update = () => setReduceMotion(query.matches);
+		update();
+		query.addEventListener('change', update);
+		return () => query.removeEventListener('change', update);
 	}, []);
 
 	useEffect(() => {
-		if (pinned || paused || reduceMotion.current) return;
+		if (pinned || paused || reduceMotion) return;
 		const timer = window.setTimeout(() => {
 			setActive((index) => (index + 1) % AGENT_ROLES.length);
 			setClient((index) => (index + 1) % AGENT_CLIENTS.length);
 		}, ROTATE_MS);
 		return () => window.clearTimeout(timer);
-	}, [active, pinned, paused]);
+	}, [active, pinned, paused, reduceMotion]);
 
 	const role = AGENT_ROLES[active];
 	const skin = AGENT_CLIENTS[client];
@@ -169,12 +173,7 @@ export function AgentRolesSection() {
 						hidden={active !== index}
 						className="mx-auto mt-6 max-w-[960px]"
 					>
-						<AgentChatWindow
-							key={`${item.id}-${skin.id}`}
-							role={item}
-							skin={skin}
-							clientTabs={clientTabs}
-						/>
+						<AgentChatWindow role={item} skin={skin} clientTabs={clientTabs} />
 						<div className="mt-3 flex flex-col gap-3 px-1 sm:flex-row sm:items-center sm:justify-between">
 							<Link
 								href="/integrations"

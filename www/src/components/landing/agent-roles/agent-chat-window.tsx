@@ -270,10 +270,14 @@ const EDITOR_LINES: ReadonlyArray<readonly [string, string, number]> = [
 	['#CE9178', '60%', 28],
 ];
 
-/** Cursor's editor, sketched: file tree and code as bars. */
+/**
+ * Cursor's editor, sketched: file tree and code as bars. Only from `lg` up:
+ * between `md` and `lg` it squeezes the chat column until the longer roles
+ * outgrow the window's fixed height.
+ */
 function EditorSketch() {
 	return (
-		<div aria-hidden className="hidden min-w-0 border-r border-white/5 md:flex">
+		<div aria-hidden className="hidden min-w-0 border-r border-white/5 lg:flex">
 			<div className="flex w-[30%] flex-col gap-2.5 border-r border-white/5 px-3 py-5">
 				{['70%', '52%', '64%', '46%', '58%', '40%'].map((width, index) => (
 					<span
@@ -298,7 +302,9 @@ function EditorSketch() {
 
 /**
  * A role's prompt played in a chat app: the message, the Corsair calls with
- * what each returned, and the answer. Remount it (change its key) to replay.
+ * what each returned, and the answer. The chat replays whenever the role or
+ * app changes; the title bar stays mounted, so a keyboard user who picks an
+ * app keeps focus on its tab.
  */
 export function AgentChatWindow({
 	role,
@@ -314,6 +320,7 @@ export function AgentChatWindow({
 	// never moves the page under the reader. The composer sits at the bottom.
 	const chat = (
 		<div
+			key={`${role.id}-${skin.id}`}
 			className={cn(
 				'flex flex-1 flex-col gap-5 px-4 pt-5 pb-4 sm:px-6',
 				// Cursor's "Agent" header takes 37px of the same height.
@@ -345,7 +352,7 @@ export function AgentChatWindow({
 				{clientTabs}
 			</div>
 			{skin.id === 'cursor' ? (
-				<div className="grid grid-cols-1 md:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">
+				<div className="grid grid-cols-1 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">
 					<EditorSketch />
 					<div className="flex min-w-0 flex-col bg-[#1F1F1F]">
 						<p className="border-b border-white/5 px-4 py-2.5 text-[12px] text-white/60 sm:px-6">

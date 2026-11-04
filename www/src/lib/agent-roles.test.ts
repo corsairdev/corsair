@@ -47,6 +47,15 @@ describe('agent roles', () => {
 		}
 	});
 
+	it("mark the recruiter's stage change as approved by the user", () => {
+		const recruiter = AGENT_ROLES.find((r) => r.id === 'recruiter');
+		const approved = recruiter?.steps.filter((s) => s.approved) ?? [];
+		assert.deepEqual(
+			approved.map((s) => `${s.app}.${s.tool}`),
+			['ashby.application.changeStage'],
+		);
+	});
+
 	it('link only to use cases that exist', () => {
 		for (const role of AGENT_ROLES) {
 			if (role.useCase) assert.ok(getUseCase(role.useCase), role.useCase);
