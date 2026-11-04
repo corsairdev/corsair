@@ -3,10 +3,11 @@ import { lever, leverEndpointSchemas } from './index';
 import { LeverSchema } from './schema';
 
 jest.mock('./client', () => ({
+	makeLeverBinaryRequest: jest.fn(),
 	makeLeverRequest: jest.fn(),
 }));
 
-import { makeLeverRequest } from './client';
+import { makeLeverBinaryRequest, makeLeverRequest } from './client';
 
 describe('Lever schema', () => {
 	it('declares a semver version', () => {
@@ -29,6 +30,11 @@ describe('Lever schema', () => {
 
 	it('enforces endpoint schemas at the bound endpoint boundary', async () => {
 		const request = jest.mocked(makeLeverRequest);
+		const binaryRequest = jest.mocked(makeLeverBinaryRequest);
+		binaryRequest.mockResolvedValue({
+			data: 'cGRmLWJ5dGVz',
+			contentType: 'application/pdf',
+		});
 		request.mockClear();
 		request.mockResolvedValue({ data: [], has_more: false });
 		const plugin = lever({ key: 'secret' });
@@ -269,6 +275,9 @@ describe('Lever schema', () => {
 	it('keeps every registered endpoint behind a schema boundary', () => {
 		const plugin = lever({ key: 'secret' });
 		const paths: string[] = [];
+		// unknown: the walk covers heterogeneous tree levels (functions and
+		// group objects) before any Zod parsing, so a single stricter type
+		// cannot describe both shapes.
 		const visit = (value: unknown, prefix: string[] = []) => {
 			if (typeof value === 'function') {
 				paths.push(prefix.join('.'));
@@ -294,6 +303,7 @@ describe('Lever schema', () => {
 	// every registered operation and asserts one request plus response parsing.
 	it('exercises every registered operation through its public boundary', async () => {
 		const request = jest.mocked(makeLeverRequest);
+		const binaryRequest = jest.mocked(makeLeverBinaryRequest);
 		request.mockClear();
 		const plugin = lever({ key: 'secret' });
 		const ctx = {
@@ -347,8 +357,40 @@ describe('Lever schema', () => {
 			{ name: 'Chandler Bing', email: 'chandler@example.com' },
 			{ url: 'https://example.test/hook', event: 'candidateStageChange' },
 		];
-		const outputCandidates = [{ data: [] }, {}, undefined];
+		// Real-shaped Lever records, chosen independently of the output schemas
+		// so a contract that rejects genuine payloads or strips documented
+		// fields fails here instead of in production.
+		const outputCandidates = [
+			{
+				data: [
+					{
+						id: 'rec-1',
+						name: 'Jane Doe',
+						stage: 'f2a1b2c3-received',
+						createdAt: 1700000000000,
+						updatedAt: 1700000000001,
+						owner: 'user-1',
+						archived: false,
+					},
+				],
+				has_more: true,
+			},
+			{
+				id: 'rec-1',
+				name: 'Jane Doe',
+				stage: 'f2a1b2c3-received',
+				createdAt: 1700000000000,
+				updatedAt: 1700000000001,
+			},
+			{ data: [] },
+			{},
+			undefined,
+		];
 		let invokedOperations = 0;
+		let binaryInvocations = 0;
+		// unknown: the walk covers functions and group objects across the
+		// plugin tree; the endpoint contract only exists after the group path
+		// is joined, so a single stricter type cannot describe both shapes.
 		const visit = async (value: unknown, prefix: string[] = []) => {
 			if (typeof value === 'function') {
 				invokedOperations += 1;
@@ -370,10 +412,20 @@ describe('Lever schema', () => {
 					(candidate) => outputSchema.safeParse(candidate).success,
 				);
 				request.mockResolvedValue(output);
-				await (value as (context: unknown, args: unknown) => Promise<unknown>)(
-					ctx,
-					input,
-				);
+				const result = await (
+					value as (context: unknown, args: unknown) => Promise<unknown>
+				)(ctx, input);
+				if (path.endsWith('.download')) {
+					binaryInvocations += 1;
+					expect(result).toEqual({
+						data: 'cGRmLWJ5dGVz',
+						contentType: 'application/pdf',
+					});
+					return;
+				}
+				if (output !== undefined) {
+					expect(result).toEqual(output);
+				}
 				return;
 			}
 			if (value && typeof value === 'object') {
@@ -385,6 +437,9 @@ describe('Lever schema', () => {
 
 		await visit(plugin.endpoints);
 		expect(invokedOperations).toBe(Object.keys(leverEndpointSchemas).length);
-		expect(request).toHaveBeenCalledTimes(invokedOperations);
+		expect(request).toHaveBeenCalledTimes(
+			invokedOperations - binaryInvocations,
+		);
+		expect(binaryRequest).toHaveBeenCalledTimes(binaryInvocations);
 	});
 });

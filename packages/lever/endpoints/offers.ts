@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { LeverEndpoints } from '..';
-import { makeLeverRequest } from '../client';
+import { makeLeverBinaryRequest, makeLeverRequest } from '../client';
 import { leverPathParameter } from './path';
 import type { LeverEndpointOutputs } from './types';
 export const listOpportunityOffers: LeverEndpoints['listOpportunityOffers'] =
@@ -29,10 +29,7 @@ export const downloadOpportunityOffer: LeverEndpoints['downloadOpportunityOffer'
 			'offerId',
 			input.offerId,
 		);
-		const response = await makeLeverRequest<
-			LeverEndpointOutputs['downloadOpportunityOffer']
-		>(ctx, path, {
-			method: 'GET',
+		const response = await makeLeverBinaryRequest(ctx, path, {
 			headers: { Accept: 'application/octet-stream' },
 		});
 		await logEventFromContext(ctx, 'lever.offers.download', input, 'completed');

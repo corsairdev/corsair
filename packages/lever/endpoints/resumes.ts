@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { LeverEndpoints } from '..';
-import { makeLeverRequest } from '../client';
+import { makeLeverBinaryRequest, makeLeverRequest } from '../client';
 import { leverPathParameter } from './path';
 import type { LeverEndpointOutputs } from './types';
 
@@ -46,12 +46,11 @@ export const downloadResume: LeverEndpoints['downloadResume'] = async (
 	ctx,
 	input,
 ) => {
-	const response = await makeLeverRequest<
-		LeverEndpointOutputs['downloadResume']
-	>(ctx, `${withResumePath(input.opportunityId, input.resumeId)}/download`, {
-		method: 'GET',
-		headers: { Accept: 'application/octet-stream' },
-	});
+	const response = await makeLeverBinaryRequest(
+		ctx,
+		`${withResumePath(input.opportunityId, input.resumeId)}/download`,
+		{ headers: { Accept: 'application/octet-stream' } },
+	);
 	await logEventFromContext(ctx, 'lever.resumes.download', input, 'completed');
 	return response;
 };

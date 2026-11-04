@@ -68,7 +68,6 @@ export async function makeLeverRequest<T>(
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		TOKEN: ctx.key,
 		HEADERS: {
 			'Content-Type': 'application/json',
 			Accept: 'application/json',
@@ -105,4 +104,35 @@ export async function makeLeverRequest<T>(
 		}
 		throw new LeverAPIError('Unknown Lever API error');
 	}
+}
+
+// Binary downloads cannot ride the shared JSON client: it reads every
+// non-JSON response with response.text(), which corrupts bytes that are not
+// valid UTF-8 (PDF, DOCX). This path fetches raw bytes and returns them
+// base64-encoded so the payload survives the JSON transport intact.
+export async function makeLeverBinaryRequest(
+	ctx: { key: string; options?: { authType?: LeverAuthType } },
+	endpoint: string,
+	options: { headers?: Record<string, string> } = {},
+): Promise<{ data: string; contentType: string }> {
+	const authType: LeverAuthType = ctx.options?.authType ?? 'api_key';
+	const response = await fetch(`${LEVER_API_BASE}${endpoint}`, {
+		method: 'GET',
+		headers: {
+			Accept: 'application/octet-stream',
+			Authorization: resolveLeverAuthorizationHeader(ctx.key, authType),
+			...options.headers,
+		},
+	});
+	if (!response.ok) {
+		throw new LeverAPIError(
+			`Lever binary download failed with status ${response.status}`,
+			response.status,
+		);
+	}
+	const contentType =
+		response.headers.get('content-type') ?? 'application/octet-stream';
+	const buffer = await response.arrayBuffer();
+	const data = Buffer.from(buffer).toString('base64');
+	return { data, contentType };
 }

@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { LeverEndpoints } from '..';
-import { makeLeverRequest } from '../client';
+import { makeLeverBinaryRequest, makeLeverRequest } from '../client';
 import { leverPathParameter } from './path';
 import type { LeverEndpointOutputs } from './types';
 
@@ -45,10 +45,10 @@ export const downloadFile: LeverEndpoints['downloadFile'] = async (
 	ctx,
 	input,
 ) => {
-	const response = await makeLeverRequest<LeverEndpointOutputs['downloadFile']>(
+	const response = await makeLeverBinaryRequest(
 		ctx,
 		withFilePath(input.opportunityId, input.fileId) + '/download',
-		{ method: 'GET', headers: { Accept: 'application/octet-stream' } },
+		{ headers: { Accept: 'application/octet-stream' } },
 	);
 	await logEventFromContext(ctx, 'lever.files.download', input, 'completed');
 	return response;

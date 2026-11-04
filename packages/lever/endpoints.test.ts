@@ -1,4 +1,4 @@
-import { makeLeverRequest } from './client';
+import { makeLeverBinaryRequest, makeLeverRequest } from './client';
 import {
 	addOpportunityLinks,
 	addOpportunitySources,
@@ -107,10 +107,12 @@ import {
 } from './endpoints';
 
 jest.mock('./client', () => ({
+	makeLeverBinaryRequest: jest.fn(),
 	makeLeverRequest: jest.fn(),
 }));
 
 const request = jest.mocked(makeLeverRequest);
+const binaryRequest = jest.mocked(makeLeverBinaryRequest);
 
 describe('Lever endpoint request seams', () => {
 	beforeEach(() => {
@@ -632,6 +634,10 @@ describe('Lever endpoint request seams', () => {
 		} as never;
 		await listFiles(ctx, { opportunityId: 'opp-1' });
 		await retrieveFile(ctx, { opportunityId: 'opp-1', fileId: 'file-1' });
+		binaryRequest.mockResolvedValue({
+			data: 'cGRmLWJ5dGVz',
+			contentType: 'application/pdf',
+		});
 		await downloadFile(ctx, { opportunityId: 'opp-1', fileId: 'file-1' });
 		await deleteFile(ctx, { opportunityId: 'opp-1', fileId: 'file-1' });
 
@@ -644,13 +650,10 @@ describe('Lever endpoint request seams', () => {
 			'/opportunities/opp-1/files/file-1',
 			{ method: 'GET' },
 		);
-		expect(request).toHaveBeenCalledWith(
+		expect(binaryRequest).toHaveBeenCalledWith(
 			ctx,
 			'/opportunities/opp-1/files/file-1/download',
-			{
-				method: 'GET',
-				headers: { Accept: 'application/octet-stream' },
-			},
+			{ headers: { Accept: 'application/octet-stream' } },
 		);
 		expect(request).toHaveBeenCalledWith(
 			ctx,
@@ -847,11 +850,15 @@ describe('Lever endpoint request seams', () => {
 			'/opportunities/opp-1/resumes/res-1',
 			{ method: 'GET' },
 		);
+		binaryRequest.mockResolvedValue({
+			data: 'cGRmLWJ5dGVz',
+			contentType: 'application/pdf',
+		});
 		await downloadResume(ctx, { opportunityId: 'opp-1', resumeId: 'res-1' });
-		expect(request).toHaveBeenCalledWith(
+		expect(binaryRequest).toHaveBeenCalledWith(
 			ctx,
 			'/opportunities/opp-1/resumes/res-1/download',
-			{ method: 'GET', headers: { Accept: 'application/octet-stream' } },
+			{ headers: { Accept: 'application/octet-stream' } },
 		);
 	});
 
@@ -999,14 +1006,18 @@ describe('Lever endpoint request seams', () => {
 		expect(request).toHaveBeenCalledWith(ctx, '/opportunities/opp-1/offers', {
 			method: 'GET',
 		});
+		binaryRequest.mockResolvedValue({
+			data: 'cGRmLWJ5dGVz',
+			contentType: 'application/pdf',
+		});
 		await downloadOpportunityOffer(ctx, {
 			opportunityId: 'opp-1',
 			offerId: 'offer-1',
 		});
-		expect(request).toHaveBeenCalledWith(
+		expect(binaryRequest).toHaveBeenCalledWith(
 			ctx,
 			'/opportunities/opp-1/offers/offer-1/download',
-			{ method: 'GET', headers: { Accept: 'application/octet-stream' } },
+			{ headers: { Accept: 'application/octet-stream' } },
 		);
 	});
 

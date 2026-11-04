@@ -123,7 +123,8 @@ Auth: API key, OAuth 2.0 (default API key). Set `authType` on the plugin factory
 
 ## Webhooks
 
-Handles 1 webhook event. See the reference for payloads and `webhookHooks`.
+Incoming webhook events are not supported. Webhook CRUD is available through the API.
+
 
 ## Reference
 

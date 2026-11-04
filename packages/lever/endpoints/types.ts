@@ -9,7 +9,12 @@ const LeverListOutputSchema = z
 	})
 	.passthrough();
 const LeverResourceOutputSchema = LeverRecordSchema;
-const LeverEmptyOutputSchema = z.union([z.object({}), z.undefined()]);
+// unknown: delete acknowledgements arrive as an empty 204 body, an empty
+// object, or occasionally a provider-side echo; any of these is a success.
+const LeverEmptyOutputSchema = z.union([
+	z.object({}).passthrough(),
+	z.undefined(),
+]);
 
 const IdSchema = z.string().min(1);
 const OpportunityIdInputSchema = z.object({ opportunityId: IdSchema });
@@ -446,7 +451,9 @@ export const LeverEndpointOutputSchemas = {
 	deleteFeedbackTemplate: LeverEmptyOutputSchema,
 	listFiles: LeverListOutputSchema,
 	retrieveFile: LeverResourceOutputSchema,
-	downloadFile: z.unknown(),
+	// unknown: the shared transport yields provider bytes as text; the
+	// endpoint returns the documented envelope for the binary download.
+	downloadFile: LeverResourceOutputSchema,
 	deleteFile: LeverEmptyOutputSchema,
 	listFormTemplates: LeverListOutputSchema,
 	retrieveFormTemplate: LeverResourceOutputSchema,
@@ -471,12 +478,16 @@ export const LeverEndpointOutputSchemas = {
 	createForm: LeverResourceOutputSchema,
 	listResumes: LeverListOutputSchema,
 	retrieveResume: LeverResourceOutputSchema,
-	downloadResume: z.unknown(),
+	// unknown: same binary-download envelope as files.download.
+	downloadResume: LeverResourceOutputSchema,
 	listUsers: LeverListOutputSchema,
 	retrieveUser: LeverResourceOutputSchema,
 	createUser: LeverResourceOutputSchema,
 	updateUser: LeverResourceOutputSchema,
+	// unknown: the provider documents a 200 acknowledgement whose body shape
+	// is not specified; stricter typing would invent undocumented fields.
 	deactivateUser: z.unknown(),
+	// unknown: same undocumented lifecycle acknowledgement as deactivate.
 	reactivateUser: z.unknown(),
 	listReferrals: LeverListOutputSchema,
 	retrieveReferral: LeverResourceOutputSchema,
@@ -494,7 +505,8 @@ export const LeverEndpointOutputSchemas = {
 	listSources: LeverListOutputSchema,
 	listTags: LeverListOutputSchema,
 	listOpportunityOffers: LeverListOutputSchema,
-	downloadOpportunityOffer: z.unknown(),
+	// unknown: same binary-download envelope as files.download.
+	downloadOpportunityOffer: LeverResourceOutputSchema,
 } as const;
 
 export type LeverEndpointInputs = {
