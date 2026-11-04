@@ -1,12 +1,7 @@
+import type { RetryStrategy } from 'corsair/core';
 import { z } from 'zod';
 import { ElasticsearchAPIError } from './client';
 import { errorHandlers } from './error-handlers';
-
-type HandlerResult = {
-	maxRetries: number;
-	headersRetryAfterMs?: number;
-	retryStrategy?: string;
-};
 
 function esError(
 	status: number | undefined,
@@ -28,12 +23,12 @@ function esError(
 
 // The framework dispatches first-match over the handler keys; this mirrors
 // that walk so a reordering of the shipped handlers fails the test.
-async function dispatch(error: Error): Promise<HandlerResult> {
+async function dispatch(error: Error): Promise<RetryStrategy> {
 	const entry = Object.entries(errorHandlers).find(([, handler]) =>
 		handler.match(error),
 	);
 	if (!entry) throw new Error(`no handler matched ${error.name}`);
-	return entry[1].handler(error) as Promise<HandlerResult>;
+	return entry[1].handler(error);
 }
 
 describe('error handler strategies', () => {
@@ -117,7 +112,7 @@ describe('error handler dispatch order', () => {
 		expect(names.at(-1)).toBe('DEFAULT');
 	});
 
-	it('is order-correct: a 429 resolves to RATE_LIMIT_ERROR, not a later or earlier catch-all', async () => {
+	it('is order-correct: a 429 resolves to RATE_LIMIT_ERROR first', () => {
 		const matching = Object.entries(errorHandlers)
 			.filter(([, handler]) => handler.match(esError(429)))
 			.map(([name]) => name);
@@ -125,9 +120,7 @@ describe('error handler dispatch order', () => {
 		expect(matching[0]).toBe('RATE_LIMIT_ERROR');
 	});
 
-	it('is order-correct: a 500 with a Zod-shaped name still reaches SERVER_ERROR', async () => {
-		// ZodError check keys on error.name, and a plain 500 is not a ZodError,
-		// but the order test proves VALIDATION_ERROR cannot swallow statuses.
+	it('is order-correct: a 500 reaches SERVER_ERROR, not an earlier catch-all', () => {
 		const matching = Object.entries(errorHandlers)
 			.filter(([, handler]) => handler.match(esError(500)))
 			.map(([name]) => name);
