@@ -1,0 +1,19 @@
+displayName: Elasticsearch
+description: "Self-hosted (or Elastic Cloud) Elasticsearch cluster access: cluster health, index inventory and metadata, search over a typed Query DSL subset, and document lookup by id."
+domain: elastic.co
+recommendedAuth: api_key
+examples:
+  read:
+    path: cluster.getHealth
+    title: Get the cluster health status
+    args: {}
+apiExamples:
+  cluster.getHealth: {}
+  indices.list:
+    call: "{ index: 'logs-*' }"
+  indices.get:
+    call: "{ index: 'logs-2026-11' }"
+  search.run:
+    call: "{ index: 'logs-*', size: 5, query: { bool: { filter: [{ term: { level: 'error' } }] } } }"
+  documents.get:
+    call: "{ index: 'logs-2026-11', id: 'tZ0GinMB6Y5qFuDylF8J' }"
