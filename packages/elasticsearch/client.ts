@@ -174,6 +174,9 @@ export async function makeElasticsearchRequest(
 		method?: 'GET' | 'POST';
 		path: string;
 		query?: ElasticsearchQuery;
+		// unknown values: the JSON body is the endpoint's zod-validated query
+		// subset serialized as-is; a stricter value type here would duplicate
+		// those schemas at the transport boundary.
 		body?: Record<string, unknown>;
 	},
 ): Promise<unknown> {

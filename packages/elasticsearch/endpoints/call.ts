@@ -20,6 +20,7 @@ export type CallRequestOptions<K extends ElasticsearchOperation> = {
 	method?: 'GET' | 'POST';
 	path: (parsed: ElasticsearchEndpointInputs[K]) => string;
 	query?: (parsed: ElasticsearchEndpointInputs[K]) => ElasticsearchQuery;
+	// unknown values: the parsed query subset serialized as the JSON body.
 	body?: (parsed: ElasticsearchEndpointInputs[K]) => Record<string, unknown>;
 	/**
 	 * documents.get answers 404 with `{ found: false }` when the id (or
