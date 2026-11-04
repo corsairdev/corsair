@@ -51,7 +51,7 @@ export const listUserWorkspaceConnections: TurbotPipesEndpoints['listUserWorkspa
 		);
 		// Background insert-only discovery: populates search without
 		// erasing stored details and without delaying the response.
-		syncListDiscovery(ctx.db?.connection, response?.items);
+		syncListDiscovery(ctx, ctx.db?.connection, response?.items);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.workspaces.list_user_connections',
@@ -362,7 +362,7 @@ export const listUserWorkspaceProcesses: TurbotPipesEndpoints['listUserWorkspace
 		);
 		// Background insert-only discovery: populates search without
 		// erasing stored details and without delaying the response.
-		syncListDiscovery(ctx.db?.process, response?.items);
+		syncListDiscovery(ctx, ctx.db?.process, response?.items);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.workspaces.list_user_processes',
@@ -382,7 +382,7 @@ export const getUserWorkspaceProcess: TurbotPipesEndpoints['getUserWorkspaceProc
 			{ method: 'GET' },
 		);
 		// Awaited: a completed fetch guarantees its record is searchable locally.
-		await syncEntityDetail(ctx.db?.process, response.id, response);
+		await syncEntityDetail(ctx, ctx.db?.process, response.id, response);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.workspaces.get_user_process',
@@ -422,7 +422,7 @@ export const listOrgWorkspaceProcesses: TurbotPipesEndpoints['listOrgWorkspacePr
 		);
 		// Background insert-only discovery: populates search without
 		// erasing stored details and without delaying the response.
-		syncListDiscovery(ctx.db?.process, response?.items);
+		syncListDiscovery(ctx, ctx.db?.process, response?.items);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.workspaces.list_org_processes',

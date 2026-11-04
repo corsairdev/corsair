@@ -9,7 +9,7 @@ export const getOrg: TurbotPipesEndpoints['getOrg'] = async (ctx, input) => {
 		TurbotPipesEndpointOutputs['getOrg']
 	>(`org/${input.org_handle}`, ctx.key, { method: 'GET' });
 	// Awaited: a completed fetch guarantees its record is searchable locally.
-	await syncEntityDetail(ctx.db?.org, response.id, response);
+	await syncEntityDetail(ctx, ctx.db?.org, response.id, response);
 	await logEventFromContext(
 		ctx,
 		'turbotpipes.orgs.get',
@@ -43,7 +43,7 @@ export const listOrgWorkspaces: TurbotPipesEndpoints['listOrgWorkspaces'] =
 		>(`org/${org_handle}/workspace`, ctx.key, { method: 'GET', query });
 		// Background insert-only discovery: populates search without
 		// erasing stored details and without delaying the response.
-		syncListDiscovery(ctx.db?.workspace, response?.items);
+		syncListDiscovery(ctx, ctx.db?.workspace, response?.items);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.orgs.list_workspaces',
@@ -95,7 +95,7 @@ export const listOrgProcesses: TurbotPipesEndpoints['listOrgProcesses'] =
 		>(`org/${org_handle}/process`, ctx.key, { method: 'GET', query });
 		// Background insert-only discovery: populates search without
 		// erasing stored details and without delaying the response.
-		syncListDiscovery(ctx.db?.process, response?.items);
+		syncListDiscovery(ctx, ctx.db?.process, response?.items);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.orgs.list_processes',

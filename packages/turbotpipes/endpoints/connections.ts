@@ -35,7 +35,7 @@ export const getUserConnection: TurbotPipesEndpoints['getUserConnection'] =
 			{ method: 'GET' },
 		);
 		// Awaited: a completed fetch guarantees its record is searchable locally.
-		await syncEntityDetail(ctx.db?.connection, response.id, response);
+		await syncEntityDetail(ctx, ctx.db?.connection, response.id, response);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.connections.get_user',

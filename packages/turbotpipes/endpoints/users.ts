@@ -9,7 +9,7 @@ export const getUser: TurbotPipesEndpoints['getUser'] = async (ctx, input) => {
 		TurbotPipesEndpointOutputs['getUser']
 	>(`user/${input.user_handle}`, ctx.key, { method: 'GET' });
 	// Awaited: a completed fetch guarantees its record is searchable locally.
-	await syncEntityDetail(ctx.db?.user, response.id, response);
+	await syncEntityDetail(ctx, ctx.db?.user, response.id, response);
 	await logEventFromContext(
 		ctx,
 		'turbotpipes.users.get',
@@ -44,7 +44,7 @@ export const listUserWorkspaces: TurbotPipesEndpoints['listUserWorkspaces'] =
 		>(`user/${user_handle}/workspace`, ctx.key, { method: 'GET', query });
 		// Background insert-only discovery: populates search without
 		// erasing stored details and without delaying the response.
-		syncListDiscovery(ctx.db?.workspace, response?.items);
+		syncListDiscovery(ctx, ctx.db?.workspace, response?.items);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.users.list_workspaces',
@@ -64,7 +64,7 @@ export const getUserWorkspace: TurbotPipesEndpoints['getUserWorkspace'] =
 			{ method: 'GET' },
 		);
 		// Awaited: a completed fetch guarantees its record is searchable locally.
-		await syncEntityDetail(ctx.db?.workspace, response.id, response);
+		await syncEntityDetail(ctx, ctx.db?.workspace, response.id, response);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.users.get_workspace',
@@ -118,7 +118,7 @@ export const listUserProcesses: TurbotPipesEndpoints['listUserProcesses'] =
 		>(`user/${user_handle}/process`, ctx.key, { method: 'GET', query });
 		// Background insert-only discovery: populates search without
 		// erasing stored details and without delaying the response.
-		syncListDiscovery(ctx.db?.process, response?.items);
+		syncListDiscovery(ctx, ctx.db?.process, response?.items);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.users.list_processes',
@@ -138,7 +138,7 @@ export const getUserProcess: TurbotPipesEndpoints['getUserProcess'] = async (
 		method: 'GET',
 	});
 	// Awaited: a completed fetch guarantees its record is searchable locally.
-	await syncEntityDetail(ctx.db?.process, response.id, response);
+	await syncEntityDetail(ctx, ctx.db?.process, response.id, response);
 	await logEventFromContext(
 		ctx,
 		'turbotpipes.users.get_process',

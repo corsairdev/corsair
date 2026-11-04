@@ -12,7 +12,7 @@ export const getActor: TurbotPipesEndpoints['actorGet'] = async (
 		TurbotPipesEndpointOutputs['actorGet']
 	>('actor', ctx.key, { method: 'GET' });
 	// Awaited: a completed fetch guarantees its record is searchable locally.
-	await syncEntityDetail(ctx.db?.actor, response.id, response);
+	await syncEntityDetail(ctx, ctx.db?.actor, response.id, response);
 	await logEventFromContext(
 		ctx,
 		'turbotpipes.actor.get',
@@ -29,7 +29,7 @@ export const listActorWorkspaces: TurbotPipesEndpoints['actorListWorkspaces'] =
 		>('actor/workspace', ctx.key, { method: 'GET', query: input });
 		// Background insert-only discovery: populates search without
 		// erasing stored details and without delaying the response.
-		syncListDiscovery(ctx.db?.workspace, response?.items);
+		syncListDiscovery(ctx, ctx.db?.workspace, response?.items);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.actor.list_workspaces',
@@ -48,7 +48,7 @@ export const listActorOrgs: TurbotPipesEndpoints['actorListOrgs'] = async (
 	>('actor/org', ctx.key, { method: 'GET', query: input });
 	// Background insert-only discovery: populates search without
 	// erasing stored details and without delaying the response.
-	syncListDiscovery(ctx.db?.org, response?.items);
+	syncListDiscovery(ctx, ctx.db?.org, response?.items);
 	await logEventFromContext(
 		ctx,
 		'turbotpipes.actor.list_orgs',
@@ -65,7 +65,7 @@ export const listActorConnections: TurbotPipesEndpoints['actorListConnections'] 
 		>('actor/conn', ctx.key, { method: 'GET', query: input });
 		// Background insert-only discovery: populates search without
 		// erasing stored details and without delaying the response.
-		syncListDiscovery(ctx.db?.connection, response?.items);
+		syncListDiscovery(ctx, ctx.db?.connection, response?.items);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.actor.list_connections',

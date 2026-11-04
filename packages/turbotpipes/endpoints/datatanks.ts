@@ -32,7 +32,7 @@ export const getUserWorkspaceDatatank: TurbotPipesEndpoints['getUserWorkspaceDat
 			{ method: 'GET' },
 		);
 		// Awaited: a completed fetch guarantees its record is searchable locally.
-		await syncEntityDetail(ctx.db?.datatank, response.id, response);
+		await syncEntityDetail(ctx, ctx.db?.datatank, response.id, response);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.datatanks.get_user_workspace',
@@ -53,7 +53,7 @@ export const listUserWorkspaceDatatanks: TurbotPipesEndpoints['listUserWorkspace
 		);
 		// Background insert-only discovery: populates search without
 		// erasing stored details and without delaying the response.
-		syncListDiscovery(ctx.db?.datatank, response?.items);
+		syncListDiscovery(ctx, ctx.db?.datatank, response?.items);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.datatanks.list_user_workspace',
@@ -74,7 +74,7 @@ export const listOrgWorkspaceDatatanks: TurbotPipesEndpoints['listOrgWorkspaceDa
 		);
 		// Background insert-only discovery: populates search without
 		// erasing stored details and without delaying the response.
-		syncListDiscovery(ctx.db?.datatank, response?.items);
+		syncListDiscovery(ctx, ctx.db?.datatank, response?.items);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.datatanks.list_org_workspace',

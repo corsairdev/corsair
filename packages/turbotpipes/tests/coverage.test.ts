@@ -158,7 +158,7 @@ describe('TurbotPipes endpoint coverage', () => {
 
 		it('a completed detail fetch guarantees its record is searchable', async () => {
 			const { rows, table } = memoryStore();
-			const ctx = { ...createMockContext(), db: { user: table } };
+			const ctx = { ...createMockContext(), database: {}, db: { user: table } };
 			mockRequest.mockResolvedValueOnce({
 				id: 'u_1',
 				handle: 'bob',
@@ -179,7 +179,11 @@ describe('TurbotPipes endpoint coverage', () => {
 				}),
 				findByEntityId: jest.fn(async () => null),
 			};
-			const ctx = { ...createMockContext(), db: { user: failing } };
+			const ctx = {
+				...createMockContext(),
+				database: {},
+				db: { user: failing },
+			};
 			mockRequest.mockResolvedValueOnce({ id: 'u_9', handle: 'carol' });
 			await expect(
 				UsersEndpoints.getUser(ctx, { user_handle: 'carol' }),
@@ -194,7 +198,11 @@ describe('TurbotPipes endpoint coverage', () => {
 				title: 'Detailed Title',
 				instance_type: 'db1.shared',
 			});
-			const ctx = { ...createMockContext(), db: { workspace: table } };
+			const ctx = {
+				...createMockContext(),
+				database: {},
+				db: { workspace: table },
+			};
 			mockRequest.mockResolvedValueOnce({
 				items: [
 					{ id: 'w_1', handle: 'main' },
@@ -219,9 +227,58 @@ describe('TurbotPipes endpoint coverage', () => {
 			);
 		});
 
+		it('a list write re-reads first, so a detail that landed after the bulk read survives', async () => {
+			const { rows, table } = memoryStore();
+			// The bulk read is stale: it predates the detail write below.
+			table.findManyByEntityIds.mockImplementationOnce(async () => []);
+			rows.set('w_1', {
+				id: 'w_1',
+				handle: 'main',
+				title: 'Detailed Title',
+			});
+			const ctx = {
+				...createMockContext(),
+				database: {},
+				db: { workspace: table },
+			};
+			mockRequest.mockResolvedValueOnce({
+				items: [{ id: 'w_1', handle: 'main', state: 'running' }],
+			});
+			await UsersEndpoints.listUserWorkspaces(ctx, { user_handle: 'bob' });
+			await new Promise((resolve) => setTimeout(resolve, 0));
+			expect(table.findByEntityId).toHaveBeenCalledWith('w_1');
+			expect(rows.get('w_1')).toEqual({
+				id: 'w_1',
+				handle: 'main',
+				title: 'Detailed Title',
+				state: 'running',
+			});
+		});
+
+		it('skips local sync when no database is configured', async () => {
+			const { table } = memoryStore();
+			const ctx = {
+				...createMockContext(),
+				db: { user: table, workspace: table },
+			};
+			mockRequest.mockResolvedValueOnce({ id: 'u_1', handle: 'bob' });
+			await UsersEndpoints.getUser(ctx, { user_handle: 'bob' });
+			mockRequest.mockResolvedValueOnce({
+				items: [{ id: 'w_1', handle: 'main' }],
+			});
+			await UsersEndpoints.listUserWorkspaces(ctx, { user_handle: 'bob' });
+			await new Promise((resolve) => setTimeout(resolve, 0));
+			expect(table.upsertByEntityId).not.toHaveBeenCalled();
+			expect(table.findManyByEntityIds).not.toHaveBeenCalled();
+		});
+
 		it('one invalid list item does not stop the rest of the page', async () => {
 			const { rows, table } = memoryStore();
-			const ctx = { ...createMockContext(), db: { workspace: table } };
+			const ctx = {
+				...createMockContext(),
+				database: {},
+				db: { workspace: table },
+			};
 			mockRequest.mockResolvedValueOnce({
 				items: [{ id: 'w_bad' }, { id: 'w_3', handle: 'prod' }],
 			});
