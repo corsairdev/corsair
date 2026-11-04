@@ -183,6 +183,8 @@ const FilesListInputSchema = OpportunityIdInputSchema.extend({
 // ── Form templates ───────────────────────────────────────────────────────────
 const FormTemplateBodySchema = z.object({
 	title: z.string().min(1),
+	// unknown: Lever documents form field payloads as provider-defined objects
+	// whose keys vary by field type; the stable envelope is the array itself.
 	formFields: z.array(z.record(z.string(), z.unknown())).optional(),
 });
 

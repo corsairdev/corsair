@@ -305,6 +305,11 @@ describe('Lever schema', () => {
 		const request = jest.mocked(makeLeverRequest);
 		const binaryRequest = jest.mocked(makeLeverBinaryRequest);
 		request.mockClear();
+		binaryRequest.mockReset();
+		binaryRequest.mockResolvedValue({
+			data: 'cGRmLWJ5dGVz',
+			contentType: 'application/pdf',
+		});
 		const plugin = lever({ key: 'secret' });
 		const ctx = {
 			key: 'secret',
@@ -357,35 +362,49 @@ describe('Lever schema', () => {
 			{ name: 'Chandler Bing', email: 'chandler@example.com' },
 			{ url: 'https://example.test/hook', event: 'candidateStageChange' },
 		];
-		// Real-shaped Lever records, chosen independently of the output schemas
-		// so a contract that rejects genuine payloads or strips documented
-		// fields fails here instead of in production.
-		const outputCandidates = [
-			{
-				data: [
-					{
-						id: 'rec-1',
-						name: 'Jane Doe',
-						stage: 'f2a1b2c3-received',
-						createdAt: 1700000000000,
-						updatedAt: 1700000000001,
-						owner: 'user-1',
-						archived: false,
-					},
-				],
-				has_more: true,
-			},
-			{
-				id: 'rec-1',
-				name: 'Jane Doe',
-				stage: 'f2a1b2c3-received',
-				createdAt: 1700000000000,
-				updatedAt: 1700000000001,
-			},
-			{ data: [] },
-			{},
-			undefined,
-		];
+		// Real-shaped Lever payloads, selected by operation family rather than
+		// by probing the output schema, so a contract that rejects genuine
+		// records or strips documented fields fails here instead of in
+		// production.
+		const listOutput = {
+			data: [
+				{
+					id: 'opp-1',
+					name: 'Jane Doe',
+					stage: 'f2a1b2c3-received',
+					createdAt: 1700000000000,
+					updatedAt: 1700000000001,
+					owner: 'user-1',
+					archived: false,
+				},
+				{
+					id: 'opp-2',
+					name: 'John Smith',
+					stage: 'f2a1b2c3-interview',
+					createdAt: 1700000000100,
+					updatedAt: 1700000000101,
+					owner: 'user-2',
+					archived: false,
+				},
+			],
+			has_more: true,
+		};
+		const recordOutput = {
+			id: 'rec-1',
+			name: 'Jane Doe',
+			stage: 'f2a1b2c3-received',
+			createdAt: 1700000000000,
+			updatedAt: 1700000000001,
+			owner: 'user-1',
+			archived: false,
+		};
+		const outputFor = (path: string) => {
+			const [, operation = ''] = path.split('.');
+			if (operation.startsWith('list') || path.startsWith('eeo.')) {
+				return listOutput;
+			}
+			return recordOutput;
+		};
 		let invokedOperations = 0;
 		let binaryInvocations = 0;
 		// unknown: the walk covers functions and group objects across the
@@ -408,10 +427,11 @@ describe('Lever schema', () => {
 					(candidate) => inputSchema.safeParse(candidate).success,
 				);
 				if (!input) throw new Error(`No valid test input for ${path}`);
-				const output = outputCandidates.find(
-					(candidate) => outputSchema.safeParse(candidate).success,
-				);
+				const output = outputFor(path);
+				expect(outputSchema.safeParse(output).success).toBe(true);
 				request.mockResolvedValue(output);
+				// unknown: the walker cannot narrow a function leaf's parameter
+				// types; the endpoint schemas validate the actual input/output.
 				const result = await (
 					value as (context: unknown, args: unknown) => Promise<unknown>
 				)(ctx, input);
@@ -423,9 +443,7 @@ describe('Lever schema', () => {
 					});
 					return;
 				}
-				if (output !== undefined) {
-					expect(result).toEqual(output);
-				}
+				expect(result).toEqual(output);
 				return;
 			}
 			if (value && typeof value === 'object') {

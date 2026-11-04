@@ -841,6 +841,7 @@ export const leverEndpointSchemas: RequiredPluginEndpointSchemas<
 	},
 } as const satisfies RequiredPluginEndpointSchemas<typeof leverEndpointsNested>;
 
+// unknown: the tree mixes group objects and handler functions at each level.
 type LeverEndpointTree = Record<string, unknown>;
 // unknown: wrappers receive core context/input before Zod parsing and re-parse output.
 type LeverEndpointHandler = (ctx: unknown, input: unknown) => Promise<unknown>;

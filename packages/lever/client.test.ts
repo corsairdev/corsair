@@ -1,4 +1,8 @@
-import { makeLeverRequest, resolveLeverAuthorizationHeader } from './client';
+import {
+	makeLeverBinaryRequest,
+	makeLeverRequest,
+	resolveLeverAuthorizationHeader,
+} from './client';
 
 const TEST_KEY = 'test-key-not-a-credential';
 const realFetch = global.fetch;
@@ -58,5 +62,40 @@ describe('Lever client auth selection', () => {
 		);
 		const headers = new Headers(lastInit?.headers);
 		expect(headers.get('Authorization')).toBe('Bearer token-1');
+	});
+});
+
+describe('Lever binary downloads', () => {
+	it('preserves Retry-After when a download is rate limited', async () => {
+		global.fetch = async () =>
+			new Response('', {
+				status: 429,
+				headers: { 'Retry-After': '2' },
+			});
+
+		await expect(
+			makeLeverBinaryRequest(
+				{ key: TEST_KEY, options: {} },
+				'/files/1/download',
+			),
+		).rejects.toMatchObject({
+			status: 429,
+			retryAfter: 2000,
+		});
+	});
+
+	it('surfaces an unknown Retry-After without inventing a delay', async () => {
+		global.fetch = async () =>
+			new Response('', {
+				status: 429,
+				headers: { 'Retry-After': 'not-a-delay' },
+			});
+
+		await expect(
+			makeLeverBinaryRequest(
+				{ key: TEST_KEY, options: {} },
+				'/files/1/download',
+			),
+		).rejects.toMatchObject({ status: 429, retryAfter: undefined });
 	});
 });

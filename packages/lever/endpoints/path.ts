@@ -4,6 +4,8 @@
 export const leverPathParameter = (
 	template: string,
 	name: string,
+	// unknown: callers reach this guard before schema parsing, so it must
+	// reject non-string and malformed values rather than assume an input type.
 	value: unknown,
 ) => {
 	if (

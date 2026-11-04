@@ -39,6 +39,17 @@ const encodeBasicCredential = (apiKey: string): string => {
 	return btoa(credentials);
 };
 
+// Retry-After is either delta-seconds or an HTTP-date. The shared retry path
+// expects milliseconds, so normalize both forms before surfacing the error.
+const parseRetryAfterMs = (value: string | null): number | undefined => {
+	if (!value) return undefined;
+	const seconds = Number(value);
+	if (Number.isFinite(seconds) && seconds >= 0) return seconds * 1000;
+	const retryAt = Date.parse(value);
+	if (Number.isNaN(retryAt)) return undefined;
+	return Math.max(0, retryAt - Date.now());
+};
+
 export const resolveLeverAuthorizationHeader = (
 	credential: string,
 	authType: LeverAuthType,
@@ -128,6 +139,8 @@ export async function makeLeverBinaryRequest(
 		throw new LeverAPIError(
 			`Lever binary download failed with status ${response.status}`,
 			response.status,
+			undefined,
+			parseRetryAfterMs(response.headers.get('retry-after')),
 		);
 	}
 	const contentType =
