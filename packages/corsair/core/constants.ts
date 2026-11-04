@@ -377,9 +377,9 @@ export const BaseProviders = [
 	'toggl',
 	'tokenmetrics',
 	'tpscheck',
-	'turbotpipes',
 	'trello',
 	'tripadvisor',
+	'turbotpipes',
 	'turso',
 	'twentyonerisk',
 	'twilio',
@@ -791,9 +791,9 @@ export const ProviderDisplayNames = {
 	toggl: 'Toggl',
 	tokenmetrics: 'Token Metrics',
 	tpscheck: 'TPSCheck',
-	turbotpipes: 'Turbot Pipes',
 	trello: 'Trello',
 	tripadvisor: 'Tripadvisor',
+	turbotpipes: 'Turbot Pipes',
 	turso: 'Turso',
 	twentyonerisk: 'TwentyOneRisk',
 	twilio: 'Twilio',
@@ -1212,9 +1212,9 @@ export type AllProviders =
 	| 'toggl'
 	| 'tokenmetrics'
 	| 'tpscheck'
-	| 'turbotpipes'
 	| 'trello'
 	| 'tripadvisor'
+	| 'turbotpipes'
 	| 'turso'
 	| 'twentyonerisk'
 	| 'twilio'
