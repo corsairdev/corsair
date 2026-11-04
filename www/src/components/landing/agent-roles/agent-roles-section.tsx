@@ -3,27 +3,47 @@
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 
-import { IntegrationLogo } from '@/components/integrations/integration-logo';
 import { CopyPromptButton } from '@/components/use-cases/copy-prompt-button';
 import { AGENT_ROLES } from '@/lib/agent-roles';
 import { cn } from '@/lib/utils';
 
-const ROTATE_MS = 7000;
+import { AgentChatWindow, ClientMark } from './agent-chat-window';
+import { AGENT_CLIENTS } from './agent-clients';
+
+const ROTATE_MS = 9000;
 
 /**
- * "Turn Claude into a sales rep": one role at a time, the apps it uses and a
- * prompt to copy. Rotates until the visitor picks a role, and never with
- * reduced motion; every role's content is in the page for search engines.
+ * "Turn Claude into a sales rep": one role at a time, played as a chat in
+ * Claude, Cursor, ChatGPT or Grok: the prompt, each Corsair call and what it
+ * returned, then the answer. Rotates role and app until the visitor picks
+ * either, and never with reduced motion; every role's content is in the page
+ * for search engines.
  */
 export function AgentRolesSection() {
 	const [active, setActive] = useState(0);
+	const [client, setClient] = useState(0);
 	const [pinned, setPinned] = useState(false);
 	// Hover and keyboard focus pause it separately, so moving the mouse away
 	// never rotates a panel out from under a keyboard user.
 	const [hovered, setHovered] = useState(false);
 	const [focused, setFocused] = useState(false);
-	const paused = hovered || focused;
+	// The chat replays only once the section is on screen, so a visitor who
+	// scrolls down sees it play instead of the finished transcript.
+	const [inView, setInView] = useState(false);
+	const sectionRef = useRef<HTMLElement>(null);
+	const paused = hovered || focused || !inView;
 	const reduceMotion = useRef(false);
+
+	useEffect(() => {
+		const section = sectionRef.current;
+		if (!section) return;
+		const observer = new IntersectionObserver(
+			([entry]) => setInView(entry.isIntersecting),
+			{ threshold: 0.35 },
+		);
+		observer.observe(section);
+		return () => observer.disconnect();
+	}, []);
 
 	useEffect(() => {
 		reduceMotion.current = window.matchMedia(
@@ -33,20 +53,55 @@ export function AgentRolesSection() {
 
 	useEffect(() => {
 		if (pinned || paused || reduceMotion.current) return;
-		const timer = window.setTimeout(
-			() => setActive((index) => (index + 1) % AGENT_ROLES.length),
-			ROTATE_MS,
-		);
+		const timer = window.setTimeout(() => {
+			setActive((index) => (index + 1) % AGENT_ROLES.length);
+			setClient((index) => (index + 1) % AGENT_CLIENTS.length);
+		}, ROTATE_MS);
 		return () => window.clearTimeout(timer);
 	}, [active, pinned, paused]);
 
 	const role = AGENT_ROLES[active];
+	const skin = AGENT_CLIENTS[client];
+
+	const clientTabs = (
+		<div role="group" aria-label="Show it in" className="flex min-w-0 gap-0.5">
+			{AGENT_CLIENTS.map((item, index) => {
+				const selected = index === client;
+				return (
+					<button
+						key={item.id}
+						type="button"
+						aria-pressed={selected}
+						aria-label={item.name}
+						onClick={() => {
+							setClient(index);
+							setPinned(true);
+						}}
+						className="flex items-center gap-1.5 rounded-t-lg px-2.5 py-2 text-[12.5px] font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[#4a38f5] sm:px-3.5"
+						style={{
+							background: selected ? skin.body : 'transparent',
+							color: selected ? skin.text : skin.muted,
+						}}
+					>
+						<ClientMark
+							skin={item}
+							size={14}
+							color={selected ? item.brand : undefined}
+						/>
+						<span className="hidden sm:inline">{item.name}</span>
+					</button>
+				);
+			})}
+		</div>
+	);
 
 	return (
 		<section
+			ref={sectionRef}
 			id="roles"
+			data-inview={inView ? 'true' : 'false'}
 			aria-labelledby="roles-heading"
-			className="relative w-full scroll-mt-16 py-14 sm:py-20"
+			className="agent-roles relative w-full scroll-mt-16 py-14 sm:py-20"
 			onMouseEnter={() => setHovered(true)}
 			onMouseLeave={() => setHovered(false)}
 			onFocusCapture={() => setFocused(true)}
@@ -57,18 +112,22 @@ export function AgentRolesSection() {
 				}
 			}}
 		>
+			<noscript>
+				<style>{'.agent-roles .agent-chat-in{animation:none!important}'}</style>
+			</noscript>
 			<div className="mx-auto max-w-[1100px] px-4 sm:px-6 md:px-10">
 				<div className="text-center">
 					<h2
 						id="roles-heading"
 						className="font-[family-name:var(--landing-font-serif)] text-[clamp(1.85rem,4vw,2.9rem)] font-light leading-[1.1] tracking-[-0.02em] text-[#1c1c1c]"
 					>
-						Turn Claude into{' '}
+						Turn {skin.name} into{' '}
 						<span className="text-[#4a38f5]">{role.title}</span>
 					</h2>
 					<p className="mx-auto mt-3 max-w-xl text-[16px] leading-relaxed text-[#1c1c1c99]">
 						Connect the apps a role uses once, and your agent does the work
-						across them. The same in ChatGPT, Cursor or any MCP client.
+						across them, asking you before anything risky. The same in any MCP
+						client.
 					</p>
 				</div>
 
@@ -108,43 +167,21 @@ export function AgentRolesSection() {
 						id={`role-panel-${item.id}`}
 						aria-labelledby={`role-tab-${item.id}`}
 						hidden={active !== index}
-						className="mt-6 overflow-hidden rounded-xl border border-[#1c1c1c]/10 bg-white shadow-[0_8px_32px_rgba(28,28,28,0.06)]"
+						className="mx-auto mt-6 max-w-[960px]"
 					>
-						<div className="px-5 py-6 sm:px-7 sm:py-7">
-							<p className="text-center font-[family-name:var(--landing-font-mono)] text-[11px] font-medium uppercase tracking-[0.08em] text-[#4a38f5]">
-								The {item.title.replace(/^an? /, '')} toolbelt
-							</p>
-							<ul className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
-								{item.apps.map((app) => (
-									<li key={app.id}>
-										<Link
-											href={`/integrations/${app.id}`}
-											className="flex h-full min-w-0 flex-col items-center justify-center gap-2.5 rounded-xl border border-[#1c1c1c]/10 bg-[#fafafa] px-3 py-5 text-center text-[14px] font-medium text-[#1c1c1c] no-underline transition-colors hover:border-[#4a38f5]/35 hover:bg-white"
-										>
-											<IntegrationLogo
-												id={app.id}
-												displayName={app.name}
-												size={36}
-												className="rounded-md"
-											/>
-											<span className="min-w-0 leading-tight">{app.name}</span>
-										</Link>
-									</li>
-								))}
-							</ul>
-							<p className="mt-4 text-center text-[13px] text-[#1c1c1c99]">
-								<Link
-									href="/integrations"
-									className="text-[#1c1c1c99] no-underline hover:text-[#4a38f5]"
-								>
-									+400 more apps
-								</Link>
-							</p>
-						</div>
-						<div className="flex flex-col gap-3 border-t border-[#1c1c1c]/8 bg-[#fafafa] px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-7">
-							<p className="min-w-0 text-[14px] leading-relaxed text-[#1c1c1c]">
-								&ldquo;{item.prompt}&rdquo;
-							</p>
+						<AgentChatWindow
+							key={`${item.id}-${skin.id}`}
+							role={item}
+							skin={skin}
+							clientTabs={clientTabs}
+						/>
+						<div className="mt-3 flex flex-col gap-3 px-1 sm:flex-row sm:items-center sm:justify-between">
+							<Link
+								href="/integrations"
+								className="text-[13px] text-[#1c1c1c99] no-underline hover:text-[#4a38f5]"
+							>
+								{item.apps.map((app) => app.name).join(', ')} and 400+ more apps
+							</Link>
 							<div className="flex shrink-0 items-center gap-4">
 								{item.useCase ? (
 									<Link
