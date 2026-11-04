@@ -116,8 +116,13 @@ export function buildAuthorizationHeader(apiKey: string): string {
 	const scheme = /^(apikey|basic|bearer)\s+/i.exec(trimmed);
 	if (scheme) {
 		const rest = trimmed.slice(scheme[0].length).trim();
-		const name = scheme[0].trim().toLowerCase();
-		const canonical = name.charAt(0).toUpperCase() + name.slice(1);
+		// The regex guarantees one of the three schemes.
+		const schemeName = scheme[0].trim().toLowerCase();
+		const canonical = schemeName.startsWith('apikey')
+			? 'ApiKey'
+			: schemeName.startsWith('basic')
+				? 'Basic'
+				: 'Bearer';
 		return `${canonical} ${rest}`;
 	}
 	if (trimmed.includes(':')) {

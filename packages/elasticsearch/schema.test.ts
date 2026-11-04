@@ -6,15 +6,8 @@ describe('Elasticsearch schema', () => {
 		expect(ElasticsearchSchema.version).toMatch(/^\d+\.\d+\.\d+$/);
 	});
 
-	it('declares an entities map', () => {
-		expect(typeof ElasticsearchSchema.entities).toBe('object');
-		expect(ElasticsearchSchema.entities).not.toBeNull();
-		expect(Array.isArray(Object.keys(ElasticsearchSchema.entities))).toBe(true);
-		for (const entity of Object.values(ElasticsearchSchema.entities)) {
-			expect(entity).toBeDefined();
-		}
+	it('persists nothing: the entities registry is empty', () => {
+		// Read-only plugin; every call fetches live cluster state.
+		expect(ElasticsearchSchema.entities).toEqual({});
 	});
 });
-
-// Per .github/PLUGIN_PR_RULES.md (R2), every implemented endpoint
-// needs a corresponding test.

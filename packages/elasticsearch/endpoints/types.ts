@@ -14,6 +14,10 @@ const QueryFieldValue = z.union([z.string(), z.number(), z.boolean()]);
 const FieldMap = (value: z.ZodType) =>
 	z.record(z.string().min(1), value);
 
+// Index names and document ids are caller-controlled path segments; blank
+// strings are never valid targets.
+const NonBlankString = z.string().min(1).regex(/\S/, 'Expected a non-blank string');
+
 const MatchAllQuerySchema = z.strictObject({
 	match_all: z.looseObject({}),
 });
@@ -54,8 +58,9 @@ type BoolQuery = {
 
 export type SearchQuery = LeafQuery | BoolQuery;
 
-// A rule's clauses can nest more bool queries (Query DSL is recursive).
-const QuerySchema: z.ZodType<SearchQuery> = z.lazy(() =>
+// A rule's clauses can nest more bool queries (Query DSL is recursive). The
+// second type parameter keeps z.input<> from widening the field to unknown.
+const QuerySchema: z.ZodType<SearchQuery, SearchQuery> = z.lazy(() =>
 	z.union([
 		MatchAllQuerySchema,
 		MatchQuerySchema,
@@ -113,7 +118,7 @@ export type ClusterGetHealthResponse = z.infer<
 
 // `index` becomes a path filter, so the object is strict.
 export const IndicesListInputSchema = z.strictObject({
-	index: z.string().min(1).optional(),
+	index: NonBlankString.optional(),
 });
 export type IndicesListInput = z.infer<typeof IndicesListInputSchema>;
 
@@ -141,7 +146,7 @@ export type IndicesListResponse = z.infer<typeof IndicesListResponseSchema>;
 // ── indices.get: GET /{index} ────────────────────────────────────────────────
 
 export const IndicesGetInputSchema = z.strictObject({
-	index: z.string().min(1),
+	index: NonBlankString,
 });
 export type IndicesGetInput = z.infer<typeof IndicesGetInputSchema>;
 
@@ -162,7 +167,7 @@ export type IndicesGetResponse = z.infer<typeof IndicesGetResponseSchema>;
 // request body, so it is strict. `from`/`size` bounds come from the spec
 // ("must be non-negative"; ES caps from+size paging at 10,000).
 export const SearchRunInputSchema = z.strictObject({
-	index: z.string().min(1),
+	index: NonBlankString,
 	query: QuerySchema.optional(),
 	from: z.number().int().min(0).default(0),
 	size: z.number().int().min(0).max(10_000).default(10),
@@ -213,8 +218,8 @@ export type SearchRunResponse = z.infer<typeof SearchRunResponseSchema>;
 // ── documents.get: GET /{index}/_doc/{id} ────────────────────────────────────
 
 export const DocumentsGetInputSchema = z.strictObject({
-	index: z.string().min(1),
-	id: z.string().min(1),
+	index: NonBlankString,
+	id: NonBlankString,
 });
 export type DocumentsGetInput = z.infer<typeof DocumentsGetInputSchema>;
 
