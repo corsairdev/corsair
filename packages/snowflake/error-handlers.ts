@@ -48,7 +48,7 @@ export const errorHandlers = {
 			maxRetries: 0,
 		}),
 	},
-	// 422: the SQL failed, or the handle does not exist (code 000709).
+	// 422: the SQL failed. Cancelling a missing handle is also 422 code 000709.
 	QUERY_FAILURE: {
 		match: (error: Error, _context: ErrorContext) => statusOf(error) === 422,
 		handler: async (_error: Error, _context: ErrorContext) => ({
@@ -73,7 +73,8 @@ export const errorHandlers = {
 			maxRetries: 0,
 		}),
 	},
-	// 404 means the path is not an endpoint. A missing statement is 422.
+	// 404 means the path is not an endpoint. A missing handle on GET is 400
+	// code 000709, which this handler already refuses to retry.
 	NOT_FOUND_ERROR: {
 		match: (error: Error, _context: ErrorContext) => statusOf(error) === 404,
 		handler: async (_error: Error, _context: ErrorContext) => ({
