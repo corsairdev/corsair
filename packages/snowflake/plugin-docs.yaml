@@ -2,6 +2,11 @@ displayName: Snowflake
 description: "Run SQL on a Snowflake account: submit a statement, fetch one result partition, or cancel execution."
 domain: snowflakecomputing.com
 recommendedAuth: api_key
+factory:
+  note: |
+    Statement calls also need the account host. Pass `account` here, or store it as the account credential. It is the identifier in `https://<account>.snowflakecomputing.com`, or that full URL. That is separate from `corsair.withTenant()`.
+  options:
+    account: acme-prod
 examples:
   read:
     path: statements.get

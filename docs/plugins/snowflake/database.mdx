@@ -1,9 +1,9 @@
 ---
 title: Database
-description: "Snowflake local sync: searchable entities, `.search()` filters, and operators."
+description: "Snowflake calls the remote SQL API and does not sync rows locally."
 ---
 
-The Snowflake plugin syncs data locally. Use `corsair.snowflake.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+The Snowflake plugin only calls the remote SQL API. It does not sync data locally or provide searchable database entities.
 
 <Info>
 **New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).

@@ -1,10 +1,4 @@
 import { AuthMissingError } from 'corsair/core';
-import type {
-	ApiRequestOptions,
-	OpenAPIConfig,
-	RateLimitConfig,
-} from 'corsair/http';
-import { ApiError, request } from 'corsair/http';
 import { z } from 'zod';
 
 export const SNOWFLAKE_USER_AGENT = 'corsair-snowflake/0.1.0';
@@ -14,16 +8,8 @@ export const SNOWFLAKE_USER_AGENT = 'corsair-snowflake/0.1.0';
 // timeout separately, and that limit can reach seven days.
 export const SNOWFLAKE_TIMEOUT_MS = 70_000;
 
-// error-handlers.ts owns retries. One attempt here still extracts Retry-After
-// on a 429. Snowflake does not document that header; a delta-seconds value is
-// honored when a proxy or a future response sends one.
-const SNOWFLAKE_RATE_LIMIT_CONFIG: RateLimitConfig = {
-	enabled: true,
-	maxRetries: 0,
-	initialRetryDelay: 1000,
-	backoffMultiplier: 2,
-	headerNames: { retryAfter: 'Retry-After' },
-};
+// error-handlers.ts owns retries. This client makes one attempt. A 429 may
+// carry Retry-After as delta-seconds or an HTTP-date; both become milliseconds.
 
 export const SnowflakeTokenTypeSchema = z.enum([
 	'KEYPAIR_JWT',
@@ -155,7 +141,7 @@ export function accountBaseUrl(account: string): string {
 	if (trimmed.includes('://') || trimmed.startsWith('//')) {
 		return baseUrlFromAbsolute(trimmed);
 	}
-	const withoutSlash = trimmed.replace(/\/+$/, '');
+	const withoutSlash = stripTrailingSlashes(trimmed);
 	if (withoutSlash.includes('/')) {
 		throw new Error(`Snowflake account identifier is not a host: ${trimmed}`);
 	}
@@ -163,6 +149,29 @@ export function accountBaseUrl(account: string): string {
 	const hostname = suffixOf(lowered) ? lowered : `${lowered}${COM_SUFFIX}`;
 	assertAccountHostname(hostname);
 	return `https://${hostname}`;
+}
+
+// A regex of one-or-more slashes is polynomial on a long run of slashes
+// (CodeQL js/polynomial-redos). Count them instead.
+function stripTrailingSlashes(value: string): string {
+	let end = value.length;
+	while (end > 0 && value.charCodeAt(end - 1) === 47) {
+		end -= 1;
+	}
+	return end === value.length ? value : value.slice(0, end);
+}
+
+/** Delta-seconds or an HTTP-date, in milliseconds. Undefined when unparseable. */
+export function retryAfterHeaderToMs(
+	header: string | null,
+	now = Date.now(),
+): number | undefined {
+	if (!header) return undefined;
+	const trimmed = header.trim();
+	if (/^\d+$/.test(trimmed)) return Number(trimmed) * 1000;
+	const parsed = Date.parse(trimmed);
+	if (Number.isNaN(parsed)) return undefined;
+	return Math.max(0, parsed - now);
 }
 
 /**
@@ -236,22 +245,50 @@ export function describeSnowflakeError(
 	return status !== undefined ? `Snowflake ${status}: ${text}` : text;
 }
 
-function toSnowflakeError(error: ApiError): SnowflakeAPIError {
-	return new SnowflakeAPIError(
-		describeSnowflakeError(error.status, error.body, error.message),
-		{
-			cause: error,
-			status: error.status,
-			code: readString(error.body, 'code'),
-			sqlState: readString(error.body, 'sqlState'),
-			statementHandle: readString(error.body, 'statementHandle'),
-			retryAfter: error.retryAfter,
-			body: error.body,
-		},
-	);
-}
+const STATUS_FALLBACK: Record<number, string> = {
+	400: 'Bad Request',
+	401: 'Unauthorized',
+	403: 'Forbidden',
+	404: 'Not Found',
+	405: 'Method Not Allowed',
+	408: 'Request Timeout',
+	415: 'Unsupported Media Type',
+	422: 'Unprocessable Entity',
+	429: 'Too Many Requests',
+	500: 'Internal Server Error',
+	502: 'Bad Gateway',
+	503: 'Service Unavailable',
+	504: 'Gateway Timeout',
+};
 
 export type SnowflakeQuery = Record<string, string | number | boolean>;
+
+function queryString(query: SnowflakeQuery | undefined): string {
+	if (!query) return '';
+	const parts: string[] = [];
+	for (const [key, value] of Object.entries(query)) {
+		parts.push(
+			`${encodeURIComponent(key)}=${encodeURIComponent(String(value))}`,
+		);
+	}
+	return parts.length > 0 ? `?${parts.join('&')}` : '';
+}
+
+// unknown: a JSON body, text, or an empty error page.
+async function readResponseBody(response: Response): Promise<unknown> {
+	if (response.status === 204) return undefined;
+	const contentType = response.headers.get('content-type') ?? '';
+	const text = await response.text();
+	if (!text) return undefined;
+	if (contentType.toLowerCase().includes('application/json')) {
+		try {
+			return JSON.parse(text);
+		} catch {
+			return text;
+		}
+	}
+	return text;
+}
 
 export async function makeSnowflakeRequest(options: {
 	baseUrl: string;
@@ -263,50 +300,60 @@ export async function makeSnowflakeRequest(options: {
 	body?: Record<string, string | number | boolean | object>;
 	// unknown: the caller parses this JSON with the endpoint output schema.
 }): Promise<unknown> {
-	const headers: Record<string, string> = {
+	const headers = new Headers({
 		Accept: 'application/json',
 		'Content-Type': 'application/json',
 		'User-Agent': SNOWFLAKE_USER_AGENT,
-	};
+		Authorization: `Bearer ${options.apiKey}`,
+	});
 	if (options.tokenType) {
-		headers['X-Snowflake-Authorization-Token-Type'] = options.tokenType;
+		headers.set('X-Snowflake-Authorization-Token-Type', options.tokenType);
 	}
 
-	const config: OpenAPIConfig = {
-		BASE: options.baseUrl,
-		VERSION: '2.0.0',
-		WITH_CREDENTIALS: false,
-		CREDENTIALS: 'omit',
-		TOKEN: options.apiKey,
-		HEADERS: headers,
-		TIMEOUT: SNOWFLAKE_TIMEOUT_MS,
-	};
+	const base = options.baseUrl.endsWith('/')
+		? options.baseUrl.slice(0, -1)
+		: options.baseUrl;
+	const path = options.path.startsWith('/') ? options.path : `/${options.path}`;
+	const url = `${base}${path}${queryString(options.query)}`;
 
-	const requestOptions: ApiRequestOptions = {
-		method: options.method,
-		url: options.path,
-		query: options.query,
-		body: options.body,
-		errors: {
-			405: 'Method Not Allowed',
-			408: 'Request Timeout',
-			415: 'Unsupported Media Type',
-			422: 'Unprocessable Entity',
-		},
-	};
-
+	let response: Response;
 	try {
-		// A 200 body is the result, including code 391908 (result too large to
-		// inline). Snowflake does not report statement failure inside HTTP 200.
-		return await request(config, requestOptions, {
-			rateLimitConfig: SNOWFLAKE_RATE_LIMIT_CONFIG,
+		response = await fetch(url, {
+			method: options.method,
+			headers,
+			body:
+				options.body === undefined ? undefined : JSON.stringify(options.body),
+			signal: AbortSignal.timeout(SNOWFLAKE_TIMEOUT_MS),
 		});
 	} catch (error) {
-		if (error instanceof SnowflakeAPIError) throw error;
-		if (error instanceof ApiError) throw toSnowflakeError(error);
 		if (error instanceof Error) {
 			throw new SnowflakeAPIError(error.message, { cause: error });
 		}
 		throw new SnowflakeAPIError('Unknown Snowflake API error');
 	}
+
+	const responseBody = await readResponseBody(response);
+	// 2xx includes 202 (statement still running). Code 391908 on 200 means the
+	// result was too large to inline; it is not a failure envelope.
+	if (response.ok) return responseBody;
+
+	const retryAfter =
+		response.status === 429
+			? retryAfterHeaderToMs(response.headers.get('Retry-After'))
+			: undefined;
+	throw new SnowflakeAPIError(
+		describeSnowflakeError(
+			response.status,
+			responseBody,
+			STATUS_FALLBACK[response.status] ?? response.statusText,
+		),
+		{
+			status: response.status,
+			code: readString(responseBody, 'code'),
+			sqlState: readString(responseBody, 'sqlState'),
+			statementHandle: readString(responseBody, 'statementHandle'),
+			retryAfter,
+			body: responseBody,
+		},
+	);
 }

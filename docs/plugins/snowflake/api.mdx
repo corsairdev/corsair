@@ -27,9 +27,9 @@ await corsair.snowflake.api.statements.cancel({ statementHandle: '019c06a4-0000-
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `statementHandle` | `string` | Yes | — |
-| `requestId` | `string` | No | — |
-| `retry` | `boolean` | No | — |
+| `statementHandle` | `string` | Yes | UUID-shaped handle (8-4-4-4-12 hex). |
+| `requestId` | `string` | No | UUID-shaped request ID (8-4-4-4-12 hex). |
+| `retry` | `boolean` | No | Requires `requestId`. `true` resubmits the same request without running it twice. |
 
 
 
@@ -64,10 +64,10 @@ await corsair.snowflake.api.statements.get({ statementHandle: '019c06a4-0000-df4
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `statementHandle` | `string` | Yes | — |
-| `requestId` | `string` | No | — |
-| `partition` | `number` | No | — |
-| `retry` | `boolean` | No | — |
+| `statementHandle` | `string` | Yes | UUID-shaped handle (8-4-4-4-12 hex). |
+| `requestId` | `string` | No | UUID-shaped request ID (8-4-4-4-12 hex). |
+| `partition` | `number` | No | Partition index, starting at 0. |
+| `retry` | `boolean` | No | Requires `requestId`. `true` resubmits the same request without running it twice. |
 
 
 
@@ -83,7 +83,7 @@ await corsair.snowflake.api.statements.get({ statementHandle: '019c06a4-0000-df4
 | `createdOn` | `number` | No | — |
 | `statementStatusUrl` | `string` | No | — |
 | `resultSetMetaData` | `object` | No | — |
-| `data` | `string \| null[][]` | No | — |
+| `data` | `(string \| null)[][]` | No | Rows. Each cell is a string or null. |
 | `stats` | `object` | No | — |
 
 <AccordionGroup>
@@ -143,10 +143,10 @@ await corsair.snowflake.api.statements.submit({ statement: 'SELECT 1', timeout: 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `requestId` | `string` | No | — |
-| `async` | `boolean` | No | — |
-| `nullable` | `boolean` | No | — |
-| `retry` | `boolean` | No | — |
+| `requestId` | `string` | No | UUID-shaped request ID (8-4-4-4-12 hex). |
+| `async` | `boolean` | No | Return the handle immediately when true. |
+| `nullable` | `boolean` | No | `false` returns SQL NULL as the string `"null"`. |
+| `retry` | `boolean` | No | Requires `requestId`. `true` resubmits the same request without running it twice. |
 | `statement` | `string` | Yes | — |
 | `timeout` | `number` | No | — |
 | `database` | `string` | No | — |
@@ -161,6 +161,7 @@ await corsair.snowflake.api.statements.submit({ statement: 'SELECT 1', timeout: 
 
 ```ts
 {
+  [key: string]: { type: string, value: string }
 }
 ```
 </Accordion>
@@ -179,7 +180,7 @@ await corsair.snowflake.api.statements.submit({ statement: 'SELECT 1', timeout: 
   timestamp_ntz_output_format?: string,
   timestamp_tz_output_format?: string,
   multi_statement_count?: number | string,
-  client_result_chunk_size?: number,
+  client_result_chunk_size?: number, // 16 to 160, megabytes
   rows_per_resultset?: number,
   use_cached_result?: string
 }
@@ -201,7 +202,7 @@ await corsair.snowflake.api.statements.submit({ statement: 'SELECT 1', timeout: 
 | `createdOn` | `number` | No | — |
 | `statementStatusUrl` | `string` | No | — |
 | `resultSetMetaData` | `object` | No | — |
-| `data` | `string \| null[][]` | No | — |
+| `data` | `(string \| null)[][]` | No | Rows. Each cell is a string or null. |
 | `stats` | `object` | No | — |
 
 <AccordionGroup>

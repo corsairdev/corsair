@@ -39,7 +39,9 @@ import { snowflake } from '@corsair-dev/snowflake';
 
 export const corsair = createCorsair({
 	plugins: [
-		snowflake(),
+		snowflake({
+			account: 'acme-prod',
+		}),
 	],
 	database: new Database('corsair.db'),
 	kek: process.env.CORSAIR_KEK!,
@@ -58,10 +60,12 @@ Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See 
 <Tabs>
 <Tab title="API Key (Recommended)">
 
-No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key and the account host. The account value is the identifier in `https://<account>.snowflakecomputing.com`, or that full URL. It can be passed as `account` on `snowflake()` or stored as the account credential.
 
 ```ts
-snowflake()
+snowflake({
+	account: 'acme-prod',
+})
 ```
 
 More: [API Key](/concepts/api-key)

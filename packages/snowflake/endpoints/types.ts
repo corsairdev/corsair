@@ -58,7 +58,7 @@ const ParametersSchema = z
 		timestamp_ntz_output_format: NonEmpty.optional(),
 		timestamp_tz_output_format: NonEmpty.optional(),
 		multi_statement_count: MultiStatementCountSchema.optional(),
-		client_result_chunk_size: z.number().int().optional(),
+		client_result_chunk_size: z.number().int().min(16).max(160).optional(),
 		rows_per_resultset: z.number().int().min(0).optional(),
 		use_cached_result: NonEmpty.optional(),
 	})

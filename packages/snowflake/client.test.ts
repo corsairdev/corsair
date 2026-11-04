@@ -83,8 +83,8 @@ describe('accountBaseUrl', () => {
 		expect(
 			accountBaseUrl('https://acme-prod.privatelink.snowflakecomputing.com'),
 		).toBe('https://acme-prod.privatelink.snowflakecomputing.com');
-		expect(accountBaseUrl('https://acme-prod.snowflakecomputing.cn')).toBe(
-			'https://acme-prod.snowflakecomputing.cn',
+		expect(accountBaseUrl(`acme-prod${'/'.repeat(10_000)}`)).toBe(
+			'https://acme-prod.snowflakecomputing.com',
 		);
 	});
 
@@ -252,20 +252,35 @@ describe('makeSnowflakeRequest', () => {
 		expect(fetchMock).toHaveBeenCalledTimes(1);
 	});
 
-	it('leaves retryAfter unset on a 500 and on an HTTP-date Retry-After', async () => {
+	it('leaves Retry-After unset on a 500 and parses an HTTP-date on a 429', async () => {
 		respond({ message: 'Internal error' }, 500, {
 			'Retry-After': 'Wed, 21 Oct 2015 07:28:00 GMT',
 		});
-		const error = await failure(
+		const serverError = await failure(
 			makeSnowflakeRequest({
 				...base,
 				method: 'GET',
 				path: '/api/v2/statements/h',
 			}),
 		);
-		expect(error.status).toBe(500);
-		expect(error.retryAfter).toBeUndefined();
+		expect(serverError.status).toBe(500);
+		expect(serverError.retryAfter).toBeUndefined();
 		expect(fetchMock).toHaveBeenCalledTimes(1);
+
+		const future = new Date(Date.now() + 5_000).toUTCString();
+		respond({ code: '390505', message: 'Too many requests.' }, 429, {
+			'Retry-After': future,
+		});
+		const limited = await failure(
+			makeSnowflakeRequest({
+				...base,
+				method: 'GET',
+				path: '/api/v2/statements/h',
+			}),
+		);
+		expect(limited.status).toBe(429);
+		expect(limited.retryAfter).toBeGreaterThan(4_000);
+		expect(limited.retryAfter).toBeLessThan(6_000);
 	});
 
 	it('maps an empty 405', async () => {

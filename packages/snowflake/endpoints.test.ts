@@ -103,7 +103,11 @@ describe('statements.submit', () => {
 			database: 'TESTDB',
 			warehouse: 'TESTWH',
 			bindings: { '1': { type: 'FIXED', value: '123' } },
-			parameters: { query_tag: 'tag-1234', multi_statement_count: '2' },
+			parameters: {
+				query_tag: 'tag-1234',
+				multi_statement_count: '2',
+				client_result_chunk_size: 160,
+			},
 			async: true,
 			nullable: false,
 			requestId: REQUEST_ID,
@@ -132,7 +136,11 @@ describe('statements.submit', () => {
 			database: 'TESTDB',
 			warehouse: 'TESTWH',
 			bindings: { '1': { type: 'FIXED', value: '123' } },
-			parameters: { query_tag: 'tag-1234', multi_statement_count: '2' },
+			parameters: {
+				query_tag: 'tag-1234',
+				multi_statement_count: '2',
+				client_result_chunk_size: 160,
+			},
 		});
 	});
 
@@ -189,6 +197,8 @@ describe('statements.submit', () => {
 				bindings: { '1': { type: 'FIXED', value: 123 } },
 			},
 			{ statement: 'SELECT 1', parameters: { NOT_A_PARAM: 'x' } },
+			{ statement: 'SELECT 1', parameters: { client_result_chunk_size: 15 } },
+			{ statement: 'SELECT 1', parameters: { client_result_chunk_size: 161 } },
 			{ statement: 'SELECT 1', parameters: { rows_per_resultset: -1 } },
 			{ statement: 'SELECT 1', parameters: { multi_statement_count: -1 } },
 			{ statement: 'SELECT 1', retry: true },
