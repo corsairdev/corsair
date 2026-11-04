@@ -1,3 +1,5 @@
+import { logEventFromContext } from 'corsair/core';
+import { Search } from './endpoints';
 import {
 	ClusterGetHealthInputSchema,
 	ClusterGetHealthResponseSchema,
@@ -20,6 +22,13 @@ import {
 	searchHit,
 	searchResponse,
 } from './test-fixtures';
+
+jest.mock('corsair/core', () => ({
+	...jest.requireActual('corsair/core'),
+	logEventFromContext: jest.fn().mockResolvedValue(null),
+}));
+
+const mockLog = jest.mocked(logEventFromContext);
 
 describe('cluster.getHealth schemas', () => {
 	it('accepts a no-arg call and tolerates harmless extra keys', () => {
@@ -250,5 +259,52 @@ describe('documents.get schemas', () => {
 		const result = DocumentsGetResponseSchema.parse(documentMissing);
 		expect(result.found).toBe(false);
 		expect(result._source).toBeUndefined();
+	});
+});
+
+describe('search.run logging', () => {
+	let fetchMock: jest.SpyInstance;
+
+	beforeEach(() => {
+		fetchMock = jest.spyOn(globalThis, 'fetch');
+		mockLog.mockClear();
+	});
+
+	afterEach(() => {
+		fetchMock.mockRestore();
+	});
+
+	it('logs identifiers and counts only, never search terms or documents', async () => {
+		fetchMock.mockResolvedValueOnce(
+			new Response(JSON.stringify(searchResponse()), {
+				status: 200,
+				headers: { 'Content-Type': 'application/json' },
+			}),
+		);
+
+		// The fake context carries only what call() reads: the solo-mode
+		// options and the resolved Authorization header.
+		await Search.run(
+			{
+				options: { baseUrl: 'http://es:9200' },
+				key: 'ApiKey encoded-key',
+			} as never,
+			{
+				index: 'logs-*',
+				size: 5,
+				query: { match: { message: 'S3CRET-DISK-TERM' } },
+			},
+		);
+
+		expect(mockLog).toHaveBeenCalledTimes(1);
+		const payload = mockLog.mock.calls[0]?.[2];
+		expect(payload).toEqual({
+			operation: 'search.run',
+			index: 'logs-*',
+			found: undefined,
+			hitCount: 1,
+		});
+		expect(JSON.stringify(payload)).not.toContain('S3CRET-DISK-TERM');
+		expect(JSON.stringify(payload)).not.toContain(searchHit._source?.message);
 	});
 });
