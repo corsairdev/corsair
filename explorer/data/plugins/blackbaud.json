@@ -1,0 +1,993 @@
+{
+  "id": "blackbaud",
+  "displayName": "Blackbaud",
+  "description": "Blackbaud plugin for Corsair",
+  "npmPackageName": "@corsair-dev/blackbaud",
+  "authTypes": ["oauth_2"],
+  "defaultAuthType": "oauth_2",
+  "counts": {
+    "api": 5,
+    "webhooks": 0,
+    "db": 5
+  },
+  "auth": [
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature",
+        "tenant_external_id"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "blackbaud.api.batch.addGiftsToBatch",
+      "shortPath": "batch.addGiftsToBatch",
+      "description": "Add one or more gifts (donations) to an existing open gift batch in Blackbaud Raiser's Edge NXT. Returns the added gifts and any per-gift errors.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "batch_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "gifts",
+            "optional": false,
+            "type": "{ amount: { value: number }, constituent_id: string, gift_splits: { amount: { value: number }, fund_id: string, appeal_id?: string, campaign_id?: string, package_id?: string }[], type: string, payments: { payment_method?: string, account_token?: string, bbps_configuration_id?: string, bbps_transaction_id?: string, check_date?: { d?: number, m?: number, y?: number }, check_number?: string, checkout_transaction_id?: string, charge_transaction?: boolean, reason?: string, reference?: string, reference_date?: { d?: number, m?: number, y?: number }, rejection_details?: string }[], date?: string, post_date?: string, post_status?: string, gift_status?: string, subtype?: string, constituency?: string, gift_code?: string, is_anonymous?: boolean, lookup_id?: string, origin?: string, reference?: string, batch_number?: string, batch_prefix?: string, linked_gifts?: string[], fundraisers?: { amount: { value: number }, constituent_id: string }[], soft_credits?: { amount: { value: number }, constituent_id: string }[], default_fundraiser_credits?: boolean, default_soft_credits?: boolean, custom_fields?: { category: string, value?: string | number | boolean, comment?: string, date?: string, parent_id?: string }[] }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "gifts",
+            "optional": true,
+            "type": "{ id?: string, constituent_id?: string, amount?: { value: number }, balance?: { value: number }, batch_number?: string, constituency?: string, date?: string, date_added?: string, date_modified?: string, gift_code?: string, gift_status?: string, is_anonymous?: boolean, lookup_id?: string, origin?: string, post_date?: string, post_status?: string, reference?: string, subtype?: string, type?: string, linked_gifts?: string[], gift_splits?: { id?: string, amount?: { value: number }, appeal_id?: string, campaign_id?: string, fund_id?: string, package_id?: string }[], payments?: { payment_method?: string, account_token?: string, bbps_configuration_id?: string, bbps_transaction_id?: string, check_date?: { d?: number, m?: number, y?: number }, check_number?: string, checkout_transaction_id?: string, reference?: string, reference_date?: { d?: number, m?: number, y?: number } }[], fundraisers?: { amount?: { value: number }, constituent_id?: string }[], soft_credits?: { id?: string, amount?: { value: number }, constituent_id?: string, gift_id?: string }[], receipts?: { amount?: { value: number }, date?: string, number?: number, status?: string }[], acknowledgements?: { date?: string, letter?: string, status?: string }[], batch_id?: string, approved_gift_id?: string, errors?: { affected_field?: string, batch_id?: string, exception_error_code?: number, exception_error_message?: string, exception_error_name?: string, gift_id?: string, lookup_id?: string }[] }[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "{ affected_field?: string, batch_id?: string, exception_error_code?: number, exception_error_message?: string, exception_error_name?: string, gift_id?: string, lookup_id?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blackbaud.api.gifts.getGiftById",
+      "shortPath": "gifts.getGiftById",
+      "description": "Retrieves comprehensive gift details from Blackbaud Raiser's Edge NXT by gift ID.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "gift_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "constituent_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "amount",
+            "optional": true,
+            "type": "{ value: number }"
+          },
+          {
+            "key": "balance",
+            "optional": true,
+            "type": "{ value: number }"
+          },
+          {
+            "key": "batch_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "constituency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_added",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_modified",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gift_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gift_status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_anonymous",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "lookup_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "origin",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "post_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "post_status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "reference",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subtype",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "linked_gifts",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "gift_splits",
+            "optional": true,
+            "type": "{ id?: string, amount?: { value: number }, appeal_id?: string, campaign_id?: string, fund_id?: string, package_id?: string }[]"
+          },
+          {
+            "key": "payments",
+            "optional": true,
+            "type": "{ payment_method?: string, account_token?: string, bbps_configuration_id?: string, bbps_transaction_id?: string, check_date?: { d?: number, m?: number, y?: number }, check_number?: string, checkout_transaction_id?: string, reference?: string, reference_date?: { d?: number, m?: number, y?: number } }[]"
+          },
+          {
+            "key": "fundraisers",
+            "optional": true,
+            "type": "{ amount?: { value: number }, constituent_id?: string }[]"
+          },
+          {
+            "key": "soft_credits",
+            "optional": true,
+            "type": "{ id?: string, amount?: { value: number }, constituent_id?: string, gift_id?: string }[]"
+          },
+          {
+            "key": "receipts",
+            "optional": true,
+            "type": "{ amount?: { value: number }, date?: string, number?: number, status?: string }[]"
+          },
+          {
+            "key": "acknowledgements",
+            "optional": true,
+            "type": "{ date?: string, letter?: string, status?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blackbaud.api.membership.getMembershipDetails",
+      "shortPath": "membership.getMembershipDetails",
+      "description": "Retrieves membership details (program, category, dues, renewal dates) from Blackbaud Raiser's Edge NXT by member junction ID.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "member_junction_id",
+            "optional": false,
+            "type": "string",
+            "description": "Membership record ID for the constituent (the \"id\" returned by the constituent memberships list)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dues",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "category_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "program_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sub_category_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_renewed_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_dropped_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "next_renewal_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "joined_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "total_years",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "times_renewed",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "consec_years",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "constituent_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "Joined | Renewal | Rejoined | Upgrade | Downgrade | Dropped"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blackbaud.api.oneRoster.oneRosterOAuth2BaseApi",
+      "shortPath": "oneRoster.oneRosterOAuth2BaseApi",
+      "description": "Reads Blackbaud OneRoster OAuth2 discovery metadata (openid-configuration, public keys).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "operation",
+            "optional": false,
+            "type": "openid-configuration | publickeys"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "issuer",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "authorization_endpoint",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "token_endpoint",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jwks_uri",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "response_types_supported",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "subject_types_supported",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "id_token_signing_alg_values_supported",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "code_challenge_methods_supported",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "keys",
+            "optional": true,
+            "type": "{ kty: string, alg?: string, use?: string, kid?: string, x5t?: string, x5c?: string[], e?: string, n?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blackbaud.api.payments.getPaymentTransaction",
+      "shortPath": "payments.getPaymentTransaction",
+      "description": "Retrieves payment transaction details from Blackbaud SKY Payments API.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transaction_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "amount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "net_amount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "additional_fee",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "application_fee",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total_fees",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "Unknown | Processed | Failed | Refunded | Pending | Authorized | Voided | Created"
+          },
+          {
+            "key": "transaction_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pending_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "transaction_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "transaction_category",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "account_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "application",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "authorization_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "check_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "comment",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "disbursement_status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "donor_ip_address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email_address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_live",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "reference_transaction_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "billing_info",
+            "optional": true,
+            "type": "{ city?: string | null, country?: string | null, post_code?: string | null, state?: string | null, street?: string | null }"
+          },
+          {
+            "key": "credit_card",
+            "optional": true,
+            "type": "{ card_type?: string | null, exp_month?: number, exp_year?: number, last_four?: string | null, name?: string | null }"
+          },
+          {
+            "key": "related_transactions",
+            "optional": true,
+            "type": "{ id?: string | null, transaction_type?: string | null }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "blackbaud.db.batchGifts.search",
+      "entityName": "batchGifts",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "constituent_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "batch_number",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "constituency",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "date_added",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "date_modified",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "gift_code",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "gift_status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "is_anonymous",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "lookup_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "origin",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "post_date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "post_status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "reference",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "subtype",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "batch_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "approved_gift_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "blackbaud.db.gifts.search",
+      "entityName": "gifts",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "constituent_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "batch_number",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "constituency",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "date_added",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "date_modified",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "gift_code",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "gift_status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "is_anonymous",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "lookup_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "origin",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "post_date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "post_status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "reference",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "subtype",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "blackbaud.db.memberships.search",
+      "entityName": "memberships",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "dues",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "category_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "program_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "sub_category_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "last_renewed_date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "last_dropped_date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "next_renewal_date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "joined_date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "total_years",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "times_renewed",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "consec_years",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "constituent_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "notes",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "blackbaud.db.oneRosterKeys.search",
+      "entityName": "oneRosterKeys",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "kty",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "alg",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "use",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "kid",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "x5t",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "e",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "n",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "blackbaud.db.paymentTransactions.search",
+      "entityName": "paymentTransactions",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "amount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "net_amount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "additional_fee",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "application_fee",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "total_fees",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "currency",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "transaction_date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "pending_date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "transaction_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "transaction_category",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "account_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "application",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "authorization_code",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "check_number",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "comment",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "disbursement_status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "donor_ip_address",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email_address",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "phone_number",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "is_live",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "token",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "reference_transaction_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

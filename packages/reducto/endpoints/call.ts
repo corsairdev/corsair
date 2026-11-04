@@ -3,7 +3,7 @@ import type { z } from 'zod';
 import type { ReductoRequestOptions } from '../client';
 import { makeReductoRequest } from '../client';
 import type { ReductoContext } from '../index';
-import { rememberJob } from './cache';
+import { rememberJob } from './persist';
 
 type Schema<T> = z.ZodType<T>;
 

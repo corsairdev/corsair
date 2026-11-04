@@ -1,0 +1,171 @@
+{
+  "id": "keenable",
+  "displayName": "Keenable",
+  "description": "Web search and page-fetch API for AI agents, with realtime and deep retrieval modes.",
+  "npmPackageName": "@corsair-dev/keenable",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 2,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "keenable.api.fetch.get",
+      "shortPath": "fetch.get",
+      "description": "Fetch a page as markdown by URL, optionally extracting with a prompt",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "max_chars",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "live",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "prompt",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "author",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "published_at",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "keenable.api.search.post",
+      "shortPath": "search.post",
+      "description": "Search the web and return ranked results (realtime or pro mode)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "mode",
+            "optional": true,
+            "type": "realtime | pro"
+          },
+          {
+            "key": "site",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "acquired_after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "acquired_before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "published_after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "published_before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query_time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "snippet_max_length",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_results",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "mode",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ title: string, url: string, description?: string, snippet?: string, published_at?: string, acquired_at?: string }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

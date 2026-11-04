@@ -14,6 +14,7 @@ const BASE_FIELDS: Record<
 		integration: [],
 		account: ['access_token', 'refresh_token', 'expires_at'],
 	},
+	managed_pricing: { integration: [], account: [] },
 } as const;
 
 export type FieldStatus = {

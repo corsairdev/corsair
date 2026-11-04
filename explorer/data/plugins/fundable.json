@@ -1,0 +1,1129 @@
+{
+  "id": "fundable",
+  "displayName": "Fundable",
+  "description": "Startup funding intelligence — companies, funding rounds, investors, founders and people search, plus alert polling.",
+  "npmPackageName": "@corsair-dev/fundable",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 21,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "fundable.api.alerts.configurations",
+      "shortPath": "alerts.configurations",
+      "description": "Authenticated user's alert configurations",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ configurations: { configuration_id: string, configuration_name: string, frequency: DAILY | WEEKLY | BIWEEKLY | MONTHLY, description?: string, filters: { industries?: string[], super_categories?: string[], locations?: string[], financing_types?: string[], deal_size_min?: number | null, deal_size_max?: number | null, num_employees?: string[], investors?: { id?: string, name?: string }[], companies?: { id?: string, name?: string }[] } }[] }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ total_count?: number, page?: number, page_size?: number, credits_used?: number, credit_source?: string | null, monthly_credits_remaining?: number | null, purchased_credits_remaining?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fundable.api.alerts.list",
+      "shortPath": "alerts.list",
+      "description": "Saved alert matches with deals and reasoning in a date range",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "alert_ids",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "start_date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "end_date",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ alerts: { alertId: string, alertName: string, alertFrequency: DAILY | WEEKLY | BIWEEKLY | MONTHLY, totalDealCount: number, deals: { id: string, company_id?: string, company_name?: string, company_guru_permalink?: string, round_type?: string, total_round_raised?: number, date?: string, company_website?: string | null, company_linkedin?: string | null, location?: { city?: string | null, state?: string | null, country?: string | null, region?: string | null } | null, deal_short_description?: string | null, deal_long_description?: string | null, reasoning?: string | null, articles?: { link?: string, is_primary: boolean, publishedDate?: string }[] }[] }[] }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ total_count?: number, page?: number, page_size?: number, credits_used?: number, credit_source?: string | null, monthly_credits_remaining?: number | null, purchased_credits_remaining?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fundable.api.companies.deals",
+      "shortPath": "companies.deals",
+      "description": "Get a company's complete funding history by identifier",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "linkedin",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "crunchbase",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ deals: { id: string, round_type?: string | null, extension?: boolean | null, intermediate?: string | null, pre?: boolean | null, date?: string | null, created_at?: string | null, total_round_raised?: number | null, deal_descriptions?: { short_description?: string | null, long_description?: string | null } | null, company_id?: string | null, investor_ids?: string[], angel_investor_ids?: string[], financings?: { id?: string | null, type?: string | null, size_usd?: number | null, size_native?: number | null, currency?: string | null }[], valuation?: { type: string, valuation_usd?: number | null, valuation_native?: number | null, valuation_currency?: string | null } | null, articles?: { link?: string | null, date?: string | null, is_primary: boolean }[] }[] }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ total_count?: number, page?: number, page_size?: number, credits_used?: number, credit_source?: string | null, monthly_credits_remaining?: number | null, purchased_credits_remaining?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fundable.api.companies.get",
+      "shortPath": "companies.get",
+      "description": "Get company details and recent funding by identifier",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "linkedin",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "crunchbase",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ company: { id?: string | null, name?: string | null, legal_name?: string | null, guru_permalink?: string | null, domain?: string | null, region?: string | null, operating_status?: string | null, founded_date?: string | null, acquired?: boolean | null, short_description?: string | null, long_description?: string | null, num_employees?: string | null, linkedin?: string | null, twitter?: string | null, facebook?: string | null, pitchbook?: string | null, crunchbase?: string | null, address?: string | null, ipo_status?: string | null, num_funding_rounds?: number | null, num_investors?: number | null, total_raised?: number | null, latest_valuation_usd?: number | null, latest_valuation_date?: string | null, industries?: { permalink?: string | null, name?: string | null }[], location?: { region?: { name?: string | null, permalink?: string | null } | null, country?: { name?: string | null, permalink?: string | null } | null, state?: { name?: string | null, permalink?: string | null } | null, city?: { name?: string | null, permalink?: string | null } | null } | null, latest_deal?: { id?: string | null, type?: string | null, total_round_raised?: number | null, date?: string | null, extension?: boolean | null, pre?: boolean | null, intermediate?: string | null, description?: { short_description?: string | null, long_description?: string | null } | null, investors?: string[], angel_investor_ids?: string[], financings?: { id?: string | null, type?: string | null, size_usd?: number | null, size_native?: number | null, currency?: string | null }[], articles?: { link?: string | null, date?: string | null, is_primary: boolean }[] } | null, all_investor_ids?: string[] | null, similarity?: number | null } }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ total_count?: number, page?: number, page_size?: number, credits_used?: number, credit_source?: string | null, monthly_credits_remaining?: number | null, purchased_credits_remaining?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fundable.api.companies.post",
+      "shortPath": "companies.post",
+      "description": "Discover companies with metadata and full latest-deal details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifiers",
+            "optional": true,
+            "type": "{ ids?: string[], domains?: string[], linkedin_urls?: string[], crunchbase_urls?: string[] }"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "{ search_query?: string, min_relevance?: number, locations?: string[], industries?: string[], super_categories?: string[], employee_count?: 1-10 | 11-50 | 51-100 | 101-250 | 251-500 | 501-1000 | 1001-5000 | 5001-10000 | 10001+[], ipo_status?: public | private[], total_raised_min?: number, total_raised_max?: number }"
+          },
+          {
+            "key": "latest_deal",
+            "optional": true,
+            "type": "{ financing_types?: { type: SERIES_A | SERIES_B | SERIES_C | SERIES_D | SERIES_E | SERIES_F | SERIES_G | SERIES_H | SERIES_I | SERIES_J | SERIES_K | SERIES_L | SERIES_M | SEED | SAFE | CONVERTIBLE_NOTE | EQUITY | PREFERRED | SECONDARY_MARKET | DEBT_FINANCING | GRANT | NON_EQUITY_ASSISTANCE | CROWDFUNDING | INITIAL_COIN_OFFERING | FUNDING_ROUND, pre?: boolean, extension?: boolean }[], size_min?: number, size_max?: number, date_start?: string, date_end?: string, created_start?: string, created_end?: string, investor_ids?: string[] }"
+          },
+          {
+            "key": "investors",
+            "optional": true,
+            "type": "{ investor_ids?: string[], people_ids?: string[] }"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "most_recent_raise | oldest_raise | most_recent_founded | oldest_founded | largest_valuation | smallest_valuation | largest_total_raise | smallest_total_raise | most_funding_rounds | most_investors"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ companies: { id?: string | null, name?: string | null, legal_name?: string | null, guru_permalink?: string | null, domain?: string | null, region?: string | null, operating_status?: string | null, founded_date?: string | null, acquired?: boolean | null, short_description?: string | null, long_description?: string | null, num_employees?: string | null, linkedin?: string | null, twitter?: string | null, facebook?: string | null, pitchbook?: string | null, crunchbase?: string | null, address?: string | null, ipo_status?: string | null, num_funding_rounds?: number | null, num_investors?: number | null, total_raised?: number | null, latest_valuation_usd?: number | null, latest_valuation_date?: string | null, industries?: { permalink?: string | null, name?: string | null }[], location?: { region?: { name?: string | null, permalink?: string | null } | null, country?: { name?: string | null, permalink?: string | null } | null, state?: { name?: string | null, permalink?: string | null } | null, city?: { name?: string | null, permalink?: string | null } | null } | null, latest_deal?: { id?: string | null, type?: string | null, total_round_raised?: number | null, date?: string | null, extension?: boolean | null, pre?: boolean | null, intermediate?: string | null, description?: { short_description?: string | null, long_description?: string | null } | null, investors?: string[], angel_investor_ids?: string[], financings?: { id?: string | null, type?: string | null, size_usd?: number | null, size_native?: number | null, currency?: string | null }[], articles?: { link?: string | null, date?: string | null, is_primary: boolean }[] } | null, all_investor_ids?: string[] | null, similarity?: number | null }[] }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ total_count?: number, page?: number, page_size?: number, credits_used?: number, credit_source?: string | null, monthly_credits_remaining?: number | null, purchased_credits_remaining?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fundable.api.companies.search",
+      "shortPath": "companies.search",
+      "description": "Fuzzy company lookup by name, domain, LinkedIn, or Crunchbase",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "linkedin",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "crunchbase",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ companies: { id: string, guru_permalink?: string | null, name: string, short_description?: string | null, relevance_score?: number, domain?: string | null, linkedin?: string | null, crunchbase?: string | null }[] }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ total_count?: number, page?: number, page_size?: number, credits_used?: number, credit_source?: string | null, monthly_credits_remaining?: number | null, purchased_credits_remaining?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fundable.api.deals.get",
+      "shortPath": "deals.get",
+      "description": "Get a specific funding round by UUID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ deal: { id: string, round_type?: string | null, extension?: boolean | null, intermediate?: string | null, pre?: boolean | null, date?: string | null, created_at?: string | null, total_round_raised?: number | null, deal_descriptions?: { short_description?: string | null, long_description?: string | null } | null, company_id?: string | null, investor_ids?: string[], angel_investor_ids?: string[], financings?: { id?: string | null, type?: string | null, size_usd?: number | null, size_native?: number | null, currency?: string | null }[], valuation?: { type: string, valuation_usd?: number | null, valuation_native?: number | null, valuation_currency?: string | null } | null, articles?: { link?: string | null, date?: string | null, is_primary: boolean }[] } }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ total_count?: number, page?: number, page_size?: number, credits_used?: number, credit_source?: string | null, monthly_credits_remaining?: number | null, purchased_credits_remaining?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fundable.api.deals.investors",
+      "shortPath": "deals.investors",
+      "description": "Full investor lineup for a funding round (firms, angels, leads)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ investors: { id: string, name: string, lead_investor?: boolean | null, personnel?: { id: string, name?: string | null, linkedin?: string | null, crunchbase?: string | null, twitter?: string | null }[], financing_type?: string | null, domain?: string | null, linkedin?: string | null, crunchbase?: string | null }[], angel_investors: { id: string, name?: string | null, financing_type?: string | null, linkedin?: string | null, crunchbase?: string | null, twitter?: string | null }[] }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ total_count?: number, page?: number, page_size?: number, credits_used?: number, credit_source?: string | null, monthly_credits_remaining?: number | null, purchased_credits_remaining?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fundable.api.deals.post",
+      "shortPath": "deals.post",
+      "description": "Find funding rounds across complete company histories",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifiers",
+            "optional": true,
+            "type": "{ deal_ids?: string[] }"
+          },
+          {
+            "key": "deal",
+            "optional": true,
+            "type": "{ financing_types?: { type: SERIES_A | SERIES_B | SERIES_C | SERIES_D | SERIES_E | SERIES_F | SERIES_G | SERIES_H | SERIES_I | SERIES_J | SERIES_K | SERIES_L | SERIES_M | SEED | SAFE | CONVERTIBLE_NOTE | EQUITY | PREFERRED | SECONDARY_MARKET | DEBT_FINANCING | GRANT | NON_EQUITY_ASSISTANCE | CROWDFUNDING | INITIAL_COIN_OFFERING | FUNDING_ROUND, pre?: boolean, extension?: boolean }[], size_min?: number, size_max?: number, date_start?: string, date_end?: string, created_start?: string, created_end?: string }"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "{ company_ids?: string[], locations?: string[], industries?: string[], super_categories?: string[], employee_count?: 1-10 | 11-50 | 51-100 | 101-250 | 251-500 | 501-1000 | 1001-5000 | 5001-10000 | 10001+[], ipo_status?: public | private[], total_raised_min?: number, total_raised_max?: number }"
+          },
+          {
+            "key": "investors",
+            "optional": true,
+            "type": "{ investor_ids?: string[], people_ids?: string[] }"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "most_recent_deal | oldest_deal | largest_raise | smallest_raise"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ deals: { id: string, round_type?: string | null, extension?: boolean | null, intermediate?: string | null, pre?: boolean | null, date?: string | null, created_at?: string | null, total_round_raised?: number | null, deal_descriptions?: { short_description?: string | null, long_description?: string | null } | null, company_id?: string | null, investor_ids?: string[], angel_investor_ids?: string[], financings?: { id?: string | null, type?: string | null, size_usd?: number | null, size_native?: number | null, currency?: string | null }[], valuation?: { type: string, valuation_usd?: number | null, valuation_native?: number | null, valuation_currency?: string | null } | null, articles?: { link?: string | null, date?: string | null, is_primary: boolean }[] }[] }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ total_count?: number, page?: number, page_size?: number, credits_used?: number, credit_source?: string | null, monthly_credits_remaining?: number | null, purchased_credits_remaining?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fundable.api.filters.industries",
+      "shortPath": "filters.industries",
+      "description": "Resolve industry and super-category labels to exact permalinks",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "INDUSTRY | SUPER_CATEGORY"
+          },
+          {
+            "key": "industry_type",
+            "optional": true,
+            "type": "INDUSTRY | SUPER_CATEGORY"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ industries: { permalink: string, name: string, industry_type?: INDUSTRY | SUPER_CATEGORY }[] }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ total_count?: number, page?: number, page_size?: number, credits_used?: number, credit_source?: string | null, monthly_credits_remaining?: number | null, purchased_credits_remaining?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fundable.api.filters.locations",
+      "shortPath": "filters.locations",
+      "description": "Resolve location labels to exact permalinks",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "CITY | STATE | REGION | COUNTRY"
+          },
+          {
+            "key": "location_type",
+            "optional": true,
+            "type": "CITY | STATE | REGION | COUNTRY"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ locations: { permalink: string, name: string, location_type?: CITY | STATE | REGION | COUNTRY }[] }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ total_count?: number, page?: number, page_size?: number, credits_used?: number, credit_source?: string | null, monthly_credits_remaining?: number | null, purchased_credits_remaining?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fundable.api.investors.deals",
+      "shortPath": "investors.deals",
+      "description": "Investor's complete deal history by identifier",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "linkedin",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "crunchbase",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ deals: { id: string, round_type?: string | null, extension?: boolean | null, intermediate?: string | null, pre?: boolean | null, date?: string | null, created_at?: string | null, total_round_raised?: number | null, deal_descriptions?: { short_description?: string | null, long_description?: string | null } | null, company_id?: string | null, investor_ids?: string[], angel_investor_ids?: string[], financings?: { id?: string | null, type?: string | null, size_usd?: number | null, size_native?: number | null, currency?: string | null }[], valuation?: { type: string, valuation_usd?: number | null, valuation_native?: number | null, valuation_currency?: string | null } | null, articles?: { link?: string | null, date?: string | null, is_primary: boolean }[] }[] }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ total_count?: number, page?: number, page_size?: number, credits_used?: number, credit_source?: string | null, monthly_credits_remaining?: number | null, purchased_credits_remaining?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fundable.api.investors.get",
+      "shortPath": "investors.get",
+      "description": "Investor profile, stats, and portfolio summary by identifier",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "linkedin",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "crunchbase",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ investor: { id: string, name: string, total_deal_count?: number, lead_deal_count?: number, deal_count_last_12_months?: number, lead_deal_count_last_12_months?: number | null, most_recent_deal_date?: string | null, guru_permalink?: string, domain?: string | null, website?: string | null, linkedin?: string | null, pitchbook?: string | null, crunchbase?: string | null, description?: string | null, legal_name?: string | null, num_employees?: string | null, investment_stage?: string | null, contact_email?: string | null, contact_phone?: string | null, location?: { region?: { name?: string | null, permalink?: string | null } | null, country?: { name?: string | null, permalink?: string | null } | null, state?: { name?: string | null, permalink?: string | null } | null, city?: { name?: string | null, permalink?: string | null } | null } | null, top_industries?: { name?: string | null, permalink?: string | null, count?: number | null }[], top_locations?: { name?: string | null, full_name?: string | null, permalink?: string | null, type?: string | null, count?: number | null }[], top_round_types?: { type?: string | null, count?: number | null }[], filtered_deal_count?: number | null, filtered_lead_count?: number | null } }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ total_count?: number, page?: number, page_size?: number, credits_used?: number, credit_source?: string | null, monthly_credits_remaining?: number | null, purchased_credits_remaining?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fundable.api.investors.post",
+      "shortPath": "investors.post",
+      "description": "Discover investor firms by attributes and investments",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifiers",
+            "optional": true,
+            "type": "{ ids?: string[], domains?: string[], linkedin_urls?: string[], crunchbase_urls?: string[] }"
+          },
+          {
+            "key": "investor",
+            "optional": true,
+            "type": "{ locations?: string[], employee_count?: 1-10 | 11-50 | 51-100 | 101-250 | 251-500 | 501-1000 | 1001-5000 | 5001-10000 | 10001+[] }"
+          },
+          {
+            "key": "company_investments",
+            "optional": true,
+            "type": "{ company_ids?: string[], search_query?: string, min_relevance?: number, locations?: string[], industries?: string[], super_categories?: string[], employee_count?: 1-10 | 11-50 | 51-100 | 101-250 | 251-500 | 501-1000 | 1001-5000 | 5001-10000 | 10001+[], ipo_status?: public | private[], total_raised_min?: number, total_raised_max?: number, financing_types?: { type: SERIES_A | SERIES_B | SERIES_C | SERIES_D | SERIES_E | SERIES_F | SERIES_G | SERIES_H | SERIES_I | SERIES_J | SERIES_K | SERIES_L | SERIES_M | SEED | SAFE | CONVERTIBLE_NOTE | EQUITY | PREFERRED | SECONDARY_MARKET | DEBT_FINANCING | GRANT | NON_EQUITY_ASSISTANCE | CROWDFUNDING | INITIAL_COIN_OFFERING | FUNDING_ROUND, pre?: boolean, extension?: boolean }[], deal_size_min?: number, deal_size_max?: number, deal_start_date?: string, deal_end_date?: string, only_lead_deals?: boolean, min_matching_deals?: number }"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "most_recent_deal | recent_deals | deals_led_ltm | total_deals | matching_deals"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ investors: { id: string, name: string, total_deal_count?: number, lead_deal_count?: number, deal_count_last_12_months?: number, lead_deal_count_last_12_months?: number | null, most_recent_deal_date?: string | null, guru_permalink?: string, domain?: string | null, website?: string | null, linkedin?: string | null, pitchbook?: string | null, crunchbase?: string | null, description?: string | null, legal_name?: string | null, num_employees?: string | null, investment_stage?: string | null, contact_email?: string | null, contact_phone?: string | null, location?: { region?: { name?: string | null, permalink?: string | null } | null, country?: { name?: string | null, permalink?: string | null } | null, state?: { name?: string | null, permalink?: string | null } | null, city?: { name?: string | null, permalink?: string | null } | null } | null, top_industries?: { name?: string | null, permalink?: string | null, count?: number | null }[], top_locations?: { name?: string | null, full_name?: string | null, permalink?: string | null, type?: string | null, count?: number | null }[], top_round_types?: { type?: string | null, count?: number | null }[], filtered_deal_count?: number | null, filtered_lead_count?: number | null }[] }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ total_count?: number, page?: number, page_size?: number, credits_used?: number, credit_source?: string | null, monthly_credits_remaining?: number | null, purchased_credits_remaining?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fundable.api.investors.search",
+      "shortPath": "investors.search",
+      "description": "Fuzzy investor lookup by name, domain, LinkedIn, or Crunchbase",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "linkedin",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "crunchbase",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ investors: { id: string, guru_permalink?: string | null, name: string, description?: string | null, image?: string | null, relevance_score?: number, domain?: string | null, website?: string | null, linkedin?: string | null, crunchbase?: string | null }[] }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ total_count?: number, page?: number, page_size?: number, credits_used?: number, credit_source?: string | null, monthly_credits_remaining?: number | null, purchased_credits_remaining?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fundable.api.people.deals",
+      "shortPath": "people.deals",
+      "description": "Deals a person participated in as an investor",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "linkedin",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "crunchbase",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "twitter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ deals: { id: string, round_type?: string | null, extension?: boolean | null, intermediate?: string | null, pre?: boolean | null, date?: string | null, created_at?: string | null, total_round_raised?: number | null, deal_descriptions?: { short_description?: string | null, long_description?: string | null } | null, company_id?: string | null, investor_ids?: string[], angel_investor_ids?: string[], financings?: { id?: string | null, type?: string | null, size_usd?: number | null, size_native?: number | null, currency?: string | null }[], valuation?: { type: string, valuation_usd?: number | null, valuation_native?: number | null, valuation_currency?: string | null } | null, articles?: { link?: string | null, date?: string | null, is_primary: boolean }[] }[] }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ total_count?: number, page?: number, page_size?: number, credits_used?: number, credit_source?: string | null, monthly_credits_remaining?: number | null, purchased_credits_remaining?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fundable.api.people.email",
+      "shortPath": "people.email",
+      "description": "Unlock a person's verified email address",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "linkedin",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "crunchbase",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "twitter",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ person_id: string, email: string, already_unlocked: boolean }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ total_count?: number, page?: number, page_size?: number, credits_used?: number, credit_source?: string | null, monthly_credits_remaining?: number | null, purchased_credits_remaining?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fundable.api.people.get",
+      "shortPath": "people.get",
+      "description": "Full person detail including employment and education by identifier",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "linkedin",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "crunchbase",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "twitter",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ person: { id: string, name?: string | null, title?: string | null, linkedin_url?: string | null, crunchbase_url?: string | null, twitter_url?: string | null, location?: string | null, city?: string | null, country_code?: string | null, about?: string | null, is_founder: boolean, current_company?: { id?: string | null, name?: string | null, permalink?: string | null, domain?: string | null } | null, employment_history: { title?: string | null, company_name?: string | null, company_id?: string | null, company_url?: string | null, location?: string | null, description?: string | null, start_date?: string | null, end_date?: string | null, is_current?: boolean }[], education_history: { school_name?: string | null, school_id?: string | null, school_url?: string | null, degree?: string | null, field_of_study?: string | null, start_date?: string | null, end_date?: string | null, description?: string | null }[], is_investor: boolean, is_angel: boolean, has_led_deal: boolean, investment_firms: { id?: string | null, name?: string | null, permalink?: string | null, domain?: string | null, deal_count?: number | null, last_deal_date?: string | null }[], investor_highlights?: { total_deal_count?: number | null, lead_deal_count?: number | null, deal_count_last_12_months?: number | null, lead_deal_count_last_12_months?: number | null, most_recent_deal_date?: string | null, top_industries?: { name?: string | null, permalink?: string | null, count?: number | null }[], top_locations?: { name?: string | null, full_name?: string | null, permalink?: string | null, type?: string | null, count?: number | null }[], top_round_types?: { type?: string | null, count?: number | null }[] } | null, filtered_deal_count?: number | null, filtered_lead_count?: number | null, filtered_most_recent_date?: string | null } }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ total_count?: number, page?: number, page_size?: number, credits_used?: number, credit_source?: string | null, monthly_credits_remaining?: number | null, purchased_credits_remaining?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fundable.api.people.phone",
+      "shortPath": "people.phone",
+      "description": "Unlock a person's verified phone number",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "linkedin",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "crunchbase",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "twitter",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ person_id: string, phone: string, already_unlocked: boolean }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ total_count?: number, page?: number, page_size?: number, credits_used?: number, credit_source?: string | null, monthly_credits_remaining?: number | null, purchased_credits_remaining?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fundable.api.people.post",
+      "shortPath": "people.post",
+      "description": "Discover founders, employees, angels, and lead investors",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "person_type",
+            "optional": true,
+            "type": "company | investor | any"
+          },
+          {
+            "key": "identifiers",
+            "optional": true,
+            "type": "{ ids?: string[], linkedin_urls?: string[], crunchbase_urls?: string[], twitter_urls?: string[] }"
+          },
+          {
+            "key": "person",
+            "optional": true,
+            "type": "{ roles?: founder | ceo | key_person[], contact_types?: linkedin | email | phone | twitter[], job_titles?: string[], education_schools?: string[], linkedin_companies?: string[] }"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "{ search_query?: string, min_relevance?: number, ids?: string[], locations?: string[], industries?: string[], super_categories?: string[], employee_count?: 1-10 | 11-50 | 51-100 | 101-250 | 251-500 | 501-1000 | 1001-5000 | 5001-10000 | 10001+[], ipo_status?: public | private | acquired | delisted[], total_raised_min?: number, total_raised_max?: number, investor_people_ids?: string[], latest_deal?: { financing_types?: { type: SERIES_A | SERIES_B | SERIES_C | SERIES_D | SERIES_E | SERIES_F | SERIES_G | SERIES_H | SERIES_I | SERIES_J | SERIES_K | SERIES_L | SERIES_M | SEED | SAFE | CONVERTIBLE_NOTE | EQUITY | PREFERRED | SECONDARY_MARKET | DEBT_FINANCING | GRANT | NON_EQUITY_ASSISTANCE | CROWDFUNDING | INITIAL_COIN_OFFERING | FUNDING_ROUND, pre?: boolean, extension?: boolean }[], size_min?: number, size_max?: number, date_start?: string, date_end?: string, investor_ids?: string[], investor_locations?: string[] } }"
+          },
+          {
+            "key": "investor",
+            "optional": true,
+            "type": "{ ids?: string[], domains?: string[], linkedin_urls?: string[], crunchbase_urls?: string[], permalinks?: string[], locations?: string[], employee_count?: 1-10 | 11-50 | 51-100 | 101-250 | 251-500 | 501-1000 | 1001-5000 | 5001-10000 | 10001+[], deals?: { search_query?: string, min_relevance?: number, investment_type?: all | angel | institutional, only_lead_deals?: boolean, min_matching_deals?: number, financing_types?: { type: SERIES_A | SERIES_B | SERIES_C | SERIES_D | SERIES_E | SERIES_F | SERIES_G | SERIES_H | SERIES_I | SERIES_J | SERIES_K | SERIES_L | SERIES_M | SEED | SAFE | CONVERTIBLE_NOTE | EQUITY | PREFERRED | SECONDARY_MARKET | DEBT_FINANCING | GRANT | NON_EQUITY_ASSISTANCE | CROWDFUNDING | INITIAL_COIN_OFFERING | FUNDING_ROUND, pre?: boolean, extension?: boolean }[], size_min?: number, size_max?: number, date_start?: string, date_end?: string, industries?: string[], super_categories?: string[], portfolio_locations?: string[], portfolio_employee_count?: 1-10 | 11-50 | 51-100 | 101-250 | 251-500 | 501-1000 | 1001-5000 | 5001-10000 | 10001+[], ipo_status?: public | private[], total_raised_min?: number, total_raised_max?: number } }"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "most_recent_deal_date | total_raised | latest_deal_size | name | total_deal_count | deal_count_last_12_months | lead_deal_count | lead_deal_count_last_12_months | filtered_deal_count"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ people: { id: string, name?: string | null, title?: string | null, linkedin_url?: string | null, crunchbase_url?: string | null, twitter_url?: string | null, location?: string | null, city?: string | null, country_code?: string | null, about?: string | null, is_founder: boolean, current_company?: { id?: string | null, name?: string | null, permalink?: string | null, domain?: string | null } | null, employment_history: { title?: string | null, company_name?: string | null, company_id?: string | null, company_url?: string | null, location?: string | null, description?: string | null, start_date?: string | null, end_date?: string | null, is_current?: boolean }[], education_history: { school_name?: string | null, school_id?: string | null, school_url?: string | null, degree?: string | null, field_of_study?: string | null, start_date?: string | null, end_date?: string | null, description?: string | null }[], is_investor: boolean, is_angel: boolean, has_led_deal: boolean, investment_firms: { id?: string | null, name?: string | null, permalink?: string | null, domain?: string | null, deal_count?: number | null, last_deal_date?: string | null }[], investor_highlights?: { total_deal_count?: number | null, lead_deal_count?: number | null, deal_count_last_12_months?: number | null, lead_deal_count_last_12_months?: number | null, most_recent_deal_date?: string | null, top_industries?: { name?: string | null, permalink?: string | null, count?: number | null }[], top_locations?: { name?: string | null, full_name?: string | null, permalink?: string | null, type?: string | null, count?: number | null }[], top_round_types?: { type?: string | null, count?: number | null }[] } | null, filtered_deal_count?: number | null, filtered_lead_count?: number | null, filtered_most_recent_date?: string | null }[] }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ total_count?: number, page?: number, page_size?: number, credits_used?: number, credit_source?: string | null, monthly_credits_remaining?: number | null, purchased_credits_remaining?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fundable.api.people.search",
+      "shortPath": "people.search",
+      "description": "Fuzzy person lookup by name or identifier",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "linkedin",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "crunchbase",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "twitter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "person_type",
+            "optional": true,
+            "type": "investor | company"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ people: { id: string, name?: string | null, linkedin_url?: string | null, crunchbase_url?: string | null, twitter_url?: string | null, person_type?: investor | company }[] }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ total_count?: number, page?: number, page_size?: number, credits_used?: number, credit_source?: string | null, monthly_credits_remaining?: number | null, purchased_credits_remaining?: number | null }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

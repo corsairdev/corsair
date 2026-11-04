@@ -1,0 +1,39 @@
+---
+title: Database
+description: "Cutt.ly local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Cutt.ly plugin syncs data locally. Use `corsair.cuttly.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Links
+
+Path: `cuttly.db.links.search`
+
+```ts
+const rows = await corsair.cuttly.db.links.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `number` | equals, gt, gte, lt, lte, in |
+| `date` | `string` | equals, contains, startsWith, endsWith, in |
+| `shortLink` | `string` | equals, contains, startsWith, endsWith, in |
+| `fullLink` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `qrCode` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

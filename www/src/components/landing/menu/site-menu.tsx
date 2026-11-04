@@ -128,6 +128,12 @@ export function SiteMenu() {
 						>
 							Integrations
 						</Link>
+						<Link
+							href="/use-cases"
+							className="px-3 py-2 text-sm font-medium text-[#1c1c1c]/80 no-underline transition-colors duration-200 hover:text-[#1c1c1c] font-[family-name:var(--landing-font-sans)]"
+						>
+							Use cases
+						</Link>
 					</div>
 
 					{/* Desktop right actions */}
@@ -211,6 +217,13 @@ export function SiteMenu() {
 							onClick={() => setIsMobileMenuOpen(false)}
 						>
 							Integrations
+						</Link>
+						<Link
+							href="/use-cases"
+							className="flex items-center justify-between rounded-lg border border-[#1c1c1c]/10 bg-white/60 px-4 py-3 text-sm font-medium text-[#1c1c1c] no-underline transition-colors hover:bg-white font-[family-name:var(--landing-font-sans)]"
+							onClick={() => setIsMobileMenuOpen(false)}
+						>
+							Use cases
 						</Link>
 						<a
 							href={GITHUB_URL}

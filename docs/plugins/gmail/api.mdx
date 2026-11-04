@@ -710,32 +710,6 @@ await corsair.gmail.api.messages.batchModify({});
 
 ---
 
-### delete
-
-`messages.delete`
-
-Permanently delete a message [DESTRUCTIVE · IRREVERSIBLE]
-
-**Risk:** `destructive` · **Irreversible**
-
-```ts
-await corsair.gmail.api.messages.delete({});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `userId` | `string` | No | — |
-| `id` | `string` | Yes | — |
-
-
-
-**Output:** `void`
-
-
----
-
 ### get
 
 `messages.get`
@@ -1122,32 +1096,6 @@ await corsair.gmail.api.messages.untrash({});
 ---
 
 ## Threads
-
-### delete
-
-`threads.delete`
-
-Permanently delete a thread [DESTRUCTIVE · IRREVERSIBLE]
-
-**Risk:** `destructive` · **Irreversible**
-
-```ts
-await corsair.gmail.api.threads.delete({});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `userId` | `string` | No | — |
-| `id` | `string` | Yes | — |
-
-
-
-**Output:** `void`
-
-
----
 
 ### get
 

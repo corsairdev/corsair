@@ -1,3 +1,5 @@
+import type { IntegrationAuthType } from '@/lib/integrations-catalog.types';
+
 export type IntegrationRiskLevel = 'read' | 'write' | 'destructive';
 
 export type IntegrationCapabilityAction = {
@@ -32,6 +34,7 @@ export type IntegrationPluginData = {
 	id: string;
 	displayName: string;
 	description: string;
+	authTypes: IntegrationAuthType[];
 	counts: {
 		api: number;
 		webhooks: number;

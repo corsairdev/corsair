@@ -1,0 +1,1909 @@
+{
+  "id": "tinyfish",
+  "displayName": "TinyFish",
+  "description": "Web search, page fetch, cloud browser sessions, web automation agents, cited research, and reusable browser profiles behind one API key.",
+  "npmPackageName": "@corsair-dev/tinyfish",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 28,
+    "webhooks": 3,
+    "db": 1
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "tinyfish.api.agent.cancelRun",
+      "shortPath": "agent.cancelRun",
+      "description": "Cancel a pending or running run",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "runId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "run_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "CANCELLED | COMPLETED | FAILED"
+          },
+          {
+            "key": "cancelled_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tinyfish.api.agent.cancelRuns",
+      "shortPath": "agent.cancelRuns",
+      "description": "Cancel up to 100 runs in one request",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "run_ids",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ run_id: string, status: CANCELLED | COMPLETED | FAILED, cancelled_at?: string | null, message?: string | null }[]"
+          },
+          {
+            "key": "not_found",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tinyfish.api.agent.getRun",
+      "shortPath": "agent.getRun",
+      "description": "Get one run with its steps, screenshots and HTML artifacts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "runId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "screenshots",
+            "optional": true,
+            "type": "base64 | url | none"
+          },
+          {
+            "key": "html",
+            "optional": true,
+            "type": "url | none"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "run_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "PENDING | RUNNING | COMPLETED | FAILED | CANCELLED"
+          },
+          {
+            "key": "goal",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "started_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "finished_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "num_of_steps",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "result",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "output_schema",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "profile_attached",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "profile_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "{ code?: string | null, message: string, category: SYSTEM_FAILURE | AGENT_FAILURE | BILLING_FAILURE | UNKNOWN, retry_after?: number | null, help_url?: string | null, help_message?: string | null, profile_hint?: { message: string, setup_url: string, reason: auth_wall | bot_challenge } | null }"
+          },
+          {
+            "key": "profile_hint",
+            "optional": true,
+            "type": "{ message: string, setup_url: string, reason: auth_wall | bot_challenge }"
+          },
+          {
+            "key": "streaming_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "browser_config",
+            "optional": true,
+            "type": "{ proxy_enabled?: boolean | null, proxy_country_code?: string | null }"
+          },
+          {
+            "key": "video_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "steps",
+            "optional": false,
+            "type": "{ id: string, timestamp: string, status: PENDING | RUNNING | COMPLETED | FAILED | CANCELLED, action?: string | null, screenshot?: string | null, html?: string | null, duration?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tinyfish.api.agent.getRuns",
+      "shortPath": "agent.getRuns",
+      "description": "Get up to 100 runs by ID in one request",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "run_ids",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ run_id: string, status: PENDING | RUNNING | COMPLETED | FAILED | CANCELLED, goal: string, created_at: string, started_at?: string | null, finished_at?: string | null, num_of_steps?: number | null, result?: {} | null, output_schema?: {} | null, profile_attached: boolean, profile_id?: string | null, error?: { code?: string | null, message: string, category: SYSTEM_FAILURE | AGENT_FAILURE | BILLING_FAILURE | UNKNOWN, retry_after?: number | null, help_url?: string | null, help_message?: string | null, profile_hint?: { message: string, setup_url: string, reason: auth_wall | bot_challenge } | null } | null, profile_hint?: { message: string, setup_url: string, reason: auth_wall | bot_challenge } | null, streaming_url?: string | null, browser_config?: { proxy_enabled?: boolean | null, proxy_country_code?: string | null } | null, video_url?: string | null, steps: { id: string, timestamp: string, status: PENDING | RUNNING | COMPLETED | FAILED | CANCELLED, action?: string | null, screenshot?: string | null, html?: string | null, duration?: string | null }[] }[]"
+          },
+          {
+            "key": "not_found",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tinyfish.api.agent.getStepHtml",
+      "shortPath": "agent.getStepHtml",
+      "description": "Get the full-page HTML snapshot captured at one step",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "runId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "stepId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "html",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tinyfish.api.agent.getStepScreenshot",
+      "shortPath": "agent.getStepScreenshot",
+      "description": "Get the JPEG screenshot captured at one step of a run",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "runId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "stepId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "base64",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sizeBytes",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tinyfish.api.agent.listRuns",
+      "shortPath": "agent.listRuns",
+      "description": "List automation runs with status and date filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "PENDING | RUNNING | COMPLETED | FAILED | CANCELLED"
+          },
+          {
+            "key": "goal",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort_direction",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ run_id: string, status: PENDING | RUNNING | COMPLETED | FAILED | CANCELLED, goal: string, created_at: string, started_at?: string | null, finished_at?: string | null, num_of_steps?: number | null, result?: {} | null, output_schema?: {} | null, profile_attached: boolean, profile_id?: string | null, error?: { code?: string | null, message: string, category: SYSTEM_FAILURE | AGENT_FAILURE | BILLING_FAILURE | UNKNOWN, retry_after?: number | null, help_url?: string | null, help_message?: string | null, profile_hint?: { message: string, setup_url: string, reason: auth_wall | bot_challenge } | null } | null, profile_hint?: { message: string, setup_url: string, reason: auth_wall | bot_challenge } | null, streaming_url?: string | null, browser_config?: { proxy_enabled?: boolean | null, proxy_country_code?: string | null } | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ total: number, next_cursor?: string | null, has_more: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tinyfish.api.agent.run",
+      "shortPath": "agent.run",
+      "description": "Automate a goal on a live website and wait for the result (billed per step)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "goal",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "browser_profile",
+            "optional": true,
+            "type": "lite | stealth"
+          },
+          {
+            "key": "api_integration",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "agent_config",
+            "optional": true,
+            "type": "{ mode?: default | strict, cursor_style?: fish | standard | green-pointer, max_steps?: number, max_duration_seconds?: number }"
+          },
+          {
+            "key": "capture_config",
+            "optional": true,
+            "type": "{ elements?: boolean, snapshots?: boolean, screenshots?: boolean, recording?: boolean, html?: boolean }"
+          },
+          {
+            "key": "webhook_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "use_vault",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "use_profile",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "profile_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "credential_item_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "proxy_config",
+            "optional": true,
+            "type": "{ enabled: boolean, country_code?: US | GB | CA | DE | FR | JP | AU | null }"
+          },
+          {
+            "key": "output_schema",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "run_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "COMPLETED | FAILED"
+          },
+          {
+            "key": "started_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "finished_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "num_of_steps",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "result",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "{ code?: string | null, message: string, category: SYSTEM_FAILURE | AGENT_FAILURE | BILLING_FAILURE | UNKNOWN, retry_after?: number | null, help_url?: string | null, help_message?: string | null, profile_hint?: { message: string, setup_url: string, reason: auth_wall | bot_challenge } | null }"
+          },
+          {
+            "key": "profile_hint",
+            "optional": true,
+            "type": "{ message: string, setup_url: string, reason: auth_wall | bot_challenge }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tinyfish.api.agent.runAsync",
+      "shortPath": "agent.runAsync",
+      "description": "Queue a web automation run and return its run ID (billed per step)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "goal",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "browser_profile",
+            "optional": true,
+            "type": "lite | stealth"
+          },
+          {
+            "key": "api_integration",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "agent_config",
+            "optional": true,
+            "type": "{ mode?: default | strict, cursor_style?: fish | standard | green-pointer, max_steps?: number, max_duration_seconds?: number }"
+          },
+          {
+            "key": "capture_config",
+            "optional": true,
+            "type": "{ elements?: boolean, snapshots?: boolean, screenshots?: boolean, recording?: boolean, html?: boolean }"
+          },
+          {
+            "key": "webhook_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "use_vault",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "use_profile",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "profile_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "credential_item_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "proxy_config",
+            "optional": true,
+            "type": "{ enabled: boolean, country_code?: US | GB | CA | DE | FR | JP | AU | null }"
+          },
+          {
+            "key": "output_schema",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "run_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "{ code: string, message: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tinyfish.api.agent.runBatch",
+      "shortPath": "agent.runBatch",
+      "description": "Queue up to 100 automation runs in a single atomic request (billed per step)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "runs",
+            "optional": false,
+            "type": "{ url: string, goal: string, browser_profile?: lite | stealth, api_integration?: string, agent_config?: { mode?: default | strict, cursor_style?: fish | standard | green-pointer, max_steps?: number, max_duration_seconds?: number }, capture_config?: { elements?: boolean, snapshots?: boolean, screenshots?: boolean, recording?: boolean, html?: boolean }, webhook_url?: string, use_vault?: boolean, credential_item_ids?: string[], proxy_config?: { enabled: boolean, country_code?: US | GB | CA | DE | FR | JP | AU | null }, output_schema?: {} }[]"
+          },
+          {
+            "key": "profile_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "output_schema",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "run_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "{ code: string, message: string, details?: any | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tinyfish.api.browser.createSession",
+      "shortPath": "browser.createSession",
+      "description": "Start a cloud browser session and return its CDP connection URL",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timeout_seconds",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "proxy_config",
+            "optional": true,
+            "type": "{ enabled?: boolean, type?: tinyfish | custom, country_code?: string, url?: string, username?: string, password?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "session_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cdp_url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "base_url",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tinyfish.api.browser.terminateSession",
+      "shortPath": "browser.terminateSession",
+      "description": "Terminate a cloud browser session",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sessionId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "terminated",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "session_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tinyfish.api.browser.usage",
+      "shortPath": "browser.usage",
+      "description": "List browser session usage and byte volumes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "session_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start_after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "end_before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "running | ended"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ session_id: string, user_id: string, sub_user_id?: string | null, mode: light | stealth | tf-browser, start_time: string, end_time?: string | null, duration_ms?: number | null, proxy_trg_rx_bytes?: number | null, proxy_trg_tx_bytes?: number | null, status: running | ended | created, created_at: string, updated_at: string }[]"
+          },
+          {
+            "key": "total",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "total_pages",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "has_more",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tinyfish.api.fetch.fetch",
+      "shortPath": "fetch.fetch",
+      "description": "Fetch up to 10 URLs as markdown, HTML or JSON with cache revalidation",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "urls",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "purpose",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "markdown | html | json"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "image_links",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "iframe_links",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "page_metadata",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "ttl",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_url_timeout_ms",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "if_none_match",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "if_modified_since",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "include_etag_and_last_modified",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_selectors",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "exclude_selectors",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ url: string, final_url?: string | null, title?: string | null, description?: string | null, language?: string | null, format: markdown | html | json, text?: string | {} | null, author?: string | null, published_date?: string | null, links?: string[], image_links?: string[], iframe_links?: string[], page_metadata?: {}, latency_ms?: number | null, not_modified?: boolean, etag?: string, last_modified?: string, unmatched_selectors?: string[] }[]"
+          },
+          {
+            "key": "errors",
+            "optional": false,
+            "type": "{ url: string, error: string, status?: number, unmatched_selectors?: string[], candidate_selectors?: string[] }[]"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tinyfish.api.fetch.usage",
+      "shortPath": "fetch.usage",
+      "description": "List recent fetch requests and their outcomes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "start_after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "end_before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "completed | failed"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: string, url: string, final_url: string, title?: string | null, description?: string | null, language?: string | null, author?: string | null, published_date?: string | null, format: markdown | html | json, status: completed | failed, request_origin: string, request_id?: string | null, text_length?: number | null, links_count: number, image_links_count: number, latency_ms?: number | null, not_modified?: boolean, etag?: string, last_modified?: string, created_at: string, error?: string | null }[]"
+          },
+          {
+            "key": "total",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "total_pages",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "has_more",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tinyfish.api.profiles.create",
+      "shortPath": "profiles.create",
+      "description": "Create a Browser Context Profile",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "set_as_default",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "proxy_country_code",
+            "optional": true,
+            "type": "US | GB | CA | AU | DE | FR | IT | ES | NL | JP | SG | BR | IN"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "proxy_country_code",
+            "optional": true,
+            "type": "US | GB | CA | AU | DE | FR | IT | ES | NL | JP | SG | BR | IN"
+          },
+          {
+            "key": "is_default",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "fingerprint_seed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "domain_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tinyfish.api.profiles.delete",
+      "shortPath": "profiles.delete",
+      "description": "Delete a profile and all of its saved cookies and sessions",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tinyfish.api.profiles.get",
+      "shortPath": "profiles.get",
+      "description": "Get a profile with the domains it has saved state for",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "proxy_country_code",
+            "optional": true,
+            "type": "US | GB | CA | AU | DE | FR | IT | ES | NL | JP | SG | BR | IN"
+          },
+          {
+            "key": "is_default",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "fingerprint_seed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "domain_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "domains",
+            "optional": false,
+            "type": "{ domain: string, cookie_count: number, local_storage_origin_count: number, last_accessed_at: string, last_written_at: string, last_written_by_run_id: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tinyfish.api.profiles.list",
+      "shortPath": "profiles.list",
+      "description": "List Browser Context Profiles",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profiles",
+            "optional": false,
+            "type": "{ id: string, name: string, proxy_country_code?: US | GB | CA | AU | DE | FR | IT | ES | NL | JP | SG | BR | IN | null, is_default?: boolean, fingerprint_seed?: string, domain_count?: number, created_at: string, updated_at?: string, signed_in_sites?: { site: string, claimed_at: string }[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tinyfish.api.profiles.update",
+      "shortPath": "profiles.update",
+      "description": "Rename a profile or change its proxy country and default flag",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "set_as_default",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "proxy_country_code",
+            "optional": true,
+            "type": "US | GB | CA | AU | DE | FR | IT | ES | NL | JP | SG | BR | IN"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "proxy_country_code",
+            "optional": true,
+            "type": "US | GB | CA | AU | DE | FR | IT | ES | NL | JP | SG | BR | IN"
+          },
+          {
+            "key": "is_default",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "fingerprint_seed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "domain_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "domains",
+            "optional": false,
+            "type": "{ domain: string, cookie_count: number, local_storage_origin_count: number, last_accessed_at: string, last_written_at: string, last_written_by_run_id: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tinyfish.api.research.cancel",
+      "shortPath": "research.cancel",
+      "description": "Cancel a research run",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "researchRunId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "research_run_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "RUNNING | COMPLETED | FAILED | CANCELLED | TIMED_OUT | QUEUED"
+          },
+          {
+            "key": "cancelled",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tinyfish.api.research.get",
+      "shortPath": "research.get",
+      "description": "Get a research run with its plan, evidence and report",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "researchRunId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "research_run_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "RUNNING | COMPLETED | FAILED | CANCELLED | TIMED_OUT | QUEUED"
+          },
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "quick_result",
+            "optional": true,
+            "type": "{ answer: string, citations: string[], actions?: { id: string, label: string, status: running | done | error, streamingUrl?: string, kind?: plan | search | fetch | browse | map, iteration?: number, url?: string, query?: string, details?: string[] }[], stats?: { iterations: number, sources_searched: number, sources_fetched: number, agent_runs: number, claims_extracted: number, termination_reason: planner_done | planner_no_queries | max_iterations | deadline | synthesis_failed | abort, subquestions_covered: number, subquestions_total: number } }"
+          },
+          {
+            "key": "quick_result_summary",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "deep_result",
+            "optional": true,
+            "type": "{ result: string, citations: string[], freshness_report?: { filter_applied?: { domain_type?: web | news | research_paper, after_date?: string, before_date?: string, recency_minutes?: number }, latest_published_date?: string, sources_with_dates: number, sources_without_dates: number, sources_in_requested_window: number, fetched_at_latest?: string }, termination_reason?: planner_done | planner_no_queries | max_iterations | deadline | synthesis_failed | abort }"
+          },
+          {
+            "key": "run_ids",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "completed_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "{ code: string, message: string, details?: any | null }"
+          },
+          {
+            "key": "research_plan",
+            "optional": true,
+            "type": "{ summary: string, subquestions: { id: string, question: string, priority: high | medium | low }[], search_queries: string[], done: boolean, review?: { id: string, status: pending | approve | refine | timeout, expiresAt: number, feedback?: string, resolvedAt?: number } }"
+          },
+          {
+            "key": "evidence",
+            "optional": true,
+            "type": "{ url: string, title: string, language?: string | null, published_date?: string | null, fetched_at?: string, live_fetch?: boolean, access_method?: fetch | browser | social, discovered_by_queries?: string[], search_filters?: { after_date?: string, before_date?: string, recency_minutes?: number }, subquestions_covered: string[], claims: { claim: string, snippet: string, subquestion_id: string, confidence: high | medium | low, claim_type?: fact | official_statement | reported_claim | estimate | opinion | user_sentiment | unverified }[], source_quality: primary | secondary | low }[]"
+          },
+          {
+            "key": "iterations",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tinyfish.api.research.list",
+      "shortPath": "research.list",
+      "description": "List research runs with status and date filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "RUNNING | COMPLETED | FAILED | CANCELLED | TIMED_OUT | QUEUED"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort_direction",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ research_run_id: string, status: RUNNING | COMPLETED | FAILED | CANCELLED | TIMED_OUT | QUEUED, query: string, quick_result?: { answer: string, citations: string[], actions?: { id: string, label: string, status: running | done | error, streamingUrl?: string, kind?: plan | search | fetch | browse | map, iteration?: number, url?: string, query?: string, details?: string[] }[], stats?: { iterations: number, sources_searched: number, sources_fetched: number, agent_runs: number, claims_extracted: number, termination_reason: planner_done | planner_no_queries | max_iterations | deadline | synthesis_failed | abort, subquestions_covered: number, subquestions_total: number } } | null, quick_result_summary?: string | null, deep_result?: { result: string, citations: string[], freshness_report?: { filter_applied?: { domain_type?: web | news | research_paper, after_date?: string, before_date?: string, recency_minutes?: number }, latest_published_date?: string, sources_with_dates: number, sources_without_dates: number, sources_in_requested_window: number, fetched_at_latest?: string }, termination_reason?: planner_done | planner_no_queries | max_iterations | deadline | synthesis_failed | abort } | null, run_ids: string[], created_at?: string | null, completed_at?: string | null, error?: { code: string, message: string, details?: any | null } | null, research_plan?: { summary: string, subquestions: { id: string, question: string, priority: high | medium | low }[], search_queries: string[], done: boolean, review?: { id: string, status: pending | approve | refine | timeout, expiresAt: number, feedback?: string, resolvedAt?: number } } | null, evidence?: { url: string, title: string, language?: string | null, published_date?: string | null, fetched_at?: string, live_fetch?: boolean, access_method?: fetch | browser | social, discovered_by_queries?: string[], search_filters?: { after_date?: string, before_date?: string, recency_minutes?: number }, subquestions_covered: string[], claims: { claim: string, snippet: string, subquestion_id: string, confidence: high | medium | low, claim_type?: fact | official_statement | reported_claim | estimate | opinion | user_sentiment | unverified }[], source_quality: primary | secondary | low }[] | null, iterations?: number | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ total: number, next_cursor?: string | null, has_more: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tinyfish.api.research.start",
+      "shortPath": "research.start",
+      "description": "Start a cited research run and return its research run ID",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "mode",
+            "optional": true,
+            "type": "deep | max"
+          },
+          {
+            "key": "stream",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "output_language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "weak_sources_enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "domain_type",
+            "optional": true,
+            "type": "web | news | research_paper"
+          },
+          {
+            "key": "after_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "before_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "recency_minutes",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "domain_filter",
+            "optional": true,
+            "type": "{ mode: include | exclusive, domains?: string[], block?: string[] }"
+          },
+          {
+            "key": "prior_run_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "session_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "research_run_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "{ code: string, message: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tinyfish.api.search.search",
+      "shortPath": "search.search",
+      "description": "Search the web with intent, date, domain and academic filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "purpose",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "include_domains",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "exclude_domains",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "domain_type",
+            "optional": true,
+            "type": "web | news | research_paper"
+          },
+          {
+            "key": "after_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "before_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "recency_minutes",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pub_year_min",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pub_year_max",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "include_thumbnail",
+            "optional": true,
+            "type": "true | false"
+          },
+          {
+            "key": "fetch",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ position: number, site_name: string, snippet: string, title: string, url: string, thumbnail_url?: string | null, fetch?: any | null, fetch_error?: any | null, date?: string | null, publisher?: string | null, authors?: string[], venue?: string | null, year?: number | null, cited_by_count?: number | null, pdf_url?: string | null }[]"
+          },
+          {
+            "key": "total_results",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tinyfish.api.search.usage",
+      "shortPath": "search.usage",
+      "description": "List recent search requests and their stored results",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "start_after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "end_before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "completed | failed"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: number, request_id: string, query: string, status_code: number, result_count: number, results?: { position: number, site_name: string, snippet: string, title: string, url: string, thumbnail_url?: string | null, fetch?: any | null, fetch_error?: any | null, date?: string | null, publisher?: string | null, authors?: string[], venue?: string | null, year?: number | null, cited_by_count?: number | null, pdf_url?: string | null }[] | null, cached?: boolean | null, response_size_bytes?: number | null, created_at: string }[]"
+          },
+          {
+            "key": "total",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "total_pages",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "has_more",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tinyfish.api.vault.list",
+      "shortPath": "vault.list",
+      "description": "List vault items and the credential IDs a run body can reference",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ itemId: string, connectionId?: string | null, label: string, vaultName: string, domains: string[], fieldMetadata: { fieldId: string, label: string, type: STRING | CONCEALED | OTP }[], hasTotp: boolean }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tinyfish.api.wallet.get",
+      "shortPath": "wallet.get",
+      "description": "Get the wallet balance, pending top-up and per-product rates",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "available_balance",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "currency",
+            "optional": false,
+            "type": "USD"
+          },
+          {
+            "key": "as_of",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "auto_reload",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "pending_top_up",
+            "optional": true,
+            "type": "{ amount: string, started_at: string }"
+          },
+          {
+            "key": "rates",
+            "optional": true,
+            "type": "{ meters: { label: string, unit_amount: string, currency: USD, per: string }[], as_of: string }"
+          },
+          {
+            "key": "agent_top_up_url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "tinyfish.webhooks.run.cancelled",
+      "shortPath": "run.cancelled",
+      "description": "A run reached CANCELLED",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event",
+            "optional": false,
+            "type": "run.cancelled"
+          },
+          {
+            "key": "run_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ run_id?: string, status?: string, goal?: string, created_at?: string, started_at?: string | null, finished_at?: string | null, num_of_steps?: number | null, result?: {} | null, error?: { code?: string | null, message?: string, category?: string } | null, streaming_url?: string | null, steps?: { id: string, timestamp: string, status: string, action?: string | null, screenshot?: string | null, html?: string | null, duration?: string | null }[] }"
+          }
+        ]
+      },
+      "responseType": "{ event: run.cancelled, run_id: string, status: string, data?: { run_id?: string, status?: string, goal?: string, created_at?: string, started_at?: string | null, finished_at?: string | null, num_of_steps?: number | null, result?: {} | null, error?: { code?: string | null, message?: string, category?: string } | null, streaming_url?: string | null, steps?: { id: string, timestamp: string, status: string, action?: string | null, screenshot?: string | null, html?: string | null, duration?: string | null }[] } }",
+      "usageExample": "tinyfish({\n    webhookHooks: {\n        run: {\n            cancelled: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "tinyfish.webhooks.run.completed",
+      "shortPath": "run.completed",
+      "description": "A run reached COMPLETED with its results attached",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event",
+            "optional": false,
+            "type": "run.completed"
+          },
+          {
+            "key": "run_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ run_id?: string, status?: string, goal?: string, created_at?: string, started_at?: string | null, finished_at?: string | null, num_of_steps?: number | null, result?: {} | null, error?: { code?: string | null, message?: string, category?: string } | null, streaming_url?: string | null, steps?: { id: string, timestamp: string, status: string, action?: string | null, screenshot?: string | null, html?: string | null, duration?: string | null }[] }"
+          }
+        ]
+      },
+      "responseType": "{ event: run.completed, run_id: string, status: string, data?: { run_id?: string, status?: string, goal?: string, created_at?: string, started_at?: string | null, finished_at?: string | null, num_of_steps?: number | null, result?: {} | null, error?: { code?: string | null, message?: string, category?: string } | null, streaming_url?: string | null, steps?: { id: string, timestamp: string, status: string, action?: string | null, screenshot?: string | null, html?: string | null, duration?: string | null }[] } }",
+      "usageExample": "tinyfish({\n    webhookHooks: {\n        run: {\n            completed: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "tinyfish.webhooks.run.failed",
+      "shortPath": "run.failed",
+      "description": "A run reached FAILED with its error attached",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event",
+            "optional": false,
+            "type": "run.failed"
+          },
+          {
+            "key": "run_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ run_id?: string, status?: string, goal?: string, created_at?: string, started_at?: string | null, finished_at?: string | null, num_of_steps?: number | null, result?: {} | null, error?: { code?: string | null, message?: string, category?: string } | null, streaming_url?: string | null, steps?: { id: string, timestamp: string, status: string, action?: string | null, screenshot?: string | null, html?: string | null, duration?: string | null }[] }"
+          }
+        ]
+      },
+      "responseType": "{ event: run.failed, run_id: string, status: string, data?: { run_id?: string, status?: string, goal?: string, created_at?: string, started_at?: string | null, finished_at?: string | null, num_of_steps?: number | null, result?: {} | null, error?: { code?: string | null, message?: string, category?: string } | null, streaming_url?: string | null, steps?: { id: string, timestamp: string, status: string, action?: string | null, screenshot?: string | null, html?: string | null, duration?: string | null }[] } }",
+      "usageExample": "tinyfish({\n    webhookHooks: {\n        run: {\n            failed: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": [
+    {
+      "path": "tinyfish.db.agentRuns.search",
+      "entityName": "agentRuns",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "goal",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "startedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "finishedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "numOfSteps",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "errorCode",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "errorMessage",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "profileId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

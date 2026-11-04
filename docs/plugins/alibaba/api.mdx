@@ -1,0 +1,473 @@
+---
+title: API
+description: "API reference for Alibaba: every `alibaba.api.*` operation with input and output types."
+---
+
+Every `alibaba.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Image
+
+### generate
+
+`image.generate`
+
+Generate or edit images with Qwen-Image 3.0 or Wan 2.7 Image; returns image URLs valid for 24 hours
+
+**Risk:** `write`
+
+```ts
+await corsair.alibaba.api.image.generate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `qwen-image-3.0-pro \| qwen-image-3.0 \| wan2.7-image-pro \| wan2.7-image` | Yes | — |
+| `prompt` | `string` | Yes | — |
+| `images` | `string[]` | No | — |
+| `parameters` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="parameters full type">
+
+```ts
+{
+  size?: string,
+  n?: number,
+  seed?: number,
+  watermark?: boolean,
+  negative_prompt?: string,
+  prompt_extend?: boolean,
+  prompt_extend_mode?: direct | agent,
+  enable_thinking?: boolean,
+  thinking_mode?: boolean,
+  enable_sequential?: boolean,
+  bbox_list?: tuple[][],
+  color_palette?: {
+    hex: string,
+    ratio: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `output` | `object` | Yes | — |
+| `usage` | `object` | No | — |
+| `request_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="output full type">
+
+```ts
+{
+  rewrite_status?: string | null,
+  choices: {
+    finish_reason?: string | null,
+    message: {
+      role: string,
+      content: {
+        image: string
+      }[]
+    }
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="usage full type">
+
+```ts
+{
+  output_width?: number | null,
+  output_height?: number | null,
+  input_image_count?: number | null,
+  output_image_count?: number | null,
+  input_image_type?: string | null,
+  output_image_type?: string | null,
+  width?: number | null,
+  height?: number | null,
+  image_count?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tasks
+
+### get
+
+`tasks.get`
+
+Get a generation task status and, once it succeeds, the video URL (valid 24 hours)
+
+**Risk:** `read`
+
+```ts
+await corsair.alibaba.api.tasks.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `output` | `object` | Yes | — |
+| `usage` | `object` | No | — |
+| `request_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="output full type">
+
+```ts
+{
+  task_id: string,
+  task_status: PENDING | RUNNING | SUCCEEDED | FAILED | CANCELED | UNKNOWN,
+  submit_time?: string | null,
+  scheduled_time?: string | null,
+  end_time?: string | null,
+  video_url?: string | null,
+  orig_prompt?: string | null,
+  code?: string | null,
+  message?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="usage full type">
+
+```ts
+{
+  duration?: number | null,
+  input_video_duration?: number | null,
+  output_video_duration?: number | null,
+  SR?: number | null,
+  ratio?: string | null,
+  video_count?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Video
+
+### edit
+
+`video.edit`
+
+Start a Wan 2.7 video editing task on an input video
+
+**Risk:** `write`
+
+```ts
+await corsair.alibaba.api.video.edit({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `wan2.7-videoedit` | Yes | — |
+| `prompt` | `string` | No | — |
+| `negative_prompt` | `string` | No | — |
+| `media` | `object[]` | Yes | — |
+| `parameters` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="media full type">
+
+```ts
+{
+  type: video | reference_image,
+  url: string | string
+}[]
+```
+</Accordion>
+
+<Accordion title="parameters full type">
+
+```ts
+{
+  resolution?: 720P | 1080P,
+  ratio?: 16:9 | 9:16 | 1:1 | 4:3 | 3:4,
+  duration?: 0 | number,
+  audio_setting?: auto | origin,
+  prompt_extend?: boolean,
+  watermark?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `output` | `object` | Yes | — |
+| `request_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="output full type">
+
+```ts
+{
+  task_id: string,
+  task_status: PENDING | RUNNING | SUCCEEDED | FAILED | CANCELED | UNKNOWN
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### imageToVideo
+
+`video.imageToVideo`
+
+Start a Wan 2.7 image-to-video task from a first frame, first and last frames, or a clip to continue
+
+**Risk:** `write`
+
+```ts
+await corsair.alibaba.api.video.imageToVideo({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `wan2.7-i2v` | Yes | — |
+| `prompt` | `string` | No | — |
+| `negative_prompt` | `string` | No | — |
+| `media` | `object[]` | Yes | — |
+| `parameters` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="media full type">
+
+```ts
+{
+  type: first_frame | last_frame | driving_audio | first_clip,
+  url: string
+}[]
+```
+</Accordion>
+
+<Accordion title="parameters full type">
+
+```ts
+{
+  resolution?: 720P | 1080P,
+  duration?: number,
+  prompt_extend?: boolean,
+  watermark?: boolean,
+  seed?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `output` | `object` | Yes | — |
+| `request_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="output full type">
+
+```ts
+{
+  task_id: string,
+  task_status: PENDING | RUNNING | SUCCEEDED | FAILED | CANCELED | UNKNOWN
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### referenceToVideo
+
+`video.referenceToVideo`
+
+Start a Wan 2.7 reference-to-video task from reference images, videos, and voices
+
+**Risk:** `write`
+
+```ts
+await corsair.alibaba.api.video.referenceToVideo({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `wan2.7-r2v` | Yes | — |
+| `prompt` | `string` | Yes | — |
+| `negative_prompt` | `string` | No | — |
+| `media` | `object[]` | Yes | — |
+| `parameters` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="media full type">
+
+```ts
+{
+  type: reference_image | reference_video | first_frame,
+  url: string,
+  reference_voice?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="parameters full type">
+
+```ts
+{
+  resolution?: 720P | 1080P,
+  ratio?: 16:9 | 9:16 | 1:1 | 4:3 | 3:4,
+  duration?: number,
+  prompt_extend?: boolean,
+  watermark?: boolean,
+  seed?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `output` | `object` | Yes | — |
+| `request_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="output full type">
+
+```ts
+{
+  task_id: string,
+  task_status: PENDING | RUNNING | SUCCEEDED | FAILED | CANCELED | UNKNOWN
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### textToVideo
+
+`video.textToVideo`
+
+Start a Wan text-to-video task (Wan 3.0 also takes reference media, files, and links); returns a task id
+
+**Risk:** `write`
+
+```ts
+await corsair.alibaba.api.video.textToVideo({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `wan2.7-t2v \| wan3.0-video \| wan3.0-video-prime` | Yes | — |
+| `prompt` | `string` | No | — |
+| `negative_prompt` | `string` | No | — |
+| `audio_url` | `string` | No | — |
+| `media` | `object[]` | No | — |
+| `parameters` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="media full type">
+
+```ts
+{
+  type: first_frame | last_frame | reference_image | reference_video | reference_audio | file | link,
+  url: string
+}[]
+```
+</Accordion>
+
+<Accordion title="parameters full type">
+
+```ts
+{
+  resolution?: 480P | 720P | 1080P,
+  ratio?: 16:9 | 9:16 | 1:1 | 4:3 | 3:4 | 21:9 | adaptive,
+  duration?: -1 | number,
+  audio?: boolean,
+  prompt_extend?: boolean,
+  watermark?: boolean,
+  seed?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `output` | `object` | Yes | — |
+| `request_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="output full type">
+
+```ts
+{
+  task_id: string,
+  task_status: PENDING | RUNNING | SUCCEEDED | FAILED | CANCELED | UNKNOWN
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

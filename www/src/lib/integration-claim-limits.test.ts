@@ -7,15 +7,15 @@ import {
 } from './integration-claim-limits';
 
 describe('canClaimMore', () => {
-	it('caps a contributor at one held claim', () => {
-		assert.equal(MAX_USER_BUILT_INTEGRATIONS, 1);
+	it('caps a contributor at five held claims', () => {
+		assert.equal(MAX_USER_BUILT_INTEGRATIONS, 5);
 		assert.equal(canClaimMore(0), true);
-		assert.equal(canClaimMore(1), false);
-		assert.equal(canClaimMore(2), false);
+		assert.equal(canClaimMore(MAX_USER_BUILT_INTEGRATIONS - 1), true);
+		assert.equal(canClaimMore(MAX_USER_BUILT_INTEGRATIONS), false);
 	});
 
 	it('stays closed if the count somehow exceeds the cap', () => {
-		assert.equal(canClaimMore(3), false);
+		assert.equal(canClaimMore(MAX_USER_BUILT_INTEGRATIONS + 1), false);
 		assert.equal(canClaimMore(10), false);
 	});
 });

@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 };
 
 const CONTACT_EMAIL = 'team@corsair.dev';
-const LAST_UPDATED = 'September 16, 2026';
+const LAST_UPDATED = 'October 25, 2026';
 const LOG_RETENTION_PERIOD = '90 days';
 
 export default function PrivacyPolicyPage() {
@@ -130,8 +130,10 @@ export default function PrivacyPolicyPage() {
 						Calls from your application to third-party APIs are made from your
 						infrastructure using the SDK. Corsair does not receive, log, or
 						store the substantive content of those API requests or responses as
-						part of this path, except as described in Section 4 (Hub control
-						plane and operational metadata).
+						part of this path, except as described in Section 4: Hub control
+						plane and operational metadata, webhook notifications Hub delivers
+						to you, workflow run records if you use Workflows, and data your
+						workflows send to Corsair&apos;s optional AI features.
 					</p>
 				</LegalSubsection>
 
@@ -145,13 +147,12 @@ export default function PrivacyPolicyPage() {
 						</strong>{' '}
 						when your Customer Application invokes integrations through the
 						hosted runtime. Corsair processes that data only to provide the
-						Service — to execute the integrations you configure and to maintain
-						connections on your and your End Users&apos; behalf — and{' '}
-						<strong className="font-medium text-[#1c1c1c]">not</strong> for
-						advertising, selling or licensing data to third parties, training or
-						improving machine learning or AI models, analytics unrelated to
-						operating the Service, or building Corsair product features outside
-						your intended use case.
+						Service: to run the integrations you configure and to maintain
+						connections on your and your End Users&apos; behalf. We do{' '}
+						<strong className="font-medium text-[#1c1c1c]">not</strong> use it
+						for advertising, sell or license it, use it to train or improve
+						machine learning or AI models, analyze its content, or use it to
+						develop other products or features.
 					</p>
 					<p>
 						Corsair Cloud{' '}
@@ -193,12 +194,16 @@ export default function PrivacyPolicyPage() {
 						described above.
 					</p>
 					<p>
-						Stored credentials and SDK data are{' '}
+						A connection&apos;s credentials (such as an End User&apos;s OAuth
+						tokens) and the data the SDK stores for that connection are{' '}
 						<strong className="font-medium text-[#1c1c1c]">
-							retained until you delete the applicable Hub project or Cloud
-							environment
-						</strong>{' '}
-						(or as otherwise described in Section 9). This is separate from
+							retained until you remove the connection or delete the applicable
+							Hub project or Cloud environment
+						</strong>
+						. Integration-level settings, such as your OAuth application&apos;s
+						client ID and client secret, and approval requests are retained
+						until you delete the applicable Hub project or Cloud environment (or
+						as otherwise described in Section 9). This is separate from
 						operational logging: when integration calls pass through the hosted
 						runtime, Corsair also retains call{' '}
 						<strong className="font-medium text-[#1c1c1c]">metadata</strong>{' '}
@@ -260,10 +265,11 @@ export default function PrivacyPolicyPage() {
 						</li>
 						<li>
 							<strong className="font-medium text-[#1c1c1c]">
-								Webhook and connection metadata
+								Webhook notifications and delivery history
 							</strong>{' '}
-							— routing identifiers, delivery status, and similar operational
-							data needed to forward provider webhooks to your registered
+							— the notifications providers send to Hub (including their
+							contents), routing identifiers, and delivery status, kept so Hub
+							can deliver, retry, and replay notifications to your registered
 							endpoints;
 						</li>
 						<li>
@@ -305,8 +311,8 @@ export default function PrivacyPolicyPage() {
 						</strong>{' '}
 						in your project&apos;s database — either Corsair&apos;s managed
 						database or one you provide. Corsair processes and stores this data
-						only to operate your hosted runtime, not for unrelated purposes
-						described in Section 2.
+						only to operate your hosted runtime, and never for the purposes
+						excluded in Section 2.
 					</p>
 				</LegalSubsection>
 
@@ -327,16 +333,47 @@ export default function PrivacyPolicyPage() {
 					</p>
 				</LegalSubsection>
 
+				<LegalSubsection title="Workflows">
+					<p>
+						If you use Corsair Workflows, Hub stores a record of each run so
+						that runs can resume after a failure and so you can see their
+						history: the event that started the run, and each step&apos;s output
+						and any error. These records can contain third-party integration
+						data. They are deleted 30 days after the run finishes, as described
+						in Section 9.
+					</p>
+				</LegalSubsection>
+
+				<LegalSubsection title="AI features">
+					<p>
+						Corsair offers optional AI features in Workflows: AI steps that
+						summarize, classify, or extract information from data a workflow
+						passes to them, and AI conditions that decide whether an incoming
+						event should start a workflow. When a workflow run fails, Corsair
+						may also send the workflow&apos;s code and error message to an AI
+						model to suggest a fix. Corsair&apos;s assistant for writing
+						workflows sends the chat messages it receives, along with the list
+						of the Customer&apos;s connected integrations and our public catalog
+						of operations, to an AI model. These requests go through a model
+						gateway that Corsair operates and are sent to Microsoft Azure OpenAI
+						Service under terms that prohibit it from using the data to train or
+						improve its models. Section 5 describes how this applies to Google
+						user data.
+					</p>
+				</LegalSubsection>
+
 				<LegalSubsection title="Hub account sign-in">
 					<p>
 						When you sign in to Corsair Hub with Google or GitHub, we receive
 						basic profile information from that provider (such as name, email
 						address, profile picture if available, and a unique account
-						identifier). We use this information only to create and maintain
-						your Hub account, authenticate you, display your identity in the
-						dashboard, and communicate with you about your account. We do not
-						use it for advertising, and we do not sell, rent, or trade it to
-						third parties. You can revoke Hub&apos;s access through your{' '}
+						identifier). We use this information to create and maintain your Hub
+						account, authenticate you, display your identity in the dashboard,
+						email you about your account, and send you the product and marketing
+						emails described in Section 6, which you can unsubscribe from at any
+						time. We do not use it to show you ads, and we do not sell, rent, or
+						trade it to third parties. You can revoke Hub&apos;s access through
+						your{' '}
 						<a
 							href="https://myaccount.google.com/permissions"
 							target="_blank"
@@ -359,45 +396,182 @@ export default function PrivacyPolicyPage() {
 				</LegalSubsection>
 			</LegalSection>
 
-			<LegalSection title="5. Google API Services User Data Policy">
+			<LegalSection title="5. Google User Data">
 				<p>
-					When Customer Applications connect to Google services through Corsair,
-					Corsair&apos;s use of information received from Google APIs will
-					adhere to the{' '}
-					<a
-						href="https://developers.google.com/terms/api-services-user-data-policy"
-						target="_blank"
-						rel="noopener noreferrer"
-						className={legalLinkClassName}
-					>
-						Google API Services User Data Policy
-					</a>
-					, including the Limited Use requirements. In accordance with that
-					policy, we do not:
+					This section applies to data Corsair receives from Google APIs when an
+					End User connects a Google account (Gmail, Google Calendar, Google
+					Drive, Google Docs, or Google Sheets) to a Customer Application
+					through Corsair. For that data, it takes precedence over any other
+					part of this policy.
 				</p>
-				<ul className="list-disc space-y-2 pl-6">
-					<li>Use or transfer Google user data for serving advertisements;</li>
-					<li>
-						Sell or share Google user data with third parties, except as
-						strictly necessary to provide the core functionality of the Service
-						(for example, completing OAuth or token refresh with Google);
-					</li>
-					<li>
-						Use Google user data to train or improve any machine learning or
-						artificial intelligence model; or
-					</li>
-					<li>
-						Allow human review of Google user data, except where necessary for
-						security purposes (such as investigating suspected abuse), to comply
-						with applicable law, or where an End User has separately and
-						affirmatively consented.
-					</li>
-				</ul>
-				<p>
-					Customers who access Google user data through their own Customer
-					Applications remain independently responsible for complying with
-					Google&apos;s policies for their use of that data.
-				</p>
+
+				<LegalSubsection title="What we access">
+					<p>
+						The End User chooses which Google account to connect and sees the
+						requested permissions on Google&apos;s consent screen. Depending on
+						what the Customer Application does, these can include reading,
+						drafting, sending, labeling, and deleting email; viewing and editing
+						calendar events and free/busy information; and viewing, creating,
+						editing, sharing, and deleting files in Google Drive, Docs, and
+						Sheets.
+					</p>
+				</LegalSubsection>
+
+				<LegalSubsection title="How we use it">
+					<p>
+						We use Google user data only to provide the features the End User
+						authorized: running the Customer Application&apos;s requests to
+						Google, keeping the connection active, delivering Google&apos;s
+						notifications to the Customer Application, and running the workflows
+						the Customer has set up. We do not use Google user data for
+						advertising, analytics, or market research, to build user profiles,
+						or to develop other products or features.
+					</p>
+				</LegalSubsection>
+
+				<LegalSubsection title="AI features">
+					<p>
+						If a Customer uses Corsair&apos;s optional AI features (described in
+						Section 4) with Google user data, that data is sent to an AI model
+						only to produce the result the workflow asks for. If a workflow run
+						fails, the error message sent for an automatic fix can contain parts
+						of the data being processed. These requests go through a model
+						gateway that Corsair operates and are sent to an AI model provider
+						under terms that prohibit it from using the data to train or improve
+						its models. The provider may keep the data for a limited time only
+						to monitor for abuse. Corsair&apos;s assistant for writing workflows
+						does not fetch Google user data itself. It receives the chat
+						messages sent to it, the list of a Customer&apos;s connected
+						integrations, and our public catalog of operations; if a message
+						contains Google user data, that message is handled under the same
+						terms as the AI requests above.
+					</p>
+				</LegalSubsection>
+
+				<LegalSubsection title="No AI or machine learning training">
+					<p>
+						We do not use Google user data, raw or derived, to develop, train,
+						or improve any artificial intelligence or machine learning model,
+						and we do not transfer it to any AI provider that would use it for
+						that purpose. The use of raw or derived user data received from
+						Google Workspace APIs will adhere to the{' '}
+						<a
+							href="https://developers.google.com/terms/api-services-user-data-policy"
+							target="_blank"
+							rel="noopener noreferrer"
+							className={legalLinkClassName}
+						>
+							Google API Services User Data Policy
+						</a>{' '}
+						and the{' '}
+						<a
+							href="https://developers.google.com/workspace/workspace-api-user-data-developer-policy"
+							target="_blank"
+							rel="noopener noreferrer"
+							className={legalLinkClassName}
+						>
+							Google Workspace User Data and Developer Policy
+						</a>
+						, including the Limited Use requirements.
+					</p>
+				</LegalSubsection>
+
+				<LegalSubsection title="Who receives it">
+					<p>We transfer Google user data only:</p>
+					<ul className="list-disc space-y-2 pl-6">
+						<li>
+							to the Customer Application the End User connected, because the
+							End User authorized that application on Corsair&apos;s connect
+							screen and Google&apos;s consent screen;
+						</li>
+						<li>
+							to an AI assistant or service the End User connects to Corsair,
+							only for requests the End User makes;
+						</li>
+						<li>
+							to the service providers described in Section 8 that host and run
+							the Service, under contracts that let them use the data only to
+							provide their services to Corsair;
+						</li>
+						<li>
+							to Microsoft Azure OpenAI Service, only when a Customer uses an AI
+							feature;
+						</li>
+						<li>
+							when required by law, or to protect against security incidents and
+							abuse; and
+						</li>
+						<li>
+							as part of a merger, acquisition, or sale of assets, only after
+							obtaining the End User&apos;s explicit prior consent.
+						</li>
+					</ul>
+					<p>
+						We do not sell Google user data. Our Terms of Service require every
+						Customer to comply with the Google API Services User Data Policy,
+						including the Limited Use requirements, for Google user data its
+						Customer Application receives through Corsair.
+					</p>
+				</LegalSubsection>
+
+				<LegalSubsection title="Human access">
+					<p>
+						No one at Corsair reads Google user data unless the End User agrees
+						to it for specific data (for example, in a support request), it is
+						needed for security purposes such as investigating abuse, or it is
+						required by law.
+					</p>
+				</LegalSubsection>
+
+				<LegalSubsection title="Storage, retention, and deletion">
+					<p>
+						With the Corsair SDK and Hub, Google OAuth tokens are stored in the
+						Customer&apos;s own database, encrypted with a key the Customer
+						holds; Hub handles them only briefly to complete the connection and
+						refresh tokens. With Corsair Cloud, the Corsair-managed database is
+						encrypted at rest, OAuth tokens are additionally encrypted with keys
+						Corsair manages, and Google user data passes through Corsair&apos;s
+						servers while an integration runs. Data is encrypted in transit.
+					</p>
+					<p>
+						Corsair Cloud keeps Google OAuth tokens, and the Google user data
+						the SDK stores for a connection (such as cached items and received
+						events), until the Customer removes the connection or deletes the
+						project or environment, and keeps approval requests, which can
+						include the details of an action waiting for approval, until the
+						project or environment is deleted. Google notifications delivered
+						through Hub are deleted after 14 days, and workflow run records 30
+						days after the run finishes. Chats with the workflow assistant are
+						kept until the project or environment is deleted. An End User can
+						revoke access at any time on their{' '}
+						<a
+							href="https://myaccount.google.com/permissions"
+							target="_blank"
+							rel="noopener noreferrer"
+							className={legalLinkClassName}
+						>
+							Google Account permissions page
+						</a>{' '}
+						and can ask for their data to be deleted by contacting the Customer
+						Application or {CONTACT_EMAIL}.
+					</p>
+				</LegalSubsection>
+
+				<LegalSubsection title="Limited Use">
+					<p>
+						Corsair&apos;s use and transfer to any other app of information
+						received from Google APIs will adhere to the{' '}
+						<a
+							href="https://developers.google.com/terms/api-services-user-data-policy"
+							target="_blank"
+							rel="noopener noreferrer"
+							className={legalLinkClassName}
+						>
+							Google API Services User Data Policy
+						</a>
+						, including the Limited Use requirements.
+					</p>
+				</LegalSubsection>
 			</LegalSection>
 
 			<LegalSection title="6. How We Use Information">
@@ -414,16 +588,60 @@ export default function PrivacyPolicyPage() {
 					</li>
 					<li>
 						Provide support, troubleshoot issues, and protect against abuse or
-						security incidents; and
+						security incidents;
+					</li>
+					<li>
+						Email Hub account holders about their account and about Corsair
+						products, as described below; and
 					</li>
 					<li>Comply with applicable law and enforce our terms.</li>
 				</ul>
 				<p>
 					We do not use third-party integration data or End User data processed
-					through the Service for advertising, model training, or analytics
-					unrelated to operating and securing the Service, as described in
-					Section 2.
+					through the Service for advertising, model training, analytics, or
+					developing other products. Google user data is also covered by Section
+					5.
 				</p>
+
+				<LegalSubsection title="Emails to Hub account holders">
+					<p>
+						<strong className="font-medium text-[#1c1c1c]">
+							Account emails:
+						</strong>{' '}
+						sign-in links, invitations, a one-time welcome email after you sign
+						up, notices when a connection stops working or you reach a plan or
+						credit limit, security and billing notices, and changes to our terms
+						or this policy. You receive these while you have a Hub account.
+					</p>
+					<p>
+						<strong className="font-medium text-[#1c1c1c]">
+							Product and marketing emails:
+						</strong>{' '}
+						news about Corsair, such as product updates and launches, company
+						news, tips for getting more out of Hub, event invitations, surveys,
+						and offers on plans or credits. Some depend on how you use Hub, for
+						example a tip when setup stalls or a plan offer when you near a
+						usage limit. Each one has an unsubscribe link, and you can
+						unsubscribe from some or all of them. Unsubscribing stops these
+						emails but not account emails. We send them only where the
+						direct-marketing rules that apply to you allow it. Where data
+						protection law requires a legal basis, we rely on our legitimate
+						interest in telling customers about our services, and you can object
+						at any time by unsubscribing.
+					</p>
+					<p>
+						To decide whether to send an email and which one, we use your Hub
+						account details and how you use Hub itself: for example, how you
+						signed up, which integrations you have set up, whether you have
+						created an MCP link and whether an agent has used it, and how many
+						credits and workflow runs you use. We record whether links in
+						product and marketing emails are clicked; we do not track whether
+						emails are opened. We never use the contents of apps connected
+						through Corsair (such as emails, messages, files, or calendar
+						events) or any Google user data to write, choose, or target these
+						emails.
+					</p>
+				</LegalSubsection>
 			</LegalSection>
 
 			<LegalSection title="7. How We Protect Information">
@@ -455,12 +673,17 @@ export default function PrivacyPolicyPage() {
 				</p>
 				<ul className="list-disc space-y-2 pl-6">
 					<li>
-						<strong className="font-medium text-[#1c1c1c]">
-							Amazon Web Services (AWS)
-						</strong>{' '}
-						— our infrastructure subprocessor for hosting Corsair Cloud and
-						related production systems, bound by contractual confidentiality and
-						security obligations;
+						Cloud hosting providers that run Hub, Corsair Cloud, and our AI
+						model gateway, and store Service data;
+					</li>
+					<li>
+						Email delivery providers that send account, product, and marketing
+						emails on our behalf;
+					</li>
+					<li>
+						AI model providers (currently Microsoft Azure OpenAI Service), only
+						for the optional AI features described in Section 4, under terms
+						that prohibit them from training on the data;
 					</li>
 					<li>
 						Government or regulatory authorities where required by law; and
@@ -468,9 +691,15 @@ export default function PrivacyPolicyPage() {
 					<li>
 						A successor entity in connection with a merger, acquisition, or sale
 						of assets, subject to this policy continuing to apply or you being
-						notified of material changes.
+						notified of material changes, and after obtaining End Users&apos;
+						explicit prior consent where required.
 					</li>
 				</ul>
+				<p>
+					Each service provider is bound by contractual confidentiality and
+					security obligations and may use the data only to provide its services
+					to Corsair.
+				</p>
 				<p>
 					Integration API calls are made to third-party providers (such as
 					Google, Slack, or other services you connect) according to your
@@ -483,11 +712,15 @@ export default function PrivacyPolicyPage() {
 					<strong className="font-medium text-[#1c1c1c]">
 						Corsair Cloud — credentials and SDK database:
 					</strong>{' '}
-					OAuth tokens, API keys, connection records, and other SDK-persisted
-					data (in a Corsair-managed database or a database you provide) are
-					retained until you delete the relevant Hub project or Cloud
-					environment (or we delete them following account termination, subject
-					to any legal retention requirements).
+					A connection&apos;s OAuth tokens, API keys, and the data the SDK
+					stores for it (in a Corsair-managed database or a database you
+					provide) are retained until you remove the connection or delete the
+					relevant Hub project or Cloud environment. Integration-level OAuth
+					application credentials (client ID and client secret), approval
+					requests, and other SDK-persisted data are retained until you delete
+					the relevant Hub project or Cloud environment (or we delete them
+					following account termination, subject to any legal retention
+					requirements).
 				</p>
 				<p>
 					<strong className="font-medium text-[#1c1c1c]">
@@ -507,15 +740,26 @@ export default function PrivacyPolicyPage() {
 				</p>
 				<p>
 					<strong className="font-medium text-[#1c1c1c]">Webhooks:</strong>{' '}
-					Webhook notification payloads are deleted upon successful delivery to
-					your registered endpoint when possible. If delivery fails, we may
-					retain the notification for up to 7 days to allow redelivery, after
-					which it is deleted.
+					Webhook notifications and their delivery history are kept for 14 days
+					so that failed deliveries can be retried and replayed, and are then
+					deleted.
+				</p>
+				<p>
+					<strong className="font-medium text-[#1c1c1c]">Workflows:</strong>{' '}
+					Workflow run records, including the triggering event and each
+					step&apos;s output and errors, are deleted 30 days after the run
+					finishes. Chats with the workflow assistant are kept until you delete
+					the relevant Hub project or environment.
 				</p>
 				<p>
 					Hub account profile information from Google or GitHub sign-in is
 					retained while your account remains active, or as needed to provide
 					the Service.
+				</p>
+				<p>
+					If you unsubscribe from product and marketing emails, we keep your
+					email address on a suppression list so that we do not send them to you
+					again.
 				</p>
 			</LegalSection>
 
@@ -541,6 +785,14 @@ export default function PrivacyPolicyPage() {
 					<li>
 						Revoke Google or GitHub Hub sign-in access using the links in
 						Section 4;
+					</li>
+					<li>
+						Unsubscribe from product and marketing emails using the link in any
+						of them, or by contacting{' '}
+						<a href={`mailto:${CONTACT_EMAIL}`} className={legalLinkClassName}>
+							{CONTACT_EMAIL}
+						</a>
+						;
 					</li>
 					<li>
 						Request deletion of your Hub account and associated control-plane

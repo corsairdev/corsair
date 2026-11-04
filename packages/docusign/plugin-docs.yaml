@@ -1,0 +1,22 @@
+displayName: DocuSign
+description: Electronic signature platform for sending, signing, and managing agreements.
+examples:
+  read:
+    path: getEnvelope
+    title: Get an envelope
+    args:
+      envelopeId: 3a1b2c4d-0000-1111-2222-333344445555
+  write:
+    path: createEnvelope
+    title: Send an envelope from a template
+    args:
+      emailSubject: Please sign the agreement
+      templateId: 7f6e5d4c-0000-1111-2222-333344445555
+      templateRoles:
+        - email: jane@example.com
+          name: Jane Doe
+          roleName: Signer
+dbExample:
+  entity: envelopes
+  note: Search envelopes synced from earlier getEnvelope calls.
+  limit: 50

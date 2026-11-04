@@ -23,6 +23,9 @@ export default async function IntegrationsPage() {
 
 	return (
 		<main>
+			<h1 className="sr-only">
+				Corsair integrations and MCP servers for AI agents
+			</h1>
 			<IntegrationsGrid integrations={integrations} />
 		</main>
 	);

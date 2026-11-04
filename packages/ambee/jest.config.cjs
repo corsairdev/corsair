@@ -1,3 +1,7 @@
+// Pin a non-UTC zone so zoneless timestamps are exercised the same way on
+// every machine (Ambee's format is UTC; see the toAmbeeTimestamp tests).
+process.env.TZ = 'Asia/Kolkata';
+
 module.exports = {
 	preset: 'ts-jest',
 	testEnvironment: 'node',

@@ -73,7 +73,13 @@ export async function resolveApprovalUrl(
 			expiresAt: record.expires_at,
 		});
 		return session.approvalUrl;
-	} catch {
+	} catch (err) {
+		// The caller can only report that there is no link, so the reason lands here.
+		console.warn(
+			`[corsair/${record.plugin}] could not create an approval link for '${record.endpoint}': ${
+				err instanceof Error ? err.message : String(err)
+			}`,
+		);
 		return null;
 	}
 }

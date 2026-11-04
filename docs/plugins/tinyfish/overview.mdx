@@ -1,0 +1,163 @@
+---
+title: Overview
+description: "Web search, page fetch, cloud browser sessions, web automation agents, cited research, and reusable browser profiles behind one API key."
+---
+
+Use **TinyFish** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
+
+**What you get:**
+
+- 28 typed API operations
+- 1 synced entity (`agentRuns`) for fast `.search()` / `.list()`
+- 3 incoming webhook event types
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/tinyfish
+```
+```bash yarn
+yarn add corsair @corsair-dev/tinyfish
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/tinyfish
+```
+```bash bun
+bun add corsair @corsair-dev/tinyfish
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { tinyfish } from '@corsair-dev/tinyfish';
+
+export const corsair = createCorsair({
+	plugins: [
+		tinyfish(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+tinyfish()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'tinyfish',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Search the web**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.tinyfish.api.search.search({ query: 'open source integration layer', location: 'US' });
+```
+
+
+**Queue a web automation run**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.tinyfish.api.agent.runAsync({ url: 'https://example.com', goal: 'Extract the page title' });
+```
+
+
+See the full list on the [API](/plugins/tinyfish/api) page.
+
+## Query synced data
+
+Runs are stamped into the agentRuns entity by sync runs, async acknowledgements, polls and webhook deliveries, so one run never duplicates rows.
+
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.tinyfish.db.agentRuns.search({
+	data: { status: 'COMPLETED' },
+	limit: 50,
+});
+```
+
+Synced entities: `agentRuns`. See [Database](/plugins/tinyfish/database) for filters and operators.
+
+## Webhooks
+
+Fires when a web automation run finishes; the plugin stamps the terminal state into agentRuns.
+
+```ts
+tinyfish({
+    webhookHooks: {
+        run: {
+            completed: {
+                after: async (ctx, result) => {
+                    console.log('Run finished:', result.data.run_id, result.data.status);
+                }
+            },
+        },
+    },
+})
+```
+
+Mount your framework handler once (see [Frameworks](/frameworks/next)), then point the provider at that URL. Full event list: [Webhooks](/plugins/tinyfish/webhooks). Concepts: [Webhooks](/concepts/webhooks), [Hooks](/concepts/hooks).
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/tinyfish/api">
+    Every `tinyfish.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/tinyfish/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Webhooks" href="/plugins/tinyfish/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

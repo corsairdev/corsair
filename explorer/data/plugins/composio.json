@@ -1,0 +1,1585 @@
+{
+  "id": "composio",
+  "displayName": "Composio",
+  "description": "Composio plugin for Corsair",
+  "npmPackageName": "@corsair-dev/composio",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 27,
+    "webhooks": 0,
+    "db": 4
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "one"]
+    }
+  ],
+  "api": [
+    {
+      "path": "composio.api.connections.create",
+      "shortPath": "connections.create",
+      "description": "Create a connected-account auth link",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "auth_config_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "alias",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "callback_url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "link_token",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "redirect_url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "expires_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "connected_account_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "composio.api.connections.delete",
+      "shortPath": "connections.delete",
+      "description": "Delete a connected account",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "connected_account_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "revoke_on_delete",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "revoke_job_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "composio.api.connections.list",
+      "shortPath": "connections.list",
+      "description": "List connected accounts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "toolkit_slugs",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "statuses",
+            "optional": true,
+            "type": "INITIALIZING | INITIATED | ACTIVE | FAILED | EXPIRED | INACTIVE | REVOKED[]"
+          },
+          {
+            "key": "user_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "auth_config_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "account_type",
+            "optional": true,
+            "type": "PRIVATE | SHARED | ALL"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: string, status: string, user_id: string, alias?: string | null, created_at: string, updated_at: string, is_disabled: boolean, toolkit: { slug: string }, auth_config: { id: string, auth_scheme?: string, is_composio_managed?: boolean, is_disabled?: boolean }, authScheme?: string, word_id?: string | null, status_reason?: string | null }[]"
+          },
+          {
+            "key": "next_cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "total_pages",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "current_page",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "total_items",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "composio.api.meta.checkActiveConnection",
+      "shortPath": "meta.checkActiveConnection",
+      "description": "COMPOSIO_CHECK_ACTIVE_CONNECTION: check one connection",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "arguments",
+            "optional": false,
+            "type": "{ toolkit?: string, connected_account_id?: string }"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string",
+            "description": "Composio user the call runs for"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string",
+            "description": "Toolkit version. Composio runs the latest when omitted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}",
+            "description": "JSON object mapping string keys to JSON values"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "successful",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "log_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "composio.api.meta.checkActiveConnections",
+      "shortPath": "meta.checkActiveConnections",
+      "description": "COMPOSIO_CHECK_ACTIVE_CONNECTIONS: check many connections",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "arguments",
+            "optional": false,
+            "type": "{ requests: { toolkit?: string, connected_account_id?: string }[] }"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string",
+            "description": "Composio user the call runs for"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string",
+            "description": "Toolkit version. Composio runs the latest when omitted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}",
+            "description": "JSON object mapping string keys to JSON values"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "successful",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "log_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "composio.api.meta.createPlan",
+      "shortPath": "meta.createPlan",
+      "description": "COMPOSIO_CREATE_PLAN: plan a multi-step workflow",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "arguments",
+            "optional": false,
+            "type": "{ difficulty: medium | hard, known_fields: string, primary_tool_slugs: string[], reasoning: string, use_case: string, related_tool_slugs?: string[], session_id?: string }"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string",
+            "description": "Composio user the call runs for"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string",
+            "description": "Toolkit version. Composio runs the latest when omitted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}",
+            "description": "JSON object mapping string keys to JSON values"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "successful",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "log_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "composio.api.meta.enableTrigger",
+      "shortPath": "meta.enableTrigger",
+      "description": "COMPOSIO_ENABLE_TRIGGER: enable a trigger on an account",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "arguments",
+            "optional": false,
+            "type": "{ connected_account_id: string, toolkit_slug: string, trigger_name: string, config_params?: {}, user_id?: string }"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string",
+            "description": "Composio user the call runs for"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string",
+            "description": "Toolkit version. Composio runs the latest when omitted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}",
+            "description": "JSON object mapping string keys to JSON values"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "successful",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "log_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "composio.api.meta.executeTool",
+      "shortPath": "meta.executeTool",
+      "description": "COMPOSIO_EXECUTE_TOOL: run one tool",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "arguments",
+            "optional": false,
+            "type": "{ tool_slug: string, arguments: {}, connected_account_id?: string, allow_destructive?: boolean }"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string",
+            "description": "Composio user the call runs for"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string",
+            "description": "Toolkit version. Composio runs the latest when omitted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}",
+            "description": "JSON object mapping string keys to JSON values"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "successful",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "log_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "composio.api.meta.getDependencyGraph",
+      "shortPath": "meta.getDependencyGraph",
+      "description": "COMPOSIO_GET_DEPENDENCY_GRAPH: tools a tool depends on",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "arguments",
+            "optional": false,
+            "type": "{ tool_name: string }"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string",
+            "description": "Composio user the call runs for"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string",
+            "description": "Toolkit version. Composio runs the latest when omitted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}",
+            "description": "JSON object mapping string keys to JSON values"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "successful",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "log_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "composio.api.meta.getRequiredParameters",
+      "shortPath": "meta.getRequiredParameters",
+      "description": "COMPOSIO_GET_REQUIRED_PARAMETERS: auth fields of a toolkit",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "arguments",
+            "optional": false,
+            "type": "{ toolkit: string }"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string",
+            "description": "Composio user the call runs for"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string",
+            "description": "Toolkit version. Composio runs the latest when omitted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}",
+            "description": "JSON object mapping string keys to JSON values"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "successful",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "log_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "composio.api.meta.getResponseSchema",
+      "shortPath": "meta.getResponseSchema",
+      "description": "COMPOSIO_GET_RESPONSE_SCHEMA: output schema of a tool",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "arguments",
+            "optional": false,
+            "type": "{ tool: string }"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string",
+            "description": "Composio user the call runs for"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string",
+            "description": "Toolkit version. Composio runs the latest when omitted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}",
+            "description": "JSON object mapping string keys to JSON values"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "successful",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "log_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "composio.api.meta.getToolSchemas",
+      "shortPath": "meta.getToolSchemas",
+      "description": "COMPOSIO_GET_TOOL_SCHEMAS: input schemas by slug",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "session_id",
+            "optional": false,
+            "type": "string",
+            "description": "Session id from sessions.create"
+          },
+          {
+            "key": "arguments",
+            "optional": false,
+            "type": "{ tool_slugs: string[], include?: input_schema | output_schema[], session_id?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ result_type: completed | failed, data: {}, error?: string | null, log_id: string } | { result_type: input_required, input_requests: {}, request_state?: string }"
+      }
+    },
+    {
+      "path": "composio.api.meta.initiateConnection",
+      "shortPath": "meta.initiateConnection",
+      "description": "COMPOSIO_INITIATE_CONNECTION: start connecting a toolkit",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "arguments",
+            "optional": false,
+            "type": "{ toolkit: string, parameters?: {} }"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string",
+            "description": "Composio user the call runs for"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string",
+            "description": "Toolkit version. Composio runs the latest when omitted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}",
+            "description": "JSON object mapping string keys to JSON values"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "successful",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "log_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "composio.api.meta.listToolkits",
+      "shortPath": "meta.listToolkits",
+      "description": "COMPOSIO_LIST_TOOLKITS: list toolkits",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "arguments",
+            "optional": false,
+            "type": "{ category?: string, name_filter?: string, min_tools?: number, no_auth_only?: boolean, size?: number }"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string",
+            "description": "Composio user the call runs for"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string",
+            "description": "Toolkit version. Composio runs the latest when omitted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}",
+            "description": "JSON object mapping string keys to JSON values"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "successful",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "log_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "composio.api.meta.listTriggers",
+      "shortPath": "meta.listTriggers",
+      "description": "COMPOSIO_LIST_TRIGGERS: list trigger types",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "arguments",
+            "optional": false,
+            "type": "{ toolkit_names?: string[] }"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string",
+            "description": "Composio user the call runs for"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string",
+            "description": "Toolkit version. Composio runs the latest when omitted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}",
+            "description": "JSON object mapping string keys to JSON values"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "successful",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "log_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "composio.api.meta.manageConnections",
+      "shortPath": "meta.manageConnections",
+      "description": "COMPOSIO_MANAGE_CONNECTIONS: check or connect toolkits",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "session_id",
+            "optional": false,
+            "type": "string",
+            "description": "Session id from sessions.create"
+          },
+          {
+            "key": "arguments",
+            "optional": false,
+            "type": "{ toolkits: string[], reinitiate_all?: boolean, session_id?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ result_type: completed | failed, data: {}, error?: string | null, log_id: string } | { result_type: input_required, input_requests: {}, request_state?: string }"
+      }
+    },
+    {
+      "path": "composio.api.meta.multiExecuteTool",
+      "shortPath": "meta.multiExecuteTool",
+      "description": "COMPOSIO_MULTI_EXECUTE_TOOL: run tools in parallel",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "session_id",
+            "optional": false,
+            "type": "string",
+            "description": "Session id from sessions.create"
+          },
+          {
+            "key": "arguments",
+            "optional": false,
+            "type": "{ tools: { tool_slug: string, arguments: {} }[], sync_response_to_workbench: boolean, memory?: {}, thought?: string, current_step?: string, current_step_metric?: string, session_id?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ result_type: completed | failed, data: {}, error?: string | null, log_id: string } | { result_type: input_required, input_requests: {}, request_state?: string }"
+      }
+    },
+    {
+      "path": "composio.api.meta.remoteBashTool",
+      "shortPath": "meta.remoteBashTool",
+      "description": "COMPOSIO_REMOTE_BASH_TOOL: run bash in the sandbox",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "session_id",
+            "optional": false,
+            "type": "string",
+            "description": "Session id from sessions.create"
+          },
+          {
+            "key": "arguments",
+            "optional": false,
+            "type": "{ command: string, session_id?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ result_type: completed | failed, data: {}, error?: string | null, log_id: string } | { result_type: input_required, input_requests: {}, request_state?: string }"
+      }
+    },
+    {
+      "path": "composio.api.meta.remoteWorkbench",
+      "shortPath": "meta.remoteWorkbench",
+      "description": "COMPOSIO_REMOTE_WORKBENCH: run Python in the sandbox",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "session_id",
+            "optional": false,
+            "type": "string",
+            "description": "Session id from sessions.create"
+          },
+          {
+            "key": "arguments",
+            "optional": false,
+            "type": "{ code_to_execute: string, thought?: string, current_step?: string, current_step_metric?: string, session_id?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ result_type: completed | failed, data: {}, error?: string | null, log_id: string } | { result_type: input_required, input_requests: {}, request_state?: string }"
+      }
+    },
+    {
+      "path": "composio.api.meta.searchTools",
+      "shortPath": "meta.searchTools",
+      "description": "COMPOSIO_SEARCH_TOOLS: find tools for a use case",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "session_id",
+            "optional": false,
+            "type": "string",
+            "description": "Session id from sessions.create"
+          },
+          {
+            "key": "arguments",
+            "optional": false,
+            "type": "{ queries: { use_case: string, known_fields?: string }[], session?: { generate_id: true } | { id: string }, model?: string, search_strategy?: auto | tool_search }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ result_type: completed | failed, data: {}, error?: string | null, log_id: string } | { result_type: input_required, input_requests: {}, request_state?: string }"
+      }
+    },
+    {
+      "path": "composio.api.meta.waitForConnection",
+      "shortPath": "meta.waitForConnection",
+      "description": "COMPOSIO_WAIT_FOR_CONNECTION: wait until toolkits connect",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "arguments",
+            "optional": false,
+            "type": "{ toolkits: string[], mode?: any | all, timeout_seconds?: number }"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string",
+            "description": "Composio user the call runs for"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string",
+            "description": "Toolkit version. Composio runs the latest when omitted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}",
+            "description": "JSON object mapping string keys to JSON values"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "successful",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "log_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "composio.api.meta.waitForConnections",
+      "shortPath": "meta.waitForConnections",
+      "description": "COMPOSIO_WAIT_FOR_CONNECTIONS: wait inside a session",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "session_id",
+            "optional": false,
+            "type": "string",
+            "description": "Session id from sessions.create"
+          },
+          {
+            "key": "arguments",
+            "optional": false,
+            "type": "{ toolkits: string[], mode?: any | all, session_id?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ result_type: completed | failed, data: {}, error?: string | null, log_id: string } | { result_type: input_required, input_requests: {}, request_state?: string }"
+      }
+    },
+    {
+      "path": "composio.api.sessions.create",
+      "shortPath": "sessions.create",
+      "description": "Create a tool router session for a user",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "toolkits",
+            "optional": true,
+            "type": "{ enable: string[] } | { disable: string[] }",
+            "description": "Allowlist (enable) or denylist (disable) of toolkit slugs"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "session_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "mcp",
+            "optional": false,
+            "type": "{ type: http, url: string }"
+          },
+          {
+            "key": "tool_router_tools",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "config",
+            "optional": true,
+            "type": "{ user_id?: string }"
+          },
+          {
+            "key": "config_version",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "composio.api.toolkits.list",
+      "shortPath": "toolkits.list",
+      "description": "List toolkits",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "category",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "managed_by",
+            "optional": true,
+            "type": "composio | all | project"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "native | custom | all"
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "usage | alphabetically"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "include_deprecated",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ slug: string, name: string, type: string, auth_schemes?: string[], no_auth?: boolean, composio_managed_auth_schemes?: string[], is_local_toolkit?: boolean, auth_guide_url?: string | null, meta: { created_at?: string, updated_at?: string, description?: string, logo?: string, app_url?: string | null, categories?: { id: string, name: string }[], triggers_count?: number, tools_count?: number, version?: string } }[]"
+          },
+          {
+            "key": "next_cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "total_pages",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "current_page",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "total_items",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "composio.api.tools.execute",
+      "shortPath": "tools.execute",
+      "description": "Execute a tool by slug",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tool_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "arguments",
+            "optional": false,
+            "type": "{}",
+            "description": "Arguments the tool takes"
+          },
+          {
+            "key": "connected_account_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string",
+            "description": "Toolkit version. Composio runs the latest when omitted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}",
+            "description": "JSON object mapping string keys to JSON values"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "successful",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "log_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "composio.api.tools.get",
+      "shortPath": "tools.get",
+      "description": "Get a tool by slug",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tool_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "toolkit",
+            "optional": false,
+            "type": "{ slug: string, name: string, logo?: string }"
+          },
+          {
+            "key": "input_parameters",
+            "optional": false,
+            "type": "{}",
+            "description": "JSON object mapping string keys to JSON values"
+          },
+          {
+            "key": "output_parameters",
+            "optional": false,
+            "type": "{}",
+            "description": "JSON object mapping string keys to JSON values"
+          },
+          {
+            "key": "no_auth",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "available_versions",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "scopes",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "tags",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "human_description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_deprecated",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "composio.api.tools.list",
+      "shortPath": "tools.list",
+      "description": "List Composio tools",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "toolkit_slug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tool_slugs",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated tool slugs"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "important",
+            "optional": true,
+            "type": "true | false"
+          },
+          {
+            "key": "include_deprecated",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "toolkit_versions",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ slug: string, name: string, description: string, toolkit: { slug: string, name: string, logo?: string }, input_parameters: {}, output_parameters: {}, no_auth: boolean, version: string, available_versions: string[], scopes?: string[], tags: string[], human_description?: string, is_deprecated: boolean }[]"
+          },
+          {
+            "key": "next_cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "total_pages",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "current_page",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "total_items",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "composio.db.connectedAccounts.search",
+      "entityName": "connectedAccounts",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status_reason",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "user_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "alias",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "word_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "authScheme",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "is_disabled",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "created_at",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "updated_at",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "composio.db.sessions.search",
+      "entityName": "sessions",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "session_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "user_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "config_version",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "composio.db.toolkits.search",
+      "entityName": "toolkits",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "slug",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "is_local_toolkit",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "no_auth",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "auth_guide_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "composio.db.tools.search",
+      "entityName": "tools",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "slug",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "no_auth",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "version",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "human_description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "is_deprecated",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    }
+  ]
+}

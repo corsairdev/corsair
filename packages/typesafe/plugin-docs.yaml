@@ -1,0 +1,31 @@
+displayName: TypeSafe
+description: Ask Jev, TypeSafe's System One model, typed questions about text, JSON or images and get calibrated probabilities back for code to act on.
+domain: typesafe.ai
+recommendedAuth: api_key
+examples:
+  read:
+    path: systemOne.ask
+    title: Check a lead against your ICP
+    args:
+      state:
+        lead:
+          title: VP Platform
+          company: Outerbounds
+          headcount: 60
+        icp: Software companies with 20 to 200 staff where the buyer leads engineering
+      questions:
+        fits_icp:
+          type: noul
+          instructions: Does `lead` fit `icp`?
+        seniority:
+          type: choice
+          instructions: How senior is `lead`?
+          criteria:
+            individual_contributor: null
+            manager: null
+            director_or_vp: null
+            c_level_or_founder: null
+apiExamples:
+  systemOne.ask:
+    call: "{ state: { message: 'I was charged twice for my order.' }, questions: { billing: { type: 'noul', instructions: 'Is `message` about billing?' }, urgency: { type: 'score', instructions: 'How urgent is `message`?', criteria: ['Can wait', 'Needs attention this week', 'Needs attention today'] } } }"
+  models.list: {}

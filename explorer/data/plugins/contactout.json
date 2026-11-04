@@ -1,0 +1,1173 @@
+{
+  "id": "contactout",
+  "displayName": "ContactOut",
+  "description": "ContactOut plugin for Corsair",
+  "npmPackageName": "@corsair-dev/contactout",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 15,
+    "webhooks": 0,
+    "db": 2
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": [
+        "api_key",
+        "webhook_signature",
+        "tenant_external_id",
+        "personal_api_key"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "contactout.api.account.stats",
+      "shortPath": "account.stats",
+      "description": "Get email, phone, and search credit usage for a month",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "period",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status_code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "period",
+            "optional": false,
+            "type": "{ start: string, end: string }"
+          },
+          {
+            "key": "usage",
+            "optional": false,
+            "type": "{ count: number, quota: number, remaining?: number | null, over_quota?: number | null, phone_count: number, phone_quota: number, phone_remaining?: number | null, phone_over_quota?: number | null, search_count: number, search_quota: number, search_remaining?: number | null, search_over_quota?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "contactout.api.company.enrichDomains",
+      "shortPath": "company.enrichDomains",
+      "description": "Get company details for up to 30 domains",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domains",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status_code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "companies",
+            "optional": false,
+            "type": "{} | {}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "contactout.api.company.search",
+      "shortPath": "company.search",
+      "description": "Search companies by name, domain, size, location, industry, technology, revenue, or founding year",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "linkedin_url",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "hq_only",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "industries",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "technologies",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "min_revenue",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_revenue",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "year_founded_from",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "year_founded_to",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status_code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "metadata",
+            "optional": false,
+            "type": "{ page: number, page_size: number, total_results: number }"
+          },
+          {
+            "key": "companies",
+            "optional": false,
+            "type": "{ name?: string | null, url?: string | null, li_vanity?: string | null, linkedin_company_id?: number | null, domain?: string | null, email_domain?: string | null, overview?: string | null, description?: string | null, type?: string | null, size?: number | null, country?: string | null, revenue?: number | string | null, founded_at?: number | null, industry?: string | null, headquarter?: string | null, website?: string | null, location?: string | null, logo_url?: string | null, specialties?: string[], technologies?: string[], locations?: (string | { city?: string | null, line1?: string | null, line2?: string | null, state?: string | null, country?: string | null, postalCode?: string | null, description?: string | null, isPrimary?: boolean })[], employees?: number | null, followers?: number | null, funding?: { total_funding_usd?: number | null, rounds?: { funding_type?: string | null, announced_date?: string | null, investor_names?: string[], lead_investors?: string[], money_raised_usd?: number | null, number_of_investors?: number | null }[], funding_status?: string | null, latest_date?: string | null, number_of_funding_rounds?: number | null } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "contactout.api.email.enrich",
+      "shortPath": "email.enrich",
+      "description": "Get the profile behind an email address",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "work_email"
+          },
+          {
+            "key": "emailType",
+            "optional": true,
+            "type": "work | personal",
+            "description": "Send the work-email key (default) or the personal-email key"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status_code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "profile",
+            "optional": false,
+            "type": "{ email?: string | null, workEmail?: string | null, workEmailStatus?: string | null, fullName?: string | null, headline?: string | null, industry?: string | null, linkedinUrl?: string | null, profilePictureUrl?: string | null, confidenceLevel?: string | null, altMatches?: string[], phone?: string | null, twitter?: string | null, github?: string | null, experience?: { title?: string | null, summary?: string | null, locality?: string | null, company_name?: string | null, linkedin_url?: string | null, domain?: string | null, logo_url?: string | null, start_date?: string | null, end_date?: string | null, is_current?: boolean | null, start_date_year?: number | string | null, start_date_month?: number | null, end_date_year?: number | string | null, end_date_month?: number | null }[], education?: { school_name?: string | null, degree?: string | null, field_of_study?: string | null, description?: string | null, url?: string | null, start_date_year?: number | string | null, start_date_month?: number | null, end_date_year?: number | string | null, end_date_month?: number | null }[], volunteeringExperiences?: { role?: string | null, company_name?: string | null, company_url?: string | null, cause?: string | null, company_id?: number | null, start_date_year?: number | string | null, start_date_month?: number | null, end_date_year?: number | string | null, end_date_month?: number | null }[], jobFunction?: string | null, workStatus?: string | null, updatedAt?: string | null, company?: { name?: string | null, url?: string | null, li_vanity?: string | null, linkedin_company_id?: number | null, domain?: string | null, email_domain?: string | null, overview?: string | null, description?: string | null, type?: string | null, size?: number | null, country?: string | null, revenue?: number | string | null, founded_at?: number | null, industry?: string | null, headquarter?: string | null, website?: string | null, location?: string | null, logo_url?: string | null, specialties?: string[], technologies?: string[], locations?: (string | { city?: string | null, line1?: string | null, line2?: string | null, state?: string | null, country?: string | null, postalCode?: string | null, description?: string | null, isPrimary?: boolean })[], employees?: number | null, followers?: number | null, funding?: { total_funding_usd?: number | null, rounds?: { funding_type?: string | null, announced_date?: string | null, investor_names?: string[], lead_investors?: string[], money_raised_usd?: number | null, number_of_investors?: number | null }[], funding_status?: string | null, latest_date?: string | null, number_of_funding_rounds?: number | null } | null } | null, location?: string | null, languages?: { name?: string | null, proficiency?: string | null }[], summary?: string | null, skills?: string[], certifications?: { name?: string | null, title?: string | null, authority?: string | null, license?: string | null, start_date_year?: number | string | null, start_date_month?: number | null, end_date_year?: number | string | null, end_date_month?: number | null }[], publications?: { url?: string | null, title?: string | null, description?: string | null, publisher?: string | null, authors?: string[], published_on_year?: number | null, published_on_month?: number | null, published_on_day?: number | null }[], projects?: { title?: string | null, description?: string | null, start_date_year?: number | string | null, start_date_month?: number | null, end_date_year?: number | string | null, end_date_month?: number | null }[], followers?: number | null, seniority?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "contactout.api.email.toLinkedin",
+      "shortPath": "email.toLinkedin",
+      "description": "Get the LinkedIn profile URL for an email address",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status_code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "profile",
+            "optional": false,
+            "type": "{ email?: string | null, linkedin?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "contactout.api.email.verify",
+      "shortPath": "email.verify",
+      "description": "Verify whether an email address is deliverable",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status_code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ status: valid | invalid | accept_all | disposable | unknown }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "contactout.api.linkedin.contactInfo",
+      "shortPath": "linkedin.contactInfo",
+      "description": "Get only the emails and phones for a LinkedIn profile",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profile",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "include_phone",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "email_type",
+            "optional": true,
+            "type": "personal | work | personal,work | none"
+          },
+          {
+            "key": "emailType",
+            "optional": true,
+            "type": "work | personal",
+            "description": "Send the work-email key (default) or the personal-email key"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status_code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "profile",
+            "optional": false,
+            "type": "{ url?: string | null, email?: string[], work_email?: string[], work_email_status?: {}, personal_email?: string[], phone?: string[], github?: string[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "contactout.api.linkedin.enrich",
+      "shortPath": "linkedin.enrich",
+      "description": "Get a full LinkedIn profile with emails and phones; emailType picks the work or personal key",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profile",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "profile_only",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "emailType",
+            "optional": true,
+            "type": "work | personal",
+            "description": "Send the work-email key (default) or the personal-email key"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status_code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "profile",
+            "optional": false,
+            "type": "{ url?: string | null, email?: string[], work_email?: string[], personal_email?: string[], phone?: string[], github?: string[], twitter?: string[], full_name?: string | null, headline?: string | null, industry?: string | null, country?: string | null, experience?: { title?: string | null, summary?: string | null, locality?: string | null, company_name?: string | null, linkedin_url?: string | null, domain?: string | null, logo_url?: string | null, start_date?: string | null, end_date?: string | null, is_current?: boolean | null, start_date_year?: number | string | null, start_date_month?: number | null, end_date_year?: number | string | null, end_date_month?: number | null }[], education?: { school_name?: string | null, degree?: string | null, field_of_study?: string | null, description?: string | null, url?: string | null, start_date_year?: number | string | null, start_date_month?: number | null, end_date_year?: number | string | null, end_date_month?: number | null }[], volunteering_experiences?: { role?: string | null, company_name?: string | null, company_url?: string | null, cause?: string | null, company_id?: number | null, start_date_year?: number | string | null, start_date_month?: number | null, end_date_year?: number | string | null, end_date_month?: number | null }[], job_function?: string | null, work_status?: string | null, profile_picture_url?: string | null, updated_at?: string | null, company?: { name?: string | null, url?: string | null, li_vanity?: string | null, linkedin_company_id?: number | null, domain?: string | null, email_domain?: string | null, overview?: string | null, description?: string | null, type?: string | null, size?: number | null, country?: string | null, revenue?: number | string | null, founded_at?: number | null, industry?: string | null, headquarter?: string | null, website?: string | null, location?: string | null, logo_url?: string | null, specialties?: string[], technologies?: string[], locations?: (string | { city?: string | null, line1?: string | null, line2?: string | null, state?: string | null, country?: string | null, postalCode?: string | null, description?: string | null, isPrimary?: boolean })[], employees?: number | null, followers?: number | null, funding?: { total_funding_usd?: number | null, rounds?: { funding_type?: string | null, announced_date?: string | null, investor_names?: string[], lead_investors?: string[], money_raised_usd?: number | null, number_of_investors?: number | null }[], funding_status?: string | null, latest_date?: string | null, number_of_funding_rounds?: number | null } | null } | null, location?: string | null, languages?: { name?: string | null, proficiency?: string | null }[], summary?: string | null, skills?: string[], certifications?: { name?: string | null, title?: string | null, authority?: string | null, license?: string | null, start_date_year?: number | string | null, start_date_month?: number | null, end_date_year?: number | string | null, end_date_month?: number | null }[], publications?: { url?: string | null, title?: string | null, description?: string | null, publisher?: string | null, authors?: string[], published_on_year?: number | null, published_on_month?: number | null, published_on_day?: number | null }[], projects?: { title?: string | null, description?: string | null, start_date_year?: number | string | null, start_date_month?: number | null, end_date_year?: number | string | null, end_date_month?: number | null }[], followers?: number | null, seniority?: string | null } | tuple"
+          }
+        ]
+      }
+    },
+    {
+      "path": "contactout.api.linkedin.personalEmailStatus",
+      "shortPath": "linkedin.personalEmailStatus",
+      "description": "Check whether a LinkedIn profile has a personal email (free)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profile",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status_code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "profile",
+            "optional": false,
+            "type": "{ email: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "contactout.api.linkedin.phoneStatus",
+      "shortPath": "linkedin.phoneStatus",
+      "description": "Check whether a LinkedIn profile has a phone number (free)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profile",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status_code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "profile",
+            "optional": false,
+            "type": "{ phone: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "contactout.api.linkedin.workEmailStatus",
+      "shortPath": "linkedin.workEmailStatus",
+      "description": "Check whether a LinkedIn profile has a work email (free)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profile",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status_code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "profile",
+            "optional": false,
+            "type": "{ email: boolean, email_status?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "contactout.api.people.count",
+      "shortPath": "people.count",
+      "description": "Count profiles matching search filters (free)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "job_title",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "past_job_title",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "exclude_job_titles",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "job_function",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "seniority",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "current_titles_only",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_related_job_titles",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "match_experience",
+            "optional": true,
+            "type": "current | past | both"
+          },
+          {
+            "key": "skills",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "languages",
+            "optional": true,
+            "type": "{ language: string, proficiency?: string[] }[]"
+          },
+          {
+            "key": "education",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "educations",
+            "optional": true,
+            "type": "{ school_name?: string, field_of_study?: string, location?: string }[]"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "location_radius",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "current_work_location",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "past_work_location",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "past_company",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "company_filter",
+            "optional": true,
+            "type": "current | past | past_only | both"
+          },
+          {
+            "key": "current_company_only",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "exclude_companies",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "exclude_companies_filter",
+            "optional": true,
+            "type": "current | past | both"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "industry",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "keyword",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "company_size",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "years_of_experience",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "years_in_current_role",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "recently_changed_jobs",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_currently_working",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status_code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "total_results",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "estimated_personal_emails",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "estimated_work_emails",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "estimated_phones",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "contactout.api.people.decisionMakers",
+      "shortPath": "people.decisionMakers",
+      "description": "List a company's decision makers by domain, name, or LinkedIn URL",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "linkedin_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "reveal_info",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "emailType",
+            "optional": true,
+            "type": "work | personal",
+            "description": "Send the work-email key (default) or the personal-email key"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status_code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "metadata",
+            "optional": false,
+            "type": "{ page: number, page_size: number, total_results: number }"
+          },
+          {
+            "key": "profiles",
+            "optional": false,
+            "type": "{} | tuple"
+          }
+        ]
+      }
+    },
+    {
+      "path": "contactout.api.people.enrich",
+      "shortPath": "people.enrich",
+      "description": "Find a profile from a LinkedIn URL, email, phone, or name plus company, school, or location",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "linkedin_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "full_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "company_domain",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "education",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "job_title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "work_email | personal_email | phone[]"
+          },
+          {
+            "key": "emailType",
+            "optional": true,
+            "type": "work | personal",
+            "description": "Send the work-email key (default) or the personal-email key"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status_code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "profile",
+            "optional": false,
+            "type": "{ url?: string | null, email?: string[], work_email?: string[], personal_email?: string[], phone?: string[], github?: string[], twitter?: string[], full_name?: string | null, headline?: string | null, industry?: string | null, country?: string | null, experience?: { title?: string | null, summary?: string | null, locality?: string | null, company_name?: string | null, linkedin_url?: string | null, domain?: string | null, logo_url?: string | null, start_date?: string | null, end_date?: string | null, is_current?: boolean | null, start_date_year?: number | string | null, start_date_month?: number | null, end_date_year?: number | string | null, end_date_month?: number | null }[], education?: { school_name?: string | null, degree?: string | null, field_of_study?: string | null, description?: string | null, url?: string | null, start_date_year?: number | string | null, start_date_month?: number | null, end_date_year?: number | string | null, end_date_month?: number | null }[], volunteering_experiences?: { role?: string | null, company_name?: string | null, company_url?: string | null, cause?: string | null, company_id?: number | null, start_date_year?: number | string | null, start_date_month?: number | null, end_date_year?: number | string | null, end_date_month?: number | null }[], job_function?: string | null, work_status?: string | null, profile_picture_url?: string | null, updated_at?: string | null, company?: { name?: string | null, url?: string | null, li_vanity?: string | null, linkedin_company_id?: number | null, domain?: string | null, email_domain?: string | null, overview?: string | null, description?: string | null, type?: string | null, size?: number | null, country?: string | null, revenue?: number | string | null, founded_at?: number | null, industry?: string | null, headquarter?: string | null, website?: string | null, location?: string | null, logo_url?: string | null, specialties?: string[], technologies?: string[], locations?: (string | { city?: string | null, line1?: string | null, line2?: string | null, state?: string | null, country?: string | null, postalCode?: string | null, description?: string | null, isPrimary?: boolean })[], employees?: number | null, followers?: number | null, funding?: { total_funding_usd?: number | null, rounds?: { funding_type?: string | null, announced_date?: string | null, investor_names?: string[], lead_investors?: string[], money_raised_usd?: number | null, number_of_investors?: number | null }[], funding_status?: string | null, latest_date?: string | null, number_of_funding_rounds?: number | null } | null } | null, location?: string | null, languages?: { name?: string | null, proficiency?: string | null }[], summary?: string | null, skills?: string[], certifications?: { name?: string | null, title?: string | null, authority?: string | null, license?: string | null, start_date_year?: number | string | null, start_date_month?: number | null, end_date_year?: number | string | null, end_date_month?: number | null }[], publications?: { url?: string | null, title?: string | null, description?: string | null, publisher?: string | null, authors?: string[], published_on_year?: number | null, published_on_month?: number | null, published_on_day?: number | null }[], projects?: { title?: string | null, description?: string | null, start_date_year?: number | string | null, start_date_month?: number | null, end_date_year?: number | string | null, end_date_month?: number | null }[], followers?: number | null, seniority?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "contactout.api.people.search",
+      "shortPath": "people.search",
+      "description": "Search profiles by title, company, location, skills, and more, 25 per page",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "job_title",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "past_job_title",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "exclude_job_titles",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "job_function",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "seniority",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "current_titles_only",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_related_job_titles",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "match_experience",
+            "optional": true,
+            "type": "current | past | both"
+          },
+          {
+            "key": "skills",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "languages",
+            "optional": true,
+            "type": "{ language: string, proficiency?: string[] }[]"
+          },
+          {
+            "key": "education",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "educations",
+            "optional": true,
+            "type": "{ school_name?: string, field_of_study?: string, location?: string }[]"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "location_radius",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "current_work_location",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "past_work_location",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "past_company",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "company_filter",
+            "optional": true,
+            "type": "current | past | past_only | both"
+          },
+          {
+            "key": "current_company_only",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "exclude_companies",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "exclude_companies_filter",
+            "optional": true,
+            "type": "current | past | both"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "industry",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "keyword",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "company_size",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "years_of_experience",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "years_in_current_role",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "recently_changed_jobs",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_currently_working",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "data_types",
+            "optional": true,
+            "type": "personal_email | work_email | phone[]"
+          },
+          {
+            "key": "reveal_info",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "detailed_experience",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "detailed_education",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "output_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "emailType",
+            "optional": true,
+            "type": "work | personal",
+            "description": "Send the work-email key (default) or the personal-email key"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status_code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "metadata",
+            "optional": false,
+            "type": "{ page: number, page_size: number, total_results: number }"
+          },
+          {
+            "key": "profiles",
+            "optional": false,
+            "type": "{} | tuple"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "contactout.db.companies.search",
+      "entityName": "companies",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "domain",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "linkedinUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "industry",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "size",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "country",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "foundedAt",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "contactout.db.profiles.search",
+      "entityName": "profiles",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "linkedinUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "fullName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "headline",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "companyName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "companyDomain",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "location",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "seniority",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "hasWorkEmail",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "hasPersonalEmail",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "hasPhone",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}
