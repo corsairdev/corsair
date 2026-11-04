@@ -5,10 +5,12 @@ description: "Print-on-demand fulfilment - manage images, virtual inventory prod
 
 Use **FinerWorks** through Corsair: one client, typed API calls, local DB sync.
 
+FinerWorks signs every request with two keys: the account's `web_api_key` and an `app_key` for the calling app (create one under Account > API in FinerWorks). Corsair stores the web API key as the tenant's API key and the app key as the account's `app_key` field; you can also pass `appKey` to `finerworks()` to use one app key for every tenant.
+
 **What you get:**
 
 - 33 typed API operations
-- 21 synced entities (`addresses`, `companyInfo`, `frameCollections`, `frames`, `galleries`, `galleryThemes`, and 15 more) for fast `.search()` / `.list()`
+- 3 synced entities (`images`, `orders`, `virtualInventoryProducts`) for fast `.search()` / `.list()`
 
 ## Setup
 
@@ -89,19 +91,24 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`account.getCompanyInfo`**
+**List images in the inventory library**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.finerworks.api.account.getCompanyInfo({});
+await tenant.finerworks.api.images.list({
+	library: { name: 'inventory' },
+	per_page: 20,
+});
 ```
 
 
-**`account.updateAppDetails`**
+**Change a product's asking price**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.finerworks.api.account.updateAppDetails({});
+await tenant.finerworks.api.inventory.update({
+	virtual_inventory: [{ sku: 'AP1556P79511', asking_price: 200 }],
+});
 ```
 
 
@@ -109,9 +116,17 @@ See the full list on the [API](/plugins/finerworks/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.finerworks.db.<entity>.search()` and `.list()`: `addresses`, `companyInfo`, `frameCollections`, `frames`, `galleries`, `galleryThemes`, `glazing`, `images`, `mats`, `mediaTypes`, `orders`, `orderStatusDefinitions`, `prices`, `productTypes`, `shipments`, `shippingOptions`, `shippingQuotes`, `styleTypes`, `submittedOrders`, `userAccounts`, `virtualInventoryProducts`.
+`orders.fetchStatus` stores each order by `order_id`. `images.list`, `images.add` and `images.update` store images by `guid`, and `inventory.list` and `inventory.update` store products by `sku`.
 
-See [Database](/plugins/finerworks/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.finerworks.db.orders.search({
+	data: { order_status_label: 'In Production' },
+	limit: 50,
+});
+```
+
+Synced entities: `images`, `orders`, `virtualInventoryProducts`. See [Database](/plugins/finerworks/database) for filters and operators.
 
 ## What's next
 

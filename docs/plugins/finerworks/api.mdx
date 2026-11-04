@@ -187,7 +187,7 @@ Update the calling application's name, description and live mode
 **Risk:** `write`
 
 ```ts
-await corsair.finerworks.api.account.updateAppDetails({});
+await corsair.finerworks.api.account.updateAppDetails({ app_details: { app_name: 'My storefront', app_live_mode: true } });
 ```
 
 **Input**
@@ -248,7 +248,7 @@ Update the FinerWorks account profile, including billing and payment information
 **Risk:** `write`
 
 ```ts
-await corsair.finerworks.api.account.updateUser({});
+await corsair.finerworks.api.account.updateUser({ shipping_preferences: [0, 2, 1] });
 ```
 
 **Input**
@@ -361,7 +361,7 @@ Get dimensions, pricing, materials and imagery for a specific frame
 **Risk:** `read`
 
 ```ts
-await corsair.finerworks.api.framing.getFrameDetails({});
+await corsair.finerworks.api.framing.getFrameDetails({ id: 131 });
 ```
 
 **Input**
@@ -369,6 +369,7 @@ await corsair.finerworks.api.framing.getFrameDetails({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
+| `product_code` | `string` | No | — |
 
 
 
@@ -378,6 +379,7 @@ await corsair.finerworks.api.framing.getFrameDetails({});
 |------|------|----------|-------------|
 | `status` | `object` | No | — |
 | `frame` | `object` | No | — |
+| `frame_details` | `object` | No | — |
 
 <AccordionGroup>
 <Accordion title="status full type">
@@ -395,6 +397,40 @@ await corsair.finerworks.api.framing.getFrameDetails({});
 </Accordion>
 
 <Accordion title="frame full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  thickness?: number | null,
+  depth?: number | null,
+  float_offset?: number | null,
+  rabbet?: number | null,
+  lip?: number | null,
+  profile_svg_url?: string | null,
+  sample_image_url_1?: string | null,
+  sample_image_url_2?: string | null,
+  sample_image_url_3?: string | null,
+  min_width?: number | null,
+  min_height?: number | null,
+  max_width?: number | null,
+  max_height?: number | null,
+  price_level?: number | null,
+  allow_glazing?: boolean | null,
+  allow_matting?: boolean | null,
+  color?: string | null,
+  composite?: string | null,
+  segment_url?: string | null,
+  sample_length?: number | null,
+  class_alias?: string | null,
+  starting_price?: number | null,
+  type?: string | null,
+  type_description?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="frame_details full type">
 
 ```ts
 {
@@ -460,6 +496,7 @@ await corsair.finerworks.api.framing.listCollections({});
 |------|------|----------|-------------|
 | `status` | `object` | No | — |
 | `collections` | `object[]` | No | — |
+| `frame_collections` | `object[]` | No | — |
 
 <AccordionGroup>
 <Accordion title="status full type">
@@ -477,6 +514,50 @@ await corsair.finerworks.api.framing.listCollections({});
 </Accordion>
 
 <Accordion title="collections full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  description?: string | null,
+  alias?: string | null,
+  icon_url_1?: string | null,
+  icon_url_2?: string | null,
+  icon_url_3?: string | null,
+  starting_price?: number | null,
+  frames?: {
+    id?: number | null,
+    name?: string | null,
+    thickness?: number | null,
+    depth?: number | null,
+    float_offset?: number | null,
+    rabbet?: number | null,
+    lip?: number | null,
+    profile_svg_url?: string | null,
+    sample_image_url_1?: string | null,
+    sample_image_url_2?: string | null,
+    sample_image_url_3?: string | null,
+    min_width?: number | null,
+    min_height?: number | null,
+    max_width?: number | null,
+    max_height?: number | null,
+    price_level?: number | null,
+    allow_glazing?: boolean | null,
+    allow_matting?: boolean | null,
+    color?: string | null,
+    composite?: string | null,
+    segment_url?: string | null,
+    sample_length?: number | null,
+    class_alias?: string | null,
+    starting_price?: number | null,
+    type?: string | null,
+    type_description?: string | null
+  }[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="frame_collections full type">
 
 ```ts
 {
@@ -542,6 +623,7 @@ await corsair.finerworks.api.framing.listGlazing({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | No | — |
+| `product_code` | `string` | No | — |
 
 
 
@@ -603,6 +685,7 @@ await corsair.finerworks.api.framing.listMats({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | No | — |
+| `product_code` | `string` | No | — |
 
 
 
@@ -663,7 +746,7 @@ Create a personal gallery collection, or update one by supplying its id
 **Risk:** `write`
 
 ```ts
-await corsair.finerworks.api.galleries.addOrUpdateCollection({});
+await corsair.finerworks.api.galleries.addOrUpdateCollection({ name: 'Seascapes', visible: true });
 ```
 
 **Input**
@@ -847,7 +930,7 @@ Add up to five prepared images to a FinerWorks library
 **Risk:** `write`
 
 ```ts
-await corsair.finerworks.api.images.add({});
+await corsair.finerworks.api.images.add({ library: { name: 'inventory' }, images: [{ title: 'Sunset', file_name: 'sunset.jpg', hires_file_name: 'sunset.jpg', private_hires_uri: 'https://example.com/sunset.jpg' }] });
 ```
 
 **Input**
@@ -964,7 +1047,7 @@ Delete image files by GUID, along with any virtual inventory products assigned t
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.finerworks.api.images.delete({});
+await corsair.finerworks.api.images.delete({ guids: ['<image-guid>'] });
 ```
 
 **Input**
@@ -1026,7 +1109,7 @@ List image files uploaded to the FinerWorks account, with pagination
 **Risk:** `read`
 
 ```ts
-await corsair.finerworks.api.images.list({});
+await corsair.finerworks.api.images.list({ library: { name: 'inventory' }, page_number: 1, per_page: 20 });
 ```
 
 **Input**
@@ -1136,7 +1219,7 @@ List the image GUIDs grouped under a file-selection key
 **Risk:** `read`
 
 ```ts
-await corsair.finerworks.api.images.listFileSelection({});
+await corsair.finerworks.api.images.listFileSelection({ guid: '<selection-guid>' });
 ```
 
 **Input**
@@ -1184,7 +1267,7 @@ Update image metadata by GUID
 **Risk:** `write`
 
 ```ts
-await corsair.finerworks.api.images.update({});
+await corsair.finerworks.api.images.update({ images: [{ guid: '<image-guid>', title: 'Sunset over the bay' }] });
 ```
 
 **Input**
@@ -1283,7 +1366,7 @@ Replace the image files held under a selection GUID
 **Risk:** `write`
 
 ```ts
-await corsair.finerworks.api.images.updateFileSelection({});
+await corsair.finerworks.api.images.updateFileSelection({ guid: '<selection-guid>', guids: ['<image-guid>'] });
 ```
 
 **Input**
@@ -1333,7 +1416,7 @@ Delete virtual inventory products by SKU and disconnect their third-party sync
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.finerworks.api.inventory.delete({});
+await corsair.finerworks.api.inventory.delete({ skus: ['AP1556P79511'] });
 ```
 
 **Input**
@@ -1380,7 +1463,7 @@ Disconnect every virtual inventory item from a third-party platform
 **Risk:** `write`
 
 ```ts
-await corsair.finerworks.api.inventory.disconnect({});
+await corsair.finerworks.api.inventory.disconnect({ platform: 'shopify' });
 ```
 
 **Input**
@@ -1427,7 +1510,7 @@ List the virtual inventory products on the account, with pagination
 **Risk:** `read`
 
 ```ts
-await corsair.finerworks.api.inventory.list({});
+await corsair.finerworks.api.inventory.list({ per_page: 20 });
 ```
 
 **Input**
@@ -1537,7 +1620,7 @@ Update virtual inventory pricing, stock and third-party integrations
 **Risk:** `write`
 
 ```ts
-await corsair.finerworks.api.inventory.update({});
+await corsair.finerworks.api.inventory.update({ virtual_inventory: [{ sku: 'AP1556P79511', asking_price: 200 }] });
 ```
 
 **Input**
@@ -1669,7 +1752,7 @@ Remove orders that were saved as pending
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.finerworks.api.orders.deletePending({});
+await corsair.finerworks.api.orders.deletePending({ ids: [12345] });
 ```
 
 **Input**
@@ -1716,7 +1799,7 @@ Get production status and tracking information for orders
 **Risk:** `read`
 
 ```ts
-await corsair.finerworks.api.orders.fetchStatus({});
+await corsair.finerworks.api.orders.fetchStatus({ order_ids: [12345] });
 ```
 
 **Input**
@@ -1847,7 +1930,7 @@ Save orders to temporary storage for review before submission
 **Risk:** `write`
 
 ```ts
-await corsair.finerworks.api.orders.savePending({});
+await corsair.finerworks.api.orders.savePending({ source: 'my-storefront', orders: [{ order_po: 'PO-1001', recipient: { first_name: 'Bob', last_name: 'Ross', address_1: '742 Evergreen Terrace', city: 'Springfield', state_code: 'OR', zip_postal_code: '97403', country_code: 'us' }, order_items: [{ product_sku: 'AP1556P79511', product_qty: 1 }] }] });
 ```
 
 **Input**
@@ -1855,6 +1938,8 @@ await corsair.finerworks.api.orders.savePending({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `orders` | `object[]` | Yes | — |
+| `source` | `string` | No | — |
+| `account_key` | `string` | No | — |
 
 <AccordionGroup>
 <Accordion title="orders full type">
@@ -1966,7 +2051,7 @@ Submit up to five new orders for production
 **Risk:** `write`
 
 ```ts
-await corsair.finerworks.api.orders.submit({});
+await corsair.finerworks.api.orders.submit({ orders: [{ order_po: 'PO-1001', test_mode: true, recipient: { first_name: 'Bob', last_name: 'Ross', address_1: '742 Evergreen Terrace', city: 'Springfield', state_code: 'OR', zip_postal_code: '97403', country_code: 'us' }, order_items: [{ product_sku: 'AP1556P79511', product_qty: 1 }] }] });
 ```
 
 **Input**
@@ -2085,7 +2170,7 @@ Validate a recipient address before submitting an order
 **Risk:** `read`
 
 ```ts
-await corsair.finerworks.api.orders.validateRecipientAddress({});
+await corsair.finerworks.api.orders.validateRecipientAddress({ recipient: { first_name: 'Bob', last_name: 'Ross', address_1: '742 Evergreen Terrace', city: 'Springfield', state_code: 'OR', zip_postal_code: '97403', country_code: 'us' } });
 ```
 
 **Input**
@@ -2180,7 +2265,7 @@ Get pricing for a set of FinerWorks product SKUs
 **Risk:** `read`
 
 ```ts
-await corsair.finerworks.api.products.getPrices({});
+await corsair.finerworks.api.products.getPrices({ products: [{ product_sku: 'AP1556P79511', product_qty: 1 }] });
 ```
 
 **Input**
@@ -2330,6 +2415,7 @@ await corsair.finerworks.api.products.listProductTypes({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `ids` | `number[]` | No | — |
+| `site_id` | `number` | No | — |
 
 
 
@@ -2392,6 +2478,7 @@ await corsair.finerworks.api.products.listStyleTypes({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `ids` | `number[]` | No | — |
+| `site_id` | `number` | No | — |
 
 
 
@@ -2483,7 +2570,7 @@ List shipping method identifiers for cross-reference
 **Risk:** `read`
 
 ```ts
-await corsair.finerworks.api.shipping.getOptionIds({});
+await corsair.finerworks.api.shipping.getOptionIds({ type: 1 });
 ```
 
 **Input**
@@ -2499,7 +2586,7 @@ await corsair.finerworks.api.shipping.getOptionIds({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `object` | No | — |
-| `shipping_options` | `object[]` | No | — |
+| `shipping_options_ids` | `number[]` | No | — |
 
 <AccordionGroup>
 <Accordion title="status full type">
@@ -2513,19 +2600,6 @@ await corsair.finerworks.api.shipping.getOptionIds({});
   reference_id?: string | null,
   domain?: string | null
 }
-```
-</Accordion>
-
-<Accordion title="shipping_options full type">
-
-```ts
-{
-  id?: number | null,
-  shipping_method?: string | null,
-  shipping_code?: string | null,
-  shipping_class_code?: string | null,
-  is_international?: boolean | null
-}[]
 ```
 </Accordion>
 </AccordionGroup>
@@ -2543,7 +2617,7 @@ Get shipping options and rates for a batch of orders
 **Risk:** `read`
 
 ```ts
-await corsair.finerworks.api.shipping.listOptionsMultiple({});
+await corsair.finerworks.api.shipping.listOptionsMultiple({ orders: [{ order_po: 'PO-1001', recipient: { first_name: 'Bob', last_name: 'Ross', address_1: '742 Evergreen Terrace', city: 'Springfield', state_code: 'OR', zip_postal_code: '97403', country_code: 'us' }, order_items: [{ product_sku: 'AP1556P79511', product_qty: 1 }] }] });
 ```
 
 **Input**
@@ -2551,6 +2625,7 @@ await corsair.finerworks.api.shipping.listOptionsMultiple({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `orders` | `object[]` | Yes | — |
+| `account_key` | `string` | No | — |
 
 <AccordionGroup>
 <Accordion title="orders full type">
