@@ -1,0 +1,21 @@
+displayName: Gumroad
+description: "Sell and manage digital products: list products and sales, read subscribers, and verify license keys."
+domain: gumroad.com
+recommendedAuth: api_key
+examples:
+  read:
+    path: products.list
+    title: List your Gumroad products
+    args: {}
+apiExamples:
+  products.list: {}
+  products.get:
+    call: "{ id: 'A-m3CDDC5dlrSdKZp0RFhA==' }"
+  sales.list:
+    call: "{ after: '2020-09-03', before: '2021-09-03' }"
+  sales.get:
+    call: "{ id: 'B28UKN-dvxYabdavG97Y-Q==' }"
+  subscribers.list:
+    call: "{ product_id: '0ssD7adjRklGBjS5cwlWPq==', paginated: 'true' }"
+  licenses.verify:
+    call: "{ product_id: '32-nPAicqbLj8B_WswVlMw==', license_key: 'A1B2C3D4-E5F60718-9ABCDEF0-1234ABCD', increment_uses_count: 'false' }"
