@@ -133,7 +133,7 @@ Some clients can't sign in to an MCP server, such as GitHub Copilot's coding age
 | `get_job` | Waits for a [long job](#long-jobs) a script started, such as a crawl or a document parse, and returns its result. Shows a [job card](#cards) where the chat supports it | Read |
 | `view_routines` | Lists the routines on this link and their recent runs, or shows one run step by step with its error | Read |
 | `update_routine` | Creates, changes, pauses or removes a routine, an automation that runs on an app event or a schedule. Describe it in plain words and Corsair writes and tests it | Sensitive write |
-| `submit_feedback` | Sends the Corsair team a short note about Corsair itself, such as a tool that failed or an app it lacks. The agent sends one only when you ask or agree, and never includes your app data | Write |
+| `submit_feedback` | Sends the Corsair team a short note about Corsair itself. The agent sends one on its own when Corsair lacks an app or action you asked for, or when a reply says the fault is on Corsair's side, and tells you it did. For a wrong or confusing answer it asks you first. A note never includes your app data | Write |
 
 Read tools never change anything in your apps. A read can still use credits: `read_data` on an app that runs on [Corsair's account](#apps-on-corsairs-account) is billed like any other call there. Write tools change only your Corsair setup, which you can undo, or send Corsair a note. Sensitive writes act in your apps, or set up a routine that will act later without asking, so a client should ask you before every call.
 
@@ -187,7 +187,7 @@ Change a link's mode at [hub.corsair.dev/me](https://hub.corsair.dev/me).
     Links last 10 minutes. On the card, press **New link**. Without a card, ask the agent for a new link.
   </Accordion>
   <Accordion title="I want to tell Corsair something went wrong">
-    Ask the agent to send Corsair feedback. It calls `submit_feedback` with a short note in its own words and the error's reference code, without anything from your apps. Or email [primary@corsair.dev](mailto:primary@corsair.dev).
+    Ask the agent to send Corsair feedback. It calls `submit_feedback` with a short note in its own words, plus the error's reference code when the note is about an error, without anything from your apps. When Corsair can't do what you asked, or an error is on Corsair's side, the agent sends the note on its own and tells you. Or email [primary@corsair.dev](mailto:primary@corsair.dev).
   </Accordion>
   <Accordion title="An app needs setting up before it can be connected">
     The project behind your link has to finish setting the app up first, for example by adding its OAuth credentials. Whoever manages the project does this in Corsair.
