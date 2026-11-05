@@ -36,11 +36,14 @@ export const signedContract = {
 	signers: [{ ...signer, signer_field_values: { city: 'Boston' } }],
 };
 
+// GET /api/templates/<id> as the live API answered on 2026-11-06.
 export const template = {
 	template_id: templateId,
 	title: 'Rental agreement',
 	created_at: '2025-01-15T08:00:00Z',
-	placeholder_fields: [{ placeholder_key: 'tenant_name' }],
+	labels: ['rentals'],
+	last_contract_created_at: null,
+	placeholder_keys: ['tenant_name'],
 	signer_field_ids: ['city', 'preferred_contact'],
 };
 

@@ -332,6 +332,17 @@ describe('templates.get', () => {
 			'city',
 			'preferred_contact',
 		]);
+		expect(result.template?.placeholder_keys).toEqual(['tenant_name']);
+	});
+
+	it("accepts the docs' placeholder_fields list of key strings", async () => {
+		respond({
+			data: { template_id: templateId, placeholder_fields: ['interest_rate'] },
+		});
+
+		const result = await invoke(Templates.get, { template_id: templateId });
+
+		expect(result.template?.placeholder_fields).toEqual(['interest_rate']);
 	});
 });
 

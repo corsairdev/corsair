@@ -174,8 +174,17 @@ const TemplateSchema = z
 		template_id: z.string().nullish(),
 		title: z.string().nullish(),
 		created_at: z.string().nullish(),
-		// unknown: placeholder rows are keyed objects in the docs' example.
-		placeholder_fields: z.array(z.record(z.string(), z.unknown())).nullish(),
+		labels: z.array(z.string()).nullish(),
+		last_contract_created_at: z.string().nullish(),
+		placeholder_keys: z
+			.array(z.string())
+			.nullish()
+			.describe(
+				'The `{{placeholder_key}}` names in the template, without braces.',
+			),
+		// The docs name the same list `placeholder_fields`; the live API
+		// sends `placeholder_keys`. Both are plain key strings.
+		placeholder_fields: z.array(z.string()).nullish(),
 		signer_field_ids: z.array(z.string()).nullish(),
 	})
 	.loose();
