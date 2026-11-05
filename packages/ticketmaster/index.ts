@@ -210,6 +210,13 @@ export type InternalTicketmasterPlugin =
 export type ExternalTicketmasterPlugin<T extends TicketmasterPluginOptions> =
 	BaseTicketmasterPlugin<T>;
 
+/**
+ * Creates the Ticketmaster plugin.
+ *
+ * Auth is a single API key, sent as the `apikey` query parameter. Every
+ * operation is a read: the Discovery API has no writes. The plugin registers no
+ * webhooks, and no error handler is called with a webhook source.
+ */
 export function ticketmaster<const T extends TicketmasterPluginOptions>(
 	incomingOptions: TicketmasterPluginOptions &
 		T = {} as TicketmasterPluginOptions & T,

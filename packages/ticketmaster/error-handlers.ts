@@ -54,8 +54,15 @@ export const errorHandlers = {
 	},
 } satisfies CorsairErrorHandler;
 
-// Handlers match in key order and DEFAULT matches everything, so it stays last
-// even when the caller adds or overrides handlers.
+/**
+ * Combines the built-in handlers with any the caller supplies, keeping
+ * `DEFAULT` last.
+ *
+ * Core runs the first handler whose `match` returns true, and `DEFAULT` matches
+ * everything, so a `DEFAULT` merged in the middle would shadow every handler
+ * after it. A caller-supplied `DEFAULT` replaces the built-in one; otherwise the
+ * built-in stays.
+ */
 export function mergeErrorHandlers(
 	builtin: CorsairErrorHandler,
 	user: CorsairErrorHandler | undefined,
