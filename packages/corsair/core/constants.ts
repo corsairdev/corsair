@@ -747,7 +747,7 @@ export const ProviderDisplayNames = {
 	prisma: 'Prisma',
 	pushbullet: 'Pushbullet',
 	razorpay: 'Razorpay',
-	recallai: 'Recallai',
+	recallai: 'Recall.ai',
 	reddit: 'Reddit',
 	reducto: 'Reducto',
 	remoet: 'Remoet',

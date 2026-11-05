@@ -1,7 +1,7 @@
 {
   "name": "@corsair-dev/recallai",
   "version": "0.1.0",
-  "description": "Recallai plugin for Corsair",
+  "description": "Recall.ai plugin for Corsair",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
