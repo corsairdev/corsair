@@ -1,4 +1,8 @@
 import { AuthMissingError } from 'corsair/core';
+import {
+	PlacidEndpointInputSchemas,
+	PlacidEndpointOutputSchemas,
+} from './endpoints/types';
 import { placid, placidEndpointSchemas } from './index';
 
 const OPERATIONS = [
@@ -85,6 +89,34 @@ describe('placid plugin definition', () => {
 		expect(Object.keys(placidEndpointSchemas).sort()).toEqual(
 			[...OPERATIONS].sort(),
 		);
+	});
+
+	// The registry is what core parses with, so each entry must be the same
+	// schema object as the exported pair, not a re-created equivalent.
+	it('maps each operation to the exported input and output schema objects', () => {
+		for (const operation of OPERATIONS) {
+			const [group, action] = operation.split('.') as [string, string];
+			// The registry key is `${group}.${action}`; the schema maps use
+			// camelCase, e.g. `templates.delete` becomes `templatesDelete`.
+			const schemaKey = `${group}${action.charAt(0).toUpperCase()}${action.slice(1)}`;
+			const entry = placidEndpointSchemas[
+				operation as keyof typeof placidEndpointSchemas
+			] as {
+				input: unknown;
+				output: unknown;
+			};
+
+			expect(entry.input).toBe(
+				PlacidEndpointInputSchemas[
+					schemaKey as keyof typeof PlacidEndpointInputSchemas
+				],
+			);
+			expect(entry.output).toBe(
+				PlacidEndpointOutputSchemas[
+					schemaKey as keyof typeof PlacidEndpointOutputSchemas
+				],
+			);
+		}
 	});
 
 	it('marks the deletes destructive and the getters read', () => {

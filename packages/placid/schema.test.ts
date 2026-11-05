@@ -42,6 +42,20 @@ describe('endpoint schemas', () => {
 			},
 		});
 		expect(result.success).toBe(true);
+		if (!result.success) return;
+
+		// Parsing must not strip the overrides; the whole point of `layers` is
+		// that these values reach Placid.
+		const layers = result.data.layers as Record<
+			string,
+			Record<string, unknown>
+		>;
+		expect(layers.title).toMatchObject({
+			font: 'Inter',
+			text_color: '#FFFFFF',
+		});
+		expect(layers.box?.border_radius).toBe('4');
+		expect(layers.code?.value).toBe('https://example.com');
 	});
 
 	it('accepts a passthrough string or array but not a bare object', () => {

@@ -59,6 +59,25 @@ describe('Placid plugin through createCorsair', () => {
 		}
 	});
 
+	// The plugin touches no stored entities, so a client with no database and
+	// no KEK must still work when a key is passed directly.
+	it('works without a database or KEK when the key is passed in', async () => {
+		const corsair = createCorsair({
+			plugins: [placid({ key: 'placid-no-db-key' })],
+		});
+
+		respond(templateList);
+
+		const result = await corsair.placid.api.templates.list({});
+
+		expect(Array.isArray(result.data)).toBe(true);
+		const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+		expect(url).toBe('https://api.placid.app/api/rest/templates');
+		expect(new Headers(init.headers).get('authorization')).toBe(
+			'Bearer placid-no-db-key',
+		);
+	});
+
 	it('sends the API key stored for the account as a Bearer token', async () => {
 		const { corsair, testDb } = await createClient({});
 		try {
@@ -181,8 +200,11 @@ describeIfKey('Placid live API', () => {
 			await corsair.placid.api.templates.delete({ template_uuid: uuid });
 			uuid = undefined;
 
-			// The listing is the proof it is gone, not the delete reply.
-			const after = await corsair.placid.api.templates.list({});
+			// The listing is the proof it is gone, not the delete reply. Newest
+			// first keeps the check on page one whatever else the project holds.
+			const after = await corsair.placid.api.templates.list({
+				order_by: 'created_at-desc',
+			});
 			expect(after.data.some((row) => row.uuid === created.uuid)).toBe(false);
 		} finally {
 			if (uuid) {
@@ -266,13 +288,14 @@ describeIfKey('Placid live API', () => {
 			await corsair.placid.api.images.delete({ id: started.id });
 			image = undefined;
 
-			// Placid answers 204 and clears `image_url`, but the record keeps
-			// answering 200 with an empty URL rather than turning into a 404.
-			// Asserting a 404 would encode behaviour the API does not have.
+			// Placid answers 204 and rewrites `image_url` to the bare directory
+			// prefix, keeping scheme and host but dropping the filename. The
+			// record still answers 200 rather than turning into a 404.
 			const afterDelete = await corsair.placid.api.images.get({
 				id: started.id,
 			});
-			expect(afterDelete.image_url).not.toContain('.jpg');
+			expect(afterDelete.image_url).not.toMatch(/\.\w+$/);
+			expect(afterDelete.image_url).toContain('/rest-images/');
 		} finally {
 			if (image) {
 				await corsair.placid.api.images

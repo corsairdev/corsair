@@ -304,6 +304,19 @@ describe('collections', () => {
 		).resolves.toEqual({ success: true, collection_id: 'col_1234' });
 	});
 
+	it('reads one collection by id with GET', async () => {
+		respond(collection);
+
+		const result = await Collections.get(contextFor(), {
+			collection_id: 'col_1234',
+		});
+
+		expect(result.id).toBe('col_1234');
+		const [url, init] = lastCall();
+		expect(url).toBe('https://api.placid.app/api/rest/collections/col_1234');
+		expect(init.method).toBe('GET');
+	});
+
 	it('rejects more than 500 templates in a collection', async () => {
 		await expect(
 			Collections.create(contextFor(), {

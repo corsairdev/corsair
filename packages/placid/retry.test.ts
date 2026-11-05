@@ -109,4 +109,42 @@ describe('retries through the bound client', () => {
 			testDb.cleanup();
 		}
 	});
+
+	it('retries a 5xx on a read and returns the next response', async () => {
+		const { corsair, testDb } = await createClient();
+		try {
+			respond({ message: 'Service Unavailable' }, 503);
+			respond(templateList);
+
+			const result = await corsair.placid.api.templates.list({});
+
+			expect(result.data).toHaveLength(1);
+			expect(fetchMock).toHaveBeenCalledTimes(2);
+		} finally {
+			testDb.cleanup();
+		}
+	}, 20_000);
+
+	// A zero delay is honored rather than read as absent, so a
+	// `Retry-After: 0` does not turn into the one second backoff.
+	it('honors a Retry-After of zero without falling back to backoff', async () => {
+		const { corsair, testDb } = await createClient();
+		const timers = jest.spyOn(globalThis, 'setTimeout');
+		try {
+			respond({ message: 'Too Many Attempts.' }, 429, { 'Retry-After': '0' });
+			respond(templateList);
+
+			await corsair.placid.api.templates.list({});
+
+			// 1ms is the smallest delay core's truthiness check accepts.
+			const delays = timers.mock.calls
+				.map((call) => call[1])
+				.filter((ms): ms is number => typeof ms === 'number');
+			expect(delays).toContain(1);
+			expect(delays).not.toContain(1000);
+		} finally {
+			timers.mockRestore();
+			testDb.cleanup();
+		}
+	}, 20_000);
 });
