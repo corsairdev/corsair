@@ -304,7 +304,52 @@ const CreateBuildSourceInputSchema = z
 	})
 	.passthrough();
 const BuildSourceBodyInputSchema = BuildSourceIdInputSchema.extend({
-	body: z.union([z.record(z.string(), z.unknown()), z.array(z.unknown())]),
+	body: z.record(z.string(), z.unknown()),
+});
+// Render's replace operations (PUT env-vars, secret-files, headers, routes)
+// take a raw JSON array as the request body. Entries left out are removed.
+const EnvVarReplacementSchema = z.array(
+	z.union([
+		z.object({ key: z.string().min(1), value: z.string() }),
+		z.object({ key: z.string().min(1), generateValue: z.boolean() }),
+	]),
+);
+const SecretFileReplacementSchema = z.array(
+	z.object({ name: z.string().min(1), content: z.string() }),
+);
+const HeaderReplacementSchema = z.array(
+	z.object({
+		path: z.string().min(1),
+		name: z.string().min(1),
+		value: z.string(),
+	}),
+);
+const RouteReplacementSchema = z.array(
+	z.object({
+		type: z.enum(['redirect', 'rewrite']),
+		source: z.string().min(1),
+		destination: z.string().min(1),
+	}),
+);
+const BuildSourceEnvVarsReplaceInputSchema = BuildSourceIdInputSchema.extend({
+	body: EnvVarReplacementSchema,
+});
+const BuildSourceSecretFilesReplaceInputSchema =
+	BuildSourceIdInputSchema.extend({ body: SecretFileReplacementSchema });
+const ServiceIdPathInputSchema = z.object({
+	id: z.string().min(1).describe('Render service ID (srv-...)'),
+});
+const ServiceEnvVarsReplaceInputSchema = ServiceIdPathInputSchema.extend({
+	body: EnvVarReplacementSchema,
+});
+const ServiceSecretFilesReplaceInputSchema = ServiceIdPathInputSchema.extend({
+	body: SecretFileReplacementSchema,
+});
+const ServiceHeadersReplaceInputSchema = ServiceIdPathInputSchema.extend({
+	body: HeaderReplacementSchema,
+});
+const ServiceRoutesReplaceInputSchema = ServiceIdPathInputSchema.extend({
+	body: RouteReplacementSchema,
 });
 const BuildSourceEnvVarBodyInputSchema = BuildSourceEnvVarInputSchema.extend({
 	body: z.record(z.string(), z.unknown()),
@@ -500,16 +545,18 @@ export type RenderEndpointInputs = {
 	updateEnvGroupEnvVar: ResourceIdKeyInput;
 	updateEnvGroupSecretFile: ResourceIdKeyInput;
 	updateEnvVar: ResourceIdKeyInput;
-	updateEnvVarsForService: ResourceIdInput;
-	updateHeaders: ResourceIdInput;
+	updateEnvVarsForService: z.infer<typeof ServiceEnvVarsReplaceInputSchema>;
+	updateHeaders: z.infer<typeof ServiceHeadersReplaceInputSchema>;
 	updateResourceLogStream: ResourceIdInput;
-	updateSecretFilesForService: ResourceIdInput;
+	updateSecretFilesForService: z.infer<
+		typeof ServiceSecretFilesReplaceInputSchema
+	>;
 	verifyCustomDomain: ResourceIdKeyInput;
 	deleteOwnerMetricsStream: ResourceIdInput;
 	retrieveOwnerMetricsStream: z.infer<typeof OwnerIdInputSchema>;
 	upsertOwnerMetricsStream: z.infer<typeof OwnerMetricsStreamInputSchema>;
 	updateOwnerNotificationSettings: ResourceIdInput;
-	updateRoutes: ResourceIdInput;
+	updateRoutes: z.infer<typeof ServiceRoutesReplaceInputSchema>;
 	createBuildSource: z.infer<typeof CreateBuildSourceInputSchema>;
 	listBuildSources: z.infer<typeof ResourceInputSchema>;
 	retrieveBuildSource: z.infer<typeof BuildSourceIdInputSchema>;
@@ -519,12 +566,16 @@ export type RenderEndpointInputs = {
 	triggerBuildSourceBuild: z.infer<typeof BuildSourceIdInputSchema>;
 	retrieveBuildSourceBuild: z.infer<typeof BuildSourceBuildInputSchema>;
 	listBuildSourceEnvVars: z.infer<typeof BuildSourceIdInputSchema>;
-	updateBuildSourceEnvVars: z.infer<typeof BuildSourceBodyInputSchema>;
+	updateBuildSourceEnvVars: z.infer<
+		typeof BuildSourceEnvVarsReplaceInputSchema
+	>;
 	retrieveBuildSourceEnvVar: z.infer<typeof BuildSourceEnvVarInputSchema>;
 	updateBuildSourceEnvVar: z.infer<typeof BuildSourceEnvVarBodyInputSchema>;
 	deleteBuildSourceEnvVar: z.infer<typeof BuildSourceEnvVarInputSchema>;
 	listBuildSourceSecretFiles: z.infer<typeof BuildSourceIdInputSchema>;
-	updateBuildSourceSecretFiles: z.infer<typeof BuildSourceBodyInputSchema>;
+	updateBuildSourceSecretFiles: z.infer<
+		typeof BuildSourceSecretFilesReplaceInputSchema
+	>;
 	retrieveBuildSourceSecretFile: z.infer<typeof BuildSourceEnvVarInputSchema>;
 	updateBuildSourceSecretFile: z.infer<typeof BuildSourceEnvVarBodyInputSchema>;
 	deleteBuildSourceSecretFile: z.infer<typeof BuildSourceEnvVarInputSchema>;
@@ -948,16 +999,16 @@ export const RenderEndpointInputSchemas = {
 	updateEnvGroupEnvVar: ResourceIdKeyInputSchema,
 	updateEnvGroupSecretFile: ResourceIdKeyInputSchema,
 	updateEnvVar: ResourceIdKeyInputSchema,
-	updateEnvVarsForService: ResourceIdInputSchema,
-	updateHeaders: ResourceIdInputSchema,
+	updateEnvVarsForService: ServiceEnvVarsReplaceInputSchema,
+	updateHeaders: ServiceHeadersReplaceInputSchema,
 	updateResourceLogStream: ResourceIdInputSchema,
-	updateSecretFilesForService: ResourceIdInputSchema,
+	updateSecretFilesForService: ServiceSecretFilesReplaceInputSchema,
 	verifyCustomDomain: ResourceIdKeyInputSchema,
 	deleteOwnerMetricsStream: ResourceIdInputSchema,
 	retrieveOwnerMetricsStream: OwnerIdInputSchema,
 	upsertOwnerMetricsStream: OwnerMetricsStreamInputSchema,
 	updateOwnerNotificationSettings: ResourceIdInputSchema,
-	updateRoutes: ResourceIdInputSchema,
+	updateRoutes: ServiceRoutesReplaceInputSchema,
 	createBuildSource: CreateBuildSourceInputSchema,
 	listBuildSources: ResourceInputSchema,
 	retrieveBuildSource: BuildSourceIdInputSchema,
@@ -967,12 +1018,12 @@ export const RenderEndpointInputSchemas = {
 	triggerBuildSourceBuild: BuildSourceIdInputSchema,
 	retrieveBuildSourceBuild: BuildSourceBuildInputSchema,
 	listBuildSourceEnvVars: BuildSourceIdInputSchema,
-	updateBuildSourceEnvVars: BuildSourceBodyInputSchema,
+	updateBuildSourceEnvVars: BuildSourceEnvVarsReplaceInputSchema,
 	retrieveBuildSourceEnvVar: BuildSourceEnvVarInputSchema,
 	updateBuildSourceEnvVar: BuildSourceEnvVarBodyInputSchema,
 	deleteBuildSourceEnvVar: BuildSourceEnvVarInputSchema,
 	listBuildSourceSecretFiles: BuildSourceIdInputSchema,
-	updateBuildSourceSecretFiles: BuildSourceBodyInputSchema,
+	updateBuildSourceSecretFiles: BuildSourceSecretFilesReplaceInputSchema,
 	retrieveBuildSourceSecretFile: BuildSourceEnvVarInputSchema,
 	updateBuildSourceSecretFile: BuildSourceEnvVarBodyInputSchema,
 	deleteBuildSourceSecretFile: BuildSourceEnvVarInputSchema,

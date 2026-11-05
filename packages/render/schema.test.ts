@@ -105,13 +105,9 @@ describe('Render schema', () => {
 			'listRoutes',
 			'listSecretFiles',
 			'retrieveOwnerNotificationSettings',
-			'updateEnvVarsForService',
-			'updateHeaders',
 			'updateResourceLogStream',
-			'updateSecretFilesForService',
 			'deleteOwnerMetricsStream',
 			'updateOwnerNotificationSettings',
-			'updateRoutes',
 			'retrieveDisk',
 			'updateDisk',
 			'deleteDisk',
@@ -135,6 +131,25 @@ describe('Render schema', () => {
 			const schema = RenderEndpointInputSchemas[operation];
 			expect(schema.safeParse({}).success).toBe(false);
 			expect(schema.safeParse({ id: 'resource-1' }).success).toBe(true);
+		}
+
+		// Replace operations send a raw JSON array: the id and an array body
+		// are both required, and an object body is rejected.
+		for (const [operation, entry] of [
+			['updateEnvVarsForService', { key: 'A', value: 'B' }],
+			['updateHeaders', { path: '/*', name: 'X-Frame-Options', value: 'DENY' }],
+			['updateSecretFilesForService', { name: 'config.json', content: '{}' }],
+			['updateRoutes', { type: 'rewrite', source: '/a', destination: '/b' }],
+		] as const) {
+			const schema = RenderEndpointInputSchemas[operation];
+			expect(schema.safeParse({ id: 'resource-1' }).success).toBe(false);
+			expect(schema.safeParse({ body: [entry] }).success).toBe(false);
+			expect(schema.safeParse({ id: 'resource-1', body: entry }).success).toBe(
+				false,
+			);
+			expect(
+				schema.safeParse({ id: 'resource-1', body: [entry] }).success,
+			).toBe(true);
 		}
 
 		const keyOperations = [
@@ -343,6 +358,7 @@ describe('Render schema', () => {
 				url: 'https://metrics.example.com',
 			},
 			{ id: 'resource-1', body: {} },
+			{ id: 'resource-1', body: [] },
 			{ workflowId: 'workflow-1' },
 			{ taskId: 'task-1' },
 			{

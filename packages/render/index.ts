@@ -2296,20 +2296,23 @@ const renderEndpointMeta = {
 		description: 'Render updateEnvVar',
 	},
 	'final.updateEnvVarsForService': {
-		riskLevel: 'write',
-		description: 'Render updateEnvVarsForService',
+		riskLevel: 'destructive',
+		description:
+			'Replace all environment variables on a Render service with the given list; variables not listed are deleted (id: service ID)',
 	},
 	'final.updateHeaders': {
-		riskLevel: 'write',
-		description: 'Render updateHeaders',
+		riskLevel: 'destructive',
+		description:
+			'Replace all response header rules on a Render service with the given list; rules not listed are deleted (id: service ID)',
 	},
 	'final.updateResourceLogStream': {
 		riskLevel: 'write',
 		description: 'Render updateResourceLogStream',
 	},
 	'final.updateSecretFilesForService': {
-		riskLevel: 'write',
-		description: 'Render updateSecretFilesForService',
+		riskLevel: 'destructive',
+		description:
+			'Replace all secret files on a Render service with the given list; files not listed are deleted (id: service ID)',
 	},
 	'final.verifyCustomDomain': {
 		riskLevel: 'write',
@@ -2332,8 +2335,9 @@ const renderEndpointMeta = {
 		description: 'Render updateOwnerNotificationSettings',
 	},
 	'final.updateRoutes': {
-		riskLevel: 'write',
-		description: 'Render updateRoutes',
+		riskLevel: 'destructive',
+		description:
+			'Replace all redirect and rewrite rules on a Render service with the given list; rules not listed are deleted (id: service ID)',
 	},
 	'buildSources.create': {
 		riskLevel: 'write',
@@ -2372,8 +2376,9 @@ const renderEndpointMeta = {
 		description: 'List environment variables for a Render build source',
 	},
 	'buildSources.envVars.update': {
-		riskLevel: 'write',
-		description: 'Replace environment variables for a Render build source',
+		riskLevel: 'destructive',
+		description:
+			'Replace all environment variables on a Render build source with the given list; variables not listed are deleted',
 	},
 	'buildSources.envVars.retrieve': {
 		riskLevel: 'read',
@@ -2393,8 +2398,9 @@ const renderEndpointMeta = {
 		description: 'List secret files for a Render build source',
 	},
 	'buildSources.secretFiles.update': {
-		riskLevel: 'write',
-		description: 'Replace secret files for a Render build source',
+		riskLevel: 'destructive',
+		description:
+			'Replace all secret files on a Render build source with the given list; files not listed are deleted',
 	},
 	'buildSources.secretFiles.retrieve': {
 		riskLevel: 'read',
