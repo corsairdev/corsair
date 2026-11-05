@@ -2,7 +2,12 @@
 // endpoint (schema parsing), the adapter, makeRenderRequest and core request().
 import { render } from './index';
 
-type Sent = { method: string; url: URL; body: unknown };
+type Sent = {
+	method: string;
+	url: URL;
+	body: unknown;
+	headers: Headers;
+};
 
 const sent: Sent[] = [];
 const replies: Array<{ status: number; body?: unknown }> = [];
@@ -17,7 +22,8 @@ beforeEach(() => {
 				method: init?.method ?? 'GET',
 				url: new URL(String(url)),
 				body:
-					typeof init?.body === 'string' ? JSON.parse(init.body) : undefined,
+					typeof init?.body === 'string' ? JSON.parse(init.body) : init?.body,
+				headers: new Headers(init?.headers),
 			});
 			const reply = replies.shift() ?? { status: 200, body: {} };
 			if (reply.body === undefined) {
@@ -235,6 +241,74 @@ describe('Render documented response shapes', () => {
 			).resolves.toBeUndefined();
 			expect(sent[0]?.method).toBe('POST');
 			expect(sent[0]?.url.pathname).toBe(path);
+		},
+	);
+});
+
+describe('Render required request fields', () => {
+	it('uploads render.yaml as multipart form data to validate a Blueprint', async () => {
+		replies.push({ status: 200, body: { valid: true } });
+		const yaml = 'services:\n  - type: web\n    name: api\n';
+
+		await expect(
+			(api.blueprints.validate as unknown as Call)(ctx, {
+				ownerId: 'tea-1',
+				file: yaml,
+			}),
+		).resolves.toEqual({ valid: true });
+
+		const request = sent[0];
+		expect(request?.method).toBe('POST');
+		expect(request?.url.pathname).toBe('/v1/blueprints/validate');
+		expect(request?.headers.get('content-type')).toBeNull();
+		expect(request?.headers.get('authorization')).toBe('Bearer rnd_test');
+		const form = request?.body as FormData;
+		expect(form).toBeInstanceOf(FormData);
+		expect(form.get('ownerId')).toBe('tea-1');
+		const file = form.get('file') as File;
+		expect(file.name).toBe('render.yaml');
+		expect(await file.text()).toBe(yaml);
+	});
+
+	it('starts a workflow task run with the documented task and input fields', async () => {
+		replies.push({ status: 202, body: { id: 'trn-1' } });
+		await (api.automation.createTaskRun as unknown as Call)(ctx, {
+			task: 'my-workflow/hello',
+			input: ['world'],
+		});
+
+		expect(sent[0]?.url.pathname).toBe('/v1/task-runs');
+		expect(sent[0]?.body).toEqual({
+			task: 'my-workflow/hello',
+			input: ['world'],
+		});
+	});
+
+	it.each([
+		['automation.createTaskRun', api.automation.createTaskRun, { taskId: 't' }],
+		[
+			'automation.createWorkflow',
+			api.automation.createWorkflow,
+			{ ownerId: 'tea-1', name: 'flow' },
+		],
+		[
+			'final.addRoute',
+			api.final.addRoute,
+			{ id: 'srv-1', source: '/a', destination: '/b' },
+		],
+		['final.createCustomDomain', api.final.createCustomDomain, { id: 'srv-1' }],
+		[
+			'services.environments.list',
+			api.services.environments.list,
+			{ ownerId: 'tea-1' },
+		],
+		['logs.list', api.logs.list, { ownerId: 'tea-1' }],
+		['dedicatedIps.list', api.dedicatedIps.list, {}],
+	] as const)(
+		'%s rejects input missing a field Render requires, before any request',
+		async (_name, endpoint, input) => {
+			await expect((endpoint as unknown as Call)(ctx, input)).rejects.toThrow();
+			expect(sent).toHaveLength(0);
 		},
 	);
 });

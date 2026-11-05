@@ -192,7 +192,7 @@ const ServiceRouteInputSchema = ServiceIdInputSchema.extend({
 	routeId: z.string().min(1),
 });
 const PatchServiceRouteInputSchema = ServiceRouteInputSchema.extend({
-	body: z.record(z.string(), z.unknown()),
+	body: z.object({ priority: z.number().int().min(0) }),
 });
 const CreateDiskInputSchema = z.object({
 	name: z.string().min(1),
@@ -377,9 +377,165 @@ const BuildSourceEnvVarBodyInputSchema = BuildSourceEnvVarInputSchema.extend({
 const ResourceBodyInputSchema = ResourceIdInputSchema.extend({
 	body: z.record(z.string(), z.unknown()),
 });
-const CreateResourceInputSchema = z
-	.record(z.string(), z.unknown())
-	.refine((value) => Object.keys(value).length > 0);
+// Required fields below follow Render's OpenAPI spec. Create and update
+// schemas stay passthrough so optional provider fields still reach Render.
+const RenderRegionSchema = z.enum([
+	'frankfurt',
+	'oregon',
+	'ohio',
+	'singapore',
+	'virginia',
+]);
+const LogStreamSettingSchema = z.enum(['send', 'drop']);
+const IdInputSchema = z.object({ id: z.string().min(1) });
+const ListEnvironmentsInputSchema = ResourceInputSchema.extend({
+	projectId: z.string().min(1),
+});
+const CreateEnvironmentInputSchema = z
+	.object({
+		name: z.string().min(1),
+		projectId: z.string().min(1),
+		protectedStatus: z.enum(['unprotected', 'protected']).optional(),
+		networkIsolationEnabled: z.boolean().optional(),
+	})
+	.passthrough();
+const CreateEnvGroupInputSchema = z
+	.object({
+		name: z.string().min(1),
+		ownerId: z.string().min(1),
+		envVars: EnvVarReplacementSchema,
+		secretFiles: SecretFileReplacementSchema.optional(),
+		serviceIds: z.array(z.string().min(1)).optional(),
+		environmentId: z.string().min(1).optional(),
+	})
+	.passthrough();
+const UpdateEnvGroupInputSchema = IdInputSchema.extend({
+	name: z.string().min(1),
+});
+const CreateProjectInputSchema = z
+	.object({
+		name: z.string().min(1),
+		ownerId: z.string().min(1),
+		environments: z
+			.array(z.object({ name: z.string().min(1) }).passthrough())
+			.min(1),
+	})
+	.passthrough();
+const CreatePostgresInputSchema = z
+	.object({
+		name: z.string().min(1),
+		ownerId: z.string().min(1),
+		plan: z.string().min(1),
+		version: z.string().min(1),
+	})
+	.passthrough();
+const CreatePostgresUserInputSchema = IdInputSchema.extend({
+	body: z.object({ username: z.string().min(1) }),
+});
+const RegistryCredentialFields = {
+	registry: z.enum([
+		'GITHUB',
+		'GITLAB',
+		'DOCKER',
+		'GOOGLE_ARTIFACT',
+		'AWS_ECR',
+	]),
+	name: z.string().min(1),
+	username: z.string().min(1),
+	authToken: z.string().min(1),
+};
+const CreateRegistryCredentialInputSchema = z.object({
+	...RegistryCredentialFields,
+	ownerId: z.string().min(1),
+});
+const UpdateRegistryCredentialInputSchema = IdInputSchema.extend(
+	RegistryCredentialFields,
+);
+const ListLogsInputSchema = ResourceInputSchema.extend({
+	ownerId: z.string().min(1),
+	resource: z.array(z.string().min(1)).min(1),
+});
+const ListLogsValuesInputSchema = ListLogsInputSchema.extend({
+	label: z.enum(['instance', 'host', 'statusCode', 'method', 'level', 'type']),
+});
+const UpdateOwnerLogStreamInputSchema = IdInputSchema.extend({
+	preview: LogStreamSettingSchema,
+	endpoint: z.string().min(1).optional(),
+	token: z.string().min(1).optional(),
+});
+const UpdateResourceLogStreamInputSchema = IdInputSchema.extend({
+	setting: LogStreamSettingSchema,
+	endpoint: z.string().min(1).optional(),
+	token: z.string().min(1).optional(),
+});
+const AddHeaderInputSchema = IdInputSchema.extend({
+	path: z.string().min(1),
+	name: z.string().min(1),
+	value: z.string(),
+});
+const AddResourcesToEnvironmentInputSchema = IdInputSchema.extend({
+	resourceIds: z.array(z.string().min(1)).min(1),
+});
+const AddRouteInputSchema = IdInputSchema.extend({
+	type: z.enum(['redirect', 'rewrite']),
+	source: z.string().min(1),
+	destination: z.string().min(1),
+	priority: z.number().int().min(0).optional(),
+});
+const CreateCustomDomainInputSchema = IdInputSchema.extend({
+	name: z.string().min(1),
+});
+const PutEnvVarInputSchema = ResourceIdKeyInputSchema.extend({
+	value: z.string().optional(),
+	generateValue: z.boolean().optional(),
+}).refine(
+	(input) =>
+		(input.value === undefined) !== (input.generateValue === undefined),
+	{ message: 'Pass exactly one of value or generateValue' },
+);
+const ValidateBlueprintInputSchema = z.object({
+	ownerId: z.string().min(1),
+	file: z.string().min(1).describe('Contents of the render.yaml to validate'),
+});
+const ListDedicatedIpsInputSchema = ResourceInputSchema.extend({
+	ownerId: z.string().min(1),
+});
+const CreateDedicatedIpInputSchema = z
+	.object({
+		name: z.string().min(1),
+		ownerId: z.string().min(1),
+		region: RenderRegionSchema,
+		description: z.string().optional(),
+		environmentIds: z.array(z.string().min(1)).optional(),
+	})
+	.passthrough();
+const CreateWorkflowInputSchema = z
+	.object({
+		name: z.string().min(1),
+		ownerId: z.string().min(1),
+		region: RenderRegionSchema,
+		runCommand: z.string().min(1),
+		buildConfig: z
+			.object({
+				repo: z.string().min(1),
+				buildCommand: z.string().min(1),
+				runtime: z.enum(['elixir', 'go', 'node', 'python', 'ruby']),
+				branch: z.string().min(1).optional(),
+				rootDir: z.string().optional(),
+			})
+			.passthrough(),
+	})
+	.passthrough();
+const CreateWorkflowVersionInputSchema = z.object({
+	workflowId: z.string().min(1),
+	commit: z.string().min(1).optional(),
+});
+const CreateTaskRunInputSchema = z.object({
+	task: z.string().min(1),
+	// unknown: task arguments are user-defined by the workflow task.
+	input: z.union([z.array(z.unknown()), z.record(z.string(), z.unknown())]),
+	idempotencyKey: z.string().min(1).optional(),
+});
 
 export type ListServicesInput = z.infer<typeof ListServicesInputSchema>;
 export type ListServicesOutput = z.infer<typeof ListServicesOutputSchema>;
@@ -428,8 +584,8 @@ export type RenderEndpointInputs = {
 	listServiceHeaders: z.infer<typeof ServiceHeadersInputSchema>;
 	listServiceCustomDomains: z.infer<typeof ServiceCustomDomainsInputSchema>;
 	deleteServiceCustomDomain: z.infer<typeof ServiceCustomDomainInputSchema>;
-	listEnvironments: z.infer<typeof ResourceInputSchema>;
-	createEnvironment: z.infer<typeof ResourceInputSchema>;
+	listEnvironments: z.infer<typeof ListEnvironmentsInputSchema>;
+	createEnvironment: z.infer<typeof CreateEnvironmentInputSchema>;
 	retrieveEnvironment: ResourceIdInput;
 	updateEnvironment: ResourceIdInput;
 	deleteEnvironment: ResourceIdInput;
@@ -437,18 +593,18 @@ export type RenderEndpointInputs = {
 		typeof EnvironmentResourcesInputSchema
 	>;
 	listEnvGroups: z.infer<typeof ResourceInputSchema>;
-	createEnvGroup: z.infer<typeof ResourceInputSchema>;
+	createEnvGroup: z.infer<typeof CreateEnvGroupInputSchema>;
 	retrieveEnvGroup: ResourceIdInput;
-	updateEnvGroup: ResourceIdInput;
+	updateEnvGroup: z.infer<typeof UpdateEnvGroupInputSchema>;
 	deleteEnvGroup: ResourceIdInput;
 	unlinkServiceFromEnvGroup: z.infer<typeof EnvGroupServiceInputSchema>;
 	listProjects: z.infer<typeof ResourceInputSchema>;
-	createProject: z.infer<typeof ResourceInputSchema>;
+	createProject: z.infer<typeof CreateProjectInputSchema>;
 	retrieveProject: ResourceIdInput;
 	updateProject: ResourceIdInput;
 	deleteProject: ResourceIdInput;
 	listPostgres: z.infer<typeof ResourceInputSchema>;
-	createPostgres: z.infer<typeof ResourceInputSchema>;
+	createPostgres: z.infer<typeof CreatePostgresInputSchema>;
 	retrievePostgres: ResourceIdInput;
 	updatePostgres: ResourceIdInput;
 	restartPostgres: ResourceIdInput;
@@ -460,9 +616,9 @@ export type RenderEndpointInputs = {
 	recoverPostgres: z.infer<typeof RecoverPostgresInputSchema>;
 	deletePostgresUser: z.infer<typeof PostgresUsernameInputSchema>;
 	listRegistryCredentials: z.infer<typeof ResourceInputSchema>;
-	createRegistryCredential: z.infer<typeof ResourceInputSchema>;
+	createRegistryCredential: z.infer<typeof CreateRegistryCredentialInputSchema>;
 	retrieveRegistryCredential: ResourceIdInput;
-	updateRegistryCredential: ResourceIdInput;
+	updateRegistryCredential: z.infer<typeof UpdateRegistryCredentialInputSchema>;
 	deleteRegistryCredential: ResourceIdInput;
 	listOwners: z.infer<typeof ResourceInputSchema>;
 	retrieveOwner: ResourceIdInput;
@@ -472,11 +628,11 @@ export type RenderEndpointInputs = {
 	listOwnerAuditLogs: z.infer<typeof AuditLogsInputSchema>;
 	listOrganizationAuditLogs: z.infer<typeof AuditLogsInputSchema>;
 	getUser: z.infer<typeof ResourceInputSchema>;
-	listLogs: z.infer<typeof ResourceInputSchema>;
-	listLogsValues: z.infer<typeof ResourceInputSchema>;
+	listLogs: z.infer<typeof ListLogsInputSchema>;
+	listLogsValues: z.infer<typeof ListLogsValuesInputSchema>;
 	listResourceLogStreams: z.infer<typeof ResourceInputSchema>;
 	deleteOwnerLogStream: ResourceIdInput;
-	updateOwnerLogStream: ResourceIdInput;
+	updateOwnerLogStream: z.infer<typeof UpdateOwnerLogStreamInputSchema>;
 	retrieveOwnerLogStream: z.infer<typeof OwnerIdInputSchema>;
 	retrieveResourceLogStream: z.infer<typeof ResourceIdPathInputSchema>;
 	deleteResourceLogStream: z.infer<typeof ResourceIdPathInputSchema>;
@@ -524,11 +680,13 @@ export type RenderEndpointInputs = {
 	retrieveWebhook: ResourceIdInput;
 	updateWebhook: z.infer<typeof UpdateWebhookInputSchema>;
 	deleteWebhook: ResourceIdInput;
-	addHeaders: ResourceIdInput;
+	addHeaders: z.infer<typeof AddHeaderInputSchema>;
 	addOrUpdateSecretFile: ResourceIdKeyInput;
-	addResourcesToEnvironment: ResourceIdInput;
-	addRoute: ResourceIdInput;
-	createCustomDomain: ResourceIdInput;
+	addResourcesToEnvironment: z.infer<
+		typeof AddResourcesToEnvironmentInputSchema
+	>;
+	addRoute: z.infer<typeof AddRouteInputSchema>;
+	createCustomDomain: z.infer<typeof CreateCustomDomainInputSchema>;
 	deleteEnvGroupEnvVar: ResourceIdKeyInput;
 	deleteEnvGroupSecretFile: ResourceIdKeyInput;
 	deleteKeyValue: ResourceIdInput;
@@ -563,12 +721,12 @@ export type RenderEndpointInputs = {
 	retrieveEnvVar: ResourceIdKeyInput;
 	retrieveOwnerNotificationSettings: ResourceIdInput;
 	retrieveSecretFile: ResourceIdKeyInput;
-	updateEnvGroupEnvVar: ResourceIdKeyInput;
+	updateEnvGroupEnvVar: z.infer<typeof PutEnvVarInputSchema>;
 	updateEnvGroupSecretFile: ResourceIdKeyInput;
-	updateEnvVar: ResourceIdKeyInput;
+	updateEnvVar: z.infer<typeof PutEnvVarInputSchema>;
 	updateEnvVarsForService: z.infer<typeof ServiceEnvVarsReplaceInputSchema>;
 	updateHeaders: z.infer<typeof ServiceHeadersReplaceInputSchema>;
-	updateResourceLogStream: ResourceIdInput;
+	updateResourceLogStream: z.infer<typeof UpdateResourceLogStreamInputSchema>;
 	updateSecretFilesForService: z.infer<
 		typeof ServiceSecretFilesReplaceInputSchema
 	>;
@@ -602,29 +760,29 @@ export type RenderEndpointInputs = {
 	deleteBuildSourceSecretFile: z.infer<typeof BuildSourceEnvVarInputSchema>;
 	linkEnvGroupToBuildSource: z.infer<typeof BuildSourceEnvGroupInputSchema>;
 	unlinkEnvGroupFromBuildSource: z.infer<typeof BuildSourceEnvGroupInputSchema>;
-	validateBlueprint: z.infer<typeof CreateResourceInputSchema>;
+	validateBlueprint: z.infer<typeof ValidateBlueprintInputSchema>;
 	retrieveBlueprint: ResourceIdInput;
 	updateBlueprint: z.infer<typeof ResourceBodyInputSchema>;
-	listDedicatedIps: z.infer<typeof ResourceInputSchema>;
-	createDedicatedIp: z.infer<typeof CreateResourceInputSchema>;
+	listDedicatedIps: z.infer<typeof ListDedicatedIpsInputSchema>;
+	createDedicatedIp: z.infer<typeof CreateDedicatedIpInputSchema>;
 	retrieveDedicatedIp: ResourceIdInput;
 	updateDedicatedIp: z.infer<typeof ResourceBodyInputSchema>;
 	deleteDedicatedIp: ResourceIdInput;
 	deletePostgres: ResourceIdInput;
 	createPostgresExport: ResourceIdInput;
-	createPostgresUser: z.infer<typeof ResourceBodyInputSchema>;
+	createPostgresUser: z.infer<typeof CreatePostgresUserInputSchema>;
 	listPostgresProcesses: ResourceIdInput;
 	listPostgresTopQueries: ResourceIdInput;
 	listPostgresSizes: ResourceIdInput;
 	listPostgresTableScans: ResourceIdInput;
-	createWorkflow: z.infer<typeof CreateResourceInputSchema>;
+	createWorkflow: z.infer<typeof CreateWorkflowInputSchema>;
 	retrieveWorkflow: ResourceIdInput;
 	updateWorkflow: z.infer<typeof ResourceBodyInputSchema>;
 	deleteWorkflow: ResourceIdInput;
-	createWorkflowVersion: z.infer<typeof CreateResourceInputSchema>;
+	createWorkflowVersion: z.infer<typeof CreateWorkflowVersionInputSchema>;
 	retrieveWorkflowVersion: ResourceIdInput;
 	retrieveTask: ResourceIdInput;
-	createTaskRun: z.infer<typeof CreateResourceInputSchema>;
+	createTaskRun: z.infer<typeof CreateTaskRunInputSchema>;
 	retrieveTaskRun: ResourceIdInput;
 	cancelTaskRun: ResourceIdInput;
 };
@@ -887,25 +1045,25 @@ export const RenderEndpointInputSchemas = {
 	listServiceHeaders: ServiceHeadersInputSchema,
 	listServiceCustomDomains: ServiceCustomDomainsInputSchema,
 	deleteServiceCustomDomain: ServiceCustomDomainInputSchema,
-	listEnvironments: ResourceInputSchema,
-	createEnvironment: ResourceInputSchema,
+	listEnvironments: ListEnvironmentsInputSchema,
+	createEnvironment: CreateEnvironmentInputSchema,
 	retrieveEnvironment: ResourceIdInputSchema,
 	updateEnvironment: ResourceIdInputSchema,
 	deleteEnvironment: ResourceIdInputSchema,
 	removeResourcesFromEnvironment: EnvironmentResourcesInputSchema,
 	listEnvGroups: ResourceInputSchema,
-	createEnvGroup: ResourceInputSchema,
+	createEnvGroup: CreateEnvGroupInputSchema,
 	retrieveEnvGroup: ResourceIdInputSchema,
-	updateEnvGroup: ResourceIdInputSchema,
+	updateEnvGroup: UpdateEnvGroupInputSchema,
 	deleteEnvGroup: ResourceIdInputSchema,
 	unlinkServiceFromEnvGroup: EnvGroupServiceInputSchema,
 	listProjects: ResourceInputSchema,
-	createProject: ResourceInputSchema,
+	createProject: CreateProjectInputSchema,
 	retrieveProject: ResourceIdInputSchema,
 	updateProject: ResourceIdInputSchema,
 	deleteProject: ResourceIdInputSchema,
 	listPostgres: ResourceInputSchema,
-	createPostgres: ResourceInputSchema,
+	createPostgres: CreatePostgresInputSchema,
 	retrievePostgres: ResourceIdInputSchema,
 	updatePostgres: ResourceIdInputSchema,
 	restartPostgres: ResourceIdInputSchema,
@@ -917,9 +1075,9 @@ export const RenderEndpointInputSchemas = {
 	recoverPostgres: RecoverPostgresInputSchema,
 	deletePostgresUser: PostgresUsernameInputSchema,
 	listRegistryCredentials: ResourceInputSchema,
-	createRegistryCredential: ResourceInputSchema,
+	createRegistryCredential: CreateRegistryCredentialInputSchema,
 	retrieveRegistryCredential: ResourceIdInputSchema,
-	updateRegistryCredential: ResourceIdInputSchema,
+	updateRegistryCredential: UpdateRegistryCredentialInputSchema,
 	deleteRegistryCredential: ResourceIdInputSchema,
 	listOwners: ResourceInputSchema,
 	retrieveOwner: ResourceIdInputSchema,
@@ -929,11 +1087,11 @@ export const RenderEndpointInputSchemas = {
 	listOwnerAuditLogs: AuditLogsInputSchema,
 	listOrganizationAuditLogs: AuditLogsInputSchema,
 	getUser: ResourceInputSchema,
-	listLogs: ResourceInputSchema,
-	listLogsValues: ResourceInputSchema,
+	listLogs: ListLogsInputSchema,
+	listLogsValues: ListLogsValuesInputSchema,
 	listResourceLogStreams: ResourceInputSchema,
 	deleteOwnerLogStream: ResourceIdInputSchema,
-	updateOwnerLogStream: ResourceIdInputSchema,
+	updateOwnerLogStream: UpdateOwnerLogStreamInputSchema,
 	retrieveOwnerLogStream: OwnerIdInputSchema,
 	retrieveResourceLogStream: ResourceIdPathInputSchema,
 	deleteResourceLogStream: ResourceIdPathInputSchema,
@@ -981,11 +1139,11 @@ export const RenderEndpointInputSchemas = {
 	retrieveWebhook: ResourceIdInputSchema,
 	updateWebhook: UpdateWebhookInputSchema,
 	deleteWebhook: ResourceIdInputSchema,
-	addHeaders: ResourceIdInputSchema,
+	addHeaders: AddHeaderInputSchema,
 	addOrUpdateSecretFile: ResourceIdKeyInputSchema,
-	addResourcesToEnvironment: ResourceIdInputSchema,
-	addRoute: ResourceIdInputSchema,
-	createCustomDomain: ResourceIdInputSchema,
+	addResourcesToEnvironment: AddResourcesToEnvironmentInputSchema,
+	addRoute: AddRouteInputSchema,
+	createCustomDomain: CreateCustomDomainInputSchema,
 	deleteEnvGroupEnvVar: ResourceIdKeyInputSchema,
 	deleteEnvGroupSecretFile: ResourceIdKeyInputSchema,
 	deleteKeyValue: ResourceIdInputSchema,
@@ -1017,12 +1175,12 @@ export const RenderEndpointInputSchemas = {
 	retrieveEnvVar: ResourceIdKeyInputSchema,
 	retrieveOwnerNotificationSettings: ResourceIdInputSchema,
 	retrieveSecretFile: ResourceIdKeyInputSchema,
-	updateEnvGroupEnvVar: ResourceIdKeyInputSchema,
+	updateEnvGroupEnvVar: PutEnvVarInputSchema,
 	updateEnvGroupSecretFile: ResourceIdKeyInputSchema,
-	updateEnvVar: ResourceIdKeyInputSchema,
+	updateEnvVar: PutEnvVarInputSchema,
 	updateEnvVarsForService: ServiceEnvVarsReplaceInputSchema,
 	updateHeaders: ServiceHeadersReplaceInputSchema,
-	updateResourceLogStream: ResourceIdInputSchema,
+	updateResourceLogStream: UpdateResourceLogStreamInputSchema,
 	updateSecretFilesForService: ServiceSecretFilesReplaceInputSchema,
 	verifyCustomDomain: ResourceIdKeyInputSchema,
 	deleteOwnerMetricsStream: ResourceIdInputSchema,
@@ -1050,29 +1208,29 @@ export const RenderEndpointInputSchemas = {
 	deleteBuildSourceSecretFile: BuildSourceEnvVarInputSchema,
 	linkEnvGroupToBuildSource: BuildSourceEnvGroupInputSchema,
 	unlinkEnvGroupFromBuildSource: BuildSourceEnvGroupInputSchema,
-	validateBlueprint: CreateResourceInputSchema,
+	validateBlueprint: ValidateBlueprintInputSchema,
 	retrieveBlueprint: ResourceIdInputSchema,
 	updateBlueprint: ResourceBodyInputSchema,
-	listDedicatedIps: ResourceInputSchema,
-	createDedicatedIp: CreateResourceInputSchema,
+	listDedicatedIps: ListDedicatedIpsInputSchema,
+	createDedicatedIp: CreateDedicatedIpInputSchema,
 	retrieveDedicatedIp: ResourceIdInputSchema,
 	updateDedicatedIp: ResourceBodyInputSchema,
 	deleteDedicatedIp: ResourceIdInputSchema,
 	deletePostgres: ResourceIdInputSchema,
 	createPostgresExport: ResourceIdInputSchema,
-	createPostgresUser: ResourceBodyInputSchema,
+	createPostgresUser: CreatePostgresUserInputSchema,
 	listPostgresProcesses: ResourceIdInputSchema,
 	listPostgresTopQueries: ResourceIdInputSchema,
 	listPostgresSizes: ResourceIdInputSchema,
 	listPostgresTableScans: ResourceIdInputSchema,
-	createWorkflow: CreateResourceInputSchema,
+	createWorkflow: CreateWorkflowInputSchema,
 	retrieveWorkflow: ResourceIdInputSchema,
 	updateWorkflow: ResourceBodyInputSchema,
 	deleteWorkflow: ResourceIdInputSchema,
-	createWorkflowVersion: CreateResourceInputSchema,
+	createWorkflowVersion: CreateWorkflowVersionInputSchema,
 	retrieveWorkflowVersion: ResourceIdInputSchema,
 	retrieveTask: ResourceIdInputSchema,
-	createTaskRun: CreateResourceInputSchema,
+	createTaskRun: CreateTaskRunInputSchema,
 	retrieveTaskRun: ResourceIdInputSchema,
 	cancelTaskRun: ResourceIdInputSchema,
 } as const;

@@ -63,14 +63,12 @@ describe('Render schema', () => {
 			'updateEnvironment',
 			'deleteEnvironment',
 			'retrieveEnvGroup',
-			'updateEnvGroup',
 			'deleteEnvGroup',
 			'retrieveProject',
 			'updateProject',
 			'retrievePostgres',
 			'updatePostgres',
 			'retrieveRegistryCredential',
-			'updateRegistryCredential',
 			'deleteRegistryCredential',
 		] as const;
 
@@ -88,11 +86,6 @@ describe('Render schema', () => {
 			'listOwnerAuditLogs',
 			'listOrganizationAuditLogs',
 			'deleteOwnerLogStream',
-			'updateOwnerLogStream',
-			'addHeaders',
-			'addResourcesToEnvironment',
-			'addRoute',
-			'createCustomDomain',
 			'deleteKeyValue',
 			'disconnectBlueprint',
 			'listBlueprintSyncs',
@@ -105,7 +98,6 @@ describe('Render schema', () => {
 			'listRoutes',
 			'listSecretFiles',
 			'retrieveOwnerNotificationSettings',
-			'updateResourceLogStream',
 			'deleteOwnerMetricsStream',
 			'updateOwnerNotificationSettings',
 			'retrieveDisk',
@@ -132,6 +124,45 @@ describe('Render schema', () => {
 			expect(schema.safeParse({}).success).toBe(false);
 			expect(schema.safeParse({ id: 'resource-1' }).success).toBe(true);
 		}
+
+		// Operations with required body fields (per Render's OpenAPI spec)
+		// reject a bare id and accept the documented payload.
+		for (const [operation, valid] of [
+			['updateEnvGroup', { id: 'evg-1', name: 'shared' }],
+			[
+				'updateRegistryCredential',
+				{
+					id: 'rgc-1',
+					registry: 'GITHUB',
+					name: 'ghcr',
+					username: 'bot',
+					authToken: 'token',
+				},
+			],
+			['updateOwnerLogStream', { id: 'tea-1', preview: 'drop' }],
+			['updateResourceLogStream', { id: 'srv-1', setting: 'send' }],
+			['addHeaders', { id: 'srv-1', path: '/*', name: 'X-A', value: '1' }],
+			['addResourcesToEnvironment', { id: 'evm-1', resourceIds: ['srv-1'] }],
+			[
+				'addRoute',
+				{ id: 'srv-1', type: 'redirect', source: '/a', destination: '/b' },
+			],
+			['createCustomDomain', { id: 'srv-1', name: 'www.example.com' }],
+			['updateEnvVar', { id: 'srv-1', key: 'A', value: 'B' }],
+			['updateEnvGroupEnvVar', { id: 'evg-1', key: 'A', generateValue: true }],
+		] as const) {
+			const schema = RenderEndpointInputSchemas[operation];
+			expect(schema.safeParse({ id: valid.id }).success).toBe(false);
+			expect(schema.safeParse(valid).success).toBe(true);
+		}
+		expect(
+			RenderEndpointInputSchemas.updateEnvVar.safeParse({
+				id: 'srv-1',
+				key: 'A',
+				value: 'B',
+				generateValue: true,
+			}).success,
+		).toBe(false);
 
 		// Replace operations send a raw JSON array: the id and an array body
 		// are both required, and an object body is rejected.
@@ -163,9 +194,7 @@ describe('Render schema', () => {
 			'retrieveEnvGroupSecretFile',
 			'retrieveEnvVar',
 			'retrieveSecretFile',
-			'updateEnvGroupEnvVar',
 			'updateEnvGroupSecretFile',
-			'updateEnvVar',
 			'verifyCustomDomain',
 		] as const;
 		for (const operation of keyOperations) {
@@ -359,6 +388,49 @@ describe('Render schema', () => {
 			},
 			{ id: 'resource-1', body: {} },
 			{ id: 'resource-1', body: [] },
+			{ id: 'resource-1', body: { priority: 0 } },
+			{ serviceId: 'service-1', routeId: 'route-1', body: { priority: 0 } },
+			{ id: 'resource-1', body: { username: 'app' } },
+			{ id: 'resource-1', name: 'resource' },
+			{ id: 'resource-1', preview: 'send' },
+			{ id: 'resource-1', setting: 'send' },
+			{ id: 'resource-1', path: '/*', name: 'X-A', value: '1' },
+			{ id: 'resource-1', resourceIds: ['service-1'] },
+			{ id: 'resource-1', type: 'redirect', source: '/a', destination: '/b' },
+			{ id: 'resource-1', key: 'resource-key', value: 'v' },
+			{
+				id: 'resource-1',
+				registry: 'GITHUB',
+				name: 'ghcr',
+				username: 'bot',
+				authToken: 'token',
+			},
+			{
+				ownerId: 'owner-1',
+				registry: 'GITHUB',
+				name: 'ghcr',
+				username: 'bot',
+				authToken: 'token',
+			},
+			{ projectId: 'project-1' },
+			{ name: 'staging', projectId: 'project-1' },
+			{ ownerId: 'owner-1' },
+			{ ownerId: 'owner-1', resource: ['service-1'] },
+			{ ownerId: 'owner-1', resource: ['service-1'], label: 'level' },
+			{ name: 'shared', ownerId: 'owner-1', envVars: [] },
+			{ name: 'app', ownerId: 'owner-1', environments: [{ name: 'prod' }] },
+			{ name: 'db', ownerId: 'owner-1', plan: 'basic_256mb', version: '17' },
+			{ ownerId: 'owner-1', file: 'services: []' },
+			{ name: 'egress', ownerId: 'owner-1', region: 'oregon' },
+			{
+				name: 'flow',
+				ownerId: 'owner-1',
+				region: 'oregon',
+				runCommand: 'node worker.js',
+				buildConfig: { repo: 'r', buildCommand: 'b', runtime: 'node' },
+			},
+			{ workflowId: 'workflow-1', commit: 'abc' },
+			{ task: 'flow/hello', input: [] },
 			{ workflowId: 'workflow-1' },
 			{ taskId: 'task-1' },
 			{

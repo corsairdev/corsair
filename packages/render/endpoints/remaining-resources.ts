@@ -39,10 +39,20 @@ const request = <T>(
 	});
 };
 
+// Render takes the render.yaml as a multipart/form-data file upload here.
 export const validateBlueprint: RenderEndpoints['validateBlueprint'] = (
 	ctx,
 	input,
-) => request(ctx, '/v1/blueprints/validate', 'POST', input);
+) =>
+	makeRenderRequest('/v1/blueprints/validate', ctx.key, {
+		method: 'POST',
+		formData: {
+			ownerId: input.ownerId,
+			file: new File([input.file], 'render.yaml', {
+				type: 'application/yaml',
+			}),
+		},
+	});
 export const retrieveBlueprint: RenderEndpoints['retrieveBlueprint'] = (
 	ctx,
 	input,

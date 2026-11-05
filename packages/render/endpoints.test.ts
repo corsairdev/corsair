@@ -274,7 +274,7 @@ describe('Render service endpoints', () => {
 
 	it('covers the resource, observability, metrics, automation, and final groups', async () => {
 		const ctx = { key: 'secret' } as never;
-		await listEnvironments(ctx, {});
+		await listEnvironments(ctx, { projectId: 'prj-1' });
 		await listProjects(ctx, {});
 		await listOwners(ctx, {});
 		await listDisks(ctx, {});
@@ -282,7 +282,7 @@ describe('Render service endpoints', () => {
 
 		expect(request).toHaveBeenCalledWith('/v1/environments', 'secret', {
 			method: 'GET',
-			query: {},
+			query: { projectId: 'prj-1' },
 		});
 		expect(request).toHaveBeenCalledWith('/v1/projects', 'secret', {
 			method: 'GET',
@@ -471,7 +471,7 @@ describe('Render service endpoints', () => {
 		await patchServiceRoute(ctx, {
 			serviceId: 'srv-1',
 			routeId: 'rte-1',
-			body: { type: 'redirect' },
+			body: { priority: 0 },
 		});
 		await deleteServiceRoute(ctx, { serviceId: 'srv-1', routeId: 'rte-1' });
 
@@ -488,7 +488,7 @@ describe('Render service endpoints', () => {
 			'secret',
 			{
 				method: 'PATCH',
-				body: { type: 'redirect' },
+				body: { priority: 0 },
 			},
 		);
 		expect(request).toHaveBeenCalledWith(
@@ -748,11 +748,29 @@ describe('Render service endpoints', () => {
 	it('covers Blueprint, Dedicated IP, Postgres, and workflow task routes', async () => {
 		request.mockResolvedValue({});
 		const ctx = { key: 'secret' } as never;
-		await validateBlueprint(ctx, { ownerId: 'own-1', blueprint: {} });
+		const workflow = {
+			ownerId: 'own-1',
+			name: 'flow',
+			region: 'oregon',
+			runCommand: 'node worker.js',
+			buildConfig: {
+				repo: 'https://github.com/acme/flow',
+				buildCommand: 'npm ci',
+				runtime: 'node',
+			},
+		} as const;
+		await validateBlueprint(ctx, {
+			ownerId: 'own-1',
+			file: 'services: []\n',
+		});
 		await retrieveBlueprint(ctx, { id: 'bp-1' });
 		await updateBlueprint(ctx, { id: 'bp-1', body: { name: 'updated' } });
-		await listDedicatedIps(ctx, {});
-		await createDedicatedIp(ctx, { ownerId: 'own-1', name: 'egress' });
+		await listDedicatedIps(ctx, { ownerId: 'own-1' });
+		await createDedicatedIp(ctx, {
+			ownerId: 'own-1',
+			name: 'egress',
+			region: 'oregon',
+		});
 		await retrieveDedicatedIp(ctx, { id: 'ip-1' });
 		await updateDedicatedIp(ctx, { id: 'ip-1', body: { name: 'updated' } });
 		await deleteDedicatedIp(ctx, { id: 'ip-1' });
@@ -763,23 +781,25 @@ describe('Render service endpoints', () => {
 		await listPostgresTopQueries(ctx, { id: 'pg-1' });
 		await listPostgresSizes(ctx, { id: 'pg-1' });
 		await listPostgresTableScans(ctx, { id: 'pg-1' });
-		await createWorkflow(ctx, { ownerId: 'own-1', name: 'flow' });
+		await createWorkflow(ctx, workflow);
 		await retrieveWorkflow(ctx, { id: 'wf-1' });
 		await updateWorkflow(ctx, { id: 'wf-1', body: { name: 'updated' } });
 		await deleteWorkflow(ctx, { id: 'wf-1' });
 		await createWorkflowVersion(ctx, { workflowId: 'wf-1' });
 		await retrieveWorkflowVersion(ctx, { id: 'wv-1' });
 		await retrieveTask(ctx, { id: 'task-1' });
-		await createTaskRun(ctx, { taskId: 'task-1' });
+		await createTaskRun(ctx, { task: 'flow/hello', input: ['world'] });
 		await retrieveTaskRun(ctx, { id: 'run-1' });
 		await cancelTaskRun(ctx, { id: 'run-1' });
 
 		for (const [path, method, body] of [
-			['/v1/blueprints/validate', 'POST', { ownerId: 'own-1', blueprint: {} }],
 			['/v1/blueprints/bp-1', 'GET', undefined],
 			['/v1/blueprints/bp-1', 'PATCH', { name: 'updated' }],
-			['/v1/dedicated-ips', 'GET', undefined],
-			['/v1/dedicated-ips', 'POST', { ownerId: 'own-1', name: 'egress' }],
+			[
+				'/v1/dedicated-ips',
+				'POST',
+				{ ownerId: 'own-1', name: 'egress', region: 'oregon' },
+			],
 			['/v1/dedicated-ips/ip-1', 'GET', undefined],
 			['/v1/dedicated-ips/ip-1', 'PATCH', { name: 'updated' }],
 			['/v1/dedicated-ips/ip-1', 'DELETE', undefined],
@@ -790,14 +810,14 @@ describe('Render service endpoints', () => {
 			['/v1/postgres/pg-1/query/top-queries', 'GET', undefined],
 			['/v1/postgres/pg-1/query/sizes', 'GET', undefined],
 			['/v1/postgres/pg-1/query/table-scans', 'GET', undefined],
-			['/v1/workflows', 'POST', { ownerId: 'own-1', name: 'flow' }],
+			['/v1/workflows', 'POST', workflow],
 			['/v1/workflows/wf-1', 'GET', undefined],
 			['/v1/workflows/wf-1', 'PATCH', { name: 'updated' }],
 			['/v1/workflows/wf-1', 'DELETE', undefined],
 			['/v1/workflowversions', 'POST', { workflowId: 'wf-1' }],
 			['/v1/workflowversions/wv-1', 'GET', undefined],
 			['/v1/tasks/task-1', 'GET', undefined],
-			['/v1/task-runs', 'POST', { taskId: 'task-1' }],
+			['/v1/task-runs', 'POST', { task: 'flow/hello', input: ['world'] }],
 			['/v1/task-runs/run-1', 'GET', undefined],
 			['/v1/task-runs/run-1', 'DELETE', undefined],
 		] as const) {
@@ -807,6 +827,14 @@ describe('Render service endpoints', () => {
 				method === 'GET' ? { method, query: {} } : { method, body },
 			);
 		}
+		expect(request).toHaveBeenCalledWith('/v1/dedicated-ips', 'secret', {
+			method: 'GET',
+			query: { ownerId: 'own-1' },
+		});
+		expect(request).toHaveBeenCalledWith('/v1/blueprints/validate', 'secret', {
+			method: 'POST',
+			formData: { ownerId: 'own-1', file: expect.any(File) },
+		});
 	});
 
 	it('uses the documented current-user route', async () => {
@@ -1255,16 +1283,21 @@ describe('Render service endpoints', () => {
 	it('sends owner log stream updates as a request body', async () => {
 		request.mockResolvedValue({});
 		await updateOwnerLogStream({ key: 'secret' } as never, {
-			id: 'stream-1',
-			url: 'https://logs.example.test',
-			labels: ['app'],
+			id: 'tea-1',
+			endpoint: 'logs.example.test:6514',
+			token: 'log-token',
+			preview: 'send',
 		});
 		expect(request).toHaveBeenCalledWith(
-			'/v1/logs/streams/owner/stream-1',
+			'/v1/logs/streams/owner/tea-1',
 			'secret',
 			expect.objectContaining({
 				method: 'PUT',
-				body: { url: 'https://logs.example.test', labels: ['app'] },
+				body: {
+					endpoint: 'logs.example.test:6514',
+					token: 'log-token',
+					preview: 'send',
+				},
 			}),
 		);
 	});

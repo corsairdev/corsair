@@ -42,9 +42,11 @@ export async function makeRenderRequest<T>(
 		query?: Record<string, string | string[] | number | boolean | undefined>;
 		headers?: Record<string, string>;
 		mediaType?: string;
+		// multipart/form-data fields; fetch sets the boundary Content-Type.
+		formData?: Record<string, string | Blob>;
 	} = {},
 ): Promise<T> {
-	const { method = 'GET', body, query, headers, mediaType } = options;
+	const { method = 'GET', body, query, headers, mediaType, formData } = options;
 
 	const config: OpenAPIConfig = {
 		BASE: RENDER_API_BASE,
@@ -53,7 +55,7 @@ export async function makeRenderRequest<T>(
 		CREDENTIALS: 'omit',
 		TOKEN: apiKey,
 		HEADERS: {
-			'Content-Type': 'application/json',
+			...(formData ? {} : { 'Content-Type': 'application/json' }),
 			Authorization: `Bearer ${apiKey}`,
 			...headers,
 		},
@@ -66,7 +68,10 @@ export async function makeRenderRequest<T>(
 			method === 'POST' || method === 'PUT' || method === 'PATCH'
 				? body
 				: undefined,
-		mediaType: mediaType ?? 'application/json; charset=utf-8',
+		mediaType: formData
+			? undefined
+			: (mediaType ?? 'application/json; charset=utf-8'),
+		formData,
 		query: method === 'GET' || method === 'DELETE' ? query : undefined,
 	};
 
