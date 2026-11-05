@@ -185,6 +185,23 @@ describe('errorHandlers', () => {
 		).resolves.toEqual({ maxRetries: 3 });
 	});
 
+	it('sends a 5xx that mentions a rate limit to SERVER_ERROR, not RATE_LIMIT_ERROR', async () => {
+		const err = await wrappedError(503, {
+			message: 'Rate limit exceeded upstream',
+		});
+
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(err)).toBe(false);
+		expect(errorHandlers.SERVER_ERROR.match(err)).toBe(true);
+		await expect(
+			errorHandlers.SERVER_ERROR.handler(err, {
+				pluginId: 'finerworks',
+				operation: 'orders.submit',
+				input: {},
+				originalError: err,
+			}),
+		).resolves.toEqual({ maxRetries: 0 });
+	});
+
 	it('does not retry a 5xx on writes, which FinerWorks may already have applied', async () => {
 		const err = await wrappedError(500, { message: 'Internal Server Error' });
 		for (const operation of [

@@ -59,7 +59,11 @@ function isReadOperation(operation: string | undefined): boolean {
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => {
-			if (statusOf(error) === 429) return true;
+			const status = statusOf(error);
+			if (status === 429) return true;
+			// A real status wins over the message: a 5xx that mentions "rate limit"
+			// must reach SERVER_ERROR, which never retries writes.
+			if (status !== undefined) return false;
 			return /too many requests|rate[ _-]?limit/i.test(error.message);
 		},
 		handler: async (error: Error) => ({
