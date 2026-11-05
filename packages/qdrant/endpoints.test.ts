@@ -197,30 +197,31 @@ describe('Qdrant endpoints', () => {
 		expect(requests).toHaveLength(1);
 	});
 
-	it('allows http to a private host only when the URL is pinned in the options', async () => {
-		const requests = mockFetch({ body: { result: { collections: [] } } });
+	it.each([
+		['http://127.0.0.1:6333', 'INSECURE_BASE_URL'],
+		['http://10.0.0.5:6333', 'INSECURE_BASE_URL'],
+		['https://127.0.0.1:6333', 'PRIVATE_BASE_URL'],
+		['https://169.254.169.254', 'PRIVATE_BASE_URL'],
+		['https://api.internal', 'PRIVATE_BASE_URL'],
+	])('refuses stored base_url %s before sending', async (url, code) => {
+		const requests = mockFetch();
 		const stored = call(
 			'collections.list',
 			{},
-			{
-				options: {},
-				keys: { get_base_url: async () => 'http://10.0.0.5:6333' },
-			},
+			{ options: {}, keys: { get_base_url: async () => url } },
 		);
-		await expect(stored.output).resolves.toMatchObject({
-			code: 'INSECURE_BASE_URL',
-		});
+		await expect(stored.output).resolves.toMatchObject({ code });
 		expect(requests).toHaveLength(0);
-
-		await call(
-			'collections.list',
-			{},
-			{
-				options: { baseUrl: 'http://10.0.0.5:6333' },
-			},
-		).output;
-		expect(requests[0]?.url.href).toBe('http://10.0.0.5:6333/collections');
 	});
+
+	it.each(['http://127.0.0.1:6333', 'http://10.0.0.5:6333'])(
+		'sends to %s when it is pinned in the options',
+		async (baseUrl) => {
+			const requests = mockFetch({ body: { result: { collections: [] } } });
+			await call('collections.list', {}, { options: { baseUrl } }).output;
+			expect(requests[0]?.url.href).toBe(`${baseUrl}/collections`);
+		},
+	);
 
 	it('reads collection and optimizer statuses Qdrant adds later', async () => {
 		const later = { ...info, status: 'blue', optimizer_status: 'indexing' };

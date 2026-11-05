@@ -110,7 +110,7 @@ function define<K extends Key>(
 			const pinnedUrl = ctx.options.baseUrl;
 			const output = await makeQdrantRequest(path(parsed), ctx.key, {
 				baseUrl: pinnedUrl ?? (await ctx.keys?.get_base_url?.()) ?? undefined,
-				allowPrivateHttp: pinnedUrl !== undefined,
+				pinned: pinnedUrl !== undefined,
 				method,
 				body: method === 'GET' || method === 'DELETE' ? undefined : body,
 				query,

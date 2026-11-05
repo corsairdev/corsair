@@ -12,14 +12,13 @@ export class QdrantAPIError extends Error {
 	}
 }
 
-// Plain http would send the key in cleartext, so it is only allowed for
-// loopback hosts.
-const LOOPBACK_HOSTS = [/^localhost$/, /^127(\.\d+){3}$/, /^\[::1\]$/];
-// Private addresses and cluster-internal names (`qdrant`, `*.svc.cluster.local`)
-// are also allowed over http, but only for a URL the developer pinned in the
-// plugin options. A URL stored for an account is set by whoever connects it,
-// and on a hosted runtime it must not reach the host's private network.
-const PRIVATE_HOSTS = [
+// Loopback, private addresses and cluster-internal names (`qdrant`,
+// `*.svc.cluster.local`). A URL the developer pinned with the `baseUrl` option
+// may use plain http for these; elsewhere http would send the key in cleartext.
+const PINNED_HTTP_HOSTS = [
+	/^localhost$/,
+	/^127(\.\d+){3}$/,
+	/^\[::1\]$/,
 	/^10(\.\d+){3}$/,
 	/^192\.168(\.\d+){2}$/,
 	/^172\.(1[6-9]|2\d|3[01])(\.\d+){2}$/,
@@ -28,10 +27,60 @@ const PRIVATE_HOSTS = [
 	/\.(local|internal|localhost)$/,
 ];
 
-// Never taken from endpoint input, so an agent can't send the key elsewhere.
+// Names that only resolve inside a network: localhost, single-label names
+// and the .local/.internal/.localhost suffixes.
+const INTERNAL_NAMES = [
+	/^localhost$/,
+	/^[a-z0-9-]+$/,
+	/\.(local|internal|localhost)$/,
+];
+
+// IP literals in loopback, private, CGNAT, link-local (cloud metadata),
+// benchmark, multicast and reserved ranges. `new URL` has already rewritten
+// other IPv4 spellings (2130706433, 0x7f.1) to dotted decimal.
+function isInternalIpLiteral(host: string): boolean {
+	const v4 = host.match(/^(\d+)\.(\d+)\.\d+\.\d+$/);
+	if (v4) {
+		const a = Number(v4[1]);
+		const b = Number(v4[2]);
+		return (
+			a === 0 ||
+			a === 10 ||
+			a === 127 ||
+			(a === 100 && b >= 64 && b <= 127) ||
+			(a === 169 && b === 254) ||
+			(a === 172 && b >= 16 && b <= 31) ||
+			(a === 192 && b === 168) ||
+			(a === 198 && (b === 18 || b === 19)) ||
+			a >= 224
+		);
+	}
+	if (!host.startsWith('[')) return false;
+	const v6 = host.slice(1, -1);
+	// ::, ::1, unique-local fc00::/7, link-local fe80::/10, and IPv4-mapped ::ffff:…
+	return (
+		v6 === '::' ||
+		v6 === '::1' ||
+		/^f[cd]/.test(v6) ||
+		/^fe[89ab]/.test(v6) ||
+		v6.startsWith('::ffff:')
+	);
+}
+
+/**
+ * Checks the cluster URL. It is never taken from endpoint input, so an agent
+ * can't send the key elsewhere.
+ *
+ * `pinned` is true only for the `baseUrl` plugin option, which the developer
+ * sets in code. A `base_url` stored for an account is set by whoever connects
+ * the account, and on a hosted runtime it must not reach the host's own
+ * network, so it must use https and a public host. The host check covers names
+ * and IP literals; it does not resolve DNS, so a public name that resolves to
+ * a private address is not caught here.
+ */
 export function normalizeQdrantBaseUrl(
 	baseUrl: string | undefined,
-	{ allowPrivateHttp = false }: { allowPrivateHttp?: boolean } = {},
+	{ pinned = false }: { pinned?: boolean } = {},
 ): string {
 	if (!baseUrl) {
 		throw new QdrantAPIError(
@@ -53,19 +102,33 @@ export function normalizeQdrantBaseUrl(
 			'INVALID_BASE_URL',
 		);
 	}
-	const httpHosts = allowPrivateHttp
-		? [...LOOPBACK_HOSTS, ...PRIVATE_HOSTS]
-		: LOOPBACK_HOSTS;
-	if (
-		url.protocol === 'http:' &&
-		!httpHosts.some((host) => host.test(url.hostname))
-	) {
-		throw new QdrantAPIError(
-			allowPrivateHttp
-				? `Use https for ${url.hostname}: http is only allowed for localhost and private hosts`
-				: `Use https for ${url.hostname}: a stored base_url may use http only for localhost. For a private host, pin it with the plugin's baseUrl option`,
-			'INSECURE_BASE_URL',
-		);
+	const host = url.hostname.replace(/\.$/, '');
+	if (pinned) {
+		if (
+			url.protocol === 'http:' &&
+			!PINNED_HTTP_HOSTS.some((pattern) => pattern.test(host))
+		) {
+			throw new QdrantAPIError(
+				`Use https for ${host}: http is only allowed for localhost and private hosts`,
+				'INSECURE_BASE_URL',
+			);
+		}
+	} else {
+		if (url.protocol !== 'https:') {
+			throw new QdrantAPIError(
+				`A stored base_url must use https. For a local or private cluster over http, pin it with the plugin's baseUrl option`,
+				'INSECURE_BASE_URL',
+			);
+		}
+		if (
+			isInternalIpLiteral(host) ||
+			INTERNAL_NAMES.some((pattern) => pattern.test(host))
+		) {
+			throw new QdrantAPIError(
+				`A stored base_url must point to a public host, not ${host}. For a local or private cluster, pin it with the plugin's baseUrl option`,
+				'PRIVATE_BASE_URL',
+			);
+		}
 	}
 	return `${url.origin}${url.pathname.replace(/\/+$/, '')}`;
 }
@@ -87,7 +150,7 @@ export async function makeQdrantRequest<T>(
 	options: {
 		baseUrl: string | undefined;
 		/** True only for a URL pinned in the plugin options, not one stored for an account. */
-		allowPrivateHttp?: boolean;
+		pinned?: boolean;
 		method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 		// unknown: any JSON body; each endpoint's zod input schema has already validated it.
 		body?: unknown;
@@ -98,9 +161,7 @@ export async function makeQdrantRequest<T>(
 	},
 ): Promise<T> {
 	const config: OpenAPIConfig = {
-		BASE: normalizeQdrantBaseUrl(options.baseUrl, {
-			allowPrivateHttp: options.allowPrivateHttp,
-		}),
+		BASE: normalizeQdrantBaseUrl(options.baseUrl, { pinned: options.pinned }),
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
