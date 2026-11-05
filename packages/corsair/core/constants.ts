@@ -248,6 +248,7 @@ export const BaseProviders = [
 	'googlemaps',
 	'googlemeet',
 	'googlesheets',
+	'grafbase',
 	'grafana',
 	'griptape',
 	'groqcloud',
@@ -671,6 +672,7 @@ export const ProviderDisplayNames = {
 	googlemaps: 'Google Maps',
 	googlemeet: 'Google Meet',
 	googlesheets: 'Google Sheets',
+	grafbase: 'Grafbase',
 	grafana: 'Grafana',
 	griptape: 'Griptape',
 	groqcloud: 'GroqCloud',
@@ -1098,6 +1100,7 @@ export type AllProviders =
 	| 'googlemaps'
 	| 'googlemeet'
 	| 'googlesheets'
+	| 'grafbase'
 	| 'grafana'
 	| 'griptape'
 	| 'groqcloud'
