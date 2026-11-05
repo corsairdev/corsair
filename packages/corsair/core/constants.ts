@@ -209,8 +209,10 @@ export const BaseProviders = [
 	'dreamstudio',
 	'dripcel',
 	'dropbox',
+	'enginemailer',
 	'dropboxsign',
 	'dynapictures',
+	'emailoctopus',
 	'emelia',
 	'enigma',
 	'epicgames',
@@ -253,6 +255,7 @@ export const BaseProviders = [
 	'grafana',
 	'griptape',
 	'groqcloud',
+	'gumroad',
 	'habitica',
 	'hackernews',
 	'harvest',
@@ -290,6 +293,7 @@ export const BaseProviders = [
 	'mailchimp',
 	'mailtrap',
 	'marketstack',
+	'mem0',
 	'merriamwebsterdict',
 	'minimax',
 	'monday',
@@ -326,6 +330,7 @@ export const BaseProviders = [
 	'pushbullet',
 	'qdrant',
 	'razorpay',
+	'recallai',
 	'reddit',
 	'reducto',
 	'remoet',
@@ -374,6 +379,7 @@ export const BaseProviders = [
 	'teams',
 	'telegram',
 	'textrazor',
+	'ticketmaster',
 	'ticktick',
 	'tikhub',
 	'timecamp',
@@ -636,8 +642,10 @@ export const ProviderDisplayNames = {
 	dreamstudio: 'DreamStudio',
 	dripcel: 'Dripcel',
 	dropbox: 'Dropbox',
+	enginemailer: 'Enginemailer',
 	dropboxsign: 'Dropbox Sign',
 	dynapictures: 'Dynapictures',
+	emailoctopus: 'EmailOctopus',
 	emelia: 'Emelia',
 	enigma: 'Enigma',
 	epicgames: 'Epic Games',
@@ -680,6 +688,7 @@ export const ProviderDisplayNames = {
 	grafana: 'Grafana',
 	griptape: 'Griptape',
 	groqcloud: 'GroqCloud',
+	gumroad: 'Gumroad',
 	habitica: 'Habitica',
 	hackernews: 'Hacker News',
 	harvest: 'Harvest',
@@ -717,6 +726,7 @@ export const ProviderDisplayNames = {
 	mailchimp: 'Mailchimp',
 	mailtrap: 'Mailtrap',
 	marketstack: 'Marketstack',
+	mem0: 'Mem0',
 	merriamwebsterdict: 'Merriam-Webster Dictionary',
 	minimax: 'MiniMax',
 	monday: 'Monday',
@@ -753,6 +763,7 @@ export const ProviderDisplayNames = {
 	pushbullet: 'Pushbullet',
 	qdrant: 'Qdrant',
 	razorpay: 'Razorpay',
+	recallai: 'Recall.ai',
 	reddit: 'Reddit',
 	reducto: 'Reducto',
 	remoet: 'Remoet',
@@ -800,6 +811,7 @@ export const ProviderDisplayNames = {
 	teams: 'Teams',
 	telegram: 'Telegram',
 	textrazor: 'TextRazor',
+	ticketmaster: 'Ticketmaster',
 	ticktick: 'TickTick',
 	tikhub: 'TikHub',
 	timecamp: 'TimeCamp',
@@ -1067,8 +1079,10 @@ export type AllProviders =
 	| 'dreamstudio'
 	| 'dripcel'
 	| 'dropbox'
+	| 'enginemailer'
 	| 'dropboxsign'
 	| 'dynapictures'
+	| 'emailoctopus'
 	| 'emelia'
 	| 'enigma'
 	| 'epicgames'
@@ -1111,6 +1125,7 @@ export type AllProviders =
 	| 'grafana'
 	| 'griptape'
 	| 'groqcloud'
+	| 'gumroad'
 	| 'habitica'
 	| 'hackernews'
 	| 'harvest'
@@ -1148,6 +1163,7 @@ export type AllProviders =
 	| 'mailchimp'
 	| 'mailtrap'
 	| 'marketstack'
+	| 'mem0'
 	| 'merriamwebsterdict'
 	| 'minimax'
 	| 'monday'
@@ -1184,6 +1200,7 @@ export type AllProviders =
 	| 'pushbullet'
 	| 'qdrant'
 	| 'razorpay'
+	| 'recallai'
 	| 'reddit'
 	| 'reducto'
 	| 'remoet'
@@ -1232,6 +1249,7 @@ export type AllProviders =
 	| 'teams'
 	| 'telegram'
 	| 'textrazor'
+	| 'ticketmaster'
 	| 'ticktick'
 	| 'tikhub'
 	| 'timecamp'

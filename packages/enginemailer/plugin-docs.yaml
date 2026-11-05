@@ -1,0 +1,126 @@
+displayName: Enginemailer
+description: Manage Enginemailer subscribers, categories and custom fields, build and send email campaigns, and read subscriber activity through Enginemailer's N8N API.
+domain: enginemailer.com
+recommendedAuth: api_key
+overviewNote: |
+  **API key.** Copy a key from the Enginemailer portal under your user profile (Manage API keys). The plugin sends it in the `APIKey` header. The same key works for the REST API (`subscribers`, `campaigns`) and the N8N API (`n8n`).
+
+  **Things to know:**
+
+  - **Paid plans.** Free accounts get "Free account is not eligible to use API!" from several calls, and the campaign API is for paid accounts only. Free accounts can insert 50 subscribers a day; paid accounts 10,000.
+  - **Errors.** The REST API answers HTTP 200 even when a call fails and puts the result in `Result.StatusCode`. The plugin throws when that code is not 2xx, with Enginemailer's message ("API Key Not Found!", "Email Existed", "Campaign Not Found").
+  - **Subcategories and custom fields.** Subscriber calls take subcategory ids from `subscribers.getSubcategories` and custom fields as `{ customfield_key, customfield_value }` pairs keyed by `subscribers.getCustomFields`. Dates are `dd MMM yyyy`, checkbox values are joined with `|`, phone numbers carry the country code.
+  - **Batch updates.** `subscribers.batchUpdateSubscribers` takes up to 5,000 subscribers and returns a job `ID`; pass it to `subscribers.batchUpdateStatus` until the status is `Completed`.
+  - **Campaigns.** An account holds at most 200 campaigns. `campaigns.listCampaigns` lists undelivered campaigns only. `campaigns.assignRecipientList` assigns everyone (`FilterBy: 1`) or the subscribers in a set of subcategories (`FilterBy: 2` with `data`). `campaigns.sendCampaign` mails the whole list at once and cannot be undone.
+  - **N8N polling.** `n8n.newSubscribers`, `n8n.unsubscribedSubscribers` and the other subscriber feeds return up to 50 records (`limit`) changed since `lastpollingdate` (`yyyy-MM-dd HH:mm:ss`, UTC). A filter set to `All` is left out of the request.
+  - **N8N lookups.** In live tests on a free account, `n8n.findSubscriber`, `n8n.tagSubscriber`, `n8n.untagSubscriber`, `n8n.deactivateSubscriber` and `n8n.deleteN8nSubscriber` answered "Email not exists." for subscribers the REST API returned, even ones `n8n.addOrUpdateSubscriber` had just created. The `subscribers` operations worked for the same addresses.
+  - **Transactional email.** `n8n.sendEmail` sends one email right away, either `html` with a `subject` or a `template_id`. `substitution_tags` is a list of `{ Key, Value }` pairs and `cc_emails` takes up to 10 addresses.
+  - **No local sync.** Data is read from Enginemailer on each call; nothing is stored in the Corsair database.
+examples:
+  read:
+    path: subscribers.get
+    title: Look up a subscriber
+    args:
+      email: ada@example.com
+  write:
+    path: subscribers.insert
+    title: Add a subscriber
+    args:
+      email: ada@example.com
+      subcategories:
+        - 12
+      customfields:
+        - customfield_key: first_name
+          customfield_value: Ada
+      sourcetype: Website sign-up
+apiExamples:
+  # Entries with enum or union values use `call`: the docs generator's arg
+  # check rejects valid string enums (e.g. 'Append' against Overwrite|Append|Ignore).
+  subscribers.get:
+    email: ada@example.com
+  subscribers.activate:
+    email: ada@example.com
+  subscribers.insert:
+    email: ada@example.com
+    subcategories: [12]
+    customfields:
+      - customfield_key: first_name
+        customfield_value: Ada
+    sourcetype: Website sign-up
+  subscribers.update:
+    email: ada@example.com
+    subcategories: [12, 13]
+    subcategories_type: 1
+    customfields:
+      - customfield_key: branch
+        customfield_value: KL
+    customfield_type: 0
+  subscribers.unsubscribe:
+    email: ada@example.com
+  subscribers.getSubcategories:
+    includeActiveSubscriberCount: true
+  subscribers.updateCategory:
+    categoryID: 0
+    categoryName: Interests
+    subcategories:
+      - subcategoryID: 0
+        subcategoryName: Hiking
+  subscribers.batchUpdateSubscribers:
+    subscribers:
+      - email: ada@example.com
+        customfields:
+          - customfield_key: first_name
+            customfield_value: Ada
+    subcategories: [12]
+    sourcetype: Import
+  subscribers.batchUpdateStatus:
+    ID: 12345
+  subscribers.deleteSubscriber:
+    email: ada@example.com
+  campaigns.createCampaign:
+    CampaignName: November news
+    SenderName: Acme
+    SenderEmail: news@acme.example
+    Subject: What is new in November
+    Content: <p>Hello</p>
+  campaigns.updateCampaign:
+    CampaignID: 2200
+    CampaignName: November news
+    SenderName: Acme
+    SenderEmail: news@acme.example
+    Subject: What is new in November
+    Content: <p>Hello again</p>
+  campaigns.deleteCampaign:
+    campaignid: 2200
+  campaigns.assignRecipientList:
+    call: "{ campaignid: 2200, FilterBy: 2, data: { CategoryList: [12, 13], FilterType: 'OR' } }"
+  campaigns.deleteRecipientList:
+    campaignid: 2200
+  campaigns.pauseCampaign:
+    campaignid: 2200
+  campaigns.sendCampaign:
+    campaignid: 2200
+  n8n.addOrUpdateSubscriber:
+    call: "{ email: 'ada@example.com', subcategories: [12], updatetype: 'Append' }"
+  n8n.deactivateSubscriber:
+    email: ada@example.com
+  n8n.deleteN8nSubscriber:
+    email: ada@example.com
+  n8n.findSubscriber:
+    email: ada@example.com
+  n8n.sendEmail:
+    call: "{ email: 'ada@example.com', type: 'template', template_id: 42, substitution_tags: [{ Key: 'firstname', Value: 'Ada' }] }"
+  n8n.tagSubscriber:
+    email: ada@example.com
+    subcategories: [12]
+  n8n.untagSubscriber:
+    email: ada@example.com
+    subcategories: [12]
+  n8n.newSubscribers:
+    call: "{ source: 'Form', filter_form: 7, limit: 50, lastpollingdate: '2026-11-01 00:00:00' }"
+  n8n.unsubscribedSubscribers:
+    call: "{ filter: 'Campaign', filter_campaign: 2200, limit: 50 }"
+  n8n.taggedSubscribers:
+    call: "{ filter_subcategory: 12, limit: 50 }"
+  n8n.autoresponderTriggered:
+    call: "{ filter_autoresponder: 3, limit: 50 }"

@@ -1784,11 +1784,27 @@
                 ]
               },
               {
+                "group": "EmailOctopus",
+                "pages": [
+                  "plugins/emailoctopus/overview",
+                  "plugins/emailoctopus/api",
+                  "plugins/emailoctopus/database"
+                ]
+              },
+              {
                 "group": "Emelia",
                 "pages": [
                   "plugins/emelia/overview",
                   "plugins/emelia/api",
                   "plugins/emelia/database"
+                ]
+              },
+              {
+                "group": "Enginemailer",
+                "pages": [
+                  "plugins/enginemailer/overview",
+                  "plugins/enginemailer/api",
+                  "plugins/enginemailer/database"
                 ]
               },
               {
@@ -2132,6 +2148,14 @@
                 ]
               },
               {
+                "group": "Gumroad",
+                "pages": [
+                  "plugins/gumroad/overview",
+                  "plugins/gumroad/api",
+                  "plugins/gumroad/database"
+                ]
+              },
+              {
                 "group": "Habitica",
                 "pages": [
                   "plugins/habitica/overview",
@@ -2440,6 +2464,14 @@
                 ]
               },
               {
+                "group": "Mem0",
+                "pages": [
+                  "plugins/mem0/overview",
+                  "plugins/mem0/api",
+                  "plugins/mem0/database"
+                ]
+              },
+              {
                 "group": "Merriam-Webster",
                 "pages": [
                   "plugins/merriamwebsterdict/overview",
@@ -2743,6 +2775,14 @@
                   "plugins/razorpay/api",
                   "plugins/razorpay/database",
                   "plugins/razorpay/webhooks"
+                ]
+              },
+              {
+                "group": "Recall.ai",
+                "pages": [
+                  "plugins/recallai/overview",
+                  "plugins/recallai/api",
+                  "plugins/recallai/database"
                 ]
               },
               {
@@ -3123,6 +3163,14 @@
                   "plugins/textrazor/overview",
                   "plugins/textrazor/api",
                   "plugins/textrazor/database"
+                ]
+              },
+              {
+                "group": "Ticketmaster",
+                "pages": [
+                  "plugins/ticketmaster/overview",
+                  "plugins/ticketmaster/api",
+                  "plugins/ticketmaster/database"
                 ]
               },
               {
