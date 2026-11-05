@@ -105,7 +105,7 @@ describe('makeEnigmaRequest', () => {
 			makeEnigmaRequest(API_KEY, { query: '{ search { id } }' }),
 		);
 		expect(error.status).toBe(401);
-		expect(error.message).toBe('Enigma 401: Invalid API key');
+		expect(error.message).toBe('Enigma 401: Missing or invalid API key');
 	});
 
 	it('treats a 429 as a rate limit, reads Retry-After and makes one attempt', async () => {

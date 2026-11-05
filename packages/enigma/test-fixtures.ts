@@ -175,6 +175,9 @@ export const graphQLErrorResponse = {
 	data: null,
 };
 
+// The real body api.enigma.com returns for a missing or bad x-api-key.
 export const badKeyResponse = {
-	message: 'Invalid API key',
+	error_message: 'Missing or invalid API key',
+	error_code: 'UNAUTHORIZED',
+	retryable: false,
 };

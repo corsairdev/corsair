@@ -27,6 +27,11 @@ function readMessage(body: unknown): string | undefined {
 	if (typeof graphQLMessage === 'string' && graphQLMessage.length > 0) {
 		return graphQLMessage;
 	}
+	// Enigma's gateway answers 401/402 with { error_message, error_code, retryable }.
+	const gatewayMessage = record?.error_message;
+	if (typeof gatewayMessage === 'string' && gatewayMessage.length > 0) {
+		return gatewayMessage;
+	}
 	const statusMessage = record?.message;
 	if (typeof statusMessage === 'string' && statusMessage.length > 0) {
 		return statusMessage;
