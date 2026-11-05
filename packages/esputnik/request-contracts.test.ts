@@ -23,6 +23,7 @@ type ExpectedContract = {
 	path: string;
 	options: {
 		method?: string;
+		accept?: string;
 		query?: Record<string, string | number | boolean | undefined>;
 		body?: Record<string, unknown>;
 	};
@@ -56,6 +57,7 @@ function validOutput(operation: string): unknown {
 		{},
 		{ id: 1 },
 		{ active: true },
+		{ results: [] },
 	]) {
 		if (schema.safeParse(candidate).success) return candidate;
 	}

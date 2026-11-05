@@ -13,6 +13,50 @@ const typedRequest = <K extends keyof EsputnikEndpointOutputs>(
 	options: RequestOptions,
 ) => makeEsputnikRequest<EsputnikEndpointOutputs[K]>(path, ctx.key, options);
 
+type ListOperation = {
+	[K in keyof EsputnikEndpointOutputs]: EsputnikEndpointOutputs[K] extends Array<unknown>
+		? K
+		: never;
+}[keyof EsputnikEndpointOutputs];
+type ListItem<K extends ListOperation> = EsputnikEndpointOutputs[K][number];
+
+// Some list routes send a single match as a bare object (seen live on the
+// email template search) and nothing as an empty body. Always return an array.
+function toList<T>(value: T[] | T | undefined | null): T[] {
+	if (value === undefined || value === null) return [];
+	return Array.isArray(value) ? value : [value];
+}
+
+const listRequest = async <K extends ListOperation>(
+	_operation: K,
+	ctx: { key: string },
+	path: string,
+	options: RequestOptions,
+): Promise<ListItem<K>[]> =>
+	toList(
+		await makeEsputnikRequest<ListItem<K>[] | ListItem<K> | undefined>(
+			path,
+			ctx.key,
+			options,
+		),
+	);
+
+// `{ results }` envelopes (contact emails, the send calls) hold an object
+// for one result and an array for several; always return an array.
+type ResultsEnvelope = { results?: JsonValue } & Record<string, JsonValue>;
+const resultsRequest = async (
+	ctx: { key: string },
+	path: string,
+	options: RequestOptions,
+) => {
+	const envelope = await makeEsputnikRequest<ResultsEnvelope | undefined>(
+		path,
+		ctx.key,
+		options,
+	);
+	return { ...envelope, results: toList(envelope?.results) };
+};
+
 // String path values are encoded so `/`, `?` or `#` cannot change the route.
 const segment = (value: string | number): string =>
 	encodeURIComponent(String(value));
@@ -98,7 +142,7 @@ export const contactEndpoints: Pick<
 			query: input,
 		}),
 	searchContacts: (ctx, input) =>
-		typedRequest('searchContacts', ctx, '/api/v1/contacts', { query: input }),
+		listRequest('searchContacts', ctx, '/api/v1/contacts', { query: input }),
 	subscribeContact: (ctx, input) =>
 		typedRequest('subscribeContact', ctx, '/api/v1/contact/subscribe', {
 			method: 'POST',
@@ -122,7 +166,7 @@ export const contactEndpoints: Pick<
 			{},
 		),
 	getContactEmails: (ctx, input) =>
-		typedRequest('getContactEmails', ctx, '/api/v1/contacts/email', {
+		resultsRequest(ctx, '/api/v1/contacts/email', {
 			query: input,
 		}),
 	addToUnsubscribed: (ctx, input) =>
@@ -139,7 +183,7 @@ export const contactEndpoints: Pick<
 		),
 	getGroupContacts: (ctx, input) => {
 		const { id, ...query } = input;
-		return typedRequest(
+		return listRequest(
 			'getGroupContacts',
 			ctx,
 			`/api/v1/group/${id}/contacts`,
@@ -165,9 +209,9 @@ export const contactEndpoints: Pick<
 		);
 	},
 	searchGroups: (ctx, input) =>
-		typedRequest('searchGroups', ctx, '/api/v1/groups', { query: input }),
+		listRequest('searchGroups', ctx, '/api/v1/groups', { query: input }),
 	searchWorkflows: (ctx, input) =>
-		typedRequest('searchWorkflows', ctx, '/api/v1/workflows', { query: input }),
+		listRequest('searchWorkflows', ctx, '/api/v1/workflows', { query: input }),
 	getContactIdByToken: (ctx, input) =>
 		typedRequest(
 			'getContactIdByToken',
@@ -176,7 +220,7 @@ export const contactEndpoints: Pick<
 			{},
 		),
 	getContactSubscriptionCategories: (ctx, input) =>
-		typedRequest(
+		listRequest(
 			'getContactSubscriptionCategories',
 			ctx,
 			`/api/v1/contact/${input.id}/subscriptions`,
@@ -193,7 +237,7 @@ export const contactEndpoints: Pick<
 	},
 	contactRecoms: (ctx, input) => {
 		const { dataSourceId, ...query } = input;
-		return typedRequest(
+		return listRequest(
 			'contactRecoms',
 			ctx,
 			`/api/v2/contacts/recoms/${dataSourceId}`,
@@ -203,13 +247,13 @@ export const contactEndpoints: Pick<
 	getAdditionalFields: (ctx) =>
 		typedRequest('getAdditionalFields', ctx, '/api/v1/additionalfields', {}),
 	getSubscriptionCategories: (ctx) =>
-		typedRequest('getSubscriptionCategories', ctx, '/api/v1/subscriptions', {}),
+		listRequest('getSubscriptionCategories', ctx, '/api/v1/subscriptions', {}),
 	contactActivity: (ctx, input) =>
-		typedRequest('contactActivity', ctx, '/api/v2/contacts/activity', {
+		listRequest('contactActivity', ctx, '/api/v2/contacts/activity', {
 			query: input,
 		}),
 	contactMessages: (ctx, input) =>
-		typedRequest('contactMessages', ctx, '/api/v2/contacts/messages', {
+		listRequest('contactMessages', ctx, '/api/v2/contacts/messages', {
 			query: input,
 		}),
 	getTokenActivated: (ctx, input) =>
@@ -272,7 +316,7 @@ export const emailEndpoints: Pick<
 	| 'sendEmail'
 > = {
 	searchEmails: (ctx, input) =>
-		typedRequest('searchEmails', ctx, '/api/v1/messages/email', {
+		listRequest('searchEmails', ctx, '/api/v1/messages/email', {
 			query: input,
 		}),
 	getEmailMessageViewLink: (ctx, input) =>
@@ -317,7 +361,7 @@ export const emailEndpoints: Pick<
 			{ method: 'DELETE' },
 		),
 	sendEmail: (ctx, input) =>
-		typedRequest('sendEmail', ctx, '/api/v1/message/email', {
+		resultsRequest(ctx, '/api/v1/message/email', {
 			method: 'POST',
 			body: input,
 		}),
@@ -334,7 +378,7 @@ export const mobilePushEndpoints: Pick<
 	| 'deleteTranslatedMobilePushMessage'
 > = {
 	searchMobilePushMessages: (ctx, input) =>
-		typedRequest(
+		listRequest(
 			'searchMobilePushMessages',
 			ctx,
 			'/api/v1/messages/mobilepush',
@@ -398,7 +442,7 @@ export const viberEndpoints: Pick<
 	| 'sendViber'
 > = {
 	searchViberMessages: (ctx, input) =>
-		typedRequest('searchViberMessages', ctx, '/api/v1/messages/viber', {
+		listRequest('searchViberMessages', ctx, '/api/v1/messages/viber', {
 			query: input,
 		}),
 	addViberMessage: (ctx, input) =>
@@ -446,7 +490,7 @@ export const viberEndpoints: Pick<
 			{ method: 'DELETE' },
 		),
 	sendViber: (ctx, input) =>
-		typedRequest('sendViber', ctx, '/api/v1/message/viber', {
+		resultsRequest(ctx, '/api/v1/message/viber', {
 			method: 'POST',
 			body: input,
 		}),
@@ -463,7 +507,7 @@ export const appInboxEndpoints: Pick<
 	| 'deleteTranslatedAppInboxMessage'
 > = {
 	searchAppInboxMessages: (ctx, input) =>
-		typedRequest('searchAppInboxMessages', ctx, '/api/v1/messages/appinbox', {
+		listRequest('searchAppInboxMessages', ctx, '/api/v1/messages/appinbox', {
 			query: input,
 		}),
 	addAppInboxMessage: (ctx, input) =>
@@ -523,12 +567,9 @@ export const telegramBotEndpoints: Pick<
 	| 'deleteTranslatedTelegramMessage'
 > = {
 	searchTelegramBotMessages: (ctx, input) =>
-		typedRequest(
-			'searchTelegramBotMessages',
-			ctx,
-			'/api/v1/messages/telegram',
-			{ query: input },
-		),
+		listRequest('searchTelegramBotMessages', ctx, '/api/v1/messages/telegram', {
+			query: input,
+		}),
 	addTelegramBotMessage: (ctx, input) =>
 		typedRequest('addTelegramBotMessage', ctx, '/api/v1/messages/telegram', {
 			method: 'POST',
@@ -587,7 +628,7 @@ export const smsEndpoints: Pick<
 	| 'sendSms'
 > = {
 	searchSmsMessages: (ctx, input) =>
-		typedRequest('searchSmsMessages', ctx, '/api/v1/messages/sms', {
+		listRequest('searchSmsMessages', ctx, '/api/v1/messages/sms', {
 			query: input,
 		}),
 	addSmsMessage: (ctx, input) =>
@@ -627,7 +668,7 @@ export const smsEndpoints: Pick<
 			{ method: 'DELETE' },
 		),
 	sendSms: (ctx, input) =>
-		typedRequest('sendSms', ctx, '/api/v1/message/sms', {
+		resultsRequest(ctx, '/api/v1/message/sms', {
 			method: 'POST',
 			body: input,
 		}),
@@ -638,7 +679,7 @@ export const broadcastEndpoints: Pick<
 	'getBroadcasts' | 'createBroadcast' | 'getBroadcast' | 'cancelBroadcast'
 > = {
 	getBroadcasts: (ctx, input) =>
-		typedRequest('getBroadcasts', ctx, '/api/v1/broadcasts', { query: input }),
+		listRequest('getBroadcasts', ctx, '/api/v1/broadcasts', { query: input }),
 	createBroadcast: (ctx, input) =>
 		typedRequest('createBroadcast', ctx, '/api/v1/broadcast', {
 			method: 'POST',
@@ -665,9 +706,9 @@ export const interfaceEndpoints: Pick<
 	'getSmsInterfaces' | 'getEmailInterfaces'
 > = {
 	getSmsInterfaces: (ctx) =>
-		typedRequest('getSmsInterfaces', ctx, '/api/v1/interfaces/sms', {}),
+		listRequest('getSmsInterfaces', ctx, '/api/v1/interfaces/sms', {}),
 	getEmailInterfaces: (ctx) =>
-		typedRequest('getEmailInterfaces', ctx, '/api/v1/interfaces/email', {}),
+		listRequest('getEmailInterfaces', ctx, '/api/v1/interfaces/email', {}),
 };
 
 export const messageEndpoints: Pick<
@@ -676,12 +717,10 @@ export const messageEndpoints: Pick<
 > = {
 	sendPreparedMessage: (ctx, input) => {
 		const { id, ...body } = input;
-		return typedRequest(
-			'sendPreparedMessage',
-			ctx,
-			`/api/v1/message/${id}/smartsend`,
-			{ method: 'POST', body },
-		);
+		return resultsRequest(ctx, `/api/v1/message/${id}/smartsend`, {
+			method: 'POST',
+			body,
+		});
 	},
 	updateInteractionStatus: (ctx, input) => {
 		const { interactionId, ...body } = input;
@@ -704,18 +743,18 @@ export const siteEndpoints: Pick<
 	| 'deleteWebPushDomain'
 	| 'getWebPushScript'
 > = {
-	getDomains: async (ctx) =>
-		(await makeEsputnikRequest<JsonValue[] | undefined>(
-			'/api/v1/site/domains',
-			ctx.key,
-			{},
-		)) ?? [],
+	getDomains: (ctx) =>
+		listRequest('getDomains', ctx, '/api/v1/site/domains', {}),
 	createDomain: (ctx, input) =>
 		typedRequest('createDomain', ctx, '/api/v1/site/domains', {
 			method: 'POST',
 			body: input,
 		}),
-	getScript: (ctx) => typedRequest('getScript', ctx, '/api/v1/site/script', {}),
+	// The script is served as text/plain; asking for JSON gets a 406.
+	getScript: (ctx) =>
+		typedRequest('getScript', ctx, '/api/v1/site/script', {
+			accept: 'text/plain',
+		}),
 	getWebPushDomains: (ctx) =>
 		typedRequest('getWebPushDomains', ctx, '/api/v1/site/webpush/domains', {}),
 	addWebPushDomain: (ctx, input) =>

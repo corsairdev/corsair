@@ -759,7 +759,9 @@
   },
   "site.getScript": {
     "path": "/api/v1/site/script",
-    "options": {}
+    "options": {
+      "accept": "text/plain"
+    }
   },
   "site.getWebPushDomains": {
     "path": "/api/v1/site/webpush/domains",

@@ -16,12 +16,17 @@ export type JsonValue =
 const ProviderJsonSchema: z.ZodType<JsonValue> = z.json();
 const JsonObjectSchema = z.record(z.string(), ProviderJsonSchema);
 const JsonArraySchema = z.array(ProviderJsonSchema);
+// `{ results: [...] }` envelopes (contact emails, the send calls). The
+// handlers turn a single-object `results` into a one-element array.
+const ResultsSchema = z
+	.object({ results: JsonArraySchema })
+	.catchall(ProviderJsonSchema);
 
-// Mutations answer with an empty body, a bare string or a small JSON value,
-// depending on the route and the response Content-Type. The shared HTTP
-// client turns an empty JSON body into `undefined` and an empty text body
-// into ''. Accept all of them so a change the provider already applied is
-// never reported as a failure.
+// Mutations answer 200 with no body (contact deletes and updates) or with a
+// sentence such as "Email with id='1' has been deleted" labelled
+// application/json, which the shared HTTP client cannot parse and returns as
+// `undefined`. Accept any JSON value or nothing so a change the provider
+// already applied is never reported as a failure.
 const AckOutputSchema = ProviderJsonSchema.optional();
 
 // Provider request objects intentionally allow documented extension fields;
@@ -478,7 +483,7 @@ export const EsputnikEndpointOutputSchemas = {
 	contactsBulkUpdate: JsonObjectSchema,
 	fileContactsBulkUpdate: JsonObjectSchema,
 	getImportSessionStatus: JsonObjectSchema,
-	getContactEmails: JsonObjectSchema,
+	getContactEmails: ResultsSchema,
 	addToUnsubscribed: AckOutputSchema,
 	deleteFromUnsubscribed: AckOutputSchema,
 	getGroupContacts: JsonArraySchema,
@@ -487,8 +492,8 @@ export const EsputnikEndpointOutputSchemas = {
 	searchGroups: JsonArraySchema,
 	searchWorkflows: JsonArraySchema,
 	getContactIdByToken: IdResultSchema,
-	// Documented as one category object; accept a list as well.
-	getContactSubscriptionCategories: ProviderJsonSchema,
+	// Documented as one object; live it is a list ([] with no subscriptions).
+	getContactSubscriptionCategories: JsonArraySchema,
 	changeContactSubscriptionCategories: AckOutputSchema,
 	contactRecoms: JsonArraySchema,
 	getAdditionalFields: JsonObjectSchema,
@@ -512,7 +517,7 @@ export const EsputnikEndpointOutputSchemas = {
 	deleteEmail: AckOutputSchema,
 	updateTranslatedMessage: AckOutputSchema,
 	deleteTranslatedEmail: AckOutputSchema,
-	sendEmail: JsonObjectSchema,
+	sendEmail: ResultsSchema,
 
 	searchMobilePushMessages: JsonArraySchema,
 	addMobilePushMessage: IdResultSchema,
@@ -529,7 +534,7 @@ export const EsputnikEndpointOutputSchemas = {
 	deleteViberMessage: AckOutputSchema,
 	updateTranslatedViberMessage: AckOutputSchema,
 	deleteTranslatedViberMessage: AckOutputSchema,
-	sendViber: JsonObjectSchema,
+	sendViber: ResultsSchema,
 
 	searchAppInboxMessages: JsonArraySchema,
 	addAppInboxMessage: IdResultSchema,
@@ -554,7 +559,7 @@ export const EsputnikEndpointOutputSchemas = {
 	deleteSmsMessage: AckOutputSchema,
 	updateTranslatedSmsMessage: AckOutputSchema,
 	deleteTranslatedSmsMessage: AckOutputSchema,
-	sendSms: JsonObjectSchema,
+	sendSms: ResultsSchema,
 
 	getBroadcasts: JsonArraySchema,
 	createBroadcast: JsonObjectSchema,
@@ -565,11 +570,10 @@ export const EsputnikEndpointOutputSchemas = {
 	getEmailInterfaces: JsonArraySchema,
 
 	// `results` is an object for one recipient and an array for several.
-	sendPreparedMessage: JsonObjectSchema,
+	sendPreparedMessage: ResultsSchema,
 	updateInteractionStatus: AckOutputSchema,
 
-	// eSputnik sends an empty body when no domain is registered; the handler
-	// returns [] in that case.
+	// The docs say the body is empty when no domain is registered (live: []).
 	getDomains: JsonArraySchema,
 	createDomain: JsonObjectSchema,
 	getScript: z.string(),
@@ -587,7 +591,7 @@ export const EsputnikEndpointOutputSchemas = {
 
 	// Documented as a JSON string of codes.
 	getPromocodes: ProviderJsonSchema,
-	// Documented without a response schema.
+	// Documented without a response schema; an account with no codes gets [].
 	getPromocodesCount: AckOutputSchema,
 	insertPromocodes: AckOutputSchema,
 

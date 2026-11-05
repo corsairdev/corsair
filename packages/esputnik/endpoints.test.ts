@@ -258,4 +258,38 @@ describe('eSputnik routes', () => {
 			{ domain: 'example.com' },
 		]);
 	});
+
+	it('turns a single match sent as a bare object into a list', async () => {
+		// messages/email search answered `{ "id": 4768507, ... }` live when
+		// exactly one template matched.
+		const template = { id: 4768507, name: 'Welcome' };
+		request.mockResolvedValueOnce(template);
+		await expect(
+			emailEndpoints.searchEmails(ctx, { search: 'Welcome' }),
+		).resolves.toEqual([template]);
+		request.mockResolvedValueOnce([template]);
+		await expect(emailEndpoints.searchEmails(ctx, {})).resolves.toEqual([
+			template,
+		]);
+		request.mockResolvedValueOnce(undefined);
+		await expect(contactEndpoints.searchContacts(ctx, {})).resolves.toEqual([]);
+	});
+
+	it('returns results envelopes with an array of results', async () => {
+		// Live: {"results":{"contactId":3669451280,"email":"..."}}
+		const result = { contactId: 1, email: 'person@example.com' };
+		request.mockResolvedValueOnce({ results: result });
+		await expect(
+			contactEndpoints.getContactEmails(ctx, { ids: '1' }),
+		).resolves.toEqual({ results: [result] });
+		request.mockResolvedValueOnce({
+			results: [{ status: 'OK' }, { status: 'ERROR' }],
+		});
+		await expect(
+			messageEndpoints.sendPreparedMessage(ctx, {
+				id: 7,
+				recipients: [{ locator: 'person@example.com' }],
+			}),
+		).resolves.toEqual({ results: [{ status: 'OK' }, { status: 'ERROR' }] });
+	});
 });

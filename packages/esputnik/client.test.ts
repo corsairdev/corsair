@@ -46,6 +46,42 @@ describe('eSputnik transport', () => {
 		});
 	});
 
+	it('sends no Content-Type without a body and can override Accept', async () => {
+		// A GET with Content-Type: application/json gets 415 from site/script.
+		mockRequest.mockResolvedValue('<script></script>');
+		await makeEsputnikRequest('/api/v1/site/script', 'secret', {
+			accept: 'text/plain',
+		});
+
+		const [config, options] = lastCall();
+		expect(Object.keys(config.HEADERS ?? {})).toEqual(['Authorization']);
+		expect(options.headers).toEqual({ Accept: 'text/plain' });
+		expect(options.body).toBeUndefined();
+	});
+
+	it('keeps the provider explanation in error messages', async () => {
+		mockRequest.mockRejectedValue(
+			new ApiError(
+				{ method: 'GET', url: '/api/v2/contacts/recoms/1' },
+				{
+					url: `${ESPUTNIK_API_BASE}/api/v2/contacts/recoms/1`,
+					ok: false,
+					status: 404,
+					statusText: 'Not Found',
+					body: 'Contact not found',
+				},
+				'Not Found',
+			),
+		);
+
+		await expect(
+			makeEsputnikRequest('/api/v2/contacts/recoms/1', 'secret'),
+		).rejects.toMatchObject({
+			status: 404,
+			message: 'Not Found: Contact not found',
+		});
+	});
+
 	it('forwards DELETE request bodies', async () => {
 		mockRequest.mockResolvedValue({});
 		await makeEsputnikRequest('/api/v1/past_events', 'secret', {

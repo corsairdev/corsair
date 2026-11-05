@@ -15,6 +15,15 @@ export class EsputnikAPIError extends Error {
 
 export const ESPUTNIK_API_BASE = 'https://esputnik.com';
 
+// eSputnik explains most errors in a short plain-text body ("Contact not
+// found", "Group '42' is not static"). Keep it in the message so callers see
+// why a request failed, not only the status text.
+function withProviderDetail(message: string, body: unknown): string {
+	if (typeof body !== 'string') return message;
+	const detail = body.trim().slice(0, 500);
+	return detail && detail !== message ? `${message}: ${detail}` : message;
+}
+
 export async function makeEsputnikRequest<T>(
 	endpoint: string,
 	apiKey: string,
@@ -24,9 +33,12 @@ export async function makeEsputnikRequest<T>(
 		// them; provider extension keys are preserved as opaque JSON values.
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | undefined>;
+		// Overrides the default `Accept: application/json` for routes that
+		// answer in another format (the tracking script is text/plain).
+		accept?: string;
 	} = {},
 ): Promise<T> {
-	const { method = 'GET', body, query } = options;
+	const { method = 'GET', body, query, accept } = options;
 
 	const config: OpenAPIConfig = {
 		BASE: ESPUTNIK_API_BASE,
@@ -34,8 +46,9 @@ export async function makeEsputnikRequest<T>(
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
 		TOKEN: undefined,
+		// No Content-Type here: the shared client adds it only when a body is
+		// sent. eSputnik answers 415 to a GET that carries one (site/script).
 		HEADERS: {
-			'Content-Type': 'application/json',
 			Authorization: `Basic ${Buffer.from(`api_key:${apiKey}`).toString('base64')}`,
 		},
 	};
@@ -46,6 +59,7 @@ export async function makeEsputnikRequest<T>(
 		body: method === 'GET' ? undefined : body,
 		mediaType: 'application/json; charset=utf-8',
 		query: method === 'GET' || method === 'DELETE' ? query : undefined,
+		headers: accept ? { Accept: accept } : undefined,
 	};
 
 	try {
@@ -53,7 +67,7 @@ export async function makeEsputnikRequest<T>(
 	} catch (error) {
 		if (error instanceof ApiError) {
 			throw new EsputnikAPIError(
-				error.message,
+				withProviderDetail(error.message, error.body),
 				error.status,
 				undefined,
 				error.retryAfter,

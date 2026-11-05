@@ -8,8 +8,14 @@ const plugin = esputnik();
 if (!plugin.endpoints) throw new Error('eSputnik endpoints are missing');
 const endpoints = plugin.endpoints;
 
-function respondWith(body: string, contentType: string, status = 200) {
-	const headers = { 'Content-Type': contentType };
+function respondWith(
+	body: string | null,
+	contentType: string | null,
+	status = 200,
+) {
+	const headers: Record<string, string> = contentType
+		? { 'Content-Type': contentType }
+		: {};
 	return jest
 		.spyOn(global, 'fetch')
 		.mockResolvedValue(new Response(body, { status, headers }));
@@ -23,10 +29,18 @@ describe('eSputnik mutations with empty or text responses', () => {
 	afterEach(() => jest.restoreAllMocks());
 
 	it.each([
+		// What the live API sent for contact deletes on 2026-11-05.
+		['no body and no Content-Type', null, null],
 		['an empty JSON body', '', 'application/json; charset=UTF-8'],
 		['an empty text body', '', 'text/plain'],
 		['a JSON string', '"OK"', 'application/json; charset=UTF-8'],
-	])(
+		// What the live API sent for deleteEmail and other acknowledgements.
+		[
+			'a sentence labelled as JSON',
+			"Email with id='4768507' has been deleted",
+			'application/json;charset=UTF-8',
+		],
+	] as const)(
 		'deleteContactByExternalCustomerId succeeds on %s',
 		async (_label, body, type) => {
 			const fetchSpy = respondWith(body, type);
