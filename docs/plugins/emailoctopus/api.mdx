@@ -67,7 +67,7 @@ await corsair.emailoctopus.api.campaigns.get({ campaign_id: '00000000-0000-0000-
 | `status` | `string` | No | — |
 | `name` | `string` | No | — |
 | `subject` | `string` | No | — |
-| `preview_text` | `string` | No | — |
+| `preview_text` | `string | null` | No | — |
 | `to` | `string[]` | No | — |
 | `from` | `object` | No | — |
 | `content` | `object` | No | — |
@@ -367,11 +367,9 @@ await corsair.emailoctopus.api.contacts.batch({ list_id: '00000000-0000-0000-000
 {
   id: string,
   email_address?: string,
-  fields?: {
-  },
-  tags?: {
-  },
-  status?: pending | subscribed | unsubscribed
+  fields?: Record<string, string | number | string[] | null>,
+  tags?: Record<string, boolean>,
+  status?: 'pending' | 'subscribed' | 'unsubscribed'
 }[]
 ```
 </Accordion>
@@ -395,8 +393,7 @@ await corsair.emailoctopus.api.contacts.batch({ list_id: '00000000-0000-0000-000
   data?: {
     id?: string,
     email_address?: string,
-    fields?: {
-    },
+    fields?: Record<string, string | number | string[] | null>,
     tags?: string[],
     status?: string,
     created_at?: string,
@@ -445,14 +442,13 @@ await corsair.emailoctopus.api.contacts.create({ list_id: '00000000-0000-0000-00
 | `email_address` | `string` | Yes | — |
 | `fields` | `object` | No | — |
 | `tags` | `string[]` | No | — |
-| `status` | `pending \| subscribed \| unsubscribed` | No | — |
+| `status` | `'pending' \| 'subscribed' \| 'unsubscribed'` | No | — |
 
 <AccordionGroup>
 <Accordion title="fields full type">
 
 ```ts
-{
-}
+Record<string, string | number | string[] | null>
 ```
 </Accordion>
 </AccordionGroup>
@@ -475,8 +471,7 @@ await corsair.emailoctopus.api.contacts.create({ list_id: '00000000-0000-0000-00
 <Accordion title="fields full type">
 
 ```ts
-{
-}
+Record<string, string | number | string[] | null>
 ```
 </Accordion>
 </AccordionGroup>
@@ -548,8 +543,7 @@ await corsair.emailoctopus.api.contacts.get({ list_id: '00000000-0000-0000-0000-
 <Accordion title="fields full type">
 
 ```ts
-{
-}
+Record<string, string | number | string[] | null>
 ```
 </Accordion>
 </AccordionGroup>
@@ -578,7 +572,7 @@ await corsair.emailoctopus.api.contacts.list({ list_id: '00000000-0000-0000-0000
 | `limit` | `number` | No | Page size. EmailOctopus returns at most 100. |
 | `starting_after` | `string` | No | Cursor from paging.next.starting_after. Pass it back unchanged. |
 | `tag` | `string` | No | — |
-| `status` | `pending \| subscribed \| unsubscribed` | No | — |
+| `status` | `'pending' \| 'subscribed' \| 'unsubscribed'` | No | — |
 | `created_at.lte` | `string` | No | — |
 | `created_at.gte` | `string` | No | — |
 | `last_updated_at.lte` | `string` | No | — |
@@ -600,8 +594,7 @@ await corsair.emailoctopus.api.contacts.list({ list_id: '00000000-0000-0000-0000
 {
   id?: string,
   email_address?: string,
-  fields?: {
-  },
+  fields?: Record<string, string | number | string[] | null>,
   tags?: string[],
   status?: string,
   created_at?: string,
@@ -648,22 +641,20 @@ await corsair.emailoctopus.api.contacts.update({ list_id: '00000000-0000-0000-00
 | `email_address` | `string` | No | — |
 | `fields` | `object` | No | — |
 | `tags` | `object` | No | — |
-| `status` | `pending \| subscribed \| unsubscribed` | No | — |
+| `status` | `'pending' \| 'subscribed' \| 'unsubscribed'` | No | — |
 
 <AccordionGroup>
 <Accordion title="fields full type">
 
 ```ts
-{
-}
+Record<string, string | number | string[] | null>
 ```
 </Accordion>
 
 <Accordion title="tags full type">
 
 ```ts
-{
-}
+Record<string, boolean>
 ```
 </Accordion>
 </AccordionGroup>
@@ -686,8 +677,7 @@ await corsair.emailoctopus.api.contacts.update({ list_id: '00000000-0000-0000-00
 <Accordion title="fields full type">
 
 ```ts
-{
-}
+Record<string, string | number | string[] | null>
 ```
 </Accordion>
 </AccordionGroup>
@@ -716,22 +706,20 @@ await corsair.emailoctopus.api.contacts.upsert({ list_id: '00000000-0000-0000-00
 | `email_address` | `string` | Yes | — |
 | `fields` | `object` | No | — |
 | `tags` | `object` | No | — |
-| `status` | `pending \| subscribed \| unsubscribed` | No | — |
+| `status` | `'pending' \| 'subscribed' \| 'unsubscribed'` | No | — |
 
 <AccordionGroup>
 <Accordion title="fields full type">
 
 ```ts
-{
-}
+Record<string, string | number | string[] | null>
 ```
 </Accordion>
 
 <Accordion title="tags full type">
 
 ```ts
-{
-}
+Record<string, boolean>
 ```
 </Accordion>
 </AccordionGroup>
@@ -754,8 +742,7 @@ await corsair.emailoctopus.api.contacts.upsert({ list_id: '00000000-0000-0000-00
 <Accordion title="fields full type">
 
 ```ts
-{
-}
+Record<string, string | number | string[] | null>
 ```
 </Accordion>
 </AccordionGroup>
@@ -788,13 +775,13 @@ await corsair.emailoctopus.api.fields.create({ list_id: '00000000-0000-0000-0000
   list_id: string,
   label: string,
   tag: string,
-  type: text | number | date,
+  type: 'text' | 'number' | 'date',
   fallback?: string | null
 } | {
   list_id: string,
   label: string,
   tag: string,
-  type: choice_single | choice_multiple,
+  type: 'choice_single' | 'choice_multiple',
   choices: string[],
   fallback?: string | null
 }
@@ -811,7 +798,7 @@ await corsair.emailoctopus.api.fields.create({ list_id: '00000000-0000-0000-0000
 | `tag` | `string` | No | — |
 | `type` | `string` | No | — |
 | `choices` | `string[]` | No | — |
-| `fallback` | `string` | No | — |
+| `fallback` | `string | null` | No | — |
 
 
 
@@ -862,8 +849,8 @@ await corsair.emailoctopus.api.fields.update({ list_id: '00000000-0000-0000-0000
 | `list_id` | `string` | Yes | — |
 | `label` | `string` | Yes | — |
 | `tag` | `string` | Yes | — |
-| `type` | `text \| number \| date` | Yes | — |
-| `fallback` | `string` | No | — |
+| `type` | `'text' \| 'number' \| 'date'` | Yes | — |
+| `fallback` | `string | null` | No | — |
 
 
 
@@ -875,7 +862,7 @@ await corsair.emailoctopus.api.fields.update({ list_id: '00000000-0000-0000-0000
 | `tag` | `string` | No | — |
 | `type` | `string` | No | — |
 | `choices` | `string[]` | No | — |
-| `fallback` | `string` | No | — |
+| `fallback` | `string | null` | No | — |
 
 
 

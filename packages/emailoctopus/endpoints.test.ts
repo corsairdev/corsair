@@ -222,11 +222,23 @@ describe('emailoctopus endpoints', () => {
 	});
 
 	it('creates, updates and deletes fields', async () => {
-		respond(field, 201);
-		await invoke(Fields.create, {
+		respond(
+			{
+				label: 'Hometown',
+				tag: 'Hometown',
+				type: 'choice_single',
+				choices: ['London', 'Paris'],
+			},
+			201,
+		);
+		const created = await invoke(Fields.create, {
 			list_id: 'list-1',
 			label: 'Hometown',
 			tag: 'Hometown',
+			type: 'choice_single',
+			choices: ['London', 'Paris'],
+		});
+		expect(created).toMatchObject({
 			type: 'choice_single',
 			choices: ['London', 'Paris'],
 		});

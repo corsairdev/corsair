@@ -67,7 +67,7 @@ Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See 
 <Tabs>
 <Tab title="API Key (Recommended)">
 
-No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+No setup call is required to register the plugin. A request with no saved key throws `AuthMissingError`. When a connect link can be minted, that error includes `connectUrl`. Redirect the tenant to `connectUrl`, or show `error.message`.
 
 ```ts
 emailoctopus()
