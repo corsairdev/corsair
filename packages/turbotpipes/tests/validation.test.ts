@@ -51,6 +51,19 @@ describe('output validation through createCorsair', () => {
 		);
 	});
 
+	it('warns instead of throwing when a write already went through', async () => {
+		const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+		// A delete answered with a non-object body does not match its schema.
+		pipes.answers['DELETE /api/v1/org/acme'] = { body: ['unexpected'] };
+		await expect(api().orgs.delete({ org_handle: 'acme' })).resolves.toEqual([
+			'unexpected',
+		]);
+		expect(warn).toHaveBeenCalledWith(
+			expect.stringMatching(/orgs\.delete: Turbot Pipes returned a response/),
+		);
+		warn.mockRestore();
+	});
+
 	it('returns the original response, keeping provider fields', async () => {
 		pipes.answers['GET /api/v1/user/bob'] = {
 			body: {

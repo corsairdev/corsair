@@ -447,8 +447,7 @@ apiExamples:
   users.updateUserPreferences:
     user_handle: "my-user"
   users.updateUserWorkspace:
-    user_handle: "my-user"
-    workspace_handle: "dev"
+    call: "{ user_handle: 'my-user', workspace_handle: 'dev', desired_state: 'disabled' }"
   workspaces.createOrgWorkspaceAggregator:
     org_handle: "my-org"
     workspace_handle: "dev"

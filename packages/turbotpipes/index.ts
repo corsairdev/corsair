@@ -1733,9 +1733,17 @@ function withSchemaValidation<
 				const response = await handler(ctx, parsedInput);
 				const result = schema.output.safeParse(response);
 				if (!result.success) {
-					throw new Error(
-						`turbotpipes ${path}: Turbot Pipes returned a response that does not match the expected shape.\n${z.prettifyError(result.error)}`,
-					);
+					const message = `turbotpipes ${path}: Turbot Pipes returned a response that does not match the expected shape.\n${z.prettifyError(result.error)}`;
+					// A write or delete has already taken effect upstream by now.
+					// Throwing would report a failure for a change that happened
+					// and invite a retry that duplicates it, so only reads throw.
+					const meta: Record<string, { riskLevel?: string } | undefined> =
+						turbotpipesEndpointMeta;
+					if (meta[path]?.riskLevel !== 'read') {
+						console.warn(message);
+						return response;
+					}
+					throw new Error(message);
 				}
 				return response;
 			};

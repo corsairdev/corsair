@@ -28,6 +28,10 @@ export const updateUser: TurbotPipesEndpoints['updateUser'] = async (
 	const response = await makeTurbotPipesRequest<
 		TurbotPipesEndpointOutputs['updateUser']
 	>(`user/${pathSegment(user_handle)}`, ctx.key, { method: 'PATCH', body });
+	// Keep local search in step with the change (getUser stored the old copy).
+	if (typeof response.id === 'string') {
+		await syncEntityDetail(ctx, 'user', response.id, response);
+	}
 	await logEventFromContext(
 		ctx,
 		'turbotpipes.users.update',
@@ -90,6 +94,9 @@ export const updateUserWorkspace: TurbotPipesEndpoints['updateUserWorkspace'] =
 				body,
 			},
 		);
+		if (typeof response.id === 'string') {
+			await syncEntityDetail(ctx, 'workspace', response.id, response);
+		}
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.users.update_workspace',

@@ -362,6 +362,26 @@ describe('TurbotPipes endpoint coverage', () => {
 			expect(rows.get('w_2')).toEqual({ id: 'w_2', handle: 'two' });
 		});
 
+		it('a successful update refreshes the stored copy', async () => {
+			const { rows, table } = memoryStore();
+			rows.set('u_1', { id: 'u_1', handle: 'bob', display_name: 'Old' });
+			const ctx = { ...createMockContext(), database: {}, db: { user: table } };
+			mockRequest.mockResolvedValueOnce({
+				id: 'u_1',
+				handle: 'bob',
+				display_name: 'New',
+			});
+			await UsersEndpoints.updateUser(ctx, {
+				user_handle: 'bob',
+				display_name: 'New',
+			});
+			expect(rows.get('u_1')).toEqual({
+				id: 'u_1',
+				handle: 'bob',
+				display_name: 'New',
+			});
+		});
+
 		it('different accounts do not share a write chain', async () => {
 			const rows = new Map<string, Record<string, unknown>>();
 			const { table: slowTable } = memoryStore(rows);
