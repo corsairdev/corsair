@@ -1,8 +1,14 @@
 import { z } from 'zod';
 
+// NetSuite record bodies vary by record type and can contain arbitrary properties.
+// `z.record(z.string(), z.unknown())` is used for request bodies to allow any record fields.
+// `.passthrough()` is used on input/output schemas because NetSuite API responses may
+// include additional fields beyond those declared in the Zod schema.
+
 const idSchema = z.union([z.string(), z.number()]);
 
 // NetSuite HATEOAS links are represented as objects with rel and href strings.
+// .passthrough() allows additional link properties NetSuite may include in future API versions.
 const netSuiteLinkSchema = z
 	.object({
 		rel: z.string().optional(),
@@ -56,7 +62,7 @@ export const AsyncGetJobStatusInputSchema = z
 	.object({
 		jobId: z.union([z.string(), z.number()]),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite async job responses may include additional fields beyond jobId.
 
 export const AsyncGetJobStatusOutputSchema = passthroughResponse;
 
@@ -65,7 +71,7 @@ export const AsyncGetJobTaskInputSchema = z
 		jobId: z.union([z.string(), z.number()]),
 		taskId: z.union([z.string(), z.number()]),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite async job responses may include additional fields beyond jobId and taskId.
 
 export const AsyncGetJobTaskOutputSchema = passthroughResponse;
 
@@ -74,12 +80,13 @@ export const AsyncGetJobTaskResultInputSchema = z
 		jobId: z.union([z.string(), z.number()]),
 		taskId: z.union([z.string(), z.number()]),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite async job result responses may include additional fields beyond jobId and taskId.
 
 export const AsyncGetJobTaskResultOutputSchema = passthroughResponse;
 
 export const CreateCustomerInputSchema = z
 	.object({
+		// NetSuite record bodies vary by record type; unknown values allow arbitrary record properties to pass through safely.
 		body: z.record(z.string(), z.unknown()),
 		Prefer: z.string().optional(),
 		replace: z.string().optional(),
@@ -87,7 +94,7 @@ export const CreateCustomerInputSchema = z
 		'X-NetSuite-PropertyNameValidation': z.string().optional(),
 		'X-NetSuite-PropertyValueValidation': z.string().optional(),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite create responses may include additional fields beyond those declared.
 
 export const CreateCustomerOutputSchema = passthroughResponse;
 

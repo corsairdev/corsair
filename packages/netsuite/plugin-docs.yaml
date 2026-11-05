@@ -57,6 +57,8 @@ apiExamples:
   createJwtClientAssertion:
     aud: "https://tstdrv123.suitetalk.api.netsuite.com/services/rest/auth/oauth2/v1/token"
     certificate_id: cert-1
+    client_id: "client-id"
+    scope: "rest_webservices"
     private_key_pem: "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQC...\n-----END PRIVATE KEY-----"
   createPurchaseOrder:
     entity:
