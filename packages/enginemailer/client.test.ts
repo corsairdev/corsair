@@ -169,13 +169,20 @@ describe('Enginemailer REST status in the response body', () => {
 	it('lets AUTH_ERROR recognise a rejected key', async () => {
 		mockRequest.mockResolvedValue(apiKeyNotFound);
 
-		const error = await makeEnginemailerRequest(
-			'/restapi/campaign/emcampaign/ListCampaign',
-			'bad-key',
-		).catch((caught: Error) => caught);
+		let error: unknown;
+		try {
+			await makeEnginemailerRequest(
+				'/restapi/campaign/emcampaign/ListCampaign',
+				'bad-key',
+			);
+		} catch (caught) {
+			error = caught;
+		}
 
-		expect(error).toBeInstanceOf(EnginemailerAPIError);
-		expect(errorHandlers.AUTH_ERROR.match(error as Error)).toBe(true);
+		if (!(error instanceof EnginemailerAPIError)) {
+			throw new Error('expected an EnginemailerAPIError');
+		}
+		expect(errorHandlers.AUTH_ERROR.match(error)).toBe(true);
 	});
 
 	it('raises a bare batchUpdateStatus error without a Result wrapper', async () => {

@@ -15,12 +15,12 @@ jest.mock('./n8n-client', () => ({
 	makeEnginemailerN8nRequest: jest.fn(),
 }));
 
-const request = makeEnginemailerRequest as jest.MockedFunction<
-	typeof makeEnginemailerRequest
->;
-const n8nRequest = makeEnginemailerN8nRequest as jest.MockedFunction<
-	typeof makeEnginemailerN8nRequest
->;
+const request = jest.mocked(makeEnginemailerRequest);
+const n8nRequest = jest.mocked(makeEnginemailerN8nRequest);
+// Why safe: every Enginemailer handler reads only `ctx.key`, and the transport
+// is mocked. A real CorsairPluginContext needs a database, key manager and
+// tenant wiring that these routing tests never touch, so a partial context is
+// the practical choice.
 const ctx = { key: 'test-api-key' } as EnginemailerContext;
 type RouteCase = {
 	name: string;

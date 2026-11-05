@@ -1,7 +1,16 @@
+import type { ZodTypeAny } from 'zod';
 import {
 	EnginemailerEndpointInputSchemas,
 	EnginemailerEndpointOutputSchemas,
 } from './endpoints/types';
+
+// String-keyed views of the schema maps (a widening annotation, not a cast),
+// so the table-driven tests below can look schemas up by operation name.
+const inputSchemas: Record<string, ZodTypeAny> =
+	EnginemailerEndpointInputSchemas;
+const outputSchemas: Record<string, ZodTypeAny> =
+	EnginemailerEndpointOutputSchemas;
+
 import { EnginemailerSchema } from './schema';
 
 describe('Enginemailer schema', () => {
@@ -79,11 +88,7 @@ describe('Enginemailer endpoint schemas', () => {
 	it.each(Object.keys(EnginemailerEndpointInputSchemas))(
 		'%s accepts its minimal valid input',
 		(name) => {
-			expect(
-				EnginemailerEndpointInputSchemas[
-					name as keyof typeof EnginemailerEndpointInputSchemas
-				].safeParse(inputs[name]).success,
-			).toBe(true);
+			expect(inputSchemas[name]?.safeParse(inputs[name])?.success).toBe(true);
 			const rawArrayOperations = new Set([
 				'newSubscribers',
 				'unsubscribedSubscribers',
@@ -112,11 +117,7 @@ describe('Enginemailer endpoint schemas', () => {
 				: rawOperations.has(name)
 					? { ok: true }
 					: { Result: {} };
-			expect(
-				EnginemailerEndpointOutputSchemas[
-					name as keyof typeof EnginemailerEndpointOutputSchemas
-				].safeParse(output).success,
-			).toBe(true);
+			expect(outputSchemas[name]?.safeParse(output)?.success).toBe(true);
 		},
 	);
 
@@ -128,11 +129,7 @@ describe('Enginemailer endpoint schemas', () => {
 		'unsubscribeSubscriber',
 		'deleteSubscriber',
 	])('%s rejects a missing email', (name) => {
-		expect(
-			EnginemailerEndpointInputSchemas[
-				name as keyof typeof EnginemailerEndpointInputSchemas
-			].safeParse({}).success,
-		).toBe(false);
+		expect(inputSchemas[name]?.safeParse({})?.success).toBe(false);
 	});
 
 	it('preserves new-subscriber source filters', () => {

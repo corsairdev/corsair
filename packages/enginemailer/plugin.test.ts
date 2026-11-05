@@ -23,11 +23,8 @@ describe('Enginemailer plugin contract', () => {
 	});
 
 	it('classifies destructive subscriber and campaign operations safely', () => {
-		const plugin = enginemailer();
-		const metadata = plugin.endpointMeta as Record<
-			string,
-			{ riskLevel: string }
-		>;
+		const metadata = enginemailer().endpointMeta;
+		if (!metadata) throw new Error('enginemailer() returned no endpointMeta');
 
 		expect(metadata['subscribers.deleteSubscriber']?.riskLevel).toBe(
 			'destructive',
