@@ -87,87 +87,87 @@ export type CodacyEndpoints = {
 export type CodacyBoundEndpoints = BindEndpoints<typeof codacyEndpointsNested>;
 
 const codacyEndpointsNested = {
-	Account: {
+	account: {
 		get: Endpoints.accountGet,
 	},
-	Organizations: {
+	organizations: {
 		list: Endpoints.organizationList,
 		get: Endpoints.organizationGet,
 	},
-	Repositories: {
+	repositories: {
 		list: Endpoints.repositoryList,
 		get: Endpoints.repositoryGet,
 		languages: Endpoints.repositoryLanguages,
 	},
-	Analysis: {
+	analysis: {
 		getConfig: Endpoints.analysisConfigGet,
 	},
-	Tools: {
+	tools: {
 		list: Endpoints.toolList,
 	},
-	Patterns: {
+	patterns: {
 		list: Endpoints.patternList,
 		get: Endpoints.patternGet,
 	},
 } as const;
 
 const endpointMeta = {
-	'Account.get': { riskLevel: 'read', description: 'Get account details' },
-	'Organizations.list': {
+	'account.get': { riskLevel: 'read', description: 'Get account details' },
+	'organizations.list': {
 		riskLevel: 'read',
 		description: 'List organizations',
 	},
-	'Organizations.get': { riskLevel: 'read', description: 'Get organization' },
-	'Repositories.list': { riskLevel: 'read', description: 'List repositories' },
-	'Repositories.get': { riskLevel: 'read', description: 'Get repository' },
-	'Repositories.languages': {
+	'organizations.get': { riskLevel: 'read', description: 'Get organization' },
+	'repositories.list': { riskLevel: 'read', description: 'List repositories' },
+	'repositories.get': { riskLevel: 'read', description: 'Get repository' },
+	'repositories.languages': {
 		riskLevel: 'read',
 		description: 'Get repository languages',
 	},
-	'Analysis.getConfig': {
+	'analysis.getConfig': {
 		riskLevel: 'read',
 		description: 'Get repository analysis configuration',
 	},
-	'Tools.list': { riskLevel: 'read', description: 'List analysis tools' },
-	'Patterns.list': { riskLevel: 'read', description: 'List tool patterns' },
-	'Patterns.get': { riskLevel: 'read', description: 'Get tool pattern' },
+	'tools.list': { riskLevel: 'read', description: 'List analysis tools' },
+	'patterns.list': { riskLevel: 'read', description: 'List tool patterns' },
+	'patterns.get': { riskLevel: 'read', description: 'Get tool pattern' },
 } as const satisfies RequiredPluginEndpointMeta<typeof codacyEndpointsNested>;
 
 const codacyEndpointSchemas = {
-	'Account.get': {
+	'account.get': {
 		input: AccountGetInputSchema,
 		output: AccountGetOutputSchema,
 	},
-	'Organizations.list': {
+	'organizations.list': {
 		input: OrganizationListInputSchema,
 		output: OrganizationListOutputSchema,
 	},
-	'Organizations.get': {
+	'organizations.get': {
 		input: OrganizationGetInputSchema,
 		output: OrganizationGetOutputSchema,
 	},
-	'Repositories.list': {
+	'repositories.list': {
 		input: RepositoryListInputSchema,
 		output: RepositoryListOutputSchema,
 	},
-	'Repositories.get': {
+	'repositories.get': {
 		input: RepositoryGetInputSchema,
 		output: RepositoryGetOutputSchema,
 	},
-	'Repositories.languages': {
+	'repositories.languages': {
 		input: RepositoryLanguagesInputSchema,
 		output: RepositoryLanguagesOutputSchema,
 	},
-	'Analysis.getConfig': {
+	'analysis.getConfig': {
 		input: AnalysisConfigGetInputSchema,
 		output: AnalysisConfigGetOutputSchema,
 	},
-	'Tools.list': { input: ToolListInputSchema, output: ToolListOutputSchema },
-	'Patterns.list': {
+	'tools.list': { input: ToolListInputSchema, output: ToolListOutputSchema },
+	'patterns.list': {
 		input: PatternListInputSchema,
 		output: PatternListOutputSchema,
 	},
-	'Patterns.get': {
+	'patterns.get': {
 		input: PatternGetInputSchema,
 		output: PatternGetOutputSchema,
 	},

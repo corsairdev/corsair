@@ -294,7 +294,7 @@ describe('analysis handlers', () => {
 		);
 		expect(result.data).toHaveLength(1);
 		// These rows hold one repository's settings; saving them would
-		// replace the tool definition Tools.list keeps under the same UUID.
+		// replace the tool definition tools.list keeps under the same UUID.
 		expect(upserts.tools).not.toHaveBeenCalled();
 	});
 });

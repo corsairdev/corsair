@@ -23,7 +23,7 @@ describe('Codacy plugin integration', () => {
 				kek: '0123456789abcdef0123456789abcdef',
 			});
 
-			await expect(corsair.codacy.api.Account.get({})).rejects.toThrow(
+			await expect(corsair.codacy.api.account.get({})).rejects.toThrow(
 				/auth-missing/,
 			);
 		} finally {
@@ -48,7 +48,7 @@ describe('Codacy plugin integration', () => {
 					kek: '0123456789abcdef0123456789abcdef',
 				});
 
-				const result = await corsair.codacy.api.Organizations.list({
+				const result = await corsair.codacy.api.organizations.list({
 					limit: 5,
 				});
 

@@ -32,7 +32,7 @@ export const getConfig: CodacyEndpoints['analysisConfigGet'] = async (
 
 	// Not saved to the `tools` entity: these rows carry one repository's
 	// settings, and an upsert would replace the tool definition that
-	// Tools.list stored under the same UUID.
+	// tools.list stored under the same UUID.
 	const parsed = AnalysisConfigGetOutputSchema.parse(response);
 
 	await logEventFromContext(
