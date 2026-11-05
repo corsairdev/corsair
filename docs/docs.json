@@ -3179,6 +3179,14 @@
                 ]
               },
               {
+                "group": "Turbot Pipes",
+                "pages": [
+                  "plugins/turbotpipes/overview",
+                  "plugins/turbotpipes/api",
+                  "plugins/turbotpipes/database"
+                ]
+              },
+              {
                 "group": "Turso",
                 "pages": [
                   "plugins/turso/overview",
