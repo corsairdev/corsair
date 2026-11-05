@@ -1564,24 +1564,6 @@ function buildDbMdx(
 	title: string,
 	data: PluginDocsIntrospection,
 ): string {
-	// A plugin without schema entities only makes live API calls: say so
-	// instead of pointing readers at `.db.<entity>.search()` paths that do not
-	// exist.
-	if (data.db.length === 0) {
-		const description = `${title} returns live API data and stores no local entities.`;
-		return `---
-title: Database
-description: ${yamlDoubleQuotedScalar(description)}
----
-
-The ${title} plugin returns live API data and does not sync or store entities locally. No local \`.search()\` operations are available.
-
-<Info>
-**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
-</Info>
-`;
-	}
-
 	const blocks: string[] = [];
 	for (const ent of data.db) {
 		const filterRows = ent.filters
