@@ -5,20 +5,25 @@ import type { ListServicesOutput, ServiceOutput } from './types';
 
 type RenderResourceList = Record<string, unknown>[];
 
-export const listServices: RenderEndpoints['listServices'] = async (
-	ctx,
-	input,
-) => {
-	const query = Object.fromEntries(
+// Render declares these list filters as `style: form, explode: false`, so a
+// multi-value filter is one comma-separated value (`name=a,b`), not a
+// repeated key (`name=a&name=b`).
+const commaSeparated = <T extends Record<string, unknown>>(input: T) =>
+	Object.fromEntries(
 		Object.entries(input).map(([key, value]) => [
 			key,
 			Array.isArray(value) ? value.join(',') : value,
 		]),
-	);
+	) as Record<string, string | number | boolean | undefined>;
+
+export const listServices: RenderEndpoints['listServices'] = async (
+	ctx,
+	input,
+) => {
 	const response = await makeRenderRequest<ListServicesOutput>(
 		'/v1/services',
 		ctx.key,
-		{ method: 'GET', query },
+		{ method: 'GET', query: commaSeparated(input) },
 	);
 
 	await logEventFromContext(ctx, 'render.services.list', input, 'completed');
@@ -290,7 +295,7 @@ export const listServiceHeaders: RenderEndpoints['listServiceHeaders'] = (
 	return makeRenderRequest(
 		`/v1/services/${encodeServiceId(serviceId)}/headers`,
 		ctx.key,
-		{ method: 'GET', query },
+		{ method: 'GET', query: commaSeparated(query) },
 	);
 };
 
@@ -300,7 +305,7 @@ export const listServiceCustomDomains: RenderEndpoints['listServiceCustomDomains
 		return makeRenderRequest(
 			`/v1/services/${encodeServiceId(serviceId)}/custom-domains`,
 			ctx.key,
-			{ method: 'GET', query },
+			{ method: 'GET', query: commaSeparated(query) },
 		);
 	};
 

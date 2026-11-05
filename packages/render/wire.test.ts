@@ -119,3 +119,53 @@ describe('Render replace operations', () => {
 		expect(sent).toHaveLength(0);
 	});
 });
+
+describe('Render list filters', () => {
+	it.each([
+		[
+			'services.list',
+			api.services.list,
+			{ name: ['web', 'worker'], region: ['oregon', 'frankfurt'] },
+			'/v1/services',
+			{ name: 'web,worker', region: 'oregon,frankfurt' },
+		],
+		[
+			'services.headers.list',
+			api.services.headers.list,
+			{ serviceId: 'srv-1', path: ['/a', '/b'], name: ['X-A', 'X-B'] },
+			'/v1/services/srv-1/headers',
+			{ path: '/a,/b', name: 'X-A,X-B' },
+		],
+		[
+			'services.customDomains.list',
+			api.services.customDomains.list,
+			{ serviceId: 'srv-1', name: ['a.example.com', 'b.example.com'] },
+			'/v1/services/srv-1/custom-domains',
+			{ name: 'a.example.com,b.example.com' },
+		],
+	] as const)(
+		'%s sends explode:false filters as one comma-separated value',
+		async (_name, endpoint, input, path, expected) => {
+			replies.push({ status: 200, body: [] });
+			await (endpoint as unknown as Call)(ctx, input);
+
+			expect(sent[0]?.url.pathname).toBe(path);
+			for (const [key, value] of Object.entries(expected)) {
+				expect(sent[0]?.url.searchParams.getAll(key)).toEqual([value]);
+			}
+		},
+	);
+
+	it('keeps repeated keys for explode:true filters such as deploy status', async () => {
+		replies.push({ status: 200, body: [] });
+		await (api.services.listDeploys as unknown as Call)(ctx, {
+			serviceId: 'srv-1',
+			status: ['live', 'build_failed'],
+		});
+
+		expect(sent[0]?.url.searchParams.getAll('status')).toEqual([
+			'live',
+			'build_failed',
+		]);
+	});
+});

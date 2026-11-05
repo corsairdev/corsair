@@ -251,7 +251,7 @@ describe('Render service endpoints', () => {
 			'secret',
 			{
 				method: 'GET',
-				query: { name: ['Cache-Control'] },
+				query: { name: 'Cache-Control' },
 			},
 		);
 		expect(request).toHaveBeenCalledWith(
