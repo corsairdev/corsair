@@ -755,3 +755,43 @@ describe('Recall.ai remaining artifact operations', () => {
 		]);
 	});
 });
+
+describe('Recall.ai calendar user paging', () => {
+	beforeEach(() => jest.mocked(makeRecallaiRequest).mockReset());
+
+	it('fetches a later page of calendar users', async () => {
+		const request = jest.mocked(makeRecallaiRequest);
+		const page = {
+			count: 120,
+			next: 'https://us-west-2.recall.ai/api/v1/calendar/users/?page=3&paginate=true',
+			previous:
+				'https://us-west-2.recall.ai/api/v1/calendar/users/?paginate=true',
+			results: [{ id: '550e8400-e29b-41d4-a716-446655440020' }],
+		};
+		request.mockResolvedValue(page);
+		const plugin = recallai({ key: 'recall-key' });
+		if (!plugin.endpoints) throw new Error('Recall.ai endpoints are missing');
+
+		await expect(
+			plugin.endpoints.calendar.listUsers(recallaiTestContext, {
+				paginate: true,
+				page: 2,
+			}),
+		).resolves.toEqual(page);
+		expect(request).toHaveBeenCalledWith(
+			'/api/v1/calendar/users/',
+			'recall-key',
+			{ method: 'GET', query: { paginate: true, page: 2 } },
+		);
+	});
+
+	it('rejects a page number without paginate, which Recall would ignore', async () => {
+		const request = jest.mocked(makeRecallaiRequest);
+		const plugin = recallai({ key: 'recall-key' });
+		if (!plugin.endpoints) throw new Error('Recall.ai endpoints are missing');
+		await expect(
+			plugin.endpoints.calendar.listUsers(recallaiTestContext, { page: 2 }),
+		).rejects.toThrow('page only applies with paginate: true');
+		expect(request).not.toHaveBeenCalled();
+	});
+});

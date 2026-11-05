@@ -40,10 +40,18 @@ export const CalendarDisconnectInputSchema = z.object({
 export const CalendarUserAuthInputSchema = z.object({
 	calendar_auth_token: calendarAuth,
 });
-export const CalendarUsersListInputSchema = z.object({
-	email: z.string().email().optional(),
-	paginate: z.boolean().optional(),
-});
+// Without `paginate` Recall returns every user as a bare array. With it, the
+// answer is a page ({ count, next, previous, results }) and `page` picks
+// which one; `next` is the URL of the following page.
+export const CalendarUsersListInputSchema = z
+	.object({
+		email: z.string().email().optional(),
+		paginate: z.boolean().optional(),
+		page: z.number().int().positive().optional(),
+	})
+	.refine(({ page, paginate }) => page === undefined || paginate === true, {
+		message: 'page only applies with paginate: true',
+	});
 export const CalendarEventsListInputSchema = z.object({
 	calendar_id: id,
 	cursor: z.string().optional(),
@@ -69,8 +77,9 @@ export const CalendarArrayResponseSchema = arrayResponse;
 export const CalendarUsersResponseSchema = z.union([
 	arrayResponse,
 	z.object({
-		next: z.string().url().nullable().optional(),
-		previous: z.string().url().nullable().optional(),
+		count: z.number().int().nonnegative().optional(),
+		next: z.string().nullable().optional(),
+		previous: z.string().nullable().optional(),
 		results: arrayResponse,
 	}),
 ]);
@@ -106,6 +115,7 @@ export type CalendarEndpointOutputs = {
 	listCalendarUsers:
 		| RecallaiJsonObject[]
 		| {
+				count?: number;
 				next?: string | null;
 				previous?: string | null;
 				results: RecallaiJsonObject[];
