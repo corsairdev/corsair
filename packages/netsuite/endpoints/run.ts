@@ -14,6 +14,10 @@ import {
 import type { NetSuiteSpecKey, RouteSpec } from './specs';
 import { netSuiteSpecs } from './specs';
 import type { NetSuiteEndpointInputs, NetSuiteEndpointOutputs } from './types';
+import {
+	NetSuiteEndpointInputSchemas,
+	NetSuiteEndpointOutputSchemas,
+} from './types';
 
 const CLIENT_ASSERTION_TYPE =
 	'urn:ietf:params:oauth:client-assertion-type:jwt-bearer';
@@ -467,9 +471,20 @@ export function makeNetSuiteEndpoint<K extends NetSuiteSpecKey>(
 	ctx: NetSuiteContext,
 	input: NetSuiteEndpointInputs[K],
 ) => Promise<NetSuiteEndpointOutputs[K]> {
+	const inputSchema = NetSuiteEndpointInputSchemas[key];
+	const outputSchema = NetSuiteEndpointOutputSchemas[key];
 	const handler = async (
 		ctx: NetSuiteContext,
 		input: NetSuiteEndpointInputs[K],
-	) => await runNetSuite<K>(ctx, key, input, netSuiteSpecs[key]);
+	) => {
+		const validated = inputSchema.parse(input);
+		const response = await runNetSuite<K>(
+			ctx,
+			key,
+			validated as NetSuiteEndpointInputs[K],
+			netSuiteSpecs[key],
+		);
+		return outputSchema.parse(response) as NetSuiteEndpointOutputs[K];
+	};
 	return handler;
 }

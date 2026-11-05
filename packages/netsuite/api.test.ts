@@ -276,6 +276,15 @@ describe('endpoint dispatch', () => {
 		}
 	});
 
+	it('validates endpoint input schemas before calling the API', async () => {
+		const fetchMock = jest.fn();
+		globalThis.fetch = fetchMock as unknown as typeof fetch;
+		await expect(
+			NetSuite.getCustomer(mockCtx() as never, {} as never),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
 	it('sends the expected record URL, query and bearer token', async () => {
 		globalThis.fetch = jest
 			.fn()
