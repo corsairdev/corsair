@@ -39,18 +39,32 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 	return result;
 }
 
-/** Flattens one Relay connection page into the shared list output shape. */
+/**
+ * Flattens one Relay connection page into the shared list output shape. Absent
+ * or null fields fall back to an empty page, but anything else passes through
+ * unvalidated so the endpoint's output schema rejects it: silently coercing a
+ * broken connection would hide pages from the caller.
+ */
 export function readPage(
 	// unknown: a connection object Grafbase sent, untyped until Grafbase's own
 	// output schema parses the pieces below.
 	connection: unknown,
-): { nodes: unknown[]; hasNextPage: boolean; nextCursor: string | null } {
+): {
+	// unknown: the original nodes value, so a non-array fails output validation.
+	nodes: unknown;
+	// unknown: the original hasNextPage value, so a non-boolean fails output
+	// validation.
+	hasNextPage: unknown;
+	nextCursor: string | null;
+} {
 	const record = asRecord(connection);
 	const pageInfo = asRecord(record?.pageInfo);
 	return {
-		nodes: Array.isArray(record?.nodes) ? record.nodes : [],
-		hasNextPage: pageInfo?.hasNextPage === true,
+		nodes: record?.nodes ?? [],
+		hasNextPage: pageInfo?.hasNextPage ?? false,
 		nextCursor:
-			typeof pageInfo?.endCursor === 'string' ? pageInfo.endCursor : null,
+			pageInfo?.hasNextPage === true && typeof pageInfo.endCursor === 'string'
+				? pageInfo.endCursor
+				: null,
 	};
 }

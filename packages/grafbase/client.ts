@@ -149,7 +149,18 @@ export async function makeGrafbaseRequest(
 				{ body: raw, errors, operationKind },
 			);
 		}
-		return envelope?.data ?? raw;
+		if (!envelope || !('data' in envelope)) {
+			throw new GrafbaseAPIError(
+				describeGrafbaseError(
+					undefined,
+					raw,
+					[],
+					'Response carried no GraphQL data',
+				),
+				{ body: raw, operationKind },
+			);
+		}
+		return envelope.data;
 	} catch (error) {
 		if (error instanceof GrafbaseAPIError) throw error;
 		if (error instanceof ApiError) {
