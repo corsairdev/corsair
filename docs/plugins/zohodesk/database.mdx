@@ -1,0 +1,85 @@
+---
+title: Database
+description: "Zoho Desk local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Zoho Desk plugin syncs data locally. Use `corsair.zohodesk.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Contacts
+
+Path: `zohodesk.db.contacts.search`
+
+```ts
+const rows = await corsair.zohodesk.db.contacts.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `firstName` | `string` | equals, contains, startsWith, endsWith, in |
+| `lastName` | `string` | equals, contains, startsWith, endsWith, in |
+| `email` | `string` | equals, contains, startsWith, endsWith, in |
+| `secondaryEmail` | `string` | equals, contains, startsWith, endsWith, in |
+| `phone` | `string` | equals, contains, startsWith, endsWith, in |
+| `mobile` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `accountId` | `string` | equals, contains, startsWith, endsWith, in |
+| `ownerId` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdTime` | `string` | equals, contains, startsWith, endsWith, in |
+| `webUrl` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Tickets
+
+Path: `zohodesk.db.tickets.search`
+
+```ts
+const rows = await corsair.zohodesk.db.tickets.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `ticketNumber` | `string` | equals, contains, startsWith, endsWith, in |
+| `subject` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `statusType` | `string` | equals, contains, startsWith, endsWith, in |
+| `priority` | `string` | equals, contains, startsWith, endsWith, in |
+| `channel` | `string` | equals, contains, startsWith, endsWith, in |
+| `category` | `string` | equals, contains, startsWith, endsWith, in |
+| `departmentId` | `string` | equals, contains, startsWith, endsWith, in |
+| `contactId` | `string` | equals, contains, startsWith, endsWith, in |
+| `accountId` | `string` | equals, contains, startsWith, endsWith, in |
+| `assigneeId` | `string` | equals, contains, startsWith, endsWith, in |
+| `teamId` | `string` | equals, contains, startsWith, endsWith, in |
+| `email` | `string` | equals, contains, startsWith, endsWith, in |
+| `dueDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `closedTime` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdTime` | `string` | equals, contains, startsWith, endsWith, in |
+| `webUrl` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

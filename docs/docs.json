@@ -3531,6 +3531,14 @@
                 ]
               },
               {
+                "group": "Zoho Desk",
+                "pages": [
+                  "plugins/zohodesk/overview",
+                  "plugins/zohodesk/api",
+                  "plugins/zohodesk/database"
+                ]
+              },
+              {
                 "group": "Zoho Inventory",
                 "pages": [
                   "plugins/zohoinventory/overview",
