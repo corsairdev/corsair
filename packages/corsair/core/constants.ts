@@ -288,6 +288,7 @@ export const BaseProviders = [
 	'mailchimp',
 	'mailtrap',
 	'marketstack',
+	'mem0',
 	'merriamwebsterdict',
 	'minimax',
 	'monday',
@@ -711,6 +712,7 @@ export const ProviderDisplayNames = {
 	mailchimp: 'Mailchimp',
 	mailtrap: 'Mailtrap',
 	marketstack: 'Marketstack',
+	mem0: 'Mem0',
 	merriamwebsterdict: 'Merriam-Webster Dictionary',
 	minimax: 'MiniMax',
 	monday: 'Monday',
@@ -1138,6 +1140,7 @@ export type AllProviders =
 	| 'mailchimp'
 	| 'mailtrap'
 	| 'marketstack'
+	| 'mem0'
 	| 'merriamwebsterdict'
 	| 'minimax'
 	| 'monday'
