@@ -13,13 +13,16 @@ import {
 	DocumentsUpdateInputSchema,
 	IndicesAddBlockInputSchema,
 	IndicesAnalyzeInputSchema,
+	IndicesDiskUsageInputSchema,
 	IndicesDownsampleInputSchema,
+	IndicesForceMergeInputSchema,
 	IndicesGetInputSchema,
 	IndicesGetResponseSchema,
 	IndicesListInputSchema,
 	IndicesListResponseSchema,
 	IndicesPutMappingInputSchema,
 	IndicesPutSettingsInputSchema,
+	IndicesStatsInputSchema,
 	SearchRunInputSchema,
 	SearchRunResponseSchema,
 } from './endpoints/types';
@@ -42,20 +45,32 @@ import {
 	indicesCreateOutput,
 	indicesDeleteAliasOutput,
 	indicesDeleteOutput,
+	indicesDeprecationsOutput,
+	indicesDiskUsageOutput,
 	indicesDownsampleOutput,
+	indicesFieldUsageStatsOutput,
 	indicesGetAliasOutput,
 	indicesGetFieldMappingOutput,
 	indicesGetMappingOutput,
 	indicesGetSettingsOutput,
+	indicesIlmRemoveOutput,
 	indicesOpenOutput,
 	indicesPutAliasOutput,
+	indicesRecoveryOutput,
+	indicesReloadSearchAnalyzersOutput,
 	indicesRemoveBlockOutput,
 	indicesResizeOutput,
 	indicesRolloverOutput,
+	indicesSearchableSnapshotStatsOutput,
+	indicesSegmentsOutput,
+	indicesShardStoresOutput,
+	indicesStatsOutput,
+	lifecycleIndicesOutput,
 	mgetResponse,
 	mtermvectorsResponse,
 	searchHit,
 	searchResponse,
+	shardsOpResponse,
 	termvectorsResult,
 	updateResponse,
 	writeResponse,
@@ -1332,5 +1347,263 @@ describe('indices lifecycle input bounds', () => {
 				char_filter: ['html_strip'],
 			}).success,
 		).toBe(false);
+	});
+});
+
+// ── stats and maintenance wire assertions ────────────────────────────────────
+
+describe('indices stats and maintenance wire calls', () => {
+	let fetchMock: jest.SpyInstance;
+
+	beforeEach(() => {
+		fetchMock = jest.spyOn(globalThis, 'fetch');
+		mockLog.mockClear();
+	});
+
+	afterEach(() => {
+		fetchMock.mockRestore();
+	});
+
+	const ctx = {
+		options: { baseUrl: 'http://es:9200' },
+		key: 'ApiKey encoded-key',
+	} as never;
+
+	function mockJson(body: unknown, status = 200) {
+		fetchMock.mockResolvedValueOnce(
+			new Response(JSON.stringify(body), {
+				status,
+				headers: { 'Content-Type': 'application/json' },
+			}),
+		);
+	}
+
+	async function sent() {
+		expect(fetchMock).toHaveBeenCalledTimes(1);
+		const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+		return { url, init };
+	}
+
+	it('indices.stats GETs the metric path with the level query', async () => {
+		mockJson(indicesStatsOutput);
+		const result = await Indices.stats(ctx, {
+			index: 'logs-*',
+			metric: 'store,docs',
+			level: 'indices',
+		});
+		expect(result.indices?.['logs-2026-11']).toBeDefined();
+		const { url, init } = await sent();
+		expect(url).toBe('http://es:9200/logs-*/_stats/store%2Cdocs?level=indices');
+		expect(init.method).toBe('GET');
+	});
+
+	it('indices.stats rejects metrics outside the documented enum', () => {
+		expect(
+			IndicesStatsInputSchema.safeParse({
+				index: 'logs',
+				metric: 'everything',
+			}).success,
+		).toBe(false);
+		expect(
+			IndicesStatsInputSchema.safeParse({ index: 'logs', metric: '_all' })
+				.success,
+		).toBe(true);
+	});
+
+	it('indices.segments and indices.recovery GET their paths', async () => {
+		mockJson(indicesSegmentsOutput);
+		mockJson(indicesRecoveryOutput);
+		const segments = await Indices.segments(ctx, { index: 'logs-2026-11' });
+		expect(segments.indices['logs-2026-11']).toBeDefined();
+		await Indices.recovery(ctx, { index: 'logs-2026-11', detailed: true });
+		expect(fetchMock.mock.calls[0]?.[0]).toBe(
+			'http://es:9200/logs-2026-11/_segments',
+		);
+		expect(fetchMock.mock.calls[1]?.[0]).toBe(
+			'http://es:9200/logs-2026-11/_recovery?detailed=true',
+		);
+	});
+
+	it('indices.shardStores filters by status enum', async () => {
+		mockJson(indicesShardStoresOutput);
+		const result = await Indices.shardStores(ctx, {
+			index: 'logs-*',
+			status: 'yellow',
+		});
+		expect(result.indices['logs-2026-11']).toBeDefined();
+		const { url } = await sent();
+		expect(url).toBe('http://es:9200/logs-*/_shard_stores?status=yellow');
+	});
+
+	it('indices.refresh and indices.flush use the documented GET methods', async () => {
+		mockJson(shardsOpResponse);
+		mockJson(shardsOpResponse);
+		const refreshed = await Indices.refresh(ctx, { index: 'logs-2026-11' });
+		expect(refreshed._shards?.successful).toBe(4);
+		await Indices.flush(ctx, { index: 'logs-2026-11', force: true });
+		expect(fetchMock.mock.calls[0]?.[0]).toBe(
+			'http://es:9200/logs-2026-11/_refresh',
+		);
+		expect(fetchMock.mock.calls[0]?.[1]).toMatchObject({ method: 'GET' });
+		expect(fetchMock.mock.calls[1]?.[0]).toBe(
+			'http://es:9200/logs-2026-11/_flush?force=true',
+		);
+	});
+
+	it('indices.forceMerge POSTs with the segment target', async () => {
+		mockJson(shardsOpResponse);
+		await Indices.forceMerge(ctx, {
+			index: 'logs-2026-11',
+			max_num_segments: 1,
+			only_expunge_deletes: true,
+		});
+		const { url, init } = await sent();
+		expect(url).toBe(
+			'http://es:9200/logs-2026-11/_forcemerge?max_num_segments=1&only_expunge_deletes=true',
+		);
+		expect(init.method).toBe('POST');
+	});
+
+	it('indices.forceMerge rejects a non-positive segment count', () => {
+		expect(
+			IndicesForceMergeInputSchema.safeParse({
+				index: 'logs',
+				max_num_segments: 0,
+			}).success,
+		).toBe(false);
+	});
+
+	it('indices.cacheClear POSTs with the comma-joined field list', async () => {
+		mockJson(shardsOpResponse);
+		await Indices.cacheClear(ctx, {
+			index: 'logs-2026-11',
+			fielddata: true,
+			fields: ['message', 'host'],
+		});
+		const { url, init } = await sent();
+		expect(url).toBe(
+			'http://es:9200/logs-2026-11/_cache/clear?fielddata=true&fields=message%2Chost',
+		);
+		expect(init.method).toBe('POST');
+	});
+
+	it('indices.reloadSearchAnalyzers POSTs and parses reload details', async () => {
+		mockJson(indicesReloadSearchAnalyzersOutput);
+		const result = await Indices.reloadSearchAnalyzers(ctx, {
+			index: 'logs-2026-11',
+		});
+		expect(result.reload_details[0]?.reloaded_analyzers).toEqual([
+			'my_synonyms',
+		]);
+		const { url, init } = await sent();
+		expect(url).toBe('http://es:9200/logs-2026-11/_reload_search_analyzers');
+		expect(init.method).toBe('POST');
+	});
+
+	it('indices.diskUsage requires the explicit expensive-tasks opt-in', () => {
+		expect(
+			IndicesDiskUsageInputSchema.safeParse({ index: 'logs' }).success,
+		).toBe(false);
+		expect(
+			IndicesDiskUsageInputSchema.safeParse({
+				index: 'logs',
+				run_expensive_tasks: false,
+			}).success,
+		).toBe(false);
+	});
+
+	it('indices.diskUsage POSTs with run_expensive_tasks=true', async () => {
+		mockJson(indicesDiskUsageOutput);
+		const result = await Indices.diskUsage(ctx, {
+			index: 'logs-2026-11',
+			run_expensive_tasks: true,
+		});
+		expect(result['logs-2026-11']?.store_size_in_bytes).toBe(1_258_291);
+		const { url, init } = await sent();
+		expect(url).toBe(
+			'http://es:9200/logs-2026-11/_disk_usage?run_expensive_tasks=true',
+		);
+		expect(init.method).toBe('POST');
+	});
+
+	it('indices.fieldUsageStats GETs the usage stats', async () => {
+		mockJson(indicesFieldUsageStatsOutput);
+		const result = await Indices.fieldUsageStats(ctx, { index: 'logs-*' });
+		expect(result._shards.total).toBe(4);
+		const { url } = await sent();
+		expect(url).toBe('http://es:9200/logs-*/_field_usage_stats');
+	});
+
+	it('indices.deprecations parses per-section deprecation rows', async () => {
+		mockJson(indicesDeprecationsOutput);
+		const result = await Indices.deprecations(ctx, { index: 'logs-2026-11' });
+		expect(result.index_settings['logs-2026-11']?.[0]?.level).toBe('warning');
+		const { url } = await sent();
+		expect(url).toBe('http://es:9200/logs-2026-11/_migration/deprecations');
+	});
+
+	it('indices.explainDataLifecycle and indices.ilmExplain GET their explain paths', async () => {
+		mockJson(lifecycleIndicesOutput);
+		mockJson(lifecycleIndicesOutput);
+		const lifecycle = await Indices.explainDataLifecycle(ctx, {
+			index: 'logs-2026-11',
+			include_defaults: true,
+		});
+		const ilm = await Indices.ilmExplain(ctx, {
+			index: 'logs-2026-11',
+			only_managed: true,
+		});
+		expect(lifecycle.indices['logs-2026-11']).toMatchObject({
+			managed: true,
+		});
+		expect(ilm.indices['logs-2026-11']).toMatchObject({ phase: 'hot' });
+		expect(fetchMock.mock.calls[0]?.[0]).toBe(
+			'http://es:9200/logs-2026-11/_lifecycle/explain?include_defaults=true',
+		);
+		expect(fetchMock.mock.calls[1]?.[0]).toBe(
+			'http://es:9200/logs-2026-11/_ilm/explain?only_managed=true',
+		);
+	});
+
+	it('indices.ilmRemove and indices.ilmRetry POST their paths', async () => {
+		mockJson(indicesIlmRemoveOutput);
+		mockJson(acknowledgedResponse);
+		const removed = await Indices.ilmRemove(ctx, { index: 'logs-2026-11' });
+		const retried = await Indices.ilmRetry(ctx, { index: 'logs-2026-11' });
+		expect(removed.has_failures).toBe(false);
+		expect(retried.acknowledged).toBe(true);
+		expect(fetchMock.mock.calls[0]?.[0]).toBe(
+			'http://es:9200/logs-2026-11/_ilm/remove',
+		);
+		expect(fetchMock.mock.calls[0]?.[1]).toMatchObject({ method: 'POST' });
+		expect(fetchMock.mock.calls[1]?.[0]).toBe(
+			'http://es:9200/logs-2026-11/_ilm/retry',
+		);
+	});
+
+	it('indices.clearSearchableSnapshotCache POSTs and tolerates an empty body', async () => {
+		mockJson({});
+		const result = await Indices.clearSearchableSnapshotCache(ctx, {
+			index: 'logs-2026-11',
+		});
+		expect(result).toEqual({});
+		const { url, init } = await sent();
+		expect(url).toBe(
+			'http://es:9200/logs-2026-11/_searchable_snapshots/cache/clear',
+		);
+		expect(init.method).toBe('POST');
+	});
+
+	it('indices.searchableSnapshotStats GETs with the level enum', async () => {
+		mockJson(indicesSearchableSnapshotStatsOutput);
+		const result = await Indices.searchableSnapshotStats(ctx, {
+			index: 'logs-*',
+			level: 'indices',
+		});
+		expect(result.stats).toBeDefined();
+		const { url } = await sent();
+		expect(url).toBe(
+			'http://es:9200/logs-*/_searchable_snapshots/stats?level=indices',
+		);
 	});
 });

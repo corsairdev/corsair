@@ -1085,6 +1085,296 @@ export const IndicesAnalyzeOutputSchema = z.looseObject({
 });
 export type IndicesAnalyzeOutput = z.infer<typeof IndicesAnalyzeOutputSchema>;
 
+// ── indices stats and maintenance ────────────────────────────────────────────
+
+// _types.CommonStatsFlag: the documented metric selectors; the path takes a
+// comma-separated combination of them.
+const STATS_METRICS = new Set([
+	'_all',
+	'store',
+	'indexing',
+	'get',
+	'search',
+	'merge',
+	'flush',
+	'refresh',
+	'query_cache',
+	'fielddata',
+	'docs',
+	'warmer',
+	'completion',
+	'segments',
+	'translog',
+	'request_cache',
+	'recovery',
+	'bulk',
+	'shard_stats',
+	'mappings',
+	'dense_vector',
+	'sparse_vector',
+]);
+
+export const IndicesStatsInputSchema = z
+	.strictObject({
+		index: NonBlankString,
+		metric: NonBlankString,
+		level: z.enum(['cluster', 'indices', 'shards']).optional(),
+	})
+	.refine(
+		(parsed) =>
+			parsed.metric
+				.split(',')
+				.map((metric) => metric.trim())
+				.every((metric) => STATS_METRICS.has(metric)),
+		{ message: 'metric must be a comma-separated list of documented stats' },
+	);
+export type IndicesStatsInput = z.input<typeof IndicesStatsInputSchema>;
+
+export const IndicesStatsOutputSchema = z.looseObject({
+	_shards: ShardStatisticsSchema,
+	_all: z.looseObject({}).optional(),
+	// Keyed by index name; per-index stats are deeply nested per metric.
+	indices: z.record(z.string(), z.looseObject({})).optional(),
+});
+export type IndicesStatsOutput = z.infer<typeof IndicesStatsOutputSchema>;
+
+export const IndicesSegmentsInputSchema = z.strictObject({
+	index: NonBlankString,
+});
+export type IndicesSegmentsInput = z.infer<typeof IndicesSegmentsInputSchema>;
+
+export const IndicesSegmentsOutputSchema = z.looseObject({
+	indices: z.record(z.string(), z.looseObject({})),
+	_shards: ShardStatisticsSchema,
+});
+export type IndicesSegmentsOutput = z.infer<typeof IndicesSegmentsOutputSchema>;
+
+export const IndicesRecoveryInputSchema = z.strictObject({
+	index: NonBlankString,
+	detailed: z.boolean().optional(),
+	active_only: z.boolean().optional(),
+});
+export type IndicesRecoveryInput = z.input<typeof IndicesRecoveryInputSchema>;
+
+// Keyed by index name; shard recovery details are deeply nested.
+export const IndicesRecoveryOutputSchema = z.record(
+	z.string(),
+	z.looseObject({}),
+);
+export type IndicesRecoveryOutput = z.infer<typeof IndicesRecoveryOutputSchema>;
+
+export const IndicesShardStoresInputSchema = z.strictObject({
+	index: NonBlankString,
+	status: z.enum(['green', 'yellow', 'red', 'all']).optional(),
+});
+export type IndicesShardStoresInput = z.input<
+	typeof IndicesShardStoresInputSchema
+>;
+
+export const IndicesShardStoresOutputSchema = z.looseObject({
+	indices: z.record(z.string(), z.looseObject({})),
+});
+export type IndicesShardStoresOutput = z.infer<
+	typeof IndicesShardStoresOutputSchema
+>;
+
+export const IndicesRefreshInputSchema = z.strictObject({
+	index: NonBlankString,
+});
+export type IndicesRefreshInput = z.infer<typeof IndicesRefreshInputSchema>;
+export type IndicesRefreshOutput = z.infer<
+	typeof ShardsOperationResponseSchema
+>;
+
+export const IndicesFlushInputSchema = z.strictObject({
+	index: NonBlankString,
+	force: z.boolean().optional(),
+	wait_if_ongoing: z.boolean().optional(),
+});
+export type IndicesFlushInput = z.input<typeof IndicesFlushInputSchema>;
+export type IndicesFlushOutput = z.infer<typeof ShardsOperationResponseSchema>;
+
+export const IndicesForceMergeInputSchema = z.strictObject({
+	index: NonBlankString,
+	max_num_segments: z.number().int().min(1).optional(),
+	only_expunge_deletes: z.boolean().optional(),
+	flush: z.boolean().optional(),
+	wait_for_completion: z.boolean().optional(),
+});
+export type IndicesForceMergeInput = z.input<
+	typeof IndicesForceMergeInputSchema
+>;
+
+export const IndicesForceMergeOutputSchema =
+	ShardsOperationResponseSchema.extend({ task: z.string().optional() });
+export type IndicesForceMergeOutput = z.infer<
+	typeof IndicesForceMergeOutputSchema
+>;
+
+export const IndicesCacheClearInputSchema = z.strictObject({
+	index: NonBlankString,
+	fielddata: z.boolean().optional(),
+	query: z.boolean().optional(),
+	request: z.boolean().optional(),
+	fields: z.array(NonBlankString).min(1).optional(),
+});
+export type IndicesCacheClearInput = z.input<
+	typeof IndicesCacheClearInputSchema
+>;
+export type IndicesCacheClearOutput = z.infer<
+	typeof ShardsOperationResponseSchema
+>;
+
+export const IndicesReloadSearchAnalyzersInputSchema = z.strictObject({
+	index: NonBlankString,
+});
+export type IndicesReloadSearchAnalyzersInput = z.infer<
+	typeof IndicesReloadSearchAnalyzersInputSchema
+>;
+
+export const IndicesReloadSearchAnalyzersOutputSchema = z.looseObject({
+	reload_details: z.array(
+		z.looseObject({
+			index: z.string(),
+			reloaded_analyzers: z.array(z.string()),
+			reloaded_node_ids: z.array(z.string()),
+		}),
+	),
+	_shards: ShardStatisticsSchema,
+});
+export type IndicesReloadSearchAnalyzersOutput = z.infer<
+	typeof IndicesReloadSearchAnalyzersOutputSchema
+>;
+
+// The disk usage API refuses to run unless run_expensive_tasks is true, so
+// the literal pins the opt-in.
+export const IndicesDiskUsageInputSchema = z.strictObject({
+	index: NonBlankString,
+	run_expensive_tasks: z.literal(true),
+	flush: z.boolean().optional(),
+});
+export type IndicesDiskUsageInput = z.input<typeof IndicesDiskUsageInputSchema>;
+
+export const IndicesDiskUsageOutputSchema = z.record(
+	z.string(),
+	z.looseObject({}),
+);
+export type IndicesDiskUsageOutput = z.infer<
+	typeof IndicesDiskUsageOutputSchema
+>;
+
+export const IndicesFieldUsageStatsInputSchema = z.strictObject({
+	index: NonBlankString,
+});
+export type IndicesFieldUsageStatsInput = z.infer<
+	typeof IndicesFieldUsageStatsInputSchema
+>;
+
+export const IndicesFieldUsageStatsOutputSchema = z.looseObject({
+	_shards: ShardStatisticsSchema,
+});
+export type IndicesFieldUsageStatsOutput = z.infer<
+	typeof IndicesFieldUsageStatsOutputSchema
+>;
+
+// migration.deprecations.Deprecation rows.
+const DeprecationSchema = z.looseObject({
+	level: z.string(),
+	message: z.string(),
+	details: z.string().optional(),
+	url: z.string().optional(),
+	resolve_during_rolling_upgrade: z.boolean().optional(),
+});
+
+export const IndicesDeprecationsInputSchema = z.strictObject({
+	index: NonBlankString,
+});
+export type IndicesDeprecationsInput = z.infer<
+	typeof IndicesDeprecationsInputSchema
+>;
+
+export const IndicesDeprecationsOutputSchema = z.looseObject({
+	cluster_settings: z.array(DeprecationSchema),
+	index_settings: z.record(z.string(), z.array(DeprecationSchema)),
+	data_streams: z.record(z.string(), z.array(DeprecationSchema)),
+	node_settings: z.array(DeprecationSchema),
+	ml_settings: z.array(DeprecationSchema),
+	templates: z.record(z.string(), z.array(DeprecationSchema)),
+	ilm_policies: z.record(z.string(), z.array(DeprecationSchema)),
+});
+export type IndicesDeprecationsOutput = z.infer<
+	typeof IndicesDeprecationsOutputSchema
+>;
+
+export const IndicesExplainDataLifecycleInputSchema = z.strictObject({
+	index: NonBlankString,
+	include_defaults: z.boolean().optional(),
+});
+export type IndicesExplainDataLifecycleInput = z.input<
+	typeof IndicesExplainDataLifecycleInputSchema
+>;
+
+const LifecycleIndicesSchema = z.looseObject({
+	indices: z.record(z.string(), z.looseObject({})),
+});
+export type LifecycleIndices = z.infer<typeof LifecycleIndicesSchema>;
+
+export const IndicesIlmExplainInputSchema = z.strictObject({
+	index: NonBlankString,
+	only_errors: z.boolean().optional(),
+	only_managed: z.boolean().optional(),
+});
+export type IndicesIlmExplainInput = z.input<
+	typeof IndicesIlmExplainInputSchema
+>;
+
+export const IndicesIlmRemoveInputSchema = z.strictObject({
+	index: NonBlankString,
+});
+export type IndicesIlmRemoveInput = z.infer<typeof IndicesIlmRemoveInputSchema>;
+
+export const IndicesIlmRemoveOutputSchema = z.looseObject({
+	failed_indexes: z.array(z.string()),
+	has_failures: z.boolean(),
+});
+export type IndicesIlmRemoveOutput = z.infer<
+	typeof IndicesIlmRemoveOutputSchema
+>;
+
+export const IndicesIlmRetryInputSchema = z.strictObject({
+	index: NonBlankString,
+});
+export type IndicesIlmRetryInput = z.infer<typeof IndicesIlmRetryInputSchema>;
+export type IndicesIlmRetryOutput = z.infer<typeof AcknowledgedResponseSchema>;
+
+export const IndicesClearSearchableSnapshotCacheInputSchema = z.strictObject({
+	index: NonBlankString,
+});
+export type IndicesClearSearchableSnapshotCacheInput = z.infer<
+	typeof IndicesClearSearchableSnapshotCacheInputSchema
+>;
+// The documented response body is an empty object.
+const EmptyObjectSchema = z.looseObject({});
+export type IndicesClearSearchableSnapshotCacheOutput = z.infer<
+	typeof EmptyObjectSchema
+>;
+
+export const IndicesSearchableSnapshotStatsInputSchema = z.strictObject({
+	index: NonBlankString,
+	level: z.enum(['cluster', 'indices', 'shards']).optional(),
+});
+export type IndicesSearchableSnapshotStatsInput = z.input<
+	typeof IndicesSearchableSnapshotStatsInputSchema
+>;
+
+export const IndicesSearchableSnapshotStatsOutputSchema = z.looseObject({
+	stats: z.looseObject({}),
+	total: z.looseObject({}),
+});
+export type IndicesSearchableSnapshotStatsOutput = z.infer<
+	typeof IndicesSearchableSnapshotStatsOutputSchema
+>;
+
 // ── registry ─────────────────────────────────────────────────────────────────
 
 export type ElasticsearchEndpointInputs = {
@@ -1129,6 +1419,24 @@ export type ElasticsearchEndpointInputs = {
 	indicesShrink: IndicesShrinkInput;
 	indicesDownsample: IndicesDownsampleInput;
 	indicesAnalyze: IndicesAnalyzeInput;
+	indicesStats: IndicesStatsInput;
+	indicesSegments: IndicesSegmentsInput;
+	indicesRecovery: IndicesRecoveryInput;
+	indicesShardStores: IndicesShardStoresInput;
+	indicesRefresh: IndicesRefreshInput;
+	indicesFlush: IndicesFlushInput;
+	indicesForceMerge: IndicesForceMergeInput;
+	indicesCacheClear: IndicesCacheClearInput;
+	indicesReloadSearchAnalyzers: IndicesReloadSearchAnalyzersInput;
+	indicesDiskUsage: IndicesDiskUsageInput;
+	indicesFieldUsageStats: IndicesFieldUsageStatsInput;
+	indicesDeprecations: IndicesDeprecationsInput;
+	indicesExplainDataLifecycle: IndicesExplainDataLifecycleInput;
+	indicesIlmExplain: IndicesIlmExplainInput;
+	indicesIlmRemove: IndicesIlmRemoveInput;
+	indicesIlmRetry: IndicesIlmRetryInput;
+	indicesClearSearchableSnapshotCache: IndicesClearSearchableSnapshotCacheInput;
+	indicesSearchableSnapshotStats: IndicesSearchableSnapshotStatsInput;
 };
 
 export type ElasticsearchEndpointOutputs = {
@@ -1173,6 +1481,24 @@ export type ElasticsearchEndpointOutputs = {
 	indicesShrink: IndicesResizeOutput;
 	indicesDownsample: IndicesDownsampleOutput;
 	indicesAnalyze: IndicesAnalyzeOutput;
+	indicesStats: IndicesStatsOutput;
+	indicesSegments: IndicesSegmentsOutput;
+	indicesRecovery: IndicesRecoveryOutput;
+	indicesShardStores: IndicesShardStoresOutput;
+	indicesRefresh: IndicesRefreshOutput;
+	indicesFlush: IndicesFlushOutput;
+	indicesForceMerge: IndicesForceMergeOutput;
+	indicesCacheClear: IndicesCacheClearOutput;
+	indicesReloadSearchAnalyzers: IndicesReloadSearchAnalyzersOutput;
+	indicesDiskUsage: IndicesDiskUsageOutput;
+	indicesFieldUsageStats: IndicesFieldUsageStatsOutput;
+	indicesDeprecations: IndicesDeprecationsOutput;
+	indicesExplainDataLifecycle: LifecycleIndices;
+	indicesIlmExplain: LifecycleIndices;
+	indicesIlmRemove: IndicesIlmRemoveOutput;
+	indicesIlmRetry: IndicesIlmRetryOutput;
+	indicesClearSearchableSnapshotCache: IndicesClearSearchableSnapshotCacheOutput;
+	indicesSearchableSnapshotStats: IndicesSearchableSnapshotStatsOutput;
 };
 
 export type ElasticsearchOperation = keyof ElasticsearchEndpointInputs;
@@ -1219,6 +1545,25 @@ export const ElasticsearchEndpointInputSchemas = {
 	indicesShrink: IndicesShrinkInputSchema,
 	indicesDownsample: IndicesDownsampleInputSchema,
 	indicesAnalyze: IndicesAnalyzeInputSchema,
+	indicesStats: IndicesStatsInputSchema,
+	indicesSegments: IndicesSegmentsInputSchema,
+	indicesRecovery: IndicesRecoveryInputSchema,
+	indicesShardStores: IndicesShardStoresInputSchema,
+	indicesRefresh: IndicesRefreshInputSchema,
+	indicesFlush: IndicesFlushInputSchema,
+	indicesForceMerge: IndicesForceMergeInputSchema,
+	indicesCacheClear: IndicesCacheClearInputSchema,
+	indicesReloadSearchAnalyzers: IndicesReloadSearchAnalyzersInputSchema,
+	indicesDiskUsage: IndicesDiskUsageInputSchema,
+	indicesFieldUsageStats: IndicesFieldUsageStatsInputSchema,
+	indicesDeprecations: IndicesDeprecationsInputSchema,
+	indicesExplainDataLifecycle: IndicesExplainDataLifecycleInputSchema,
+	indicesIlmExplain: IndicesIlmExplainInputSchema,
+	indicesIlmRemove: IndicesIlmRemoveInputSchema,
+	indicesIlmRetry: IndicesIlmRetryInputSchema,
+	indicesClearSearchableSnapshotCache:
+		IndicesClearSearchableSnapshotCacheInputSchema,
+	indicesSearchableSnapshotStats: IndicesSearchableSnapshotStatsInputSchema,
 } as const;
 
 export const ElasticsearchEndpointOutputSchemas = {
@@ -1263,4 +1608,22 @@ export const ElasticsearchEndpointOutputSchemas = {
 	indicesShrink: IndicesResizeOutputSchema,
 	indicesDownsample: IndicesDownsampleOutputSchema,
 	indicesAnalyze: IndicesAnalyzeOutputSchema,
+	indicesStats: IndicesStatsOutputSchema,
+	indicesSegments: IndicesSegmentsOutputSchema,
+	indicesRecovery: IndicesRecoveryOutputSchema,
+	indicesShardStores: IndicesShardStoresOutputSchema,
+	indicesRefresh: ShardsOperationResponseSchema,
+	indicesFlush: ShardsOperationResponseSchema,
+	indicesForceMerge: IndicesForceMergeOutputSchema,
+	indicesCacheClear: ShardsOperationResponseSchema,
+	indicesReloadSearchAnalyzers: IndicesReloadSearchAnalyzersOutputSchema,
+	indicesDiskUsage: IndicesDiskUsageOutputSchema,
+	indicesFieldUsageStats: IndicesFieldUsageStatsOutputSchema,
+	indicesDeprecations: IndicesDeprecationsOutputSchema,
+	indicesExplainDataLifecycle: LifecycleIndicesSchema,
+	indicesIlmExplain: LifecycleIndicesSchema,
+	indicesIlmRemove: IndicesIlmRemoveOutputSchema,
+	indicesIlmRetry: AcknowledgedResponseSchema,
+	indicesClearSearchableSnapshotCache: EmptyObjectSchema,
+	indicesSearchableSnapshotStats: IndicesSearchableSnapshotStatsOutputSchema,
 } as const;

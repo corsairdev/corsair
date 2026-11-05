@@ -251,3 +251,184 @@ export const analyze: ElasticsearchEndpoints['indicesAnalyze'] = (ctx, input) =>
 			...pickBody(parsed, ['analyzer', 'field', 'tokenizer', 'explain']),
 		}),
 	});
+
+// ── stats and maintenance ────────────────────────────────────────────────────
+
+export const stats: ElasticsearchEndpoints['indicesStats'] = (ctx, input) =>
+	call(ctx, 'indicesStats', 'indices.stats', input, {
+		path: (parsed) =>
+			`${indexPath(parsed.index)}/_stats/${encodeURIComponent(parsed.metric)}`,
+		query: (parsed) => pickQuery(parsed, ['level']),
+	});
+
+export const segments: ElasticsearchEndpoints['indicesSegments'] = (
+	ctx,
+	input,
+) =>
+	call(ctx, 'indicesSegments', 'indices.segments', input, {
+		path: (parsed) => `${indexPath(parsed.index)}/_segments`,
+	});
+
+export const recovery: ElasticsearchEndpoints['indicesRecovery'] = (
+	ctx,
+	input,
+) =>
+	call(ctx, 'indicesRecovery', 'indices.recovery', input, {
+		path: (parsed) => `${indexPath(parsed.index)}/_recovery`,
+		query: (parsed) => pickQuery(parsed, ['detailed', 'active_only']),
+	});
+
+export const shardStores: ElasticsearchEndpoints['indicesShardStores'] = (
+	ctx,
+	input,
+) =>
+	call(ctx, 'indicesShardStores', 'indices.shardStores', input, {
+		path: (parsed) => `${indexPath(parsed.index)}/_shard_stores`,
+		query: (parsed) => pickQuery(parsed, ['status']),
+	});
+
+// GET is the documented method for the refresh and flush maintenance paths.
+export const refresh: ElasticsearchEndpoints['indicesRefresh'] = (ctx, input) =>
+	call(ctx, 'indicesRefresh', 'indices.refresh', input, {
+		path: (parsed) => `${indexPath(parsed.index)}/_refresh`,
+	});
+
+export const flush: ElasticsearchEndpoints['indicesFlush'] = (ctx, input) =>
+	call(ctx, 'indicesFlush', 'indices.flush', input, {
+		path: (parsed) => `${indexPath(parsed.index)}/_flush`,
+		query: (parsed) => pickQuery(parsed, ['force', 'wait_if_ongoing']),
+	});
+
+export const forceMerge: ElasticsearchEndpoints['indicesForceMerge'] = (
+	ctx,
+	input,
+) =>
+	call(ctx, 'indicesForceMerge', 'indices.forceMerge', input, {
+		method: 'POST',
+		path: (parsed) => `${indexPath(parsed.index)}/_forcemerge`,
+		query: (parsed) =>
+			pickQuery(parsed, [
+				'max_num_segments',
+				'only_expunge_deletes',
+				'flush',
+				'wait_for_completion',
+			]),
+	});
+
+export const cacheClear: ElasticsearchEndpoints['indicesCacheClear'] = (
+	ctx,
+	input,
+) =>
+	call(ctx, 'indicesCacheClear', 'indices.cacheClear', input, {
+		method: 'POST',
+		path: (parsed) => `${indexPath(parsed.index)}/_cache/clear`,
+		query: (parsed) => ({
+			...pickQuery(parsed, ['fielddata', 'query', 'request']),
+			fields: parsed.fields?.join(','),
+		}),
+	});
+
+export const reloadSearchAnalyzers: ElasticsearchEndpoints['indicesReloadSearchAnalyzers'] =
+	(ctx, input) =>
+		call(
+			ctx,
+			'indicesReloadSearchAnalyzers',
+			'indices.reloadSearchAnalyzers',
+			input,
+			{
+				method: 'POST',
+				path: (parsed) => `${indexPath(parsed.index)}/_reload_search_analyzers`,
+			},
+		);
+
+export const diskUsage: ElasticsearchEndpoints['indicesDiskUsage'] = (
+	ctx,
+	input,
+) =>
+	call(ctx, 'indicesDiskUsage', 'indices.diskUsage', input, {
+		method: 'POST',
+		path: (parsed) => `${indexPath(parsed.index)}/_disk_usage`,
+		query: (parsed) => pickQuery(parsed, ['run_expensive_tasks', 'flush']),
+	});
+
+export const fieldUsageStats: ElasticsearchEndpoints['indicesFieldUsageStats'] =
+	(ctx, input) =>
+		call(ctx, 'indicesFieldUsageStats', 'indices.fieldUsageStats', input, {
+			path: (parsed) => `${indexPath(parsed.index)}/_field_usage_stats`,
+		});
+
+export const deprecations: ElasticsearchEndpoints['indicesDeprecations'] = (
+	ctx,
+	input,
+) =>
+	call(ctx, 'indicesDeprecations', 'indices.deprecations', input, {
+		path: (parsed) => `${indexPath(parsed.index)}/_migration/deprecations`,
+	});
+
+export const explainDataLifecycle: ElasticsearchEndpoints['indicesExplainDataLifecycle'] =
+	(ctx, input) =>
+		call(
+			ctx,
+			'indicesExplainDataLifecycle',
+			'indices.explainDataLifecycle',
+			input,
+			{
+				path: (parsed) => `${indexPath(parsed.index)}/_lifecycle/explain`,
+				query: (parsed) => pickQuery(parsed, ['include_defaults']),
+			},
+		);
+
+export const ilmExplain: ElasticsearchEndpoints['indicesIlmExplain'] = (
+	ctx,
+	input,
+) =>
+	call(ctx, 'indicesIlmExplain', 'indices.ilmExplain', input, {
+		path: (parsed) => `${indexPath(parsed.index)}/_ilm/explain`,
+		query: (parsed) => pickQuery(parsed, ['only_errors', 'only_managed']),
+	});
+
+export const ilmRemove: ElasticsearchEndpoints['indicesIlmRemove'] = (
+	ctx,
+	input,
+) =>
+	call(ctx, 'indicesIlmRemove', 'indices.ilmRemove', input, {
+		method: 'POST',
+		path: (parsed) => `${indexPath(parsed.index)}/_ilm/remove`,
+	});
+
+export const ilmRetry: ElasticsearchEndpoints['indicesIlmRetry'] = (
+	ctx,
+	input,
+) =>
+	call(ctx, 'indicesIlmRetry', 'indices.ilmRetry', input, {
+		method: 'POST',
+		path: (parsed) => `${indexPath(parsed.index)}/_ilm/retry`,
+	});
+
+export const clearSearchableSnapshotCache: ElasticsearchEndpoints['indicesClearSearchableSnapshotCache'] =
+	(ctx, input) =>
+		call(
+			ctx,
+			'indicesClearSearchableSnapshotCache',
+			'indices.clearSearchableSnapshotCache',
+			input,
+			{
+				method: 'POST',
+				path: (parsed) =>
+					`${indexPath(parsed.index)}/_searchable_snapshots/cache/clear`,
+			},
+		);
+
+export const searchableSnapshotStats: ElasticsearchEndpoints['indicesSearchableSnapshotStats'] =
+	(ctx, input) =>
+		call(
+			ctx,
+			'indicesSearchableSnapshotStats',
+			'indices.searchableSnapshotStats',
+			input,
+			{
+				path: (parsed) =>
+					`${indexPath(parsed.index)}/_searchable_snapshots/stats`,
+				query: (parsed) => pickQuery(parsed, ['level']),
+			},
+		);

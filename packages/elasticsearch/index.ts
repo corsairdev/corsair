@@ -112,6 +112,24 @@ export type ElasticsearchEndpoints = {
 	indicesShrink: ElasticsearchEndpoint<'indicesShrink'>;
 	indicesDownsample: ElasticsearchEndpoint<'indicesDownsample'>;
 	indicesAnalyze: ElasticsearchEndpoint<'indicesAnalyze'>;
+	indicesStats: ElasticsearchEndpoint<'indicesStats'>;
+	indicesSegments: ElasticsearchEndpoint<'indicesSegments'>;
+	indicesRecovery: ElasticsearchEndpoint<'indicesRecovery'>;
+	indicesShardStores: ElasticsearchEndpoint<'indicesShardStores'>;
+	indicesRefresh: ElasticsearchEndpoint<'indicesRefresh'>;
+	indicesFlush: ElasticsearchEndpoint<'indicesFlush'>;
+	indicesForceMerge: ElasticsearchEndpoint<'indicesForceMerge'>;
+	indicesCacheClear: ElasticsearchEndpoint<'indicesCacheClear'>;
+	indicesReloadSearchAnalyzers: ElasticsearchEndpoint<'indicesReloadSearchAnalyzers'>;
+	indicesDiskUsage: ElasticsearchEndpoint<'indicesDiskUsage'>;
+	indicesFieldUsageStats: ElasticsearchEndpoint<'indicesFieldUsageStats'>;
+	indicesDeprecations: ElasticsearchEndpoint<'indicesDeprecations'>;
+	indicesExplainDataLifecycle: ElasticsearchEndpoint<'indicesExplainDataLifecycle'>;
+	indicesIlmExplain: ElasticsearchEndpoint<'indicesIlmExplain'>;
+	indicesIlmRemove: ElasticsearchEndpoint<'indicesIlmRemove'>;
+	indicesIlmRetry: ElasticsearchEndpoint<'indicesIlmRetry'>;
+	indicesClearSearchableSnapshotCache: ElasticsearchEndpoint<'indicesClearSearchableSnapshotCache'>;
+	indicesSearchableSnapshotStats: ElasticsearchEndpoint<'indicesSearchableSnapshotStats'>;
 };
 
 // Elasticsearch has no inbound webhook surface — the REST API is
@@ -147,6 +165,24 @@ const elasticsearchEndpointsNested = {
 		shrink: Indices.shrink,
 		downsample: Indices.downsample,
 		analyze: Indices.analyze,
+		stats: Indices.stats,
+		segments: Indices.segments,
+		recovery: Indices.recovery,
+		shardStores: Indices.shardStores,
+		refresh: Indices.refresh,
+		flush: Indices.flush,
+		forceMerge: Indices.forceMerge,
+		cacheClear: Indices.cacheClear,
+		reloadSearchAnalyzers: Indices.reloadSearchAnalyzers,
+		diskUsage: Indices.diskUsage,
+		fieldUsageStats: Indices.fieldUsageStats,
+		deprecations: Indices.deprecations,
+		explainDataLifecycle: Indices.explainDataLifecycle,
+		ilmExplain: Indices.ilmExplain,
+		ilmRemove: Indices.ilmRemove,
+		ilmRetry: Indices.ilmRetry,
+		clearSearchableSnapshotCache: Indices.clearSearchableSnapshotCache,
+		searchableSnapshotStats: Indices.searchableSnapshotStats,
 	},
 	search: {
 		run: Search.run,
@@ -334,6 +370,80 @@ export const elasticsearchEndpointSchemas = {
 	'indices.analyze': {
 		input: ElasticsearchEndpointInputSchemas.indicesAnalyze,
 		output: ElasticsearchEndpointOutputSchemas.indicesAnalyze,
+	},
+	'indices.stats': {
+		input: ElasticsearchEndpointInputSchemas.indicesStats,
+		output: ElasticsearchEndpointOutputSchemas.indicesStats,
+	},
+	'indices.segments': {
+		input: ElasticsearchEndpointInputSchemas.indicesSegments,
+		output: ElasticsearchEndpointOutputSchemas.indicesSegments,
+	},
+	'indices.recovery': {
+		input: ElasticsearchEndpointInputSchemas.indicesRecovery,
+		output: ElasticsearchEndpointOutputSchemas.indicesRecovery,
+	},
+	'indices.shardStores': {
+		input: ElasticsearchEndpointInputSchemas.indicesShardStores,
+		output: ElasticsearchEndpointOutputSchemas.indicesShardStores,
+	},
+	'indices.refresh': {
+		input: ElasticsearchEndpointInputSchemas.indicesRefresh,
+		output: ElasticsearchEndpointOutputSchemas.indicesRefresh,
+	},
+	'indices.flush': {
+		input: ElasticsearchEndpointInputSchemas.indicesFlush,
+		output: ElasticsearchEndpointOutputSchemas.indicesFlush,
+	},
+	'indices.forceMerge': {
+		input: ElasticsearchEndpointInputSchemas.indicesForceMerge,
+		output: ElasticsearchEndpointOutputSchemas.indicesForceMerge,
+	},
+	'indices.cacheClear': {
+		input: ElasticsearchEndpointInputSchemas.indicesCacheClear,
+		output: ElasticsearchEndpointOutputSchemas.indicesCacheClear,
+	},
+	'indices.reloadSearchAnalyzers': {
+		input: ElasticsearchEndpointInputSchemas.indicesReloadSearchAnalyzers,
+		output: ElasticsearchEndpointOutputSchemas.indicesReloadSearchAnalyzers,
+	},
+	'indices.diskUsage': {
+		input: ElasticsearchEndpointInputSchemas.indicesDiskUsage,
+		output: ElasticsearchEndpointOutputSchemas.indicesDiskUsage,
+	},
+	'indices.fieldUsageStats': {
+		input: ElasticsearchEndpointInputSchemas.indicesFieldUsageStats,
+		output: ElasticsearchEndpointOutputSchemas.indicesFieldUsageStats,
+	},
+	'indices.deprecations': {
+		input: ElasticsearchEndpointInputSchemas.indicesDeprecations,
+		output: ElasticsearchEndpointOutputSchemas.indicesDeprecations,
+	},
+	'indices.explainDataLifecycle': {
+		input: ElasticsearchEndpointInputSchemas.indicesExplainDataLifecycle,
+		output: ElasticsearchEndpointOutputSchemas.indicesExplainDataLifecycle,
+	},
+	'indices.ilmExplain': {
+		input: ElasticsearchEndpointInputSchemas.indicesIlmExplain,
+		output: ElasticsearchEndpointOutputSchemas.indicesIlmExplain,
+	},
+	'indices.ilmRemove': {
+		input: ElasticsearchEndpointInputSchemas.indicesIlmRemove,
+		output: ElasticsearchEndpointOutputSchemas.indicesIlmRemove,
+	},
+	'indices.ilmRetry': {
+		input: ElasticsearchEndpointInputSchemas.indicesIlmRetry,
+		output: ElasticsearchEndpointOutputSchemas.indicesIlmRetry,
+	},
+	'indices.clearSearchableSnapshotCache': {
+		input:
+			ElasticsearchEndpointInputSchemas.indicesClearSearchableSnapshotCache,
+		output:
+			ElasticsearchEndpointOutputSchemas.indicesClearSearchableSnapshotCache,
+	},
+	'indices.searchableSnapshotStats': {
+		input: ElasticsearchEndpointInputSchemas.indicesSearchableSnapshotStats,
+		output: ElasticsearchEndpointOutputSchemas.indicesSearchableSnapshotStats,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof elasticsearchEndpointsNested
@@ -545,6 +655,96 @@ const elasticsearchEndpointMeta = {
 		riskLevel: 'read',
 		description:
 			'Run text analysis with an index analyzer or field and get the resulting tokens back with offsets and positions',
+	},
+	'indices.stats': {
+		riskLevel: 'read',
+		description:
+			'Get index statistics for chosen metrics (store, indexing, search, merge, segments, docs...), aggregated at cluster, index or shard level',
+	},
+	'indices.segments': {
+		riskLevel: 'read',
+		description:
+			'Get low-level Lucene segment information per shard of the target indices',
+	},
+	'indices.recovery': {
+		riskLevel: 'read',
+		description:
+			'View shard recovery status for indices (replication, recovery from snapshot, relocation), keyed by index name',
+	},
+	'indices.shardStores': {
+		riskLevel: 'read',
+		description:
+			'Get information about shard stores (copy status, allocation, flush stats) filtered by health status',
+	},
+	'indices.refresh': {
+		riskLevel: 'write',
+		description:
+			'Refresh indices (GET /{index}/_refresh) so pending indexed documents become searchable immediately',
+	},
+	'indices.flush': {
+		riskLevel: 'write',
+		description:
+			'Flush indices (GET /{index}/_flush) to persist in-memory transaction-log entries to storage',
+	},
+	'indices.forceMerge': {
+		riskLevel: 'write',
+		description:
+			'Force a Lucene segment merge on indices, optionally to a target segment count; resource-heavy on large indices',
+	},
+	'indices.cacheClear': {
+		riskLevel: 'write',
+		description:
+			'Clear index caches (fielddata, query, request, or specific fields) for the target indices',
+	},
+	'indices.reloadSearchAnalyzers': {
+		riskLevel: 'write',
+		description:
+			'Reload search analyzers on indices whose analyzer resources changed (for example after a synonym file update)',
+	},
+	'indices.diskUsage': {
+		riskLevel: 'read',
+		description:
+			'Analyze disk usage per field of an index; requires the explicit run_expensive_tasks: true opt-in because the analysis is resource-intensive',
+	},
+	'indices.fieldUsageStats': {
+		riskLevel: 'read',
+		description:
+			'Get field usage statistics (how often each field was read by searches) for the target indices',
+	},
+	'indices.deprecations': {
+		riskLevel: 'read',
+		description:
+			'Get deprecation warnings about the target index configuration that the next major Elasticsearch upgrade will remove',
+	},
+	'indices.explainDataLifecycle': {
+		riskLevel: 'read',
+		description:
+			'Get the data stream lifecycle management status for the target indices, keyed by index name',
+	},
+	'indices.ilmExplain': {
+		riskLevel: 'read',
+		description:
+			'Get the Index Lifecycle Management state for the target indices, including the current step and any failures',
+	},
+	'indices.ilmRemove': {
+		riskLevel: 'write',
+		description:
+			'Remove the ILM policy association from an index; lifecycle management stops managing it',
+	},
+	'indices.ilmRetry': {
+		riskLevel: 'write',
+		description:
+			'Retry a failed Index Lifecycle Management step for the target indices',
+	},
+	'indices.clearSearchableSnapshotCache': {
+		riskLevel: 'write',
+		description:
+			'Clear the searchable snapshots shared cache for fully-mounted indices',
+	},
+	'indices.searchableSnapshotStats': {
+		riskLevel: 'read',
+		description:
+			'Get searchable snapshot statistics (cache usage, IO) for mounted indices at cluster, index or shard level',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof elasticsearchEndpointsNested

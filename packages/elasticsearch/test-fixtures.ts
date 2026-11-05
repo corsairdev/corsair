@@ -18,14 +18,19 @@ import type {
 	IndicesCreateOutput,
 	IndicesDeleteAliasOutput,
 	IndicesDeleteOutput,
+	IndicesDeprecationsOutput,
 	IndicesDownsampleOutput,
 	IndicesGetResponse,
 	IndicesGetSettingsOutput,
+	IndicesIlmRemoveOutput,
 	IndicesListResponse,
 	IndicesOpenOutput,
 	IndicesRemoveBlockOutput,
 	IndicesResizeOutput,
 	IndicesRolloverOutput,
+	IndicesSearchableSnapshotStatsOutput,
+	IndicesStatsOutput,
+	LifecycleIndices,
 	SearchHit,
 	SearchRunResponse,
 	TermVectorsResult,
@@ -391,3 +396,167 @@ export const indicesAnalyzeOutput: IndicesAnalyzeOutput = {
 		},
 	],
 };
+
+// ── stats and maintenance fixtures ───────────────────────────────────────────
+
+export const shardsOpResponse = {
+	_shards: { total: 4, successful: 4, failed: 0, skipped: 0 },
+} as const;
+
+export const indicesStatsOutput: IndicesStatsOutput = {
+	_shards: shardsOpResponse._shards,
+	_all: {
+		primaries: {},
+		total: {},
+	},
+	indices: {
+		'logs-2026-11': {
+			uuid: 'AxNuG5LbQs6tS3D4f9C-Rw',
+			health: 'green',
+			primaries: { docs: { count: 4201, deleted: 0 } },
+			total: { store: { size_in_bytes: 1_258_291 } },
+		},
+	},
+};
+
+export const indicesSegmentsOutput = {
+	indices: {
+		'logs-2026-11': {
+			shards: {
+				0: [
+					{
+						routing: { state: 'STARTED', primary: true, node: 'node-1' },
+						num_committed_segments: 1,
+						num_search_segments: 1,
+						segments: {
+							_0: {
+								generation: 0,
+								num_docs: 1,
+								size_in_bytes: 260,
+								committed: true,
+								search: true,
+							},
+						},
+					},
+				],
+			},
+		},
+	},
+	_shards: shardsOpResponse._shards,
+} as const;
+
+export const indicesRecoveryOutput = {
+	'logs-2026-11': {
+		shards: [
+			{
+				id: 0,
+				type: 'EMPTY_STORE',
+				stage: 'DONE',
+				primary: true,
+				start_time_in_millis: 1761955200000,
+				total_time_in_millis: 100,
+				index: { size: { total_in_bytes: 0 } },
+			},
+		],
+	},
+} as const;
+
+export const indicesShardStoresOutput = {
+	indices: {
+		'logs-2026-11': {
+			shards: {
+				0: {
+					stores: [
+						{
+							'node-1': { sync_id: 'sync-1', allocation_id: 'alloc-1' },
+						},
+					],
+				},
+			},
+		},
+	},
+} as const;
+
+export const indicesFieldUsageStatsOutput = {
+	_shards: shardsOpResponse._shards,
+	'logs-2026-11': {
+		id: 0,
+		'shard-stats': {
+			'search.total': 12,
+			'search.query_time': '20ms',
+			'aggregation.total': 3,
+			fields: { message: 9, level: 3 },
+		},
+	},
+} as const;
+
+export const indicesReloadSearchAnalyzersOutput = {
+	reload_details: [
+		{
+			index: 'logs-2026-11',
+			reloaded_analyzers: ['my_synonyms'],
+			reloaded_node_ids: ['node-1', 'node-2'],
+		},
+	],
+	_shards: shardsOpResponse._shards,
+} as const;
+
+export const indicesDiskUsageOutput = {
+	'logs-2026-11': {
+		store_size_in_bytes: 1_258_291,
+		fielddata: 0,
+		fields: {
+			_all: { total_in_bytes: 411, inverted_index: { total_in_bytes: 411 } },
+		},
+	},
+} as const;
+
+export const indicesDeprecationsOutput: IndicesDeprecationsOutput = {
+	cluster_settings: [],
+	index_settings: {
+		'logs-2026-11': [
+			{
+				level: 'warning',
+				message: 'Index name uses custom routing',
+				url: 'https://www.elastic.co/guide/en/elasticsearch/reference/current/breaking-changes-9.0.html',
+				details: 'custom routing is deprecated',
+				resolve_during_rolling_upgrade: false,
+			},
+		],
+	},
+	data_streams: {},
+	node_settings: [],
+	ml_settings: [],
+	templates: {},
+	ilm_policies: {},
+};
+
+export const lifecycleIndicesOutput: LifecycleIndices = {
+	indices: {
+		'logs-2026-11': {
+			index_name: '.logs-2026-11',
+			managed: true,
+			policy: 'logs-policy',
+			index_creation_date_millis: 1761955200000,
+			lifecycle_date_millis: 1761955200000,
+			phase: 'hot',
+			phase_time_millis: 1761955200001,
+			action: 'rollover',
+			step: 'check-rollover-ready',
+		},
+	},
+};
+
+export const indicesIlmRemoveOutput: IndicesIlmRemoveOutput = {
+	failed_indexes: [],
+	has_failures: false,
+};
+
+export const indicesSearchableSnapshotStatsOutput: IndicesSearchableSnapshotStatsOutput =
+	{
+		stats: {
+			total: { index_n: 1, copy_n: 0, copy_cached_n: 0 },
+			indices: {},
+		},
+		total: { reclaimed_bytes: 0, reclaimed_file_count: 0 },
+	};

@@ -50,6 +50,24 @@ pnpm add @corsair-dev/elasticsearch
 | `indices.rollover` | `elasticsearch.api.indices.rollover` | `write` | Roll an alias or data stream over to a new index when conditions (max_age, max_size, max_docs...) are met, with dry-run support |
 | `indices.shrink` | `elasticsearch.api.indices.shrink` | `write` | Shrink an index into a new index with fewer primary shards (factor of the source count) |
 | `indices.split` | `elasticsearch.api.indices.split` | `write` | Split an index into a new index with more primary shards (split count must be a multiple of the source) |
+| `indices.cacheClear` | `elasticsearch.api.indices.cacheClear` | `write` | Clear index caches (fielddata, query, request, or specific fields) for the target indices |
+| `indices.deprecations` | `elasticsearch.api.indices.deprecations` | `read` | Get deprecation warnings about the target index configuration that the next major Elasticsearch upgrade will remove |
+| `indices.diskUsage` | `elasticsearch.api.indices.diskUsage` | `read` | Analyze disk usage per field of an index; requires the explicit run_expensive_tasks: true opt-in because the analysis is resource-intensive |
+| `indices.explainDataLifecycle` | `elasticsearch.api.indices.explainDataLifecycle` | `read` | Get the data stream lifecycle management status for the target indices, keyed by index name |
+| `indices.fieldUsageStats` | `elasticsearch.api.indices.fieldUsageStats` | `read` | Get field usage statistics (how often each field was read by searches) for the target indices |
+| `indices.flush` | `elasticsearch.api.indices.flush` | `write` | Flush indices (GET /{index}/_flush) to persist in-memory transaction-log entries to storage |
+| `indices.forceMerge` | `elasticsearch.api.indices.forceMerge` | `write` | Force a Lucene segment merge on indices, optionally to a target segment count; resource-heavy on large indices |
+| `indices.ilmExplain` | `elasticsearch.api.indices.ilmExplain` | `read` | Get the Index Lifecycle Management state for the target indices, including the current step and any failures |
+| `indices.ilmRemove` | `elasticsearch.api.indices.ilmRemove` | `write` | Remove the ILM policy association from an index; lifecycle management stops managing it |
+| `indices.ilmRetry` | `elasticsearch.api.indices.ilmRetry` | `write` | Retry a failed Index Lifecycle Management step for the target indices |
+| `indices.recovery` | `elasticsearch.api.indices.recovery` | `read` | View shard recovery status for indices (replication, recovery from snapshot, relocation), keyed by index name |
+| `indices.refresh` | `elasticsearch.api.indices.refresh` | `write` | Refresh indices (GET /{index}/_refresh) so pending indexed documents become searchable immediately |
+| `indices.reloadSearchAnalyzers` | `elasticsearch.api.indices.reloadSearchAnalyzers` | `write` | Reload search analyzers on indices whose analyzer resources changed (for example after a synonym file update) |
+| `indices.searchableSnapshotStats` | `elasticsearch.api.indices.searchableSnapshotStats` | `read` | Get searchable snapshot statistics (cache usage, IO) for mounted indices at cluster, index or shard level |
+| `indices.clearSearchableSnapshotCache` | `elasticsearch.api.indices.clearSearchableSnapshotCache` | `write` | Clear the searchable snapshots shared cache for fully-mounted indices |
+| `indices.segments` | `elasticsearch.api.indices.segments` | `read` | Get low-level Lucene segment information per shard of the target indices |
+| `indices.shardStores` | `elasticsearch.api.indices.shardStores` | `read` | Get information about shard stores (copy status, allocation, flush stats) filtered by health status |
+| `indices.stats` | `elasticsearch.api.indices.stats` | `read` | Get index statistics for chosen metrics (store, indexing, search, merge, segments, docs...), aggregated at cluster, index or shard level |
 | `indices.get` | `elasticsearch.api.indices.get` | `read` | Get mapping, settings and alias information for one or more indices or data streams |
 | `indices.list` | `elasticsearch.api.indices.list` | `read` | List the indices (or data stream backing indices) matching a target, with health, shards, doc counts and store size |
 | `search.run` | `elasticsearch.api.search.run` | `read` | Search indices, data streams or aliases with a typed subset of the Query DSL (match, match_phrase, term, terms, ids, match_all, bool) with from/size paging |
