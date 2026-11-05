@@ -36,14 +36,14 @@ Five things catch callers out, each checked against the live API:
 
 - A render that fails still returns 200 from the create call. Read `status`, then `error_code`.
 - `polling_url` and the file URL are null until the render finishes. Images with `create_now: true` often finish inline; PDFs and videos usually queue.
-- Deleting a generated file answers 204 and clears its URL, but a later `get` still returns 200 with an empty URL, not a 404.
+- Deleting a generated file answers 204 and rewrites its URL field to the bare directory prefix, dropping the filename. A later `get` still returns 200, not a 404. The field is `image_url`, `pdf_url` or `video_url` depending on the type.
 - `templates.list`, `collections.list` and `fonts.list` page by cursor. Pass `links.next` from the previous page as `cursor`; template and font pages hold 20 rows.
-- The API token is project-scoped. A token from another project returns 401, not an empty list.
+- The API has no project selector. Every request acts on the project that owns the token, so a token from another project lists and creates resources in its own project rather than failing.
 
 `media.upload` and `fonts.create` fetch a public `file_url`, so private and
 loopback addresses are rejected, the connection is pinned to a checked address,
-each redirect hop is checked, and the download has a 30 second deadline and a
-25 MB cap.
+each redirect hop is checked, compressed responses are decoded, and the download
+has a 30 second deadline and a 25 MB cap.
 
 ## Endpoints
 
@@ -78,7 +78,7 @@ each redirect hop is checked, and the download has a 30 second deadline and a
 
 ## Auth
 
-Auth: API key. Create an API project in Placid, open the project, then click API Tokens in the left menu. Tokens are project-scoped: a token only reaches the templates of the project that owns it.
+Auth: API key. Create an API project in Placid, open the project, then click API Tokens in the left menu. The API has no project selector, so every request acts on the project that owns the token.
 
 ## Webhooks
 

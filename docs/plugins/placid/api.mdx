@@ -28,7 +28,7 @@ await corsair.placid.api.collections.create({ title: 'Acme onboarding', template
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `title` | `string \| null` | Yes | — |
-| `custom_data` | `object` | No | — |
+| `custom_data` | `string \| object` | No | — |
 | `template_uuids` | `string[] \| null` | No | — |
 
 <AccordionGroup>
@@ -48,7 +48,7 @@ string | Record<string, unknown>
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `title` | `string \| null` | No | — |
-| `custom_data` | `object \| null` | No | — |
+| `custom_data` | `string \| object \| unknown[]` | No | — |
 | `templates` | `string[] \| null` | No | The UUIDs of the templates in this collection. |
 | `template_uuids` | `string[] \| null` | No | Deprecated alias. The API returns `templates`. |
 
@@ -122,7 +122,7 @@ await corsair.placid.api.collections.get({ collection_id: 'col_1234' });
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `title` | `string \| null` | No | — |
-| `custom_data` | `object \| null` | No | — |
+| `custom_data` | `string \| object \| unknown[]` | No | — |
 | `templates` | `string[] \| null` | No | The UUIDs of the templates in this collection. |
 | `template_uuids` | `string[] \| null` | No | Deprecated alias. The API returns `templates`. |
 
@@ -228,7 +228,7 @@ await corsair.placid.api.collections.update({ collection_id: 'col_1234', add_tem
 |------|------|----------|-------------|
 | `collection_id` | `string` | Yes | — |
 | `title` | `string \| null` | No | — |
-| `custom_data` | `object` | No | — |
+| `custom_data` | `string \| object` | No | — |
 | `template_uuids` | `string[] \| null` | No | Replaces the whole list of templates in the collection. |
 | `add_template_uuids` | `string[]` | No | Adds these templates, keeping the existing ones. |
 | `remove_template_uuids` | `string[]` | No | Removes these templates. |
@@ -250,7 +250,7 @@ string | Record<string, unknown> | null
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `title` | `string \| null` | No | — |
-| `custom_data` | `object \| null` | No | — |
+| `custom_data` | `string \| object \| unknown[]` | No | — |
 | `templates` | `string[] \| null` | No | The UUIDs of the templates in this collection. |
 | `template_uuids` | `string[] \| null` | No | Deprecated alias. The API returns `templates`. |
 
@@ -973,7 +973,7 @@ await corsair.placid.api.templates.create({ title: 'Employee of the month', widt
 | `width` | `number \| null` | No | — |
 | `height` | `number \| null` | No | — |
 | `tags` | `string[] \| null` | No | — |
-| `custom_data` | `object` | No | A reference value, such as a serialized JSON object. |
+| `custom_data` | `string \| object` | No | A reference value, such as a serialized JSON object. |
 | `from_template` | `string` | No | Duplicate this template UUID. Overrides `title`, `width` and `height` with the source values. |
 | `add_to_collections` | `string[]` | No | — |
 
@@ -997,7 +997,7 @@ string | Record<string, unknown>
 | `thumbnail` | `string \| null` | No | Null while Placid regenerates the preview. |
 | `tags` | `string[] \| null` | No | — |
 | `layers` | `object[] \| null` | No | — |
-| `custom_data` | `object \| null` | No | The reference value set on the template, if any. |
+| `custom_data` | `string \| object \| unknown[]` | No | The reference value set on the template, if any. |
 | `width` | `number \| null` | No | — |
 | `height` | `number \| null` | No | — |
 | `created_at` | `string \| null` | No | — |
@@ -1086,7 +1086,7 @@ await corsair.placid.api.templates.get({ template_uuid: 'ospo24ysn' });
 | `thumbnail` | `string \| null` | No | Null while Placid regenerates the preview. |
 | `tags` | `string[] \| null` | No | — |
 | `layers` | `object[] \| null` | No | — |
-| `custom_data` | `object \| null` | No | The reference value set on the template, if any. |
+| `custom_data` | `string \| object \| unknown[]` | No | The reference value set on the template, if any. |
 | `width` | `number \| null` | No | — |
 | `height` | `number \| null` | No | — |
 | `created_at` | `string \| null` | No | — |
@@ -1216,7 +1216,7 @@ await corsair.placid.api.templates.update({ template_uuid: 'ospo24ysn', title: '
 | `template_uuid` | `string` | Yes | — |
 | `title` | `string \| null` | No | — |
 | `tags` | `string[] \| null` | No | — |
-| `custom_data` | `object` | No | — |
+| `custom_data` | `string \| object` | No | — |
 
 <AccordionGroup>
 <Accordion title="custom_data full type">
@@ -1238,7 +1238,7 @@ string | Record<string, unknown> | null
 | `thumbnail` | `string \| null` | No | Null while Placid regenerates the preview. |
 | `tags` | `string[] \| null` | No | — |
 | `layers` | `object[] \| null` | No | — |
-| `custom_data` | `object \| null` | No | The reference value set on the template, if any. |
+| `custom_data` | `string \| object \| unknown[]` | No | The reference value set on the template, if any. |
 | `width` | `number \| null` | No | — |
 | `height` | `number \| null` | No | — |
 | `created_at` | `string \| null` | No | — |

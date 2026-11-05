@@ -3,11 +3,11 @@ description: Creative automation with Placid - render templates to images, PDFs 
 domain: placid.app
 recommendedAuth: api_key
 overviewNote: |
-  Create an API project in Placid, open the project, then click API Tokens in the left menu. Tokens are project-scoped: a token only reaches the templates of the project that owns it, and a token from another project returns 401.
+  Create an API project in Placid, open the project, then click API Tokens in the left menu. The API has no project selector: every request acts on the project that owns the token, so a token from another project lists and creates resources in its own project rather than failing.
 
   - **Renders are queued.** `images.create`, `pdfs.create`, `videos.create` and `pdfs.merge` reply with `status: 'queued'` almost every time. Poll the reply's `polling_url` with the matching `get`, or pass `webhook_success` and let Placid call you. The file URL is null until `status` is `finished`.
   - **Failures are reported after the fact.** A render that fails still returns a 200 from the create call. Read the `status: 'error'` reply for `error_code`, `error_message` and `error_details`. Branch on `error_code`, which does not change; `error_message` can be reworded.
-  - **Deleting a generated file keeps its record.** `images.delete`, `pdfs.delete` and `videos.delete` answer 204 and empty the file URL, but a later `get` still returns 200 with an empty `image_url` rather than a 404. Do not poll for a 404 to confirm a delete.
+  - **Deleting a generated file keeps its record.** `images.delete`, `pdfs.delete` and `videos.delete` answer 204 and rewrite the URL field to the bare directory prefix, dropping the filename but keeping scheme and host. A later `get` still returns 200 rather than a 404. The field is `image_url` for images, `pdf_url` for PDFs and `video_url` for videos. Do not poll for a 404 to confirm a delete.
   - **`collections` returns `templates`.** Placid's docs name the member list `template_uuids`, but the API answers `templates`, a plain array of UUID strings. Both are read, so either spelling works.
   - **Credits.** One image is one credit, one PDF page is two, and a video is ten credits per ten seconds. `create_now: true` renders immediately instead of queueing, and Placid allows 10 simultaneous calls that way.
   - **Rate limit.** 60 requests per minute. A 429 is retried up to three times with backoff. A 5xx is only retried on reads, because repeating a create would render and bill a second file.
