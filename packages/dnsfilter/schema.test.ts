@@ -1,3 +1,4 @@
+import { z } from 'zod';
 import {
 	DnsfilterEndpointInputSchemas,
 	DnsfilterEndpointOutputSchemas,
@@ -116,5 +117,90 @@ describe('Dnsfilter endpoint schemas', () => {
 			DnsfilterEndpointInputSchemas.csvExportsUserAgentCreate.safeParse({})
 				.success,
 		).toBe(true);
+	});
+});
+
+// JSON Schema nodes are arbitrary nested JSON, so the walker takes `unknown`
+// and narrows with typeof checks.
+function isOpenString(node: unknown): boolean {
+	if (typeof node !== 'object' || node === null || Array.isArray(node)) {
+		return false;
+	}
+	// Safe: the guard above leaves a non-null, non-array object.
+	const record = node as Record<string, unknown>;
+	return (
+		record.type === 'string' && !('enum' in record) && !('const' in record)
+	);
+}
+
+// Collects paths of enum/const nodes that have no plain-string sibling branch,
+// i.e. response values the API could not extend without failing the parse.
+function strictEnumPaths(node: unknown, path: string, out: string[]): void {
+	if (Array.isArray(node)) {
+		node.forEach((entry, index) => {
+			strictEnumPaths(entry, `${path}[${index}]`, out);
+		});
+		return;
+	}
+	if (typeof node !== 'object' || node === null) return;
+	// Safe: the guards above leave a non-null, non-array object.
+	const record = node as Record<string, unknown>;
+	const anyOf = Array.isArray(record.anyOf) ? record.anyOf : [];
+	const open = anyOf.some(isOpenString);
+	if ('enum' in record || 'const' in record) out.push(path);
+	for (const [key, value] of Object.entries(record)) {
+		if (key !== 'anyOf' || !open) {
+			strictEnumPaths(value, `${path}.${key}`, out);
+			continue;
+		}
+		// An open enum: the enum branch is allowed beside the plain string.
+		for (const branch of anyOf) {
+			const isEnumBranch =
+				typeof branch === 'object' && branch !== null && 'enum' in branch;
+			if (!isEnumBranch) strictEnumPaths(branch, `${path}.anyOf`, out);
+		}
+	}
+}
+
+describe('Dnsfilter response enums', () => {
+	it('never rejects a value the API adds to a response enum', () => {
+		const strict: string[] = [];
+		for (const [key, schema] of Object.entries(
+			DnsfilterEndpointOutputSchemas,
+		)) {
+			strictEnumPaths(
+				z.toJSONSchema(schema, { unrepresentable: 'any' }),
+				key,
+				strict,
+			);
+		}
+		expect(strict).toEqual([]);
+	});
+
+	it('keeps unknown response values instead of failing the read', () => {
+		const parsed =
+			DnsfilterEndpointOutputSchemas.userAgentReleasesList.safeParse({
+				user_agent_releases: [{ agent_type: 'linux', architecture: 'arm64' }],
+			});
+
+		expect(parsed.success).toBe(true);
+		expect(parsed.data?.user_agent_releases?.[0]).toEqual({
+			agent_type: 'linux',
+			architecture: 'arm64',
+		});
+	});
+
+	it('keeps request enums strict', () => {
+		expect(
+			DnsfilterEndpointInputSchemas.unblockRequestsDecision.safeParse({
+				id: 'req-1',
+				decision: 'maybe',
+			}).success,
+		).toBe(false);
+		expect(
+			DnsfilterEndpointInputSchemas.scheduledReportsCreate.safeParse({
+				scheduled_report: { frequency: 'hourly' },
+			}).success,
+		).toBe(false);
 	});
 });

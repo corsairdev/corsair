@@ -1,5 +1,16 @@
 import { z } from 'zod';
 
+// Response-only enums. DNSFilter adds values to these lists over time (user
+// agent releases already report architectures beyond x86/x86_64), and a strict
+// z.enum would fail the whole read on the first new value. The documented
+// values stay in the schema for docs and tooling; any other string passes
+// through unchanged. Request enums stay strict z.enum.
+export function openEnum<const T extends readonly [string, ...string[]]>(
+	values: T,
+) {
+	return z.union([z.enum(values), z.string()]);
+}
+
 // Generated from the DNSFilter OpenAPI document (2026-10-13). Payloads the
 // document leaves open become z.unknown(); typed fields stay concrete.
 
@@ -358,7 +369,7 @@ export const EnterpriseConnectionSchema = z.object({
 	role_map: z.array(EnterpriseConnectionRoleMapSchema).optional(),
 	sub_prefix: z.string().optional(),
 	conn_id: z.string().optional(),
-	idp: z.enum(['openid', 'okta', 'azure', 'google']).optional(),
+	idp: openEnum(['openid', 'okta', 'azure', 'google']).optional(),
 	authorized_domains: z.array(z.string()).optional(),
 });
 export type EnterpriseConnection = z.infer<typeof EnterpriseConnectionSchema>;
@@ -1018,7 +1029,7 @@ export const PolicySchema = z.object({
 	ecosia_safesearch: z.boolean().optional(),
 	yandex_safe_search: z.boolean().optional(),
 	youtube_restricted: z.boolean().optional(),
-	youtube_restricted_level: z.enum(['strict', 'none']).optional(),
+	youtube_restricted_level: openEnum(['strict', 'none']).optional(),
 	interstitial: z.boolean().optional(),
 	is_global_policy: z.boolean().optional(),
 	can_edit: z.boolean().optional(),
@@ -1164,9 +1175,12 @@ export const ScheduledReportPreviewSchema = z.object({
 	organization_id: z.number().int().optional(),
 	include_threat_summary: z.boolean().optional(),
 	include_content_category_summary: z.boolean().optional(),
-	content_categories_show_count: z
-		.enum(['all_categories', 'top5', 'top10', 'top15'])
-		.optional(),
+	content_categories_show_count: openEnum([
+		'all_categories',
+		'top5',
+		'top10',
+		'top15',
+	]).optional(),
 	url: z.string().optional(),
 });
 export type ScheduledReportPreview = z.infer<
@@ -1223,11 +1237,35 @@ export const ScheduledReportSchema = z.object({
 });
 export type ScheduledReport = z.infer<typeof ScheduledReportSchema>;
 
+// ScheduledReportSchema is also the create/update body, so responses get a
+// copy whose enums accept values added later.
+export const ScheduledReportAttributesSchema = ScheduledReportSchema.extend({
+	frequency: openEnum(['monthly', 'bi_weekly', 'weekly']).optional(),
+	day_of_week: openEnum([
+		'sunday',
+		'monday',
+		'tuesday',
+		'wednesday',
+		'thursday',
+		'friday',
+		'saturday',
+	]).optional(),
+	content_categories_show_count: openEnum([
+		'all_categories',
+		'top5',
+		'top10',
+		'top15',
+	]).optional(),
+});
+export type ScheduledReportAttributes = z.infer<
+	typeof ScheduledReportAttributesSchema
+>;
+
 export const ScheduledReportSpecSchema = z.object({
 	id: z.string().optional(),
 	type: z.string().optional(),
 	uuid: z.string().optional(),
-	attributes: ScheduledReportSchema.optional(),
+	attributes: ScheduledReportAttributesSchema.optional(),
 });
 export type ScheduledReportSpec = z.infer<typeof ScheduledReportSpecSchema>;
 
@@ -1905,7 +1943,7 @@ export const TrafficReportsQueryLogsResultSchema = z.object({
 	networkid: z.number().int().optional(),
 	request_address: z.string().optional(),
 	domain: z.string().optional(),
-	result: z.enum(['allowed', 'blocked']).optional(),
+	result: openEnum(['allowed', 'blocked']).optional(),
 	threat: z.boolean().optional(),
 	categories: z.array(z.number().int()).optional(),
 	server_id: z.number().int().optional(),
@@ -1914,7 +1952,7 @@ export const TrafficReportsQueryLogsResultSchema = z.object({
 	responsetime: z.number().int().optional(),
 	agentid: z.string().optional(),
 	agentname: z.string().optional(),
-	agenttype: z.enum(['proxy', 'agent', 'clientless']).optional(),
+	agenttype: openEnum(['proxy', 'agent', 'clientless']).optional(),
 	agent_type_raw: z.string().optional(),
 	local_ipv4_address: z.string().optional(),
 	local_ipv6_address: z.string().optional(),
@@ -2400,8 +2438,8 @@ export type UserAgentCleanupUpdate = z.infer<
 >;
 
 export const UserAgentReleaseSchema = z.object({
-	agent_type: z.enum(['windows', 'macos']).optional(),
-	architecture: z.enum(['x86', 'x86_64']).optional(),
+	agent_type: openEnum(['windows', 'macos']).optional(),
+	architecture: openEnum(['x86', 'x86_64']).optional(),
 	agent_version: z.string().optional(),
 	white_label: z.boolean().optional(),
 	release_channels: z
@@ -2419,42 +2457,44 @@ export type UserAgentRelease = z.infer<typeof UserAgentReleaseSchema>;
 
 export const UserAgentFilteringClientSettingSchema = z.object({
 	auto_updates: z.boolean().optional(),
-	connection_method: z
-		.enum(['inherit', 'transparent_prox', 'loopback'])
-		.optional(),
-	filtering_method: z.enum(['inherit', 'precheck', 'dns_filtering']).optional(),
-	fail_over_method: z.enum(['inherit', 'fail_open', 'fail_close']).optional(),
+	connection_method: openEnum([
+		'inherit',
+		'transparent_prox',
+		'loopback',
+	]).optional(),
+	filtering_method: openEnum([
+		'inherit',
+		'precheck',
+		'dns_filtering',
+	]).optional(),
+	fail_over_method: openEnum(['inherit', 'fail_open', 'fail_close']).optional(),
 });
 export type UserAgentFilteringClientSetting = z.infer<
 	typeof UserAgentFilteringClientSettingSchema
 >;
 
 export const UserAgentSchema = z.object({
-	agent_type: z
-		.enum([
-			'proxy',
-			'windows',
-			'macos',
-			'linux',
-			'android',
-			'ios',
-			'embedded',
-			'dnsmasq',
-			'fingbox',
-		])
-		.optional(),
+	agent_type: openEnum([
+		'proxy',
+		'windows',
+		'macos',
+		'linux',
+		'android',
+		'ios',
+		'embedded',
+		'dnsmasq',
+		'fingbox',
+	]).optional(),
 	agent_version: z.string().optional(),
 	client_id: z.string().optional(),
 	hostname: z.string().optional(),
-	status: z
-		.enum([
-			'active',
-			'disabled',
-			'uninstalled',
-			'uninstalled_from_client',
-			'created',
-		])
-		.optional(),
+	status: openEnum([
+		'active',
+		'disabled',
+		'uninstalled',
+		'uninstalled_from_client',
+		'created',
+	]).optional(),
 	os_version: z.string().optional(),
 	os_name: z.string().optional(),
 	friendly_name: z.string().optional(),
@@ -2466,38 +2506,40 @@ export const UserAgentSchema = z.object({
 	id_hex: z.string().optional(),
 	id_binary: z.array(z.number().int()).optional(),
 	last_sync: z.string().optional(),
-	agent_state: z
-		.enum(['protected', 'unprotected', 'bypassed', 'uninstalled'])
-		.optional(),
+	agent_state: openEnum([
+		'protected',
+		'unprotected',
+		'bypassed',
+		'uninstalled',
+	]).optional(),
 	cyber_sight_client: z
 		.object({
-			service_state: z
-				.enum(['not_installed', 'operational', 'disabled', 'error'])
-				.optional(),
-			chrome_extension_status: z
-				.enum([
-					'not_installed',
-					'operational',
-					'disabled',
-					'error',
-					'outdated',
-					'install_disabled',
-					'browser_not_installed',
-					'not_communicating',
-				])
-				.optional(),
-			edge_extension_status: z
-				.enum([
-					'not_installed',
-					'operational',
-					'disabled',
-					'error',
-					'outdated',
-					'install_disabled',
-					'browser_not_installed',
-					'not_communicating',
-				])
-				.optional(),
+			service_state: openEnum([
+				'not_installed',
+				'operational',
+				'disabled',
+				'error',
+			]).optional(),
+			chrome_extension_status: openEnum([
+				'not_installed',
+				'operational',
+				'disabled',
+				'error',
+				'outdated',
+				'install_disabled',
+				'browser_not_installed',
+				'not_communicating',
+			]).optional(),
+			edge_extension_status: openEnum([
+				'not_installed',
+				'operational',
+				'disabled',
+				'error',
+				'outdated',
+				'install_disabled',
+				'browser_not_installed',
+				'not_communicating',
+			]).optional(),
 		})
 		.optional(),
 	cyber_sight_client_setting: z
@@ -2674,33 +2716,33 @@ export type ScheduledReportV2RecipientSpec = z.infer<
 export const ScheduledReportV2IndexAttributesSpecSchema = z.object({
 	name: z.string().optional(),
 	organization: ScheduledReportV2OrganizationSpecSchema.optional(),
-	report_type: z
-		.enum([
-			'legacy_protection_summary_report',
-			'filter_protection_overview',
-			'cyber_sight_activity_overview',
-			'cyber_sight_timeline',
-			'cyber_sight_ai_usage',
-			'cyber_sight_threat_trends',
-		])
-		.optional(),
+	report_type: openEnum([
+		'legacy_protection_summary_report',
+		'filter_protection_overview',
+		'cyber_sight_activity_overview',
+		'cyber_sight_timeline',
+		'cyber_sight_ai_usage',
+		'cyber_sight_threat_trends',
+	]).optional(),
 	recipients: z.array(ScheduledReportV2RecipientSpecSchema).optional(),
 	recipient_count: z.number().int().optional(),
 	send_to_dashboard_users: z.boolean().optional(),
-	frequency: z
-		.enum(['monthly', 'bi_weekly', 'weekly', 'daily', 'quarterly'])
-		.optional(),
-	day_of_week: z
-		.enum([
-			'sunday',
-			'monday',
-			'tuesday',
-			'wednesday',
-			'thursday',
-			'friday',
-			'saturday',
-		])
-		.optional(),
+	frequency: openEnum([
+		'monthly',
+		'bi_weekly',
+		'weekly',
+		'daily',
+		'quarterly',
+	]).optional(),
+	day_of_week: openEnum([
+		'sunday',
+		'monday',
+		'tuesday',
+		'wednesday',
+		'thursday',
+		'friday',
+		'saturday',
+	]).optional(),
 	day_of_month: z.number().int().optional(),
 	next_delivery: z.string().optional(),
 	last_delivery: z.string().optional(),
@@ -2789,35 +2831,35 @@ export type ScheduledReportV2Write = z.infer<
 export const ScheduledReportV2ShowAttributesSpecSchema = z.object({
 	name: z.string().optional(),
 	organization: ScheduledReportV2OrganizationSpecSchema.optional(),
-	report_type: z
-		.enum([
-			'legacy_protection_summary_report',
-			'filter_protection_overview',
-			'cyber_sight_activity_overview',
-			'cyber_sight_timeline',
-			'cyber_sight_ai_usage',
-			'cyber_sight_threat_trends',
-		])
-		.optional(),
+	report_type: openEnum([
+		'legacy_protection_summary_report',
+		'filter_protection_overview',
+		'cyber_sight_activity_overview',
+		'cyber_sight_timeline',
+		'cyber_sight_ai_usage',
+		'cyber_sight_threat_trends',
+	]).optional(),
 	internal_recipients: z.array(ScheduledReportV2RecipientSpecSchema).optional(),
 	external_recipients: z.array(ScheduledReportV2RecipientSpecSchema).optional(),
 	recipients: z.array(ScheduledReportV2RecipientSpecSchema).optional(),
 	send_to_dashboard_users: z.boolean().optional(),
 	selected_sub_orgs: z.array(z.number().int()).optional(),
-	frequency: z
-		.enum(['monthly', 'bi_weekly', 'weekly', 'daily', 'quarterly'])
-		.optional(),
-	day_of_week: z
-		.enum([
-			'sunday',
-			'monday',
-			'tuesday',
-			'wednesday',
-			'thursday',
-			'friday',
-			'saturday',
-		])
-		.optional(),
+	frequency: openEnum([
+		'monthly',
+		'bi_weekly',
+		'weekly',
+		'daily',
+		'quarterly',
+	]).optional(),
+	day_of_week: openEnum([
+		'sunday',
+		'monday',
+		'tuesday',
+		'wednesday',
+		'thursday',
+		'friday',
+		'saturday',
+	]).optional(),
 	day_of_month: z.number().int().optional(),
 	next_delivery: z.string().optional(),
 	last_delivery: z.string().optional(),
@@ -2889,14 +2931,21 @@ export const UnblockRequestAttributesSpecSchema = z.object({
 	organization: UnblockRequestLinkedResourceSpecSchema.optional(),
 	site: UnblockRequestLinkedResourceSpecSchema.optional(),
 	deployment: z.string().optional(),
-	deployment_type: z
-		.enum(['site', 'roaming_client', 'relay', 'clientless'])
-		.optional(),
+	deployment_type: openEnum([
+		'site',
+		'roaming_client',
+		'relay',
+		'clientless',
+	]).optional(),
 	policy: UnblockRequestPolicyResourceSpecSchema.optional(),
 	category: UnblockRequestCategorySpecSchema.optional(),
-	blocked_by: z
-		.enum(['blocklist', 'appaware', 'category', 'security', 'unknown'])
-		.optional(),
+	blocked_by: openEnum([
+		'blocklist',
+		'appaware',
+		'category',
+		'security',
+		'unknown',
+	]).optional(),
 	time_of_attempt: z.string().optional(),
 	user_agent_id: z.string().optional(),
 	agent_local_user_id: z.number().int().optional(),
@@ -2906,15 +2955,13 @@ export const UnblockRequestAttributesSpecSchema = z.object({
 	can_action: z.boolean().optional(),
 	actioned_by: UnblockRequestActionerSpecSchema.optional(),
 	resolved_date: z.string().optional(),
-	action: z
-		.enum([
-			'allowed',
-			'denied',
-			'ignored',
-			'resolved_already_allowed',
-			'expired',
-		])
-		.optional(),
+	action: openEnum([
+		'allowed',
+		'denied',
+		'ignored',
+		'resolved_already_allowed',
+		'expired',
+	]).optional(),
 	response_message: z.string().optional(),
 	internal_notes: z.string().optional(),
 });
@@ -2941,7 +2988,7 @@ export type UnblockRequestsMetaSpec = z.infer<
 
 export const UnblockRequestCoverageSpecSchema = z.object({
 	covered: z.boolean().optional(),
-	list: z.enum(['policy', 'universal_org', 'universal_msp']).optional(),
+	list: openEnum(['policy', 'universal_org', 'universal_msp']).optional(),
 	date_added: z.string().optional(),
 });
 export type UnblockRequestCoverageSpec = z.infer<
@@ -2957,7 +3004,7 @@ export type UnblockRequestBlastRadiusSpec = z.infer<
 >;
 
 export const UnblockRequestAllowListTargetSpecSchema = z.object({
-	type: z.enum(['policy', 'universal']).optional(),
+	type: openEnum(['policy', 'universal']).optional(),
 	id: z.number().int().optional(),
 	name: z.string().optional(),
 	affects_all: z.boolean().optional(),
@@ -3015,15 +3062,13 @@ export type UnblockRequestDecisionRequestSpec = z.infer<
 
 export const UnblockRequestDecisionAttributesSpecSchema = z.object({
 	domain: z.string().optional(),
-	status: z
-		.enum([
-			'allowed',
-			'denied',
-			'ignored',
-			'resolved_already_allowed',
-			'expired',
-		])
-		.optional(),
+	status: openEnum([
+		'allowed',
+		'denied',
+		'ignored',
+		'resolved_already_allowed',
+		'expired',
+	]).optional(),
 	decided_at: z.string().optional(),
 	decided_by: UnblockRequestActionerSpecSchema.optional(),
 	response_message: z.string().optional(),
@@ -3279,7 +3324,7 @@ export type NetworksCsvExportCreateSpec = z.infer<
 
 export const UnblockRequestsCsvExportSpecSchema = z.object({
 	uuid: z.string().optional(),
-	tab: z.enum(['active', 'history']).optional(),
+	tab: openEnum(['active', 'history']).optional(),
 	row_count: z.number().int().optional(),
 	total_count: z.number().int().optional(),
 	truncated: z.boolean().optional(),
@@ -3309,7 +3354,7 @@ export type UnblockRequestsCsvExportCreateSpec = z.infer<
 
 export const UnblockRequestsCsvExportPendingSpecSchema = z.object({
 	uuid: z.string().optional(),
-	status: z.enum(['processing']).optional(),
+	status: openEnum(['processing']).optional(),
 });
 export type UnblockRequestsCsvExportPendingSpec = z.infer<
 	typeof UnblockRequestsCsvExportPendingSpecSchema
