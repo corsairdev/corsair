@@ -8,6 +8,8 @@ import {
 	searchResponse,
 } from './test-fixtures';
 
+const RETRY_AFTER_SECONDS = 7;
+
 async function createClient() {
 	const testDb = createTestDatabase();
 	await createIntegrationAndAccount(testDb.db, 'enigma', 'default');
@@ -35,44 +37,65 @@ function respond(
 	);
 }
 
+function rateLimited() {
+	respond(badKeyResponse, 429, {
+		'Retry-After': String(RETRY_AFTER_SECONDS),
+	});
+}
+
 beforeEach(() => {
 	fetchMock = jest.spyOn(globalThis, 'fetch');
+	jest.useFakeTimers();
 	jest.spyOn(console, 'log').mockImplementation(() => undefined);
 });
 
 afterEach(() => {
+	jest.useRealTimers();
 	jest.restoreAllMocks();
 });
 
 describe('Enigma retry behavior through createCorsair', () => {
-	it('retries a 429 through the bound client, which the HTTP layer does not', async () => {
+	it('waits out Retry-After before the second attempt', async () => {
 		const { corsair, testDb } = await createClient();
 		try {
-			respond(badKeyResponse, 429, { 'Retry-After': '1' });
+			rateLimited();
 			respond(searchResponse(brand));
 
-			const result = await corsair.enigma.api.brands.match({
+			const pending = corsair.enigma.api.brands.match({
 				name: 'Starbucks',
 			});
+			await jest.advanceTimersByTimeAsync(RETRY_AFTER_SECONDS * 1000 - 1);
+			expect(fetchMock).toHaveBeenCalledTimes(1);
 
-			expect(result.brand?.id).toBe(brand.id);
+			await jest.advanceTimersByTimeAsync(1);
+			await expect(pending).resolves.toMatchObject({
+				brand: { id: brand.id },
+			});
 			expect(fetchMock).toHaveBeenCalledTimes(2);
 		} finally {
 			testDb.cleanup();
 		}
 	});
 
-	it('gives up after the third rate-limited attempt', async () => {
+	it('gives up after the third rate-limited retry', async () => {
 		const { corsair, testDb } = await createClient();
 		try {
-			respond(badKeyResponse, 429, { 'Retry-After': '1' });
-			respond(badKeyResponse, 429, { 'Retry-After': '1' });
-			respond(badKeyResponse, 429, { 'Retry-After': '1' });
-			respond(badKeyResponse, 429, { 'Retry-After': '1' });
+			rateLimited();
+			rateLimited();
+			rateLimited();
+			rateLimited();
 
-			await expect(
-				corsair.enigma.api.brands.match({ name: 'Starbucks' }),
-			).rejects.toMatchObject({ status: 429 });
+			const pending = corsair.enigma.api.brands.match({
+				name: 'Starbucks',
+			});
+			const rejection = expect(pending).rejects.toMatchObject({
+				status: 429,
+			});
+			await jest.advanceTimersByTimeAsync(
+				RETRY_AFTER_SECONDS * 1000 * 3 + 1000,
+			);
+
+			await rejection;
 			expect(fetchMock).toHaveBeenCalledTimes(4);
 		} finally {
 			testDb.cleanup();
@@ -85,11 +108,14 @@ describe('Enigma retry behavior through createCorsair', () => {
 			respond(badKeyResponse, 502);
 			respond(searchResponse(locationDetail));
 
-			const result = await corsair.enigma.api.locations.match({
+			const pending = corsair.enigma.api.locations.match({
 				name: 'Bluestone Lane',
 			});
+			await jest.advanceTimersByTimeAsync(10_000);
 
-			expect(result.location?.id).toBe(locationDetail.id);
+			await expect(pending).resolves.toMatchObject({
+				location: { id: locationDetail.id },
+			});
 			expect(fetchMock).toHaveBeenCalledTimes(2);
 		} finally {
 			testDb.cleanup();
