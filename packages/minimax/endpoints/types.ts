@@ -16,8 +16,12 @@ const BaseRespSchema = z
 	})
 	.passthrough();
 
-const CHAT_MODELS = [
-	'MiniMax-M3.1-Flash-Preview',
+/**
+ * Canonical ordinary text choices. Keep this list separate from validation:
+ * callers may still send saved, legacy, or custom model IDs explicitly.
+ */
+export const MINIMAX_TEXT_MODELS = [
+	'MiniMax-M3.1-Flash',
 	'MiniMax-M3',
 	'MiniMax-M2.7',
 	'MiniMax-M2.7-highspeed',
@@ -27,7 +31,71 @@ const CHAT_MODELS = [
 	'MiniMax-M2',
 ] as const;
 
-const TextModelSchema = z.enum(CHAT_MODELS);
+export const DEFAULT_MINIMAX_TEXT_MODEL = MINIMAX_TEXT_MODELS[0];
+
+// Explicit IDs are intentionally open-ended so saved/custom/legacy model
+// selections remain usable even when the upstream catalog changes.
+const TextModelSchema = z
+	.string()
+	.min(1)
+	.default(DEFAULT_MINIMAX_TEXT_MODEL)
+	.describe(
+		`Recommended: ${MINIMAX_TEXT_MODELS.join(', ')}. Explicit model IDs are preserved.`,
+	);
+
+function validateFlashOptions(
+	input: Record<string, unknown>,
+	ctx: z.RefinementCtx,
+) {
+	if (input.model !== DEFAULT_MINIMAX_TEXT_MODEL) return;
+	const thinking = input.thinking;
+	if (
+		thinking &&
+		typeof thinking === 'object' &&
+		'type' in thinking &&
+		thinking.type !== 'adaptive'
+	) {
+		ctx.addIssue({
+			code: 'custom',
+			path: ['thinking', 'type'],
+			message: 'Flash requires adaptive thinking',
+		});
+	}
+	const reasoning = input.reasoning;
+	const effort =
+		reasoning && typeof reasoning === 'object' && 'effort' in reasoning
+			? reasoning.effort
+			: undefined;
+	for (const [path, value] of [
+		['reasoning_effort', input.reasoning_effort],
+		['reasoning', effort],
+	] as const) {
+		if (
+			value !== undefined &&
+			!['low', 'medium', 'high', 'xhigh', 'max'].includes(String(value))
+		) {
+			ctx.addIssue({
+				code: 'custom',
+				path: [path],
+				message: 'Flash effort must be low, medium, high, xhigh, or max',
+			});
+		}
+	}
+	if (input.service_tier !== undefined) {
+		ctx.addIssue({
+			code: 'custom',
+			path: ['service_tier'],
+			message: 'Flash does not support service_tier',
+		});
+	}
+	if (input.reasoning_split === false) {
+		ctx.addIssue({
+			code: 'custom',
+			path: ['reasoning_split'],
+			message: 'Flash requires separate reasoning',
+		});
+	}
+}
 
 const SPEECH_MODELS = [
 	'speech-2.8-hd',
@@ -174,9 +242,10 @@ export const ChatCompletionInputSchema = z
 		// the generation was billed. Reject it locally instead.
 		stream: z.literal(false).optional(),
 	})
-	.passthrough();
+	.passthrough()
+	.superRefine(validateFlashOptions);
 
-export type ChatCompletionInput = z.infer<typeof ChatCompletionInputSchema>;
+export type ChatCompletionInput = z.input<typeof ChatCompletionInputSchema>;
 
 export const ChatCompletionOutputSchema = z
 	.object({
@@ -236,7 +305,7 @@ const ResponseToolSchema = z.object({ type: z.string().min(1) }).passthrough();
 
 export const CreateResponseInputSchema = z
 	.object({
-		model: z.string().min(1),
+		model: TextModelSchema,
 		input: z.union([z.string(), z.array(ResponseInputItemSchema)]),
 		instructions: z.string().optional(),
 		max_output_tokens: z.number().int().positive().optional(),
@@ -259,9 +328,10 @@ export const CreateResponseInputSchema = z
 		// object output schema, so reject it before the request is billed.
 		stream: z.literal(false).optional(),
 	})
-	.passthrough();
+	.passthrough()
+	.superRefine(validateFlashOptions);
 
-export type CreateResponseInput = z.infer<typeof CreateResponseInputSchema>;
+export type CreateResponseInput = z.input<typeof CreateResponseInputSchema>;
 
 export const CreateResponseOutputSchema = z
 	.object({
@@ -291,7 +361,7 @@ export type CreateResponseOutput = z.infer<typeof CreateResponseOutputSchema>;
 
 export const EstimateInputTokensInputSchema = z
 	.object({
-		model: z.string().min(1),
+		model: TextModelSchema,
 		input: z.union([z.string(), z.array(ResponseInputItemSchema)]),
 		instructions: z.string().optional(),
 		tools: z.array(ResponseToolSchema).optional(),
@@ -307,9 +377,10 @@ export const EstimateInputTokensInputSchema = z
 		// See ChatCompletionInputSchema: reject streaming before any billed call.
 		stream: z.literal(false).optional(),
 	})
-	.passthrough();
+	.passthrough()
+	.superRefine(validateFlashOptions);
 
-export type EstimateInputTokensInput = z.infer<
+export type EstimateInputTokensInput = z.input<
 	typeof EstimateInputTokensInputSchema
 >;
 
