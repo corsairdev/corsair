@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
-import { Documents, Indices, Search } from './endpoints';
+import { Ccr, Documents, Fleet, Indices, Search } from './endpoints';
 import {
+	CcrForgetFollowerInputSchema,
 	ClusterGetHealthInputSchema,
 	ClusterGetHealthResponseSchema,
 	DocumentsBulkInputSchema,
@@ -23,8 +24,11 @@ import {
 	IndicesPutMappingInputSchema,
 	IndicesPutSettingsInputSchema,
 	IndicesStatsInputSchema,
+	SearchMsearchInputSchema,
 	SearchRunInputSchema,
 	SearchRunResponseSchema,
+	SearchTemplateInputSchema,
+	SearchVectorTileInputSchema,
 } from './endpoints/types';
 import {
 	acknowledgedResponse,
@@ -32,12 +36,17 @@ import {
 	byScrollResponse,
 	catIndexRow,
 	catIndices,
+	ccrFollowInfoOutput,
+	ccrFollowOutput,
+	ccrFollowStatsOutput,
+	ccrForgetFollowerOutput,
 	clusterHealth,
 	documentFound,
 	documentMissing,
 	existsFalse,
 	existsTrue,
 	explainResponse,
+	fleetGlobalCheckpointsOutput,
 	indexInfo,
 	indicesAddBlockOutput,
 	indicesAnalyzeOutput,
@@ -67,9 +76,21 @@ import {
 	indicesStatsOutput,
 	lifecycleIndicesOutput,
 	mgetResponse,
+	msearchEmptyResult,
+	msearchResult,
 	mtermvectorsResponse,
+	searchAsyncSubmitOutput,
+	searchCountOutput,
+	searchEqlOutput,
+	searchFieldCapsOutput,
+	searchGraphExploreOutput,
 	searchHit,
+	searchOpenPointInTimeOutput,
+	searchRankEvalOutput,
 	searchResponse,
+	searchShardsOutput,
+	searchTermsEnumOutput,
+	searchValidateQueryOutput,
 	shardsOpResponse,
 	termvectorsResult,
 	updateResponse,
@@ -1604,6 +1625,541 @@ describe('indices stats and maintenance wire calls', () => {
 		const { url } = await sent();
 		expect(url).toBe(
 			'http://es:9200/logs-*/_searchable_snapshots/stats?level=indices',
+		);
+	});
+});
+
+// ── search family wire assertions ────────────────────────────────────────────
+
+describe('search family wire calls', () => {
+	let fetchMock: jest.SpyInstance;
+
+	beforeEach(() => {
+		fetchMock = jest.spyOn(globalThis, 'fetch');
+		mockLog.mockClear();
+	});
+
+	afterEach(() => {
+		fetchMock.mockRestore();
+	});
+
+	const ctx = {
+		options: { baseUrl: 'http://es:9200' },
+		key: 'ApiKey encoded-key',
+	} as never;
+
+	function mockJson(body: unknown, status = 200) {
+		fetchMock.mockResolvedValueOnce(
+			new Response(JSON.stringify(body), {
+				status,
+				headers: { 'Content-Type': 'application/json' },
+			}),
+		);
+	}
+
+	async function sent() {
+		expect(fetchMock).toHaveBeenCalledTimes(1);
+		const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+		return { url, init };
+	}
+
+	it('search.count GETs without a query and POSTs the query body when present', async () => {
+		mockJson(searchCountOutput);
+		mockJson(searchCountOutput);
+		await Search.count(ctx, { index: 'logs-*' });
+		const counted = await Search.count(ctx, {
+			index: 'logs-*',
+			query: { term: { level: 'error' } },
+		});
+		expect(counted.count).toBe(42);
+		const [getUrl, getInit] = fetchMock.mock.calls[0] as [string, RequestInit];
+		expect(getUrl).toBe('http://es:9200/logs-*/_count');
+		expect(getInit.method).toBe('GET');
+		expect(getInit.body).toBeUndefined();
+		const [postUrl, postInit] = fetchMock.mock.calls[1] as [
+			string,
+			RequestInit,
+		];
+		expect(postUrl).toBe('http://es:9200/logs-*/_count');
+		expect(postInit.method).toBe('POST');
+		expect(JSON.parse(String(postInit.body))).toEqual({
+			query: { term: { level: 'error' } },
+		});
+	});
+
+	it('search.msearch serializes sub-searches to header/body ndjson pairs', async () => {
+		mockJson(msearchResult);
+		const result = await Search.msearch(ctx, {
+			index: 'logs-*',
+			searches: [
+				{ query: { term: { level: 'error' } }, size: 5 },
+				{ index: 'other-index' },
+			],
+		});
+		expect(result.responses).toHaveLength(2);
+		expect(result.responses[1]?.error?.type).toBe('index_not_found_exception');
+		const { url, init } = await sent();
+		expect(url).toBe('http://es:9200/logs-*/_msearch');
+		expect(init.method).toBe('POST');
+		expect(init.body).toBe(
+			'{}\n{"query":{"term":{"level":"error"}},"size":5}\n{"index":"other-index"}\n{}\n',
+		);
+		expect(new Headers(init.headers).get('content-type')).toBe(
+			'application/x-ndjson',
+		);
+	});
+
+	it('search.msearch passes raw ndjson through and accepts empty responses', async () => {
+		mockJson(msearchEmptyResult);
+		const result = await Search.msearch(ctx, {
+			index: 'logs',
+			ndjson: '{}\n{}\n',
+		});
+		expect(result.responses).toEqual([]);
+		const { init } = await sent();
+		expect(init.body).toBe('{}\n{}\n');
+	});
+
+	it('search.msearch rejects both or neither of searches/ndjson', () => {
+		expect(SearchMsearchInputSchema.safeParse({ index: 'logs' }).success).toBe(
+			false,
+		);
+		expect(
+			SearchMsearchInputSchema.safeParse({
+				index: 'logs',
+				searches: [{}],
+				ndjson: '{}\n',
+			}).success,
+		).toBe(false);
+	});
+
+	it('search.msearchTemplate serializes template id/params pairs', async () => {
+		mockJson(msearchResult);
+		const result = await Search.msearchTemplate(ctx, {
+			index: 'logs-*',
+			searches: [{ id: 'my-template', params: { level: 'error' } }],
+		});
+		expect(result.took).toBe(12);
+		const { url, init } = await sent();
+		expect(url).toBe('http://es:9200/logs-*/_msearch/template');
+		expect(init.body).toBe(
+			'{}\n{"id":"my-template","params":{"level":"error"}}\n',
+		);
+	});
+
+	it('search.template requires exactly one of id or source', () => {
+		expect(SearchTemplateInputSchema.safeParse({ index: 'logs' }).success).toBe(
+			false,
+		);
+		expect(
+			SearchTemplateInputSchema.safeParse({
+				index: 'logs',
+				id: 't',
+				source: '{}',
+			}).success,
+		).toBe(false);
+		expect(
+			SearchTemplateInputSchema.safeParse({
+				index: 'logs',
+				id: 'my-template',
+				params: { n: 5 },
+			}).success,
+		).toBe(true);
+	});
+
+	it('search.template POSTs the template body', async () => {
+		mockJson(searchResponse());
+		const result = await Search.template(ctx, {
+			index: 'logs-*',
+			id: 'my-template',
+			params: { level: 'error' },
+		});
+		expect(result.hits.hits).toHaveLength(1);
+		const { url, init } = await sent();
+		expect(url).toBe('http://es:9200/logs-*/_search/template');
+		expect(JSON.parse(String(init.body))).toEqual({
+			id: 'my-template',
+			params: { level: 'error' },
+		});
+	});
+
+	it('search.termsEnum POSTs the field and prefix body', async () => {
+		mockJson(searchTermsEnumOutput);
+		const result = await Search.termsEnum(ctx, {
+			index: 'logs-*',
+			field: 'level',
+			string: 'err',
+			size: 10,
+		});
+		expect(result.terms).toEqual(['error', 'error_boundary', 'errors']);
+		const { url, init } = await sent();
+		expect(url).toBe('http://es:9200/logs-*/_terms_enum');
+		expect(JSON.parse(String(init.body))).toEqual({
+			field: 'level',
+			string: 'err',
+			size: 10,
+		});
+	});
+
+	it('search.fieldCaps POSTs with the fields query', async () => {
+		mockJson(searchFieldCapsOutput);
+		const result = await Search.fieldCaps(ctx, {
+			index: 'logs-*',
+			fields: 'level,message',
+		});
+		expect(result.fields.level?.keyword?.aggregatable).toBe(true);
+		const { url, init } = await sent();
+		expect(url).toBe(
+			'http://es:9200/logs-*/_field_caps?fields=level%2Cmessage',
+		);
+		expect(init.method).toBe('POST');
+		expect(init.body).toBeUndefined();
+	});
+
+	it('search.shards POSTs with routing and preference queries', async () => {
+		mockJson(searchShardsOutput);
+		const result = await Search.shards(ctx, {
+			index: 'logs-2026-11',
+			preference: '_local',
+		});
+		expect(result.nodes['node-1']).toBeDefined();
+		const { url, init } = await sent();
+		expect(url).toBe(
+			'http://es:9200/logs-2026-11/_search_shards?preference=_local',
+		);
+		expect(init.method).toBe('POST');
+	});
+
+	it('search.openPointInTime POSTs keep_alive as a query param', async () => {
+		mockJson(searchOpenPointInTimeOutput);
+		const result = await Search.openPointInTime(ctx, {
+			index: 'logs-*',
+			keep_alive: '1m',
+		});
+		expect(result.id).toContain('pit-');
+		const { url, init } = await sent();
+		expect(url).toBe('http://es:9200/logs-*/_pit?keep_alive=1m');
+		expect(init.method).toBe('POST');
+	});
+
+	it('search.rankEval POSTs rated requests and the metric', async () => {
+		mockJson(searchRankEvalOutput);
+		const result = await Search.rankEval(ctx, {
+			index: 'logs-*',
+			requests: [
+				{
+					id: 'my_query_id',
+					request: { query: { match: { message: 'disk' } } },
+					ratings: [{ _id: '1', rating: 1 }],
+				},
+			],
+			metric: { precision: { k: 10 } },
+		});
+		expect(result.metric_score).toBe(0.9);
+		const { url, init } = await sent();
+		expect(url).toBe('http://es:9200/logs-*/_rank_eval');
+		expect(JSON.parse(String(init.body))).toEqual({
+			requests: [
+				{
+					id: 'my_query_id',
+					request: { query: { match: { message: 'disk' } } },
+					ratings: [{ _id: '1', rating: 1 }],
+				},
+			],
+			metric: { precision: { k: 10 } },
+		});
+	});
+
+	it('search.vectorTile bounds zoom/coordinates and grid enums', () => {
+		expect(
+			SearchVectorTileInputSchema.safeParse({
+				index: 'logs',
+				field: 'geo',
+				zoom: 3,
+				x: 8,
+				y: 5,
+			}).success,
+		).toBe(false); // x must be < 2^zoom
+		expect(
+			SearchVectorTileInputSchema.safeParse({
+				index: 'logs',
+				field: 'geo',
+				zoom: 30,
+				x: 0,
+				y: 0,
+			}).success,
+		).toBe(false);
+		expect(
+			SearchVectorTileInputSchema.safeParse({
+				index: 'logs',
+				field: 'geo',
+				zoom: 3,
+				x: 7,
+				y: 5,
+				grid_agg: 'geohash',
+			}).success,
+		).toBe(false);
+		expect(
+			SearchVectorTileInputSchema.safeParse({
+				index: 'logs',
+				field: 'geo',
+				zoom: 3,
+				x: 7,
+				y: 5,
+				grid_precision: 9,
+			}).success,
+		).toBe(false);
+	});
+
+	it('search.vectorTile GETs the tile path and returns base64 bytes', async () => {
+		const bytes = new Uint8Array([0x1a, 0x04, 0x74, 0x65, 0x73, 0x74]);
+		fetchMock.mockResolvedValueOnce(
+			new Response(bytes, {
+				status: 200,
+				headers: { 'Content-Type': 'application/x-protobuf' },
+			}),
+		);
+		const result = await Search.vectorTile(ctx, {
+			index: 'places',
+			field: 'location',
+			zoom: 12,
+			x: 3000,
+			y: 2000,
+			grid_type: 'centroid',
+		});
+		expect(result).toEqual({
+			contentType: 'application/x-protobuf',
+			base64: Buffer.from(bytes).toString('base64'),
+		});
+		const { url, init } = await sent();
+		expect(url).toBe(
+			'http://es:9200/places/_mvt/location/12/3000/2000?grid_type=centroid',
+		);
+		// The raw-fetch binary path omits method, which fetch treats as GET.
+		expect(init.method ?? 'GET').toBe('GET');
+	});
+
+	it('search.eql POSTs the EQL query with wait controls in the query', async () => {
+		mockJson(searchEqlOutput);
+		const result = await Search.eql(ctx, {
+			index: 'logs-*',
+			query: 'process where process.name == "sudo"',
+			size: 10,
+			keep_on_completion: false,
+		});
+		expect(result.hits.events).toHaveLength(1);
+		const { url, init } = await sent();
+		expect(url).toBe(
+			'http://es:9200/logs-*/_eql/search?keep_on_completion=false',
+		);
+		expect(JSON.parse(String(init.body))).toEqual({
+			query: 'process where process.name == "sudo"',
+			size: 10,
+		});
+	});
+
+	it('search.asyncSubmit POSTs the search body with async controls', async () => {
+		mockJson(searchAsyncSubmitOutput);
+		const result = await Search.asyncSubmit(ctx, {
+			index: 'logs-*',
+			query: { match_all: {} },
+			size: 100,
+			wait_for_completion_timeout: '1s',
+			keep_alive: '5m',
+		});
+		expect(result.is_running).toBe(true);
+		const { url, init } = await sent();
+		expect(url).toBe(
+			'http://es:9200/logs-*/_async_search?wait_for_completion_timeout=1s&keep_alive=5m',
+		);
+		expect(JSON.parse(String(init.body))).toEqual({
+			query: { match_all: {} },
+			size: 100,
+		});
+	});
+
+	it('search.graphExplore POSTs the vertices body', async () => {
+		mockJson(searchGraphExploreOutput);
+		const result = await Search.graphExplore(ctx, {
+			index: 'logs-*',
+			vertices: [{ field: 'level' }, { field: 'host' }],
+		});
+		expect(result.vertices[0]?.term).toBe('error');
+		const { url, init } = await sent();
+		expect(url).toBe('http://es:9200/logs-*/_graph/explore');
+		expect(JSON.parse(String(init.body))).toEqual({
+			vertices: [{ field: 'level' }, { field: 'host' }],
+		});
+	});
+
+	it('search.validateQuery posts the query and all_shards flag', async () => {
+		mockJson(searchValidateQueryOutput);
+		const result = await Search.validateQuery(ctx, {
+			index: 'logs-*',
+			query: { match: { message: 'disk' } },
+			all_shards: true,
+		});
+		expect(result.valid).toBe(true);
+		const { url, init } = await sent();
+		expect(url).toBe('http://es:9200/logs-*/_validate/query?all_shards=true');
+		expect(JSON.parse(String(init.body))).toEqual({
+			query: { match: { message: 'disk' } },
+		});
+	});
+});
+
+// ── fleet and ccr wire assertions ────────────────────────────────────────────
+
+describe('fleet and ccr wire calls', () => {
+	let fetchMock: jest.SpyInstance;
+
+	beforeEach(() => {
+		fetchMock = jest.spyOn(globalThis, 'fetch');
+		mockLog.mockClear();
+	});
+
+	afterEach(() => {
+		fetchMock.mockRestore();
+	});
+
+	const ctx = {
+		options: { baseUrl: 'http://es:9200' },
+		key: 'ApiKey encoded-key',
+	} as never;
+
+	function mockJson(body: unknown, status = 200) {
+		fetchMock.mockResolvedValueOnce(
+			new Response(JSON.stringify(body), {
+				status,
+				headers: { 'Content-Type': 'application/json' },
+			}),
+		);
+	}
+
+	async function sent() {
+		expect(fetchMock).toHaveBeenCalledTimes(1);
+		const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+		return { url, init };
+	}
+
+	it('fleet.search POSTs with the comma-joined checkpoint wait', async () => {
+		mockJson(searchResponse());
+		const result = await Fleet.search(ctx, {
+			index: 'logs-2026-11',
+			query: { match_all: {} },
+			wait_for_checkpoints: [10, 25],
+		});
+		expect(result.hits.hits).toHaveLength(1);
+		const { url, init } = await sent();
+		expect(url).toBe(
+			'http://es:9200/logs-2026-11/_fleet/_fleet_search?wait_for_checkpoints=10%2C25',
+		);
+		expect(JSON.parse(String(init.body))).toEqual({ query: { match_all: {} } });
+	});
+
+	it('fleet.msearch POSTs ndjson pairs with the checkpoint wait', async () => {
+		mockJson(msearchResult);
+		const result = await Fleet.msearch(ctx, {
+			index: 'logs-2026-11',
+			searches: [{ size: 1 }],
+			wait_for_checkpoints: [10],
+		});
+		expect(result.responses).toHaveLength(2);
+		const { url, init } = await sent();
+		expect(url).toBe(
+			'http://es:9200/logs-2026-11/_fleet/_fleet_msearch?wait_for_checkpoints=10',
+		);
+		expect(init.body).toBe('{}\n{"size":1}\n');
+	});
+
+	it('fleet.globalCheckpoints GETs with wait and checkpoint params', async () => {
+		mockJson(fleetGlobalCheckpointsOutput);
+		const result = await Fleet.globalCheckpoints(ctx, {
+			index: 'logs-2026-11',
+			wait_for_advance: true,
+			checkpoints: [10],
+			timeout: '10s',
+		});
+		expect(result.global_checkpoints).toEqual([10, 25]);
+		const { url, init } = await sent();
+		expect(url).toBe(
+			'http://es:9200/logs-2026-11/_fleet/global_checkpoints?wait_for_advance=true&timeout=10s&checkpoints=10',
+		);
+		expect(init.method).toBe('GET');
+	});
+
+	it('ccr.follow PUTs the leader and remote cluster body', async () => {
+		mockJson(ccrFollowOutput);
+		const result = await Ccr.follow(ctx, {
+			index: 'logs-follower',
+			leader_index: 'logs-2026-11',
+			remote_cluster: 'leader_cluster',
+			max_outstanding_read_requests: 8,
+		});
+		expect(result.index_following_started).toBe(true);
+		const { url, init } = await sent();
+		expect(url).toBe('http://es:9200/logs-follower/_ccr/follow');
+		expect(init.method).toBe('PUT');
+		expect(JSON.parse(String(init.body))).toEqual({
+			leader_index: 'logs-2026-11',
+			remote_cluster: 'leader_cluster',
+			max_outstanding_read_requests: 8,
+		});
+	});
+
+	it('ccr.followInfo and ccr.followStats GET their paths', async () => {
+		mockJson(ccrFollowInfoOutput);
+		mockJson(ccrFollowStatsOutput);
+		const info = await Ccr.followInfo(ctx, { index: 'logs-follower' });
+		const stats = await Ccr.followStats(ctx, { index: 'logs-follower' });
+		expect(info.follower_indices[0]?.status).toBe('active');
+		expect(stats.indices[0]?.index).toBe('logs-follower');
+		expect(fetchMock.mock.calls[0]?.[0]).toBe(
+			'http://es:9200/logs-follower/_ccr/info',
+		);
+		expect(fetchMock.mock.calls[1]?.[0]).toBe(
+			'http://es:9200/logs-follower/_ccr/stats',
+		);
+	});
+
+	it('ccr.forgetFollower requires a follower identifier and POSTs the body', async () => {
+		expect(
+			CcrForgetFollowerInputSchema.safeParse({ index: 'leader' }).success,
+		).toBe(false);
+		mockJson(ccrForgetFollowerOutput);
+		const result = await Ccr.forgetFollower(ctx, {
+			index: 'logs-2026-11',
+			follower_cluster: 'follower_cluster',
+			follower_index: 'logs-follower',
+		});
+		expect(result._shards.successful).toBe(1);
+		const { url, init } = await sent();
+		expect(url).toBe('http://es:9200/logs-2026-11/_ccr/forget_follower');
+		expect(init.method).toBe('POST');
+		expect(JSON.parse(String(init.body))).toEqual({
+			follower_cluster: 'follower_cluster',
+			follower_index: 'logs-follower',
+		});
+	});
+
+	it('ccr.pauseFollow, resumeFollow and unfollow POST their paths', async () => {
+		mockJson(acknowledgedResponse);
+		mockJson(acknowledgedResponse);
+		mockJson(acknowledgedResponse);
+		const paused = await Ccr.pauseFollow(ctx, { index: 'logs-follower' });
+		const resumed = await Ccr.resumeFollow(ctx, { index: 'logs-follower' });
+		const unfollowed = await Ccr.unfollow(ctx, { index: 'logs-follower' });
+		expect(paused.acknowledged).toBe(true);
+		expect(resumed.acknowledged).toBe(true);
+		expect(unfollowed.acknowledged).toBe(true);
+		expect(fetchMock.mock.calls[0]?.[0]).toBe(
+			'http://es:9200/logs-follower/_ccr/pause_follow',
+		);
+		expect(fetchMock.mock.calls[1]?.[0]).toBe(
+			'http://es:9200/logs-follower/_ccr/resume_follow',
+		);
+		expect(fetchMock.mock.calls[2]?.[0]).toBe(
+			'http://es:9200/logs-follower/_ccr/unfollow',
 		);
 	});
 });

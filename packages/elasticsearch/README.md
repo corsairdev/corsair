@@ -71,6 +71,30 @@ pnpm add @corsair-dev/elasticsearch
 | `indices.get` | `elasticsearch.api.indices.get` | `read` | Get mapping, settings and alias information for one or more indices or data streams |
 | `indices.list` | `elasticsearch.api.indices.list` | `read` | List the indices (or data stream backing indices) matching a target, with health, shards, doc counts and store size |
 | `search.run` | `elasticsearch.api.search.run` | `read` | Search indices, data streams or aliases with a typed subset of the Query DSL (match, match_phrase, term, terms, ids, match_all, bool) with from/size paging |
+| `search.asyncSubmit` | `elasticsearch.api.search.asyncSubmit` | `read` | Submit an async search: returns partial results immediately with an id for polling while the search keeps running |
+| `search.count` | `elasticsearch.api.search.count` | `read` | Count documents matching a typed query (or every document) across indices, data streams and aliases without fetching hits |
+| `search.eql` | `elasticsearch.api.search.eql` | `read` | Run an Event Query Language search (event and sequence matching) over log/event indices |
+| `search.fieldCaps` | `elasticsearch.api.search.fieldCaps` | `read` | Get field capabilities (types, searchable, aggregatable, per-index overrides) across indices |
+| `search.graphExplore` | `elasticsearch.api.search.graphExplore` | `read` | Explore graph analytics: find vertices and connections between terms that co-occur in documents |
+| `search.msearch` | `elasticsearch.api.search.msearch` | `read` | Run multiple searches in one request from typed sub-searches (query/from/size) or raw NDJSON; each response item carries its own error |
+| `search.msearchTemplate` | `elasticsearch.api.search.msearchTemplate` | `read` | Run multiple templated searches in one request, each using a stored template id and params |
+| `search.openPointInTime` | `elasticsearch.api.search.openPointInTime` | `write` | Open a point in time (PIT) over indices with a keep-alive; the returned id pins a consistent view and holds cluster resources |
+| `search.rankEval` | `elasticsearch.api.search.rankEval` | `read` | Evaluate ranked search results against rated documents with a metric (precision, recall, DCG...) and get per-request details |
+| `search.shards` | `elasticsearch.api.search.shards` | `read` | Get the shards a search would execute on: node list, shard routing copies and index names |
+| `search.template` | `elasticsearch.api.search.template` | `read` | Run a search with a stored template id or an inline mustache source plus params; same response shape as search.run |
+| `search.termsEnum` | `elasticsearch.api.search.termsEnum` | `read` | Enumerate terms in a field that match a string prefix, for autocomplete-style lookups |
+| `search.validateQuery` | `elasticsearch.api.search.validateQuery` | `read` | Validate a typed query (or Lucene q string) without running it, with optional per-shard explanations |
+| `search.vectorTile` | `elasticsearch.api.search.vectorTile` | `read` | Search a geospatial field as a Mapbox vector tile for a zoom/x/y grid; returns the protobuf tile base64-encoded |
+| `fleet.search` | `elasticsearch.api.fleet.search` | `read` | Run a Fleet search on one index or alias, optionally waiting for global checkpoints before executing |
+| `fleet.msearch` | `elasticsearch.api.fleet.msearch` | `read` | Run multiple Fleet searches in one request with optional checkpoint waits; each item carries its own error |
+| `fleet.globalCheckpoints` | `elasticsearch.api.fleet.globalCheckpoints` | `read` | Get the global checkpoints of an index, optionally waiting for them to advance past given values |
+| `ccr.follow` | `elasticsearch.api.ccr.follow` | `write` | Create a follower index that replicates a leader index from a remote cluster (cross-cluster replication) |
+| `ccr.followInfo` | `elasticsearch.api.ccr.followInfo` | `read` | Get follower information (leader index, remote cluster, status) for follower index patterns |
+| `ccr.followStats` | `elasticsearch.api.ccr.followStats` | `read` | Get cross-cluster replication statistics (shard-level following stats) for follower indices |
+| `ccr.forgetFollower` | `elasticsearch.api.ccr.forgetFollower` | `write` | Remove a follower retention lease from a leader index by follower identifiers, letting its data be trimmed |
+| `ccr.pauseFollow` | `elasticsearch.api.ccr.pauseFollow` | `write` | Pause replication of a follower index; the leader stops streaming operations until resumed |
+| `ccr.resumeFollow` | `elasticsearch.api.ccr.resumeFollow` | `write` | Resume replication on a paused follower index |
+| `ccr.unfollow` | `elasticsearch.api.ccr.unfollow` | `write` | Convert a follower index into a regular index, detaching it from its leader for good |
 
 Risk levels follow the operation's effect on the cluster: `read` never mutates, `write` changes documents or index/cluster state, `destructive` deletes data. Mutating calls (POST/PUT/DELETE) are never replayed on 5xx or timeout, because the change may already have been applied; 429 retries remain safe (the request was rejected before executing).
 
@@ -78,7 +102,9 @@ Risk levels follow the operation's effect on the cluster: `read` never mutates, 
 
 Operations whose REST API is a HEAD request (`documents.exists`, `documents.existsSource`, `indices.exists`, `indices.existsAlias`) answer 200 or 404 with an empty body. The plugin resolves both to `{ exists: boolean }` instead of throwing on 404, so an agent can branch on the value directly.
 
-`search.run`, `documents.explain`, `documents.updateByQuery`, `documents.deleteByQuery` and `documents.termvectors` accept the same strict, typed subset of the Query DSL as `search.run`: `match`, `match_phrase`, `term`, `terms`, `ids`, `match_all`, and `bool` (which can nest any of these). Unknown query kinds and unknown body keys are rejected before the wire. `documents.deleteByQuery` additionally requires a `query`, so the deletion set is always explicit.
+`search.run`, `documents.explain`, `documents.updateByQuery`, `documents.deleteByQuery`, `documents.termvectors`, `search.count`, `search.msearch`, `search.asyncSubmit`, `search.eql` (typed body), `search.validateQuery`, `fleet.search`, `fleet.msearch` and `indices.putAlias` (filter) accept the same strict, typed subset of the Query DSL as `search.run`: `match`, `match_phrase`, `term`, `terms`, `ids`, `match_all`, and `bool` (which can nest any of these). Unknown query kinds and unknown body keys are rejected before the wire. `documents.deleteByQuery` additionally requires a `query`, so the deletion set is always explicit.
+
+Bulk-style APIs that speak newline-delimited JSON (`documents.bulk`, `search.msearch`, `search.msearchTemplate`, `fleet.msearch`) accept typed operation/sub-search arrays, serialized by the plugin, or a validated raw `ndjson` string (every line must parse and the payload must end with a newline). `search.vectorTile` returns the binary protobuf tile as `{ contentType, base64 }`.
 
 ## Auth
 

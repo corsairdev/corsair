@@ -4,6 +4,10 @@
 import type {
 	ByScrollResponse,
 	CatIndexRow,
+	CcrFollowInfoOutput,
+	CcrFollowOutput,
+	CcrFollowStatsOutput,
+	CcrForgetFollowerOutput,
 	ClusterGetHealthResponse,
 	DocumentsBulkOutput,
 	DocumentsExplainOutput,
@@ -12,6 +16,7 @@ import type {
 	DocumentsMtermvectorsOutput,
 	DocumentsUpdateOutput,
 	ExistsResult,
+	FleetGlobalCheckpointsOutput,
 	IndicesAddBlockOutput,
 	IndicesAnalyzeOutput,
 	IndicesCloseOutput,
@@ -31,8 +36,19 @@ import type {
 	IndicesSearchableSnapshotStatsOutput,
 	IndicesStatsOutput,
 	LifecycleIndices,
+	MultiSearchResult,
+	SearchAsyncSubmitOutput,
+	SearchCountOutput,
+	SearchEqlOutput,
+	SearchFieldCapsOutput,
+	SearchGraphExploreOutput,
 	SearchHit,
+	SearchOpenPointInTimeOutput,
+	SearchRankEvalOutput,
 	SearchRunResponse,
+	SearchShardsOutput,
+	SearchTermsEnumOutput,
+	SearchValidateQueryOutput,
 	TermVectorsResult,
 	WriteResponse,
 } from './endpoints/types';
@@ -560,3 +576,182 @@ export const indicesSearchableSnapshotStatsOutput: IndicesSearchableSnapshotStat
 		},
 		total: { reclaimed_bytes: 0, reclaimed_file_count: 0 },
 	};
+
+// ── search family fixtures ───────────────────────────────────────────────────
+
+export const searchCountOutput: SearchCountOutput = {
+	count: 42,
+	_shards: { total: 1, successful: 1, failed: 0, skipped: 0 },
+};
+
+export const msearchResult: MultiSearchResult = {
+	took: 12,
+	responses: [
+		{
+			took: 8,
+			hits: {
+				total: { value: 1, relation: 'eq' },
+				hits: [searchHit],
+			},
+			status: 200,
+		},
+		{
+			status: 404,
+			error: {
+				type: 'index_not_found_exception',
+				reason: 'no such index [missing]',
+			},
+		},
+	],
+};
+
+export const msearchEmptyResult: MultiSearchResult = {
+	took: 3,
+	responses: [],
+};
+
+export const searchTermsEnumOutput: SearchTermsEnumOutput = {
+	_shards: { total: 1, successful: 1, failed: 0, skipped: 0 },
+	terms: ['error', 'error_boundary', 'errors'],
+	complete: true,
+};
+
+export const searchFieldCapsOutput: SearchFieldCapsOutput = {
+	indices: ['logs-2026-11'],
+	fields: {
+		level: {
+			keyword: {
+				type: 'keyword',
+				searchable: true,
+				aggregatable: true,
+			},
+		},
+		message: {
+			text: {
+				type: 'text',
+				searchable: true,
+				aggregatable: false,
+			},
+		},
+	},
+};
+
+export const searchShardsOutput: SearchShardsOutput = {
+	nodes: {
+		'node-1': {
+			name: 'node-1',
+			ephemeral_id: 'eph-1',
+			transport_address: '10.0.0.1:9300',
+		},
+	},
+	shards: [[{ state: 'STARTED', primary: true, node: 'node-1', shard: 0 }]],
+	indices: { 'logs-2026-11': {} },
+};
+
+export const searchOpenPointInTimeOutput: SearchOpenPointInTimeOutput = {
+	id: 'pit-46ToAwMDaWR5VG9rZW4iMmdKaFY0Yk1CbE5hNzQ2TnFmc2lTQg',
+	_shards: { total: 1, successful: 1, failed: 0, skipped: 0 },
+};
+
+export const searchRankEvalOutput: SearchRankEvalOutput = {
+	metric_score: 0.9,
+	details: {
+		my_query_id: {
+			metric_score: 0.9,
+			unrated_docs: [{ _index: 'logs-2026-11', _id: 'tZ0GinMB6Y5qFuDylF8J' }],
+			hits: [
+				{
+					hit: { _index: 'logs-2026-11', _id: '1', _score: 1.5 },
+					rating: 1,
+				},
+			],
+		},
+	},
+	failures: {},
+};
+
+export const searchEqlOutput: SearchEqlOutput = {
+	took: 15,
+	timed_out: false,
+	hits: {
+		events: [
+			{
+				_index: 'logs-2026-11',
+				_id: 'tZ0GinMB6Y5qFuDylF8J',
+				_source: { event: { category: 'process' } },
+			},
+		],
+	},
+};
+
+export const searchAsyncSubmitOutput: SearchAsyncSubmitOutput = {
+	id: 'FmRldE8zREVEUzA2ZVpUeGs2ejJFUFEaEk03QUVQcG5KeWlBa8Kjc7KRrw',
+	is_partial: true,
+	is_running: true,
+	start_time_in_millis: 1761955200000,
+	expiration_time_in_millis: 1761955800000,
+	response: {
+		took: 3,
+		hits: { hits: [searchHit] },
+	},
+};
+
+export const searchGraphExploreOutput: SearchGraphExploreOutput = {
+	took: 30,
+	timed_out: false,
+	vertices: [
+		{ field: 'level', term: 'error', weight: 4, depth: 0 },
+		{ field: 'host', term: 'node-2', weight: 2, depth: 1 },
+	],
+	connections: [{ source: 0, target: 1, doc_count: 2, weight: 2 }],
+	failures: [],
+};
+
+export const searchValidateQueryOutput: SearchValidateQueryOutput = {
+	valid: true,
+	_shards: { total: 1, successful: 1, failed: 0, skipped: 0 },
+	explanations: [{ index: 'logs-2026-11', valid: true }],
+};
+
+export const fleetGlobalCheckpointsOutput: FleetGlobalCheckpointsOutput = {
+	global_checkpoints: [10, 25],
+	timed_out: false,
+};
+
+// ── ccr fixtures ─────────────────────────────────────────────────────────────
+
+export const ccrFollowOutput: CcrFollowOutput = {
+	follow_index_created: true,
+	follow_index_shards_acked: true,
+	index_following_started: true,
+};
+
+export const ccrFollowInfoOutput: CcrFollowInfoOutput = {
+	follower_indices: [
+		{
+			follower_index: 'logs-follower',
+			leader_index: 'logs-2026-11',
+			remote_cluster: 'leader_cluster',
+			status: 'active',
+		},
+	],
+};
+
+export const ccrFollowStatsOutput: CcrFollowStatsOutput = {
+	indices: [
+		{
+			index: 'logs-follower',
+			shards: [
+				{
+					shard_id: 0,
+					leader_global_checkpointer: 150,
+					follower_global_checkpointer: 150,
+				},
+			],
+		},
+	],
+};
+
+export const ccrForgetFollowerOutput: CcrForgetFollowerOutput = {
+	_shards: { total: 1, successful: 1, failed: 0, skipped: 0 },
+};

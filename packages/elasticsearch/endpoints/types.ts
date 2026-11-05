@@ -1375,6 +1375,478 @@ export type IndicesSearchableSnapshotStatsOutput = z.infer<
 	typeof IndicesSearchableSnapshotStatsOutputSchema
 >;
 
+// ── search family on index-scoped paths ─────────────────────────────────────
+
+export const SearchCountInputSchema = z.strictObject({
+	index: NonBlankString,
+	query: QuerySchema.optional(),
+});
+export type SearchCountInput = z.input<typeof SearchCountInputSchema>;
+
+export const SearchCountOutputSchema = z.looseObject({
+	count: z.number(),
+	_shards: ShardStatisticsSchema,
+});
+export type SearchCountOutput = z.infer<typeof SearchCountOutputSchema>;
+
+// One sub-search in an msearch body: optional target override plus the same
+// typed query subset search.run accepts. All fields optional: an empty
+// sub-search is a valid match_all.
+const MsearchSearchSchema = z.strictObject({
+	index: NonBlankString.optional(),
+	query: QuerySchema.optional(),
+	from: z.number().int().min(0).optional(),
+	size: z.number().int().min(0).optional(),
+});
+
+export const SearchMsearchInputSchema = z
+	.strictObject({
+		index: NonBlankString,
+		searches: z.array(MsearchSearchSchema).min(1).optional(),
+		ndjson: NdjsonPayload.optional(),
+	})
+	.refine(
+		(parsed) =>
+			(parsed.searches !== undefined) !== (parsed.ndjson !== undefined),
+		{ message: 'provide exactly one of searches or ndjson' },
+	);
+export type SearchMsearchInput = z.input<typeof SearchMsearchInputSchema>;
+
+// Each msearch response item is either a search result or an error envelope.
+const MsearchItemSchema = z.looseObject({
+	took: z.number().optional(),
+	hits: z.looseObject({}).optional(),
+	aggregations: z.looseObject({}).optional(),
+	status: z.number().optional(),
+	error: ErrorCauseSchema.optional(),
+});
+
+const MultiSearchResultSchema = z.looseObject({
+	took: z.number(),
+	// Empty sub-search lists are valid.
+	responses: z.array(MsearchItemSchema),
+});
+export type MultiSearchResult = z.infer<typeof MultiSearchResultSchema>;
+
+// One templated sub-search: a stored template id plus its params.
+const MsearchTemplateSearchSchema = z.strictObject({
+	index: NonBlankString.optional(),
+	id: NonBlankString,
+	// z.unknown() values: template params are defined by the template.
+	params: z.record(z.string(), z.unknown()).optional(),
+});
+
+export const SearchMsearchTemplateInputSchema = z
+	.strictObject({
+		index: NonBlankString,
+		searches: z.array(MsearchTemplateSearchSchema).min(1).optional(),
+		ndjson: NdjsonPayload.optional(),
+	})
+	.refine(
+		(parsed) =>
+			(parsed.searches !== undefined) !== (parsed.ndjson !== undefined),
+		{ message: 'provide exactly one of searches or ndjson' },
+	);
+export type SearchMsearchTemplateInput = z.input<
+	typeof SearchMsearchTemplateInputSchema
+>;
+export type SearchMsearchTemplateOutput = MultiSearchResult;
+
+export const SearchTemplateInputSchema = z
+	.strictObject({
+		index: NonBlankString,
+		id: NonBlankString.optional(),
+		source: NonBlankString.optional(),
+		// z.unknown() values: template params are defined by the template.
+		params: z.record(z.string(), z.unknown()).optional(),
+	})
+	.refine(
+		(parsed) => (parsed.id !== undefined) !== (parsed.source !== undefined),
+		{
+			message: 'provide exactly one of id or source',
+		},
+	);
+export type SearchTemplateInput = z.input<typeof SearchTemplateInputSchema>;
+export type SearchTemplateOutput = SearchRunResponse;
+
+export const SearchTermsEnumInputSchema = z.strictObject({
+	index: NonBlankString,
+	field: NonBlankString,
+	string: NonBlankString.optional(),
+	size: z.number().int().min(1).optional(),
+	case_insensitive: z.boolean().optional(),
+});
+export type SearchTermsEnumInput = z.input<typeof SearchTermsEnumInputSchema>;
+
+export const SearchTermsEnumOutputSchema = z.looseObject({
+	_shards: ShardStatisticsSchema,
+	terms: z.array(z.string()),
+	complete: z.boolean(),
+});
+export type SearchTermsEnumOutput = z.infer<typeof SearchTermsEnumOutputSchema>;
+
+export const SearchFieldCapsInputSchema = z.strictObject({
+	index: NonBlankString,
+	// Comma-separated field list or wildcard; defaults to all fields.
+	fields: NonBlankString.optional(),
+});
+export type SearchFieldCapsInput = z.input<typeof SearchFieldCapsInputSchema>;
+
+export const SearchFieldCapsOutputSchema = z.looseObject({
+	indices: z.array(z.string()),
+	// field name -> capability type (text, keyword, ...) -> capabilities.
+	fields: z.record(
+		z.string(),
+		z.record(
+			z.string(),
+			z.looseObject({
+				type: z.string().optional(),
+				searchable: z.boolean().optional(),
+				aggregatable: z.boolean().optional(),
+				indices: z.array(z.string()).optional(),
+			}),
+		),
+	),
+});
+export type SearchFieldCapsOutput = z.infer<typeof SearchFieldCapsOutputSchema>;
+
+export const SearchShardsInputSchema = z.strictObject({
+	index: NonBlankString,
+	routing: NonBlankString.optional(),
+	preference: NonBlankString.optional(),
+	local: z.boolean().optional(),
+});
+export type SearchShardsInput = z.input<typeof SearchShardsInputSchema>;
+
+export const SearchShardsOutputSchema = z.looseObject({
+	nodes: z.record(z.string(), z.looseObject({})),
+	// Shard copies nested by shard number.
+	shards: z.array(z.array(z.looseObject({}))),
+	indices: z.record(z.string(), z.looseObject({})),
+});
+export type SearchShardsOutput = z.infer<typeof SearchShardsOutputSchema>;
+
+export const SearchOpenPointInTimeInputSchema = z.strictObject({
+	index: NonBlankString,
+	keep_alive: NonBlankString,
+	preference: NonBlankString.optional(),
+	routing: NonBlankString.optional(),
+});
+export type SearchOpenPointInTimeInput = z.input<
+	typeof SearchOpenPointInTimeInputSchema
+>;
+
+export const SearchOpenPointInTimeOutputSchema = z.looseObject({
+	id: z.string(),
+	_shards: ShardStatisticsSchema,
+});
+export type SearchOpenPointInTimeOutput = z.infer<
+	typeof SearchOpenPointInTimeOutputSchema
+>;
+
+export const SearchRankEvalInputSchema = z.strictObject({
+	index: NonBlankString,
+	requests: z
+		.array(
+			z.strictObject({
+				id: NonBlankString,
+				request: z.strictObject({ query: QuerySchema }),
+				ratings: z
+					.array(
+						z.strictObject({
+							_index: NonBlankString.optional(),
+							_id: NonBlankString,
+							rating: z.number(),
+						}),
+					)
+					.min(1),
+			}),
+		)
+		.min(1),
+	// metric name (precision, recall, dcg...) -> its typed-but-open options.
+	metric: z.record(z.string(), z.looseObject({})).optional(),
+});
+export type SearchRankEvalInput = z.input<typeof SearchRankEvalInputSchema>;
+
+export const SearchRankEvalOutputSchema = z.looseObject({
+	metric_score: z.number(),
+	details: z.record(z.string(), z.looseObject({})),
+	failures: z.record(z.string(), z.looseObject({})),
+});
+export type SearchRankEvalOutput = z.infer<typeof SearchRankEvalOutputSchema>;
+
+export const SearchVectorTileInputSchema = z
+	.strictObject({
+		index: NonBlankString,
+		field: NonBlankString,
+		zoom: z.number().int().min(0).max(29),
+		x: z.number().int().min(0),
+		y: z.number().int().min(0),
+		exact_bounds: z.boolean().optional(),
+		extent: z.number().int().min(1).optional(),
+		grid_agg: z.enum(['geotile', 'geohex']).optional(),
+		grid_precision: z.number().int().min(0).max(8).optional(),
+		grid_type: z.enum(['grid', 'point', 'centroid']).optional(),
+		size: z.number().int().min(0).max(10_000).optional(),
+		with_labels: z.boolean().optional(),
+	})
+	.refine(
+		(parsed) => parsed.x < 2 ** parsed.zoom && parsed.y < 2 ** parsed.zoom,
+		{ message: 'x and y must be valid tile coordinates for the zoom level' },
+	);
+export type SearchVectorTileInput = z.input<typeof SearchVectorTileInputSchema>;
+
+// The tile is a binary Mapbox vector tile; the binary client returns the
+// bytes base64-encoded with the response content type.
+export const SearchVectorTileOutputSchema = z.strictObject({
+	contentType: z.string(),
+	base64: z.string(),
+});
+export type SearchVectorTileOutput = z.infer<
+	typeof SearchVectorTileOutputSchema
+>;
+
+export const SearchEqlInputSchema = z.strictObject({
+	index: NonBlankString,
+	query: NonBlankString,
+	size: z.number().int().min(0).optional(),
+	event_category: NonBlankString.optional(),
+	wait_for_completion_timeout: NonBlankString.optional(),
+	keep_alive: NonBlankString.optional(),
+	keep_on_completion: z.boolean().optional(),
+});
+export type SearchEqlInput = z.input<typeof SearchEqlInputSchema>;
+
+export const SearchEqlOutputSchema = z.looseObject({
+	id: z.string().optional(),
+	is_partial: z.boolean().optional(),
+	is_running: z.boolean().optional(),
+	took: z.number().optional(),
+	timed_out: z.boolean().optional(),
+	hits: z.looseObject({
+		total: z.looseObject({}).optional(),
+		// EQL events and sequences are matched documents.
+		events: z.array(z.looseObject({})).optional(),
+		sequences: z.array(z.looseObject({})).optional(),
+	}),
+	shard_failures: z.array(z.looseObject({})).optional(),
+});
+export type SearchEqlOutput = z.infer<typeof SearchEqlOutputSchema>;
+
+export const SearchAsyncSubmitInputSchema = z.strictObject({
+	index: NonBlankString,
+	query: QuerySchema.optional(),
+	from: z.number().int().min(0).optional(),
+	size: z.number().int().min(0).max(10_000).optional(),
+	wait_for_completion_timeout: NonBlankString.optional(),
+	keep_alive: NonBlankString.optional(),
+	keep_on_completion: z.boolean().optional(),
+});
+export type SearchAsyncSubmitInput = z.input<
+	typeof SearchAsyncSubmitInputSchema
+>;
+
+export const SearchAsyncSubmitOutputSchema = z.looseObject({
+	id: z.string().optional(),
+	is_partial: z.boolean(),
+	is_running: z.boolean(),
+	start_time_in_millis: z.number(),
+	expiration_time_in_millis: z.number(),
+	error: ErrorCauseSchema.optional(),
+	// The wrapped search response, present once results are available.
+	response: z.looseObject({}).optional(),
+});
+export type SearchAsyncSubmitOutput = z.infer<
+	typeof SearchAsyncSubmitOutputSchema
+>;
+
+export const SearchGraphExploreInputSchema = z.strictObject({
+	index: NonBlankString,
+	vertices: z.array(z.looseObject({ field: z.string() })).min(1),
+	timeout: NonBlankString.optional(),
+});
+export type SearchGraphExploreInput = z.input<
+	typeof SearchGraphExploreInputSchema
+>;
+
+export const SearchGraphExploreOutputSchema = z.looseObject({
+	vertices: z.array(z.looseObject({})),
+	connections: z.array(z.looseObject({})),
+	failures: z.array(z.looseObject({})),
+	timed_out: z.boolean(),
+	took: z.number(),
+});
+export type SearchGraphExploreOutput = z.infer<
+	typeof SearchGraphExploreOutputSchema
+>;
+
+export const SearchValidateQueryInputSchema = z.strictObject({
+	index: NonBlankString,
+	query: QuerySchema.optional(),
+	q: NonBlankString.optional(),
+	explain: z.boolean().optional(),
+	rewrite: z.boolean().optional(),
+	all_shards: z.boolean().optional(),
+});
+export type SearchValidateQueryInput = z.input<
+	typeof SearchValidateQueryInputSchema
+>;
+
+export const SearchValidateQueryOutputSchema = z.looseObject({
+	valid: z.boolean(),
+	_shards: ShardStatisticsSchema.optional(),
+	explanations: z
+		.array(
+			z.looseObject({
+				index: z.string().optional(),
+				shard: z.number().optional(),
+				valid: z.boolean(),
+				error: z.string().optional(),
+				explanation: z.string().optional(),
+			}),
+		)
+		.optional(),
+	error: z.string().optional(),
+});
+export type SearchValidateQueryOutput = z.infer<
+	typeof SearchValidateQueryOutputSchema
+>;
+
+// ── fleet (CCS internal) on index-scoped paths ──────────────────────────────
+
+export const FleetSearchInputSchema = z.strictObject({
+	index: NonBlankString,
+	query: QuerySchema.optional(),
+	from: z.number().int().min(0).optional(),
+	size: z.number().int().min(0).max(10_000).optional(),
+	wait_for_checkpoints: z.array(z.number().int().min(0)).min(1).optional(),
+});
+export type FleetSearchInput = z.input<typeof FleetSearchInputSchema>;
+export type FleetSearchOutput = SearchRunResponse;
+
+export const FleetMsearchInputSchema = z
+	.strictObject({
+		index: NonBlankString,
+		searches: z.array(MsearchSearchSchema).min(1).optional(),
+		ndjson: NdjsonPayload.optional(),
+		wait_for_checkpoints: z.array(z.number().int().min(0)).min(1).optional(),
+	})
+	.refine(
+		(parsed) =>
+			(parsed.searches !== undefined) !== (parsed.ndjson !== undefined),
+		{ message: 'provide exactly one of searches or ndjson' },
+	);
+export type FleetMsearchInput = z.input<typeof FleetMsearchInputSchema>;
+export type FleetMsearchOutput = MultiSearchResult;
+
+export const FleetGlobalCheckpointsInputSchema = z.strictObject({
+	index: NonBlankString,
+	wait_for_advance: z.boolean().optional(),
+	wait_for_index: z.boolean().optional(),
+	checkpoints: z.array(z.number().int().min(0)).min(1).optional(),
+	timeout: NonBlankString.optional(),
+});
+export type FleetGlobalCheckpointsInput = z.input<
+	typeof FleetGlobalCheckpointsInputSchema
+>;
+
+export const FleetGlobalCheckpointsOutputSchema = z.looseObject({
+	global_checkpoints: z.array(z.number()),
+	timed_out: z.boolean(),
+});
+export type FleetGlobalCheckpointsOutput = z.infer<
+	typeof FleetGlobalCheckpointsOutputSchema
+>;
+
+// ── cross-cluster replication on index-scoped paths ─────────────────────────
+
+export const CcrFollowInputSchema = z.strictObject({
+	index: NonBlankString,
+	leader_index: NonBlankString,
+	remote_cluster: NonBlankString,
+	max_outstanding_read_requests: z.number().int().min(1).optional(),
+	max_retry_delay: NonBlankString.optional(),
+	read_poll_timeout: NonBlankString.optional(),
+	settings: SettingsRecord.optional(),
+	master_timeout: NonBlankString.optional(),
+	wait_for_active_shards: WaitForActiveShardsParam.optional(),
+});
+export type CcrFollowInput = z.input<typeof CcrFollowInputSchema>;
+
+export const CcrFollowOutputSchema = z.looseObject({
+	follow_index_created: z.boolean(),
+	follow_index_shards_acked: z.boolean(),
+	index_following_started: z.boolean(),
+});
+export type CcrFollowOutput = z.infer<typeof CcrFollowOutputSchema>;
+
+export const CcrFollowInfoInputSchema = z.strictObject({
+	index: NonBlankString,
+});
+export type CcrFollowInfoInput = z.infer<typeof CcrFollowInfoInputSchema>;
+
+export const CcrFollowInfoOutputSchema = z.looseObject({
+	follower_indices: z.array(
+		z.looseObject({
+			follower_index: z.string(),
+			leader_index: z.string(),
+			remote_cluster: z.string(),
+			status: z.string(),
+		}),
+	),
+});
+export type CcrFollowInfoOutput = z.infer<typeof CcrFollowInfoOutputSchema>;
+
+export const CcrFollowStatsInputSchema = z.strictObject({
+	index: NonBlankString,
+});
+export type CcrFollowStatsInput = z.infer<typeof CcrFollowStatsInputSchema>;
+
+export const CcrFollowStatsOutputSchema = z.looseObject({
+	indices: z.array(
+		z.looseObject({
+			index: z.string(),
+			shards: z.array(z.looseObject({})),
+		}),
+	),
+});
+export type CcrFollowStatsOutput = z.infer<typeof CcrFollowStatsOutputSchema>;
+
+export const CcrForgetFollowerInputSchema = z
+	.strictObject({
+		index: NonBlankString,
+		follower_cluster: NonBlankString.optional(),
+		follower_index: NonBlankString.optional(),
+		follower_index_uuid: NonBlankString.optional(),
+		leader_remote_cluster: NonBlankString.optional(),
+		timeout: NonBlankString.optional(),
+	})
+	.refine(
+		(parsed) =>
+			parsed.follower_cluster !== undefined ||
+			parsed.follower_index !== undefined ||
+			parsed.follower_index_uuid !== undefined ||
+			parsed.leader_remote_cluster !== undefined,
+		{ message: 'provide at least one follower identifier' },
+	);
+export type CcrForgetFollowerInput = z.input<
+	typeof CcrForgetFollowerInputSchema
+>;
+
+export const CcrForgetFollowerOutputSchema = z.looseObject({
+	_shards: ShardStatisticsSchema,
+});
+export type CcrForgetFollowerOutput = z.infer<
+	typeof CcrForgetFollowerOutputSchema
+>;
+
+const CcrIndexInputSchema = z.strictObject({
+	index: NonBlankString,
+	master_timeout: NonBlankString.optional(),
+});
+export type CcrIndexInput = z.input<typeof CcrIndexInputSchema>;
+export type CcrAcknowledgedOutput = z.infer<typeof AcknowledgedResponseSchema>;
+
 // ── registry ─────────────────────────────────────────────────────────────────
 
 export type ElasticsearchEndpointInputs = {
@@ -1437,6 +1909,30 @@ export type ElasticsearchEndpointInputs = {
 	indicesIlmRetry: IndicesIlmRetryInput;
 	indicesClearSearchableSnapshotCache: IndicesClearSearchableSnapshotCacheInput;
 	indicesSearchableSnapshotStats: IndicesSearchableSnapshotStatsInput;
+	searchCount: SearchCountInput;
+	searchMsearch: SearchMsearchInput;
+	searchMsearchTemplate: SearchMsearchTemplateInput;
+	searchTemplate: SearchTemplateInput;
+	searchTermsEnum: SearchTermsEnumInput;
+	searchFieldCaps: SearchFieldCapsInput;
+	searchShards: SearchShardsInput;
+	searchOpenPointInTime: SearchOpenPointInTimeInput;
+	searchRankEval: SearchRankEvalInput;
+	searchVectorTile: SearchVectorTileInput;
+	searchEql: SearchEqlInput;
+	searchAsyncSubmit: SearchAsyncSubmitInput;
+	searchGraphExplore: SearchGraphExploreInput;
+	searchValidateQuery: SearchValidateQueryInput;
+	fleetSearch: FleetSearchInput;
+	fleetMsearch: FleetMsearchInput;
+	fleetGlobalCheckpoints: FleetGlobalCheckpointsInput;
+	ccrFollow: CcrFollowInput;
+	ccrFollowInfo: CcrFollowInfoInput;
+	ccrFollowStats: CcrFollowStatsInput;
+	ccrForgetFollower: CcrForgetFollowerInput;
+	ccrPauseFollow: CcrIndexInput;
+	ccrResumeFollow: CcrIndexInput;
+	ccrUnfollow: CcrIndexInput;
 };
 
 export type ElasticsearchEndpointOutputs = {
@@ -1499,6 +1995,30 @@ export type ElasticsearchEndpointOutputs = {
 	indicesIlmRetry: IndicesIlmRetryOutput;
 	indicesClearSearchableSnapshotCache: IndicesClearSearchableSnapshotCacheOutput;
 	indicesSearchableSnapshotStats: IndicesSearchableSnapshotStatsOutput;
+	searchCount: SearchCountOutput;
+	searchMsearch: MultiSearchResult;
+	searchMsearchTemplate: SearchMsearchTemplateOutput;
+	searchTemplate: SearchTemplateOutput;
+	searchTermsEnum: SearchTermsEnumOutput;
+	searchFieldCaps: SearchFieldCapsOutput;
+	searchShards: SearchShardsOutput;
+	searchOpenPointInTime: SearchOpenPointInTimeOutput;
+	searchRankEval: SearchRankEvalOutput;
+	searchVectorTile: SearchVectorTileOutput;
+	searchEql: SearchEqlOutput;
+	searchAsyncSubmit: SearchAsyncSubmitOutput;
+	searchGraphExplore: SearchGraphExploreOutput;
+	searchValidateQuery: SearchValidateQueryOutput;
+	fleetSearch: FleetSearchOutput;
+	fleetMsearch: FleetMsearchOutput;
+	fleetGlobalCheckpoints: FleetGlobalCheckpointsOutput;
+	ccrFollow: CcrFollowOutput;
+	ccrFollowInfo: CcrFollowInfoOutput;
+	ccrFollowStats: CcrFollowStatsOutput;
+	ccrForgetFollower: CcrForgetFollowerOutput;
+	ccrPauseFollow: CcrAcknowledgedOutput;
+	ccrResumeFollow: CcrAcknowledgedOutput;
+	ccrUnfollow: CcrAcknowledgedOutput;
 };
 
 export type ElasticsearchOperation = keyof ElasticsearchEndpointInputs;
@@ -1564,6 +2084,30 @@ export const ElasticsearchEndpointInputSchemas = {
 	indicesClearSearchableSnapshotCache:
 		IndicesClearSearchableSnapshotCacheInputSchema,
 	indicesSearchableSnapshotStats: IndicesSearchableSnapshotStatsInputSchema,
+	searchCount: SearchCountInputSchema,
+	searchMsearch: SearchMsearchInputSchema,
+	searchMsearchTemplate: SearchMsearchTemplateInputSchema,
+	searchTemplate: SearchTemplateInputSchema,
+	searchTermsEnum: SearchTermsEnumInputSchema,
+	searchFieldCaps: SearchFieldCapsInputSchema,
+	searchShards: SearchShardsInputSchema,
+	searchOpenPointInTime: SearchOpenPointInTimeInputSchema,
+	searchRankEval: SearchRankEvalInputSchema,
+	searchVectorTile: SearchVectorTileInputSchema,
+	searchEql: SearchEqlInputSchema,
+	searchAsyncSubmit: SearchAsyncSubmitInputSchema,
+	searchGraphExplore: SearchGraphExploreInputSchema,
+	searchValidateQuery: SearchValidateQueryInputSchema,
+	fleetSearch: FleetSearchInputSchema,
+	fleetMsearch: FleetMsearchInputSchema,
+	fleetGlobalCheckpoints: FleetGlobalCheckpointsInputSchema,
+	ccrFollow: CcrFollowInputSchema,
+	ccrFollowInfo: CcrFollowInfoInputSchema,
+	ccrFollowStats: CcrFollowStatsInputSchema,
+	ccrForgetFollower: CcrForgetFollowerInputSchema,
+	ccrPauseFollow: CcrIndexInputSchema,
+	ccrResumeFollow: CcrIndexInputSchema,
+	ccrUnfollow: CcrIndexInputSchema,
 } as const;
 
 export const ElasticsearchEndpointOutputSchemas = {
@@ -1626,4 +2170,28 @@ export const ElasticsearchEndpointOutputSchemas = {
 	indicesIlmRetry: AcknowledgedResponseSchema,
 	indicesClearSearchableSnapshotCache: EmptyObjectSchema,
 	indicesSearchableSnapshotStats: IndicesSearchableSnapshotStatsOutputSchema,
+	searchCount: SearchCountOutputSchema,
+	searchMsearch: MultiSearchResultSchema,
+	searchMsearchTemplate: MultiSearchResultSchema,
+	searchTemplate: SearchRunResponseSchema,
+	searchTermsEnum: SearchTermsEnumOutputSchema,
+	searchFieldCaps: SearchFieldCapsOutputSchema,
+	searchShards: SearchShardsOutputSchema,
+	searchOpenPointInTime: SearchOpenPointInTimeOutputSchema,
+	searchRankEval: SearchRankEvalOutputSchema,
+	searchVectorTile: SearchVectorTileOutputSchema,
+	searchEql: SearchEqlOutputSchema,
+	searchAsyncSubmit: SearchAsyncSubmitOutputSchema,
+	searchGraphExplore: SearchGraphExploreOutputSchema,
+	searchValidateQuery: SearchValidateQueryOutputSchema,
+	fleetSearch: SearchRunResponseSchema,
+	fleetMsearch: MultiSearchResultSchema,
+	fleetGlobalCheckpoints: FleetGlobalCheckpointsOutputSchema,
+	ccrFollow: CcrFollowOutputSchema,
+	ccrFollowInfo: CcrFollowInfoOutputSchema,
+	ccrFollowStats: CcrFollowStatsOutputSchema,
+	ccrForgetFollower: CcrForgetFollowerOutputSchema,
+	ccrPauseFollow: AcknowledgedResponseSchema,
+	ccrResumeFollow: AcknowledgedResponseSchema,
+	ccrUnfollow: AcknowledgedResponseSchema,
 } as const;

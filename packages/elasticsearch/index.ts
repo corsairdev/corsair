@@ -13,7 +13,7 @@ import type {
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
 import { buildAuthorizationHeader } from './client';
-import { Cluster, Documents, Indices, Search } from './endpoints';
+import { Ccr, Cluster, Documents, Fleet, Indices, Search } from './endpoints';
 import type {
 	ElasticsearchEndpointInputs,
 	ElasticsearchEndpointOutputs,
@@ -130,6 +130,30 @@ export type ElasticsearchEndpoints = {
 	indicesIlmRetry: ElasticsearchEndpoint<'indicesIlmRetry'>;
 	indicesClearSearchableSnapshotCache: ElasticsearchEndpoint<'indicesClearSearchableSnapshotCache'>;
 	indicesSearchableSnapshotStats: ElasticsearchEndpoint<'indicesSearchableSnapshotStats'>;
+	searchCount: ElasticsearchEndpoint<'searchCount'>;
+	searchMsearch: ElasticsearchEndpoint<'searchMsearch'>;
+	searchMsearchTemplate: ElasticsearchEndpoint<'searchMsearchTemplate'>;
+	searchTemplate: ElasticsearchEndpoint<'searchTemplate'>;
+	searchTermsEnum: ElasticsearchEndpoint<'searchTermsEnum'>;
+	searchFieldCaps: ElasticsearchEndpoint<'searchFieldCaps'>;
+	searchShards: ElasticsearchEndpoint<'searchShards'>;
+	searchOpenPointInTime: ElasticsearchEndpoint<'searchOpenPointInTime'>;
+	searchRankEval: ElasticsearchEndpoint<'searchRankEval'>;
+	searchVectorTile: ElasticsearchEndpoint<'searchVectorTile'>;
+	searchEql: ElasticsearchEndpoint<'searchEql'>;
+	searchAsyncSubmit: ElasticsearchEndpoint<'searchAsyncSubmit'>;
+	searchGraphExplore: ElasticsearchEndpoint<'searchGraphExplore'>;
+	searchValidateQuery: ElasticsearchEndpoint<'searchValidateQuery'>;
+	fleetSearch: ElasticsearchEndpoint<'fleetSearch'>;
+	fleetMsearch: ElasticsearchEndpoint<'fleetMsearch'>;
+	fleetGlobalCheckpoints: ElasticsearchEndpoint<'fleetGlobalCheckpoints'>;
+	ccrFollow: ElasticsearchEndpoint<'ccrFollow'>;
+	ccrFollowInfo: ElasticsearchEndpoint<'ccrFollowInfo'>;
+	ccrFollowStats: ElasticsearchEndpoint<'ccrFollowStats'>;
+	ccrForgetFollower: ElasticsearchEndpoint<'ccrForgetFollower'>;
+	ccrPauseFollow: ElasticsearchEndpoint<'ccrPauseFollow'>;
+	ccrResumeFollow: ElasticsearchEndpoint<'ccrResumeFollow'>;
+	ccrUnfollow: ElasticsearchEndpoint<'ccrUnfollow'>;
 };
 
 // Elasticsearch has no inbound webhook surface — the REST API is
@@ -186,6 +210,34 @@ const elasticsearchEndpointsNested = {
 	},
 	search: {
 		run: Search.run,
+		count: Search.count,
+		msearch: Search.msearch,
+		msearchTemplate: Search.msearchTemplate,
+		template: Search.template,
+		termsEnum: Search.termsEnum,
+		fieldCaps: Search.fieldCaps,
+		shards: Search.shards,
+		openPointInTime: Search.openPointInTime,
+		rankEval: Search.rankEval,
+		vectorTile: Search.vectorTile,
+		eql: Search.eql,
+		asyncSubmit: Search.asyncSubmit,
+		graphExplore: Search.graphExplore,
+		validateQuery: Search.validateQuery,
+	},
+	fleet: {
+		search: Fleet.search,
+		msearch: Fleet.msearch,
+		globalCheckpoints: Fleet.globalCheckpoints,
+	},
+	ccr: {
+		follow: Ccr.follow,
+		followInfo: Ccr.followInfo,
+		followStats: Ccr.followStats,
+		forgetFollower: Ccr.forgetFollower,
+		pauseFollow: Ccr.pauseFollow,
+		resumeFollow: Ccr.resumeFollow,
+		unfollow: Ccr.unfollow,
 	},
 	documents: {
 		get: Documents.get,
@@ -444,6 +496,102 @@ export const elasticsearchEndpointSchemas = {
 	'indices.searchableSnapshotStats': {
 		input: ElasticsearchEndpointInputSchemas.indicesSearchableSnapshotStats,
 		output: ElasticsearchEndpointOutputSchemas.indicesSearchableSnapshotStats,
+	},
+	'search.count': {
+		input: ElasticsearchEndpointInputSchemas.searchCount,
+		output: ElasticsearchEndpointOutputSchemas.searchCount,
+	},
+	'search.msearch': {
+		input: ElasticsearchEndpointInputSchemas.searchMsearch,
+		output: ElasticsearchEndpointOutputSchemas.searchMsearch,
+	},
+	'search.msearchTemplate': {
+		input: ElasticsearchEndpointInputSchemas.searchMsearchTemplate,
+		output: ElasticsearchEndpointOutputSchemas.searchMsearchTemplate,
+	},
+	'search.template': {
+		input: ElasticsearchEndpointInputSchemas.searchTemplate,
+		output: ElasticsearchEndpointOutputSchemas.searchTemplate,
+	},
+	'search.termsEnum': {
+		input: ElasticsearchEndpointInputSchemas.searchTermsEnum,
+		output: ElasticsearchEndpointOutputSchemas.searchTermsEnum,
+	},
+	'search.fieldCaps': {
+		input: ElasticsearchEndpointInputSchemas.searchFieldCaps,
+		output: ElasticsearchEndpointOutputSchemas.searchFieldCaps,
+	},
+	'search.shards': {
+		input: ElasticsearchEndpointInputSchemas.searchShards,
+		output: ElasticsearchEndpointOutputSchemas.searchShards,
+	},
+	'search.openPointInTime': {
+		input: ElasticsearchEndpointInputSchemas.searchOpenPointInTime,
+		output: ElasticsearchEndpointOutputSchemas.searchOpenPointInTime,
+	},
+	'search.rankEval': {
+		input: ElasticsearchEndpointInputSchemas.searchRankEval,
+		output: ElasticsearchEndpointOutputSchemas.searchRankEval,
+	},
+	'search.vectorTile': {
+		input: ElasticsearchEndpointInputSchemas.searchVectorTile,
+		output: ElasticsearchEndpointOutputSchemas.searchVectorTile,
+	},
+	'search.eql': {
+		input: ElasticsearchEndpointInputSchemas.searchEql,
+		output: ElasticsearchEndpointOutputSchemas.searchEql,
+	},
+	'search.asyncSubmit': {
+		input: ElasticsearchEndpointInputSchemas.searchAsyncSubmit,
+		output: ElasticsearchEndpointOutputSchemas.searchAsyncSubmit,
+	},
+	'search.graphExplore': {
+		input: ElasticsearchEndpointInputSchemas.searchGraphExplore,
+		output: ElasticsearchEndpointOutputSchemas.searchGraphExplore,
+	},
+	'search.validateQuery': {
+		input: ElasticsearchEndpointInputSchemas.searchValidateQuery,
+		output: ElasticsearchEndpointOutputSchemas.searchValidateQuery,
+	},
+	'fleet.search': {
+		input: ElasticsearchEndpointInputSchemas.fleetSearch,
+		output: ElasticsearchEndpointOutputSchemas.fleetSearch,
+	},
+	'fleet.msearch': {
+		input: ElasticsearchEndpointInputSchemas.fleetMsearch,
+		output: ElasticsearchEndpointOutputSchemas.fleetMsearch,
+	},
+	'fleet.globalCheckpoints': {
+		input: ElasticsearchEndpointInputSchemas.fleetGlobalCheckpoints,
+		output: ElasticsearchEndpointOutputSchemas.fleetGlobalCheckpoints,
+	},
+	'ccr.follow': {
+		input: ElasticsearchEndpointInputSchemas.ccrFollow,
+		output: ElasticsearchEndpointOutputSchemas.ccrFollow,
+	},
+	'ccr.followInfo': {
+		input: ElasticsearchEndpointInputSchemas.ccrFollowInfo,
+		output: ElasticsearchEndpointOutputSchemas.ccrFollowInfo,
+	},
+	'ccr.followStats': {
+		input: ElasticsearchEndpointInputSchemas.ccrFollowStats,
+		output: ElasticsearchEndpointOutputSchemas.ccrFollowStats,
+	},
+	'ccr.forgetFollower': {
+		input: ElasticsearchEndpointInputSchemas.ccrForgetFollower,
+		output: ElasticsearchEndpointOutputSchemas.ccrForgetFollower,
+	},
+	'ccr.pauseFollow': {
+		input: ElasticsearchEndpointInputSchemas.ccrPauseFollow,
+		output: ElasticsearchEndpointOutputSchemas.ccrPauseFollow,
+	},
+	'ccr.resumeFollow': {
+		input: ElasticsearchEndpointInputSchemas.ccrResumeFollow,
+		output: ElasticsearchEndpointOutputSchemas.ccrResumeFollow,
+	},
+	'ccr.unfollow': {
+		input: ElasticsearchEndpointInputSchemas.ccrUnfollow,
+		output: ElasticsearchEndpointOutputSchemas.ccrUnfollow,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof elasticsearchEndpointsNested
@@ -745,6 +893,125 @@ const elasticsearchEndpointMeta = {
 		riskLevel: 'read',
 		description:
 			'Get searchable snapshot statistics (cache usage, IO) for mounted indices at cluster, index or shard level',
+	},
+	'search.count': {
+		riskLevel: 'read',
+		description:
+			'Count documents matching a typed query (or every document) across indices, data streams and aliases without fetching hits',
+	},
+	'search.msearch': {
+		riskLevel: 'read',
+		description:
+			'Run multiple searches in one request from typed sub-searches (query/from/size) or raw NDJSON; each response item carries its own error',
+	},
+	'search.msearchTemplate': {
+		riskLevel: 'read',
+		description:
+			'Run multiple templated searches in one request, each using a stored template id and params',
+	},
+	'search.template': {
+		riskLevel: 'read',
+		description:
+			'Run a search with a stored template id or an inline mustache source plus params; same response shape as search.run',
+	},
+	'search.termsEnum': {
+		riskLevel: 'read',
+		description:
+			'Enumerate terms in a field that match a string prefix, for autocomplete-style lookups',
+	},
+	'search.fieldCaps': {
+		riskLevel: 'read',
+		description:
+			'Get field capabilities (types, searchable, aggregatable, per-index overrides) across indices',
+	},
+	'search.shards': {
+		riskLevel: 'read',
+		description:
+			'Get the shards a search would execute on: node list, shard routing copies and index names',
+	},
+	'search.openPointInTime': {
+		riskLevel: 'write',
+		description:
+			'Open a point in time (PIT) over indices with a keep-alive; the returned id pins a consistent view and holds cluster resources',
+	},
+	'search.rankEval': {
+		riskLevel: 'read',
+		description:
+			'Evaluate ranked search results against rated documents with a metric (precision, recall, DCG...) and get per-request details',
+	},
+	'search.vectorTile': {
+		riskLevel: 'read',
+		description:
+			'Search a geospatial field as a Mapbox vector tile for a zoom/x/y grid; returns the protobuf tile base64-encoded',
+	},
+	'search.eql': {
+		riskLevel: 'read',
+		description:
+			'Run an Event Query Language search (event and sequence matching) over log/event indices',
+	},
+	'search.asyncSubmit': {
+		riskLevel: 'read',
+		description:
+			'Submit an async search: returns partial results immediately with an id for polling while the search keeps running',
+	},
+	'search.graphExplore': {
+		riskLevel: 'read',
+		description:
+			'Explore graph analytics: find vertices and connections between terms that co-occur in documents',
+	},
+	'search.validateQuery': {
+		riskLevel: 'read',
+		description:
+			'Validate a typed query (or Lucene q string) without running it, with optional per-shard explanations',
+	},
+	'fleet.search': {
+		riskLevel: 'read',
+		description:
+			'Run a Fleet search on one index or alias, optionally waiting for global checkpoints before executing',
+	},
+	'fleet.msearch': {
+		riskLevel: 'read',
+		description:
+			'Run multiple Fleet searches in one request with optional checkpoint waits; each item carries its own error',
+	},
+	'fleet.globalCheckpoints': {
+		riskLevel: 'read',
+		description:
+			'Get the global checkpoints of an index, optionally waiting for them to advance past given values',
+	},
+	'ccr.follow': {
+		riskLevel: 'write',
+		description:
+			'Create a follower index that replicates a leader index from a remote cluster (cross-cluster replication)',
+	},
+	'ccr.followInfo': {
+		riskLevel: 'read',
+		description:
+			'Get follower information (leader index, remote cluster, status) for follower index patterns',
+	},
+	'ccr.followStats': {
+		riskLevel: 'read',
+		description:
+			'Get cross-cluster replication statistics (shard-level following stats) for follower indices',
+	},
+	'ccr.forgetFollower': {
+		riskLevel: 'write',
+		description:
+			'Remove a follower retention lease from a leader index by follower identifiers, letting its data be trimmed',
+	},
+	'ccr.pauseFollow': {
+		riskLevel: 'write',
+		description:
+			'Pause replication of a follower index; the leader stops streaming operations until resumed',
+	},
+	'ccr.resumeFollow': {
+		riskLevel: 'write',
+		description: 'Resume replication on a paused follower index',
+	},
+	'ccr.unfollow': {
+		riskLevel: 'write',
+		description:
+			'Convert a follower index into a regular index, detaching it from its leader for good',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof elasticsearchEndpointsNested
