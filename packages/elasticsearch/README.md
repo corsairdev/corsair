@@ -159,6 +159,16 @@ pnpm add @corsair-dev/elasticsearch
 | `security.apiKeys.query` | `elasticsearch.api.security.apiKeys.query` | `read` | Find API keys with a typed query (POST /_security/_query/api_key) over name, metadata and other key fields, search-style hits envelope |
 | `security.crossClusterApiKeys.create` | `elasticsearch.api.security.crossClusterApiKeys.create` | `write` | Create a cross-cluster API key granting remote search and/or replication access to named indices |
 | `security.crossClusterApiKeys.update` | `elasticsearch.api.security.crossClusterApiKeys.update` | `write` | Replace the access assignment, expiration or metadata of a cross-cluster API key by id |
+| `security.authenticate` | `elasticsearch.api.security.authenticate` | `read` | Identify the authenticated principal (GET /_security/_authenticate): username, roles, realm chain and the API key or token in use |
+| `security.users.get` | `elasticsearch.api.security.users.get` | `read` | Get users by comma-separated usernames or wildcards, with roles, full name, email, metadata and enabled flag keyed by username |
+| `security.users.put` | `elasticsearch.api.security.users.put` | `write` | Create or update a user (POST /_security/user/{username}) with a password or hash, roles, profile fields and enabled flag; replies created: true\|false |
+| `security.users.delete` | `elasticsearch.api.security.users.delete` | `destructive` | Delete a user and their credentials (DELETE /_security/user/{username}); replies found: true when a user was removed |
+| `security.users.disable` | `elasticsearch.api.security.users.disable` | `write` | Disable a user so authentication is rejected until re-enabled (POST /_security/user/{username}/_disable) |
+| `security.users.enable` | `elasticsearch.api.security.users.enable` | `write` | Re-enable a previously disabled user (POST /_security/user/{username}/_enable) |
+| `security.users.changePassword` | `elasticsearch.api.security.users.changePassword` | `write` | Change a user password with a plaintext password or an SSH bcrypt hash (exactly one), (POST /_security/user/{username}/_password) |
+| `security.users.query` | `elasticsearch.api.security.users.query` | `read` | Find users with a typed query over username and profile fields (POST /_security/_query/user), search-style hits envelope |
+| `security.hasPrivileges` | `elasticsearch.api.security.hasPrivileges` | `read` | Check cluster, index and application privileges for one user (POST /_security/user/{user}/_has_privileges); the reply maps each privilege to a boolean |
+| `security.getUserPrivileges` | `elasticsearch.api.security.getUserPrivileges` | `read` | List the privileges of the authenticated principal (GET /_security/user/_privileges): cluster, index, application, global and run_as grants |
 
 Risk levels follow the operation's effect on the cluster: `read` never mutates, `write` changes documents or index/cluster state, `destructive` deletes data. Mutating calls (POST/PUT/DELETE) are never replayed on 5xx or timeout, because the change may already have been applied; 429 retries remain safe (the request was rejected before executing).
 

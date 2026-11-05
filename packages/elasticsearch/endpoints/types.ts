@@ -3388,6 +3388,250 @@ export type SecurityCrossClusterApiKeysUpdateOutput = z.infer<
 	typeof SecurityApiKeysUpdateOutputSchema
 >;
 
+// ── security.authenticate and the user/privilege checks ──────────────────────
+
+export const SecurityAuthenticateInputSchema = z.object({});
+export type SecurityAuthenticateInput = z.infer<
+	typeof SecurityAuthenticateInputSchema
+>;
+
+export const SecurityAuthenticateOutputSchema = z.looseObject({
+	username: z.string(),
+	roles: z.array(z.string()),
+	enabled: z.boolean(),
+	authentication_type: z.string(),
+	authentication_realm: z.looseObject({ name: z.string(), type: z.string() }),
+	lookup_realm: z.looseObject({ name: z.string(), type: z.string() }),
+	metadata: SecurityMetadata,
+	full_name: z.string().nullable().optional(),
+	email: z.string().nullable().optional(),
+	api_key: z
+		.looseObject({
+			id: z.string().optional(),
+			name: z.string().optional(),
+			managed_by: z.string().optional(),
+			internal: z.boolean().optional(),
+		})
+		.optional(),
+	token: z
+		.looseObject({
+			name: z.string().optional(),
+			type: z.string().optional(),
+			managed_by: z.string().optional(),
+		})
+		.optional(),
+});
+export type SecurityAuthenticateOutput = z.infer<
+	typeof SecurityAuthenticateOutputSchema
+>;
+
+// One native-realm user row, shared by users.get and users.query hits.
+const SecurityUserSchema = z.looseObject({
+	username: z.string(),
+	roles: z.array(z.string()),
+	full_name: z.string().nullable().optional(),
+	email: z.string().nullable().optional(),
+	metadata: SecurityMetadata,
+	enabled: z.boolean(),
+});
+export type SecurityUser = z.infer<typeof SecurityUserSchema>;
+
+// ── security.users: /_security/user ──────────────────────────────────────────
+
+export const SecurityUsersGetInputSchema = z.strictObject({
+	// Comma-separated usernames or wildcards; the spec default is all users.
+	username: NonBlankString,
+	with_profile_uid: z.boolean().optional(),
+});
+export type SecurityUsersGetInput = z.input<typeof SecurityUsersGetInputSchema>;
+
+export const SecurityUsersGetOutputSchema = z.record(
+	z.string().min(1),
+	SecurityUserSchema,
+);
+export type SecurityUsersGetOutput = z.infer<
+	typeof SecurityUsersGetOutputSchema
+>;
+
+const SecurityPutUserBodyFields = {
+	password: NonBlankString.optional(),
+	password_hash: NonBlankString.optional(),
+	roles: z.array(NonBlankString).optional(),
+	full_name: z.string().optional(),
+	email: z.string().optional(),
+	metadata: SecurityMetadata.optional(),
+	enabled: z.boolean().optional(),
+};
+
+export const SecurityUsersPutInputSchema = z.strictObject({
+	username: NonBlankString,
+	...SecurityPutUserBodyFields,
+	refresh: RefreshParam.optional(),
+});
+export type SecurityUsersPutInput = z.input<typeof SecurityUsersPutInputSchema>;
+
+export const SecurityCreatedResponseSchema = z.looseObject({
+	created: z.boolean(),
+});
+export type SecurityCreatedResponse = z.infer<
+	typeof SecurityCreatedResponseSchema
+>;
+
+export const SecurityFoundResponseSchema = z.looseObject({
+	found: z.boolean(),
+});
+export type SecurityFoundResponse = z.infer<typeof SecurityFoundResponseSchema>;
+
+// The 200 replies for password change, enable and disable are empty objects.
+const SecurityEmptyResponseSchema = z.looseObject({});
+export type SecurityEmptyResponse = z.infer<typeof SecurityEmptyResponseSchema>;
+
+export const SecurityUsersDeleteInputSchema = z.strictObject({
+	username: NonBlankString,
+	refresh: RefreshParam.optional(),
+});
+export type SecurityUsersDeleteInput = z.input<
+	typeof SecurityUsersDeleteInputSchema
+>;
+export type SecurityUsersDeleteOutput = SecurityFoundResponse;
+
+export const SecurityUsersDisableInputSchema = z.strictObject({
+	username: NonBlankString,
+	refresh: RefreshParam.optional(),
+});
+export type SecurityUsersDisableInput = z.input<
+	typeof SecurityUsersDisableInputSchema
+>;
+export type SecurityUsersDisableOutput = SecurityEmptyResponse;
+
+export const SecurityUsersEnableInputSchema = z.strictObject({
+	username: NonBlankString,
+	refresh: RefreshParam.optional(),
+});
+export type SecurityUsersEnableInput = z.input<
+	typeof SecurityUsersEnableInputSchema
+>;
+export type SecurityUsersEnableOutput = SecurityEmptyResponse;
+
+export const SecurityUsersChangePasswordInputSchema = z
+	.strictObject({
+		username: NonBlankString,
+		password: NonBlankString.optional(),
+		password_hash: NonBlankString.optional(),
+		refresh: RefreshParam.optional(),
+	})
+	.refine(
+		(input) =>
+			(input.password !== undefined) !== (input.password_hash !== undefined),
+		{ message: 'provide exactly one of password or password_hash' },
+	);
+export type SecurityUsersChangePasswordInput = z.input<
+	typeof SecurityUsersChangePasswordInputSchema
+>;
+export type SecurityUsersChangePasswordOutput = SecurityEmptyResponse;
+
+export const SecurityUsersQueryInputSchema = z.strictObject({
+	query: QuerySchema.optional(),
+	from: z.number().int().min(0).optional(),
+	size: z.number().int().min(0).max(10_000).optional(),
+	with_profile_uid: z.boolean().optional(),
+});
+export type SecurityUsersQueryInput = z.input<
+	typeof SecurityUsersQueryInputSchema
+>;
+
+export const SecurityUsersQueryOutputSchema = z.looseObject({
+	hits: z.looseObject({
+		total: z
+			.union([
+				z.looseObject({ value: z.number(), relation: z.string() }),
+				z.number(),
+			])
+			.optional(),
+		hits: z.array(SecurityUserSchema),
+	}),
+});
+export type SecurityUsersQueryOutput = z.infer<
+	typeof SecurityUsersQueryOutputSchema
+>;
+
+// ── security.hasPrivileges / security.getUserPrivileges ──────────────────────
+
+// The index privilege check body: names take a target or a list; the Query
+// DSL in `query` is the full DSL, so it passes through loose.
+const SecurityPrivilegesCheckIndexSchema = z.looseObject({
+	names: z.union([NonBlankString, z.array(NonBlankString).min(1)]),
+	privileges: z.array(NonBlankString).min(1),
+	field_security: z
+		.strictObject({
+			grant: z.array(NonBlankString).optional(),
+			except: z.array(NonBlankString).optional(),
+		})
+		.optional(),
+	query: z.looseObject({}).optional(),
+});
+
+// The privileges object has_privileges posts (cluster, index, application);
+// all sections are optional because an empty body is a valid check that
+// returns everything false.
+const SecurityPrivilegesCheckSchema = z.strictObject({
+	cluster: z.array(NonBlankString).min(1).optional(),
+	index: z.array(SecurityPrivilegesCheckIndexSchema).min(1).optional(),
+	application: z
+		.array(
+			z.strictObject({
+				application: NonBlankString,
+				privileges: z.array(NonBlankString).min(1),
+				resources: z.array(NonBlankString).optional(),
+			}),
+		)
+		.min(1)
+		.optional(),
+});
+
+export const SecurityHasPrivilegesInputSchema = z.strictObject({
+	user: NonBlankString,
+	privileges: SecurityPrivilegesCheckSchema.optional(),
+});
+export type SecurityHasPrivilegesInput = z.input<
+	typeof SecurityHasPrivilegesInputSchema
+>;
+
+// The reply is keyed by username (_user for the caller) and then by dynamic
+// privilege namespaces whose values are per-privilege boolean maps, so only
+// the envelope is typed.
+export const SecurityHasPrivilegesOutputSchema = z.record(
+	z.string().min(1),
+	z.looseObject({}),
+);
+export type SecurityHasPrivilegesOutput = z.infer<
+	typeof SecurityHasPrivilegesOutputSchema
+>;
+
+export const SecurityGetUserPrivilegesInputSchema = z.object({});
+export type SecurityGetUserPrivilegesInput = z.infer<
+	typeof SecurityGetUserPrivilegesInputSchema
+>;
+
+export const SecurityGetUserPrivilegesOutputSchema = z.looseObject({
+	applications: z.array(
+		z.looseObject({
+			application: z.string(),
+			privileges: z.array(z.string()),
+			resources: z.array(z.string()),
+		}),
+	),
+	cluster: z.array(z.string()),
+	global: z.array(z.looseObject({})),
+	indices: z.array(z.looseObject({})),
+	run_as: z.array(z.string()),
+	remote_cluster: z.array(z.looseObject({})).optional(),
+	remote_indices: z.array(z.looseObject({})).optional(),
+});
+export type SecurityGetUserPrivilegesOutput = z.infer<
+	typeof SecurityGetUserPrivilegesOutputSchema
+>;
+
 // ── registry ─────────────────────────────────────────────────────────────────
 
 export type ElasticsearchEndpointInputs = {
@@ -3538,6 +3782,16 @@ export type ElasticsearchEndpointInputs = {
 	securityApiKeysQuery: SecurityApiKeysQueryInput;
 	securityCrossClusterApiKeysCreate: SecurityCrossClusterApiKeysCreateInput;
 	securityCrossClusterApiKeysUpdate: SecurityCrossClusterApiKeysUpdateInput;
+	securityAuthenticate: SecurityAuthenticateInput;
+	securityUsersGet: SecurityUsersGetInput;
+	securityUsersPut: SecurityUsersPutInput;
+	securityUsersDelete: SecurityUsersDeleteInput;
+	securityUsersDisable: SecurityUsersDisableInput;
+	securityUsersEnable: SecurityUsersEnableInput;
+	securityUsersChangePassword: SecurityUsersChangePasswordInput;
+	securityUsersQuery: SecurityUsersQueryInput;
+	securityHasPrivileges: SecurityHasPrivilegesInput;
+	securityGetUserPrivileges: SecurityGetUserPrivilegesInput;
 };
 
 export type ElasticsearchEndpointOutputs = {
@@ -3688,6 +3942,16 @@ export type ElasticsearchEndpointOutputs = {
 	securityApiKeysQuery: SecurityApiKeysQueryOutput;
 	securityCrossClusterApiKeysCreate: SecurityCrossClusterApiKeysCreateOutput;
 	securityCrossClusterApiKeysUpdate: SecurityCrossClusterApiKeysUpdateOutput;
+	securityAuthenticate: SecurityAuthenticateOutput;
+	securityUsersGet: SecurityUsersGetOutput;
+	securityUsersPut: SecurityCreatedResponse;
+	securityUsersDelete: SecurityUsersDeleteOutput;
+	securityUsersDisable: SecurityUsersDisableOutput;
+	securityUsersEnable: SecurityUsersEnableOutput;
+	securityUsersChangePassword: SecurityUsersChangePasswordOutput;
+	securityUsersQuery: SecurityUsersQueryOutput;
+	securityHasPrivileges: SecurityHasPrivilegesOutput;
+	securityGetUserPrivileges: SecurityGetUserPrivilegesOutput;
 };
 
 export type ElasticsearchOperation = keyof ElasticsearchEndpointInputs;
@@ -3844,6 +4108,16 @@ export const ElasticsearchEndpointInputSchemas = {
 		SecurityCrossClusterApiKeysCreateInputSchema,
 	securityCrossClusterApiKeysUpdate:
 		SecurityCrossClusterApiKeysUpdateInputSchema,
+	securityAuthenticate: SecurityAuthenticateInputSchema,
+	securityUsersGet: SecurityUsersGetInputSchema,
+	securityUsersPut: SecurityUsersPutInputSchema,
+	securityUsersDelete: SecurityUsersDeleteInputSchema,
+	securityUsersDisable: SecurityUsersDisableInputSchema,
+	securityUsersEnable: SecurityUsersEnableInputSchema,
+	securityUsersChangePassword: SecurityUsersChangePasswordInputSchema,
+	securityUsersQuery: SecurityUsersQueryInputSchema,
+	securityHasPrivileges: SecurityHasPrivilegesInputSchema,
+	securityGetUserPrivileges: SecurityGetUserPrivilegesInputSchema,
 } as const;
 
 export const ElasticsearchEndpointOutputSchemas = {
@@ -3994,4 +4268,14 @@ export const ElasticsearchEndpointOutputSchemas = {
 	securityApiKeysQuery: SecurityApiKeysQueryOutputSchema,
 	securityCrossClusterApiKeysCreate: SecurityCreatedApiKeySchema,
 	securityCrossClusterApiKeysUpdate: SecurityApiKeysUpdateOutputSchema,
+	securityAuthenticate: SecurityAuthenticateOutputSchema,
+	securityUsersGet: SecurityUsersGetOutputSchema,
+	securityUsersPut: SecurityCreatedResponseSchema,
+	securityUsersDelete: SecurityFoundResponseSchema,
+	securityUsersDisable: SecurityEmptyResponseSchema,
+	securityUsersEnable: SecurityEmptyResponseSchema,
+	securityUsersChangePassword: SecurityEmptyResponseSchema,
+	securityUsersQuery: SecurityUsersQueryOutputSchema,
+	securityHasPrivileges: SecurityHasPrivilegesOutputSchema,
+	securityGetUserPrivileges: SecurityGetUserPrivilegesOutputSchema,
 } as const;

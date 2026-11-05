@@ -53,9 +53,18 @@ import {
 	SecurityApiKeysInvalidateInputSchema,
 	SecurityApiKeysQueryInputSchema,
 	SecurityApiKeysQueryOutputSchema,
+	SecurityAuthenticateOutputSchema,
 	SecurityCreatedApiKeySchema,
 	SecurityCrossClusterApiKeysCreateInputSchema,
 	SecurityCrossClusterApiKeysUpdateInputSchema,
+	SecurityGetUserPrivilegesOutputSchema,
+	SecurityHasPrivilegesInputSchema,
+	SecurityHasPrivilegesOutputSchema,
+	SecurityUsersChangePasswordInputSchema,
+	SecurityUsersGetInputSchema,
+	SecurityUsersGetOutputSchema,
+	SecurityUsersPutInputSchema,
+	SecurityUsersQueryInputSchema,
 	TasksListInputSchema,
 } from './endpoints/types';
 import {
@@ -171,8 +180,13 @@ import {
 	securityApiKeysInvalidateOutput,
 	securityApiKeysQueryOutput,
 	securityApiKeysUpdateOutput,
+	securityAuthenticateOutput,
 	securityCacheClearOutput,
 	securityCreatedApiKey,
+	securityGetUserPrivilegesOutput,
+	securityHasPrivilegesOutput,
+	securityUsersGetOutput,
+	securityUsersQueryOutput,
 	shardsOpResponse,
 	taskGetOutput,
 	tasksListOutput,
@@ -3402,5 +3416,279 @@ describe('security.apiKeys wire calls', () => {
 		expect(JSON.parse(String(init.body))).toEqual({
 			access: { replication: [{ names: 'leader-*' }] },
 		});
+	});
+});
+
+// ── security users / privileges schemas and wire assertions ──────────────────
+
+describe('security.users schemas', () => {
+	it('get requires a username target and rejects extras', () => {
+		expect(SecurityUsersGetInputSchema.safeParse({}).success).toBe(false);
+		expect(
+			SecurityUsersGetInputSchema.parse({ username: 'jacknich,*' }),
+		).toEqual({ username: 'jacknich,*' });
+		expect(
+			SecurityUsersGetInputSchema.safeParse({ username: 'a', size: 10 })
+				.success,
+		).toBe(false);
+	});
+
+	it('put types the body fields and keeps the username out of the body', () => {
+		expect(
+			SecurityUsersPutInputSchema.parse({
+				username: 'jacknich',
+				password: 'w3AkP@ss',
+				roles: ['admin'],
+			}),
+		).toEqual({
+			username: 'jacknich',
+			password: 'w3AkP@ss',
+			roles: ['admin'],
+		});
+		expect(
+			SecurityUsersPutInputSchema.safeParse({ username: 'u', realms: [] })
+				.success,
+		).toBe(false);
+	});
+
+	it('changePassword requires exactly one of password or password_hash', () => {
+		expect(
+			SecurityUsersChangePasswordInputSchema.safeParse({ username: 'u' })
+				.success,
+		).toBe(false);
+		expect(
+			SecurityUsersChangePasswordInputSchema.safeParse({
+				username: 'u',
+				password: 'p',
+				password_hash: 'h',
+			}).success,
+		).toBe(false);
+		expect(
+			SecurityUsersChangePasswordInputSchema.safeParse({
+				username: 'u',
+				password_hash: '$2a$10$hash',
+			}).success,
+		).toBe(true);
+	});
+
+	it('query bounds from/size like the search API', () => {
+		expect(SecurityUsersQueryInputSchema.safeParse({ from: -1 }).success).toBe(
+			false,
+		);
+		expect(
+			SecurityUsersQueryInputSchema.safeParse({ size: 10_001 }).success,
+		).toBe(false);
+	});
+
+	it('hasPrivileges types the privilege check body sections', () => {
+		expect(
+			SecurityHasPrivilegesInputSchema.safeParse({
+				user: 'jacknich',
+				privileges: {
+					cluster: ['monitor'],
+					index: [{ names: ['logs-*'], privileges: ['read'] }],
+					application: [
+						{ application: 'myapp', privileges: ['read'], resources: ['*'] },
+					],
+				},
+			}).success,
+		).toBe(true);
+		expect(
+			SecurityHasPrivilegesInputSchema.safeParse({
+				user: 'u',
+				privileges: { cluster: [] },
+			}).success,
+		).toBe(false);
+		expect(
+			SecurityHasPrivilegesInputSchema.safeParse({
+				user: 'u',
+				privileges: { index: [{ names: ['logs'], privileges: [] }] },
+			}).success,
+		).toBe(false);
+	});
+
+	it('parses the user map, authenticate body and privilege replies', () => {
+		const users = SecurityUsersGetOutputSchema.parse(securityUsersGetOutput());
+		expect(users.jacknich?.roles).toEqual(['admin', 'other_role1']);
+
+		const auth = SecurityAuthenticateOutputSchema.parse(
+			securityAuthenticateOutput,
+		);
+		expect(auth.authentication_type).toBe('API key');
+		expect(auth.api_key?.id).toBe('VuaOCfVY4sH4Qf7d9CAAa3');
+
+		const own = SecurityGetUserPrivilegesOutputSchema.parse(
+			securityGetUserPrivilegesOutput,
+		);
+		expect(own.cluster).toContain('monitor');
+
+		const checked = SecurityHasPrivilegesOutputSchema.parse(
+			securityHasPrivilegesOutput,
+		);
+		expect(Object.keys(checked)).toEqual(['jacknich']);
+	});
+
+	it('accepts an empty users map as a valid result', () => {
+		expect(SecurityUsersGetOutputSchema.parse({})).toEqual({});
+	});
+});
+
+describe('security.users wire calls', () => {
+	let fetchMock: jest.SpyInstance;
+
+	beforeEach(() => {
+		fetchMock = jest.spyOn(globalThis, 'fetch');
+		mockLog.mockClear();
+	});
+
+	afterEach(() => {
+		fetchMock.mockRestore();
+	});
+
+	const ctx = {
+		options: { baseUrl: 'http://es:9200' },
+		key: 'ApiKey encoded-key',
+	} as never;
+
+	function mockJson(body: unknown, status = 200) {
+		fetchMock.mockResolvedValueOnce(
+			new Response(JSON.stringify(body), {
+				status,
+				headers: { 'Content-Type': 'application/json' },
+			}),
+		);
+	}
+
+	async function sent() {
+		expect(fetchMock).toHaveBeenCalledTimes(1);
+		const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+		return { url, init };
+	}
+
+	it('authenticate GETs the authenticate path', async () => {
+		mockJson(securityAuthenticateOutput);
+		const result = await Security.authenticate(ctx, {});
+		expect(result.username).toBe('elastic');
+		const { url, init } = await sent();
+		expect(url).toBe('http://es:9200/_security/_authenticate');
+		expect(init.method).toBe('GET');
+	});
+
+	it('users.get GETs the encoded username list with the profile flag', async () => {
+		mockJson(securityUsersGetOutput());
+		const result = await Security.getUsers(ctx, {
+			username: 'jacknich, kim',
+			with_profile_uid: true,
+		});
+		expect(result.jacknich?.enabled).toBe(true);
+		const { url, init } = await sent();
+		expect(url).toBe(
+			'http://es:9200/_security/user/jacknich,kim?with_profile_uid=true',
+		);
+		expect(init.method).toBe('GET');
+	});
+
+	it('users.put POSTs the body fields without the username', async () => {
+		mockJson({ created: true });
+		await Security.putUser(ctx, {
+			username: 'jacknich',
+			password: 'w3AkP@ss',
+			roles: ['admin'],
+			enabled: true,
+			refresh: false,
+		});
+		const { url, init } = await sent();
+		expect(url).toBe('http://es:9200/_security/user/jacknich?refresh=false');
+		expect(init.method).toBe('POST');
+		expect(JSON.parse(String(init.body))).toEqual({
+			password: 'w3AkP@ss',
+			roles: ['admin'],
+			enabled: true,
+		});
+	});
+
+	it('users.delete DELETEs the user path', async () => {
+		mockJson({ found: true });
+		const result = await Security.deleteUser(ctx, { username: 'jacknich' });
+		expect(result.found).toBe(true);
+		const { url, init } = await sent();
+		expect(url).toBe('http://es:9200/_security/user/jacknich');
+		expect(init.method).toBe('DELETE');
+	});
+
+	it('users.disable and users.enable POST the action suffix', async () => {
+		mockJson({});
+		await Security.disableUser(ctx, { username: 'jacknich' });
+		let [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+		expect(url).toBe('http://es:9200/_security/user/jacknich/_disable');
+		expect(init.method).toBe('POST');
+
+		mockJson({});
+		await Security.enableUser(ctx, { username: 'jacknich' });
+		[url, init] = fetchMock.mock.calls[1] as [string, RequestInit];
+		expect(url).toBe('http://es:9200/_security/user/jacknich/_enable');
+		expect(init.method).toBe('POST');
+		expect(fetchMock).toHaveBeenCalledTimes(2);
+	});
+
+	it('users.changePassword POSTs only the credential body', async () => {
+		mockJson({});
+		await Security.changePassword(ctx, {
+			username: 'jacknich',
+			password: 'new-pw',
+			refresh: 'wait_for',
+		});
+		const { url, init } = await sent();
+		expect(url).toBe(
+			'http://es:9200/_security/user/jacknich/_password?refresh=wait_for',
+		);
+		expect(init.method).toBe('POST');
+		expect(JSON.parse(String(init.body))).toEqual({ password: 'new-pw' });
+	});
+
+	it('users.query POSTs the typed query subset', async () => {
+		mockJson(securityUsersQueryOutput);
+		await Security.queryUsers(ctx, {
+			query: { term: { username: 'jack' } },
+			size: 20,
+		});
+		const { url, init } = await sent();
+		expect(url).toBe('http://es:9200/_security/_query/user');
+		expect(init.method).toBe('POST');
+		expect(JSON.parse(String(init.body))).toEqual({
+			query: { term: { username: 'jack' } },
+			size: 20,
+		});
+	});
+
+	it('hasPrivileges POSTs the privileges body under the user path', async () => {
+		mockJson(securityHasPrivilegesOutput);
+		const result = await Security.hasPrivileges(ctx, {
+			user: 'jacknich',
+			privileges: { cluster: ['monitor'] },
+		});
+		expect(result.jacknich).toBeDefined();
+		const { url, init } = await sent();
+		expect(url).toBe('http://es:9200/_security/user/jacknich/_has_privileges');
+		expect(init.method).toBe('POST');
+		expect(JSON.parse(String(init.body))).toEqual({
+			privileges: { cluster: ['monitor'] },
+		});
+	});
+
+	it('hasPrivileges sends an empty object body when no checks are given', async () => {
+		mockJson({ _user: { cluster: {} } });
+		await Security.hasPrivileges(ctx, { user: '_user' });
+		const { init } = await sent();
+		expect(JSON.parse(String(init.body))).toEqual({});
+	});
+
+	it('getUserPrivileges GETs the privileges path', async () => {
+		mockJson(securityGetUserPrivilegesOutput);
+		const result = await Security.getUserPrivileges(ctx, {});
+		expect(result.cluster).toContain('monitor');
+		const { url, init } = await sent();
+		expect(url).toBe('http://es:9200/_security/user/_privileges');
+		expect(init.method).toBe('GET');
 	});
 });

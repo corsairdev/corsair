@@ -186,3 +186,125 @@ export const updateCrossClusterApiKey: ElasticsearchEndpoints['securityCrossClus
 					pickBody(parsed, ['access', 'expiration', 'metadata']),
 			},
 		);
+
+// ── security.authenticate ────────────────────────────────────────────────────
+
+export const authenticate: ElasticsearchEndpoints['securityAuthenticate'] = (
+	ctx,
+	input,
+) =>
+	call(ctx, 'securityAuthenticate', 'security.authenticate', input, {
+		path: () => '/_security/_authenticate',
+	});
+
+// ── security.users ───────────────────────────────────────────────────────────
+
+export const getUsers: ElasticsearchEndpoints['securityUsersGet'] = (
+	ctx,
+	input,
+) =>
+	call(ctx, 'securityUsersGet', 'security.users.get', input, {
+		path: (parsed) => `/_security/user/${target(parsed.username)}`,
+		query: (parsed) => pickQuery(parsed, ['with_profile_uid']),
+	});
+
+export const putUser: ElasticsearchEndpoints['securityUsersPut'] = (
+	ctx,
+	input,
+) =>
+	call(ctx, 'securityUsersPut', 'security.users.put', input, {
+		method: 'POST',
+		path: (parsed) => `/_security/user/${target(parsed.username)}`,
+		query: (parsed) => pickQuery(parsed, ['refresh']),
+		body: (parsed) =>
+			pickBody(parsed, [
+				'password',
+				'password_hash',
+				'roles',
+				'full_name',
+				'email',
+				'metadata',
+				'enabled',
+			]),
+	});
+
+export const deleteUser: ElasticsearchEndpoints['securityUsersDelete'] = (
+	ctx,
+	input,
+) =>
+	call(ctx, 'securityUsersDelete', 'security.users.delete', input, {
+		method: 'DELETE',
+		path: (parsed) => `/_security/user/${target(parsed.username)}`,
+		query: (parsed) => pickQuery(parsed, ['refresh']),
+	});
+
+export const disableUser: ElasticsearchEndpoints['securityUsersDisable'] = (
+	ctx,
+	input,
+) =>
+	call(ctx, 'securityUsersDisable', 'security.users.disable', input, {
+		method: 'POST',
+		path: (parsed) => `/_security/user/${target(parsed.username)}/_disable`,
+		query: (parsed) => pickQuery(parsed, ['refresh']),
+	});
+
+export const enableUser: ElasticsearchEndpoints['securityUsersEnable'] = (
+	ctx,
+	input,
+) =>
+	call(ctx, 'securityUsersEnable', 'security.users.enable', input, {
+		method: 'POST',
+		path: (parsed) => `/_security/user/${target(parsed.username)}/_enable`,
+		query: (parsed) => pickQuery(parsed, ['refresh']),
+	});
+
+export const changePassword: ElasticsearchEndpoints['securityUsersChangePassword'] =
+	(ctx, input) =>
+		call(
+			ctx,
+			'securityUsersChangePassword',
+			'security.users.changePassword',
+			input,
+			{
+				method: 'POST',
+				path: (parsed) =>
+					`/_security/user/${target(parsed.username)}/_password`,
+				query: (parsed) => pickQuery(parsed, ['refresh']),
+				body: (parsed) => pickBody(parsed, ['password', 'password_hash']),
+			},
+		);
+
+export const queryUsers: ElasticsearchEndpoints['securityUsersQuery'] = (
+	ctx,
+	input,
+) =>
+	call(ctx, 'securityUsersQuery', 'security.users.query', input, {
+		method: 'POST',
+		path: () => '/_security/_query/user',
+		query: (parsed) => pickQuery(parsed, ['with_profile_uid']),
+		body: (parsed) => pickBody(parsed, ['query', 'from', 'size']),
+	});
+
+// ── security.hasPrivileges / getUserPrivileges ───────────────────────────────
+
+export const hasPrivileges: ElasticsearchEndpoints['securityHasPrivileges'] = (
+	ctx,
+	input,
+) =>
+	call(ctx, 'securityHasPrivileges', 'security.hasPrivileges', input, {
+		method: 'POST',
+		path: (parsed) => `/_security/user/${target(parsed.user)}/_has_privileges`,
+		body: (parsed) => pickBody(parsed, ['privileges']),
+	});
+
+export const getUserPrivileges: ElasticsearchEndpoints['securityGetUserPrivileges'] =
+	(ctx, input) =>
+		call(
+			ctx,
+			'securityGetUserPrivileges',
+			'security.getUserPrivileges',
+			input,
+			{
+				path: () => '/_security/user/_privileges',
+			},
+		);

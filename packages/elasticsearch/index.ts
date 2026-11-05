@@ -229,6 +229,16 @@ export type ElasticsearchEndpoints = {
 	securityApiKeysQuery: ElasticsearchEndpoint<'securityApiKeysQuery'>;
 	securityCrossClusterApiKeysCreate: ElasticsearchEndpoint<'securityCrossClusterApiKeysCreate'>;
 	securityCrossClusterApiKeysUpdate: ElasticsearchEndpoint<'securityCrossClusterApiKeysUpdate'>;
+	securityAuthenticate: ElasticsearchEndpoint<'securityAuthenticate'>;
+	securityUsersGet: ElasticsearchEndpoint<'securityUsersGet'>;
+	securityUsersPut: ElasticsearchEndpoint<'securityUsersPut'>;
+	securityUsersDelete: ElasticsearchEndpoint<'securityUsersDelete'>;
+	securityUsersDisable: ElasticsearchEndpoint<'securityUsersDisable'>;
+	securityUsersEnable: ElasticsearchEndpoint<'securityUsersEnable'>;
+	securityUsersChangePassword: ElasticsearchEndpoint<'securityUsersChangePassword'>;
+	securityUsersQuery: ElasticsearchEndpoint<'securityUsersQuery'>;
+	securityHasPrivileges: ElasticsearchEndpoint<'securityHasPrivileges'>;
+	securityGetUserPrivileges: ElasticsearchEndpoint<'securityGetUserPrivileges'>;
 };
 
 // Elasticsearch has no inbound webhook surface — the REST API is
@@ -406,6 +416,18 @@ const elasticsearchEndpointsNested = {
 			create: Security.createCrossClusterApiKey,
 			update: Security.updateCrossClusterApiKey,
 		},
+		users: {
+			get: Security.getUsers,
+			put: Security.putUser,
+			delete: Security.deleteUser,
+			disable: Security.disableUser,
+			enable: Security.enableUser,
+			changePassword: Security.changePassword,
+			query: Security.queryUsers,
+		},
+		authenticate: Security.authenticate,
+		hasPrivileges: Security.hasPrivileges,
+		getUserPrivileges: Security.getUserPrivileges,
 	},
 } as const;
 
@@ -1002,6 +1024,46 @@ export const elasticsearchEndpointSchemas = {
 		input: ElasticsearchEndpointInputSchemas.securityCrossClusterApiKeysUpdate,
 		output:
 			ElasticsearchEndpointOutputSchemas.securityCrossClusterApiKeysUpdate,
+	},
+	'security.authenticate': {
+		input: ElasticsearchEndpointInputSchemas.securityAuthenticate,
+		output: ElasticsearchEndpointOutputSchemas.securityAuthenticate,
+	},
+	'security.users.get': {
+		input: ElasticsearchEndpointInputSchemas.securityUsersGet,
+		output: ElasticsearchEndpointOutputSchemas.securityUsersGet,
+	},
+	'security.users.put': {
+		input: ElasticsearchEndpointInputSchemas.securityUsersPut,
+		output: ElasticsearchEndpointOutputSchemas.securityUsersPut,
+	},
+	'security.users.delete': {
+		input: ElasticsearchEndpointInputSchemas.securityUsersDelete,
+		output: ElasticsearchEndpointOutputSchemas.securityUsersDelete,
+	},
+	'security.users.disable': {
+		input: ElasticsearchEndpointInputSchemas.securityUsersDisable,
+		output: ElasticsearchEndpointOutputSchemas.securityUsersDisable,
+	},
+	'security.users.enable': {
+		input: ElasticsearchEndpointInputSchemas.securityUsersEnable,
+		output: ElasticsearchEndpointOutputSchemas.securityUsersEnable,
+	},
+	'security.users.changePassword': {
+		input: ElasticsearchEndpointInputSchemas.securityUsersChangePassword,
+		output: ElasticsearchEndpointOutputSchemas.securityUsersChangePassword,
+	},
+	'security.users.query': {
+		input: ElasticsearchEndpointInputSchemas.securityUsersQuery,
+		output: ElasticsearchEndpointOutputSchemas.securityUsersQuery,
+	},
+	'security.hasPrivileges': {
+		input: ElasticsearchEndpointInputSchemas.securityHasPrivileges,
+		output: ElasticsearchEndpointOutputSchemas.securityHasPrivileges,
+	},
+	'security.getUserPrivileges': {
+		input: ElasticsearchEndpointInputSchemas.securityGetUserPrivileges,
+		output: ElasticsearchEndpointOutputSchemas.securityGetUserPrivileges,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof elasticsearchEndpointsNested
@@ -1741,6 +1803,56 @@ const elasticsearchEndpointMeta = {
 		riskLevel: 'write',
 		description:
 			'Replace the access assignment, expiration or metadata of a cross-cluster API key by id',
+	},
+	'security.authenticate': {
+		riskLevel: 'read',
+		description:
+			'Identify the authenticated principal (GET /_security/_authenticate): username, roles, realm chain and the API key or token in use',
+	},
+	'security.users.get': {
+		riskLevel: 'read',
+		description:
+			'Get users by comma-separated usernames or wildcards, with roles, full name, email, metadata and enabled flag keyed by username',
+	},
+	'security.users.put': {
+		riskLevel: 'write',
+		description:
+			'Create or update a user (POST /_security/user/{username}) with a password or hash, roles, profile fields and enabled flag; replies created: true|false',
+	},
+	'security.users.delete': {
+		riskLevel: 'destructive',
+		description:
+			'Delete a user and their credentials (DELETE /_security/user/{username}); replies found: true when a user was removed',
+	},
+	'security.users.disable': {
+		riskLevel: 'write',
+		description:
+			'Disable a user so authentication is rejected until re-enabled (POST /_security/user/{username}/_disable)',
+	},
+	'security.users.enable': {
+		riskLevel: 'write',
+		description:
+			'Re-enable a previously disabled user (POST /_security/user/{username}/_enable)',
+	},
+	'security.users.changePassword': {
+		riskLevel: 'write',
+		description:
+			'Change a user password with a plaintext password or an SSH bcrypt hash (exactly one), (POST /_security/user/{username}/_password)',
+	},
+	'security.users.query': {
+		riskLevel: 'read',
+		description:
+			'Find users with a typed query over username and profile fields (POST /_security/_query/user), search-style hits envelope',
+	},
+	'security.hasPrivileges': {
+		riskLevel: 'read',
+		description:
+			'Check cluster, index and application privileges for one user (POST /_security/user/{user}/_has_privileges); the reply maps each privilege to a boolean',
+	},
+	'security.getUserPrivileges': {
+		riskLevel: 'read',
+		description:
+			'List the privileges of the authenticated principal (GET /_security/user/_privileges): cluster, index, application, global and run_as grants',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof elasticsearchEndpointsNested

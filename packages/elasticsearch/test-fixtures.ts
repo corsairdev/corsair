@@ -99,8 +99,14 @@ import type {
 	SecurityApiKeysGetOutput,
 	SecurityApiKeysInvalidateOutput,
 	SecurityApiKeysQueryOutput,
+	SecurityAuthenticateOutput,
 	SecurityCacheClearResponse,
 	SecurityCreatedApiKey,
+	SecurityGetUserPrivilegesOutput,
+	SecurityHasPrivilegesOutput,
+	SecurityUser,
+	SecurityUsersGetOutput,
+	SecurityUsersQueryOutput,
 	TasksGetOutput,
 	TasksListOutput,
 	TermVectorsResult,
@@ -1415,5 +1421,65 @@ export const securityApiKeysQueryOutput: SecurityApiKeysQueryOutput = {
 	hits: {
 		total: { value: 1, relation: 'eq' },
 		hits: [securityApiKeyItem],
+	},
+};
+
+export const securityUserRow: SecurityUser = {
+	username: 'jacknich',
+	roles: ['admin', 'other_role1'],
+	full_name: 'Jack Nicholson',
+	email: 'jacknich@example.com',
+	metadata: { intelligence: 7 },
+	enabled: true,
+};
+
+export function securityUsersGetOutput(
+	users: Record<string, SecurityUser> = { jacknich: securityUserRow },
+): SecurityUsersGetOutput {
+	return users;
+}
+
+export const securityAuthenticateOutput: SecurityAuthenticateOutput = {
+	username: 'elastic',
+	roles: ['superuser'],
+	enabled: true,
+	authentication_type: 'API key',
+	authentication_realm: { name: '_es_api_key', type: 'api_key' },
+	lookup_realm: { name: 'default_file', type: 'file' },
+	metadata: {},
+	api_key: {
+		id: 'VuaOCfVY4sH4Qf7d9CAAa3',
+		name: 'my-api-key',
+		managed_by: 'elasticsearch',
+		internal: false,
+	},
+};
+
+export const securityHasPrivilegesOutput: SecurityHasPrivilegesOutput = {
+	jacknich: {
+		cluster: { monitor: true, manage: false },
+		index: { 'logs-*': { read: true } },
+	},
+};
+
+export const securityGetUserPrivilegesOutput: SecurityGetUserPrivilegesOutput =
+	{
+		applications: [
+			{
+				application: 'myapp',
+				privileges: ['read', 'write'],
+				resources: ['*'],
+			},
+		],
+		cluster: ['monitor', 'manage_api_key'],
+		global: [],
+		indices: [{ names: ['logs-*'], privileges: ['read'] }],
+		run_as: [],
+	};
+
+export const securityUsersQueryOutput: SecurityUsersQueryOutput = {
+	hits: {
+		total: { value: 1, relation: 'eq' },
+		hits: [securityUserRow],
 	},
 };

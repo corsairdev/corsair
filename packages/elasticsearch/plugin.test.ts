@@ -168,6 +168,16 @@ const operations = [
 	'security.apiKeys.query',
 	'security.crossClusterApiKeys.create',
 	'security.crossClusterApiKeys.update',
+	'security.authenticate',
+	'security.users.get',
+	'security.users.put',
+	'security.users.delete',
+	'security.users.disable',
+	'security.users.enable',
+	'security.users.changePassword',
+	'security.users.query',
+	'security.hasPrivileges',
+	'security.getUserPrivileges',
 ];
 
 // Risk pinned per op: reads never mutate, writes change data or cluster
@@ -320,6 +330,16 @@ const riskLevels: Record<string, 'read' | 'write' | 'destructive'> = {
 	'security.apiKeys.query': 'read',
 	'security.crossClusterApiKeys.create': 'write',
 	'security.crossClusterApiKeys.update': 'write',
+	'security.authenticate': 'read',
+	'security.users.get': 'read',
+	'security.users.put': 'write',
+	'security.users.delete': 'destructive',
+	'security.users.disable': 'write',
+	'security.users.enable': 'write',
+	'security.users.changePassword': 'write',
+	'security.users.query': 'read',
+	'security.hasPrivileges': 'read',
+	'security.getUserPrivileges': 'read',
 };
 
 describe('elasticsearch plugin definition', () => {
