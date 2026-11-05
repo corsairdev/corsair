@@ -6,6 +6,18 @@ import {
 	UnsafeUrlError,
 } from './endpoints/download';
 
+/**
+ * Wraps a jest mock as `typeof fetch`.
+ *
+ * unknown: `jest.fn` returns `Mock<...>`, whose call signature does not match
+ * the DOM `fetch` overloads even when the implementation has the right shape.
+ * The double cast is the narrowest way to hand the mock to production code that
+ * takes `typeof fetch`; the mock is never called outside these tests.
+ */
+function asFetch(mock: jest.Mock): typeof fetch {
+	return mock as unknown as typeof fetch;
+}
+
 describe('isBlockedAddress', () => {
 	it('blocks loopback, private and link-local IPv4 ranges', () => {
 		for (const ip of [
@@ -140,12 +152,14 @@ describe('downloadAsFile', () => {
 	const publicResolve = async () => ['93.184.216.34'];
 
 	it('returns a File with the response bytes and type', async () => {
-		const fetchImpl = jest.fn(async () => {
-			return new Response(new Uint8Array([1, 2, 3]), {
-				status: 200,
-				headers: { 'Content-Type': 'image/png' },
-			});
-		}) as unknown as typeof fetch;
+		const fetchImpl = asFetch(
+			jest.fn(async () => {
+				return new Response(new Uint8Array([1, 2, 3]), {
+					status: 200,
+					headers: { 'Content-Type': 'image/png' },
+				});
+			}),
+		);
 
 		const file = await downloadAsFile(
 			'https://example.com/logo.png',
@@ -160,12 +174,14 @@ describe('downloadAsFile', () => {
 	});
 
 	it('sends redirect: manual so each hop can be vetted', async () => {
-		const fetchImpl = jest.fn(async () => {
-			return new Response(new Uint8Array([1]), {
-				status: 200,
-				headers: { 'Content-Type': 'image/png' },
-			});
-		}) as unknown as typeof fetch;
+		const fetchImpl = asFetch(
+			jest.fn(async () => {
+				return new Response(new Uint8Array([1]), {
+					status: 200,
+					headers: { 'Content-Type': 'image/png' },
+				});
+			}),
+		);
 
 		await downloadAsFile('https://example.com/a.png', 'a.png', 'f', {
 			resolve: publicResolve,
@@ -180,19 +196,21 @@ describe('downloadAsFile', () => {
 
 	it('follows a redirect to another public host', async () => {
 		let call = 0;
-		const fetchImpl = jest.fn(async () => {
-			call += 1;
-			if (call === 1) {
-				return new Response(null, {
-					status: 302,
-					headers: { Location: 'https://cdn.example/b.png' },
+		const fetchImpl = asFetch(
+			jest.fn(async () => {
+				call += 1;
+				if (call === 1) {
+					return new Response(null, {
+						status: 302,
+						headers: { Location: 'https://cdn.example/b.png' },
+					});
+				}
+				return new Response(new Uint8Array([9]), {
+					status: 200,
+					headers: { 'Content-Type': 'image/png' },
 				});
-			}
-			return new Response(new Uint8Array([9]), {
-				status: 200,
-				headers: { 'Content-Type': 'image/png' },
-			});
-		}) as unknown as typeof fetch;
+			}),
+		);
 
 		const file = await downloadAsFile(
 			'https://example.com/a.png',
@@ -206,12 +224,14 @@ describe('downloadAsFile', () => {
 	});
 
 	it('refuses a redirect to a private host instead of following it', async () => {
-		const fetchImpl = jest.fn(async () => {
-			return new Response(null, {
-				status: 302,
-				headers: { Location: 'http://127.0.0.1/admin' },
-			});
-		}) as unknown as typeof fetch;
+		const fetchImpl = asFetch(
+			jest.fn(async () => {
+				return new Response(null, {
+					status: 302,
+					headers: { Location: 'http://127.0.0.1/admin' },
+				});
+			}),
+		);
 
 		await expect(
 			downloadAsFile('https://example.com/a.png', 'a.png', 'f', {
@@ -225,12 +245,14 @@ describe('downloadAsFile', () => {
 	});
 
 	it('stops after the redirect limit', async () => {
-		const fetchImpl = jest.fn(async () => {
-			return new Response(null, {
-				status: 302,
-				headers: { Location: 'https://example.com/again.png' },
-			});
-		}) as unknown as typeof fetch;
+		const fetchImpl = asFetch(
+			jest.fn(async () => {
+				return new Response(null, {
+					status: 302,
+					headers: { Location: 'https://example.com/again.png' },
+				});
+			}),
+		);
 
 		await expect(
 			downloadAsFile('https://example.com/a.png', 'a.png', 'f', {
@@ -243,12 +265,14 @@ describe('downloadAsFile', () => {
 	it('rejects a body larger than the cap without buffering it all', async () => {
 		// One chunk over the limit is enough to trip the guard.
 		const oversized = new Uint8Array(DOWNLOAD_MAX_BYTES + 1);
-		const fetchImpl = jest.fn(async () => {
-			return new Response(oversized, {
-				status: 200,
-				headers: { 'Content-Type': 'application/octet-stream' },
-			});
-		}) as unknown as typeof fetch;
+		const fetchImpl = asFetch(
+			jest.fn(async () => {
+				return new Response(oversized, {
+					status: 200,
+					headers: { 'Content-Type': 'application/octet-stream' },
+				});
+			}),
+		);
 
 		await expect(
 			downloadAsFile('https://example.com/big.bin', 'big.bin', 'f', {
@@ -259,9 +283,11 @@ describe('downloadAsFile', () => {
 	});
 
 	it('reports a failed download with the status', async () => {
-		const fetchImpl = jest.fn(async () => {
-			return new Response('nope', { status: 403 });
-		}) as unknown as typeof fetch;
+		const fetchImpl = asFetch(
+			jest.fn(async () => {
+				return new Response('nope', { status: 403 });
+			}),
+		);
 
 		await expect(
 			downloadAsFile('https://example.com/a.png', 'a.png', 'f', {

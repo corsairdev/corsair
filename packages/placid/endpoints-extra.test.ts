@@ -9,6 +9,12 @@ import {
 	templateList,
 } from './test-fixtures';
 
+// Uploads resolve the host before fetching, so the lookup is replaced with a
+// public address. Without this the suite would need live DNS and fail offline.
+jest.mock('node:dns/promises', () => ({
+	lookup: jest.fn(async () => [{ address: '93.184.216.34', family: 4 }]),
+}));
+
 let fetchMock: jest.SpyInstance;
 
 // unknown: a stand-in for the real plugin context, which would need a database,
@@ -309,6 +315,22 @@ describe('media', () => {
 				file_url: 'https://example.com/private.jpg',
 			}),
 		).rejects.toThrow(/publicly reachable/);
+	});
+
+	it('refuses the cloud metadata address before any fetch', async () => {
+		await expect(
+			Media.upload(contextFor(), {
+				file_url: 'http://169.254.169.254/latest/meta-data/',
+			}),
+		).rejects.toThrow(/private or reserved/);
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('refuses a loopback address before any fetch', async () => {
+		await expect(
+			Media.upload(contextFor(), { file_url: 'http://127.0.0.1/x.jpg' }),
+		).rejects.toThrow(/private or reserved/);
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 });
 
