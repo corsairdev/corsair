@@ -52,6 +52,67 @@ export function hubMcpConnectUrl(pluginId: string): string {
 	});
 	return `${APP_URL}/login?${params.toString()}`;
 }
+/** Lug: personal MCP addresses, yourname.lug.dev (hub apps/lug). */
+export const LUG_URL = 'https://lug.dev';
+
+// Mirrors hub apps/lug/src/lib/handle.ts (format and reserved names). Hub is
+// the authority: it re-checks the handle, its blocklist and availability.
+const LUG_HANDLE_RE = /^[a-z0-9](?:[a-z0-9-]{0,30}[a-z0-9])?$/;
+const LUG_RESERVED = new Set([
+	'www',
+	'api',
+	'app',
+	'mcp',
+	'hub',
+	'admin',
+	'auth',
+	'oauth',
+	'login',
+	'signup',
+	'docs',
+	'mail',
+	'smtp',
+	'status',
+	'help',
+	'support',
+	'blog',
+	'dashboard',
+	'console',
+	'corsair',
+	'static',
+	'cdn',
+	'assets',
+	'root',
+	'security',
+	'abuse',
+	'postmaster',
+	'billing',
+	'_box',
+]);
+
+export function lugHandleProblem(handle: string): 'format' | 'reserved' | null {
+	if (!LUG_HANDLE_RE.test(handle)) return 'format';
+	// xn-- renders as unicode, so one handle could pass for another.
+	if (handle.slice(2, 4) === '--') return 'format';
+	if (LUG_RESERVED.has(handle)) return 'reserved';
+	return null;
+}
+
+/**
+ * Claiming a handle typed on corsair.dev: Hub sign-in in Lug mode, which
+ * names the handle on the login card, then /me, whose claim box opens with it
+ * filled in and checks that it is free (hub apps/app components/me/address.tsx).
+ */
+export function hubLugClaimUrl(handle: string): string {
+	const h = handle.trim().toLowerCase();
+	const params = new URLSearchParams({
+		mode: 'lug',
+		handle: h,
+		redirect: `/me?${new URLSearchParams({ handle: h })}`,
+	});
+	return `${APP_URL}/login?${params.toString()}`;
+}
+
 export const TWITTER_URL = 'https://x.com/corsairdotdev';
 export const DISCORD_URL = 'https://discord.com/invite/uNgCP3mSzU';
 export const ENTERPRISE_CONTACT_URL = '';

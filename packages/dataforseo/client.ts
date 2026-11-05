@@ -52,6 +52,43 @@ export function packCredentials(login: string, password: string): string {
 	return `${login}:${password}`;
 }
 
+const BASE64 = /^[A-Za-z0-9+/]+={0,2}$/;
+const PRINTABLE = /^[\x20-\x7e]+$/;
+
+function hasBothHalves(text: string): boolean {
+	const colon = text.indexOf(':');
+	return colon > 0 && colon < text.length - 1;
+}
+
+/**
+ * True when `value` is the base64 of `login:password` that DataForSEO's
+ * dashboard shows ready-made, so it is sent as it is instead of encoded twice.
+ */
+function isEncodedCredential(value: string): boolean {
+	if (value.includes(':') || !BASE64.test(value)) return false;
+	const decoded = Buffer.from(value, 'base64').toString('utf8');
+	return (
+		PRINTABLE.test(decoded) &&
+		hasBothHalves(decoded) &&
+		Buffer.from(decoded, 'utf8').toString('base64') === value
+	);
+}
+
+/**
+ * The whole credential in one string: `login:password`, or the dashboard's
+ * base64 of it. Hub's single key field and Corsair's own key arrive this way.
+ */
+export function isWholeCredential(value: string): boolean {
+	return hasBothHalves(value) || isEncodedCredential(value);
+}
+
+/** The value of the HTTP Basic `Authorization` header for a credential. */
+export function basicToken(credentials: string): string {
+	return isEncodedCredential(credentials)
+		? credentials
+		: Buffer.from(credentials).toString('base64');
+}
+
 // unknown: the envelope is checked before the response schema runs, so its
 // codes and messages are narrowed here instead of trusted.
 type Envelope = {
@@ -106,7 +143,7 @@ export async function makeDataForSeoRequest(
 		TIMEOUT: DATAFORSEO_TIMEOUT_MS,
 		HEADERS: {
 			Accept: 'application/json',
-			Authorization: `Basic ${Buffer.from(credentials).toString('base64')}`,
+			Authorization: `Basic ${basicToken(credentials)}`,
 		},
 	};
 
