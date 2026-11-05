@@ -82,6 +82,7 @@ import type {
 	NodesRepositoriesMeteringOutput,
 	NodesStatsOutput,
 	NodesUsageOutput,
+	SearchAsyncStatusOutput,
 	SearchAsyncSubmitOutput,
 	SearchCountOutput,
 	SearchEqlOutput,
@@ -1550,3 +1551,11 @@ export const securityPrivilegesGetBuiltinOutput: SecurityPrivilegesGetBuiltinOut
 		index: ['all', 'create', 'delete', 'read', 'write'],
 		remote_cluster: ['monitor_enrich', 'monitor_stats'],
 	};
+
+export const searchAsyncStatusOutput: SearchAsyncStatusOutput = {
+	id: 'FmRldE8zREVEUzA2ZVpUeGs2dmJFUZRWWG5PQF9B',
+	is_running: false,
+	is_partial: false,
+	start_time_in_millis: 1758_000_000_000,
+	expiration_time_in_millis: 1758_000_300_000,
+};

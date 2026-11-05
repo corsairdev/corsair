@@ -214,3 +214,11 @@ export const scriptLanguages: ElasticsearchEndpoints['clusterScriptLanguages'] =
 		call(ctx, 'clusterScriptLanguages', 'cluster.scriptLanguages', input, {
 			path: () => '/_script_language',
 		});
+
+export const resolveCluster: ElasticsearchEndpoints['clusterResolveCluster'] = (
+	ctx,
+	input,
+) =>
+	call(ctx, 'clusterResolveCluster', 'cluster.resolveCluster', input, {
+		path: (parsed) => `/_resolve/cluster/${target(parsed.name)}`,
+	});

@@ -204,3 +204,44 @@ export const validateQuery: ElasticsearchEndpoints['searchValidateQuery'] = (
 			pickQuery(parsed, ['q', 'explain', 'rewrite', 'all_shards']),
 		body: (parsed) => pickBody(parsed, ['query']),
 	});
+
+export const asyncGet: ElasticsearchEndpoints['searchAsyncGet'] = (
+	ctx,
+	input,
+) =>
+	call(ctx, 'searchAsyncGet', 'search.asyncGet', input, {
+		path: (parsed) => `/_async_search/${encodeURIComponent(parsed.id)}`,
+		query: (parsed) =>
+			pickQuery(parsed, [
+				'keep_alive',
+				'typed_keys',
+				'wait_for_completion_timeout',
+				'return_intermediate_results',
+			]),
+	});
+
+export const asyncStatus: ElasticsearchEndpoints['searchAsyncStatus'] = (
+	ctx,
+	input,
+) =>
+	call(ctx, 'searchAsyncStatus', 'search.asyncStatus', input, {
+		path: (parsed) => `/_async_search/status/${encodeURIComponent(parsed.id)}`,
+		query: (parsed) => pickQuery(parsed, ['keep_alive']),
+	});
+
+export const asyncDelete: ElasticsearchEndpoints['searchAsyncDelete'] = (
+	ctx,
+	input,
+) =>
+	call(ctx, 'searchAsyncDelete', 'search.asyncDelete', input, {
+		method: 'DELETE',
+		path: (parsed) => `/_async_search/${encodeURIComponent(parsed.id)}`,
+	});
+
+export const closePointInTime: ElasticsearchEndpoints['searchClosePointInTime'] =
+	(ctx, input) =>
+		call(ctx, 'searchClosePointInTime', 'search.closePointInTime', input, {
+			method: 'DELETE',
+			path: () => '/_pit',
+			body: (parsed) => pickBody(parsed, ['id']),
+		});

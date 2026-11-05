@@ -153,6 +153,12 @@ export type ElasticsearchEndpoints = {
 	searchVectorTile: ElasticsearchEndpoint<'searchVectorTile'>;
 	searchEql: ElasticsearchEndpoint<'searchEql'>;
 	searchAsyncSubmit: ElasticsearchEndpoint<'searchAsyncSubmit'>;
+	searchAsyncGet: ElasticsearchEndpoint<'searchAsyncGet'>;
+	searchAsyncStatus: ElasticsearchEndpoint<'searchAsyncStatus'>;
+	searchAsyncDelete: ElasticsearchEndpoint<'searchAsyncDelete'>;
+	searchClosePointInTime: ElasticsearchEndpoint<'searchClosePointInTime'>;
+	indicesResolveIndex: ElasticsearchEndpoint<'indicesResolveIndex'>;
+	clusterResolveCluster: ElasticsearchEndpoint<'clusterResolveCluster'>;
 	searchGraphExplore: ElasticsearchEndpoint<'searchGraphExplore'>;
 	searchValidateQuery: ElasticsearchEndpoint<'searchValidateQuery'>;
 	fleetSearch: ElasticsearchEndpoint<'fleetSearch'>;
@@ -278,6 +284,7 @@ const elasticsearchEndpointsNested = {
 		sslCertificates: Cluster.sslCertificates,
 		scriptContexts: Cluster.scriptContexts,
 		scriptLanguages: Cluster.scriptLanguages,
+		resolveCluster: Cluster.resolveCluster,
 	},
 	indices: {
 		list: Indices.list,
@@ -322,6 +329,7 @@ const elasticsearchEndpointsNested = {
 		ilmRetry: Indices.ilmRetry,
 		clearSearchableSnapshotCache: Indices.clearSearchableSnapshotCache,
 		searchableSnapshotStats: Indices.searchableSnapshotStats,
+		resolveIndex: Indices.resolveIndex,
 	},
 	search: {
 		run: Search.run,
@@ -337,6 +345,10 @@ const elasticsearchEndpointsNested = {
 		vectorTile: Search.vectorTile,
 		eql: Search.eql,
 		asyncSubmit: Search.asyncSubmit,
+		asyncGet: Search.asyncGet,
+		asyncStatus: Search.asyncStatus,
+		asyncDelete: Search.asyncDelete,
+		closePointInTime: Search.closePointInTime,
 		graphExplore: Search.graphExplore,
 		validateQuery: Search.validateQuery,
 	},
@@ -749,6 +761,30 @@ export const elasticsearchEndpointSchemas = {
 	'search.asyncSubmit': {
 		input: ElasticsearchEndpointInputSchemas.searchAsyncSubmit,
 		output: ElasticsearchEndpointOutputSchemas.searchAsyncSubmit,
+	},
+	'search.asyncGet': {
+		input: ElasticsearchEndpointInputSchemas.searchAsyncGet,
+		output: ElasticsearchEndpointOutputSchemas.searchAsyncGet,
+	},
+	'search.asyncStatus': {
+		input: ElasticsearchEndpointInputSchemas.searchAsyncStatus,
+		output: ElasticsearchEndpointOutputSchemas.searchAsyncStatus,
+	},
+	'search.asyncDelete': {
+		input: ElasticsearchEndpointInputSchemas.searchAsyncDelete,
+		output: ElasticsearchEndpointOutputSchemas.searchAsyncDelete,
+	},
+	'search.closePointInTime': {
+		input: ElasticsearchEndpointInputSchemas.searchClosePointInTime,
+		output: ElasticsearchEndpointOutputSchemas.searchClosePointInTime,
+	},
+	'indices.resolveIndex': {
+		input: ElasticsearchEndpointInputSchemas.indicesResolveIndex,
+		output: ElasticsearchEndpointOutputSchemas.indicesResolveIndex,
+	},
+	'cluster.resolveCluster': {
+		input: ElasticsearchEndpointInputSchemas.clusterResolveCluster,
+		output: ElasticsearchEndpointOutputSchemas.clusterResolveCluster,
 	},
 	'search.graphExplore': {
 		input: ElasticsearchEndpointInputSchemas.searchGraphExplore,
@@ -1509,6 +1545,34 @@ const elasticsearchEndpointMeta = {
 		riskLevel: 'read',
 		description:
 			'Submit an async search: returns partial results immediately with an id for polling while the search keeps running',
+	},
+	'search.asyncGet': {
+		riskLevel: 'read',
+		description:
+			'Get the current results of an async search by id, optionally waiting for completion',
+	},
+	'search.asyncStatus': {
+		riskLevel: 'read',
+		description: 'Get only the running status of an async search by id',
+	},
+	'search.asyncDelete': {
+		riskLevel: 'destructive',
+		description:
+			'Delete an async search and its results before it completes, freeing its resources',
+	},
+	'search.closePointInTime': {
+		riskLevel: 'write',
+		description:
+			'Close a point in time by id, freeing the resources it holds on its indices',
+	},
+	'indices.resolveIndex': {
+		riskLevel: 'read',
+		description:
+			'Resolve an index, alias or wildcard pattern into the concrete indices, aliases and data streams it matches',
+	},
+	'cluster.resolveCluster': {
+		riskLevel: 'read',
+		description: 'Resolve a remote cluster alias to its connection details',
 	},
 	'search.graphExplore': {
 		riskLevel: 'read',

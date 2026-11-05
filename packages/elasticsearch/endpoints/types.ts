@@ -3942,6 +3942,12 @@ export type ElasticsearchEndpointInputs = {
 	searchVectorTile: SearchVectorTileInput;
 	searchEql: SearchEqlInput;
 	searchAsyncSubmit: SearchAsyncSubmitInput;
+	searchAsyncGet: SearchAsyncGetInput;
+	searchAsyncStatus: SearchAsyncStatusInput;
+	searchAsyncDelete: SearchAsyncDeleteInput;
+	searchClosePointInTime: SearchClosePointInTimeInput;
+	indicesResolveIndex: IndicesResolveIndexInput;
+	clusterResolveCluster: ClusterResolveClusterInput;
 	searchGraphExplore: SearchGraphExploreInput;
 	searchValidateQuery: SearchValidateQueryInput;
 	fleetSearch: FleetSearchInput;
@@ -4115,6 +4121,12 @@ export type ElasticsearchEndpointOutputs = {
 	searchVectorTile: SearchVectorTileOutput;
 	searchEql: SearchEqlOutput;
 	searchAsyncSubmit: SearchAsyncSubmitOutput;
+	searchAsyncGet: SearchAsyncGetOutput;
+	searchAsyncStatus: SearchAsyncStatusOutput;
+	searchAsyncDelete: SearchAsyncDeleteOutput;
+	searchClosePointInTime: SearchClosePointInTimeOutput;
+	indicesResolveIndex: IndicesResolveIndexOutput;
+	clusterResolveCluster: ClusterResolveClusterOutput;
 	searchGraphExplore: SearchGraphExploreOutput;
 	searchValidateQuery: SearchValidateQueryOutput;
 	fleetSearch: FleetSearchOutput;
@@ -4215,6 +4227,93 @@ export type ElasticsearchEndpointOutputs = {
 	securityPrivilegesGetBuiltin: SecurityPrivilegesGetBuiltinOutput;
 	securityPrivilegesGet: SecurityPrivilegesGetOutput;
 };
+
+// ── search.asyncGet / asyncStatus / asyncDelete, closePointInTime ────────────
+
+export const SearchAsyncGetInputSchema = z.strictObject({
+	id: NonBlankString,
+	keep_alive: NonBlankString.optional(),
+	typed_keys: z.boolean().optional(),
+	wait_for_completion_timeout: NonBlankString.optional(),
+	return_intermediate_results: z.boolean().optional(),
+});
+export type SearchAsyncGetInput = z.input<typeof SearchAsyncGetInputSchema>;
+export const SearchAsyncGetOutputSchema = SearchAsyncSubmitOutputSchema;
+export type SearchAsyncGetOutput = SearchAsyncSubmitOutput;
+
+export const SearchAsyncStatusInputSchema = z.strictObject({
+	id: NonBlankString,
+	keep_alive: NonBlankString.optional(),
+});
+export type SearchAsyncStatusInput = z.input<
+	typeof SearchAsyncStatusInputSchema
+>;
+export const SearchAsyncStatusOutputSchema = z.looseObject({
+	id: z.string().optional(),
+	is_running: z.boolean(),
+	is_partial: z.boolean(),
+	start_time_in_millis: z.number(),
+	expiration_time_in_millis: z.number(),
+});
+export type SearchAsyncStatusOutput = z.infer<
+	typeof SearchAsyncStatusOutputSchema
+>;
+
+export const SearchAsyncDeleteInputSchema = z.strictObject({
+	id: NonBlankString,
+});
+export type SearchAsyncDeleteInput = z.infer<
+	typeof SearchAsyncDeleteInputSchema
+>;
+export const SearchAsyncDeleteOutputSchema = EmptyBodyResponse;
+export type SearchAsyncDeleteOutput = z.infer<
+	typeof SearchAsyncDeleteOutputSchema
+>;
+
+export const SearchClosePointInTimeInputSchema = z.strictObject({
+	id: NonBlankString,
+});
+export type SearchClosePointInTimeInput = z.infer<
+	typeof SearchClosePointInTimeInputSchema
+>;
+export const SearchClosePointInTimeOutputSchema = z.looseObject({
+	succeeded: z.boolean(),
+	num_freed: z.number().optional(),
+});
+export type SearchClosePointInTimeOutput = z.infer<
+	typeof SearchClosePointInTimeOutputSchema
+>;
+
+// ── indices.resolveIndex / cluster.resolveCluster ────────────────────────────
+
+export const IndicesResolveIndexInputSchema = z.strictObject({
+	name: NonBlankString.describe('Index, alias, or data stream name pattern'),
+});
+export type IndicesResolveIndexInput = z.infer<
+	typeof IndicesResolveIndexInputSchema
+>;
+export const IndicesResolveIndexOutputSchema = z.looseObject({
+	indices: z.array(z.looseObject({})).default([]),
+	aliases: z.array(z.looseObject({})).default([]),
+	data_streams: z.array(z.looseObject({})).default([]),
+});
+export type IndicesResolveIndexOutput = z.infer<
+	typeof IndicesResolveIndexOutputSchema
+>;
+
+export const ClusterResolveClusterInputSchema = z.strictObject({
+	name: NonBlankString,
+});
+export type ClusterResolveClusterInput = z.infer<
+	typeof ClusterResolveClusterInputSchema
+>;
+export const ClusterResolveClusterOutputSchema = z.looseObject({
+	name: z.string().optional(),
+	connected: z.boolean().optional(),
+});
+export type ClusterResolveClusterOutput = z.infer<
+	typeof ClusterResolveClusterOutputSchema
+>;
 
 export type ElasticsearchOperation = keyof ElasticsearchEndpointInputs;
 
@@ -4393,6 +4492,12 @@ export const ElasticsearchEndpointInputSchemas = {
 	securityPrivilegesPut: SecurityPrivilegesPutInputSchema,
 	securityPrivilegesGetBuiltin: SecurityPrivilegesGetBuiltinInputSchema,
 	securityPrivilegesGet: SecurityPrivilegesGetInputSchema,
+	searchAsyncGet: SearchAsyncGetInputSchema,
+	searchAsyncStatus: SearchAsyncStatusInputSchema,
+	searchAsyncDelete: SearchAsyncDeleteInputSchema,
+	searchClosePointInTime: SearchClosePointInTimeInputSchema,
+	indicesResolveIndex: IndicesResolveIndexInputSchema,
+	clusterResolveCluster: ClusterResolveClusterInputSchema,
 } as const;
 
 export const ElasticsearchEndpointOutputSchemas = {
@@ -4566,4 +4671,10 @@ export const ElasticsearchEndpointOutputSchemas = {
 	securityPrivilegesPut: SecurityPrivilegesPutOutputSchema,
 	securityPrivilegesGetBuiltin: SecurityPrivilegesGetBuiltinOutputSchema,
 	securityPrivilegesGet: SecurityPrivilegesPutOutputSchema,
+	searchAsyncGet: SearchAsyncGetOutputSchema,
+	searchAsyncStatus: SearchAsyncStatusOutputSchema,
+	searchAsyncDelete: SearchAsyncDeleteOutputSchema,
+	searchClosePointInTime: SearchClosePointInTimeOutputSchema,
+	indicesResolveIndex: IndicesResolveIndexOutputSchema,
+	clusterResolveCluster: ClusterResolveClusterOutputSchema,
 } as const;

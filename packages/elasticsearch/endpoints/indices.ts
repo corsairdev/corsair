@@ -432,3 +432,13 @@ export const searchableSnapshotStats: ElasticsearchEndpoints['indicesSearchableS
 				query: (parsed) => pickQuery(parsed, ['level']),
 			},
 		);
+
+export const resolveIndex: ElasticsearchEndpoints['indicesResolveIndex'] = (
+	ctx,
+	input,
+) =>
+	call(ctx, 'indicesResolveIndex', 'indices.resolveIndex', input, {
+		method: 'POST',
+		path: (parsed) => `/_resolve/index/${encodeIndexTarget(parsed.name)}`,
+		body: () => ({}),
+	});

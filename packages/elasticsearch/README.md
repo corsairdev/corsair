@@ -29,6 +29,7 @@ pnpm add @corsair-dev/elasticsearch
 | `cluster.healthReport` | `elasticsearch.api.cluster.healthReport` | `read` | Get the cluster health report with per-indicator status (master_is_stable, shards_availability, disk, ...); a feature selects a subset |
 | `cluster.sslCertificates` | `elasticsearch.api.cluster.sslCertificates` | `read` | List the SSL certificates loaded on the HTTP layer: alias, subject, issuer, serial, path and expiry per certificate |
 | `cluster.scriptContexts` | `elasticsearch.api.cluster.scriptContexts` | `read` | List the supported script contexts with the methods and parameters each exposes to scripts |
+| `cluster.resolveCluster` | `elasticsearch.api.cluster.resolveCluster` | `read` | Resolve a remote cluster alias to its connection details |
 | `cluster.scriptLanguages` | `elasticsearch.api.cluster.scriptLanguages` | `read` | List the script languages the cluster allows and the contexts each language can be used in |
 | `documents.get` | `elasticsearch.api.documents.get` | `read` | Get one JSON document by index and id; a missing document returns found: false rather than an error |
 | `documents.exists` | `elasticsearch.api.documents.exists` | `read` | Check whether a document exists (HEAD): resolves to { exists: boolean } instead of throwing on 404 |
@@ -80,6 +81,7 @@ pnpm add @corsair-dev/elasticsearch
 | `indices.recovery` | `elasticsearch.api.indices.recovery` | `read` | View shard recovery status for indices (replication, recovery from snapshot, relocation), keyed by index name |
 | `indices.refresh` | `elasticsearch.api.indices.refresh` | `write` | Refresh indices (GET /{index}/_refresh) so pending indexed documents become searchable immediately |
 | `indices.reloadSearchAnalyzers` | `elasticsearch.api.indices.reloadSearchAnalyzers` | `write` | Reload search analyzers on indices whose analyzer resources changed (for example after a synonym file update) |
+| `indices.resolveIndex` | `elasticsearch.api.indices.resolveIndex` | `read` | Resolve an index, alias or wildcard pattern into the concrete indices, aliases and data streams it matches |
 | `indices.searchableSnapshotStats` | `elasticsearch.api.indices.searchableSnapshotStats` | `read` | Get searchable snapshot statistics (cache usage, IO) for mounted indices at cluster, index or shard level |
 | `indices.clearSearchableSnapshotCache` | `elasticsearch.api.indices.clearSearchableSnapshotCache` | `write` | Clear the searchable snapshots shared cache for fully-mounted indices |
 | `indices.segments` | `elasticsearch.api.indices.segments` | `read` | Get low-level Lucene segment information per shard of the target indices |
@@ -89,6 +91,10 @@ pnpm add @corsair-dev/elasticsearch
 | `indices.list` | `elasticsearch.api.indices.list` | `read` | List the indices (or data stream backing indices) matching a target, with health, shards, doc counts and store size |
 | `search.run` | `elasticsearch.api.search.run` | `read` | Search indices, data streams or aliases with a typed subset of the Query DSL (match, match_phrase, term, terms, ids, match_all, bool) with from/size paging |
 | `search.asyncSubmit` | `elasticsearch.api.search.asyncSubmit` | `read` | Submit an async search: returns partial results immediately with an id for polling while the search keeps running |
+| `search.asyncGet` | `elasticsearch.api.search.asyncGet` | `read` | Get the current results of an async search by id, optionally waiting for completion |
+| `search.asyncStatus` | `elasticsearch.api.search.asyncStatus` | `read` | Get only the running status of an async search by id |
+| `search.asyncDelete` | `elasticsearch.api.search.asyncDelete` | `destructive` | Delete an async search and its results before it completes, freeing its resources |
+| `search.closePointInTime` | `elasticsearch.api.search.closePointInTime` | `write` | Close a point in time by id, freeing the resources it holds on its indices |
 | `search.count` | `elasticsearch.api.search.count` | `read` | Count documents matching a typed query (or every document) across indices, data streams and aliases without fetching hits |
 | `search.eql` | `elasticsearch.api.search.eql` | `read` | Run an Event Query Language search (event and sequence matching) over log/event indices |
 | `search.fieldCaps` | `elasticsearch.api.search.fieldCaps` | `read` | Get field capabilities (types, searchable, aggregatable, per-index overrides) across indices |

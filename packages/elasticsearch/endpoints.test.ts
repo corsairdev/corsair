@@ -176,6 +176,7 @@ import {
 	nodesRepositoriesMeteringOutput,
 	nodesStatsOutput,
 	nodesUsageOutput,
+	searchAsyncStatusOutput,
 	searchAsyncSubmitOutput,
 	searchCountOutput,
 	searchEqlOutput,
@@ -2111,6 +2112,95 @@ describe('search family wire calls', () => {
 			query: { match_all: {} },
 			size: 100,
 		});
+	});
+
+	it('search.asyncGet reads results by id with keep_alive', async () => {
+		mockJson(searchAsyncSubmitOutput);
+		const result = await Search.asyncGet(ctx, {
+			id: 'FmRldE8zREVEUzA2ZVpUeGs2dmJFUZRWWG5PQF9Cc2pwanJz',
+			keep_alive: '1m',
+		});
+		expect(result.is_running).toBe(true);
+		const { url, init } = await sent();
+		expect(url).toBe(
+			'http://es:9200/_async_search/FmRldE8zREVEUzA2ZVpUeGs2dmJFUZRWWG5PQF9Cc2pwanJz?keep_alive=1m',
+		);
+		expect(init.method).toBe('GET');
+	});
+
+	it('search.asyncStatus reads only the status subresource', async () => {
+		mockJson(searchAsyncStatusOutput);
+		const result = await Search.asyncStatus(ctx, {
+			id: 'FmRldE8zREVEUzA2ZVpUeGs2dmJFUZRWWG5PQF9Cc2pwanJz',
+		});
+		expect(result.is_running).toBe(false);
+		const { url } = await sent();
+		expect(url).toBe(
+			'http://es:9200/_async_search/status/FmRldE8zREVEUzA2ZVpUeGs2dmJFUZRWWG5PQF9Cc2pwanJz',
+		);
+	});
+
+	it('search.asyncDelete deletes by id', async () => {
+		mockJson({});
+		await Search.asyncDelete(ctx, {
+			id: 'FmRldE8zREVEUzA2ZVpUeGs2dmJFUZRWWG5PQF9Cc2pwanJz',
+		});
+		const { url, init } = await sent();
+		expect(url).toBe(
+			'http://es:9200/_async_search/FmRldE8zREVEUzA2ZVpUeGs2dmJFUZRWWG5PQF9Cc2pwanJz',
+		);
+		expect(init.method).toBe('DELETE');
+	});
+
+	it('search.closePointInTime DELETEs the pit id as the body', async () => {
+		mockJson({ succeeded: true, num_freed: 3 });
+		const result = await Search.closePointInTime(ctx, {
+			id: 'pit-46ToAwMDA0MjY1NzNF...',
+		});
+		expect(result.succeeded).toBe(true);
+		const { url, init } = await sent();
+		expect(url).toBe('http://es:9200/_pit');
+		expect(init.method).toBe('DELETE');
+		expect(JSON.parse(String(init.body))).toEqual({
+			id: 'pit-46ToAwMDA0MjY1NzNF...',
+		});
+	});
+
+	it('indices.resolveIndex POSTs the name as the path target', async () => {
+		mockJson({
+			indices: [
+				{
+					name: 'logs-2026-11',
+					aliases: ['logs'],
+					attributes: ['open'],
+				},
+			],
+			aliases: [],
+			data_streams: [],
+		});
+		const result = await Indices.resolveIndex(ctx, { name: 'logs-*' });
+		expect(result.indices).toHaveLength(1);
+		const { url, init } = await sent();
+		expect(url).toBe('http://es:9200/_resolve/index/logs-*');
+		expect(init.method).toBe('POST');
+		expect(JSON.parse(String(init.body))).toEqual({});
+	});
+
+	it('cluster.resolveCluster reads the cluster alias', async () => {
+		mockJson({
+			connected: true,
+			mode: 'sniff',
+			num_nodes_connected: 3,
+			max_connections_per_cluster: 3,
+			connections: [],
+			skip_unavailable: false,
+			cluster_alias: 'remote',
+		});
+		const result = await Cluster.resolveCluster(ctx, { name: 'remote' });
+		expect(result.connected).toBe(true);
+		const { url, init } = await sent();
+		expect(url).toBe('http://es:9200/_resolve/cluster/remote');
+		expect(init.method).toBe('GET');
 	});
 
 	it('search.graphExplore POSTs the vertices body', async () => {
