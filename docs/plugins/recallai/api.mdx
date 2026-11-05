@@ -20,7 +20,7 @@ Delete a mixed audio artifact
 **Risk:** `destructive`
 
 ```ts
-await corsair.recallai.api.audioMixed.delete({});
+await corsair.recallai.api.audioMixed.delete({ id: '3c4d5e6f-7a8b-4c9d-8e0f-1a2b3c4d5e6f' });
 ```
 
 **Input**
@@ -45,7 +45,7 @@ List mixed audio artifacts
 **Risk:** `read`
 
 ```ts
-await corsair.recallai.api.audioMixed.list({});
+await corsair.recallai.api.audioMixed.list({ recording_id: '6f1c2d3e-4b5a-4c6d-8e7f-001122334455', status_code: 'done' });
 ```
 
 **Input**
@@ -101,7 +101,7 @@ Retrieve a mixed audio artifact
 **Risk:** `read`
 
 ```ts
-await corsair.recallai.api.audioMixed.retrieve({});
+await corsair.recallai.api.audioMixed.retrieve({ id: '3c4d5e6f-7a8b-4c9d-8e0f-1a2b3c4d5e6f' });
 ```
 
 **Input**
@@ -169,7 +169,7 @@ Update mixed audio artifact metadata
 **Risk:** `write`
 
 ```ts
-await corsair.recallai.api.audioMixed.update({});
+await corsair.recallai.api.audioMixed.update({ id: '3c4d5e6f-7a8b-4c9d-8e0f-1a2b3c4d5e6f', metadata: { reviewed: 'true' } });
 ```
 
 **Input**
@@ -250,7 +250,7 @@ Delete a separate audio artifact
 **Risk:** `destructive`
 
 ```ts
-await corsair.recallai.api.audioSeparate.delete({});
+await corsair.recallai.api.audioSeparate.delete({ id: '3c4d5e6f-7a8b-4c9d-8e0f-1a2b3c4d5e6f' });
 ```
 
 **Input**
@@ -275,7 +275,7 @@ List separate audio artifacts
 **Risk:** `read`
 
 ```ts
-await corsair.recallai.api.audioSeparate.list({});
+await corsair.recallai.api.audioSeparate.list({ recording_id: '6f1c2d3e-4b5a-4c6d-8e7f-001122334455', status_code: 'done' });
 ```
 
 **Input**
@@ -331,7 +331,7 @@ Retrieve a separate audio artifact
 **Risk:** `read`
 
 ```ts
-await corsair.recallai.api.audioSeparate.retrieve({});
+await corsair.recallai.api.audioSeparate.retrieve({ id: '3c4d5e6f-7a8b-4c9d-8e0f-1a2b3c4d5e6f' });
 ```
 
 **Input**
@@ -399,7 +399,7 @@ Update separate audio artifact metadata
 **Risk:** `write`
 
 ```ts
-await corsair.recallai.api.audioSeparate.update({});
+await corsair.recallai.api.audioSeparate.update({ id: '3c4d5e6f-7a8b-4c9d-8e0f-1a2b3c4d5e6f', metadata: { reviewed: 'true' } });
 ```
 
 **Input**
@@ -513,7 +513,7 @@ Delete stored media for a Recall.ai bot
 **Risk:** `destructive`
 
 ```ts
-await corsair.recallai.api.botActions.deleteBotMedia({});
+await corsair.recallai.api.botActions.deleteBotMedia({ id: '550e8400-e29b-41d4-a716-446655440000' });
 ```
 
 **Input**
@@ -583,7 +583,7 @@ Remove a Recall.ai bot from its meeting
 **Risk:** `destructive`
 
 ```ts
-await corsair.recallai.api.botActions.leaveBotCall({});
+await corsair.recallai.api.botActions.leaveBotCall({ id: '550e8400-e29b-41d4-a716-446655440000' });
 ```
 
 **Input**
@@ -653,7 +653,7 @@ Output audio from a Recall.ai bot
 **Risk:** `write`
 
 ```ts
-await corsair.recallai.api.botActions.outputAudio({});
+await corsair.recallai.api.botActions.outputAudio({ id: '550e8400-e29b-41d4-a716-446655440000', kind: 'mp3', b64_data: 'SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA' });
 ```
 
 **Input**
@@ -725,7 +725,7 @@ Start media output from a Recall.ai bot
 **Risk:** `write`
 
 ```ts
-await corsair.recallai.api.botActions.outputMedia({});
+await corsair.recallai.api.botActions.outputMedia({ id: '550e8400-e29b-41d4-a716-446655440000', camera: { kind: 'webpage', config: { url: 'https://example.com/avatar' } } });
 ```
 
 **Input**
@@ -815,7 +815,7 @@ Output video from a Recall.ai bot
 **Risk:** `write`
 
 ```ts
-await corsair.recallai.api.botActions.outputVideo({});
+await corsair.recallai.api.botActions.outputVideo({ id: '550e8400-e29b-41d4-a716-446655440000', kind: 'jpeg', b64_data: '/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsL' });
 ```
 
 **Input**
@@ -887,7 +887,7 @@ Pause a Recall.ai bot recording
 **Risk:** `write`
 
 ```ts
-await corsair.recallai.api.botActions.pauseRecording({});
+await corsair.recallai.api.botActions.pauseRecording({ id: '550e8400-e29b-41d4-a716-446655440000' });
 ```
 
 **Input**
@@ -957,7 +957,7 @@ Pin a participant for a Recall.ai bot
 **Risk:** `write`
 
 ```ts
-await corsair.recallai.api.botActions.pinParticipant({});
+await corsair.recallai.api.botActions.pinParticipant({ bot_id: '550e8400-e29b-41d4-a716-446655440000', participant_id: 100 });
 ```
 
 **Input**
@@ -1028,7 +1028,7 @@ Resume a Recall.ai bot recording
 **Risk:** `write`
 
 ```ts
-await corsair.recallai.api.botActions.resumeRecording({});
+await corsair.recallai.api.botActions.resumeRecording({ id: '550e8400-e29b-41d4-a716-446655440000' });
 ```
 
 **Input**
@@ -1252,7 +1252,7 @@ Start bot screenshare in Recall.ai
 **Risk:** `write`
 
 ```ts
-await corsair.recallai.api.botActions.startScreenshare({});
+await corsair.recallai.api.botActions.startScreenshare({ id: '550e8400-e29b-41d4-a716-446655440000', kind: 'jpeg', b64_data: '/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsL' });
 ```
 
 **Input**
@@ -1324,7 +1324,7 @@ Stop bot audio output in Recall.ai
 **Risk:** `write`
 
 ```ts
-await corsair.recallai.api.botActions.stopOutputAudio({});
+await corsair.recallai.api.botActions.stopOutputAudio({ id: '550e8400-e29b-41d4-a716-446655440000' });
 ```
 
 **Input**
@@ -1376,7 +1376,7 @@ Stop bot video output in Recall.ai
 **Risk:** `write`
 
 ```ts
-await corsair.recallai.api.botActions.stopOutputVideo({});
+await corsair.recallai.api.botActions.stopOutputVideo({ id: '550e8400-e29b-41d4-a716-446655440000' });
 ```
 
 **Input**
@@ -1401,7 +1401,7 @@ Stop a Recall.ai bot recording
 **Risk:** `write`
 
 ```ts
-await corsair.recallai.api.botActions.stopRecording({});
+await corsair.recallai.api.botActions.stopRecording({ id: '550e8400-e29b-41d4-a716-446655440000' });
 ```
 
 **Input**
@@ -1471,7 +1471,7 @@ Stop bot screenshare in Recall.ai
 **Risk:** `write`
 
 ```ts
-await corsair.recallai.api.botActions.stopScreenshare({});
+await corsair.recallai.api.botActions.stopScreenshare({ id: '550e8400-e29b-41d4-a716-446655440000' });
 ```
 
 **Input**
@@ -1598,7 +1598,7 @@ Delete a Recall.ai meeting bot
 **Risk:** `destructive`
 
 ```ts
-await corsair.recallai.api.bots.delete({});
+await corsair.recallai.api.bots.delete({ id: '550e8400-e29b-41d4-a716-446655440000' });
 ```
 
 **Input**
@@ -1684,7 +1684,7 @@ Retrieve a Recall.ai meeting bot
 **Risk:** `read`
 
 ```ts
-await corsair.recallai.api.bots.retrieve({});
+await corsair.recallai.api.bots.retrieve({ id: '550e8400-e29b-41d4-a716-446655440000' });
 ```
 
 **Input**
@@ -1884,7 +1884,7 @@ Delete a Recall.ai calendar user
 **Risk:** `destructive`
 
 ```ts
-await corsair.recallai.api.calendar.deleteUser({});
+await corsair.recallai.api.calendar.deleteUser({ calendar_auth_token: 'calendar-auth-token-from-authenticate' });
 ```
 
 **Input**
@@ -1909,7 +1909,7 @@ Disconnect a Recall.ai calendar platform
 **Risk:** `destructive`
 
 ```ts
-await corsair.recallai.api.calendar.disconnectPlatform({});
+await corsair.recallai.api.calendar.disconnectPlatform({ calendar_auth_token: 'calendar-auth-token-from-authenticate', platform: 'google' });
 ```
 
 **Input**
@@ -1987,7 +1987,7 @@ List Recall.ai calendar meetings
 **Risk:** `read`
 
 ```ts
-await corsair.recallai.api.calendar.listMeetings({ calendar_auth_token: token, start_time_after: '2026-11-01T00:00:00Z' });
+await corsair.recallai.api.calendar.listMeetings({ calendar_auth_token: 'calendar-auth-token-from-authenticate', start_time_after: '2026-11-01T00:00:00Z' });
 ```
 
 **Input**
@@ -2025,7 +2025,7 @@ List Recall.ai calendar users
 **Risk:** `read`
 
 ```ts
-await corsair.recallai.api.calendar.listUsers({});
+await corsair.recallai.api.calendar.listUsers({ paginate: true, page: 2 });
 ```
 
 **Input**
@@ -2034,6 +2034,7 @@ await corsair.recallai.api.calendar.listUsers({});
 |------|------|----------|-------------|
 | `email` | `string` | No | — |
 | `paginate` | `boolean` | No | — |
+| `page` | `number` | No | — |
 
 
 
@@ -2045,6 +2046,7 @@ await corsair.recallai.api.calendar.listUsers({});
 ```ts
 {
 }[] | {
+  count?: number,
   next?: string | null,
   previous?: string | null,
   results: {
@@ -2066,7 +2068,7 @@ Refresh Recall.ai calendar meetings
 **Risk:** `write`
 
 ```ts
-await corsair.recallai.api.calendar.refreshMeetings({});
+await corsair.recallai.api.calendar.refreshMeetings({ calendar_auth_token: 'calendar-auth-token-from-authenticate' });
 ```
 
 **Input**
@@ -2101,7 +2103,7 @@ Retrieve a Recall.ai calendar event
 **Risk:** `read`
 
 ```ts
-await corsair.recallai.api.calendar.retrieveEvent({});
+await corsair.recallai.api.calendar.retrieveEvent({ id: '8b9c0d1e-2f3a-4b4c-8d5e-6f7a8b9c0d1e' });
 ```
 
 **Input**
@@ -2136,7 +2138,7 @@ Retrieve a Recall.ai calendar meeting
 **Risk:** `read`
 
 ```ts
-await corsair.recallai.api.calendar.retrieveMeeting({});
+await corsair.recallai.api.calendar.retrieveMeeting({ id: '9c0d1e2f-3a4b-4c5d-8e6f-7a8b9c0d1e2f', calendar_auth_token: 'calendar-auth-token-from-authenticate' });
 ```
 
 **Input**
@@ -2172,7 +2174,7 @@ Retrieve a Recall.ai calendar user
 **Risk:** `read`
 
 ```ts
-await corsair.recallai.api.calendar.retrieveUser({});
+await corsair.recallai.api.calendar.retrieveUser({ calendar_auth_token: 'calendar-auth-token-from-authenticate' });
 ```
 
 **Input**
@@ -2254,7 +2256,7 @@ Remove a scheduled Recall.ai bot from a calendar event
 **Risk:** `destructive`
 
 ```ts
-await corsair.recallai.api.calendar.unscheduleBot({});
+await corsair.recallai.api.calendar.unscheduleBot({ id: '8b9c0d1e-2f3a-4b4c-8d5e-6f7a8b9c0d1e' });
 ```
 
 **Input**
@@ -2289,7 +2291,7 @@ Update a Recall.ai calendar meeting
 **Risk:** `write`
 
 ```ts
-await corsair.recallai.api.calendar.updateMeeting({});
+await corsair.recallai.api.calendar.updateMeeting({ id: '9c0d1e2f-3a4b-4c5d-8e6f-7a8b9c0d1e2f', calendar_auth_token: 'calendar-auth-token-from-authenticate', override_should_record: true });
 ```
 
 **Input**
@@ -2326,7 +2328,7 @@ Update a Recall.ai calendar user
 **Risk:** `write`
 
 ```ts
-await corsair.recallai.api.calendar.updateUser({});
+await corsair.recallai.api.calendar.updateUser({ calendar_auth_token: 'calendar-auth-token-from-authenticate', preferences: { record_external: true, record_internal: false } });
 ```
 
 **Input**
@@ -2375,7 +2377,7 @@ Create a Recall.ai calendar
 **Risk:** `write`
 
 ```ts
-await corsair.recallai.api.calendars.create({});
+await corsair.recallai.api.calendars.create({ platform: 'google_calendar', oauth_client_id: '1234567890-abc.apps.googleusercontent.com', oauth_client_secret: 'GOCSPX-client-secret', oauth_refresh_token: '1//0g-refresh-token' });
 ```
 
 **Input**
@@ -2454,7 +2456,7 @@ Create a Recall.ai calendar access token
 **Risk:** `write`
 
 ```ts
-await corsair.recallai.api.calendars.createAccessToken({});
+await corsair.recallai.api.calendars.createAccessToken({ id: '7a8b9c0d-1e2f-4a3b-9c4d-5e6f7a8b9c0d' });
 ```
 
 **Input**
@@ -2485,7 +2487,7 @@ Delete a Recall.ai calendar
 **Risk:** `destructive`
 
 ```ts
-await corsair.recallai.api.calendars.delete({});
+await corsair.recallai.api.calendars.delete({ id: '7a8b9c0d-1e2f-4a3b-9c4d-5e6f7a8b9c0d' });
 ```
 
 **Input**
@@ -2573,7 +2575,7 @@ Retrieve a Recall.ai calendar
 **Risk:** `read`
 
 ```ts
-await corsair.recallai.api.calendars.retrieve({});
+await corsair.recallai.api.calendars.retrieve({ id: '7a8b9c0d-1e2f-4a3b-9c4d-5e6f7a8b9c0d' });
 ```
 
 **Input**
@@ -2635,7 +2637,7 @@ Update a Recall.ai calendar
 **Risk:** `write`
 
 ```ts
-await corsair.recallai.api.calendars.update({});
+await corsair.recallai.api.calendars.update({ id: '7a8b9c0d-1e2f-4a3b-9c4d-5e6f7a8b9c0d', metadata: { team: 'sales' } });
 ```
 
 **Input**
@@ -2717,7 +2719,7 @@ Create a Recall.ai Google login group
 **Risk:** `write`
 
 ```ts
-await corsair.recallai.api.googleLoginGroups.create({});
+await corsair.recallai.api.googleLoginGroups.create({ name: 'Sales bots', login_mode: 'only_if_required' });
 ```
 
 **Input**
@@ -2772,7 +2774,7 @@ Delete a Recall.ai Google login group
 **Risk:** `destructive`
 
 ```ts
-await corsair.recallai.api.googleLoginGroups.delete({});
+await corsair.recallai.api.googleLoginGroups.delete({ id: 'a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d' });
 ```
 
 **Input**
@@ -2858,7 +2860,7 @@ Update fields on a Recall.ai Google login group
 **Risk:** `write`
 
 ```ts
-await corsair.recallai.api.googleLoginGroups.partialUpdate({});
+await corsair.recallai.api.googleLoginGroups.partialUpdate({ id: 'a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d', login_mode: 'always' });
 ```
 
 **Input**
@@ -2914,7 +2916,7 @@ Retrieve a Recall.ai Google login group
 **Risk:** `read`
 
 ```ts
-await corsair.recallai.api.googleLoginGroups.retrieve({});
+await corsair.recallai.api.googleLoginGroups.retrieve({ id: 'a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d' });
 ```
 
 **Input**
@@ -2968,7 +2970,7 @@ Replace a Recall.ai Google login group
 **Risk:** `write`
 
 ```ts
-await corsair.recallai.api.googleLoginGroups.update({});
+await corsair.recallai.api.googleLoginGroups.update({ id: 'a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d', name: 'Sales bots', login_mode: 'always' });
 ```
 
 **Input**
@@ -3026,7 +3028,7 @@ Create a Recall.ai Google login
 **Risk:** `write`
 
 ```ts
-await corsair.recallai.api.googleLogins.create({});
+await corsair.recallai.api.googleLogins.create({ email: 'notetaker@acme.com', sso_v2_workspace_domain: 'acme.com', sso_v2_private_key: '-----BEGIN PRIVATE KEY-----...', sso_v2_cert: '-----BEGIN CERTIFICATE-----...', group_id: 'a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d' });
 ```
 
 **Input**
@@ -3069,7 +3071,7 @@ Delete a Recall.ai Google login
 **Risk:** `destructive`
 
 ```ts
-await corsair.recallai.api.googleLogins.delete({});
+await corsair.recallai.api.googleLogins.delete({ id: 'b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e' });
 ```
 
 **Input**
@@ -3150,7 +3152,7 @@ Update fields on a Recall.ai Google login
 **Risk:** `write`
 
 ```ts
-await corsair.recallai.api.googleLogins.partialUpdate({});
+await corsair.recallai.api.googleLogins.partialUpdate({ id: 'b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e', is_active: false });
 ```
 
 **Input**
@@ -3194,7 +3196,7 @@ Retrieve a Recall.ai Google login
 **Risk:** `read`
 
 ```ts
-await corsair.recallai.api.googleLogins.retrieve({});
+await corsair.recallai.api.googleLogins.retrieve({ id: 'b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e' });
 ```
 
 **Input**
@@ -3232,7 +3234,7 @@ Replace a Recall.ai Google login
 **Risk:** `write`
 
 ```ts
-await corsair.recallai.api.googleLogins.update({});
+await corsair.recallai.api.googleLogins.update({ id: 'b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e', email: 'notetaker@acme.com', is_active: true, sso_v2_workspace_domain: 'acme.com', sso_v2_private_key: '-----BEGIN PRIVATE KEY-----...', sso_v2_cert: '-----BEGIN CERTIFICATE-----...', group_id: 'a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d' });
 ```
 
 **Input**
@@ -3278,7 +3280,7 @@ Create a Recall.ai direct connection
 **Risk:** `write`
 
 ```ts
-await corsair.recallai.api.meetingDirectConnects.create({});
+await corsair.recallai.api.meetingDirectConnects.create({ google_meet_media_api: { space_name: 'spaces/jQCFfuBOdN5z', access_token: 'ya29.google-oauth-access-token' }, metadata: { source: 'meet-addon' } });
 ```
 
 **Input**
@@ -3480,7 +3482,7 @@ Retrieve a Recall.ai direct connection
 **Risk:** `read`
 
 ```ts
-await corsair.recallai.api.meetingDirectConnects.retrieve({});
+await corsair.recallai.api.meetingDirectConnects.retrieve({ id: 'e5f6a7b8-c9d0-4e1f-8a2b-4c5d6e7f8a9b' });
 ```
 
 **Input**
@@ -3583,7 +3585,7 @@ Delete a Recall.ai meeting metadata artifact
 **Risk:** `destructive`
 
 ```ts
-await corsair.recallai.api.meetingMetadata.delete({});
+await corsair.recallai.api.meetingMetadata.delete({ id: '3c4d5e6f-7a8b-4c9d-8e0f-1a2b3c4d5e6f' });
 ```
 
 **Input**
@@ -3608,7 +3610,7 @@ List Recall.ai meeting metadata artifacts
 **Risk:** `read`
 
 ```ts
-await corsair.recallai.api.meetingMetadata.list({});
+await corsair.recallai.api.meetingMetadata.list({ recording_id: '6f1c2d3e-4b5a-4c6d-8e7f-001122334455', status_code: 'done' });
 ```
 
 **Input**
@@ -3667,7 +3669,7 @@ Retrieve a Recall.ai meeting metadata artifact
 **Risk:** `read`
 
 ```ts
-await corsair.recallai.api.meetingMetadata.retrieve({});
+await corsair.recallai.api.meetingMetadata.retrieve({ id: '3c4d5e6f-7a8b-4c9d-8e0f-1a2b3c4d5e6f' });
 ```
 
 **Input**
@@ -3739,7 +3741,7 @@ Update Recall.ai meeting metadata
 **Risk:** `write`
 
 ```ts
-await corsair.recallai.api.meetingMetadata.update({});
+await corsair.recallai.api.meetingMetadata.update({ id: '3c4d5e6f-7a8b-4c9d-8e0f-1a2b3c4d5e6f', metadata: { reviewed: 'true' } });
 ```
 
 **Input**
@@ -3824,7 +3826,7 @@ Delete a Recall.ai participant event artifact
 **Risk:** `destructive`
 
 ```ts
-await corsair.recallai.api.participantEvents.delete({});
+await corsair.recallai.api.participantEvents.delete({ id: '3c4d5e6f-7a8b-4c9d-8e0f-1a2b3c4d5e6f' });
 ```
 
 **Input**
@@ -3849,7 +3851,7 @@ List Recall.ai participant event artifacts
 **Risk:** `read`
 
 ```ts
-await corsair.recallai.api.participantEvents.list({});
+await corsair.recallai.api.participantEvents.list({ recording_id: '6f1c2d3e-4b5a-4c6d-8e7f-001122334455', status_code: 'done' });
 ```
 
 **Input**
@@ -3908,7 +3910,7 @@ Retrieve a Recall.ai participant event artifact
 **Risk:** `read`
 
 ```ts
-await corsair.recallai.api.participantEvents.retrieve({});
+await corsair.recallai.api.participantEvents.retrieve({ id: '3c4d5e6f-7a8b-4c9d-8e0f-1a2b3c4d5e6f' });
 ```
 
 **Input**
@@ -3980,7 +3982,7 @@ Update Recall.ai participant event metadata
 **Risk:** `write`
 
 ```ts
-await corsair.recallai.api.participantEvents.update({});
+await corsair.recallai.api.participantEvents.update({ id: '3c4d5e6f-7a8b-4c9d-8e0f-1a2b3c4d5e6f', metadata: { reviewed: 'true' } });
 ```
 
 **Input**
@@ -4065,7 +4067,7 @@ List Recall.ai real-time endpoints
 **Risk:** `read`
 
 ```ts
-await corsair.recallai.api.realtimeEndpoints.list({});
+await corsair.recallai.api.realtimeEndpoints.list({ recording_id: '6f1c2d3e-4b5a-4c6d-8e7f-001122334455', status_code: 'running' });
 ```
 
 **Input**
@@ -4122,7 +4124,7 @@ Retrieve a Recall.ai real-time endpoint
 **Risk:** `read`
 
 ```ts
-await corsair.recallai.api.realtimeEndpoints.retrieve({});
+await corsair.recallai.api.realtimeEndpoints.retrieve({ id: '0a1b2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d' });
 ```
 
 **Input**
@@ -4190,7 +4192,7 @@ Update a Recall.ai real-time endpoint
 **Risk:** `write`
 
 ```ts
-await corsair.recallai.api.realtimeEndpoints.update({});
+await corsair.recallai.api.realtimeEndpoints.update({ id: '0a1b2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d', metadata: { consumer: 'live-notes' } });
 ```
 
 **Input**
@@ -4389,7 +4391,7 @@ Delete a Recall.ai recording artifact
 **Risk:** `destructive`
 
 ```ts
-await corsair.recallai.api.recordings.delete({});
+await corsair.recallai.api.recordings.delete({ id: '6f1c2d3e-4b5a-4c6d-8e7f-001122334455' });
 ```
 
 **Input**
@@ -4471,7 +4473,7 @@ Retrieve a Recall.ai recording artifact
 **Risk:** `read`
 
 ```ts
-await corsair.recallai.api.recordings.retrieve({});
+await corsair.recallai.api.recordings.retrieve({ id: '6f1c2d3e-4b5a-4c6d-8e7f-001122334455' });
 ```
 
 **Input**
@@ -4539,7 +4541,7 @@ Update Recall.ai recording metadata
 **Risk:** `write`
 
 ```ts
-await corsair.recallai.api.recordings.update({});
+await corsair.recallai.api.recordings.update({ id: '6f1c2d3e-4b5a-4c6d-8e7f-001122334455', metadata: { crm_deal_id: 'D-1042' } });
 ```
 
 **Input**
@@ -4620,7 +4622,7 @@ Create a Recall.ai Desktop SDK upload
 **Risk:** `write`
 
 ```ts
-await corsair.recallai.api.sdkUploads.create({});
+await corsair.recallai.api.sdkUploads.create({ recording_config: { transcript: { provider: { recallai_streaming: {} } } }, metadata: { source: 'desktop-app' } });
 ```
 
 **Input**
@@ -4760,7 +4762,7 @@ Retrieve a Recall.ai Desktop SDK upload
 **Risk:** `read`
 
 ```ts
-await corsair.recallai.api.sdkUploads.retrieve({});
+await corsair.recallai.api.sdkUploads.retrieve({ id: 'f6a7b8c9-d0e1-4f2a-9b3c-5d6e7f8a9b0c' });
 ```
 
 **Input**
@@ -4830,7 +4832,7 @@ Delete a Recall.ai transcript artifact
 **Risk:** `destructive`
 
 ```ts
-await corsair.recallai.api.transcripts.delete({});
+await corsair.recallai.api.transcripts.delete({ id: '3c4d5e6f-7a8b-4c9d-8e0f-1a2b3c4d5e6f' });
 ```
 
 **Input**
@@ -4914,7 +4916,7 @@ Retrieve a Recall.ai transcript artifact
 **Risk:** `read`
 
 ```ts
-await corsair.recallai.api.transcripts.retrieve({});
+await corsair.recallai.api.transcripts.retrieve({ id: '3c4d5e6f-7a8b-4c9d-8e0f-1a2b3c4d5e6f' });
 ```
 
 **Input**
@@ -4986,7 +4988,7 @@ Update Recall.ai transcript metadata
 **Risk:** `write`
 
 ```ts
-await corsair.recallai.api.transcripts.update({});
+await corsair.recallai.api.transcripts.update({ id: '3c4d5e6f-7a8b-4c9d-8e0f-1a2b3c4d5e6f', metadata: { reviewed: 'true' } });
 ```
 
 **Input**
@@ -5071,7 +5073,7 @@ Delete a mixed video artifact
 **Risk:** `destructive`
 
 ```ts
-await corsair.recallai.api.videoMixed.delete({});
+await corsair.recallai.api.videoMixed.delete({ id: '3c4d5e6f-7a8b-4c9d-8e0f-1a2b3c4d5e6f' });
 ```
 
 **Input**
@@ -5096,7 +5098,7 @@ List mixed video artifacts
 **Risk:** `read`
 
 ```ts
-await corsair.recallai.api.videoMixed.list({});
+await corsair.recallai.api.videoMixed.list({ recording_id: '6f1c2d3e-4b5a-4c6d-8e7f-001122334455', status_code: 'done' });
 ```
 
 **Input**
@@ -5152,7 +5154,7 @@ Retrieve a mixed video artifact
 **Risk:** `read`
 
 ```ts
-await corsair.recallai.api.videoMixed.retrieve({});
+await corsair.recallai.api.videoMixed.retrieve({ id: '3c4d5e6f-7a8b-4c9d-8e0f-1a2b3c4d5e6f' });
 ```
 
 **Input**
@@ -5220,7 +5222,7 @@ Update mixed video artifact metadata
 **Risk:** `write`
 
 ```ts
-await corsair.recallai.api.videoMixed.update({});
+await corsair.recallai.api.videoMixed.update({ id: '3c4d5e6f-7a8b-4c9d-8e0f-1a2b3c4d5e6f', metadata: { reviewed: 'true' } });
 ```
 
 **Input**
@@ -5301,7 +5303,7 @@ Delete a separate video artifact
 **Risk:** `destructive`
 
 ```ts
-await corsair.recallai.api.videoSeparate.delete({});
+await corsair.recallai.api.videoSeparate.delete({ id: '3c4d5e6f-7a8b-4c9d-8e0f-1a2b3c4d5e6f' });
 ```
 
 **Input**
@@ -5326,7 +5328,7 @@ List separate video artifacts
 **Risk:** `read`
 
 ```ts
-await corsair.recallai.api.videoSeparate.list({});
+await corsair.recallai.api.videoSeparate.list({ recording_id: '6f1c2d3e-4b5a-4c6d-8e7f-001122334455', status_code: 'done' });
 ```
 
 **Input**
@@ -5382,7 +5384,7 @@ Retrieve a separate video artifact
 **Risk:** `read`
 
 ```ts
-await corsair.recallai.api.videoSeparate.retrieve({});
+await corsair.recallai.api.videoSeparate.retrieve({ id: '3c4d5e6f-7a8b-4c9d-8e0f-1a2b3c4d5e6f' });
 ```
 
 **Input**
@@ -5450,7 +5452,7 @@ Update separate video artifact metadata
 **Risk:** `write`
 
 ```ts
-await corsair.recallai.api.videoSeparate.update({});
+await corsair.recallai.api.videoSeparate.update({ id: '3c4d5e6f-7a8b-4c9d-8e0f-1a2b3c4d5e6f', metadata: { reviewed: 'true' } });
 ```
 
 **Input**
@@ -5634,7 +5636,7 @@ Create a Recall.ai Zoom OAuth app
 **Risk:** `write`
 
 ```ts
-await corsair.recallai.api.zoomOAuthApps.create({});
+await corsair.recallai.api.zoomOAuthApps.create({ kind: 'account_level', client_id: 'zoom-client-id', client_secret: 'zoom-client-secret', webhook_secret: 'zoom-webhook-secret' });
 ```
 
 **Input**
@@ -5673,7 +5675,7 @@ Delete a Recall.ai Zoom OAuth app
 **Risk:** `destructive`
 
 ```ts
-await corsair.recallai.api.zoomOAuthApps.delete({});
+await corsair.recallai.api.zoomOAuthApps.delete({ id: 'c3d4e5f6-a7b8-4c9d-8e0f-2a3b4c5d6e7f' });
 ```
 
 **Input**
@@ -5754,7 +5756,7 @@ Retrieve a Recall.ai Zoom OAuth app
 **Risk:** `read`
 
 ```ts
-await corsair.recallai.api.zoomOAuthApps.retrieve({});
+await corsair.recallai.api.zoomOAuthApps.retrieve({ id: 'c3d4e5f6-a7b8-4c9d-8e0f-2a3b4c5d6e7f' });
 ```
 
 **Input**
@@ -5790,7 +5792,7 @@ Update a Recall.ai Zoom OAuth app
 **Risk:** `write`
 
 ```ts
-await corsair.recallai.api.zoomOAuthApps.update({});
+await corsair.recallai.api.zoomOAuthApps.update({ id: 'c3d4e5f6-a7b8-4c9d-8e0f-2a3b4c5d6e7f', webhook_secret: 'new-zoom-webhook-secret' });
 ```
 
 **Input**
@@ -5881,7 +5883,7 @@ Create a Recall.ai Zoom OAuth credential
 **Risk:** `write`
 
 ```ts
-await corsair.recallai.api.zoomOAuthCredentials.create({});
+await corsair.recallai.api.zoomOAuthCredentials.create({ oauth_app: 'c3d4e5f6-a7b8-4c9d-8e0f-2a3b4c5d6e7f', authorization_code: { code: 'zoom-authorization-code', redirect_uri: 'https://app.acme.com/zoom/callback' } });
 ```
 
 **Input**
@@ -5933,7 +5935,7 @@ Delete a Recall.ai Zoom OAuth credential
 **Risk:** `destructive`
 
 ```ts
-await corsair.recallai.api.zoomOAuthCredentials.delete({});
+await corsair.recallai.api.zoomOAuthCredentials.delete({ id: 'd4e5f6a7-b8c9-4d0e-9f1a-3b4c5d6e7f8a' });
 ```
 
 **Input**
@@ -6016,7 +6018,7 @@ Retrieve a Recall.ai Zoom OAuth credential
 **Risk:** `read`
 
 ```ts
-await corsair.recallai.api.zoomOAuthCredentials.retrieve({});
+await corsair.recallai.api.zoomOAuthCredentials.retrieve({ id: 'd4e5f6a7-b8c9-4d0e-9f1a-3b4c5d6e7f8a' });
 ```
 
 **Input**
@@ -6053,7 +6055,7 @@ Retrieve a Zoom OAuth access token
 **Risk:** `read`
 
 ```ts
-await corsair.recallai.api.zoomOAuthCredentials.retrieveAccessToken({});
+await corsair.recallai.api.zoomOAuthCredentials.retrieveAccessToken({ id: 'd4e5f6a7-b8c9-4d0e-9f1a-3b4c5d6e7f8a' });
 ```
 
 **Input**
@@ -6084,7 +6086,7 @@ Synchronize Zoom OAuth credential meetings
 **Risk:** `write`
 
 ```ts
-await corsair.recallai.api.zoomOAuthCredentials.syncMeetings({});
+await corsair.recallai.api.zoomOAuthCredentials.syncMeetings({ id: 'd4e5f6a7-b8c9-4d0e-9f1a-3b4c5d6e7f8a' });
 ```
 
 **Input**
@@ -6109,7 +6111,7 @@ Validate a Recall.ai Zoom OAuth credential
 **Risk:** `write`
 
 ```ts
-await corsair.recallai.api.zoomOAuthCredentials.validate({});
+await corsair.recallai.api.zoomOAuthCredentials.validate({ id: 'd4e5f6a7-b8c9-4d0e-9f1a-3b4c5d6e7f8a' });
 ```
 
 **Input**
