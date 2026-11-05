@@ -1,7 +1,12 @@
 import { createCorsair } from 'corsair/core';
 import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
 import { mem0 } from './index';
-import { memory, rateLimited } from './test-fixtures';
+import {
+	memory,
+	rateLimited,
+	searchResults,
+	serverError,
+} from './test-fixtures';
 
 let fetchMock: jest.SpyInstance;
 
@@ -70,6 +75,41 @@ describe('Mem0 429 retries through the bound client', () => {
 
 			expect(result.event_id).toBe('evt-1');
 			expect(fetchMock).toHaveBeenCalledTimes(2);
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	it('retries a 5xx on search, a POST that reads', async () => {
+		const { corsair, testDb } = await createClient();
+		try {
+			respond(serverError, 503);
+			respond(searchResults);
+
+			const result = await corsair.mem0.api.memories.search({
+				query: 'hobbies',
+				filters: { user_id: 'alice' },
+			});
+
+			expect(result.results).toHaveLength(1);
+			expect(fetchMock).toHaveBeenCalledTimes(2);
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	it('does not retry a 5xx on add, which may have been applied', async () => {
+		const { corsair, testDb } = await createClient();
+		try {
+			respond(serverError, 503);
+
+			await expect(
+				corsair.mem0.api.memories.add({
+					messages: [{ role: 'user', content: 'I moved to Austin.' }],
+					user_id: 'alice',
+				}),
+			).rejects.toMatchObject({ status: 503 });
+			expect(fetchMock).toHaveBeenCalledTimes(1);
 		} finally {
 			testDb.cleanup();
 		}

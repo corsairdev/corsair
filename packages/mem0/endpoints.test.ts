@@ -223,6 +223,18 @@ describe('memories.search', () => {
 		});
 	});
 
+	it('accepts results reduced to the fields the caller asked for', async () => {
+		respond({ results: [{ id: 'ea925981' }] });
+
+		const result = await invoke(Memories.search, {
+			query: 'hobbies',
+			filters: { user_id: 'alice' },
+			fields: ['id'],
+		});
+
+		expect(result).toEqual({ results: [{ id: 'ea925981' }] });
+	});
+
 	it('rejects filters that carry no entity ID', async () => {
 		await expect(
 			invoke(Memories.search, {
@@ -302,6 +314,24 @@ describe('memories.list', () => {
 			filters: {
 				AND: [{ user_id: 'alice' }, { categories: { contains: 'finance' } }],
 			},
+		});
+	});
+
+	it('accepts rows reduced to the fields the caller asked for', async () => {
+		respond({
+			count: 1,
+			next: null,
+			previous: null,
+			results: [{ id: 'ea925981', memory: 'A fact' }],
+		});
+
+		const result = await invoke(Memories.list, {
+			filters: { user_id: 'alice' },
+			fields: ['id', 'memory'],
+		});
+
+		expect(result).toMatchObject({
+			results: [{ id: 'ea925981', memory: 'A fact' }],
 		});
 	});
 
@@ -503,6 +533,13 @@ describe('memories.deleteAll', () => {
 			user_id: 'alice',
 			'metadata[tier]': 'gold',
 		});
+	});
+
+	it('rejects an empty metadata map, which sends no query keys', async () => {
+		await expect(invoke(Memories.deleteAll, { metadata: {} })).rejects.toThrow(
+			'At least one filter is required. Mem0 rejects an unfiltered delete.',
+		);
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
 	it('rejects an unfiltered delete before any request', async () => {

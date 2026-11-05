@@ -33,7 +33,7 @@ function respond(
 async function apiError(
 	status: number,
 	body: unknown,
-	method: 'GET' | 'POST' = 'GET',
+	method: 'GET' | 'POST' | 'DELETE' = 'GET',
 	headers: Record<string, string> = {},
 ): Promise<Mem0APIError> {
 	const { makeMem0Request } = await import('./client');
@@ -56,13 +56,15 @@ function wired(handlers: CorsairErrorHandler): WiredHandler[] {
 	);
 }
 
-async function decide(error: Error) {
+// unknown: a test supplies only the context fields a matcher reads.
+async function decide(error: Error, context?: unknown) {
+	const sent = (context ?? {}) as never;
 	const handler = wired(errorHandlers).find((entry) =>
-		entry.match(error, {} as never),
+		entry.match(error, sent),
 	);
 	expect(handler).toBeDefined();
 	if (!handler) throw new Error('no handler matched');
-	return handler.handler(error, {} as never);
+	return handler.handler(error, sent);
 }
 
 beforeEach(() => {
@@ -129,6 +131,37 @@ describe('errorHandlers', () => {
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff',
 		});
+	});
+
+	it('retries a 5xx on a POST read such as search or list', async () => {
+		const searchError = await apiError(500, serverError, 'POST');
+		expect(
+			await decide(searchError, { operation: 'memories.search' } as never),
+		).toMatchObject({ maxRetries: 2 });
+
+		const listError = await apiError(500, serverError, 'POST');
+		expect(
+			await decide(listError, { operation: 'memories.list' } as never),
+		).toMatchObject({ maxRetries: 2 });
+	});
+
+	it('does not retry a 5xx on a POST write', async () => {
+		const addError = await apiError(500, serverError, 'POST');
+		expect(
+			await decide(addError, { operation: 'memories.add' } as never),
+		).toEqual({ maxRetries: 0 });
+
+		const deleteAllError = await apiError(500, serverError, 'DELETE');
+		expect(
+			await decide(deleteAllError, {
+				operation: 'memories.deleteAll',
+			} as never),
+		).toEqual({ maxRetries: 0 });
+	});
+
+	it('does not retry a 5xx when no operation is supplied', async () => {
+		const bareError = await apiError(500, serverError, 'POST');
+		expect(await decide(bareError)).toEqual({ maxRetries: 0 });
 	});
 
 	it('does not replay a 5xx write, which may have gone through', async () => {
