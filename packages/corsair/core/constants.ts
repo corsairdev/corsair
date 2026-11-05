@@ -211,6 +211,7 @@ export const BaseProviders = [
 	'dynapictures',
 	'emelia',
 	'epicgames',
+	'esputnik',
 	'everhour',
 	'exa',
 	'excel',
@@ -629,6 +630,7 @@ export const ProviderDisplayNames = {
 	dynapictures: 'Dynapictures',
 	emelia: 'Emelia',
 	epicgames: 'Epic Games',
+	esputnik: 'eSputnik',
 	everhour: 'Everhour',
 	exa: 'Exa',
 	excel: 'Excel',
@@ -1052,6 +1054,7 @@ export type AllProviders =
 	| 'dynapictures'
 	| 'emelia'
 	| 'epicgames'
+	| 'esputnik'
 	| 'everhour'
 	| 'exa'
 	| 'excel'
