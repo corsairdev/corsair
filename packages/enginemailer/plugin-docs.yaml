@@ -13,6 +13,7 @@ overviewNote: |
   - **Batch updates.** `subscribers.batchUpdateSubscribers` takes up to 5,000 subscribers and returns a job `ID`; pass it to `subscribers.batchUpdateStatus` until the status is `Completed`.
   - **Campaigns.** An account holds at most 200 campaigns. `campaigns.listCampaigns` lists undelivered campaigns only. `campaigns.assignRecipientList` assigns everyone (`FilterBy: 1`) or the subscribers in a set of subcategories (`FilterBy: 2` with `data`). `campaigns.sendCampaign` mails the whole list at once and cannot be undone.
   - **N8N polling.** `n8n.newSubscribers`, `n8n.unsubscribedSubscribers` and the other subscriber feeds return up to 50 records (`limit`) changed since `lastpollingdate` (`yyyy-MM-dd HH:mm:ss`, UTC). A filter set to `All` is left out of the request.
+  - **N8N lookups.** In live tests on a free account, `n8n.findSubscriber`, `n8n.tagSubscriber`, `n8n.untagSubscriber`, `n8n.deactivateSubscriber` and `n8n.deleteN8nSubscriber` answered "Email not exists." for subscribers the REST API returned, even ones `n8n.addOrUpdateSubscriber` had just created. The `subscribers` operations worked for the same addresses.
   - **Transactional email.** `n8n.sendEmail` sends one email right away, either `html` with a `subject` or a `template_id`. `substitution_tags` is a list of `{ Key, Value }` pairs and `cc_emails` takes up to 10 addresses.
   - **No local sync.** Data is read from Enginemailer on each call; nothing is stored in the Corsair database.
 examples:
