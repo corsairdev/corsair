@@ -221,7 +221,7 @@ Create user AI key
 **Risk:** `write`
 
 ```ts
-await corsair.turbotpipes.api.ai.createUserAiKey({});
+await corsair.turbotpipes.api.ai.createUserAiKey({ user_handle: 'my-user', provider: 'openai', key: '<openai-api-key>' });
 ```
 
 **Input**
@@ -258,7 +258,7 @@ Delete AI conversation in org workspace
 **Risk:** `destructive`
 
 ```ts
-await corsair.turbotpipes.api.ai.deleteOrgWorkspaceConversation({});
+await corsair.turbotpipes.api.ai.deleteOrgWorkspaceConversation({ org_handle: 'my-org', workspace_handle: 'dev', conversation_id: '<conversation-id>' });
 ```
 
 **Input**
@@ -271,12 +271,17 @@ await corsair.turbotpipes.api.ai.deleteOrgWorkspaceConversation({});
 
 
 
-**Output**
+**Output:** `object`
 
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `success` | `boolean` | Yes | — |
+<AccordionGroup>
+<Accordion title="Output full type">
 
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 ---
@@ -290,7 +295,7 @@ Get user AI key metadata
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.ai.getUserAiKey({});
+await corsair.turbotpipes.api.ai.getUserAiKey({ user_handle: 'my-user', provider: 'openai' });
 ```
 
 **Input**
@@ -326,7 +331,7 @@ Get AI conversation details
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.ai.getUserWorkspaceConversation({});
+await corsair.turbotpipes.api.ai.getUserWorkspaceConversation({ user_handle: 'my-user', workspace_handle: 'dev', conversation_id: '<conversation-id>' });
 ```
 
 **Input**
@@ -363,7 +368,7 @@ List user AI keys
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.ai.listUserAiKeys({});
+await corsair.turbotpipes.api.ai.listUserAiKeys({ user_handle: 'my-user' });
 ```
 
 **Input**
@@ -371,6 +376,8 @@ await corsair.turbotpipes.api.ai.listUserAiKeys({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `user_handle` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `next_token` | `string` | No | — |
 
 
 
@@ -404,7 +411,7 @@ List AI conversations
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.ai.listUserWorkspaceConversations({});
+await corsair.turbotpipes.api.ai.listUserWorkspaceConversations({ user_handle: 'my-user', workspace_handle: 'dev' });
 ```
 
 **Input**
@@ -413,6 +420,9 @@ await corsair.turbotpipes.api.ai.listUserWorkspaceConversations({});
 |------|------|----------|-------------|
 | `user_handle` | `string` | Yes | — |
 | `workspace_handle` | `string` | Yes | — |
+| `where` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `next_token` | `string` | No | — |
 
 
 
@@ -446,7 +456,7 @@ Send chat message to workspace AI
 **Risk:** `write`
 
 ```ts
-await corsair.turbotpipes.api.ai.sendUserWorkspaceChatMessage({});
+await corsair.turbotpipes.api.ai.sendUserWorkspaceChatMessage({ user_handle: 'my-user', workspace_handle: 'dev', message: 'Which S3 buckets are public?' });
 ```
 
 **Input**
@@ -484,7 +494,7 @@ Test user AI key
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.ai.testUserAiKey({});
+await corsair.turbotpipes.api.ai.testUserAiKey({ user_handle: 'my-user', provider: 'openai', key: '<openai-api-key>' });
 ```
 
 **Input**
@@ -521,7 +531,7 @@ Update user AI key
 **Risk:** `write`
 
 ```ts
-await corsair.turbotpipes.api.ai.updateUserAiKey({});
+await corsair.turbotpipes.api.ai.updateUserAiKey({ user_handle: 'my-user', provider: 'openai', key: '<openai-api-key>' });
 ```
 
 **Input**
@@ -558,7 +568,12 @@ Update AI conversation
 **Risk:** `write`
 
 ```ts
-await corsair.turbotpipes.api.ai.updateUserWorkspaceConversation({});
+await corsair.turbotpipes.api.ai.updateUserWorkspaceConversation({
+	user_handle: 'my-user',
+	workspace_handle: 'dev',
+	conversation_id: '<conversation-id>',
+	title: 'Weekly cost review',
+});
 ```
 
 **Input**
@@ -598,7 +613,7 @@ Send login token to email
 **Risk:** `write`
 
 ```ts
-await corsair.turbotpipes.api.auth.createLoginTokenEmail({});
+await corsair.turbotpipes.api.auth.createLoginTokenEmail({ email: 'you@example.com' });
 ```
 
 **Input**
@@ -609,12 +624,17 @@ await corsair.turbotpipes.api.auth.createLoginTokenEmail({});
 
 
 
-**Output**
+**Output:** `object`
 
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `success` | `boolean` | Yes | — |
+<AccordionGroup>
+<Accordion title="Output full type">
 
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 ---
@@ -628,7 +648,7 @@ Create new user signup
 **Risk:** `write`
 
 ```ts
-await corsair.turbotpipes.api.auth.createSignup({});
+await corsair.turbotpipes.api.auth.createSignup({ email: 'you@example.com' });
 ```
 
 **Input**
@@ -639,12 +659,17 @@ await corsair.turbotpipes.api.auth.createSignup({});
 
 
 
-**Output**
+**Output:** `object`
 
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `success` | `boolean` | Yes | — |
+<AccordionGroup>
+<Accordion title="Output full type">
 
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 ---
@@ -658,7 +683,7 @@ Create user password
 **Risk:** `write`
 
 ```ts
-await corsair.turbotpipes.api.auth.createUserPassword({});
+await corsair.turbotpipes.api.auth.createUserPassword({ user_handle: 'my-user' });
 ```
 
 **Input**
@@ -666,16 +691,21 @@ await corsair.turbotpipes.api.auth.createUserPassword({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `user_handle` | `string` | Yes | — |
-| `password` | `string` | No | — |
+| `expires_in_minutes` | `number` | No | — |
 
 
 
-**Output**
+**Output:** `object`
 
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `success` | `boolean` | Yes | — |
+<AccordionGroup>
+<Accordion title="Output full type">
 
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 ---
@@ -689,7 +719,7 @@ Delete user token
 **Risk:** `destructive`
 
 ```ts
-await corsair.turbotpipes.api.auth.deleteUserToken({});
+await corsair.turbotpipes.api.auth.deleteUserToken({ user_handle: 'my-user', token_id: '<token-id>' });
 ```
 
 **Input**
@@ -701,12 +731,17 @@ await corsair.turbotpipes.api.auth.deleteUserToken({});
 
 
 
-**Output**
+**Output:** `object`
 
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `success` | `boolean` | Yes | — |
+<AccordionGroup>
+<Accordion title="Output full type">
 
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 ---
@@ -720,7 +755,7 @@ Get OAuth provider details
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.auth.getAuthProvider({});
+await corsair.turbotpipes.api.auth.getAuthProvider({ provider: 'openai' });
 ```
 
 **Input**
@@ -755,7 +790,7 @@ Get user password status
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.auth.getUserPassword({});
+await corsair.turbotpipes.api.auth.getUserPassword({ user_handle: 'my-user' });
 ```
 
 **Input**
@@ -790,7 +825,7 @@ Get user token metadata
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.auth.getUserToken({});
+await corsair.turbotpipes.api.auth.getUserToken({ user_handle: 'my-user', token_id: '<token-id>' });
 ```
 
 **Input**
@@ -826,7 +861,7 @@ Initiate user login
 **Risk:** `write`
 
 ```ts
-await corsair.turbotpipes.api.auth.initiateLogin({});
+await corsair.turbotpipes.api.auth.initiateLogin({ email: 'you@example.com' });
 ```
 
 **Input**
@@ -837,12 +872,17 @@ await corsair.turbotpipes.api.auth.initiateLogin({});
 
 
 
-**Output**
+**Output:** `object`
 
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `success` | `boolean` | Yes | — |
+<AccordionGroup>
+<Accordion title="Output full type">
 
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 ---
@@ -856,7 +896,7 @@ Update user token status
 **Risk:** `write`
 
 ```ts
-await corsair.turbotpipes.api.auth.updateUserToken({});
+await corsair.turbotpipes.api.auth.updateUserToken({ user_handle: 'my-user', token_id: '<token-id>', status: 'inactive' });
 ```
 
 **Input**
@@ -865,7 +905,9 @@ await corsair.turbotpipes.api.auth.updateUserToken({});
 |------|------|----------|-------------|
 | `user_handle` | `string` | Yes | — |
 | `token_id` | `string` | Yes | — |
-| `status` | `string` | No | — |
+| `status` | `string` | Yes | — |
+| `title` | `string` | No | — |
+| `description` | `string` | No | — |
 
 
 
@@ -895,7 +937,7 @@ Delete org billing subscription
 **Risk:** `destructive`
 
 ```ts
-await corsair.turbotpipes.api.billing.deleteOrgBillingSubscription({});
+await corsair.turbotpipes.api.billing.deleteOrgBillingSubscription({ org_handle: 'my-org', subscription_id: '<subscription-id>' });
 ```
 
 **Input**
@@ -907,12 +949,17 @@ await corsair.turbotpipes.api.billing.deleteOrgBillingSubscription({});
 
 
 
-**Output**
+**Output:** `object`
 
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `success` | `boolean` | Yes | — |
+<AccordionGroup>
+<Accordion title="Output full type">
 
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 ---
@@ -926,7 +973,7 @@ Get org billing invoice
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.billing.getOrgBillingInvoice({});
+await corsair.turbotpipes.api.billing.getOrgBillingInvoice({ org_handle: 'my-org', invoice_id: '<invoice-id>' });
 ```
 
 **Input**
@@ -962,7 +1009,7 @@ Get user billing plan
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.billing.getUserBillingPlan({});
+await corsair.turbotpipes.api.billing.getUserBillingPlan({ user_handle: 'my-user' });
 ```
 
 **Input**
@@ -997,7 +1044,7 @@ Get user upcoming invoice
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.billing.getUserBillingUpcomingInvoice({});
+await corsair.turbotpipes.api.billing.getUserBillingUpcomingInvoice({ user_handle: 'my-user' });
 ```
 
 **Input**
@@ -1032,7 +1079,7 @@ List user billing invoices
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.billing.listUserBillingInvoices({});
+await corsair.turbotpipes.api.billing.listUserBillingInvoices({ user_handle: 'my-user' });
 ```
 
 **Input**
@@ -1040,6 +1087,8 @@ await corsair.turbotpipes.api.billing.listUserBillingInvoices({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `user_handle` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `next_token` | `string` | No | — |
 
 
 
@@ -1073,7 +1122,7 @@ List user payment methods
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.billing.listUserBillingPaymentMethods({});
+await corsair.turbotpipes.api.billing.listUserBillingPaymentMethods({ user_handle: 'my-user' });
 ```
 
 **Input**
@@ -1114,7 +1163,7 @@ List user billing subscriptions
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.billing.listUserBillingSubscriptions({});
+await corsair.turbotpipes.api.billing.listUserBillingSubscriptions({ user_handle: 'my-user' });
 ```
 
 **Input**
@@ -1155,7 +1204,7 @@ Update org billing subscription
 **Risk:** `write`
 
 ```ts
-await corsair.turbotpipes.api.billing.updateOrgBillingSubscription({});
+await corsair.turbotpipes.api.billing.updateOrgBillingSubscription({ org_handle: 'my-org', subscription_id: '<subscription-id>' });
 ```
 
 **Input**
@@ -1194,7 +1243,7 @@ Create org connection
 **Risk:** `write`
 
 ```ts
-await corsair.turbotpipes.api.connections.createOrgConnection({});
+await corsair.turbotpipes.api.connections.createOrgConnection({ org_handle: 'my-org', handle: 'aws_prod', plugin: 'aws' });
 ```
 
 **Input**
@@ -1242,7 +1291,7 @@ Create org connection folder
 **Risk:** `write`
 
 ```ts
-await corsair.turbotpipes.api.connections.createOrgConnectionFolder({});
+await corsair.turbotpipes.api.connections.createOrgConnectionFolder({ org_handle: 'my-org', title: 'Production' });
 ```
 
 **Input**
@@ -1279,7 +1328,7 @@ Create user connection
 **Risk:** `write`
 
 ```ts
-await corsair.turbotpipes.api.connections.createUserConnection({});
+await corsair.turbotpipes.api.connections.createUserConnection({ user_handle: 'my-user', handle: 'aws_prod', plugin: 'aws' });
 ```
 
 **Input**
@@ -1327,7 +1376,7 @@ Delete org connection permission
 **Risk:** `destructive`
 
 ```ts
-await corsair.turbotpipes.api.connections.deleteOrgConnectionPermission({});
+await corsair.turbotpipes.api.connections.deleteOrgConnectionPermission({ org_handle: 'my-org', connection_handle: 'aws_prod', permission_id: '<permission-id>' });
 ```
 
 **Input**
@@ -1340,12 +1389,17 @@ await corsair.turbotpipes.api.connections.deleteOrgConnectionPermission({});
 
 
 
-**Output**
+**Output:** `object`
 
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `success` | `boolean` | Yes | — |
+<AccordionGroup>
+<Accordion title="Output full type">
 
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 ---
@@ -1359,7 +1413,7 @@ Delete user connection (deprecated)
 **Risk:** `destructive`
 
 ```ts
-await corsair.turbotpipes.api.connections.deleteUserConnectionDeprecated({});
+await corsair.turbotpipes.api.connections.deleteUserConnectionDeprecated({ user_handle: 'my-user', connection_handle: 'aws_prod' });
 ```
 
 **Input**
@@ -1371,17 +1425,17 @@ await corsair.turbotpipes.api.connections.deleteUserConnectionDeprecated({});
 
 
 
-**Output**
+**Output:** `object`
 
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `id` | `string` | Yes | — |
-| `handle` | `string` | Yes | — |
-| `plugin` | `string` | No | — |
-| `state` | `string` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
+<AccordionGroup>
+<Accordion title="Output full type">
 
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 ---
@@ -1395,7 +1449,7 @@ Get org connection permission
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.connections.getOrgConnectionPermission({});
+await corsair.turbotpipes.api.connections.getOrgConnectionPermission({ org_handle: 'my-org', connection_handle: 'aws_prod' });
 ```
 
 **Input**
@@ -1405,6 +1459,8 @@ await corsair.turbotpipes.api.connections.getOrgConnectionPermission({});
 | `org_handle` | `string` | Yes | — |
 | `connection_handle` | `string` | Yes | — |
 | `permission_id` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `next_token` | `string` | No | — |
 
 
 
@@ -1432,7 +1488,7 @@ Get user connection details
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.connections.getUserConnection({});
+await corsair.turbotpipes.api.connections.getUserConnection({ user_handle: 'my-user', connection_handle: 'aws_prod' });
 ```
 
 **Input**
@@ -1468,7 +1524,7 @@ List connections for user
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.connections.listUserConnections({});
+await corsair.turbotpipes.api.connections.listUserConnections({ user_handle: 'my-user' });
 ```
 
 **Input**
@@ -1511,7 +1567,13 @@ Test user connection credentials
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.connections.testUserConnection({});
+await corsair.turbotpipes.api.connections.testUserConnection({
+	user_handle: 'my-user',
+	plugin: 'aws',
+	config: {
+		regions: ['us-east-1'],
+	},
+});
 ```
 
 **Input**
@@ -1559,7 +1621,7 @@ Update org connection
 **Risk:** `write`
 
 ```ts
-await corsair.turbotpipes.api.connections.updateOrgConnection({});
+await corsair.turbotpipes.api.connections.updateOrgConnection({ org_handle: 'my-org', connection_handle: 'aws_prod' });
 ```
 
 **Input**
@@ -1607,7 +1669,7 @@ Update org connection folder
 **Risk:** `write`
 
 ```ts
-await corsair.turbotpipes.api.connections.updateOrgConnectionFolder({});
+await corsair.turbotpipes.api.connections.updateOrgConnectionFolder({ org_handle: 'my-org', folder_id: '<folder-id>' });
 ```
 
 **Input**
@@ -1644,7 +1706,7 @@ Update user connection
 **Risk:** `write`
 
 ```ts
-await corsair.turbotpipes.api.connections.updateUserConnection({});
+await corsair.turbotpipes.api.connections.updateUserConnection({ user_handle: 'my-user', connection_handle: 'aws_prod' });
 ```
 
 **Input**
@@ -1694,7 +1756,7 @@ Create user workspace Datatank
 **Risk:** `write`
 
 ```ts
-await corsair.turbotpipes.api.datatanks.createUserWorkspaceDatatank({});
+await corsair.turbotpipes.api.datatanks.createUserWorkspaceDatatank({ user_handle: 'my-user', workspace_handle: 'dev', handle: 'logs' });
 ```
 
 **Input**
@@ -1731,7 +1793,7 @@ Create Datatank table
 **Risk:** `write`
 
 ```ts
-await corsair.turbotpipes.api.datatanks.createUserWorkspaceDatatankTable({});
+await corsair.turbotpipes.api.datatanks.createUserWorkspaceDatatankTable({ user_handle: 'my-user', workspace_handle: 'dev', datatank_handle: 'logs', name: 'aws_buckets', type: 'table' });
 ```
 
 **Input**
@@ -1741,7 +1803,28 @@ await corsair.turbotpipes.api.datatanks.createUserWorkspaceDatatankTable({});
 | `user_handle` | `string` | Yes | — |
 | `workspace_handle` | `string` | Yes | — |
 | `datatank_handle` | `string` | Yes | — |
-| `table_name` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `type` | `table \| query` | Yes | — |
+| `description` | `string` | No | — |
+| `desired_state` | `enabled \| disabled` | No | — |
+| `frequency` | `object` | No | — |
+| `part_per` | `connection` | No | — |
+| `skip_initial_refresh` | `boolean` | No | — |
+| `source_query` | `string` | No | — |
+| `source_schema` | `string` | No | — |
+| `source_table` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="frequency full type">
+
+```ts
+{
+  type: interval | cron | manual,
+  schedule?: string
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -1769,7 +1852,12 @@ Get Datatank table details
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.datatanks.getDatatankTable({});
+await corsair.turbotpipes.api.datatanks.getDatatankTable({
+	user_handle: 'my-user',
+	workspace_handle: 'dev',
+	datatank_handle: 'logs',
+	table_name: 'aws_s3_bucket',
+});
 ```
 
 **Input**
@@ -1807,7 +1895,7 @@ Get user workspace Datatank
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.datatanks.getUserWorkspaceDatatank({});
+await corsair.turbotpipes.api.datatanks.getUserWorkspaceDatatank({ user_handle: 'my-user', workspace_handle: 'dev', datatank_handle: 'logs' });
 ```
 
 **Input**
@@ -1844,7 +1932,7 @@ Get user workspace schema
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.datatanks.getUserWorkspaceSchema({});
+await corsair.turbotpipes.api.datatanks.getUserWorkspaceSchema({ user_handle: 'my-user', workspace_handle: 'dev', schema_name: 'aws' });
 ```
 
 **Input**
@@ -1881,7 +1969,12 @@ Get schema table details
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.datatanks.getUserWorkspaceSchemaTable({});
+await corsair.turbotpipes.api.datatanks.getUserWorkspaceSchemaTable({
+	user_handle: 'my-user',
+	workspace_handle: 'dev',
+	schema_name: 'aws',
+	table_name: 'aws_s3_bucket',
+});
 ```
 
 **Input**
@@ -1919,7 +2012,7 @@ List org workspace Datatanks
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.datatanks.listOrgWorkspaceDatatanks({});
+await corsair.turbotpipes.api.datatanks.listOrgWorkspaceDatatanks({ org_handle: 'my-org', workspace_handle: 'dev' });
 ```
 
 **Input**
@@ -1928,6 +2021,8 @@ await corsair.turbotpipes.api.datatanks.listOrgWorkspaceDatatanks({});
 |------|------|----------|-------------|
 | `org_handle` | `string` | Yes | — |
 | `workspace_handle` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `next_token` | `string` | No | — |
 
 
 
@@ -1961,7 +2056,12 @@ List Datatank partitions
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.datatanks.listUserWorkspaceDatatankPartitions({});
+await corsair.turbotpipes.api.datatanks.listUserWorkspaceDatatankPartitions({
+	user_handle: 'my-user',
+	workspace_handle: 'dev',
+	datatank_handle: 'logs',
+	table_name: 'aws_s3_bucket',
+});
 ```
 
 **Input**
@@ -1972,6 +2072,8 @@ await corsair.turbotpipes.api.datatanks.listUserWorkspaceDatatankPartitions({});
 | `workspace_handle` | `string` | Yes | — |
 | `datatank_handle` | `string` | Yes | — |
 | `table_name` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `next_token` | `string` | No | — |
 
 
 
@@ -2005,7 +2107,7 @@ List user workspace Datatanks
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.datatanks.listUserWorkspaceDatatanks({});
+await corsair.turbotpipes.api.datatanks.listUserWorkspaceDatatanks({ user_handle: 'my-user', workspace_handle: 'dev' });
 ```
 
 **Input**
@@ -2014,6 +2116,8 @@ await corsair.turbotpipes.api.datatanks.listUserWorkspaceDatatanks({});
 |------|------|----------|-------------|
 | `user_handle` | `string` | Yes | — |
 | `workspace_handle` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `next_token` | `string` | No | — |
 
 
 
@@ -2047,7 +2151,7 @@ List Datatank tables
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.datatanks.listUserWorkspaceDatatankTables({});
+await corsair.turbotpipes.api.datatanks.listUserWorkspaceDatatankTables({ user_handle: 'my-user', workspace_handle: 'dev', datatank_handle: 'logs' });
 ```
 
 **Input**
@@ -2057,6 +2161,8 @@ await corsair.turbotpipes.api.datatanks.listUserWorkspaceDatatankTables({});
 | `user_handle` | `string` | Yes | — |
 | `workspace_handle` | `string` | Yes | — |
 | `datatank_handle` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `next_token` | `string` | No | — |
 
 
 
@@ -2090,7 +2196,7 @@ List user workspace schemas
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.datatanks.listUserWorkspaceSchemas({});
+await corsair.turbotpipes.api.datatanks.listUserWorkspaceSchemas({ user_handle: 'my-user', workspace_handle: 'dev' });
 ```
 
 **Input**
@@ -2099,6 +2205,8 @@ await corsair.turbotpipes.api.datatanks.listUserWorkspaceSchemas({});
 |------|------|----------|-------------|
 | `user_handle` | `string` | Yes | — |
 | `workspace_handle` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `next_token` | `string` | No | — |
 
 
 
@@ -2132,7 +2240,7 @@ List schema tables
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.datatanks.listUserWorkspaceSchemaTables({});
+await corsair.turbotpipes.api.datatanks.listUserWorkspaceSchemaTables({ user_handle: 'my-user', workspace_handle: 'dev', schema_name: 'aws' });
 ```
 
 **Input**
@@ -2177,7 +2285,7 @@ Get identity details by handle
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.identities.getIdentity({});
+await corsair.turbotpipes.api.identities.getIdentity({ identity_handle: 'my-user' });
 ```
 
 **Input**
@@ -2212,7 +2320,7 @@ Get identity avatar
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.identities.getIdentityAvatar({});
+await corsair.turbotpipes.api.identities.getIdentityAvatar({ identity_handle: 'my-user' });
 ```
 
 **Input**
@@ -2245,7 +2353,14 @@ List identities
 await corsair.turbotpipes.api.identities.listIdentities({});
 ```
 
-**Input:** _empty object_
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `next_token` | `string` | No | — |
+
 
 
 **Output**
@@ -2280,7 +2395,7 @@ Create user integration
 **Risk:** `write`
 
 ```ts
-await corsair.turbotpipes.api.integrations.createUserIntegration({});
+await corsair.turbotpipes.api.integrations.createUserIntegration({ user_handle: 'my-user', handle: 'my_slack', type: 'slack' });
 ```
 
 **Input**
@@ -2288,8 +2403,19 @@ await corsair.turbotpipes.api.integrations.createUserIntegration({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `user_handle` | `string` | Yes | — |
-| `integration_handle` | `string` | Yes | — |
-| `type` | `string` | Yes | — |
+| `handle` | `string` | Yes | — |
+| `type` | `aws \| azure \| gcp \| github \| slack \| gitlab` | Yes | — |
+| `config` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="config full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -2317,7 +2443,7 @@ Delete user integration
 **Risk:** `destructive`
 
 ```ts
-await corsair.turbotpipes.api.integrations.deleteUserIntegration({});
+await corsair.turbotpipes.api.integrations.deleteUserIntegration({ user_handle: 'my-user', integration_handle: 'my_slack' });
 ```
 
 **Input**
@@ -2329,12 +2455,17 @@ await corsair.turbotpipes.api.integrations.deleteUserIntegration({});
 
 
 
-**Output**
+**Output:** `object`
 
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `success` | `boolean` | Yes | — |
+<AccordionGroup>
+<Accordion title="Output full type">
 
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 ---
@@ -2348,7 +2479,7 @@ Get org integration
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.integrations.getOrgIntegration({});
+await corsair.turbotpipes.api.integrations.getOrgIntegration({ org_handle: 'my-org', integration_handle: 'my_slack' });
 ```
 
 **Input**
@@ -2384,7 +2515,7 @@ Get org workspace integration
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.integrations.getOrgWorkspaceIntegration({});
+await corsair.turbotpipes.api.integrations.getOrgWorkspaceIntegration({ org_handle: 'my-org', workspace_handle: 'dev', integration_handle: 'my_slack' });
 ```
 
 **Input**
@@ -2421,7 +2552,7 @@ Get user integration details
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.integrations.getUserIntegration({});
+await corsair.turbotpipes.api.integrations.getUserIntegration({ user_handle: 'my-user', integration_handle: 'my_slack' });
 ```
 
 **Input**
@@ -2457,7 +2588,7 @@ Get user workspace integration
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.integrations.getUserWorkspaceIntegration({});
+await corsair.turbotpipes.api.integrations.getUserWorkspaceIntegration({ user_handle: 'my-user', workspace_handle: 'dev', integration_handle: 'my_slack' });
 ```
 
 **Input**
@@ -2494,7 +2625,7 @@ Install Slack integration for user
 **Risk:** `write`
 
 ```ts
-await corsair.turbotpipes.api.integrations.installUserSlackIntegration({});
+await corsair.turbotpipes.api.integrations.installUserSlackIntegration({ user_handle: 'my-user', integration_handle: 'my_slack' });
 ```
 
 **Input**
@@ -2530,7 +2661,7 @@ List integrations for user
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.integrations.listUserIntegrations({});
+await corsair.turbotpipes.api.integrations.listUserIntegrations({ user_handle: 'my-user' });
 ```
 
 **Input**
@@ -2538,6 +2669,8 @@ await corsair.turbotpipes.api.integrations.listUserIntegrations({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `user_handle` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `next_token` | `string` | No | — |
 
 
 
@@ -2571,7 +2704,7 @@ List user workspace integrations
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.integrations.listUserWorkspaceIntegrations({});
+await corsair.turbotpipes.api.integrations.listUserWorkspaceIntegrations({ user_handle: 'my-user', workspace_handle: 'dev' });
 ```
 
 **Input**
@@ -2580,6 +2713,8 @@ await corsair.turbotpipes.api.integrations.listUserWorkspaceIntegrations({});
 |------|------|----------|-------------|
 | `user_handle` | `string` | Yes | — |
 | `workspace_handle` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `next_token` | `string` | No | — |
 
 
 
@@ -2613,7 +2748,7 @@ Test user integration
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.integrations.testUserIntegration({});
+await corsair.turbotpipes.api.integrations.testUserIntegration({ user_handle: 'my-user', integration_handle: 'my_slack' });
 ```
 
 **Input**
@@ -2622,7 +2757,6 @@ await corsair.turbotpipes.api.integrations.testUserIntegration({});
 |------|------|----------|-------------|
 | `user_handle` | `string` | Yes | — |
 | `integration_handle` | `string` | Yes | — |
-| `type` | `string` | Yes | — |
 
 
 
@@ -2650,7 +2784,7 @@ Update user integration
 **Risk:** `write`
 
 ```ts
-await corsair.turbotpipes.api.integrations.updateUserIntegration({});
+await corsair.turbotpipes.api.integrations.updateUserIntegration({ user_handle: 'my-user', integration_handle: 'my_slack' });
 ```
 
 **Input**
@@ -2689,7 +2823,7 @@ Create mod variable setting
 **Risk:** `write`
 
 ```ts
-await corsair.turbotpipes.api.mods.createUserWorkspaceModVariableSetting({});
+await corsair.turbotpipes.api.mods.createUserWorkspaceModVariableSetting({ user_handle: 'my-user', workspace_handle: 'dev', mod_alias: 'aws_compliance', variable_name: 'regions', value: ['us-east-1'] });
 ```
 
 **Input**
@@ -2728,7 +2862,12 @@ Delete org mod variable setting
 **Risk:** `destructive`
 
 ```ts
-await corsair.turbotpipes.api.mods.deleteOrgWorkspaceModVariableSetting({});
+await corsair.turbotpipes.api.mods.deleteOrgWorkspaceModVariableSetting({
+	org_handle: 'my-org',
+	workspace_handle: 'dev',
+	mod_alias: 'aws_compliance',
+	variable_name: 'regions',
+});
 ```
 
 **Input**
@@ -2742,12 +2881,17 @@ await corsair.turbotpipes.api.mods.deleteOrgWorkspaceModVariableSetting({});
 
 
 
-**Output**
+**Output:** `object`
 
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `success` | `boolean` | Yes | — |
+<AccordionGroup>
+<Accordion title="Output full type">
 
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 ---
@@ -2761,7 +2905,12 @@ Delete mod variable setting
 **Risk:** `destructive`
 
 ```ts
-await corsair.turbotpipes.api.mods.deleteUserWorkspaceModVariableSetting({});
+await corsair.turbotpipes.api.mods.deleteUserWorkspaceModVariableSetting({
+	user_handle: 'my-user',
+	workspace_handle: 'dev',
+	mod_alias: 'aws_compliance',
+	variable_name: 'regions',
+});
 ```
 
 **Input**
@@ -2775,12 +2924,17 @@ await corsair.turbotpipes.api.mods.deleteUserWorkspaceModVariableSetting({});
 
 
 
-**Output**
+**Output:** `object`
 
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `success` | `boolean` | Yes | — |
+<AccordionGroup>
+<Accordion title="Output full type">
 
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 ---
@@ -2794,7 +2948,12 @@ Get org mod variable setting
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.mods.getOrgWorkspaceModVariableSetting({});
+await corsair.turbotpipes.api.mods.getOrgWorkspaceModVariableSetting({
+	org_handle: 'my-org',
+	workspace_handle: 'dev',
+	mod_alias: 'aws_compliance',
+	variable_name: 'regions',
+});
 ```
 
 **Input**
@@ -2832,7 +2991,7 @@ Get installed mod details
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.mods.getUserWorkspaceMod({});
+await corsair.turbotpipes.api.mods.getUserWorkspaceMod({ user_handle: 'my-user', workspace_handle: 'dev', mod_alias: 'aws_compliance' });
 ```
 
 **Input**
@@ -2869,7 +3028,12 @@ Get mod variable setting
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.mods.getUserWorkspaceModVariableSetting({});
+await corsair.turbotpipes.api.mods.getUserWorkspaceModVariableSetting({
+	user_handle: 'my-user',
+	workspace_handle: 'dev',
+	mod_alias: 'aws_compliance',
+	variable_name: 'regions',
+});
 ```
 
 **Input**
@@ -2907,7 +3071,7 @@ Install mod in user workspace
 **Risk:** `write`
 
 ```ts
-await corsair.turbotpipes.api.mods.installUserWorkspaceMod({});
+await corsair.turbotpipes.api.mods.installUserWorkspaceMod({ user_handle: 'my-user', workspace_handle: 'dev', path: 'github.com/turbot/steampipe-mod-aws-compliance' });
 ```
 
 **Input**
@@ -2944,7 +3108,7 @@ List installed mods in org workspace
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.mods.listOrgWorkspaceMods({});
+await corsair.turbotpipes.api.mods.listOrgWorkspaceMods({ org_handle: 'my-org', workspace_handle: 'dev' });
 ```
 
 **Input**
@@ -2953,6 +3117,8 @@ await corsair.turbotpipes.api.mods.listOrgWorkspaceMods({});
 |------|------|----------|-------------|
 | `org_handle` | `string` | Yes | — |
 | `workspace_handle` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `next_token` | `string` | No | — |
 
 
 
@@ -2986,7 +3152,7 @@ List installed mods in workspace
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.mods.listUserWorkspaceMods({});
+await corsair.turbotpipes.api.mods.listUserWorkspaceMods({ user_handle: 'my-user', workspace_handle: 'dev' });
 ```
 
 **Input**
@@ -2995,6 +3161,8 @@ await corsair.turbotpipes.api.mods.listUserWorkspaceMods({});
 |------|------|----------|-------------|
 | `user_handle` | `string` | Yes | — |
 | `workspace_handle` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `next_token` | `string` | No | — |
 
 
 
@@ -3028,7 +3196,7 @@ List mod variables
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.mods.listUserWorkspaceModVariables({});
+await corsair.turbotpipes.api.mods.listUserWorkspaceModVariables({ user_handle: 'my-user', workspace_handle: 'dev', mod_alias: 'aws_compliance' });
 ```
 
 **Input**
@@ -3038,6 +3206,8 @@ await corsair.turbotpipes.api.mods.listUserWorkspaceModVariables({});
 | `user_handle` | `string` | Yes | — |
 | `workspace_handle` | `string` | Yes | — |
 | `mod_alias` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `next_token` | `string` | No | — |
 
 
 
@@ -3073,7 +3243,11 @@ Create user notifier
 **Risk:** `write`
 
 ```ts
-await corsair.turbotpipes.api.notifiers.createUserNotifier({});
+await corsair.turbotpipes.api.notifiers.createUserNotifier({
+	user_handle: 'my-user',
+	name: 'ops_alerts',
+	notifies: [{ integration: 'slack.default', channel: '#ops' }],
+});
 ```
 
 **Input**
@@ -3081,8 +3255,19 @@ await corsair.turbotpipes.api.notifiers.createUserNotifier({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `user_handle` | `string` | Yes | — |
-| `handle` | `string` | Yes | — |
-| `type` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `notifies` | `object[]` | Yes | — |
+| `state` | `enabled \| disabled` | No | — |
+
+<AccordionGroup>
+<Accordion title="notifies full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -3110,7 +3295,12 @@ Create workspace notifier
 **Risk:** `write`
 
 ```ts
-await corsair.turbotpipes.api.notifiers.createUserWorkspaceNotifier({});
+await corsair.turbotpipes.api.notifiers.createUserWorkspaceNotifier({
+	user_handle: 'my-user',
+	workspace_handle: 'dev',
+	name: 'ops_alerts',
+	notifies: [{ integration: 'slack.default', channel: '#ops' }],
+});
 ```
 
 **Input**
@@ -3119,8 +3309,19 @@ await corsair.turbotpipes.api.notifiers.createUserWorkspaceNotifier({});
 |------|------|----------|-------------|
 | `user_handle` | `string` | Yes | — |
 | `workspace_handle` | `string` | Yes | — |
-| `handle` | `string` | Yes | — |
-| `type` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `notifies` | `object[]` | Yes | — |
+| `state` | `enabled \| disabled` | No | — |
+
+<AccordionGroup>
+<Accordion title="notifies full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -3148,7 +3349,7 @@ Delete workspace notifier
 **Risk:** `destructive`
 
 ```ts
-await corsair.turbotpipes.api.notifiers.deleteUserWorkspaceNotifier({});
+await corsair.turbotpipes.api.notifiers.deleteUserWorkspaceNotifier({ user_handle: 'my-user', workspace_handle: 'dev', notifier_handle: 'ops_alerts' });
 ```
 
 **Input**
@@ -3161,12 +3362,17 @@ await corsair.turbotpipes.api.notifiers.deleteUserWorkspaceNotifier({});
 
 
 
-**Output**
+**Output:** `object`
 
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `success` | `boolean` | Yes | — |
+<AccordionGroup>
+<Accordion title="Output full type">
 
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 ---
@@ -3180,7 +3386,7 @@ Get org workspace notifier
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.notifiers.getOrgWorkspaceNotifier({});
+await corsair.turbotpipes.api.notifiers.getOrgWorkspaceNotifier({ org_handle: 'my-org', workspace_handle: 'dev', notifier_handle: 'ops_alerts' });
 ```
 
 **Input**
@@ -3217,7 +3423,7 @@ Get workspace notifier
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.notifiers.getUserWorkspaceNotifier({});
+await corsair.turbotpipes.api.notifiers.getUserWorkspaceNotifier({ user_handle: 'my-user', workspace_handle: 'dev', notifier_handle: 'ops_alerts' });
 ```
 
 **Input**
@@ -3254,7 +3460,7 @@ List user notifiers
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.notifiers.listUserNotifiers({});
+await corsair.turbotpipes.api.notifiers.listUserNotifiers({ user_handle: 'my-user' });
 ```
 
 **Input**
@@ -3262,6 +3468,9 @@ await corsair.turbotpipes.api.notifiers.listUserNotifiers({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `user_handle` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `next_token` | `string` | No | — |
+| `where` | `string` | No | — |
 
 
 
@@ -3295,7 +3504,7 @@ List workspace notifiers
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.notifiers.listUserWorkspaceNotifiers({});
+await corsair.turbotpipes.api.notifiers.listUserWorkspaceNotifiers({ user_handle: 'my-user', workspace_handle: 'dev' });
 ```
 
 **Input**
@@ -3304,6 +3513,9 @@ await corsair.turbotpipes.api.notifiers.listUserWorkspaceNotifiers({});
 |------|------|----------|-------------|
 | `user_handle` | `string` | Yes | — |
 | `workspace_handle` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `next_token` | `string` | No | — |
+| `where` | `string` | No | — |
 
 
 
@@ -3337,7 +3549,12 @@ Post command to workspace notifier
 **Risk:** `write`
 
 ```ts
-await corsair.turbotpipes.api.notifiers.postUserWorkspaceNotifierCommand({});
+await corsair.turbotpipes.api.notifiers.postUserWorkspaceNotifierCommand({
+	user_handle: 'my-user',
+	workspace_handle: 'dev',
+	notifier_handle: 'ops_alerts',
+	command: 'set_default',
+});
 ```
 
 **Input**
@@ -3372,7 +3589,7 @@ Delete an organization
 **Risk:** `destructive`
 
 ```ts
-await corsair.turbotpipes.api.orgs.delete({});
+await corsair.turbotpipes.api.orgs.delete({ org_handle: 'my-org' });
 ```
 
 **Input**
@@ -3383,12 +3600,17 @@ await corsair.turbotpipes.api.orgs.delete({});
 
 
 
-**Output**
+**Output:** `object`
 
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `success` | `boolean` | Yes | — |
+<AccordionGroup>
+<Accordion title="Output full type">
 
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 ---
@@ -3402,7 +3624,7 @@ Delete organization workspace
 **Risk:** `destructive`
 
 ```ts
-await corsair.turbotpipes.api.orgs.deleteWorkspace({});
+await corsair.turbotpipes.api.orgs.deleteWorkspace({ org_handle: 'my-org', workspace_handle: 'dev' });
 ```
 
 **Input**
@@ -3414,12 +3636,17 @@ await corsair.turbotpipes.api.orgs.deleteWorkspace({});
 
 
 
-**Output**
+**Output:** `object`
 
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `success` | `boolean` | Yes | — |
+<AccordionGroup>
+<Accordion title="Output full type">
 
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 ---
@@ -3433,7 +3660,7 @@ Get organization details
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.orgs.get({});
+await corsair.turbotpipes.api.orgs.get({ org_handle: 'my-org' });
 ```
 
 **Input**
@@ -3469,7 +3696,7 @@ Get organization member details
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.orgs.getMember({});
+await corsair.turbotpipes.api.orgs.getMember({ org_handle: 'my-org', user_handle: 'my-user' });
 ```
 
 **Input**
@@ -3505,7 +3732,7 @@ List organization processes
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.orgs.listProcesses({});
+await corsair.turbotpipes.api.orgs.listProcesses({ org_handle: 'my-org' });
 ```
 
 **Input**
@@ -3513,6 +3740,7 @@ await corsair.turbotpipes.api.orgs.listProcesses({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `org_handle` | `string` | Yes | — |
+| `where` | `string` | No | — |
 | `limit` | `number` | No | — |
 | `next_token` | `string` | No | — |
 
@@ -3548,7 +3776,7 @@ List organization service accounts
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.orgs.listServiceAccounts({});
+await corsair.turbotpipes.api.orgs.listServiceAccounts({ org_handle: 'my-org' });
 ```
 
 **Input**
@@ -3556,6 +3784,9 @@ await corsair.turbotpipes.api.orgs.listServiceAccounts({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `org_handle` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `next_token` | `string` | No | — |
+| `include` | `string` | No | — |
 
 
 
@@ -3589,7 +3820,7 @@ List organization usage
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.orgs.listUsage({});
+await corsair.turbotpipes.api.orgs.listUsage({ org_handle: 'my-org' });
 ```
 
 **Input**
@@ -3597,6 +3828,9 @@ await corsair.turbotpipes.api.orgs.listUsage({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `org_handle` | `string` | Yes | — |
+| `where` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `next_token` | `string` | No | — |
 
 
 
@@ -3630,7 +3864,7 @@ List organization workspaces
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.orgs.listWorkspaces({});
+await corsair.turbotpipes.api.orgs.listWorkspaces({ org_handle: 'my-org' });
 ```
 
 **Input**
@@ -3673,7 +3907,7 @@ Run command on org workspace
 **Risk:** `write`
 
 ```ts
-await corsair.turbotpipes.api.orgs.runWorkspaceCommand({});
+await corsair.turbotpipes.api.orgs.runWorkspaceCommand({ org_handle: 'my-org', workspace_handle: 'dev', command: 'reboot' });
 ```
 
 **Input**
@@ -3705,7 +3939,7 @@ Update organization member role
 **Risk:** `write`
 
 ```ts
-await corsair.turbotpipes.api.orgs.updateMemberRole({});
+await corsair.turbotpipes.api.orgs.updateMemberRole({ org_handle: 'my-org', user_handle: 'my-user', role: 'member' });
 ```
 
 **Input**
@@ -3742,7 +3976,7 @@ Update service account
 **Risk:** `write`
 
 ```ts
-await corsair.turbotpipes.api.orgs.updateServiceAccount({});
+await corsair.turbotpipes.api.orgs.updateServiceAccount({ org_handle: 'my-org', service_account_handle: 'ci-bot' });
 ```
 
 **Input**
@@ -3780,7 +4014,12 @@ Update service account token
 **Risk:** `write`
 
 ```ts
-await corsair.turbotpipes.api.orgs.updateServiceAccountToken({});
+await corsair.turbotpipes.api.orgs.updateServiceAccountToken({
+	org_handle: 'my-org',
+	service_account_handle: 'ci-bot',
+	token_id: '<token-id>',
+	status: 'inactive',
+});
 ```
 
 **Input**
@@ -3790,7 +4029,9 @@ await corsair.turbotpipes.api.orgs.updateServiceAccountToken({});
 | `org_handle` | `string` | Yes | — |
 | `service_account_handle` | `string` | Yes | — |
 | `token_id` | `string` | Yes | — |
-| `status` | `string` | No | — |
+| `status` | `string` | Yes | — |
+| `title` | `string` | No | — |
+| `description` | `string` | No | — |
 
 
 
@@ -3820,7 +4061,7 @@ Delete pipeline from workspace
 **Risk:** `destructive`
 
 ```ts
-await corsair.turbotpipes.api.pipelines.deleteUserWorkspacePipeline({});
+await corsair.turbotpipes.api.pipelines.deleteUserWorkspacePipeline({ user_handle: 'my-user', workspace_handle: 'dev', pipeline_id: '<pipeline-id>' });
 ```
 
 **Input**
@@ -3833,12 +4074,17 @@ await corsair.turbotpipes.api.pipelines.deleteUserWorkspacePipeline({});
 
 
 
-**Output**
+**Output:** `object`
 
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `success` | `boolean` | Yes | — |
+<AccordionGroup>
+<Accordion title="Output full type">
 
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 ---
@@ -3852,7 +4098,7 @@ Get Flowpipe trigger details
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.pipelines.getOrgWorkspaceFlowpipeTrigger({});
+await corsair.turbotpipes.api.pipelines.getOrgWorkspaceFlowpipeTrigger({ org_handle: 'my-org', workspace_handle: 'dev', trigger_name: 'daily_check' });
 ```
 
 **Input**
@@ -3889,7 +4135,7 @@ Get Flowpipe mod details
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.pipelines.getUserWorkspaceFlowpipeMod({});
+await corsair.turbotpipes.api.pipelines.getUserWorkspaceFlowpipeMod({ user_handle: 'my-user', workspace_handle: 'dev', mod_alias: 'aws_compliance' });
 ```
 
 **Input**
@@ -3926,7 +4172,7 @@ Get Flowpipe pipeline details
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.pipelines.getUserWorkspaceFlowpipePipeline({});
+await corsair.turbotpipes.api.pipelines.getUserWorkspaceFlowpipePipeline({ user_handle: 'my-user', workspace_handle: 'dev', pipeline_id: '<pipeline-id>' });
 ```
 
 **Input**
@@ -3963,7 +4209,7 @@ Get pipeline details
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.pipelines.getUserWorkspacePipeline({});
+await corsair.turbotpipes.api.pipelines.getUserWorkspacePipeline({ user_handle: 'my-user', workspace_handle: 'dev', pipeline_id: '<pipeline-id>' });
 ```
 
 **Input**
@@ -4000,7 +4246,7 @@ Install Flowpipe mod
 **Risk:** `write`
 
 ```ts
-await corsair.turbotpipes.api.pipelines.installUserWorkspaceFlowpipeMod({});
+await corsair.turbotpipes.api.pipelines.installUserWorkspaceFlowpipeMod({ user_handle: 'my-user', workspace_handle: 'dev', path: 'github.com/turbot/steampipe-mod-aws-compliance' });
 ```
 
 **Input**
@@ -4037,7 +4283,7 @@ List org Flowpipe mod variables
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.pipelines.listOrgWorkspaceFlowpipeModVariables({});
+await corsair.turbotpipes.api.pipelines.listOrgWorkspaceFlowpipeModVariables({ org_handle: 'my-org', workspace_handle: 'dev', mod_alias: 'aws_compliance' });
 ```
 
 **Input**
@@ -4047,6 +4293,8 @@ await corsair.turbotpipes.api.pipelines.listOrgWorkspaceFlowpipeModVariables({})
 | `org_handle` | `string` | Yes | — |
 | `workspace_handle` | `string` | Yes | — |
 | `mod_alias` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `next_token` | `string` | No | — |
 
 
 
@@ -4080,7 +4328,7 @@ List pipelines in org workspace
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.pipelines.listOrgWorkspacePipelines({});
+await corsair.turbotpipes.api.pipelines.listOrgWorkspacePipelines({ org_handle: 'my-org', workspace_handle: 'dev' });
 ```
 
 **Input**
@@ -4089,6 +4337,9 @@ await corsair.turbotpipes.api.pipelines.listOrgWorkspacePipelines({});
 |------|------|----------|-------------|
 | `org_handle` | `string` | Yes | — |
 | `workspace_handle` | `string` | Yes | — |
+| `where` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `next_token` | `string` | No | — |
 
 
 
@@ -4122,7 +4373,7 @@ List Flowpipe inputs
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.pipelines.listUserWorkspaceFlowpipeInputs({});
+await corsair.turbotpipes.api.pipelines.listUserWorkspaceFlowpipeInputs({ user_handle: 'my-user', workspace_handle: 'dev' });
 ```
 
 **Input**
@@ -4131,6 +4382,8 @@ await corsair.turbotpipes.api.pipelines.listUserWorkspaceFlowpipeInputs({});
 |------|------|----------|-------------|
 | `user_handle` | `string` | Yes | — |
 | `workspace_handle` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `next_token` | `string` | No | — |
 
 
 
@@ -4164,7 +4417,7 @@ List user Flowpipe mod variables
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.pipelines.listUserWorkspaceFlowpipeModVariables({});
+await corsair.turbotpipes.api.pipelines.listUserWorkspaceFlowpipeModVariables({ user_handle: 'my-user', workspace_handle: 'dev', mod_alias: 'aws_compliance' });
 ```
 
 **Input**
@@ -4174,6 +4427,8 @@ await corsair.turbotpipes.api.pipelines.listUserWorkspaceFlowpipeModVariables({}
 | `user_handle` | `string` | Yes | — |
 | `workspace_handle` | `string` | Yes | — |
 | `mod_alias` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `next_token` | `string` | No | — |
 
 
 
@@ -4207,7 +4462,7 @@ List Flowpipe pipelines
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.pipelines.listUserWorkspaceFlowpipePipelines({});
+await corsair.turbotpipes.api.pipelines.listUserWorkspaceFlowpipePipelines({ user_handle: 'my-user', workspace_handle: 'dev' });
 ```
 
 **Input**
@@ -4216,6 +4471,9 @@ await corsair.turbotpipes.api.pipelines.listUserWorkspaceFlowpipePipelines({});
 |------|------|----------|-------------|
 | `user_handle` | `string` | Yes | — |
 | `workspace_handle` | `string` | Yes | — |
+| `where` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `next_token` | `string` | No | — |
 
 
 
@@ -4249,7 +4507,7 @@ List Flowpipe triggers
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.pipelines.listUserWorkspaceFlowpipeTriggers({});
+await corsair.turbotpipes.api.pipelines.listUserWorkspaceFlowpipeTriggers({ user_handle: 'my-user', workspace_handle: 'dev' });
 ```
 
 **Input**
@@ -4291,7 +4549,7 @@ List pipelines in workspace
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.pipelines.listUserWorkspacePipelines({});
+await corsair.turbotpipes.api.pipelines.listUserWorkspacePipelines({ user_handle: 'my-user', workspace_handle: 'dev' });
 ```
 
 **Input**
@@ -4300,6 +4558,9 @@ await corsair.turbotpipes.api.pipelines.listUserWorkspacePipelines({});
 |------|------|----------|-------------|
 | `user_handle` | `string` | Yes | — |
 | `workspace_handle` | `string` | Yes | — |
+| `where` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `next_token` | `string` | No | — |
 
 
 
@@ -4333,7 +4594,7 @@ List triggers for pipeline
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.pipelines.listUserWorkspacePipelineTriggers({});
+await corsair.turbotpipes.api.pipelines.listUserWorkspacePipelineTriggers({ user_handle: 'my-user', workspace_handle: 'dev', pipeline_id: '<pipeline-id>' });
 ```
 
 **Input**
@@ -4343,6 +4604,9 @@ await corsair.turbotpipes.api.pipelines.listUserWorkspacePipelineTriggers({});
 | `user_handle` | `string` | Yes | — |
 | `workspace_handle` | `string` | Yes | — |
 | `pipeline_id` | `string` | Yes | — |
+| `where` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `next_token` | `string` | No | — |
 
 
 
@@ -4376,7 +4640,12 @@ Run Flowpipe pipeline command
 **Risk:** `write`
 
 ```ts
-await corsair.turbotpipes.api.pipelines.runUserWorkspaceFlowpipePipelineCommand({});
+await corsair.turbotpipes.api.pipelines.runUserWorkspaceFlowpipePipelineCommand({
+	user_handle: 'my-user',
+	workspace_handle: 'dev',
+	pipeline_id: '<pipeline-id>',
+	command: 'run',
+});
 ```
 
 **Input**
@@ -4409,7 +4678,12 @@ Run Flowpipe trigger command
 **Risk:** `write`
 
 ```ts
-await corsair.turbotpipes.api.pipelines.runUserWorkspaceFlowpipeTriggerCommand({});
+await corsair.turbotpipes.api.pipelines.runUserWorkspaceFlowpipeTriggerCommand({
+	user_handle: 'my-user',
+	workspace_handle: 'dev',
+	trigger_name: 'daily_check',
+	command: 'run',
+});
 ```
 
 **Input**
@@ -4442,7 +4716,7 @@ Uninstall Flowpipe mod
 **Risk:** `destructive`
 
 ```ts
-await corsair.turbotpipes.api.pipelines.uninstallFlowpipeMod({});
+await corsair.turbotpipes.api.pipelines.uninstallFlowpipeMod({ user_handle: 'my-user', workspace_handle: 'dev', mod_alias: 'aws_compliance' });
 ```
 
 **Input**
@@ -4455,12 +4729,17 @@ await corsair.turbotpipes.api.pipelines.uninstallFlowpipeMod({});
 
 
 
-**Output**
+**Output:** `object`
 
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `success` | `boolean` | Yes | — |
+<AccordionGroup>
+<Accordion title="Output full type">
 
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 ---
@@ -4474,7 +4753,7 @@ Uninstall org Flowpipe mod
 **Risk:** `destructive`
 
 ```ts
-await corsair.turbotpipes.api.pipelines.uninstallOrgWorkspaceFlowpipeMod({});
+await corsair.turbotpipes.api.pipelines.uninstallOrgWorkspaceFlowpipeMod({ org_handle: 'my-org', workspace_handle: 'dev', mod_alias: 'aws_compliance' });
 ```
 
 **Input**
@@ -4487,12 +4766,17 @@ await corsair.turbotpipes.api.pipelines.uninstallOrgWorkspaceFlowpipeMod({});
 
 
 
-**Output**
+**Output:** `object`
 
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `success` | `boolean` | Yes | — |
+<AccordionGroup>
+<Accordion title="Output full type">
 
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 ---
@@ -4508,7 +4792,7 @@ Execute query in org workspace
 **Risk:** `write`
 
 ```ts
-await corsair.turbotpipes.api.query.createOrgWorkspaceQuery({});
+await corsair.turbotpipes.api.query.createOrgWorkspaceQuery({ org_handle: 'my-org', workspace_handle: 'dev', sql: 'select name, region from aws_s3_bucket' });
 ```
 
 **Input**
@@ -4545,7 +4829,17 @@ Create workspace snapshot
 **Risk:** `write`
 
 ```ts
-await corsair.turbotpipes.api.query.createOrgWorkspaceSnapshot({});
+await corsair.turbotpipes.api.query.createOrgWorkspaceSnapshot({
+	org_handle: 'my-org',
+	workspace_handle: 'dev',
+	data: {
+		schema_version: '20240607',
+		start_time: '2026-11-05T09:00:00Z',
+		end_time: '2026-11-05T09:00:04Z',
+		layout: { name: 'aws_compliance.benchmark.cis_v300', panel_type: 'benchmark' },
+		panels: {},
+	},
+});
 ```
 
 **Input**
@@ -4554,7 +4848,35 @@ await corsair.turbotpipes.api.query.createOrgWorkspaceSnapshot({});
 |------|------|----------|-------------|
 | `org_handle` | `string` | Yes | — |
 | `workspace_handle` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
 | `title` | `string` | No | — |
+| `visibility` | `workspace \| anyone_with_link` | No | — |
+| `tags` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  schema_version: string,
+  start_time: string,
+  end_time: string,
+  layout: {
+    name: string,
+    panel_type: string
+  },
+  panels: {
+  },
+  inputs?: {
+  },
+  variables?: {
+  },
+  metadata?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -4582,7 +4904,7 @@ Get query data from org workspace
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.query.getOrgWorkspaceQueryData({});
+await corsair.turbotpipes.api.query.getOrgWorkspaceQueryData({ org_handle: 'my-org', workspace_handle: 'dev', sql: 'select name, region from aws_s3_bucket' });
 ```
 
 **Input**
@@ -4619,7 +4941,7 @@ Execute query in user workspace (GET)
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.query.getUserWorkspaceQuery({});
+await corsair.turbotpipes.api.query.getUserWorkspaceQuery({ user_handle: 'my-user', workspace_handle: 'dev', sql: 'select name, region from aws_s3_bucket' });
 ```
 
 **Input**
@@ -4656,7 +4978,7 @@ Get query data from user workspace
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.query.getUserWorkspaceQueryData({});
+await corsair.turbotpipes.api.query.getUserWorkspaceQueryData({ user_handle: 'my-user', workspace_handle: 'dev', sql: 'select name, region from aws_s3_bucket' });
 ```
 
 **Input**
@@ -4693,7 +5015,7 @@ List workspace snapshots
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.query.listUserWorkspaceSnapshots({});
+await corsair.turbotpipes.api.query.listUserWorkspaceSnapshots({ user_handle: 'my-user', workspace_handle: 'dev' });
 ```
 
 **Input**
@@ -4702,6 +5024,9 @@ await corsair.turbotpipes.api.query.listUserWorkspaceSnapshots({});
 |------|------|----------|-------------|
 | `user_handle` | `string` | Yes | — |
 | `workspace_handle` | `string` | Yes | — |
+| `where` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `next_token` | `string` | No | — |
 
 
 
@@ -4735,7 +5060,7 @@ Execute query in user workspace (POST)
 **Risk:** `write`
 
 ```ts
-await corsair.turbotpipes.api.query.postUserWorkspaceQuery({});
+await corsair.turbotpipes.api.query.postUserWorkspaceQuery({ user_handle: 'my-user', workspace_handle: 'dev', sql: 'select name, region from aws_s3_bucket' });
 ```
 
 **Input**
@@ -4772,7 +5097,7 @@ Run query in user workspace
 **Risk:** `write`
 
 ```ts
-await corsair.turbotpipes.api.query.runUserWorkspaceQuery({});
+await corsair.turbotpipes.api.query.runUserWorkspaceQuery({ user_handle: 'my-user', workspace_handle: 'dev', sql: 'select name, region from aws_s3_bucket' });
 ```
 
 **Input**
@@ -4811,7 +5136,7 @@ Get tenant information
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.tenants.getTenant({});
+await corsair.turbotpipes.api.tenants.getTenant({ tenant_handle: 'turbot-pipes' });
 ```
 
 **Input**
@@ -4846,7 +5171,7 @@ Get tenant avatar image
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.tenants.getTenantAvatar({});
+await corsair.turbotpipes.api.tenants.getTenantAvatar({ tenant_handle: 'turbot-pipes' });
 ```
 
 **Input**
@@ -4909,7 +5234,13 @@ List accessible tenants
 await corsair.turbotpipes.api.tenants.listTenants({});
 ```
 
-**Input:** _empty object_
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `next_token` | `string` | No | — |
+
 
 
 **Output**
@@ -4944,7 +5275,7 @@ Delete custom user avatar
 **Risk:** `destructive`
 
 ```ts
-await corsair.turbotpipes.api.users.deleteUserAvatar({});
+await corsair.turbotpipes.api.users.deleteUserAvatar({ user_handle: 'my-user' });
 ```
 
 **Input**
@@ -4955,12 +5286,17 @@ await corsair.turbotpipes.api.users.deleteUserAvatar({});
 
 
 
-**Output**
+**Output:** `object`
 
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `success` | `boolean` | Yes | — |
+<AccordionGroup>
+<Accordion title="Output full type">
 
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 ---
@@ -4974,7 +5310,7 @@ Get user details by handle
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.users.get({});
+await corsair.turbotpipes.api.users.get({ user_handle: 'my-user' });
 ```
 
 **Input**
@@ -5010,7 +5346,7 @@ Get user email details
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.users.getUserEmail({});
+await corsair.turbotpipes.api.users.getUserEmail({ user_handle: 'my-user', email_id: '<email-id>' });
 ```
 
 **Input**
@@ -5046,7 +5382,7 @@ Get user preferences
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.users.getUserPreferences({});
+await corsair.turbotpipes.api.users.getUserPreferences({ user_handle: 'my-user' });
 ```
 
 **Input**
@@ -5081,7 +5417,7 @@ Get user process details
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.users.getUserProcess({});
+await corsair.turbotpipes.api.users.getUserProcess({ user_handle: 'my-user', process_id: '<process-id>' });
 ```
 
 **Input**
@@ -5116,7 +5452,7 @@ Get user workspace details
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.users.getUserWorkspace({});
+await corsair.turbotpipes.api.users.getUserWorkspace({ user_handle: 'my-user', workspace_handle: 'dev' });
 ```
 
 **Input**
@@ -5153,7 +5489,7 @@ List user audit logs
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.users.listAuditLogs({});
+await corsair.turbotpipes.api.users.listAuditLogs({ user_handle: 'my-user' });
 ```
 
 **Input**
@@ -5196,7 +5532,7 @@ List user constraints
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.users.listConstraints({});
+await corsair.turbotpipes.api.users.listConstraints({ user_handle: 'my-user' });
 ```
 
 **Input**
@@ -5204,6 +5540,9 @@ await corsair.turbotpipes.api.users.listConstraints({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `user_handle` | `string` | Yes | — |
+| `where` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `next_token` | `string` | No | — |
 
 
 
@@ -5237,7 +5576,7 @@ List processes for user
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.users.listProcesses({});
+await corsair.turbotpipes.api.users.listProcesses({ user_handle: 'my-user' });
 ```
 
 **Input**
@@ -5280,7 +5619,7 @@ List user usage metrics
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.users.listUsage({});
+await corsair.turbotpipes.api.users.listUsage({ user_handle: 'my-user' });
 ```
 
 **Input**
@@ -5288,6 +5627,9 @@ await corsair.turbotpipes.api.users.listUsage({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `user_handle` | `string` | Yes | — |
+| `where` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `next_token` | `string` | No | — |
 
 
 
@@ -5321,7 +5663,7 @@ List user emails
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.users.listUserEmails({});
+await corsair.turbotpipes.api.users.listUserEmails({ user_handle: 'my-user' });
 ```
 
 **Input**
@@ -5329,6 +5671,8 @@ await corsair.turbotpipes.api.users.listUserEmails({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `user_handle` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `next_token` | `string` | No | — |
 
 
 
@@ -5362,7 +5706,7 @@ List workspaces for user
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.users.listWorkspaces({});
+await corsair.turbotpipes.api.users.listWorkspaces({ user_handle: 'my-user' });
 ```
 
 **Input**
@@ -5405,7 +5749,7 @@ Run command on user workspace
 **Risk:** `write`
 
 ```ts
-await corsair.turbotpipes.api.users.runUserWorkspaceCommand({});
+await corsair.turbotpipes.api.users.runUserWorkspaceCommand({ user_handle: 'my-user', workspace_handle: 'dev', command: 'reboot' });
 ```
 
 **Input**
@@ -5437,7 +5781,7 @@ Update user information
 **Risk:** `write`
 
 ```ts
-await corsair.turbotpipes.api.users.update({});
+await corsair.turbotpipes.api.users.update({ user_handle: 'my-user' });
 ```
 
 **Input**
@@ -5475,7 +5819,7 @@ Update user preferences
 **Risk:** `write`
 
 ```ts
-await corsair.turbotpipes.api.users.updateUserPreferences({});
+await corsair.turbotpipes.api.users.updateUserPreferences({ user_handle: 'my-user' });
 ```
 
 **Input**
@@ -5483,17 +5827,9 @@ await corsair.turbotpipes.api.users.updateUserPreferences({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `user_handle` | `string` | Yes | — |
-| `email_subscriptions` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="email_subscriptions full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `communication_community_updates` | `enabled \| disabled` | No | — |
+| `communication_product_updates` | `enabled \| disabled` | No | — |
+| `communication_tips_and_tricks` | `enabled \| disabled` | No | — |
 
 
 
@@ -5521,7 +5857,7 @@ Update user workspace
 **Risk:** `write`
 
 ```ts
-await corsair.turbotpipes.api.users.updateUserWorkspace({});
+await corsair.turbotpipes.api.users.updateUserWorkspace({ user_handle: 'my-user', workspace_handle: 'dev' });
 ```
 
 **Input**
@@ -5530,9 +5866,11 @@ await corsair.turbotpipes.api.users.updateUserWorkspace({});
 |------|------|----------|-------------|
 | `user_handle` | `string` | Yes | — |
 | `workspace_handle` | `string` | Yes | — |
-| `desired_state` | `string` | No | — |
-| `instance_type` | `string` | No | — |
-| `db_volume_size` | `number` | No | — |
+| `handle` | `string` | No | — |
+| `desired_state` | `enabled \| disabled` | No | — |
+| `instance_type` | `db1.shared \| db1.small \| db1.medium` | No | — |
+| `db_volume_size_bytes` | `number` | No | — |
+| `search_path_prefix` | `string[]` | No | — |
 
 
 
@@ -5563,7 +5901,12 @@ Create org workspace aggregator
 **Risk:** `write`
 
 ```ts
-await corsair.turbotpipes.api.workspaces.createOrgWorkspaceAggregator({});
+await corsair.turbotpipes.api.workspaces.createOrgWorkspaceAggregator({
+	org_handle: 'my-org',
+	workspace_handle: 'dev',
+	handle: 'aws_all',
+	plugin: 'aws',
+});
 ```
 
 **Input**
@@ -5573,7 +5916,19 @@ await corsair.turbotpipes.api.workspaces.createOrgWorkspaceAggregator({});
 | `org_handle` | `string` | Yes | — |
 | `workspace_handle` | `string` | Yes | — |
 | `handle` | `string` | Yes | — |
-| `connections` | `string[]` | Yes | — |
+| `plugin` | `string` | Yes | — |
+| `connections` | `string[]` | No | — |
+| `config` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="config full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -5601,7 +5956,12 @@ Create org workspace connection
 **Risk:** `write`
 
 ```ts
-await corsair.turbotpipes.api.workspaces.createOrgWorkspaceConnection({});
+await corsair.turbotpipes.api.workspaces.createOrgWorkspaceConnection({
+	org_handle: 'my-org',
+	workspace_handle: 'dev',
+	handle: 'aws_prod',
+	plugin: 'aws',
+});
 ```
 
 **Input**
@@ -5610,7 +5970,20 @@ await corsair.turbotpipes.api.workspaces.createOrgWorkspaceConnection({});
 |------|------|----------|-------------|
 | `org_handle` | `string` | Yes | — |
 | `workspace_handle` | `string` | Yes | — |
-| `connection_handle` | `string` | Yes | — |
+| `handle` | `string` | Yes | — |
+| `plugin` | `string` | Yes | — |
+| `config` | `object` | No | — |
+| `parent_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="config full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -5638,7 +6011,7 @@ Create org workspace connection folder
 **Risk:** `write`
 
 ```ts
-await corsair.turbotpipes.api.workspaces.createOrgWorkspaceConnectionFolder({});
+await corsair.turbotpipes.api.workspaces.createOrgWorkspaceConnectionFolder({ org_handle: 'my-org', workspace_handle: 'dev', title: 'Production' });
 ```
 
 **Input**
@@ -5675,7 +6048,12 @@ Create user workspace connection
 **Risk:** `write`
 
 ```ts
-await corsair.turbotpipes.api.workspaces.createUserWorkspaceConnection({});
+await corsair.turbotpipes.api.workspaces.createUserWorkspaceConnection({
+	user_handle: 'my-user',
+	workspace_handle: 'dev',
+	handle: 'aws_prod',
+	plugin: 'aws',
+});
 ```
 
 **Input**
@@ -5684,7 +6062,20 @@ await corsair.turbotpipes.api.workspaces.createUserWorkspaceConnection({});
 |------|------|----------|-------------|
 | `user_handle` | `string` | Yes | — |
 | `workspace_handle` | `string` | Yes | — |
-| `connection_handle` | `string` | Yes | — |
+| `handle` | `string` | Yes | — |
+| `plugin` | `string` | Yes | — |
+| `config` | `object` | No | — |
+| `parent_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="config full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -5712,7 +6103,7 @@ Create user workspace connection folder
 **Risk:** `write`
 
 ```ts
-await corsair.turbotpipes.api.workspaces.createUserWorkspaceConnectionFolder({});
+await corsair.turbotpipes.api.workspaces.createUserWorkspaceConnectionFolder({ user_handle: 'my-user', workspace_handle: 'dev', title: 'Production' });
 ```
 
 **Input**
@@ -5749,7 +6140,7 @@ Get org workspace connection
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.workspaces.getOrgWorkspaceConnection({});
+await corsair.turbotpipes.api.workspaces.getOrgWorkspaceConnection({ org_handle: 'my-org', workspace_handle: 'dev', connection_handle: 'aws_prod' });
 ```
 
 **Input**
@@ -5786,7 +6177,7 @@ Get org workspace connection folder
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.workspaces.getOrgWorkspaceConnectionFolder({});
+await corsair.turbotpipes.api.workspaces.getOrgWorkspaceConnectionFolder({ org_handle: 'my-org', workspace_handle: 'dev', folder_id: '<folder-id>' });
 ```
 
 **Input**
@@ -5823,7 +6214,7 @@ Get user workspace aggregator
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.workspaces.getUserWorkspaceAggregator({});
+await corsair.turbotpipes.api.workspaces.getUserWorkspaceAggregator({ user_handle: 'my-user', workspace_handle: 'dev', aggregator_handle: 'aws_all' });
 ```
 
 **Input**
@@ -5860,7 +6251,7 @@ Get user workspace connection
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.workspaces.getUserWorkspaceConnection({});
+await corsair.turbotpipes.api.workspaces.getUserWorkspaceConnection({ user_handle: 'my-user', workspace_handle: 'dev', connection_handle: 'aws_prod' });
 ```
 
 **Input**
@@ -5897,7 +6288,7 @@ Get user workspace connection folder
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.workspaces.getUserWorkspaceConnectionFolder({});
+await corsair.turbotpipes.api.workspaces.getUserWorkspaceConnectionFolder({ user_handle: 'my-user', workspace_handle: 'dev', folder_id: '<folder-id>' });
 ```
 
 **Input**
@@ -5934,7 +6325,7 @@ Get workspace process
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.workspaces.getUserWorkspaceProcess({});
+await corsair.turbotpipes.api.workspaces.getUserWorkspaceProcess({ user_handle: 'my-user', workspace_handle: 'dev', process_id: '<process-id>' });
 ```
 
 **Input**
@@ -5970,7 +6361,7 @@ Get workspace process logs
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.workspaces.getUserWorkspaceProcessLog({});
+await corsair.turbotpipes.api.workspaces.getUserWorkspaceProcessLog({ user_handle: 'my-user', workspace_handle: 'dev', process_id: '<process-id>' });
 ```
 
 **Input**
@@ -5980,22 +6371,27 @@ await corsair.turbotpipes.api.workspaces.getUserWorkspaceProcessLog({});
 | `user_handle` | `string` | Yes | — |
 | `workspace_handle` | `string` | Yes | — |
 | `process_id` | `string` | Yes | — |
-| `log_file` | `string` | Yes | — |
-| `content_type` | `string` | No | — |
+| `log_file` | `process` | No | — |
+| `content_type` | `jsonl` | No | — |
 
 
 
-**Output:** `object`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entries` | `object[]` | Yes | — |
 
 <AccordionGroup>
-<Accordion title="Output full type">
+<Accordion title="entries full type">
 
 ```ts
 {
-}
+}[]
 ```
 </Accordion>
 </AccordionGroup>
+
 
 
 ---
@@ -6009,7 +6405,7 @@ List org workspace processes
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.workspaces.listOrgWorkspaceProcesses({});
+await corsair.turbotpipes.api.workspaces.listOrgWorkspaceProcesses({ org_handle: 'my-org', workspace_handle: 'dev' });
 ```
 
 **Input**
@@ -6018,6 +6414,9 @@ await corsair.turbotpipes.api.workspaces.listOrgWorkspaceProcesses({});
 |------|------|----------|-------------|
 | `org_handle` | `string` | Yes | — |
 | `workspace_handle` | `string` | Yes | — |
+| `where` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `next_token` | `string` | No | — |
 
 
 
@@ -6051,7 +6450,7 @@ List user workspace aggregator connections
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.workspaces.listUserWorkspaceAggregatorConnections({});
+await corsair.turbotpipes.api.workspaces.listUserWorkspaceAggregatorConnections({ user_handle: 'my-user', workspace_handle: 'dev', aggregator_handle: 'aws_all' });
 ```
 
 **Input**
@@ -6061,6 +6460,8 @@ await corsair.turbotpipes.api.workspaces.listUserWorkspaceAggregatorConnections(
 | `user_handle` | `string` | Yes | — |
 | `workspace_handle` | `string` | Yes | — |
 | `aggregator_handle` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `next_token` | `string` | No | — |
 
 
 
@@ -6094,7 +6495,7 @@ List user workspace aggregators
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.workspaces.listUserWorkspaceAggregators({});
+await corsair.turbotpipes.api.workspaces.listUserWorkspaceAggregators({ user_handle: 'my-user', workspace_handle: 'dev' });
 ```
 
 **Input**
@@ -6103,6 +6504,8 @@ await corsair.turbotpipes.api.workspaces.listUserWorkspaceAggregators({});
 |------|------|----------|-------------|
 | `user_handle` | `string` | Yes | — |
 | `workspace_handle` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `next_token` | `string` | No | — |
 
 
 
@@ -6136,7 +6539,7 @@ List workspace audit logs
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.workspaces.listUserWorkspaceAuditLogs({});
+await corsair.turbotpipes.api.workspaces.listUserWorkspaceAuditLogs({ user_handle: 'my-user', workspace_handle: 'dev' });
 ```
 
 **Input**
@@ -6145,6 +6548,8 @@ await corsair.turbotpipes.api.workspaces.listUserWorkspaceAuditLogs({});
 |------|------|----------|-------------|
 | `user_handle` | `string` | Yes | — |
 | `workspace_handle` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `next_token` | `string` | No | — |
 
 
 
@@ -6178,7 +6583,7 @@ List user workspace connection associations
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.workspaces.listUserWorkspaceConnectionAssociations({});
+await corsair.turbotpipes.api.workspaces.listUserWorkspaceConnectionAssociations({ user_handle: 'my-user', workspace_handle: 'dev' });
 ```
 
 **Input**
@@ -6187,6 +6592,8 @@ await corsair.turbotpipes.api.workspaces.listUserWorkspaceConnectionAssociations
 |------|------|----------|-------------|
 | `user_handle` | `string` | Yes | — |
 | `workspace_handle` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `next_token` | `string` | No | — |
 
 
 
@@ -6220,7 +6627,7 @@ List user workspace connection folders
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.workspaces.listUserWorkspaceConnectionFolders({});
+await corsair.turbotpipes.api.workspaces.listUserWorkspaceConnectionFolders({ user_handle: 'my-user', workspace_handle: 'dev' });
 ```
 
 **Input**
@@ -6229,6 +6636,8 @@ await corsair.turbotpipes.api.workspaces.listUserWorkspaceConnectionFolders({});
 |------|------|----------|-------------|
 | `user_handle` | `string` | Yes | — |
 | `workspace_handle` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `next_token` | `string` | No | — |
 
 
 
@@ -6262,7 +6671,7 @@ List user workspace connections
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.workspaces.listUserWorkspaceConnections({});
+await corsair.turbotpipes.api.workspaces.listUserWorkspaceConnections({ user_handle: 'my-user', workspace_handle: 'dev' });
 ```
 
 **Input**
@@ -6271,6 +6680,8 @@ await corsair.turbotpipes.api.workspaces.listUserWorkspaceConnections({});
 |------|------|----------|-------------|
 | `user_handle` | `string` | Yes | — |
 | `workspace_handle` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `next_token` | `string` | No | — |
 
 
 
@@ -6304,7 +6715,7 @@ List user workspace connection tree
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.workspaces.listUserWorkspaceConnectionTree({});
+await corsair.turbotpipes.api.workspaces.listUserWorkspaceConnectionTree({ user_handle: 'my-user', workspace_handle: 'dev' });
 ```
 
 **Input**
@@ -6313,6 +6724,10 @@ await corsair.turbotpipes.api.workspaces.listUserWorkspaceConnectionTree({});
 |------|------|----------|-------------|
 | `user_handle` | `string` | Yes | — |
 | `workspace_handle` | `string` | Yes | — |
+| `prefix` | `string` | No | — |
+| `where` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `next_token` | `string` | No | — |
 
 
 
@@ -6340,7 +6755,7 @@ List workspace database logs
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.workspaces.listUserWorkspaceDatabaseLogs({});
+await corsair.turbotpipes.api.workspaces.listUserWorkspaceDatabaseLogs({ user_handle: 'my-user', workspace_handle: 'dev' });
 ```
 
 **Input**
@@ -6349,6 +6764,8 @@ await corsair.turbotpipes.api.workspaces.listUserWorkspaceDatabaseLogs({});
 |------|------|----------|-------------|
 | `user_handle` | `string` | Yes | — |
 | `workspace_handle` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `next_token` | `string` | No | — |
 
 
 
@@ -6382,7 +6799,7 @@ List workspace processes
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.workspaces.listUserWorkspaceProcesses({});
+await corsair.turbotpipes.api.workspaces.listUserWorkspaceProcesses({ user_handle: 'my-user', workspace_handle: 'dev' });
 ```
 
 **Input**
@@ -6391,6 +6808,9 @@ await corsair.turbotpipes.api.workspaces.listUserWorkspaceProcesses({});
 |------|------|----------|-------------|
 | `user_handle` | `string` | Yes | — |
 | `workspace_handle` | `string` | Yes | — |
+| `where` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `next_token` | `string` | No | — |
 
 
 
@@ -6424,7 +6844,7 @@ List user workspace usage
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.workspaces.listUserWorkspaceUsage({});
+await corsair.turbotpipes.api.workspaces.listUserWorkspaceUsage({ user_handle: 'my-user', workspace_handle: 'dev' });
 ```
 
 **Input**
@@ -6433,6 +6853,9 @@ await corsair.turbotpipes.api.workspaces.listUserWorkspaceUsage({});
 |------|------|----------|-------------|
 | `user_handle` | `string` | Yes | — |
 | `workspace_handle` | `string` | Yes | — |
+| `where` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `next_token` | `string` | No | — |
 
 
 
@@ -6466,7 +6889,12 @@ Test user workspace connection
 **Risk:** `read`
 
 ```ts
-await corsair.turbotpipes.api.workspaces.testUserWorkspaceConnection({});
+await corsair.turbotpipes.api.workspaces.testUserWorkspaceConnection({
+	user_handle: 'my-user',
+	workspace_handle: 'dev',
+	connection_handle: 'aws_prod',
+	plugin: 'aws',
+});
 ```
 
 **Input**
@@ -6476,6 +6904,18 @@ await corsair.turbotpipes.api.workspaces.testUserWorkspaceConnection({});
 | `user_handle` | `string` | Yes | — |
 | `workspace_handle` | `string` | Yes | — |
 | `connection_handle` | `string` | Yes | — |
+| `plugin` | `string` | Yes | — |
+| `config` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="config full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 
