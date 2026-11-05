@@ -2440,6 +2440,14 @@
                 ]
               },
               {
+                "group": "Mem0",
+                "pages": [
+                  "plugins/mem0/overview",
+                  "plugins/mem0/api",
+                  "plugins/mem0/database"
+                ]
+              },
+              {
                 "group": "Merriam-Webster",
                 "pages": [
                   "plugins/merriamwebsterdict/overview",
