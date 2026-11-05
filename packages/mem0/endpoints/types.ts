@@ -601,6 +601,145 @@ const EventsListResponseSchema = z.object({
 
 export type EventsListResponse = z.infer<typeof EventsListResponseSchema>;
 
+// ── webhooks.list ─────────────────────────────────────────────────────────
+
+// Mem0's docs and its TypeScript SDK place these on /api/v1/webhooks/projects/
+// {project_id}/ for create and list, and /api/v1/webhooks/{webhook_id}/ for
+// update and delete. The SDK is the reference used here; the docs' own cURL
+// samples disagree with each other.
+export const MEM0_WEBHOOK_EVENT_TYPES = [
+	'memory_add',
+	'memory_update',
+	'memory_delete',
+	'memory_categorize',
+	'ingest_job_completed',
+	'ingest_job_partially_completed',
+	'ingest_job_failed',
+	'ingest_job_cancelled',
+] as const;
+
+const WebhookEventTypeSchema = z.enum(MEM0_WEBHOOK_EVENT_TYPES);
+
+const ProjectIdInputSchema = z.object({
+	project_id: z
+		.string()
+		.min(1)
+		.describe(
+			'The project whose webhooks to read. Mem0 scopes webhooks to a project.',
+		),
+});
+
+export type ProjectIdInput = z.input<typeof ProjectIdInputSchema>;
+
+export const WebhookSchema = z
+	.object({
+		webhook_id: z.string(),
+		name: z.string().nullish(),
+		url: z.string().nullish(),
+		event_types: z.array(z.string()).nullish(),
+		owner: z
+			.string()
+			.nullish()
+			.describe('Username of the account that created the webhook.'),
+		is_active: z.boolean().nullish(),
+		project: z
+			.string()
+			.nullish()
+			.describe('Name of the project the webhook belongs to.'),
+		created_at: z.string().nullish(),
+		updated_at: z.string().nullish(),
+	})
+	.loose();
+
+export type Mem0Webhook = z.infer<typeof WebhookSchema>;
+
+const WebhooksListResponseSchema = z.object({
+	webhooks: z.array(WebhookSchema),
+});
+
+export type WebhooksListResponse = z.infer<typeof WebhooksListResponseSchema>;
+
+// ── webhooks.create ───────────────────────────────────────────────────────
+
+const WebhooksCreateInputSchema = z.object({
+	project_id: z
+		.string()
+		.min(1)
+		.describe('The project to register the webhook on.'),
+	name: z.string().min(1).describe('A label for the webhook.'),
+	url: z.string().min(1).describe('The HTTPS endpoint Mem0 posts events to.'),
+	event_types: z
+		.array(WebhookEventTypeSchema)
+		.min(1)
+		.describe(
+			'Events to subscribe to. Mem0 requires this: omitting it does not fall back to a default.',
+		),
+	is_active: z.boolean().optional().describe('Defaults to true on Mem0 side.'),
+});
+
+export type WebhooksCreateInput = z.input<typeof WebhooksCreateInputSchema>;
+
+export type WebhooksCreateResponse = Mem0Webhook;
+const WebhooksCreateResponseSchema = WebhookSchema;
+
+// ── webhooks.update ───────────────────────────────────────────────────────
+
+const WebhooksUpdateInputSchema = z
+	.object({
+		webhook_id: z.string().min(1).describe('The webhook to change.'),
+		name: z.string().min(1).optional().describe('The new label.'),
+		url: z.string().min(1).optional().describe('The new endpoint URL.'),
+		event_types: z
+			.array(WebhookEventTypeSchema)
+			.min(1)
+			.optional()
+			.describe('The new event subscription list, replacing the old one.'),
+	})
+	.refine(
+		(value) =>
+			value.name !== undefined ||
+			value.url !== undefined ||
+			value.event_types !== undefined,
+		{ message: 'Pass at least one of name, url or event_types.' },
+	);
+
+export type WebhooksUpdateInput = z.input<typeof WebhooksUpdateInputSchema>;
+
+const WebhooksUpdateResponseSchema = z
+	.object({
+		success: z.literal(true),
+		webhook_id: z.string(),
+		message: z.string().nullish(),
+		webhook: WebhookSchema.optional().describe(
+			'The webhook as it stands after the change, when Mem0 returns it.',
+		),
+	})
+	.loose();
+
+export type WebhooksUpdateResponse = z.infer<
+	typeof WebhooksUpdateResponseSchema
+>;
+
+// ── webhooks.delete ───────────────────────────────────────────────────────
+
+const WebhooksDeleteInputSchema = z.object({
+	webhook_id: z.string().min(1).describe('The webhook to remove.'),
+});
+
+export type WebhooksDeleteInput = z.input<typeof WebhooksDeleteInputSchema>;
+
+const WebhooksDeleteResponseSchema = z
+	.object({
+		success: z.literal(true),
+		webhook_id: z.string(),
+		message: z.string().nullish(),
+	})
+	.loose();
+
+export type WebhooksDeleteResponse = z.infer<
+	typeof WebhooksDeleteResponseSchema
+>;
+
 // ── Registry ──────────────────────────────────────────────────────────────
 
 export type Mem0EndpointInputs = {
@@ -616,6 +755,10 @@ export type Mem0EndpointInputs = {
 	memoriesBatchDelete: MemoriesBatchDeleteInput;
 	eventsGet: EventsGetInput;
 	eventsList: EventsListInput;
+	webhooksList: ProjectIdInput;
+	webhooksCreate: WebhooksCreateInput;
+	webhooksUpdate: WebhooksUpdateInput;
+	webhooksDelete: WebhooksDeleteInput;
 };
 
 export type Mem0EndpointOutputs = {
@@ -631,6 +774,10 @@ export type Mem0EndpointOutputs = {
 	memoriesBatchDelete: MemoriesBatchDeleteResponse;
 	eventsGet: EventsGetResponse;
 	eventsList: EventsListResponse;
+	webhooksList: WebhooksListResponse;
+	webhooksCreate: WebhooksCreateResponse;
+	webhooksUpdate: WebhooksUpdateResponse;
+	webhooksDelete: WebhooksDeleteResponse;
 };
 
 export const Mem0EndpointInputSchemas = {
@@ -646,6 +793,10 @@ export const Mem0EndpointInputSchemas = {
 	memoriesBatchDelete: MemoriesBatchDeleteInputSchema,
 	eventsGet: EventsGetInputSchema,
 	eventsList: EventsListInputSchema,
+	webhooksList: ProjectIdInputSchema,
+	webhooksCreate: WebhooksCreateInputSchema,
+	webhooksUpdate: WebhooksUpdateInputSchema,
+	webhooksDelete: WebhooksDeleteInputSchema,
 } as const;
 
 export const Mem0EndpointOutputSchemas = {
@@ -661,4 +812,8 @@ export const Mem0EndpointOutputSchemas = {
 	memoriesBatchDelete: BatchResponseSchema,
 	eventsGet: EventsGetResponseSchema,
 	eventsList: EventsListResponseSchema,
+	webhooksList: WebhooksListResponseSchema,
+	webhooksCreate: WebhooksCreateResponseSchema,
+	webhooksUpdate: WebhooksUpdateResponseSchema,
+	webhooksDelete: WebhooksDeleteResponseSchema,
 } as const;

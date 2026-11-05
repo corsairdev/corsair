@@ -11,7 +11,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
-import { Events, Memories } from './endpoints';
+import { Events, Memories, Webhooks } from './endpoints';
 import type {
 	Mem0EndpointInputs,
 	Mem0EndpointOutputs,
@@ -59,6 +59,10 @@ export type Mem0Endpoints = {
 	memoriesBatchDelete: Mem0Endpoint<'memoriesBatchDelete'>;
 	eventsGet: Mem0Endpoint<'eventsGet'>;
 	eventsList: Mem0Endpoint<'eventsList'>;
+	webhooksList: Mem0Endpoint<'webhooksList'>;
+	webhooksCreate: Mem0Endpoint<'webhooksCreate'>;
+	webhooksUpdate: Mem0Endpoint<'webhooksUpdate'>;
+	webhooksDelete: Mem0Endpoint<'webhooksDelete'>;
 };
 
 export const mem0EndpointsNested = {
@@ -77,6 +81,12 @@ export const mem0EndpointsNested = {
 	events: {
 		get: Events.get,
 		list: Events.list,
+	},
+	webhooks: {
+		list: Webhooks.list,
+		create: Webhooks.create,
+		update: Webhooks.update,
+		delete: Webhooks.remove,
 	},
 } as const;
 
@@ -128,6 +138,22 @@ export const mem0EndpointSchemas = {
 	'events.list': {
 		input: Mem0EndpointInputSchemas.eventsList,
 		output: Mem0EndpointOutputSchemas.eventsList,
+	},
+	'webhooks.list': {
+		input: Mem0EndpointInputSchemas.webhooksList,
+		output: Mem0EndpointOutputSchemas.webhooksList,
+	},
+	'webhooks.create': {
+		input: Mem0EndpointInputSchemas.webhooksCreate,
+		output: Mem0EndpointOutputSchemas.webhooksCreate,
+	},
+	'webhooks.update': {
+		input: Mem0EndpointInputSchemas.webhooksUpdate,
+		output: Mem0EndpointOutputSchemas.webhooksUpdate,
+	},
+	'webhooks.delete': {
+		input: Mem0EndpointInputSchemas.webhooksDelete,
+		output: Mem0EndpointOutputSchemas.webhooksDelete,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<typeof mem0EndpointsNested>;
 
@@ -191,6 +217,25 @@ export const mem0EndpointMeta = {
 		description:
 			'List recent events for the organization and project, page by page, for dashboards or for finding failed writes',
 	},
+	'webhooks.list': {
+		riskLevel: 'read',
+		description:
+			'List the webhooks registered on a project: each URL, its event subscriptions, and whether it is active',
+	},
+	'webhooks.create': {
+		riskLevel: 'write',
+		description:
+			'Register a URL to receive Mem0 events for a project, subscribing it to memory add, update, delete or categorize and the ingest job events',
+	},
+	'webhooks.update': {
+		riskLevel: 'write',
+		description:
+			"Change a webhook's label, URL or event subscriptions; the new event list replaces the old one",
+	},
+	'webhooks.delete': {
+		riskLevel: 'destructive',
+		description: 'Unregister a webhook so Mem0 stops posting events to its URL',
+	},
 } as const satisfies RequiredPluginEndpointMeta<typeof mem0EndpointsNested>;
 
 export type BaseMem0Plugin<T extends Mem0PluginOptions> = CorsairPlugin<
@@ -253,6 +298,7 @@ export type {
 	Mem0Memory,
 	Mem0Message,
 	Mem0SearchResult,
+	Mem0Webhook,
 	MemoriesAddInput,
 	MemoriesAddResponse,
 	MemoriesBatchDeleteInput,
@@ -272,4 +318,12 @@ export type {
 	MemoriesUpdateInput,
 	MemoriesUpdateResponse,
 	MemoryIdInput,
+	ProjectIdInput,
+	WebhooksCreateInput,
+	WebhooksCreateResponse,
+	WebhooksDeleteInput,
+	WebhooksDeleteResponse,
+	WebhooksListResponse,
+	WebhooksUpdateInput,
+	WebhooksUpdateResponse,
 } from './endpoints/types';
