@@ -176,7 +176,9 @@ const MemoriesSearchInputSchema = z.object({
 	fields: z
 		.array(z.string())
 		.optional()
-		.describe('Restrict the fields returned per memory.'),
+		.describe(
+			'Only these fields come back per memory. A memory without them is absent from the result, not null.',
+		),
 	categories: z
 		.array(z.string())
 		.optional()
@@ -272,7 +274,9 @@ const MemoriesListInputSchema = z.object({
 	fields: z
 		.array(z.string())
 		.optional()
-		.describe('Restrict the fields returned per memory.'),
+		.describe(
+			'Only these fields come back per memory. A memory without them is absent from the result, not null.',
+		),
 	keywords: z
 		.string()
 		.optional()
@@ -577,7 +581,14 @@ export const EventSchema = z
 			.describe('PENDING, RUNNING, FAILED or SUCCEEDED.'),
 		payload: JsonRecordSchema.nullish(),
 		metadata: JsonRecordSchema.nullish(),
-		results: z.array(JsonValueSchema).nullish(),
+		// Mem0 sends an array for ADD, SEARCH and GET_ALL, a single memory
+		// object for UPDATE, and null for DELETE and DELETE_ALL.
+		results: z
+			.union([z.array(JsonValueSchema), JsonRecordSchema])
+			.nullish()
+			.describe(
+				'An array for ADD, SEARCH and GET_ALL, one object for UPDATE, and null for a delete.',
+			),
 		created_at: z.string().nullish(),
 		updated_at: z.string().nullish(),
 		started_at: z.string().nullish(),
