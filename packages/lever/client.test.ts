@@ -3,6 +3,7 @@ import {
 	makeLeverRequest,
 	resolveLeverAuthorizationHeader,
 } from './client';
+import { errorHandlers } from './error-handlers';
 
 const TEST_KEY = 'test-key-not-a-credential';
 const realFetch = global.fetch;
@@ -97,5 +98,72 @@ describe('Lever binary downloads', () => {
 				'/files/1/download',
 			),
 		).rejects.toMatchObject({ status: 429, retryAfter: undefined });
+	});
+
+	it('hands the Retry-After delay to the retry strategy', async () => {
+		global.fetch = async () =>
+			new Response('', { status: 429, headers: { 'Retry-After': '7' } });
+		let error = new Error('download did not fail');
+		await makeLeverBinaryRequest(
+			{ key: TEST_KEY, options: {} },
+			'/files/1/download',
+		).catch((caught: Error) => {
+			error = caught;
+		});
+
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(true);
+		await expect(
+			errorHandlers.RATE_LIMIT_ERROR.handler(error),
+		).resolves.toEqual({ maxRetries: 5, headersRetryAfterMs: 7000 });
+	});
+
+	it('keeps non-UTF-8 bytes intact and sends the offer status filter', async () => {
+		const bytes = new Uint8Array([0x25, 0x50, 0x44, 0x46, 0xff, 0xfe, 0x00]);
+		let requestedUrl = '';
+		global.fetch = async (input) => {
+			requestedUrl = String(input);
+			return new Response(bytes, {
+				status: 200,
+				headers: { 'Content-Type': 'application/pdf' },
+			});
+		};
+
+		const result = await makeLeverBinaryRequest(
+			{ key: TEST_KEY, options: {} },
+			'/opportunities/opp-1/offers/offer-1/download',
+			{ query: { status: 'signed' } },
+		);
+
+		expect(requestedUrl).toBe(
+			'https://api.lever.co/v1/opportunities/opp-1/offers/offer-1/download?status=signed',
+		);
+		expect(Buffer.from(result.data, 'base64')).toEqual(Buffer.from(bytes));
+		expect(result.contentType).toBe('application/pdf');
+	});
+});
+
+describe('Lever write requests', () => {
+	it('puts perform_as in the query string of a POST', async () => {
+		let requestedUrl = '';
+		let requestBody = '';
+		global.fetch = async (input, init) => {
+			requestedUrl = String(input);
+			requestBody = String(init?.body);
+			return new Response('{"data":{}}', {
+				status: 201,
+				headers: { 'Content-Type': 'application/json' },
+			});
+		};
+
+		await makeLeverRequest({ key: TEST_KEY, options: {} }, '/opportunities', {
+			method: 'POST',
+			body: { name: 'Jane Doe' },
+			query: { perform_as: 'user-1', parse: undefined },
+		});
+
+		expect(requestedUrl).toBe(
+			'https://api.lever.co/v1/opportunities?perform_as=user-1',
+		);
+		expect(JSON.parse(requestBody)).toEqual({ name: 'Jane Doe' });
 	});
 });

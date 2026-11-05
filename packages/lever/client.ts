@@ -94,7 +94,9 @@ export async function makeLeverRequest<T>(
 		// option removal), so bodies are sent for every non-GET method.
 		body: method === 'GET' ? undefined : body,
 		mediaType: 'application/json; charset=utf-8',
-		query: method === 'GET' ? query : undefined,
+		// Writes carry query parameters too: Lever reads perform_as (and a few
+		// flags such as send_confirmation_email) from the URL on POST/PUT/DELETE.
+		query,
 	};
 
 	try {
@@ -124,10 +126,18 @@ export async function makeLeverRequest<T>(
 export async function makeLeverBinaryRequest(
 	ctx: { key: string; options?: { authType?: LeverAuthType } },
 	endpoint: string,
-	options: { headers?: Record<string, string> } = {},
+	options: {
+		headers?: Record<string, string>;
+		query?: Record<string, string | undefined>;
+	} = {},
 ): Promise<{ data: string; contentType: string }> {
 	const authType: LeverAuthType = ctx.options?.authType ?? 'api_key';
-	const response = await fetch(`${LEVER_API_BASE}${endpoint}`, {
+	const params = new URLSearchParams();
+	for (const [name, value] of Object.entries(options.query ?? {})) {
+		if (value !== undefined) params.append(name, value);
+	}
+	const search = params.size > 0 ? `?${params.toString()}` : '';
+	const response = await fetch(`${LEVER_API_BASE}${endpoint}${search}`, {
 		method: 'GET',
 		headers: {
 			Accept: 'application/octet-stream',
