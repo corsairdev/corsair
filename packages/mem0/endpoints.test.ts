@@ -257,6 +257,18 @@ describe('memories.search', () => {
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
+	it('rejects an entity key whose value is undefined', async () => {
+		await expect(
+			invoke(Memories.search, {
+				query: 'hobbies',
+				filters: { user_id: undefined },
+			}),
+		).rejects.toThrow(
+			'filters must include at least one of user_id, agent_id, app_id or run_id.',
+		);
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
 	it('rejects a top_k above the documented maximum', async () => {
 		await expect(
 			invoke(Memories.search, {
@@ -375,6 +387,17 @@ describe('memories.get', () => {
 			{ memoryId: 'a/b' },
 			'completed',
 		);
+	});
+
+	it('rejects a 200 whose body fails the output schema, without logging', async () => {
+		// A 200 with a body the schema cannot read is a provider bug, not an
+		// empty result, so it must throw and leave no completed event behind.
+		respond({ unexpected: 'shape' });
+
+		await expect(
+			invoke(Memories.get, { memory_id: 'ea925981' }),
+		).rejects.toThrow();
+		expect(mockLog).not.toHaveBeenCalled();
 	});
 
 	it('surfaces a 404 for an unknown memory', async () => {
@@ -554,6 +577,16 @@ describe('memories.deleteAll', () => {
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
+	it('rejects a null metadata value, which the query would drop', async () => {
+		await expect(
+			invoke(Memories.deleteAll, {
+				user_id: 'alice',
+				metadata: { tier: null },
+			}),
+		).rejects.toThrow('metadata values must be strings, numbers or booleans');
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
 	it('rejects an unfiltered delete before any request', async () => {
 		await expect(invoke(Memories.deleteAll, {})).rejects.toThrow(
 			'At least one filter is required. Mem0 rejects an unfiltered delete.',
@@ -589,6 +622,14 @@ describe('memories.history', () => {
 
 		expect(result).toEqual({ history: [] });
 	});
+
+	it('rejects a body that is not an array instead of calling it empty', async () => {
+		respond({ detail: 'unexpected' });
+
+		await expect(
+			invoke(Memories.history, { memory_id: 'ea925981' }),
+		).rejects.toThrow();
+	});
 });
 
 describe('memories.batchUpdate', () => {
@@ -618,6 +659,39 @@ describe('memories.batchUpdate', () => {
 			count: 2,
 			message: 'Successfully updated 2 memories',
 		});
+	});
+
+	it('never sends metadata, which Mem0 ignores on this endpoint', async () => {
+		respond(batchUpdated);
+
+		await invoke(Memories.batchUpdate, {
+			memories: [
+				{
+					memory_id: '285ed74b',
+					text: 'Watches football',
+					metadata: { tier: 'gold' },
+				},
+			],
+		});
+
+		const body = lastRequest().body as {
+			memories: Record<string, unknown>[];
+		};
+		// Mem0 documents metadata here but leaves the stored value untouched, so
+		// the schema drops it rather than implying a change that will not happen.
+		expect(body.memories[0]).toEqual({
+			memory_id: '285ed74b',
+			text: 'Watches football',
+		});
+	});
+
+	it('rejects an entry with no text, which Mem0 answers 400 for', async () => {
+		await expect(
+			invoke(Memories.batchUpdate, {
+				memories: [{ memory_id: '285ed74b', metadata: { tier: 'gold' } }],
+			}),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
 	it('rejects more than 1000 memories', async () => {
@@ -773,6 +847,14 @@ describe('webhooks.list', () => {
 		const result = await invoke(Webhooks.list, { project_id: 'proj_123' });
 
 		expect(result).toEqual({ webhooks: [] });
+	});
+
+	it('rejects a body that is not an array instead of calling it empty', async () => {
+		respond({ error: 'unexpected' });
+
+		await expect(
+			invoke(Webhooks.list, { project_id: 'proj_123' }),
+		).rejects.toThrow();
 	});
 
 	it('surfaces a 403 for a project the key cannot see', async () => {
