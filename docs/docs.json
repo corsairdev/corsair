@@ -1784,6 +1784,14 @@
                 ]
               },
               {
+                "group": "eSputnik",
+                "pages": [
+                  "plugins/esputnik/overview",
+                  "plugins/esputnik/api",
+                  "plugins/esputnik/database"
+                ]
+              },
+              {
                 "group": "Everhour",
                 "pages": [
                   "plugins/everhour/overview",
