@@ -283,6 +283,57 @@ describe('events.get', () => {
 		});
 	});
 
+	it('types the public onsale window and the presales as data', async () => {
+		respond(eventDetail);
+
+		// Called directly rather than through `invoke`: the concrete signature
+		// is what carries the output type into these annotations, so `tsc` fails
+		// the file if `sales.public.startDateTime` is still `unknown`.
+		const result = await Events.get({ key: API_KEY } as never, {
+			id: event.id,
+		});
+
+		const start: string | null | undefined =
+			result.sales?.public?.startDateTime;
+		const presale: string | null | undefined =
+			result.sales?.presales?.[0]?.name;
+		expect(start).toBe('2015-10-02T11:00:00Z');
+		expect(presale).toBe('American Express Presale');
+	});
+
+	it('types each classification level with its id and name', async () => {
+		respond(eventDetail);
+
+		const result = await Events.get({ key: API_KEY } as never, {
+			id: event.id,
+		});
+
+		// Same idea: strings, not `unknown`, so no narrowing is needed.
+		const segmentId: string | null | undefined =
+			result.classifications?.[0]?.segment?.id;
+		const genreName: string | null | undefined =
+			result.classifications?.[0]?.genre?.name;
+		expect(segmentId).toBe('KZFzniwnSyZfZ7v7nE');
+		expect(genreName).toBe('Golf');
+	});
+
+	it('types the nested genre and sub-genre levels of the tree', async () => {
+		respond(classificationsSearchResponse);
+
+		const result = await Classifications.search({ key: API_KEY } as never, {});
+
+		// Each level is a named type, so these read without a cast. The old
+		// recursive schema surfaced both as `lazy` in the docs and as `unknown`
+		// to a caller.
+		const genreName: string | null | undefined =
+			result.classifications[0]?.segment?._embedded?.genres?.[0]?.name;
+		const subGenreName: string | null | undefined =
+			result.classifications[0]?.segment?._embedded?.genres?.[0]?._embedded
+				?.subgenres?.[0]?.name;
+		expect(genreName).toBe('Magic & Illusion');
+		expect(subGenreName).toBe('Magic');
+	});
+
 	it.each([[{}], [{ id: '' }]])(
 		'rejects %j before calling Ticketmaster',
 		async (input) => {

@@ -78,22 +78,69 @@ export const ImageSchema = z
 export type TicketmasterImage = z.infer<typeof ImageSchema>;
 
 // `_links` is a map of either one link, one link per relation, or a list of
-// them, depending on the entity. It is passed through untouched.
+// them, depending on the entity. It is passed through untouched, because its
+// shape varies per relation and callers rarely read it.
+// unknown: every entity type puts a different set of relations here, so a
+// stricter type would have to enumerate them all and would still drift.
 const LinksSchema = z.record(z.string(), z.unknown()).nullish();
 
+/** One HAL link: `{ href, templated }`, as sent in `_links` and `outlets`. */
 const LinkRefSchema = z
 	.object({ href: z.string().nullish(), templated: z.boolean().nullish() })
 	.loose();
 
+/**
+ * The classification tree is two levels deep, not arbitrary: a segment holds
+ * genres, and a genre holds sub-genres, each a `{ id, name }` node. Spelling the
+ * two levels out keeps named types in the API docs and in IntelliSense, which a
+ * recursive `z.lazy` schema does not: the docs renderer prints it as `lazy`.
+ */
+export const ClassificationNodeSchema = z
+	.object({
+		id: z.string().nullish(),
+		name: z.string().nullish(),
+		locale: z.string().nullish(),
+		_links: LinksSchema,
+	})
+	.loose();
+
+/** A sub-genre: the bottom of the tree, so it holds no `_embedded`. */
+export type TicketmasterSubGenre = z.infer<typeof ClassificationNodeSchema>;
+
+/** A genre, which lists its sub-genres. */
+export const GenreNodeSchema = ClassificationNodeSchema.extend({
+	_embedded: z
+		.object({ subgenres: z.array(ClassificationNodeSchema).nullish() })
+		.loose()
+		.nullish(),
+}).loose();
+
+export type TicketmasterGenre = z.infer<typeof GenreNodeSchema>;
+
+/** A segment, which lists its genres. */
+export const SegmentNodeSchema = ClassificationNodeSchema.extend({
+	_embedded: z
+		.object({ genres: z.array(GenreNodeSchema).nullish() })
+		.loose()
+		.nullish(),
+}).loose();
+
+export type TicketmasterSegment = z.infer<typeof SegmentNodeSchema>;
+
+/**
+ * One entry of a classification response. Ticketmaster fills whichever levels
+ * the entry belongs to, so a segment entry has `segment`, a genre entry has
+ * `segment` and `genre`, and a sub-genre entry has all three.
+ */
 export const ClassificationSchema = z
 	.object({
 		primary: z.boolean().nullish(),
 		family: z.boolean().nullish(),
-		segment: LinkRefSchema.nullish(),
-		genre: LinkRefSchema.nullish(),
-		subGenre: LinkRefSchema.nullish(),
-		type: LinkRefSchema.nullish(),
-		subType: LinkRefSchema.nullish(),
+		segment: SegmentNodeSchema.nullish(),
+		genre: GenreNodeSchema.nullish(),
+		subGenre: ClassificationNodeSchema.nullish(),
+		type: ClassificationNodeSchema.nullish(),
+		subType: ClassificationNodeSchema.nullish(),
 	})
 	.loose();
 
@@ -217,10 +264,38 @@ const EventDatesSchema = z
 	})
 	.loose();
 
+/**
+ * The onsale window for an event. Ticketmaster names the public one `public`
+ * (the docs' examples show `sales.public.startDateTime`), and each presale
+ * carries its own name and window.
+ */
+const SaleWindowSchema = z
+	.object({
+		startDateTime: z.string().nullish(),
+		endDateTime: z.string().nullish(),
+		startTBD: z.boolean().nullish(),
+		startTBA: z.boolean().nullish(),
+	})
+	.loose();
+
+const PresaleSchema = z
+	.object({
+		name: z.string().nullish(),
+		description: z.string().nullish(),
+		url: z.string().nullish(),
+		startDateTime: z.string().nullish(),
+		endDateTime: z.string().nullish(),
+		startTBD: z.boolean().nullish(),
+		startTBA: z.boolean().nullish(),
+	})
+	.loose();
+
+export type TicketmasterSaleWindow = z.infer<typeof SaleWindowSchema>;
+
 const EventSalesSchema = z
 	.object({
-		publicSale: LinkRefSchema.nullish(),
-		presales: z.array(LinkRefSchema.loose()).nullish(),
+		public: SaleWindowSchema.nullish(),
+		presales: z.array(PresaleSchema).nullish(),
 	})
 	.loose();
 
@@ -608,38 +683,14 @@ export type VenuesGetResponse = z.infer<typeof VenuesGetResponseSchema>;
 
 // ── classifications.search ────────────────────────────────────────────────
 
-/** One level of the segment → genre → sub-genre tree, as the search returns it. */
-export const ClassificationNodeSchema = z
-	.object({
-		id: z.string().nullish(),
-		name: z.string().nullish(),
-		locale: z.string().nullish(),
-		_links: LinksSchema,
-		_embedded: z
-			.object({
-				// One level down: a segment holds genres, a genre holds subgenres.
-				genres: z.array(LinkRefSchema).nullish(),
-				subgenres: z.array(LinkRefSchema).nullish(),
-				subGenres: z.array(LinkRefSchema).nullish(),
-			})
-			.loose()
-			.nullish(),
-	})
-	.loose();
-
-export const ClassificationEntrySchema = z
-	.object({
-		id: z.string().nullish(),
-		segment: ClassificationNodeSchema.nullish(),
-		genre: ClassificationNodeSchema.nullish(),
-		subGenre: ClassificationNodeSchema.nullish(),
-		type: ClassificationNodeSchema.nullish(),
-		subType: ClassificationNodeSchema.nullish(),
-		primary: z.boolean().nullish(),
-		family: z.boolean().nullish(),
-		_links: LinksSchema,
-	})
-	.loose();
+/**
+ * The search returns the whole tree with each entry: the same node shape as
+ * `ClassificationSchema`, plus the entry's own `id`.
+ */
+export const ClassificationEntrySchema = ClassificationSchema.extend({
+	id: z.string().nullish(),
+	_links: LinksSchema,
+}).loose();
 
 export type TicketmasterClassificationEntry = z.infer<
 	typeof ClassificationEntrySchema

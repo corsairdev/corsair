@@ -25,6 +25,13 @@ export const event = {
 			startTBD: false,
 			endDateTime: '2016-03-06T23:00:00Z',
 		},
+		presales: [
+			{
+				name: 'American Express Presale',
+				startDateTime: '2015-09-20T14:00:00Z',
+				endDateTime: '2015-10-02T10:00:00Z',
+			},
+		],
 	},
 	dates: {
 		start: {
