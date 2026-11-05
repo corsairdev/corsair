@@ -90,7 +90,8 @@ await corsair.esignatures.api.contracts.create({ template_id: '4templ44-8888', s
 | `test` | `'yes' \| 'no'` | No | When yes, the contract is a demo and no sending fees are charged. |
 | `save_as_draft` | `'yes' \| 'no'` | No | When yes, the contract is a draft until `contracts.sendDraft` sends it. |
 | `placeholder_fields` | `object[]` | No | — |
-| `emails` | `object` | No | Overrides for the sign request email. |
+| `signer_fields` | `object[]` | No | Pre-fills Signer fields the signer completes. |
+| `emails` | `object` | No | Overrides for the sign request and signed-contract emails. |
 | `custom_branding` | `object` | No | — |
 
 <AccordionGroup>
@@ -124,12 +125,24 @@ await corsair.esignatures.api.contracts.create({ template_id: '4templ44-8888', s
 ```
 </Accordion>
 
+<Accordion title="signer_fields full type">
+
+```ts
+{
+  signer_field_id: string,
+  default_value?: string
+}[]
+```
+</Accordion>
+
 <Accordion title="emails full type">
 
 ```ts
 {
-  subject?: string,
-  text?: string,
+  signature_request_subject?: string,
+  signature_request_text?: string,
+  final_contract_subject?: string,
+  final_contract_text?: string,
   cc_email_addresses?: string[],
   reply_to?: string
 }
@@ -520,7 +533,10 @@ await corsair.esignatures.api.templates.get({ template_id: '4templ44-8888' });
   template_id?: string | null,
   title?: string | null,
   created_at?: string | null,
-  placeholder_fields?: Record<string, unknown>[] | null,
+  labels?: string[] | null,
+  last_contract_created_at?: string | null,
+  placeholder_keys?: string[] | null,
+  placeholder_fields?: string[] | null,
   signer_field_ids?: string[] | null
 }
 ```
