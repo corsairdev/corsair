@@ -57,6 +57,14 @@ function respond(body: unknown, status = 200) {
 	);
 }
 
+// A rejection can be any value, so it stays unknown until the caller asserts on
+// it. Narrowing here would hide a non-Mem0APIError failure, which is exactly
+// what a test should catch.
+// unknown: a rejected promise's reason has no static type.
+function rejection(promise: Promise<unknown>): Promise<unknown> {
+	return promise.catch((error: unknown) => error);
+}
+
 function lastRequest() {
 	const [url, init] = fetchMock.mock.calls.at(-1) as [string, RequestInit];
 	const parsed = new URL(url);
@@ -163,10 +171,12 @@ describe('memories.add', () => {
 	it('surfaces a 400 as a Mem0APIError', async () => {
 		respond(badRequest('Invalid input data.'), 400);
 
-		const error = await invoke(Memories.add, {
-			messages: [{ role: 'user', content: 'hello' }],
-			user_id: 'alice',
-		}).catch((e: unknown) => e);
+		const error = await rejection(
+			invoke(Memories.add, {
+				messages: [{ role: 'user', content: 'hello' }],
+				user_id: 'alice',
+			}),
+		);
 
 		expect(error).toBeInstanceOf(Mem0APIError);
 		expect((error as Mem0APIError).status).toBe(400);
@@ -370,8 +380,8 @@ describe('memories.get', () => {
 	it('surfaces a 404 for an unknown memory', async () => {
 		respond(memoryNotFound, 404);
 
-		const error = await invoke(Memories.get, { memory_id: 'missing' }).catch(
-			(e: unknown) => e,
+		const error = await rejection(
+			invoke(Memories.get, { memory_id: 'missing' }),
 		);
 
 		expect((error as Mem0APIError).status).toBe(404);
@@ -409,6 +419,7 @@ describe('memories.update', () => {
 			expiration_date: null,
 		});
 
+		// unknown: the serialized body is untyped JSON until fields are read.
 		const body = lastRequest().body as Record<string, unknown>;
 		expect(Object.hasOwn(body, 'expiration_date')).toBe(true);
 		expect(body.expiration_date).toBeNull();
@@ -422,6 +433,7 @@ describe('memories.update', () => {
 			text: 'A new fact',
 		});
 
+		// unknown: the serialized body is untyped JSON until fields are read.
 		const body = lastRequest().body as Record<string, unknown>;
 		expect(Object.hasOwn(body, 'expiration_date')).toBe(false);
 	});
@@ -675,6 +687,30 @@ describe('events.get', () => {
 		);
 	});
 
+	it('accepts a single-object result, which UPDATE events send', async () => {
+		respond({
+			...event,
+			event_type: 'UPDATE',
+			results: { id: 'ea925981', memory: 'User moved to Lisbon' },
+		});
+
+		const result = (await invoke(Events.get, { event_id: 'evt-1' })) as {
+			results: { memory: string };
+		};
+
+		expect(result.results.memory).toBe('User moved to Lisbon');
+	});
+
+	it('accepts a null result, which DELETE events send', async () => {
+		respond({ ...event, event_type: 'DELETE', results: null });
+
+		const result = (await invoke(Events.get, { event_id: 'evt-1' })) as {
+			results: unknown;
+		};
+
+		expect(result.results).toBeNull();
+	});
+
 	it('keeps a FAILED event readable with its error', async () => {
 		respond({ ...event, status: 'FAILED', error: 'Extraction failed' });
 
@@ -807,12 +843,14 @@ describe('webhooks.create', () => {
 	it('reports the first field error of a 400', async () => {
 		respond(webhookInvalid, 400);
 
-		const error = await invoke(Webhooks.create, {
-			project_id: 'proj_123',
-			name: 'Memory Logger',
-			url: 'https://your-app.example/webhook',
-			event_types: ['memory_add'],
-		}).catch((e: unknown) => e);
+		const error = await rejection(
+			invoke(Webhooks.create, {
+				project_id: 'proj_123',
+				name: 'Memory Logger',
+				url: 'https://your-app.example/webhook',
+				event_types: ['memory_add'],
+			}),
+		);
 
 		expect((error as Mem0APIError).message).toBe(
 			'Mem0 400: name: This field is required.',
@@ -854,6 +892,7 @@ describe('webhooks.update', () => {
 		const result = (await invoke(Webhooks.update, {
 			webhook_id: 'wh_123',
 			name: 'Memory Logger',
+			// unknown: the test only checks the passthrough exists, not its shape.
 		})) as { webhook?: unknown };
 
 		expect(result.webhook).toEqual(webhook);
