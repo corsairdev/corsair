@@ -120,6 +120,10 @@ export async function makeDnsfilterRequest<T>(
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
+		// The shared client defaults to encodeURI, which leaves `/`, `?` and `#`
+		// alone, so an id or domain such as `1/../../api_keys` would reach a
+		// different route. Encode every path value as a single segment.
+		ENCODE_PATH: encodeURIComponent,
 		// No TOKEN: the shared client would send `Bearer <key>`.
 		HEADERS: {
 			Accept: 'application/json',

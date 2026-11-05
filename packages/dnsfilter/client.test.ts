@@ -52,6 +52,7 @@ function lastRequestCall() {
 			BASE: string;
 			// Asserted to be absent; typing it would imply the transport sends one.
 			TOKEN?: unknown;
+			ENCODE_PATH?: (value: string) => string;
 			HEADERS: Record<string, string>;
 		},
 		{
@@ -98,6 +99,18 @@ describe('makeDnsfilterRequest', () => {
 		const [, options] = lastRequestCall();
 		expect(options.url).toBe('/v1/networks/{id}');
 		expect(options.path).toEqual({ id: 42 });
+	});
+
+	it('encodes each path value as one segment', async () => {
+		await makeDnsfilterRequest('/v1/notes/{resource}/{id}/{domain}', 'k', {
+			path: { resource: 'networks', id: 1, domain: '../../api_keys?x=#y' },
+		});
+
+		const [config] = lastRequestCall();
+		expect(config.ENCODE_PATH).toBe(encodeURIComponent);
+		expect(config.ENCODE_PATH?.('../../api_keys?x=#y')).toBe(
+			'..%2F..%2Fapi_keys%3Fx%3D%23y',
+		);
 	});
 
 	it('keeps nested pagination objects for the shared serializer', async () => {
