@@ -34,6 +34,106 @@ examples:
             url: https://example.com/guide
             lang: en
 apiExamples:
+  collections.list: {}
+  collections.get:
+    collectionName: docs
+  collections.exists:
+    collectionName: docs
+  collections.update:
+    collectionName: docs
+    optimizers_config:
+      indexing_threshold: 20000
+  collections.delete:
+    collectionName: docs_old
+  aliases.list: {}
+  aliases.listForCollection:
+    collectionName: docs
+  payloadIndexes.create:
+    collectionName: docs
+    field_name: lang
+    field_schema:
+      type: keyword
+  payloadIndexes.delete:
+    collectionName: docs
+    fieldName: lang
+  points.upsert:
+    collectionName: docs
+    points:
+      - id: 1
+        vector: [0.12, 0.08, 0.91, 0.33]
+        payload:
+          url: https://example.com/guide
+          lang: en
+  points.get:
+    collectionName: docs
+    ids: [1, 2]
+    with_payload: true
+  points.delete:
+    collectionName: docs
+    points: [1, 2]
+  points.count:
+    collectionName: docs
+    filter:
+      must:
+        - key: lang
+          match:
+            value: en
+    exact: true
+  points.setPayload:
+    collectionName: docs
+    payload:
+      reviewed: true
+    points: [1]
+  points.overwritePayload:
+    collectionName: docs
+    payload:
+      url: https://example.com/guide
+      lang: de
+    points: [1]
+  points.deletePayload:
+    collectionName: docs
+    keys: [reviewed]
+    points: [1]
+  points.clearPayload:
+    collectionName: docs
+    filter:
+      must:
+        - key: lang
+          match:
+            value: en
+  points.updateVectors:
+    collectionName: docs
+    points:
+      - id: 1
+        vector:
+          dense: [0.12, 0.08, 0.91, 0.33]
+  points.deleteVectors:
+    collectionName: docs
+    vector: [bm25]
+    points: [1]
+  query.points:
+    collectionName: docs
+    query: [0.12, 0.08, 0.91, 0.33]
+    limit: 5
+    with_payload: true
+  query.batch:
+    collectionName: docs
+    searches:
+      - query: [0.12, 0.08, 0.91, 0.33]
+        limit: 3
+      - query: 1
+        limit: 3
+  query.facet:
+    collectionName: docs
+    key: lang
+    exact: true
+  snapshots.list:
+    collectionName: docs
+  snapshots.create:
+    collectionName: docs
+  snapshots.delete:
+    collectionName: docs
+    snapshotName: docs-2026-11-05-20-09-51.snapshot
   collections.create:
     collectionName: docs
     vectors:

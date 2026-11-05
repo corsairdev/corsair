@@ -1,12 +1,11 @@
 ---
 title: Database
-description: "Qdrant local sync: searchable entities, `.search()` filters, and operators."
+description: "Qdrant returns live API data and stores no local entities."
 ---
 
-The Qdrant plugin syncs data locally. Use `corsair.qdrant.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+The Qdrant plugin returns live API data and does not sync or store entities locally. No local `.search()` operations are available. Each call logs a `qdrant.<group>.<operation>` event that records only the collection name.
 
 <Info>
 **New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
 </Info>
-
 

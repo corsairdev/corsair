@@ -57,7 +57,7 @@ List the aliases that point to one collection
 **Risk:** `read`
 
 ```ts
-await corsair.qdrant.api.aliases.listForCollection({});
+await corsair.qdrant.api.aliases.listForCollection({ collectionName: 'docs' });
 ```
 
 **Input**
@@ -198,7 +198,7 @@ await corsair.qdrant.api.collections.create({
 {
   size: number,
   distance: Cosine | Euclid | Dot | Manhattan,
-  datatype?: float32 | float16 | uint8 | turbo4,
+  datatype?: float32 | float16 | uint8 | turbo4 | turbo8 | turbo16,
   on_disk?: boolean,
   multivector_config?: {
     comparator: max_sim
@@ -297,7 +297,7 @@ Delete a collection and every point stored in it
 **Risk:** `destructive`
 
 ```ts
-await corsair.qdrant.api.collections.delete({});
+await corsair.qdrant.api.collections.delete({ collectionName: 'docs_old' });
 ```
 
 **Input**
@@ -323,7 +323,7 @@ Check whether a collection with the given name exists
 **Risk:** `read`
 
 ```ts
-await corsair.qdrant.api.collections.exists({});
+await corsair.qdrant.api.collections.exists({ collectionName: 'docs' });
 ```
 
 **Input**
@@ -353,7 +353,7 @@ Get a collection’s status, point counts, vector configuration and payload inde
 **Risk:** `read`
 
 ```ts
-await corsair.qdrant.api.collections.get({});
+await corsair.qdrant.api.collections.get({ collectionName: 'docs' });
 ```
 
 **Input**
@@ -368,8 +368,8 @@ await corsair.qdrant.api.collections.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `status` | `green \| yellow \| grey \| red` | Yes | — |
-| `optimizer_status` | `object` | Yes | — |
+| `status` | `string` | Yes | green \| yellow \| grey \| red |
+| `optimizer_status` | `object` | Yes | "ok", or &#123; error &#125; when optimizers failed |
 | `points_count` | `number` | No | — |
 | `indexed_vectors_count` | `number` | No | — |
 | `segments_count` | `number` | Yes | — |
@@ -380,7 +380,7 @@ await corsair.qdrant.api.collections.get({});
 <Accordion title="optimizer_status full type">
 
 ```ts
-ok | {
+string | {
   error: string
 }
 ```
@@ -452,7 +452,10 @@ Update a collection’s vector, HNSW, optimizer, quantization or strict-mode par
 **Risk:** `write`
 
 ```ts
-await corsair.qdrant.api.collections.update({});
+await corsair.qdrant.api.collections.update({
+	collectionName: 'docs',
+	optimizers_config: { indexing_threshold: 20000 },
+});
 ```
 
 **Input**
@@ -554,7 +557,11 @@ Index a payload field (keyword, integer, float, geo, text, bool, datetime, uuid)
 **Risk:** `write`
 
 ```ts
-await corsair.qdrant.api.payloadIndexes.create({});
+await corsair.qdrant.api.payloadIndexes.create({
+	collectionName: 'docs',
+	field_name: 'lang',
+	field_schema: { type: 'keyword' },
+});
 ```
 
 **Input**
@@ -601,7 +608,7 @@ Remove the index on a payload field
 **Risk:** `destructive`
 
 ```ts
-await corsair.qdrant.api.payloadIndexes.delete({});
+await corsair.qdrant.api.payloadIndexes.delete({ collectionName: 'docs', fieldName: 'lang' });
 ```
 
 **Input**
@@ -638,7 +645,15 @@ Remove every payload key from points selected by ID list or filter
 **Risk:** `destructive`
 
 ```ts
-await corsair.qdrant.api.points.clearPayload({});
+await corsair.qdrant.api.points.clearPayload({
+	collectionName: 'docs',
+	filter: {
+		must: [{
+			key: 'lang',
+			match: { value: 'en' },
+		}],
+	},
+});
 ```
 
 **Input**
@@ -709,7 +724,16 @@ Count the points that match a filter, exactly or approximately
 **Risk:** `read`
 
 ```ts
-await corsair.qdrant.api.points.count({});
+await corsair.qdrant.api.points.count({
+	collectionName: 'docs',
+	filter: {
+		must: [{
+			key: 'lang',
+			match: { value: 'en' },
+		}],
+	},
+	exact: true,
+});
 ```
 
 **Input**
@@ -778,7 +802,10 @@ Delete points selected by ID list or by filter
 **Risk:** `destructive`
 
 ```ts
-await corsair.qdrant.api.points.delete({});
+await corsair.qdrant.api.points.delete({
+	collectionName: 'docs',
+	points: [1, 2],
+});
 ```
 
 **Input**
@@ -849,7 +876,11 @@ Remove specific payload keys from points selected by ID list or filter
 **Risk:** `destructive`
 
 ```ts
-await corsair.qdrant.api.points.deletePayload({});
+await corsair.qdrant.api.points.deletePayload({
+	collectionName: 'docs',
+	keys: ['reviewed'],
+	points: [1],
+});
 ```
 
 **Input**
@@ -921,7 +952,11 @@ Remove named vectors from points selected by ID list or filter
 **Risk:** `destructive`
 
 ```ts
-await corsair.qdrant.api.points.deleteVectors({});
+await corsair.qdrant.api.points.deleteVectors({
+	collectionName: 'docs',
+	vector: ['bm25'],
+	points: [1],
+});
 ```
 
 **Input**
@@ -993,7 +1028,11 @@ Retrieve points by ID, optionally with their payloads and vectors
 **Risk:** `read`
 
 ```ts
-await corsair.qdrant.api.points.get({});
+await corsair.qdrant.api.points.get({
+	collectionName: 'docs',
+	ids: [1, 2],
+	with_payload: true,
+});
 ```
 
 **Input**
@@ -1064,7 +1103,11 @@ Replace the whole payload of points selected by ID list or filter
 **Risk:** `destructive`
 
 ```ts
-await corsair.qdrant.api.points.overwritePayload({});
+await corsair.qdrant.api.points.overwritePayload({
+	collectionName: 'docs',
+	payload: { url: 'https://example.com/guide', lang: 'de' },
+	points: [1],
+});
 ```
 
 **Input**
@@ -1267,7 +1310,11 @@ Merge payload keys into points selected by ID list or filter, optionally under a
 **Risk:** `write`
 
 ```ts
-await corsair.qdrant.api.points.setPayload({});
+await corsair.qdrant.api.points.setPayload({
+	collectionName: 'docs',
+	payload: { reviewed: true },
+	points: [1],
+});
 ```
 
 **Input**
@@ -1348,7 +1395,15 @@ Replace specific named vectors on existing points, keeping the others
 **Risk:** `write`
 
 ```ts
-await corsair.qdrant.api.points.updateVectors({});
+await corsair.qdrant.api.points.updateVectors({
+	collectionName: 'docs',
+	points: [{
+		id: 1,
+		vector: {
+			dense: [0.12, 0.08, 0.91, 0.33],
+		},
+	}],
+});
 ```
 
 **Input**
@@ -1432,7 +1487,14 @@ Insert or replace points with their vectors and payloads, waiting for the write 
 **Risk:** `write`
 
 ```ts
-await corsair.qdrant.api.points.upsert({});
+await corsair.qdrant.api.points.upsert({
+	collectionName: 'docs',
+	points: [{
+		id: 1,
+		vector: [0.12, 0.08, 0.91, 0.33],
+		payload: { url: 'https://example.com/guide', lang: 'en' },
+	}],
+});
 ```
 
 **Input**
@@ -1521,7 +1583,13 @@ Run several universal queries against one collection in a single request
 **Risk:** `read`
 
 ```ts
-await corsair.qdrant.api.query.batch({});
+await corsair.qdrant.api.query.batch({
+	collectionName: 'docs',
+	searches: [{
+		query: [0.12, 0.08, 0.91, 0.33],
+		limit: 3,
+	}, { query: 1, limit: 3 }],
+});
 ```
 
 **Input**
@@ -1623,7 +1691,7 @@ Count points per distinct value of an indexed payload field
 **Risk:** `read`
 
 ```ts
-await corsair.qdrant.api.query.facet({});
+await corsair.qdrant.api.query.facet({ collectionName: 'docs', key: 'lang', exact: true });
 ```
 
 **Input**
@@ -1724,7 +1792,7 @@ await corsair.qdrant.api.query.groups({
 | `query` | `object` | No | — |
 | `using` | `string` | No | Named vector to search |
 | `filter` | `object` | No | — |
-| `params` | `object` | No | Search params, e.g. { hnsw_ef, exact } |
+| `params` | `object` | No | Search params, e.g. &#123; hnsw_ef, exact &#125; |
 | `score_threshold` | `number` | No | — |
 | `limit` | `number` | No | — |
 | `with_payload` | `object` | No | — |
@@ -1873,7 +1941,12 @@ Universal query: nearest-neighbour, hybrid fusion with prefetch, recommend, disc
 **Risk:** `read`
 
 ```ts
-await corsair.qdrant.api.query.points({});
+await corsair.qdrant.api.query.points({
+	collectionName: 'docs',
+	query: [0.12, 0.08, 0.91, 0.33],
+	limit: 5,
+	with_payload: true,
+});
 ```
 
 **Input**
@@ -1885,7 +1958,7 @@ await corsair.qdrant.api.query.points({});
 | `query` | `object` | No | — |
 | `using` | `string` | No | Named vector to search |
 | `filter` | `object` | No | — |
-| `params` | `object` | No | Search params, e.g. { hnsw_ef, exact } |
+| `params` | `object` | No | Search params, e.g. &#123; hnsw_ef, exact &#125; |
 | `score_threshold` | `number` | No | — |
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
@@ -2013,7 +2086,7 @@ Create a snapshot of a collection on the node and wait for it to finish
 **Risk:** `write`
 
 ```ts
-await corsair.qdrant.api.snapshots.create({});
+await corsair.qdrant.api.snapshots.create({ collectionName: 'docs' });
 ```
 
 **Input**
@@ -2046,7 +2119,7 @@ Delete a collection snapshot from the node
 **Risk:** `destructive`
 
 ```ts
-await corsair.qdrant.api.snapshots.delete({});
+await corsair.qdrant.api.snapshots.delete({ collectionName: 'docs', snapshotName: 'docs-2026-11-05-20-09-51.snapshot' });
 ```
 
 **Input**
@@ -2072,7 +2145,7 @@ List the snapshots stored for a collection
 **Risk:** `read`
 
 ```ts
-await corsair.qdrant.api.snapshots.list({});
+await corsair.qdrant.api.snapshots.list({ collectionName: 'docs' });
 ```
 
 **Input**
