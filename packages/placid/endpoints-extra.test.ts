@@ -71,6 +71,36 @@ describe('templates', () => {
 		expect(url).toContain('order_by=title-asc');
 	});
 
+	it('requests the next page from a whole links.next URL', async () => {
+		respond(templateList);
+
+		await Templates.list(contextFor(), {
+			cursor: 'https://api.placid.app/api/rest/templates?cursor=abc123',
+		});
+
+		const [url] = lastCall();
+		// Only the token travels; the URL is not nested inside a query value.
+		expect(url).toBe('https://api.placid.app/api/rest/templates?cursor=abc123');
+	});
+
+	it('accepts a bare cursor token', async () => {
+		respond(templateList);
+
+		await Templates.list(contextFor(), { cursor: 'abc123' });
+
+		expect(lastCall()[0]).toBe(
+			'https://api.placid.app/api/rest/templates?cursor=abc123',
+		);
+	});
+
+	it('omits the cursor on a first page', async () => {
+		respond(templateList);
+
+		await Templates.list(contextFor(), {});
+
+		expect(lastCall()[0]).toBe('https://api.placid.app/api/rest/templates');
+	});
+
 	it('reads the dynamic layers of a template', async () => {
 		respond(template);
 
@@ -166,6 +196,18 @@ describe('collections', () => {
 
 		expect(result.data[0]?.id).toBe('col_1234');
 		expect(lastCall()[0]).toContain('per_page=20');
+	});
+
+	it('pages collections by cursor', async () => {
+		respond(collectionList);
+
+		await Collections.list(contextFor(), {
+			cursor: 'https://api.placid.app/api/rest/collections?cursor=xyz',
+		});
+
+		expect(lastCall()[0]).toBe(
+			'https://api.placid.app/api/rest/collections?cursor=xyz',
+		);
 	});
 
 	it('creates a collection with its templates', async () => {
@@ -286,6 +328,20 @@ describe('fonts', () => {
 		await Fonts.list(contextFor(), {});
 
 		expect(lastCall()[0]).toBe('https://api.placid.app/api/rest/fonts');
+	});
+
+	it('reads one font by its uuid', async () => {
+		respond(font);
+
+		const result = await Fonts.get(contextFor(), {
+			uuid: 'f1abc123def456',
+		});
+
+		expect(result.uuid).toBe('f1abc123def456');
+		expect(result.title).toBe('Helvetica Neue');
+		const [url, init] = lastCall();
+		expect(url).toBe('https://api.placid.app/api/rest/fonts/f1abc123def456');
+		expect(init.method).toBe('GET');
 	});
 
 	it('uploads a font with the required terms acceptance', async () => {

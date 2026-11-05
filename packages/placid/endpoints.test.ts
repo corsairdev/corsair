@@ -172,6 +172,18 @@ describe('pdfs', () => {
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
+	it('reads a finished PDF URL', async () => {
+		respond({ ...pdfQueued, status: 'finished', pdf_url: 'https://x/y.pdf' });
+
+		const result = await Pdfs.get(contextFor(), { id: 2 });
+
+		expect(result.status).toBe('finished');
+		expect(result.pdf_url).toBe('https://x/y.pdf');
+		const [url, init] = lastCall();
+		expect(url).toBe('https://api.placid.app/api/rest/pdfs/2');
+		expect(init.method).toBe('GET');
+	});
+
 	it('deletes a PDF', async () => {
 		respondEmpty(204);
 
@@ -216,6 +228,22 @@ describe('videos', () => {
 			}),
 		).rejects.toThrow();
 		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('reads a finished video URL', async () => {
+		respond({
+			...videoQueued,
+			status: 'finished',
+			video_url: 'https://x/y.mp4',
+		});
+
+		const result = await Videos.get(contextFor(), { id: 3 });
+
+		expect(result.status).toBe('finished');
+		expect(result.video_url).toBe('https://x/y.mp4');
+		const [url, init] = lastCall();
+		expect(url).toBe('https://api.placid.app/api/rest/videos/3');
+		expect(init.method).toBe('GET');
 	});
 
 	it('deletes a video', async () => {
