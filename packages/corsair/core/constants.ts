@@ -163,6 +163,7 @@ export const BaseProviders = [
 	'cloudinary',
 	'coassemble',
 	'coda',
+	'codacy',
 	'codeinterpreter',
 	'cody',
 	'coinbase',
@@ -588,6 +589,7 @@ export const ProviderDisplayNames = {
 	cloudinary: 'Cloudinary',
 	coassemble: 'Coassemble',
 	coda: 'Coda',
+	codacy: 'Codacy',
 	codeinterpreter: 'CodeInterpreter',
 	cody: 'Cody',
 	coinbase: 'Coinbase',
@@ -1018,6 +1020,7 @@ export type AllProviders =
 	| 'cloudinary'
 	| 'coassemble'
 	| 'coda'
+	| 'codacy'
 	| 'codeinterpreter'
 	| 'cody'
 	| 'coinbase'
