@@ -12,6 +12,7 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
+import { AuthMissingError, getOAuthAccessToken } from 'corsair/core';
 import {
 	addOpportunityLinks,
 	addOpportunitySources,
@@ -887,6 +888,49 @@ const validatedLeverEndpointsNested = withLeverSchemas(leverEndpointsNested);
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
+// Lever OAuth access tokens expire after one hour; the refresh token (granted
+// with offline_access) mints new ones at the same token endpoint.
+const LEVER_OAUTH_TOKEN_URL = 'https://auth.lever.co/oauth/token';
+
+const leverOAuthConfig = {
+	providerName: 'Lever',
+	authUrl: 'https://auth.lever.co/authorize',
+	tokenUrl: LEVER_OAUTH_TOKEN_URL,
+	// write:admin scopes include read access for the same resource.
+	scopes: [
+		'offline_access',
+		'opportunities:write:admin',
+		'applications:read:admin',
+		'archive_reasons:read:admin',
+		'audit_events:read:admin',
+		'contact:write:admin',
+		'diversity_surveys:read:admin',
+		'eeo_responses:read:admin',
+		'eeo_responses_pii:read:admin',
+		'feedback:write:admin',
+		'feedback_templates:write:admin',
+		'files:write:admin',
+		'forms:write:admin',
+		'form_templates:write:admin',
+		'interviews:write:admin',
+		'notes:write:admin',
+		'offers:read:admin',
+		'panels:write:admin',
+		'postings:write:admin',
+		'referrals:read:admin',
+		'requisitions:write:admin',
+		'requisition_fields:write:admin',
+		'resumes:read:admin',
+		'sources:read:admin',
+		'stages:read:admin',
+		'tags:read:admin',
+		'users:write:admin',
+		'webhooks:write:admin',
+	],
+	// Lever's authorize endpoint rejects requests without the API audience.
+	authParams: { audience: 'https://api.lever.co/v1/' },
+};
+
 const leverEndpointMeta = {
 	'opportunities.list': {
 		riskLevel: 'read',
@@ -1340,6 +1384,7 @@ export function lever<const T extends LeverPluginOptions>(
 	return {
 		id: 'lever',
 		authConfig: leverAuthConfig,
+		oauthConfig: leverOAuthConfig,
 		schema: LeverSchema,
 		options: options,
 		hooks: options.hooks,
@@ -1358,12 +1403,19 @@ export function lever<const T extends LeverPluginOptions>(
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				return res ?? '';
+				if (!res) {
+					throw new AuthMissingError('lever', 'api_key');
+				}
+				return res;
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const res = await ctx.keys.get_access_token();
-				return res ?? '';
+				// Refreshes the one-hour access token when it has expired instead
+				// of returning a stale one.
+				return getOAuthAccessToken(ctx, {
+					plugin: 'lever',
+					tokenUrl: LEVER_OAUTH_TOKEN_URL,
+				});
 			}
 
 			return '';
