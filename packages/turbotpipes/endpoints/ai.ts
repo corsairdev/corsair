@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeTurbotPipesRequest } from '../client';
+import { makeTurbotPipesRequest, pathSegment } from '../client';
 import type { TurbotPipesEndpoints } from '../index';
 import type { TurbotPipesEndpointOutputs } from './types';
 
@@ -12,7 +12,7 @@ export const createUserAiKey: TurbotPipesEndpoints['createUserAiKey'] = async (
 	void _rest;
 	const response = await makeTurbotPipesRequest<
 		TurbotPipesEndpointOutputs['createUserAiKey']
-	>(`user/${user_handle}/ai/key`, ctx.key, {
+	>(`user/${pathSegment(user_handle)}/ai/key`, ctx.key, {
 		method: 'POST',
 		body: { provider, key },
 	});
@@ -32,9 +32,13 @@ export const getUserAiKey: TurbotPipesEndpoints['getUserAiKey'] = async (
 ) => {
 	const response = await makeTurbotPipesRequest<
 		TurbotPipesEndpointOutputs['getUserAiKey']
-	>(`user/${input.user_handle}/ai/key/${input.provider}`, ctx.key, {
-		method: 'GET',
-	});
+	>(
+		`user/${pathSegment(input.user_handle)}/ai/key/${pathSegment(input.provider)}`,
+		ctx.key,
+		{
+			method: 'GET',
+		},
+	);
 	await logEventFromContext(
 		ctx,
 		'turbotpipes.ai.get_user_key',
@@ -50,7 +54,9 @@ export const listUserAiKeys: TurbotPipesEndpoints['listUserAiKeys'] = async (
 ) => {
 	const response = await makeTurbotPipesRequest<
 		TurbotPipesEndpointOutputs['listUserAiKeys']
-	>(`user/${input.user_handle}/ai/key`, ctx.key, { method: 'GET' });
+	>(`user/${pathSegment(input.user_handle)}/ai/key`, ctx.key, {
+		method: 'GET',
+	});
 	await logEventFromContext(
 		ctx,
 		'turbotpipes.ai.list_user_keys',
@@ -67,10 +73,14 @@ export const updateUserAiKey: TurbotPipesEndpoints['updateUserAiKey'] = async (
 	const { user_handle, provider, key } = input;
 	const response = await makeTurbotPipesRequest<
 		TurbotPipesEndpointOutputs['updateUserAiKey']
-	>(`user/${user_handle}/ai/key/${provider}`, ctx.key, {
-		method: 'PATCH',
-		body: { key },
-	});
+	>(
+		`user/${pathSegment(user_handle)}/ai/key/${pathSegment(provider)}`,
+		ctx.key,
+		{
+			method: 'PATCH',
+			body: { key },
+		},
+	);
 	// Log only identifiers; the AI provider key must never persist in event storage.
 	await logEventFromContext(
 		ctx,
@@ -88,10 +98,14 @@ export const testUserAiKey: TurbotPipesEndpoints['testUserAiKey'] = async (
 	const { user_handle, provider, key } = input;
 	const response = await makeTurbotPipesRequest<
 		TurbotPipesEndpointOutputs['testUserAiKey']
-	>(`user/${user_handle}/ai/key/${provider}/test`, ctx.key, {
-		method: 'POST',
-		body: { key },
-	});
+	>(
+		`user/${pathSegment(user_handle)}/ai/key/${pathSegment(provider)}/test`,
+		ctx.key,
+		{
+			method: 'POST',
+			body: { key },
+		},
+	);
 	// Log only identifiers; the AI provider key must never persist in event storage.
 	await logEventFromContext(
 		ctx,
@@ -107,7 +121,7 @@ export const deleteOrgWorkspaceConversation: TurbotPipesEndpoints['deleteOrgWork
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['deleteOrgWorkspaceConversation']
 		>(
-			`org/${input.org_handle}/workspace/${input.workspace_handle}/ai/conversation/${input.conversation_id}`,
+			`org/${pathSegment(input.org_handle)}/workspace/${pathSegment(input.workspace_handle)}/ai/conversation/${pathSegment(input.conversation_id)}`,
 			ctx.key,
 			{ method: 'DELETE' },
 		);
@@ -125,7 +139,7 @@ export const getUserWorkspaceConversation: TurbotPipesEndpoints['getUserWorkspac
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['getUserWorkspaceConversation']
 		>(
-			`user/${input.user_handle}/workspace/${input.workspace_handle}/ai/conversation/${input.conversation_id}`,
+			`user/${pathSegment(input.user_handle)}/workspace/${pathSegment(input.workspace_handle)}/ai/conversation/${pathSegment(input.conversation_id)}`,
 			ctx.key,
 			{ method: 'GET' },
 		);
@@ -144,7 +158,7 @@ export const updateUserWorkspaceConversation: TurbotPipesEndpoints['updateUserWo
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['updateUserWorkspaceConversation']
 		>(
-			`user/${user_handle}/workspace/${workspace_handle}/ai/conversation/${conversation_id}`,
+			`user/${pathSegment(user_handle)}/workspace/${pathSegment(workspace_handle)}/ai/conversation/${pathSegment(conversation_id)}`,
 			ctx.key,
 			{ method: 'PATCH', body: { title } },
 		);
@@ -162,7 +176,7 @@ export const listUserWorkspaceConversations: TurbotPipesEndpoints['listUserWorks
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['listUserWorkspaceConversations']
 		>(
-			`user/${input.user_handle}/workspace/${input.workspace_handle}/ai/conversation`,
+			`user/${pathSegment(input.user_handle)}/workspace/${pathSegment(input.workspace_handle)}/ai/conversation`,
 			ctx.key,
 			{ method: 'GET' },
 		);
@@ -180,10 +194,14 @@ export const sendUserWorkspaceChatMessage: TurbotPipesEndpoints['sendUserWorkspa
 		const { user_handle, workspace_handle, message, conversation_id } = input;
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['sendUserWorkspaceChatMessage']
-		>(`user/${user_handle}/workspace/${workspace_handle}/ai/chat`, ctx.key, {
-			method: 'POST',
-			body: { message, conversation_id },
-		});
+		>(
+			`user/${pathSegment(user_handle)}/workspace/${pathSegment(workspace_handle)}/ai/chat`,
+			ctx.key,
+			{
+				method: 'POST',
+				body: { message, conversation_id },
+			},
+		);
 		// Log only identifiers; message content may carry sensitive data.
 		await logEventFromContext(
 			ctx,

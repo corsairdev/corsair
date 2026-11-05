@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeTurbotPipesRequest } from '../client';
+import { makeTurbotPipesRequest, pathSegment } from '../client';
 import type { TurbotPipesEndpoints } from '../index';
 import { syncEntityDetail, syncListDiscovery } from './sync';
 import type { TurbotPipesEndpointOutputs } from './types';
@@ -7,7 +7,7 @@ import type { TurbotPipesEndpointOutputs } from './types';
 export const getUser: TurbotPipesEndpoints['getUser'] = async (ctx, input) => {
 	const response = await makeTurbotPipesRequest<
 		TurbotPipesEndpointOutputs['getUser']
-	>(`user/${input.user_handle}`, ctx.key, { method: 'GET' });
+	>(`user/${pathSegment(input.user_handle)}`, ctx.key, { method: 'GET' });
 	// Awaited: a completed fetch guarantees its record is searchable locally.
 	await syncEntityDetail(ctx, ctx.db?.user, response.id, response);
 	await logEventFromContext(
@@ -26,7 +26,7 @@ export const updateUser: TurbotPipesEndpoints['updateUser'] = async (
 	const { user_handle, ...body } = input;
 	const response = await makeTurbotPipesRequest<
 		TurbotPipesEndpointOutputs['updateUser']
-	>(`user/${user_handle}`, ctx.key, { method: 'PATCH', body });
+	>(`user/${pathSegment(user_handle)}`, ctx.key, { method: 'PATCH', body });
 	await logEventFromContext(
 		ctx,
 		'turbotpipes.users.update',
@@ -41,7 +41,10 @@ export const listUserWorkspaces: TurbotPipesEndpoints['listUserWorkspaces'] =
 		const { user_handle, ...query } = input;
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['listUserWorkspaces']
-		>(`user/${user_handle}/workspace`, ctx.key, { method: 'GET', query });
+		>(`user/${pathSegment(user_handle)}/workspace`, ctx.key, {
+			method: 'GET',
+			query,
+		});
 		// Background insert-only discovery: populates search without
 		// erasing stored details and without delaying the response.
 		syncListDiscovery(ctx, ctx.db?.workspace, response?.items);
@@ -59,7 +62,7 @@ export const getUserWorkspace: TurbotPipesEndpoints['getUserWorkspace'] =
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['getUserWorkspace']
 		>(
-			`user/${input.user_handle}/workspace/${input.workspace_handle}`,
+			`user/${pathSegment(input.user_handle)}/workspace/${pathSegment(input.workspace_handle)}`,
 			ctx.key,
 			{ method: 'GET' },
 		);
@@ -79,10 +82,14 @@ export const updateUserWorkspace: TurbotPipesEndpoints['updateUserWorkspace'] =
 		const { user_handle, workspace_handle, ...body } = input;
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['updateUserWorkspace']
-		>(`user/${user_handle}/workspace/${workspace_handle}`, ctx.key, {
-			method: 'PATCH',
-			body,
-		});
+		>(
+			`user/${pathSegment(user_handle)}/workspace/${pathSegment(workspace_handle)}`,
+			ctx.key,
+			{
+				method: 'PATCH',
+				body,
+			},
+		);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.users.update_workspace',
@@ -97,10 +104,14 @@ export const runUserWorkspaceCommand: TurbotPipesEndpoints['runUserWorkspaceComm
 		const { user_handle, workspace_handle, command } = input;
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['runUserWorkspaceCommand']
-		>(`user/${user_handle}/workspace/${workspace_handle}/command`, ctx.key, {
-			method: 'POST',
-			body: { command },
-		});
+		>(
+			`user/${pathSegment(user_handle)}/workspace/${pathSegment(workspace_handle)}/command`,
+			ctx.key,
+			{
+				method: 'POST',
+				body: { command },
+			},
+		);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.users.run_workspace_command',
@@ -115,7 +126,10 @@ export const listUserProcesses: TurbotPipesEndpoints['listUserProcesses'] =
 		const { user_handle, ...query } = input;
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['listUserProcesses']
-		>(`user/${user_handle}/process`, ctx.key, { method: 'GET', query });
+		>(`user/${pathSegment(user_handle)}/process`, ctx.key, {
+			method: 'GET',
+			query,
+		});
 		// Background insert-only discovery: populates search without
 		// erasing stored details and without delaying the response.
 		syncListDiscovery(ctx, ctx.db?.process, response?.items);
@@ -134,9 +148,13 @@ export const getUserProcess: TurbotPipesEndpoints['getUserProcess'] = async (
 ) => {
 	const response = await makeTurbotPipesRequest<
 		TurbotPipesEndpointOutputs['getUserProcess']
-	>(`user/${input.user_handle}/process/${input.process_id}`, ctx.key, {
-		method: 'GET',
-	});
+	>(
+		`user/${pathSegment(input.user_handle)}/process/${pathSegment(input.process_id)}`,
+		ctx.key,
+		{
+			method: 'GET',
+		},
+	);
 	// Awaited: a completed fetch guarantees its record is searchable locally.
 	await syncEntityDetail(ctx, ctx.db?.process, response.id, response);
 	await logEventFromContext(
@@ -154,7 +172,7 @@ export const listUserUsage: TurbotPipesEndpoints['listUserUsage'] = async (
 ) => {
 	const response = await makeTurbotPipesRequest<
 		TurbotPipesEndpointOutputs['listUserUsage']
-	>(`user/${input.user_handle}/usage`, ctx.key, { method: 'GET' });
+	>(`user/${pathSegment(input.user_handle)}/usage`, ctx.key, { method: 'GET' });
 	await logEventFromContext(
 		ctx,
 		'turbotpipes.users.list_usage',
@@ -168,7 +186,9 @@ export const listUserConstraints: TurbotPipesEndpoints['listUserConstraints'] =
 	async (ctx, input) => {
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['listUserConstraints']
-		>(`user/${input.user_handle}/constraint`, ctx.key, { method: 'GET' });
+		>(`user/${pathSegment(input.user_handle)}/constraint`, ctx.key, {
+			method: 'GET',
+		});
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.users.list_constraints',
@@ -183,7 +203,10 @@ export const listUserAuditLogs: TurbotPipesEndpoints['listUserAuditLogs'] =
 		const { user_handle, ...query } = input;
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['listUserAuditLogs']
-		>(`user/${user_handle}/audit_log`, ctx.key, { method: 'GET', query });
+		>(`user/${pathSegment(user_handle)}/audit_log`, ctx.key, {
+			method: 'GET',
+			query,
+		});
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.users.list_audit_logs',
@@ -199,9 +222,13 @@ export const getUserEmail: TurbotPipesEndpoints['getUserEmail'] = async (
 ) => {
 	const response = await makeTurbotPipesRequest<
 		TurbotPipesEndpointOutputs['getUserEmail']
-	>(`user/${input.user_handle}/email/${input.email_id}`, ctx.key, {
-		method: 'GET',
-	});
+	>(
+		`user/${pathSegment(input.user_handle)}/email/${pathSegment(input.email_id)}`,
+		ctx.key,
+		{
+			method: 'GET',
+		},
+	);
 	await logEventFromContext(
 		ctx,
 		'turbotpipes.users.get_email',
@@ -217,7 +244,7 @@ export const listUserEmails: TurbotPipesEndpoints['listUserEmails'] = async (
 ) => {
 	const response = await makeTurbotPipesRequest<
 		TurbotPipesEndpointOutputs['listUserEmails']
-	>(`user/${input.user_handle}/email`, ctx.key, { method: 'GET' });
+	>(`user/${pathSegment(input.user_handle)}/email`, ctx.key, { method: 'GET' });
 	await logEventFromContext(
 		ctx,
 		'turbotpipes.users.list_emails',
@@ -231,7 +258,9 @@ export const getUserPreferences: TurbotPipesEndpoints['getUserPreferences'] =
 	async (ctx, input) => {
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['getUserPreferences']
-		>(`user/${input.user_handle}/preferences`, ctx.key, { method: 'GET' });
+		>(`user/${pathSegment(input.user_handle)}/preferences`, ctx.key, {
+			method: 'GET',
+		});
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.users.get_preferences',
@@ -246,7 +275,10 @@ export const updateUserPreferences: TurbotPipesEndpoints['updateUserPreferences'
 		const { user_handle, ...body } = input;
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['updateUserPreferences']
-		>(`user/${user_handle}/preferences`, ctx.key, { method: 'PATCH', body });
+		>(`user/${pathSegment(user_handle)}/preferences`, ctx.key, {
+			method: 'PATCH',
+			body,
+		});
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.users.update_preferences',
@@ -260,7 +292,9 @@ export const deleteUserAvatar: TurbotPipesEndpoints['deleteUserAvatar'] =
 	async (ctx, input) => {
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['deleteUserAvatar']
-		>(`user/${input.user_handle}/avatar`, ctx.key, { method: 'DELETE' });
+		>(`user/${pathSegment(input.user_handle)}/avatar`, ctx.key, {
+			method: 'DELETE',
+		});
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.users.delete_avatar',

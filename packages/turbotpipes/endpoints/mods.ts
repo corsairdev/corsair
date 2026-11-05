@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeTurbotPipesRequest } from '../client';
+import { makeTurbotPipesRequest, pathSegment } from '../client';
 import type { TurbotPipesEndpoints } from '../index';
 import type { TurbotPipesEndpointOutputs } from './types';
 
@@ -8,10 +8,14 @@ export const installUserWorkspaceMod: TurbotPipesEndpoints['installUserWorkspace
 		const { user_handle, workspace_handle, path } = input;
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['installUserWorkspaceMod']
-		>(`user/${user_handle}/workspace/${workspace_handle}/mod`, ctx.key, {
-			method: 'POST',
-			body: { path },
-		});
+		>(
+			`user/${pathSegment(user_handle)}/workspace/${pathSegment(workspace_handle)}/mod`,
+			ctx.key,
+			{
+				method: 'POST',
+				body: { path },
+			},
+		);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.mods.install_user_mod',
@@ -26,7 +30,7 @@ export const getUserWorkspaceMod: TurbotPipesEndpoints['getUserWorkspaceMod'] =
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['getUserWorkspaceMod']
 		>(
-			`user/${input.user_handle}/workspace/${input.workspace_handle}/mod/${input.mod_alias}`,
+			`user/${pathSegment(input.user_handle)}/workspace/${pathSegment(input.workspace_handle)}/mod/${pathSegment(input.mod_alias)}`,
 			ctx.key,
 			{ method: 'GET' },
 		);
@@ -44,7 +48,7 @@ export const listUserWorkspaceMods: TurbotPipesEndpoints['listUserWorkspaceMods'
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['listUserWorkspaceMods']
 		>(
-			`user/${input.user_handle}/workspace/${input.workspace_handle}/mod`,
+			`user/${pathSegment(input.user_handle)}/workspace/${pathSegment(input.workspace_handle)}/mod`,
 			ctx.key,
 			{ method: 'GET' },
 		);
@@ -62,7 +66,7 @@ export const listOrgWorkspaceMods: TurbotPipesEndpoints['listOrgWorkspaceMods'] 
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['listOrgWorkspaceMods']
 		>(
-			`org/${input.org_handle}/workspace/${input.workspace_handle}/mod`,
+			`org/${pathSegment(input.org_handle)}/workspace/${pathSegment(input.workspace_handle)}/mod`,
 			ctx.key,
 			{ method: 'GET' },
 		);
@@ -82,7 +86,7 @@ export const createUserWorkspaceModVariableSetting: TurbotPipesEndpoints['create
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['createUserWorkspaceModVariableSetting']
 		>(
-			`user/${user_handle}/workspace/${workspace_handle}/mod/${mod_alias}/variable`,
+			`user/${pathSegment(user_handle)}/workspace/${pathSegment(workspace_handle)}/mod/${pathSegment(mod_alias)}/variable`,
 			ctx.key,
 			{ method: 'POST', body: { name: variable_name, setting: value } },
 		);
@@ -102,7 +106,7 @@ export const deleteUserWorkspaceModVariableSetting: TurbotPipesEndpoints['delete
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['deleteUserWorkspaceModVariableSetting']
 		>(
-			`user/${user_handle}/workspace/${workspace_handle}/mod/${mod_alias}/variable/${variable_name}`,
+			`user/${pathSegment(user_handle)}/workspace/${pathSegment(workspace_handle)}/mod/${pathSegment(mod_alias)}/variable/${pathSegment(variable_name)}`,
 			ctx.key,
 			{ method: 'DELETE' },
 		);
@@ -121,7 +125,7 @@ export const getUserWorkspaceModVariableSetting: TurbotPipesEndpoints['getUserWo
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['getUserWorkspaceModVariableSetting']
 		>(
-			`user/${user_handle}/workspace/${workspace_handle}/mod/${mod_alias}/variable/${variable_name}`,
+			`user/${pathSegment(user_handle)}/workspace/${pathSegment(workspace_handle)}/mod/${pathSegment(mod_alias)}/variable/${pathSegment(variable_name)}`,
 			ctx.key,
 			{ method: 'GET' },
 		);
@@ -140,7 +144,7 @@ export const listUserWorkspaceModVariables: TurbotPipesEndpoints['listUserWorksp
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['listUserWorkspaceModVariables']
 		>(
-			`user/${user_handle}/workspace/${workspace_handle}/mod/${mod_alias}/variable`,
+			`user/${pathSegment(user_handle)}/workspace/${pathSegment(workspace_handle)}/mod/${pathSegment(mod_alias)}/variable`,
 			ctx.key,
 			{ method: 'GET' },
 		);
@@ -159,7 +163,7 @@ export const getOrgWorkspaceModVariableSetting: TurbotPipesEndpoints['getOrgWork
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['getOrgWorkspaceModVariableSetting']
 		>(
-			`org/${org_handle}/workspace/${workspace_handle}/mod/${mod_alias}/variable/${variable_name}`,
+			`org/${pathSegment(org_handle)}/workspace/${pathSegment(workspace_handle)}/mod/${pathSegment(mod_alias)}/variable/${pathSegment(variable_name)}`,
 			ctx.key,
 			{ method: 'GET' },
 		);
@@ -178,7 +182,7 @@ export const deleteOrgWorkspaceModVariableSetting: TurbotPipesEndpoints['deleteO
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['deleteOrgWorkspaceModVariableSetting']
 		>(
-			`org/${org_handle}/workspace/${workspace_handle}/mod/${mod_alias}/variable/${variable_name}`,
+			`org/${pathSegment(org_handle)}/workspace/${pathSegment(workspace_handle)}/mod/${pathSegment(mod_alias)}/variable/${pathSegment(variable_name)}`,
 			ctx.key,
 			{ method: 'DELETE' },
 		);

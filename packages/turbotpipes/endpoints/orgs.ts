@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeTurbotPipesRequest } from '../client';
+import { makeTurbotPipesRequest, pathSegment } from '../client';
 import type { TurbotPipesEndpoints } from '../index';
 import { syncEntityDetail, syncListDiscovery } from './sync';
 import type { TurbotPipesEndpointOutputs } from './types';
@@ -7,7 +7,7 @@ import type { TurbotPipesEndpointOutputs } from './types';
 export const getOrg: TurbotPipesEndpoints['getOrg'] = async (ctx, input) => {
 	const response = await makeTurbotPipesRequest<
 		TurbotPipesEndpointOutputs['getOrg']
-	>(`org/${input.org_handle}`, ctx.key, { method: 'GET' });
+	>(`org/${pathSegment(input.org_handle)}`, ctx.key, { method: 'GET' });
 	// Awaited: a completed fetch guarantees its record is searchable locally.
 	await syncEntityDetail(ctx, ctx.db?.org, response.id, response);
 	await logEventFromContext(
@@ -25,7 +25,7 @@ export const deleteOrg: TurbotPipesEndpoints['deleteOrg'] = async (
 ) => {
 	const response = await makeTurbotPipesRequest<
 		TurbotPipesEndpointOutputs['deleteOrg']
-	>(`org/${input.org_handle}`, ctx.key, { method: 'DELETE' });
+	>(`org/${pathSegment(input.org_handle)}`, ctx.key, { method: 'DELETE' });
 	await logEventFromContext(
 		ctx,
 		'turbotpipes.orgs.delete',
@@ -40,7 +40,10 @@ export const listOrgWorkspaces: TurbotPipesEndpoints['listOrgWorkspaces'] =
 		const { org_handle, ...query } = input;
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['listOrgWorkspaces']
-		>(`org/${org_handle}/workspace`, ctx.key, { method: 'GET', query });
+		>(`org/${pathSegment(org_handle)}/workspace`, ctx.key, {
+			method: 'GET',
+			query,
+		});
 		// Background insert-only discovery: populates search without
 		// erasing stored details and without delaying the response.
 		syncListDiscovery(ctx, ctx.db?.workspace, response?.items);
@@ -57,9 +60,13 @@ export const deleteOrgWorkspace: TurbotPipesEndpoints['deleteOrgWorkspace'] =
 	async (ctx, input) => {
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['deleteOrgWorkspace']
-		>(`org/${input.org_handle}/workspace/${input.workspace_handle}`, ctx.key, {
-			method: 'DELETE',
-		});
+		>(
+			`org/${pathSegment(input.org_handle)}/workspace/${pathSegment(input.workspace_handle)}`,
+			ctx.key,
+			{
+				method: 'DELETE',
+			},
+		);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.orgs.delete_workspace',
@@ -74,10 +81,14 @@ export const runOrgWorkspaceCommand: TurbotPipesEndpoints['runOrgWorkspaceComman
 		const { org_handle, workspace_handle, command } = input;
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['runOrgWorkspaceCommand']
-		>(`org/${org_handle}/workspace/${workspace_handle}/command`, ctx.key, {
-			method: 'POST',
-			body: { command },
-		});
+		>(
+			`org/${pathSegment(org_handle)}/workspace/${pathSegment(workspace_handle)}/command`,
+			ctx.key,
+			{
+				method: 'POST',
+				body: { command },
+			},
+		);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.orgs.run_workspace_command',
@@ -92,7 +103,10 @@ export const listOrgProcesses: TurbotPipesEndpoints['listOrgProcesses'] =
 		const { org_handle, ...query } = input;
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['listOrgProcesses']
-		>(`org/${org_handle}/process`, ctx.key, { method: 'GET', query });
+		>(`org/${pathSegment(org_handle)}/process`, ctx.key, {
+			method: 'GET',
+			query,
+		});
 		// Background insert-only discovery: populates search without
 		// erasing stored details and without delaying the response.
 		syncListDiscovery(ctx, ctx.db?.process, response?.items);
@@ -109,7 +123,9 @@ export const listOrgServiceAccounts: TurbotPipesEndpoints['listOrgServiceAccount
 	async (ctx, input) => {
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['listOrgServiceAccounts']
-		>(`org/${input.org_handle}/service_account`, ctx.key, { method: 'GET' });
+		>(`org/${pathSegment(input.org_handle)}/service_account`, ctx.key, {
+			method: 'GET',
+		});
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.orgs.list_service_accounts',
@@ -124,10 +140,14 @@ export const updateOrgServiceAccount: TurbotPipesEndpoints['updateOrgServiceAcco
 		const { org_handle, service_account_handle, ...body } = input;
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['updateOrgServiceAccount']
-		>(`org/${org_handle}/service_account/${service_account_handle}`, ctx.key, {
-			method: 'PATCH',
-			body,
-		});
+		>(
+			`org/${pathSegment(org_handle)}/service_account/${pathSegment(service_account_handle)}`,
+			ctx.key,
+			{
+				method: 'PATCH',
+				body,
+			},
+		);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.orgs.update_service_account',
@@ -143,7 +163,7 @@ export const updateOrgServiceAccountToken: TurbotPipesEndpoints['updateOrgServic
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['updateOrgServiceAccountToken']
 		>(
-			`org/${org_handle}/service_account/${service_account_handle}/token/${token_id}`,
+			`org/${pathSegment(org_handle)}/service_account/${pathSegment(service_account_handle)}/token/${pathSegment(token_id)}`,
 			ctx.key,
 			{ method: 'PATCH', body },
 		);
@@ -162,9 +182,13 @@ export const getOrgMember: TurbotPipesEndpoints['getOrgMember'] = async (
 ) => {
 	const response = await makeTurbotPipesRequest<
 		TurbotPipesEndpointOutputs['getOrgMember']
-	>(`org/${input.org_handle}/member/${input.user_handle}`, ctx.key, {
-		method: 'GET',
-	});
+	>(
+		`org/${pathSegment(input.org_handle)}/member/${pathSegment(input.user_handle)}`,
+		ctx.key,
+		{
+			method: 'GET',
+		},
+	);
 	await logEventFromContext(
 		ctx,
 		'turbotpipes.orgs.get_member',
@@ -179,10 +203,14 @@ export const updateOrgMemberRole: TurbotPipesEndpoints['updateOrgMemberRole'] =
 		const { org_handle, user_handle, role } = input;
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['updateOrgMemberRole']
-		>(`org/${org_handle}/member/${user_handle}`, ctx.key, {
-			method: 'PATCH',
-			body: { role },
-		});
+		>(
+			`org/${pathSegment(org_handle)}/member/${pathSegment(user_handle)}`,
+			ctx.key,
+			{
+				method: 'PATCH',
+				body: { role },
+			},
+		);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.orgs.update_member_role',
@@ -198,7 +226,7 @@ export const listOrgUsage: TurbotPipesEndpoints['listOrgUsage'] = async (
 ) => {
 	const response = await makeTurbotPipesRequest<
 		TurbotPipesEndpointOutputs['listOrgUsage']
-	>(`org/${input.org_handle}/usage`, ctx.key, { method: 'GET' });
+	>(`org/${pathSegment(input.org_handle)}/usage`, ctx.key, { method: 'GET' });
 	await logEventFromContext(
 		ctx,
 		'turbotpipes.orgs.list_usage',

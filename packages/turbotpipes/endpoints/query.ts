@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeTurbotPipesRequest } from '../client';
+import { makeTurbotPipesRequest, pathSegment } from '../client';
 import type { TurbotPipesEndpoints } from '../index';
 import type { TurbotPipesEndpointOutputs } from './types';
 
@@ -11,10 +11,14 @@ export const createOrgWorkspaceQuery: TurbotPipesEndpoints['createOrgWorkspaceQu
 		const { org_handle, workspace_handle, sql } = input;
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['createOrgWorkspaceQuery']
-		>(`org/${org_handle}/workspace/${workspace_handle}/query`, ctx.key, {
-			method: 'POST',
-			body: { sql },
-		});
+		>(
+			`org/${pathSegment(org_handle)}/workspace/${pathSegment(workspace_handle)}/query`,
+			ctx.key,
+			{
+				method: 'POST',
+				body: { sql },
+			},
+		);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.query.create_org_query',
@@ -29,10 +33,14 @@ export const getOrgWorkspaceQueryData: TurbotPipesEndpoints['getOrgWorkspaceQuer
 		const { org_handle, workspace_handle, sql } = input;
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['getOrgWorkspaceQueryData']
-		>(`org/${org_handle}/workspace/${workspace_handle}/query`, ctx.key, {
-			method: 'GET',
-			query: { sql },
-		});
+		>(
+			`org/${pathSegment(org_handle)}/workspace/${pathSegment(workspace_handle)}/query`,
+			ctx.key,
+			{
+				method: 'GET',
+				query: { sql },
+			},
+		);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.query.get_org_query_data',
@@ -47,10 +55,14 @@ export const createOrgWorkspaceSnapshot: TurbotPipesEndpoints['createOrgWorkspac
 		const { org_handle, workspace_handle, title } = input;
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['createOrgWorkspaceSnapshot']
-		>(`org/${org_handle}/workspace/${workspace_handle}/snapshot`, ctx.key, {
-			method: 'POST',
-			body: { title },
-		});
+		>(
+			`org/${pathSegment(org_handle)}/workspace/${pathSegment(workspace_handle)}/snapshot`,
+			ctx.key,
+			{
+				method: 'POST',
+				body: { title },
+			},
+		);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.query.create_org_snapshot',
@@ -65,10 +77,14 @@ export const getUserWorkspaceQuery: TurbotPipesEndpoints['getUserWorkspaceQuery'
 		const { user_handle, workspace_handle, sql } = input;
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['getUserWorkspaceQuery']
-		>(`user/${user_handle}/workspace/${workspace_handle}/query`, ctx.key, {
-			method: 'GET',
-			query: { sql },
-		});
+		>(
+			`user/${pathSegment(user_handle)}/workspace/${pathSegment(workspace_handle)}/query`,
+			ctx.key,
+			{
+				method: 'GET',
+				query: { sql },
+			},
+		);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.query.get_user_query',
@@ -83,10 +99,14 @@ export const getUserWorkspaceQueryData: TurbotPipesEndpoints['getUserWorkspaceQu
 		const { user_handle, workspace_handle, sql } = input;
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['getUserWorkspaceQueryData']
-		>(`user/${user_handle}/workspace/${workspace_handle}/query`, ctx.key, {
-			method: 'GET',
-			query: { sql },
-		});
+		>(
+			`user/${pathSegment(user_handle)}/workspace/${pathSegment(workspace_handle)}/query`,
+			ctx.key,
+			{
+				method: 'GET',
+				query: { sql },
+			},
+		);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.query.get_user_query_data',
@@ -101,10 +121,14 @@ export const postUserWorkspaceQuery: TurbotPipesEndpoints['postUserWorkspaceQuer
 		const { user_handle, workspace_handle, sql } = input;
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['postUserWorkspaceQuery']
-		>(`user/${user_handle}/workspace/${workspace_handle}/query`, ctx.key, {
-			method: 'POST',
-			body: { sql },
-		});
+		>(
+			`user/${pathSegment(user_handle)}/workspace/${pathSegment(workspace_handle)}/query`,
+			ctx.key,
+			{
+				method: 'POST',
+				body: { sql },
+			},
+		);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.query.post_user_query',
@@ -119,10 +143,14 @@ export const runUserWorkspaceQuery: TurbotPipesEndpoints['runUserWorkspaceQuery'
 		const { user_handle, workspace_handle, sql } = input;
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['runUserWorkspaceQuery']
-		>(`user/${user_handle}/workspace/${workspace_handle}/query`, ctx.key, {
-			method: 'POST',
-			body: { sql },
-		});
+		>(
+			`user/${pathSegment(user_handle)}/workspace/${pathSegment(workspace_handle)}/query`,
+			ctx.key,
+			{
+				method: 'POST',
+				body: { sql },
+			},
+		);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.query.run_user_query',
@@ -137,7 +165,7 @@ export const listUserWorkspaceSnapshots: TurbotPipesEndpoints['listUserWorkspace
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['listUserWorkspaceSnapshots']
 		>(
-			`user/${input.user_handle}/workspace/${input.workspace_handle}/snapshot`,
+			`user/${pathSegment(input.user_handle)}/workspace/${pathSegment(input.workspace_handle)}/snapshot`,
 			ctx.key,
 			{ method: 'GET' },
 		);

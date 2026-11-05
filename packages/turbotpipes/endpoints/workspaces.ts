@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeTurbotPipesRequest } from '../client';
+import { makeTurbotPipesRequest, pathSegment } from '../client';
 import type { TurbotPipesEndpoints } from '../index';
 import { syncEntityDetail, syncListDiscovery } from './sync';
 import type { TurbotPipesEndpointOutputs } from './types';
@@ -9,10 +9,14 @@ export const createUserWorkspaceConnection: TurbotPipesEndpoints['createUserWork
 		const { user_handle, workspace_handle, connection_handle } = input;
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['createUserWorkspaceConnection']
-		>(`user/${user_handle}/workspace/${workspace_handle}/connection`, ctx.key, {
-			method: 'POST',
-			body: { connection_handle },
-		});
+		>(
+			`user/${pathSegment(user_handle)}/workspace/${pathSegment(workspace_handle)}/connection`,
+			ctx.key,
+			{
+				method: 'POST',
+				body: { connection_handle },
+			},
+		);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.workspaces.create_user_connection',
@@ -27,7 +31,7 @@ export const getUserWorkspaceConnection: TurbotPipesEndpoints['getUserWorkspaceC
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['getUserWorkspaceConnection']
 		>(
-			`user/${input.user_handle}/workspace/${input.workspace_handle}/connection/${input.connection_handle}`,
+			`user/${pathSegment(input.user_handle)}/workspace/${pathSegment(input.workspace_handle)}/connection/${pathSegment(input.connection_handle)}`,
 			ctx.key,
 			{ method: 'GET' },
 		);
@@ -45,7 +49,7 @@ export const listUserWorkspaceConnections: TurbotPipesEndpoints['listUserWorkspa
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['listUserWorkspaceConnections']
 		>(
-			`user/${input.user_handle}/workspace/${input.workspace_handle}/connection`,
+			`user/${pathSegment(input.user_handle)}/workspace/${pathSegment(input.workspace_handle)}/connection`,
 			ctx.key,
 			{ method: 'GET' },
 		);
@@ -66,7 +70,7 @@ export const listUserWorkspaceConnectionAssociations: TurbotPipesEndpoints['list
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['listUserWorkspaceConnectionAssociations']
 		>(
-			`user/${input.user_handle}/workspace/${input.workspace_handle}/conn`,
+			`user/${pathSegment(input.user_handle)}/workspace/${pathSegment(input.workspace_handle)}/conn`,
 			ctx.key,
 			{ method: 'GET' },
 		);
@@ -84,7 +88,7 @@ export const listUserWorkspaceConnectionTree: TurbotPipesEndpoints['listUserWork
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['listUserWorkspaceConnectionTree']
 		>(
-			`user/${input.user_handle}/workspace/${input.workspace_handle}/connection_tree`,
+			`user/${pathSegment(input.user_handle)}/workspace/${pathSegment(input.workspace_handle)}/connection_tree`,
 			ctx.key,
 			{ method: 'GET' },
 		);
@@ -102,7 +106,7 @@ export const testUserWorkspaceConnection: TurbotPipesEndpoints['testUserWorkspac
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['testUserWorkspaceConnection']
 		>(
-			`user/${input.user_handle}/workspace/${input.workspace_handle}/connection/${input.connection_handle}/test`,
+			`user/${pathSegment(input.user_handle)}/workspace/${pathSegment(input.workspace_handle)}/connection/${pathSegment(input.connection_handle)}/test`,
 			ctx.key,
 			{ method: 'POST' },
 		);
@@ -121,7 +125,7 @@ export const createUserWorkspaceConnectionFolder: TurbotPipesEndpoints['createUs
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['createUserWorkspaceConnectionFolder']
 		>(
-			`user/${user_handle}/workspace/${workspace_handle}/connection_folder`,
+			`user/${pathSegment(user_handle)}/workspace/${pathSegment(workspace_handle)}/connection_folder`,
 			ctx.key,
 			{ method: 'POST', body: { title } },
 		);
@@ -139,7 +143,7 @@ export const getUserWorkspaceConnectionFolder: TurbotPipesEndpoints['getUserWork
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['getUserWorkspaceConnectionFolder']
 		>(
-			`user/${input.user_handle}/workspace/${input.workspace_handle}/connection_folder/${input.folder_id}`,
+			`user/${pathSegment(input.user_handle)}/workspace/${pathSegment(input.workspace_handle)}/connection_folder/${pathSegment(input.folder_id)}`,
 			ctx.key,
 			{ method: 'GET' },
 		);
@@ -157,7 +161,7 @@ export const listUserWorkspaceConnectionFolders: TurbotPipesEndpoints['listUserW
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['listUserWorkspaceConnectionFolders']
 		>(
-			`user/${input.user_handle}/workspace/${input.workspace_handle}/connection_folder`,
+			`user/${pathSegment(input.user_handle)}/workspace/${pathSegment(input.workspace_handle)}/connection_folder`,
 			ctx.key,
 			{ method: 'GET' },
 		);
@@ -175,10 +179,14 @@ export const createOrgWorkspaceConnection: TurbotPipesEndpoints['createOrgWorksp
 		const { org_handle, workspace_handle, connection_handle } = input;
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['createOrgWorkspaceConnection']
-		>(`org/${org_handle}/workspace/${workspace_handle}/connection`, ctx.key, {
-			method: 'POST',
-			body: { connection_handle },
-		});
+		>(
+			`org/${pathSegment(org_handle)}/workspace/${pathSegment(workspace_handle)}/connection`,
+			ctx.key,
+			{
+				method: 'POST',
+				body: { connection_handle },
+			},
+		);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.workspaces.create_org_connection',
@@ -193,7 +201,7 @@ export const getOrgWorkspaceConnection: TurbotPipesEndpoints['getOrgWorkspaceCon
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['getOrgWorkspaceConnection']
 		>(
-			`org/${input.org_handle}/workspace/${input.workspace_handle}/connection/${input.connection_handle}`,
+			`org/${pathSegment(input.org_handle)}/workspace/${pathSegment(input.workspace_handle)}/connection/${pathSegment(input.connection_handle)}`,
 			ctx.key,
 			{ method: 'GET' },
 		);
@@ -212,7 +220,7 @@ export const createOrgWorkspaceConnectionFolder: TurbotPipesEndpoints['createOrg
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['createOrgWorkspaceConnectionFolder']
 		>(
-			`org/${org_handle}/workspace/${workspace_handle}/connection_folder`,
+			`org/${pathSegment(org_handle)}/workspace/${pathSegment(workspace_handle)}/connection_folder`,
 			ctx.key,
 			{ method: 'POST', body: { title } },
 		);
@@ -230,7 +238,7 @@ export const getOrgWorkspaceConnectionFolder: TurbotPipesEndpoints['getOrgWorksp
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['getOrgWorkspaceConnectionFolder']
 		>(
-			`org/${input.org_handle}/workspace/${input.workspace_handle}/connection_folder/${input.folder_id}`,
+			`org/${pathSegment(input.org_handle)}/workspace/${pathSegment(input.workspace_handle)}/connection_folder/${pathSegment(input.folder_id)}`,
 			ctx.key,
 			{ method: 'GET' },
 		);
@@ -248,10 +256,14 @@ export const createOrgWorkspaceAggregator: TurbotPipesEndpoints['createOrgWorksp
 		const { org_handle, workspace_handle, handle, connections } = input;
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['createOrgWorkspaceAggregator']
-		>(`org/${org_handle}/workspace/${workspace_handle}/aggregator`, ctx.key, {
-			method: 'POST',
-			body: { handle, connections },
-		});
+		>(
+			`org/${pathSegment(org_handle)}/workspace/${pathSegment(workspace_handle)}/aggregator`,
+			ctx.key,
+			{
+				method: 'POST',
+				body: { handle, connections },
+			},
+		);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.workspaces.create_org_aggregator',
@@ -266,7 +278,7 @@ export const getUserWorkspaceAggregator: TurbotPipesEndpoints['getUserWorkspaceA
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['getUserWorkspaceAggregator']
 		>(
-			`user/${input.user_handle}/workspace/${input.workspace_handle}/aggregator/${input.aggregator_handle}`,
+			`user/${pathSegment(input.user_handle)}/workspace/${pathSegment(input.workspace_handle)}/aggregator/${pathSegment(input.aggregator_handle)}`,
 			ctx.key,
 			{ method: 'GET' },
 		);
@@ -284,7 +296,7 @@ export const listUserWorkspaceAggregators: TurbotPipesEndpoints['listUserWorkspa
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['listUserWorkspaceAggregators']
 		>(
-			`user/${input.user_handle}/workspace/${input.workspace_handle}/aggregator`,
+			`user/${pathSegment(input.user_handle)}/workspace/${pathSegment(input.workspace_handle)}/aggregator`,
 			ctx.key,
 			{ method: 'GET' },
 		);
@@ -302,7 +314,7 @@ export const listUserWorkspaceAggregatorConnections: TurbotPipesEndpoints['listU
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['listUserWorkspaceAggregatorConnections']
 		>(
-			`user/${input.user_handle}/workspace/${input.workspace_handle}/aggregator/${input.aggregator_handle}/connection`,
+			`user/${pathSegment(input.user_handle)}/workspace/${pathSegment(input.workspace_handle)}/aggregator/${pathSegment(input.aggregator_handle)}/connection`,
 			ctx.key,
 			{ method: 'GET' },
 		);
@@ -320,7 +332,7 @@ export const listUserWorkspaceAuditLogs: TurbotPipesEndpoints['listUserWorkspace
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['listUserWorkspaceAuditLogs']
 		>(
-			`user/${input.user_handle}/workspace/${input.workspace_handle}/audit_log`,
+			`user/${pathSegment(input.user_handle)}/workspace/${pathSegment(input.workspace_handle)}/audit_log`,
 			ctx.key,
 			{ method: 'GET' },
 		);
@@ -338,7 +350,7 @@ export const listUserWorkspaceDatabaseLogs: TurbotPipesEndpoints['listUserWorksp
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['listUserWorkspaceDatabaseLogs']
 		>(
-			`user/${input.user_handle}/workspace/${input.workspace_handle}/db_log`,
+			`user/${pathSegment(input.user_handle)}/workspace/${pathSegment(input.workspace_handle)}/db_log`,
 			ctx.key,
 			{ method: 'GET' },
 		);
@@ -356,7 +368,7 @@ export const listUserWorkspaceProcesses: TurbotPipesEndpoints['listUserWorkspace
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['listUserWorkspaceProcesses']
 		>(
-			`user/${input.user_handle}/workspace/${input.workspace_handle}/process`,
+			`user/${pathSegment(input.user_handle)}/workspace/${pathSegment(input.workspace_handle)}/process`,
 			ctx.key,
 			{ method: 'GET' },
 		);
@@ -377,7 +389,7 @@ export const getUserWorkspaceProcess: TurbotPipesEndpoints['getUserWorkspaceProc
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['getUserWorkspaceProcess']
 		>(
-			`user/${input.user_handle}/workspace/${input.workspace_handle}/process/${input.process_id}`,
+			`user/${pathSegment(input.user_handle)}/workspace/${pathSegment(input.workspace_handle)}/process/${pathSegment(input.process_id)}`,
 			ctx.key,
 			{ method: 'GET' },
 		);
@@ -398,7 +410,7 @@ export const getUserWorkspaceProcessLog: TurbotPipesEndpoints['getUserWorkspaceP
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['getUserWorkspaceProcessLog']
 		>(
-			`user/${input.user_handle}/workspace/${input.workspace_handle}/process/${input.process_id}/log/${input.log_file}.${contentType}`,
+			`user/${pathSegment(input.user_handle)}/workspace/${pathSegment(input.workspace_handle)}/process/${pathSegment(input.process_id)}/log/${pathSegment(input.log_file)}.${pathSegment(contentType)}`,
 			ctx.key,
 			{ method: 'GET' },
 		);
@@ -416,7 +428,7 @@ export const listOrgWorkspaceProcesses: TurbotPipesEndpoints['listOrgWorkspacePr
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['listOrgWorkspaceProcesses']
 		>(
-			`org/${input.org_handle}/workspace/${input.workspace_handle}/process`,
+			`org/${pathSegment(input.org_handle)}/workspace/${pathSegment(input.workspace_handle)}/process`,
 			ctx.key,
 			{ method: 'GET' },
 		);
@@ -437,7 +449,7 @@ export const listUserWorkspaceUsage: TurbotPipesEndpoints['listUserWorkspaceUsag
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['listUserWorkspaceUsage']
 		>(
-			`user/${input.user_handle}/workspace/${input.workspace_handle}/usage`,
+			`user/${pathSegment(input.user_handle)}/workspace/${pathSegment(input.workspace_handle)}/usage`,
 			ctx.key,
 			{ method: 'GET' },
 		);

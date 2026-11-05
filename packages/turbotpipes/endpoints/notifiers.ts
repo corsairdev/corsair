@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeTurbotPipesRequest } from '../client';
+import { makeTurbotPipesRequest, pathSegment } from '../client';
 import type { TurbotPipesEndpoints } from '../index';
 import type { TurbotPipesEndpointOutputs } from './types';
 
@@ -8,7 +8,10 @@ export const createUserNotifier: TurbotPipesEndpoints['createUserNotifier'] =
 		const { user_handle, ...body } = input;
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['createUserNotifier']
-		>(`user/${user_handle}/notifier`, ctx.key, { method: 'POST', body });
+		>(`user/${pathSegment(user_handle)}/notifier`, ctx.key, {
+			method: 'POST',
+			body,
+		});
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.notifiers.create_user',
@@ -22,7 +25,9 @@ export const listUserNotifiers: TurbotPipesEndpoints['listUserNotifiers'] =
 	async (ctx, input) => {
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['listUserNotifiers']
-		>(`user/${input.user_handle}/notifier`, ctx.key, { method: 'GET' });
+		>(`user/${pathSegment(input.user_handle)}/notifier`, ctx.key, {
+			method: 'GET',
+		});
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.notifiers.list_user',
@@ -37,7 +42,7 @@ export const getOrgWorkspaceNotifier: TurbotPipesEndpoints['getOrgWorkspaceNotif
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['getOrgWorkspaceNotifier']
 		>(
-			`org/${input.org_handle}/workspace/${input.workspace_handle}/notifier/${input.notifier_handle}`,
+			`org/${pathSegment(input.org_handle)}/workspace/${pathSegment(input.workspace_handle)}/notifier/${pathSegment(input.notifier_handle)}`,
 			ctx.key,
 			{ method: 'GET' },
 		);
@@ -55,10 +60,14 @@ export const createUserWorkspaceNotifier: TurbotPipesEndpoints['createUserWorksp
 		const { user_handle, workspace_handle, ...body } = input;
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['createUserWorkspaceNotifier']
-		>(`user/${user_handle}/workspace/${workspace_handle}/notifier`, ctx.key, {
-			method: 'POST',
-			body,
-		});
+		>(
+			`user/${pathSegment(user_handle)}/workspace/${pathSegment(workspace_handle)}/notifier`,
+			ctx.key,
+			{
+				method: 'POST',
+				body,
+			},
+		);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.notifiers.create_user_workspace',
@@ -73,7 +82,7 @@ export const deleteUserWorkspaceNotifier: TurbotPipesEndpoints['deleteUserWorksp
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['deleteUserWorkspaceNotifier']
 		>(
-			`user/${input.user_handle}/workspace/${input.workspace_handle}/notifier/${input.notifier_handle}`,
+			`user/${pathSegment(input.user_handle)}/workspace/${pathSegment(input.workspace_handle)}/notifier/${pathSegment(input.notifier_handle)}`,
 			ctx.key,
 			{ method: 'DELETE' },
 		);
@@ -91,7 +100,7 @@ export const getUserWorkspaceNotifier: TurbotPipesEndpoints['getUserWorkspaceNot
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['getUserWorkspaceNotifier']
 		>(
-			`user/${input.user_handle}/workspace/${input.workspace_handle}/notifier/${input.notifier_handle}`,
+			`user/${pathSegment(input.user_handle)}/workspace/${pathSegment(input.workspace_handle)}/notifier/${pathSegment(input.notifier_handle)}`,
 			ctx.key,
 			{ method: 'GET' },
 		);
@@ -109,7 +118,7 @@ export const listUserWorkspaceNotifiers: TurbotPipesEndpoints['listUserWorkspace
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['listUserWorkspaceNotifiers']
 		>(
-			`user/${input.user_handle}/workspace/${input.workspace_handle}/notifier`,
+			`user/${pathSegment(input.user_handle)}/workspace/${pathSegment(input.workspace_handle)}/notifier`,
 			ctx.key,
 			{ method: 'GET' },
 		);
@@ -128,7 +137,7 @@ export const postUserWorkspaceNotifierCommand: TurbotPipesEndpoints['postUserWor
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['postUserWorkspaceNotifierCommand']
 		>(
-			`user/${user_handle}/workspace/${workspace_handle}/notifier/${notifier_handle}/command`,
+			`user/${pathSegment(user_handle)}/workspace/${pathSegment(workspace_handle)}/notifier/${pathSegment(notifier_handle)}/command`,
 			ctx.key,
 			{ method: 'POST', body: { command } },
 		);

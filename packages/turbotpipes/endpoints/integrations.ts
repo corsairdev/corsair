@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeTurbotPipesRequest } from '../client';
+import { makeTurbotPipesRequest, pathSegment } from '../client';
 import type { TurbotPipesEndpoints } from '../index';
 import type { TurbotPipesEndpointOutputs } from './types';
 
@@ -8,7 +8,10 @@ export const createUserIntegration: TurbotPipesEndpoints['createUserIntegration'
 		const { user_handle, ...body } = input;
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['createUserIntegration']
-		>(`user/${user_handle}/integration`, ctx.key, { method: 'POST', body });
+		>(`user/${pathSegment(user_handle)}/integration`, ctx.key, {
+			method: 'POST',
+			body,
+		});
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.integrations.create_user',
@@ -23,7 +26,7 @@ export const deleteUserIntegration: TurbotPipesEndpoints['deleteUserIntegration'
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['deleteUserIntegration']
 		>(
-			`user/${input.user_handle}/integration/${input.integration_handle}`,
+			`user/${pathSegment(input.user_handle)}/integration/${pathSegment(input.integration_handle)}`,
 			ctx.key,
 			{ method: 'DELETE' },
 		);
@@ -41,7 +44,7 @@ export const getUserIntegration: TurbotPipesEndpoints['getUserIntegration'] =
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['getUserIntegration']
 		>(
-			`user/${input.user_handle}/integration/${input.integration_handle}`,
+			`user/${pathSegment(input.user_handle)}/integration/${pathSegment(input.integration_handle)}`,
 			ctx.key,
 			{ method: 'GET' },
 		);
@@ -58,7 +61,9 @@ export const listUserIntegrations: TurbotPipesEndpoints['listUserIntegrations'] 
 	async (ctx, input) => {
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['listUserIntegrations']
-		>(`user/${input.user_handle}/integration`, ctx.key, { method: 'GET' });
+		>(`user/${pathSegment(input.user_handle)}/integration`, ctx.key, {
+			method: 'GET',
+		});
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.integrations.list_user',
@@ -73,10 +78,14 @@ export const updateUserIntegration: TurbotPipesEndpoints['updateUserIntegration'
 		const { user_handle, integration_handle, ...body } = input;
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['updateUserIntegration']
-		>(`user/${user_handle}/integration/${integration_handle}`, ctx.key, {
-			method: 'PATCH',
-			body,
-		});
+		>(
+			`user/${pathSegment(user_handle)}/integration/${pathSegment(integration_handle)}`,
+			ctx.key,
+			{
+				method: 'PATCH',
+				body,
+			},
+		);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.integrations.update_user',
@@ -91,10 +100,14 @@ export const testUserIntegration: TurbotPipesEndpoints['testUserIntegration'] =
 		const { user_handle, integration_handle, ...body } = input;
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['testUserIntegration']
-		>(`user/${user_handle}/integration/${integration_handle}/test`, ctx.key, {
-			method: 'POST',
-			body,
-		});
+		>(
+			`user/${pathSegment(user_handle)}/integration/${pathSegment(integration_handle)}/test`,
+			ctx.key,
+			{
+				method: 'POST',
+				body,
+			},
+		);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.integrations.test_user',
@@ -109,7 +122,7 @@ export const getOrgWorkspaceIntegration: TurbotPipesEndpoints['getOrgWorkspaceIn
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['getOrgWorkspaceIntegration']
 		>(
-			`org/${input.org_handle}/workspace/${input.workspace_handle}/integration/${input.integration_handle}`,
+			`org/${pathSegment(input.org_handle)}/workspace/${pathSegment(input.workspace_handle)}/integration/${pathSegment(input.integration_handle)}`,
 			ctx.key,
 			{ method: 'GET' },
 		);
@@ -127,7 +140,7 @@ export const getOrgIntegration: TurbotPipesEndpoints['getOrgIntegration'] =
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['getOrgIntegration']
 		>(
-			`org/${input.org_handle}/integration/${input.integration_handle}`,
+			`org/${pathSegment(input.org_handle)}/integration/${pathSegment(input.integration_handle)}`,
 			ctx.key,
 			{ method: 'GET' },
 		);
@@ -145,7 +158,7 @@ export const getUserWorkspaceIntegration: TurbotPipesEndpoints['getUserWorkspace
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['getUserWorkspaceIntegration']
 		>(
-			`user/${input.user_handle}/workspace/${input.workspace_handle}/integration/${input.integration_handle}`,
+			`user/${pathSegment(input.user_handle)}/workspace/${pathSegment(input.workspace_handle)}/integration/${pathSegment(input.integration_handle)}`,
 			ctx.key,
 			{ method: 'GET' },
 		);
@@ -163,7 +176,7 @@ export const listUserWorkspaceIntegrations: TurbotPipesEndpoints['listUserWorksp
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['listUserWorkspaceIntegrations']
 		>(
-			`user/${input.user_handle}/workspace/${input.workspace_handle}/integration`,
+			`user/${pathSegment(input.user_handle)}/workspace/${pathSegment(input.workspace_handle)}/integration`,
 			ctx.key,
 			{ method: 'GET' },
 		);
@@ -181,7 +194,7 @@ export const installUserSlackIntegration: TurbotPipesEndpoints['installUserSlack
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['installUserSlackIntegration']
 		>(
-			`user/${input.user_handle}/integration/${input.integration_handle}/slack/install`,
+			`user/${pathSegment(input.user_handle)}/integration/${pathSegment(input.integration_handle)}/slack/install`,
 			ctx.key,
 			{ method: 'GET' },
 		);

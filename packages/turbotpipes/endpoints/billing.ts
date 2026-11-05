@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeTurbotPipesRequest } from '../client';
+import { makeTurbotPipesRequest, pathSegment } from '../client';
 import type { TurbotPipesEndpoints } from '../index';
 import type { TurbotPipesEndpointOutputs } from './types';
 
@@ -8,7 +8,7 @@ export const deleteOrgBillingSubscription: TurbotPipesEndpoints['deleteOrgBillin
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['deleteOrgBillingSubscription']
 		>(
-			`org/${input.org_handle}/billing/subscription/${input.subscription_id}`,
+			`org/${pathSegment(input.org_handle)}/billing/subscription/${pathSegment(input.subscription_id)}`,
 			ctx.key,
 			{ method: 'DELETE' },
 		);
@@ -26,10 +26,14 @@ export const updateOrgBillingSubscription: TurbotPipesEndpoints['updateOrgBillin
 		const { org_handle, subscription_id, action } = input;
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['updateOrgBillingSubscription']
-		>(`org/${org_handle}/billing/subscription/${subscription_id}`, ctx.key, {
-			method: 'PATCH',
-			body: { action },
-		});
+		>(
+			`org/${pathSegment(org_handle)}/billing/subscription/${pathSegment(subscription_id)}`,
+			ctx.key,
+			{
+				method: 'PATCH',
+				body: { action },
+			},
+		);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.billing.update_org_subscription',
@@ -43,9 +47,13 @@ export const getOrgBillingInvoice: TurbotPipesEndpoints['getOrgBillingInvoice'] 
 	async (ctx, input) => {
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['getOrgBillingInvoice']
-		>(`org/${input.org_handle}/billing/invoice/${input.invoice_id}`, ctx.key, {
-			method: 'GET',
-		});
+		>(
+			`org/${pathSegment(input.org_handle)}/billing/invoice/${pathSegment(input.invoice_id)}`,
+			ctx.key,
+			{
+				method: 'GET',
+			},
+		);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.billing.get_org_invoice',
@@ -59,7 +67,9 @@ export const getUserBillingPlan: TurbotPipesEndpoints['getUserBillingPlan'] =
 	async (ctx, input) => {
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['getUserBillingPlan']
-		>(`user/${input.user_handle}/billing/plan`, ctx.key, { method: 'GET' });
+		>(`user/${pathSegment(input.user_handle)}/billing/plan`, ctx.key, {
+			method: 'GET',
+		});
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.billing.get_user_plan',
@@ -73,9 +83,13 @@ export const getUserBillingUpcomingInvoice: TurbotPipesEndpoints['getUserBilling
 	async (ctx, input) => {
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['getUserBillingUpcomingInvoice']
-		>(`user/${input.user_handle}/billing/invoice/upcoming`, ctx.key, {
-			method: 'GET',
-		});
+		>(
+			`user/${pathSegment(input.user_handle)}/billing/invoice/upcoming`,
+			ctx.key,
+			{
+				method: 'GET',
+			},
+		);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.billing.get_user_upcoming_invoice',
@@ -89,7 +103,9 @@ export const listUserBillingInvoices: TurbotPipesEndpoints['listUserBillingInvoi
 	async (ctx, input) => {
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['listUserBillingInvoices']
-		>(`user/${input.user_handle}/billing/invoice`, ctx.key, { method: 'GET' });
+		>(`user/${pathSegment(input.user_handle)}/billing/invoice`, ctx.key, {
+			method: 'GET',
+		});
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.billing.list_user_invoices',
@@ -103,9 +119,13 @@ export const listUserBillingPaymentMethods: TurbotPipesEndpoints['listUserBillin
 	async (ctx, input) => {
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['listUserBillingPaymentMethods']
-		>(`user/${input.user_handle}/billing/payment_method`, ctx.key, {
-			method: 'GET',
-		});
+		>(
+			`user/${pathSegment(input.user_handle)}/billing/payment_method`,
+			ctx.key,
+			{
+				method: 'GET',
+			},
+		);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.billing.list_user_payment_methods',
@@ -119,7 +139,7 @@ export const listUserBillingSubscriptions: TurbotPipesEndpoints['listUserBilling
 	async (ctx, input) => {
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['listUserBillingSubscriptions']
-		>(`user/${input.user_handle}/billing/subscription`, ctx.key, {
+		>(`user/${pathSegment(input.user_handle)}/billing/subscription`, ctx.key, {
 			method: 'GET',
 		});
 		await logEventFromContext(

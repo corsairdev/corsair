@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeTurbotPipesRequest } from '../client';
+import { makeTurbotPipesRequest, pathSegment } from '../client';
 import type { TurbotPipesEndpoints } from '../index';
 import type { TurbotPipesEndpointOutputs } from './types';
 
@@ -8,7 +8,7 @@ export const createUserPassword: TurbotPipesEndpoints['createUserPassword'] =
 		const { user_handle, password } = input;
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['createUserPassword']
-		>(`user/${user_handle}/password`, ctx.key, {
+		>(`user/${pathSegment(user_handle)}/password`, ctx.key, {
 			method: 'POST',
 			body: { password },
 		});
@@ -28,7 +28,9 @@ export const getUserPassword: TurbotPipesEndpoints['getUserPassword'] = async (
 ) => {
 	const response = await makeTurbotPipesRequest<
 		TurbotPipesEndpointOutputs['getUserPassword']
-	>(`user/${input.user_handle}/password`, ctx.key, { method: 'GET' });
+	>(`user/${pathSegment(input.user_handle)}/password`, ctx.key, {
+		method: 'GET',
+	});
 	await logEventFromContext(
 		ctx,
 		'turbotpipes.auth.get_user_password',
@@ -44,9 +46,13 @@ export const getUserToken: TurbotPipesEndpoints['getUserToken'] = async (
 ) => {
 	const response = await makeTurbotPipesRequest<
 		TurbotPipesEndpointOutputs['getUserToken']
-	>(`user/${input.user_handle}/token/${input.token_id}`, ctx.key, {
-		method: 'GET',
-	});
+	>(
+		`user/${pathSegment(input.user_handle)}/token/${pathSegment(input.token_id)}`,
+		ctx.key,
+		{
+			method: 'GET',
+		},
+	);
 	await logEventFromContext(
 		ctx,
 		'turbotpipes.auth.get_user_token',
@@ -62,9 +68,13 @@ export const deleteUserToken: TurbotPipesEndpoints['deleteUserToken'] = async (
 ) => {
 	const response = await makeTurbotPipesRequest<
 		TurbotPipesEndpointOutputs['deleteUserToken']
-	>(`user/${input.user_handle}/token/${input.token_id}`, ctx.key, {
-		method: 'DELETE',
-	});
+	>(
+		`user/${pathSegment(input.user_handle)}/token/${pathSegment(input.token_id)}`,
+		ctx.key,
+		{
+			method: 'DELETE',
+		},
+	);
 	await logEventFromContext(
 		ctx,
 		'turbotpipes.auth.delete_user_token',
@@ -81,10 +91,14 @@ export const updateUserToken: TurbotPipesEndpoints['updateUserToken'] = async (
 	const { user_handle, token_id, status } = input;
 	const response = await makeTurbotPipesRequest<
 		TurbotPipesEndpointOutputs['updateUserToken']
-	>(`user/${user_handle}/token/${token_id}`, ctx.key, {
-		method: 'PATCH',
-		body: { status },
-	});
+	>(
+		`user/${pathSegment(user_handle)}/token/${pathSegment(token_id)}`,
+		ctx.key,
+		{
+			method: 'PATCH',
+			body: { status },
+		},
+	);
 	await logEventFromContext(
 		ctx,
 		'turbotpipes.auth.update_user_token',
@@ -149,7 +163,7 @@ export const getAuthProvider: TurbotPipesEndpoints['getAuthProvider'] = async (
 ) => {
 	const response = await makeTurbotPipesRequest<
 		TurbotPipesEndpointOutputs['getAuthProvider']
-	>(`auth/${input.provider}`, ctx.key, { method: 'GET' });
+	>(`auth/${pathSegment(input.provider)}`, ctx.key, { method: 'GET' });
 	await logEventFromContext(
 		ctx,
 		'turbotpipes.auth.get_auth_provider',

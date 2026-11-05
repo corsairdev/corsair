@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeTurbotPipesRequest } from '../client';
+import { makeTurbotPipesRequest, pathSegment } from '../client';
 import type { TurbotPipesEndpoints } from '../index';
 import { syncEntityDetail } from './sync';
 import type { TurbotPipesEndpointOutputs } from './types';
@@ -11,7 +11,7 @@ export const createUserConnection: TurbotPipesEndpoints['createUserConnection'] 
 		void _rest;
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['createUserConnection']
-		>(`user/${user_handle}/connection`, ctx.key, {
+		>(`user/${pathSegment(user_handle)}/connection`, ctx.key, {
 			method: 'POST',
 			body: { handle, plugin, config },
 		});
@@ -30,7 +30,7 @@ export const getUserConnection: TurbotPipesEndpoints['getUserConnection'] =
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['getUserConnection']
 		>(
-			`user/${input.user_handle}/connection/${input.connection_handle}`,
+			`user/${pathSegment(input.user_handle)}/connection/${pathSegment(input.connection_handle)}`,
 			ctx.key,
 			{ method: 'GET' },
 		);
@@ -50,7 +50,10 @@ export const listUserConnections: TurbotPipesEndpoints['listUserConnections'] =
 		const { user_handle, ...query } = input;
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['listUserConnections']
-		>(`user/${user_handle}/connection`, ctx.key, { method: 'GET', query });
+		>(`user/${pathSegment(user_handle)}/connection`, ctx.key, {
+			method: 'GET',
+			query,
+		});
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.connections.list_user',
@@ -65,10 +68,14 @@ export const updateUserConnection: TurbotPipesEndpoints['updateUserConnection'] 
 		const { user_handle, connection_handle, ...body } = input;
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['updateUserConnection']
-		>(`user/${user_handle}/connection/${connection_handle}`, ctx.key, {
-			method: 'PATCH',
-			body,
-		});
+		>(
+			`user/${pathSegment(user_handle)}/connection/${pathSegment(connection_handle)}`,
+			ctx.key,
+			{
+				method: 'PATCH',
+				body,
+			},
+		);
 		await logEventFromContext(
 			ctx,
 			// Log only identifiers; connection config may carry credentials.
@@ -84,7 +91,7 @@ export const deleteUserConnectionDeprecated: TurbotPipesEndpoints['deleteUserCon
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['deleteUserConnectionDeprecated']
 		>(
-			`user/${input.user_handle}/connection/${input.connection_handle}`,
+			`user/${pathSegment(input.user_handle)}/connection/${pathSegment(input.connection_handle)}`,
 			ctx.key,
 			{ method: 'DELETE' },
 		);
@@ -103,10 +110,14 @@ export const testUserConnection: TurbotPipesEndpoints['testUserConnection'] =
 		const handle = connection_handle ?? '_';
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['testUserConnection']
-		>(`user/${user_handle}/connection/${handle}/test`, ctx.key, {
-			method: 'POST',
-			body,
-		});
+		>(
+			`user/${pathSegment(user_handle)}/connection/${pathSegment(handle)}/test`,
+			ctx.key,
+			{
+				method: 'POST',
+				body,
+			},
+		);
 		await logEventFromContext(
 			ctx,
 			// Log only identifiers; connection config may carry credentials.
@@ -124,7 +135,7 @@ export const createOrgConnection: TurbotPipesEndpoints['createOrgConnection'] =
 		void _orgRest;
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['createOrgConnection']
-		>(`org/${org_handle}/connection`, ctx.key, {
+		>(`org/${pathSegment(org_handle)}/connection`, ctx.key, {
 			method: 'POST',
 			body: { handle, plugin, config },
 		});
@@ -143,10 +154,14 @@ export const updateOrgConnection: TurbotPipesEndpoints['updateOrgConnection'] =
 		const { org_handle, connection_handle, ...body } = input;
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['updateOrgConnection']
-		>(`org/${org_handle}/connection/${connection_handle}`, ctx.key, {
-			method: 'PATCH',
-			body,
-		});
+		>(
+			`org/${pathSegment(org_handle)}/connection/${pathSegment(connection_handle)}`,
+			ctx.key,
+			{
+				method: 'PATCH',
+				body,
+			},
+		);
 		await logEventFromContext(
 			ctx,
 			// Log only identifiers; connection config may carry credentials.
@@ -163,8 +178,8 @@ export const getOrgConnectionPermission: TurbotPipesEndpoints['getOrgConnectionP
 			TurbotPipesEndpointOutputs['getOrgConnectionPermission']
 		>(
 			input.permission_id
-				? `org/${input.org_handle}/connection/${input.connection_handle}/permission/${input.permission_id}`
-				: `org/${input.org_handle}/connection/${input.connection_handle}/permission`,
+				? `org/${pathSegment(input.org_handle)}/connection/${pathSegment(input.connection_handle)}/permission/${pathSegment(input.permission_id)}`
+				: `org/${pathSegment(input.org_handle)}/connection/${pathSegment(input.connection_handle)}/permission`,
 			ctx.key,
 			{ method: 'GET' },
 		);
@@ -183,7 +198,7 @@ export const deleteOrgConnectionPermission: TurbotPipesEndpoints['deleteOrgConne
 			TurbotPipesEndpointOutputs['deleteOrgConnectionPermission']
 		>(
 			// Pipes has no DELETE on the permission collection (404); it deletes one by id.
-			`org/${input.org_handle}/connection/${input.connection_handle}/permission/${input.permission_id}`,
+			`org/${pathSegment(input.org_handle)}/connection/${pathSegment(input.connection_handle)}/permission/${pathSegment(input.permission_id)}`,
 			ctx.key,
 			{ method: 'DELETE' },
 		);
@@ -201,7 +216,10 @@ export const createOrgConnectionFolder: TurbotPipesEndpoints['createOrgConnectio
 		const { org_handle, ...body } = input;
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['createOrgConnectionFolder']
-		>(`org/${org_handle}/connection_folder`, ctx.key, { method: 'POST', body });
+		>(`org/${pathSegment(org_handle)}/connection_folder`, ctx.key, {
+			method: 'POST',
+			body,
+		});
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.connections.create_org_folder',
@@ -216,10 +234,14 @@ export const updateOrgConnectionFolder: TurbotPipesEndpoints['updateOrgConnectio
 		const { org_handle, folder_id, ...body } = input;
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['updateOrgConnectionFolder']
-		>(`org/${org_handle}/connection_folder/${folder_id}`, ctx.key, {
-			method: 'PATCH',
-			body,
-		});
+		>(
+			`org/${pathSegment(org_handle)}/connection_folder/${pathSegment(folder_id)}`,
+			ctx.key,
+			{
+				method: 'PATCH',
+				body,
+			},
+		);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.connections.update_org_folder',

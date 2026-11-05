@@ -58,6 +58,33 @@ export class TurbotPipesAPIError extends Error {
 const TURBOTPIPES_API_BASE = 'https://pipes.turbot.com/api/v1';
 
 /**
+ * Encodes one caller value as a single URL path segment.
+ *
+ * Handles and ids come from callers, and Corsair checks permissions by
+ * endpoint name, not by URL. A raw value such as `../../../../acme` would
+ * otherwise retarget the request after URL normalization (for example from a
+ * permission delete to `DELETE /org/acme`).
+ *
+ * Empty values, dot segments and path separators are rejected outright: no
+ * Pipes handle or id contains them, and some servers decode `%2F` before
+ * routing, so encoding alone is not enough. Everything else is encoded.
+ */
+export function pathSegment(value: string | number): string {
+	const segment = String(value);
+	if (
+		segment === '' ||
+		segment === '.' ||
+		segment === '..' ||
+		/[/\\]/.test(segment)
+	) {
+		throw new Error(
+			`Invalid Turbot Pipes path segment ${JSON.stringify(segment)}: handles and ids must be non-empty, cannot be "." or "..", and cannot contain "/" or "\\".`,
+		);
+	}
+	return encodeURIComponent(segment);
+}
+
+/**
  * Performs an HTTP request to the Turbot Pipes API.
  * Auth: Bearer Token in Authorization header (e.g., Bearer tpt_...).
  */
