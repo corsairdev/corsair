@@ -59,10 +59,12 @@ export const create: WorkableEndpoints['subscriptionsCreate'] = async (
 		WorkableEndpointOutputSchemas.subscriptionsCreate,
 		raw,
 	);
+	// The target URL is left out: webhook receiver URLs often carry a secret
+	// token in their path or query, and events are stored in plain text.
 	await logEventFromContext(
 		ctx,
 		'workable.subscriptions.create',
-		{ event: valid.event, target: valid.target },
+		{ event: valid.event },
 		'completed',
 	);
 	return response;

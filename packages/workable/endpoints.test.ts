@@ -603,6 +603,29 @@ describe('Workable endpoints', () => {
 			expect(calls.at(-1)?.init?.method).toBe('POST');
 		});
 
+		// Receiver URLs often carry a secret token; events are stored as is.
+		it('subscriptions.create leaves the target URL out of the event', async () => {
+			const { logEventFromContext } = jest.requireMock('corsair/core') as {
+				logEventFromContext: jest.Mock;
+			};
+			logEventFromContext.mockClear();
+			const { ctx } = makeCtx();
+			respondWith({ id: 2 });
+			await Subscriptions.create(ctx, {
+				target: 'https://hooks.example.com/workable?token=s3cret',
+				event: 'candidate_moved',
+			});
+			expect(logEventFromContext).toHaveBeenCalledWith(
+				ctx,
+				'workable.subscriptions.create',
+				{ event: 'candidate_moved' },
+				'completed',
+			);
+			expect(JSON.stringify(logEventFromContext.mock.calls)).not.toContain(
+				's3cret',
+			);
+		});
+
 		it('subscriptions.delete hits DELETE /subscriptions/{id}', async () => {
 			const { ctx } = makeCtx();
 			respondWith({}, 200);
