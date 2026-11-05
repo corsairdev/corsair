@@ -40,7 +40,7 @@ await corsair.mem0.api.events.get({ event_id: '2c4d1f44-4f7b-4b2f-9f6e-7b5b4f5a1
 | `status` | `string \| null` | No | PENDING, RUNNING, FAILED or SUCCEEDED. |
 | `payload` | `Record<string, unknown> \| null` | No | — |
 | `metadata` | `Record<string, unknown> \| null` | No | — |
-| `results` | `unknown[] \| Record<string, unknown> \| null` | No | An array for ADD, SEARCH and GET_ALL, one object for UPDATE, and null for a delete. |
+| `results` | `object \| null` | No | An array for ADD, SEARCH and GET_ALL, one object for UPDATE, and null for a delete. |
 | `created_at` | `string \| null` | No | — |
 | `updated_at` | `string \| null` | No | — |
 | `started_at` | `string \| null` | No | — |
@@ -261,7 +261,7 @@ await corsair.mem0.api.memories.batchUpdate({ memories: [{ memory_id: '285ed74b-
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `memories` | `object[]` | Yes | The memories to update, up to 1000 per call. |
+| `memories` | `object[]` | Yes | The memories to update, up to 1000 per call. Text is applied; use memories.update when metadata also has to change. |
 
 <AccordionGroup>
 <Accordion title="memories full type">
@@ -269,8 +269,7 @@ await corsair.mem0.api.memories.batchUpdate({ memories: [{ memory_id: '285ed74b-
 ```ts
 {
   memory_id: string,
-  text?: string,
-  metadata?: Record<string, unknown>
+  text: string
 }[]
 ```
 </Accordion>
@@ -346,7 +345,7 @@ await corsair.mem0.api.memories.deleteAll({ user_id: 'alice' });
 | `run_id` | `string` | No | Delete this run's memories. Pass "*" for every run. |
 | `org_id` | `string` | No | Only memories in this organization. |
 | `project_id` | `string` | No | Only memories in this project. |
-| `metadata` | `Record<string, unknown>` | No | Only memories whose metadata matches these keys. |
+| `metadata` | `Record<string, unknown>` | No | Only memories whose metadata matches these keys. Values must be strings, numbers or booleans, because null and undefined reach the wire as no key at all. |
 
 <AccordionGroup>
 <Accordion title="metadata full type">
