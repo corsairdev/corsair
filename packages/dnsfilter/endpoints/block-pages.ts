@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { DnsfilterEndpoints } from '..';
-import { makeDnsfilterRequest } from '../client';
+import { dropNullFields, makeDnsfilterRequest } from '../client';
 import { redactSensitive } from '../redact';
 import type { DnsfilterEndpointOutputs } from './types';
 import {
@@ -25,7 +25,9 @@ export const blockPagesList: DnsfilterEndpoints['blockPagesList'] = async (
 			page: values.page,
 		},
 	});
-	const result = DnsfilterEndpointOutputSchemas.blockPagesList.parse(response);
+	const result = DnsfilterEndpointOutputSchemas.blockPagesList.parse(
+		dropNullFields(response),
+	);
 	await logEventFromContext(
 		ctx,
 		'dnsfilter.blockPages.list',
@@ -57,8 +59,9 @@ export const blockPagesCreate: DnsfilterEndpoints['blockPagesCreate'] = async (
 			updated_at: values.updated_at,
 		},
 	});
-	const result =
-		DnsfilterEndpointOutputSchemas.blockPagesCreate.parse(response);
+	const result = DnsfilterEndpointOutputSchemas.blockPagesCreate.parse(
+		dropNullFields(response),
+	);
 	await logEventFromContext(
 		ctx,
 		'dnsfilter.blockPages.create',
@@ -83,8 +86,9 @@ export const blockPagesListAll: DnsfilterEndpoints['blockPagesListAll'] =
 				page: values.page,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.blockPagesListAll.parse(response);
+		const result = DnsfilterEndpointOutputSchemas.blockPagesListAll.parse(
+			dropNullFields(response),
+		);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.blockPages.listAll',
@@ -111,7 +115,9 @@ export const blockPagesGet: DnsfilterEndpoints['blockPagesGet'] = async (
 			include_relationships: values.include_relationships,
 		},
 	});
-	const result = DnsfilterEndpointOutputSchemas.blockPagesGet.parse(response);
+	const result = DnsfilterEndpointOutputSchemas.blockPagesGet.parse(
+		dropNullFields(response),
+	);
 	await logEventFromContext(
 		ctx,
 		'dnsfilter.blockPages.get',
@@ -146,8 +152,9 @@ export const blockPagesUpdate: DnsfilterEndpoints['blockPagesUpdate'] = async (
 			updated_at: values.updated_at,
 		},
 	});
-	const result =
-		DnsfilterEndpointOutputSchemas.blockPagesUpdate.parse(response);
+	const result = DnsfilterEndpointOutputSchemas.blockPagesUpdate.parse(
+		dropNullFields(response),
+	);
 	await logEventFromContext(
 		ctx,
 		'dnsfilter.blockPages.update',
@@ -173,8 +180,9 @@ export const blockPagesDelete: DnsfilterEndpoints['blockPagesDelete'] = async (
 			id: values.id,
 		},
 	});
-	const result =
-		DnsfilterEndpointOutputSchemas.blockPagesDelete.parse(response);
+	const result = DnsfilterEndpointOutputSchemas.blockPagesDelete.parse(
+		dropNullFields(response),
+	);
 	await logEventFromContext(
 		ctx,
 		'dnsfilter.blockPages.delete',

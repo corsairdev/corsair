@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { DnsfilterEndpoints } from '..';
-import { makeDnsfilterRequest } from '../client';
+import { dropNullFields, makeDnsfilterRequest } from '../client';
 import { redactSensitive } from '../redact';
 import type { DnsfilterEndpointOutputs } from './types';
 import {
@@ -24,8 +24,9 @@ export const csvExportsUserAgentsCsv: DnsfilterEndpoints['csvExportsUserAgentsCs
 				timezone: values.timezone,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.csvExportsUserAgentsCsv.parse(response);
+		const result = DnsfilterEndpointOutputSchemas.csvExportsUserAgentsCsv.parse(
+			dropNullFields(response),
+		);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.csvExports.userAgentsCsv',
@@ -49,7 +50,9 @@ export const csvExportsUserAgentCreate: DnsfilterEndpoints['csvExportsUserAgentC
 			body: values,
 		});
 		const result =
-			DnsfilterEndpointOutputSchemas.csvExportsUserAgentCreate.parse(response);
+			DnsfilterEndpointOutputSchemas.csvExportsUserAgentCreate.parse(
+				dropNullFields(response),
+			);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.csvExports.userAgentCreate',
@@ -73,8 +76,9 @@ export const csvExportsUserAgentGet: DnsfilterEndpoints['csvExportsUserAgentGet'
 				id: values.id,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.csvExportsUserAgentGet.parse(response);
+		const result = DnsfilterEndpointOutputSchemas.csvExportsUserAgentGet.parse(
+			dropNullFields(response),
+		);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.csvExports.userAgentGet',
@@ -99,7 +103,7 @@ export const csvExportsAgentLocalUsersCreate: DnsfilterEndpoints['csvExportsAgen
 		});
 		const result =
 			DnsfilterEndpointOutputSchemas.csvExportsAgentLocalUsersCreate.parse(
-				response,
+				dropNullFields(response),
 			);
 		await logEventFromContext(
 			ctx,
@@ -128,7 +132,7 @@ export const csvExportsAgentLocalUsersGet: DnsfilterEndpoints['csvExportsAgentLo
 		});
 		const result =
 			DnsfilterEndpointOutputSchemas.csvExportsAgentLocalUsersGet.parse(
-				response,
+				dropNullFields(response),
 			);
 		await logEventFromContext(
 			ctx,
@@ -164,7 +168,9 @@ export const csvExportsCyberSightCreate: DnsfilterEndpoints['csvExportsCyberSigh
 			},
 		});
 		const result =
-			DnsfilterEndpointOutputSchemas.csvExportsCyberSightCreate.parse(response);
+			DnsfilterEndpointOutputSchemas.csvExportsCyberSightCreate.parse(
+				dropNullFields(response),
+			);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.csvExports.cyberSightCreate',
@@ -188,8 +194,9 @@ export const csvExportsCyberSightGet: DnsfilterEndpoints['csvExportsCyberSightGe
 				id: values.id,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.csvExportsCyberSightGet.parse(response);
+		const result = DnsfilterEndpointOutputSchemas.csvExportsCyberSightGet.parse(
+			dropNullFields(response),
+		);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.csvExports.cyberSightGet',
@@ -221,7 +228,9 @@ export const csvExportsNetworksCreate: DnsfilterEndpoints['csvExportsNetworksCre
 			},
 		});
 		const result =
-			DnsfilterEndpointOutputSchemas.csvExportsNetworksCreate.parse(response);
+			DnsfilterEndpointOutputSchemas.csvExportsNetworksCreate.parse(
+				dropNullFields(response),
+			);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.csvExports.networksCreate',
@@ -245,8 +254,9 @@ export const csvExportsNetworksGet: DnsfilterEndpoints['csvExportsNetworksGet'] 
 				id: values.id,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.csvExportsNetworksGet.parse(response);
+		const result = DnsfilterEndpointOutputSchemas.csvExportsNetworksGet.parse(
+			dropNullFields(response),
+		);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.csvExports.networksGet',
@@ -281,7 +291,7 @@ export const csvExportsUnblockRequestsCreate: DnsfilterEndpoints['csvExportsUnbl
 		});
 		const result =
 			DnsfilterEndpointOutputSchemas.csvExportsUnblockRequestsCreate.parse(
-				response,
+				dropNullFields(response),
 			);
 		await logEventFromContext(
 			ctx,
@@ -310,7 +320,7 @@ export const csvExportsUnblockRequestsGet: DnsfilterEndpoints['csvExportsUnblock
 		});
 		const result =
 			DnsfilterEndpointOutputSchemas.csvExportsUnblockRequestsGet.parse(
-				response,
+				dropNullFields(response),
 			);
 		await logEventFromContext(
 			ctx,

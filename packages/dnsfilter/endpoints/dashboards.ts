@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { DnsfilterEndpoints } from '..';
-import { makeDnsfilterRequest } from '../client';
+import { dropNullFields, makeDnsfilterRequest } from '../client';
 import { redactSensitive } from '../redact';
 import type { DnsfilterEndpointOutputs } from './types';
 import {
@@ -21,7 +21,9 @@ export const dashboardsList: DnsfilterEndpoints['dashboardsList'] = async (
 	>('/v2/dashboards', ctx.key, {
 		method: 'GET',
 	});
-	const result = DnsfilterEndpointOutputSchemas.dashboardsList.parse(response);
+	const result = DnsfilterEndpointOutputSchemas.dashboardsList.parse(
+		dropNullFields(response),
+	);
 	await logEventFromContext(
 		ctx,
 		'dnsfilter.dashboards.list',
@@ -47,8 +49,9 @@ export const dashboardsCreate: DnsfilterEndpoints['dashboardsCreate'] = async (
 			dashboard: values.dashboard,
 		},
 	});
-	const result =
-		DnsfilterEndpointOutputSchemas.dashboardsCreate.parse(response);
+	const result = DnsfilterEndpointOutputSchemas.dashboardsCreate.parse(
+		dropNullFields(response),
+	);
 	await logEventFromContext(
 		ctx,
 		'dnsfilter.dashboards.create',
@@ -69,8 +72,9 @@ export const dashboardsAvailable: DnsfilterEndpoints['dashboardsAvailable'] =
 		>('/v2/dashboards/available', ctx.key, {
 			method: 'GET',
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.dashboardsAvailable.parse(response);
+		const result = DnsfilterEndpointOutputSchemas.dashboardsAvailable.parse(
+			dropNullFields(response),
+		);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.dashboards.available',
@@ -93,7 +97,9 @@ export const dashboardsOwned: DnsfilterEndpoints['dashboardsOwned'] = async (
 	>('/v2/dashboards/owned', ctx.key, {
 		method: 'GET',
 	});
-	const result = DnsfilterEndpointOutputSchemas.dashboardsOwned.parse(response);
+	const result = DnsfilterEndpointOutputSchemas.dashboardsOwned.parse(
+		dropNullFields(response),
+	);
 	await logEventFromContext(
 		ctx,
 		'dnsfilter.dashboards.owned',
@@ -122,8 +128,9 @@ export const dashboardsUpdate: DnsfilterEndpoints['dashboardsUpdate'] = async (
 			dashboard: values.dashboard,
 		},
 	});
-	const result =
-		DnsfilterEndpointOutputSchemas.dashboardsUpdate.parse(response);
+	const result = DnsfilterEndpointOutputSchemas.dashboardsUpdate.parse(
+		dropNullFields(response),
+	);
 	await logEventFromContext(
 		ctx,
 		'dnsfilter.dashboards.update',
@@ -149,8 +156,9 @@ export const dashboardsDelete: DnsfilterEndpoints['dashboardsDelete'] = async (
 			id: values.id,
 		},
 	});
-	const result =
-		DnsfilterEndpointOutputSchemas.dashboardsDelete.parse(response);
+	const result = DnsfilterEndpointOutputSchemas.dashboardsDelete.parse(
+		dropNullFields(response),
+	);
 	await logEventFromContext(
 		ctx,
 		'dnsfilter.dashboards.delete',
@@ -174,8 +182,9 @@ export const dashboardsMakePublic: DnsfilterEndpoints['dashboardsMakePublic'] =
 				id: values.id,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.dashboardsMakePublic.parse(response);
+		const result = DnsfilterEndpointOutputSchemas.dashboardsMakePublic.parse(
+			dropNullFields(response),
+		);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.dashboards.makePublic',
@@ -199,8 +208,9 @@ export const dashboardsMakePrivate: DnsfilterEndpoints['dashboardsMakePrivate'] 
 				id: values.id,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.dashboardsMakePrivate.parse(response);
+		const result = DnsfilterEndpointOutputSchemas.dashboardsMakePrivate.parse(
+			dropNullFields(response),
+		);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.dashboards.makePrivate',
@@ -226,7 +236,9 @@ export const dashboardsLink: DnsfilterEndpoints['dashboardsLink'] = async (
 			id: values.id,
 		},
 	});
-	const result = DnsfilterEndpointOutputSchemas.dashboardsLink.parse(response);
+	const result = DnsfilterEndpointOutputSchemas.dashboardsLink.parse(
+		dropNullFields(response),
+	);
 	await logEventFromContext(
 		ctx,
 		'dnsfilter.dashboards.link',
@@ -252,8 +264,9 @@ export const dashboardsUnlink: DnsfilterEndpoints['dashboardsUnlink'] = async (
 			id: values.id,
 		},
 	});
-	const result =
-		DnsfilterEndpointOutputSchemas.dashboardsUnlink.parse(response);
+	const result = DnsfilterEndpointOutputSchemas.dashboardsUnlink.parse(
+		dropNullFields(response),
+	);
 	await logEventFromContext(
 		ctx,
 		'dnsfilter.dashboards.unlink',

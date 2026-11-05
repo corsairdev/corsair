@@ -2,7 +2,7 @@
 // One file per resource family; each endpoint keeps its own group name.
 import { logEventFromContext } from 'corsair/core';
 import type { DnsfilterEndpoints } from '..';
-import { makeDnsfilterRequest } from '../client';
+import { dropNullFields, makeDnsfilterRequest } from '../client';
 import { redactSensitive } from '../redact';
 import type { DnsfilterEndpointOutputs } from './types';
 import {
@@ -21,8 +21,9 @@ export const dictionaryQpMethods: DnsfilterEndpoints['dictionaryQpMethods'] =
 		>('/v1/dictionary/qp_methods', ctx.key, {
 			method: 'GET',
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.dictionaryQpMethods.parse(response);
+		const result = DnsfilterEndpointOutputSchemas.dictionaryQpMethods.parse(
+			dropNullFields(response),
+		);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.dictionary.qpMethods',
@@ -45,7 +46,9 @@ export const dictionaryV2AiApplications: DnsfilterEndpoints['dictionaryV2AiAppli
 			method: 'GET',
 		});
 		const result =
-			DnsfilterEndpointOutputSchemas.dictionaryV2AiApplications.parse(response);
+			DnsfilterEndpointOutputSchemas.dictionaryV2AiApplications.parse(
+				dropNullFields(response),
+			);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.dictionaryV2.aiApplications',
@@ -69,7 +72,7 @@ export const dictionaryV2CyberSightActivityTypes: DnsfilterEndpoints['dictionary
 		});
 		const result =
 			DnsfilterEndpointOutputSchemas.dictionaryV2CyberSightActivityTypes.parse(
-				response,
+				dropNullFields(response),
 			);
 		await logEventFromContext(
 			ctx,
@@ -94,7 +97,7 @@ export const dictionaryV2VpnSettingsStateTypes: DnsfilterEndpoints['dictionaryV2
 		});
 		const result =
 			DnsfilterEndpointOutputSchemas.dictionaryV2VpnSettingsStateTypes.parse(
-				response,
+				dropNullFields(response),
 			);
 		await logEventFromContext(
 			ctx,

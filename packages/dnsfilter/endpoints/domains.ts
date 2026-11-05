@@ -2,7 +2,7 @@
 // One file per resource family; each endpoint keeps its own group name.
 import { logEventFromContext } from 'corsair/core';
 import type { DnsfilterEndpoints } from '..';
-import { makeDnsfilterRequest } from '../client';
+import { dropNullFields, makeDnsfilterRequest } from '../client';
 import { redactSensitive } from '../redact';
 import type { DnsfilterEndpointOutputs } from './types';
 import {
@@ -24,8 +24,9 @@ export const domainsUserLookup: DnsfilterEndpoints['domainsUserLookup'] =
 				fqdn: values.fqdn,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.domainsUserLookup.parse(response);
+		const result = DnsfilterEndpointOutputSchemas.domainsUserLookup.parse(
+			dropNullFields(response),
+		);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.domains.userLookup',
@@ -49,8 +50,9 @@ export const domainsBulkLookup: DnsfilterEndpoints['domainsBulkLookup'] =
 				fqdns: values.fqdns,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.domainsBulkLookup.parse(response);
+		const result = DnsfilterEndpointOutputSchemas.domainsBulkLookup.parse(
+			dropNullFields(response),
+		);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.domains.bulkLookup',
@@ -76,8 +78,9 @@ export const domainsSuggestThreat: DnsfilterEndpoints['domainsSuggestThreat'] =
 				notes: values.notes,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.domainsSuggestThreat.parse(response);
+		const result = DnsfilterEndpointOutputSchemas.domainsSuggestThreat.parse(
+			dropNullFields(response),
+		);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.domains.suggestThreat',
@@ -105,7 +108,9 @@ export const domainNotesGet: DnsfilterEndpoints['domainNotesGet'] = async (
 			resource: values.resource,
 		},
 	});
-	const result = DnsfilterEndpointOutputSchemas.domainNotesGet.parse(response);
+	const result = DnsfilterEndpointOutputSchemas.domainNotesGet.parse(
+		dropNullFields(response),
+	);
 	await logEventFromContext(
 		ctx,
 		'dnsfilter.domainNotes.get',
@@ -132,8 +137,9 @@ export const domainNotesUpdate: DnsfilterEndpoints['domainNotesUpdate'] =
 			},
 			body: values.body,
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.domainNotesUpdate.parse(response);
+		const result = DnsfilterEndpointOutputSchemas.domainNotesUpdate.parse(
+			dropNullFields(response),
+		);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.domainNotes.update',
@@ -165,8 +171,9 @@ export const domainNotesBatchUpdate: DnsfilterEndpoints['domainNotesBatchUpdate'
 				type: values.type,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.domainNotesBatchUpdate.parse(response);
+		const result = DnsfilterEndpointOutputSchemas.domainNotesBatchUpdate.parse(
+			dropNullFields(response),
+		);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.domainNotes.batchUpdate',
@@ -192,8 +199,9 @@ export const domainNotesDelete: DnsfilterEndpoints['domainNotesDelete'] =
 				resource: values.resource,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.domainNotesDelete.parse(response);
+		const result = DnsfilterEndpointOutputSchemas.domainNotesDelete.parse(
+			dropNullFields(response),
+		);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.domainNotes.delete',
@@ -221,8 +229,9 @@ export const domainNotesBatchDestroy: DnsfilterEndpoints['domainNotesBatchDestro
 				domains: values.domains,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.domainNotesBatchDestroy.parse(response);
+		const result = DnsfilterEndpointOutputSchemas.domainNotesBatchDestroy.parse(
+			dropNullFields(response),
+		);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.domainNotes.batchDestroy',

@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { DnsfilterEndpoints } from '..';
-import { makeDnsfilterRequest } from '../client';
+import { dropNullFields, makeDnsfilterRequest } from '../client';
 import { redactSensitive } from '../redact';
 import type { DnsfilterEndpointOutputs } from './types';
 import {
@@ -39,7 +39,7 @@ export const trafficReportsTotalRequests: DnsfilterEndpoints['trafficReportsTota
 		});
 		const result =
 			DnsfilterEndpointOutputSchemas.trafficReportsTotalRequests.parse(
-				response,
+				dropNullFields(response),
 			);
 		await logEventFromContext(
 			ctx,
@@ -71,7 +71,7 @@ export const trafficReportsTotalRequestsGeo: DnsfilterEndpoints['trafficReportsT
 		});
 		const result =
 			DnsfilterEndpointOutputSchemas.trafficReportsTotalRequestsGeo.parse(
-				response,
+				dropNullFields(response),
 			);
 		await logEventFromContext(
 			ctx,
@@ -113,7 +113,7 @@ export const trafficReportsTotalRequestsOrganizations: DnsfilterEndpoints['traff
 		});
 		const result =
 			DnsfilterEndpointOutputSchemas.trafficReportsTotalRequestsOrganizations.parse(
-				response,
+				dropNullFields(response),
 			);
 		await logEventFromContext(
 			ctx,
@@ -155,7 +155,7 @@ export const trafficReportsTotalRequestsAgents: DnsfilterEndpoints['trafficRepor
 		});
 		const result =
 			DnsfilterEndpointOutputSchemas.trafficReportsTotalRequestsAgents.parse(
-				response,
+				dropNullFields(response),
 			);
 		await logEventFromContext(
 			ctx,
@@ -197,7 +197,7 @@ export const trafficReportsTotalRequestsUsers: DnsfilterEndpoints['trafficReport
 		});
 		const result =
 			DnsfilterEndpointOutputSchemas.trafficReportsTotalRequestsUsers.parse(
-				response,
+				dropNullFields(response),
 			);
 		await logEventFromContext(
 			ctx,
@@ -238,7 +238,7 @@ export const trafficReportsTotalRequestsCollections: DnsfilterEndpoints['traffic
 		});
 		const result =
 			DnsfilterEndpointOutputSchemas.trafficReportsTotalRequestsCollections.parse(
-				response,
+				dropNullFields(response),
 			);
 		await logEventFromContext(
 			ctx,
@@ -277,7 +277,9 @@ export const trafficReportsTotalThreats: DnsfilterEndpoints['trafficReportsTotal
 			},
 		});
 		const result =
-			DnsfilterEndpointOutputSchemas.trafficReportsTotalThreats.parse(response);
+			DnsfilterEndpointOutputSchemas.trafficReportsTotalThreats.parse(
+				dropNullFields(response),
+			);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.trafficReports.totalThreats',
@@ -316,7 +318,7 @@ export const trafficReportsTotalThreatsOrganizations: DnsfilterEndpoints['traffi
 		});
 		const result =
 			DnsfilterEndpointOutputSchemas.trafficReportsTotalThreatsOrganizations.parse(
-				response,
+				dropNullFields(response),
 			);
 		await logEventFromContext(
 			ctx,
@@ -356,7 +358,7 @@ export const trafficReportsTotalThreatsUsers: DnsfilterEndpoints['trafficReports
 		});
 		const result =
 			DnsfilterEndpointOutputSchemas.trafficReportsTotalThreatsUsers.parse(
-				response,
+				dropNullFields(response),
 			);
 		await logEventFromContext(
 			ctx,
@@ -398,7 +400,7 @@ export const trafficReportsTotalCategories: DnsfilterEndpoints['trafficReportsTo
 		});
 		const result =
 			DnsfilterEndpointOutputSchemas.trafficReportsTotalCategories.parse(
-				response,
+				dropNullFields(response),
 			);
 		await logEventFromContext(
 			ctx,
@@ -439,7 +441,7 @@ export const trafficReportsTotalCategoriesOrganizations: DnsfilterEndpoints['tra
 		});
 		const result =
 			DnsfilterEndpointOutputSchemas.trafficReportsTotalCategoriesOrganizations.parse(
-				response,
+				dropNullFields(response),
 			);
 		await logEventFromContext(
 			ctx,
@@ -481,7 +483,9 @@ export const trafficReportsTotalDomains: DnsfilterEndpoints['trafficReportsTotal
 			},
 		});
 		const result =
-			DnsfilterEndpointOutputSchemas.trafficReportsTotalDomains.parse(response);
+			DnsfilterEndpointOutputSchemas.trafficReportsTotalDomains.parse(
+				dropNullFields(response),
+			);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.trafficReports.totalDomains',
@@ -523,7 +527,7 @@ export const trafficReportsTotalDomainsOrganizations: DnsfilterEndpoints['traffi
 		});
 		const result =
 			DnsfilterEndpointOutputSchemas.trafficReportsTotalDomainsOrganizations.parse(
-				response,
+				dropNullFields(response),
 			);
 		await logEventFromContext(
 			ctx,
@@ -566,7 +570,7 @@ export const trafficReportsTotalDomainsUsers: DnsfilterEndpoints['trafficReports
 		});
 		const result =
 			DnsfilterEndpointOutputSchemas.trafficReportsTotalDomainsUsers.parse(
-				response,
+				dropNullFields(response),
 			);
 		await logEventFromContext(
 			ctx,
@@ -605,8 +609,9 @@ export const trafficReportsQps: DnsfilterEndpoints['trafficReportsQps'] =
 				user_ids: values.user_ids,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.trafficReportsQps.parse(response);
+		const result = DnsfilterEndpointOutputSchemas.trafficReportsQps.parse(
+			dropNullFields(response),
+		);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.trafficReports.qps',
@@ -645,7 +650,7 @@ export const trafficReportsQpsActiveOrganizations: DnsfilterEndpoints['trafficRe
 		});
 		const result =
 			DnsfilterEndpointOutputSchemas.trafficReportsQpsActiveOrganizations.parse(
-				response,
+				dropNullFields(response),
 			);
 		await logEventFromContext(
 			ctx,
@@ -684,7 +689,7 @@ export const trafficReportsQpsActiveAgents: DnsfilterEndpoints['trafficReportsQp
 		});
 		const result =
 			DnsfilterEndpointOutputSchemas.trafficReportsQpsActiveAgents.parse(
-				response,
+				dropNullFields(response),
 			);
 		await logEventFromContext(
 			ctx,
@@ -726,7 +731,9 @@ export const trafficReportsTopDomains: DnsfilterEndpoints['trafficReportsTopDoma
 			},
 		});
 		const result =
-			DnsfilterEndpointOutputSchemas.trafficReportsTopDomains.parse(response);
+			DnsfilterEndpointOutputSchemas.trafficReportsTopDomains.parse(
+				dropNullFields(response),
+			);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.trafficReports.topDomains',
@@ -767,7 +774,7 @@ export const trafficReportsTopCategories: DnsfilterEndpoints['trafficReportsTopC
 		});
 		const result =
 			DnsfilterEndpointOutputSchemas.trafficReportsTopCategories.parse(
-				response,
+				dropNullFields(response),
 			);
 		await logEventFromContext(
 			ctx,
@@ -809,7 +816,7 @@ export const trafficReportsTopApplicationCategories: DnsfilterEndpoints['traffic
 		});
 		const result =
 			DnsfilterEndpointOutputSchemas.trafficReportsTopApplicationCategories.parse(
-				response,
+				dropNullFields(response),
 			);
 		await logEventFromContext(
 			ctx,
@@ -849,7 +856,9 @@ export const trafficReportsTopNetworks: DnsfilterEndpoints['trafficReportsTopNet
 			},
 		});
 		const result =
-			DnsfilterEndpointOutputSchemas.trafficReportsTopNetworks.parse(response);
+			DnsfilterEndpointOutputSchemas.trafficReportsTopNetworks.parse(
+				dropNullFields(response),
+			);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.trafficReports.topNetworks',
@@ -887,8 +896,9 @@ export const trafficReportsTopAgents: DnsfilterEndpoints['trafficReportsTopAgent
 				user_ids: values.user_ids,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.trafficReportsTopAgents.parse(response);
+		const result = DnsfilterEndpointOutputSchemas.trafficReportsTopAgents.parse(
+			dropNullFields(response),
+		);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.trafficReports.topAgents',
@@ -926,8 +936,9 @@ export const trafficReportsTopUsers: DnsfilterEndpoints['trafficReportsTopUsers'
 				user_ids: values.user_ids,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.trafficReportsTopUsers.parse(response);
+		const result = DnsfilterEndpointOutputSchemas.trafficReportsTopUsers.parse(
+			dropNullFields(response),
+		);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.trafficReports.topUsers',
@@ -968,7 +979,7 @@ export const trafficReportsTopCollections: DnsfilterEndpoints['trafficReportsTop
 		});
 		const result =
 			DnsfilterEndpointOutputSchemas.trafficReportsTopCollections.parse(
-				response,
+				dropNullFields(response),
 			);
 		await logEventFromContext(
 			ctx,
@@ -1021,8 +1032,9 @@ export const trafficReportsQueryLogs: DnsfilterEndpoints['trafficReportsQueryLog
 				user_ids: values.user_ids,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.trafficReportsQueryLogs.parse(response);
+		const result = DnsfilterEndpointOutputSchemas.trafficReportsQueryLogs.parse(
+			dropNullFields(response),
+		);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.trafficReports.queryLogs',
@@ -1061,7 +1073,7 @@ export const trafficReportsTotalOrganizationsStats: DnsfilterEndpoints['trafficR
 		});
 		const result =
 			DnsfilterEndpointOutputSchemas.trafficReportsTotalOrganizationsStats.parse(
-				response,
+				dropNullFields(response),
 			);
 		await logEventFromContext(
 			ctx,
@@ -1095,7 +1107,7 @@ export const trafficReportsTotalDomainStats: DnsfilterEndpoints['trafficReportsT
 		});
 		const result =
 			DnsfilterEndpointOutputSchemas.trafficReportsTotalDomainStats.parse(
-				response,
+				dropNullFields(response),
 			);
 		await logEventFromContext(
 			ctx,
@@ -1128,7 +1140,7 @@ export const trafficReportsTotalCategoryStats: DnsfilterEndpoints['trafficReport
 		});
 		const result =
 			DnsfilterEndpointOutputSchemas.trafficReportsTotalCategoryStats.parse(
-				response,
+				dropNullFields(response),
 			);
 		await logEventFromContext(
 			ctx,
@@ -1173,7 +1185,7 @@ export const trafficReportsTotalOrganizationsRequests: DnsfilterEndpoints['traff
 		});
 		const result =
 			DnsfilterEndpointOutputSchemas.trafficReportsTotalOrganizationsRequests.parse(
-				response,
+				dropNullFields(response),
 			);
 		await logEventFromContext(
 			ctx,
@@ -1206,7 +1218,7 @@ export const trafficReportsTopOrganizationsRequests: DnsfilterEndpoints['traffic
 		});
 		const result =
 			DnsfilterEndpointOutputSchemas.trafficReportsTopOrganizationsRequests.parse(
-				response,
+				dropNullFields(response),
 			);
 		await logEventFromContext(
 			ctx,
@@ -1238,7 +1250,7 @@ export const trafficReportsTotalClientStats: DnsfilterEndpoints['trafficReportsT
 		});
 		const result =
 			DnsfilterEndpointOutputSchemas.trafficReportsTotalClientStats.parse(
-				response,
+				dropNullFields(response),
 			);
 		await logEventFromContext(
 			ctx,
@@ -1268,7 +1280,7 @@ export const trafficReportsTotalDeployments: DnsfilterEndpoints['trafficReportsT
 		});
 		const result =
 			DnsfilterEndpointOutputSchemas.trafficReportsTotalDeployments.parse(
-				response,
+				dropNullFields(response),
 			);
 		await logEventFromContext(
 			ctx,
@@ -1297,7 +1309,7 @@ export const trafficReportsTotalRoamingClients: DnsfilterEndpoints['trafficRepor
 		});
 		const result =
 			DnsfilterEndpointOutputSchemas.trafficReportsTotalRoamingClients.parse(
-				response,
+				dropNullFields(response),
 			);
 		await logEventFromContext(
 			ctx,
@@ -1339,7 +1351,7 @@ export const trafficReportsTotalApplicationsStats: DnsfilterEndpoints['trafficRe
 		});
 		const result =
 			DnsfilterEndpointOutputSchemas.trafficReportsTotalApplicationsStats.parse(
-				response,
+				dropNullFields(response),
 			);
 		await logEventFromContext(
 			ctx,
@@ -1380,7 +1392,7 @@ export const trafficReportsTotalApplicationsNetworksStats: DnsfilterEndpoints['t
 		});
 		const result =
 			DnsfilterEndpointOutputSchemas.trafficReportsTotalApplicationsNetworksStats.parse(
-				response,
+				dropNullFields(response),
 			);
 		await logEventFromContext(
 			ctx,
@@ -1421,7 +1433,7 @@ export const trafficReportsTotalApplicationsAgentsStats: DnsfilterEndpoints['tra
 		});
 		const result =
 			DnsfilterEndpointOutputSchemas.trafficReportsTotalApplicationsAgentsStats.parse(
-				response,
+				dropNullFields(response),
 			);
 		await logEventFromContext(
 			ctx,
@@ -1462,7 +1474,7 @@ export const trafficReportsTotalApplicationsUsersStats: DnsfilterEndpoints['traf
 		});
 		const result =
 			DnsfilterEndpointOutputSchemas.trafficReportsTotalApplicationsUsersStats.parse(
-				response,
+				dropNullFields(response),
 			);
 		await logEventFromContext(
 			ctx,
@@ -1503,7 +1515,7 @@ export const trafficReportsTotalApplicationsCollectionsStats: DnsfilterEndpoints
 		});
 		const result =
 			DnsfilterEndpointOutputSchemas.trafficReportsTotalApplicationsCollectionsStats.parse(
-				response,
+				dropNullFields(response),
 			);
 		await logEventFromContext(
 			ctx,

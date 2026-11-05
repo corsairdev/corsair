@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { DnsfilterEndpoints } from '..';
-import { makeDnsfilterRequest } from '../client';
+import { dropNullFields, makeDnsfilterRequest } from '../client';
 import { redactSensitive } from '../redact';
 import type { DnsfilterEndpointOutputs } from './types';
 import {
@@ -23,7 +23,9 @@ export const apiKeysCreate: DnsfilterEndpoints['apiKeysCreate'] = async (
 			expiry: values.expiry,
 		},
 	});
-	const result = DnsfilterEndpointOutputSchemas.apiKeysCreate.parse(response);
+	const result = DnsfilterEndpointOutputSchemas.apiKeysCreate.parse(
+		dropNullFields(response),
+	);
 	await logEventFromContext(
 		ctx,
 		'dnsfilter.apiKeys.create',
@@ -51,7 +53,9 @@ export const apiKeysList: DnsfilterEndpoints['apiKeysList'] = async (
 			organization_id: values.organization_id,
 		},
 	});
-	const result = DnsfilterEndpointOutputSchemas.apiKeysList.parse(response);
+	const result = DnsfilterEndpointOutputSchemas.apiKeysList.parse(
+		dropNullFields(response),
+	);
 	await logEventFromContext(
 		ctx,
 		'dnsfilter.apiKeys.list',
@@ -75,7 +79,9 @@ export const apiKeysGet: DnsfilterEndpoints['apiKeysGet'] = async (
 			id: values.id,
 		},
 	});
-	const result = DnsfilterEndpointOutputSchemas.apiKeysGet.parse(response);
+	const result = DnsfilterEndpointOutputSchemas.apiKeysGet.parse(
+		dropNullFields(response),
+	);
 	await logEventFromContext(
 		ctx,
 		'dnsfilter.apiKeys.get',
@@ -99,7 +105,9 @@ export const apiKeysDelete: DnsfilterEndpoints['apiKeysDelete'] = async (
 			id: values.id,
 		},
 	});
-	const result = DnsfilterEndpointOutputSchemas.apiKeysDelete.parse(response);
+	const result = DnsfilterEndpointOutputSchemas.apiKeysDelete.parse(
+		dropNullFields(response),
+	);
 	await logEventFromContext(
 		ctx,
 		'dnsfilter.apiKeys.delete',
@@ -123,7 +131,9 @@ export const apiKeysRevoke: DnsfilterEndpoints['apiKeysRevoke'] = async (
 			id: values.id,
 		},
 	});
-	const result = DnsfilterEndpointOutputSchemas.apiKeysRevoke.parse(response);
+	const result = DnsfilterEndpointOutputSchemas.apiKeysRevoke.parse(
+		dropNullFields(response),
+	);
 	await logEventFromContext(
 		ctx,
 		'dnsfilter.apiKeys.revoke',

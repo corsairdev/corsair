@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { DnsfilterEndpoints } from '..';
-import { makeDnsfilterRequest } from '../client';
+import { dropNullFields, makeDnsfilterRequest } from '../client';
 import { persistUnblockRequests } from '../persistence';
 import { redactSensitive } from '../redact';
 import type { DnsfilterEndpointOutputs } from './types';
@@ -43,9 +43,10 @@ export const unblockRequestsList: DnsfilterEndpoints['unblockRequestsList'] =
 				time_of_attempt: values.time_of_attempt,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.unblockRequestsList.parse(response);
-		await persistUnblockRequests(ctx, result);
+		const result = DnsfilterEndpointOutputSchemas.unblockRequestsList.parse(
+			dropNullFields(response),
+		);
+		await persistUnblockRequests(ctx, response);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.unblockRequests.list',
@@ -71,8 +72,9 @@ export const unblockRequestsCounts: DnsfilterEndpoints['unblockRequestsCounts'] 
 				organization_ids: values.organization_ids,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.unblockRequestsCounts.parse(response);
+		const result = DnsfilterEndpointOutputSchemas.unblockRequestsCounts.parse(
+			dropNullFields(response),
+		);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.unblockRequests.counts',
@@ -101,7 +103,7 @@ export const unblockRequestsPendingCount: DnsfilterEndpoints['unblockRequestsPen
 		});
 		const result =
 			DnsfilterEndpointOutputSchemas.unblockRequestsPendingCount.parse(
-				response,
+				dropNullFields(response),
 			);
 		await logEventFromContext(
 			ctx,
@@ -126,9 +128,10 @@ export const unblockRequestsGet: DnsfilterEndpoints['unblockRequestsGet'] =
 				id: values.id,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.unblockRequestsGet.parse(response);
-		await persistUnblockRequests(ctx, result);
+		const result = DnsfilterEndpointOutputSchemas.unblockRequestsGet.parse(
+			dropNullFields(response),
+		);
+		await persistUnblockRequests(ctx, response);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.unblockRequests.get',
@@ -158,9 +161,10 @@ export const unblockRequestsDecision: DnsfilterEndpoints['unblockRequestsDecisio
 				internal_notes: values.internal_notes,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.unblockRequestsDecision.parse(response);
-		await persistUnblockRequests(ctx, result);
+		const result = DnsfilterEndpointOutputSchemas.unblockRequestsDecision.parse(
+			dropNullFields(response),
+		);
+		await persistUnblockRequests(ctx, response);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.unblockRequests.decision',

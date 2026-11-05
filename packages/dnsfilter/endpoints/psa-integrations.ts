@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { DnsfilterEndpoints } from '..';
-import { makeDnsfilterRequest } from '../client';
+import { dropNullFields, makeDnsfilterRequest } from '../client';
 import { redactSensitive } from '../redact';
 import type { DnsfilterEndpointOutputs } from './types';
 import {
@@ -26,7 +26,7 @@ export const psaIntegrationsRedirectLink: DnsfilterEndpoints['psaIntegrationsRed
 		});
 		const result =
 			DnsfilterEndpointOutputSchemas.psaIntegrationsRedirectLink.parse(
-				response,
+				dropNullFields(response),
 			);
 		await logEventFromContext(
 			ctx,

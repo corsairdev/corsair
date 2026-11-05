@@ -2,7 +2,7 @@
 // One file per resource family; each endpoint keeps its own group name.
 import { logEventFromContext } from 'corsair/core';
 import type { DnsfilterEndpoints } from '..';
-import { makeDnsfilterRequest } from '../client';
+import { dropNullFields, makeDnsfilterRequest } from '../client';
 import { persistUserAgents } from '../persistence';
 import { redactSensitive } from '../redact';
 import type { DnsfilterEndpointOutputs } from './types';
@@ -56,8 +56,10 @@ export const userAgentsList: DnsfilterEndpoints['userAgentsList'] = async (
 			vpn_status: values.vpn_status,
 		},
 	});
-	const result = DnsfilterEndpointOutputSchemas.userAgentsList.parse(response);
-	await persistUserAgents(ctx, result);
+	const result = DnsfilterEndpointOutputSchemas.userAgentsList.parse(
+		dropNullFields(response),
+	);
+	await persistUserAgents(ctx, response);
 	await logEventFromContext(
 		ctx,
 		'dnsfilter.userAgents.list',
@@ -93,9 +95,10 @@ export const userAgentsListAll: DnsfilterEndpoints['userAgentsListAll'] =
 				type: values.type,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.userAgentsListAll.parse(response);
-		await persistUserAgents(ctx, result);
+		const result = DnsfilterEndpointOutputSchemas.userAgentsListAll.parse(
+			dropNullFields(response),
+		);
+		await persistUserAgents(ctx, response);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.userAgents.listAll',
@@ -131,8 +134,9 @@ export const userAgentsCounts: DnsfilterEndpoints['userAgentsCounts'] = async (
 			type: values.type,
 		},
 	});
-	const result =
-		DnsfilterEndpointOutputSchemas.userAgentsCounts.parse(response);
+	const result = DnsfilterEndpointOutputSchemas.userAgentsCounts.parse(
+		dropNullFields(response),
+	);
 	await logEventFromContext(
 		ctx,
 		'dnsfilter.userAgents.counts',
@@ -156,8 +160,10 @@ export const userAgentsGet: DnsfilterEndpoints['userAgentsGet'] = async (
 			id: values.id,
 		},
 	});
-	const result = DnsfilterEndpointOutputSchemas.userAgentsGet.parse(response);
-	await persistUserAgents(ctx, result);
+	const result = DnsfilterEndpointOutputSchemas.userAgentsGet.parse(
+		dropNullFields(response),
+	);
+	await persistUserAgents(ctx, response);
 	await logEventFromContext(
 		ctx,
 		'dnsfilter.userAgents.get',
@@ -186,9 +192,10 @@ export const userAgentsUpdate: DnsfilterEndpoints['userAgentsUpdate'] = async (
 			user_agent: values.user_agent,
 		},
 	});
-	const result =
-		DnsfilterEndpointOutputSchemas.userAgentsUpdate.parse(response);
-	await persistUserAgents(ctx, result);
+	const result = DnsfilterEndpointOutputSchemas.userAgentsUpdate.parse(
+		dropNullFields(response),
+	);
+	await persistUserAgents(ctx, response);
 	await logEventFromContext(
 		ctx,
 		'dnsfilter.userAgents.update',
@@ -218,8 +225,9 @@ export const userAgentsDelete: DnsfilterEndpoints['userAgentsDelete'] = async (
 			queue_uninstall: values.queue_uninstall,
 		},
 	});
-	const result =
-		DnsfilterEndpointOutputSchemas.userAgentsDelete.parse(response);
+	const result = DnsfilterEndpointOutputSchemas.userAgentsDelete.parse(
+		dropNullFields(response),
+	);
 	try {
 		await ctx.db.userAgents.deleteByEntityId(String(values.id));
 	} catch (error) {
@@ -253,7 +261,9 @@ export const userAgentsTags: DnsfilterEndpoints['userAgentsTags'] = async (
 			organization_ids: values.organization_ids,
 		},
 	});
-	const result = DnsfilterEndpointOutputSchemas.userAgentsTags.parse(response);
+	const result = DnsfilterEndpointOutputSchemas.userAgentsTags.parse(
+		dropNullFields(response),
+	);
 	await logEventFromContext(
 		ctx,
 		'dnsfilter.userAgents.tags',
@@ -279,7 +289,9 @@ export const userAgentsDequeueUninstall: DnsfilterEndpoints['userAgentsDequeueUn
 			},
 		});
 		const result =
-			DnsfilterEndpointOutputSchemas.userAgentsDequeueUninstall.parse(response);
+			DnsfilterEndpointOutputSchemas.userAgentsDequeueUninstall.parse(
+				dropNullFields(response),
+			);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.userAgents.dequeueUninstall',
@@ -303,8 +315,9 @@ export const userAgentsUninstallPin: DnsfilterEndpoints['userAgentsUninstallPin'
 				organization_id: values.organization_id,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.userAgentsUninstallPin.parse(response);
+		const result = DnsfilterEndpointOutputSchemas.userAgentsUninstallPin.parse(
+			dropNullFields(response),
+		);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.userAgents.uninstallPin',
@@ -351,7 +364,9 @@ export const userAgentBulkDeletesCreate: DnsfilterEndpoints['userAgentBulkDelete
 			},
 		});
 		const result =
-			DnsfilterEndpointOutputSchemas.userAgentBulkDeletesCreate.parse(response);
+			DnsfilterEndpointOutputSchemas.userAgentBulkDeletesCreate.parse(
+				dropNullFields(response),
+			);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.userAgentBulkDeletes.create',
@@ -375,8 +390,9 @@ export const userAgentBulkDeletesGet: DnsfilterEndpoints['userAgentBulkDeletesGe
 				id: values.id,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.userAgentBulkDeletesGet.parse(response);
+		const result = DnsfilterEndpointOutputSchemas.userAgentBulkDeletesGet.parse(
+			dropNullFields(response),
+		);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.userAgentBulkDeletes.get',
@@ -411,7 +427,9 @@ export const userAgentBulkDeletesCounts: DnsfilterEndpoints['userAgentBulkDelete
 			},
 		});
 		const result =
-			DnsfilterEndpointOutputSchemas.userAgentBulkDeletesCounts.parse(response);
+			DnsfilterEndpointOutputSchemas.userAgentBulkDeletesCounts.parse(
+				dropNullFields(response),
+			);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.userAgentBulkDeletes.counts',
@@ -458,7 +476,9 @@ export const userAgentBulkUpdatesCreate: DnsfilterEndpoints['userAgentBulkUpdate
 			},
 		});
 		const result =
-			DnsfilterEndpointOutputSchemas.userAgentBulkUpdatesCreate.parse(response);
+			DnsfilterEndpointOutputSchemas.userAgentBulkUpdatesCreate.parse(
+				dropNullFields(response),
+			);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.userAgentBulkUpdates.create',
@@ -482,8 +502,9 @@ export const userAgentBulkUpdatesGet: DnsfilterEndpoints['userAgentBulkUpdatesGe
 				id: values.id,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.userAgentBulkUpdatesGet.parse(response);
+		const result = DnsfilterEndpointOutputSchemas.userAgentBulkUpdatesGet.parse(
+			dropNullFields(response),
+		);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.userAgentBulkUpdates.get',
@@ -522,7 +543,7 @@ export const userAgentBulkUpdatesHasMixed: DnsfilterEndpoints['userAgentBulkUpda
 		});
 		const result =
 			DnsfilterEndpointOutputSchemas.userAgentBulkUpdatesHasMixed.parse(
-				response,
+				dropNullFields(response),
 			);
 		await logEventFromContext(
 			ctx,
@@ -562,7 +583,9 @@ export const userAgentBulkUpdatesCounts: DnsfilterEndpoints['userAgentBulkUpdate
 			},
 		});
 		const result =
-			DnsfilterEndpointOutputSchemas.userAgentBulkUpdatesCounts.parse(response);
+			DnsfilterEndpointOutputSchemas.userAgentBulkUpdatesCounts.parse(
+				dropNullFields(response),
+			);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.userAgentBulkUpdates.counts',
@@ -588,8 +611,9 @@ export const userAgentCleanupsCreate: DnsfilterEndpoints['userAgentCleanupsCreat
 				inactive_for: values.inactive_for,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.userAgentCleanupsCreate.parse(response);
+		const result = DnsfilterEndpointOutputSchemas.userAgentCleanupsCreate.parse(
+			dropNullFields(response),
+		);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.userAgentCleanups.create',
@@ -613,8 +637,9 @@ export const userAgentCleanupsGet: DnsfilterEndpoints['userAgentCleanupsGet'] =
 				id: values.id,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.userAgentCleanupsGet.parse(response);
+		const result = DnsfilterEndpointOutputSchemas.userAgentCleanupsGet.parse(
+			dropNullFields(response),
+		);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.userAgentCleanups.get',
@@ -642,8 +667,9 @@ export const userAgentCleanupsUpdate: DnsfilterEndpoints['userAgentCleanupsUpdat
 				inactive_for: values.inactive_for,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.userAgentCleanupsUpdate.parse(response);
+		const result = DnsfilterEndpointOutputSchemas.userAgentCleanupsUpdate.parse(
+			dropNullFields(response),
+		);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.userAgentCleanups.update',
@@ -664,8 +690,9 @@ export const userAgentReleasesList: DnsfilterEndpoints['userAgentReleasesList'] 
 		>('/v1/user_agent_releases', ctx.key, {
 			method: 'GET',
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.userAgentReleasesList.parse(response);
+		const result = DnsfilterEndpointOutputSchemas.userAgentReleasesList.parse(
+			dropNullFields(response),
+		);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.userAgentReleases.list',
@@ -686,8 +713,9 @@ export const userAgentReleasesRelay: DnsfilterEndpoints['userAgentReleasesRelay'
 		>('/v1/user_agent_releases/relay', ctx.key, {
 			method: 'GET',
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.userAgentReleasesRelay.parse(response);
+		const result = DnsfilterEndpointOutputSchemas.userAgentReleasesRelay.parse(
+			dropNullFields(response),
+		);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.userAgentReleases.relay',
@@ -716,7 +744,9 @@ export const userAgentsV2UpdateSettings: DnsfilterEndpoints['userAgentsV2UpdateS
 			},
 		});
 		const result =
-			DnsfilterEndpointOutputSchemas.userAgentsV2UpdateSettings.parse(response);
+			DnsfilterEndpointOutputSchemas.userAgentsV2UpdateSettings.parse(
+				dropNullFields(response),
+			);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.userAgentsV2.updateSettings',

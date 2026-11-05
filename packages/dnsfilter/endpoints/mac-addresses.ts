@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { DnsfilterEndpoints } from '..';
-import { makeDnsfilterRequest } from '../client';
+import { dropNullFields, makeDnsfilterRequest } from '../client';
 import { persistMacAddresses } from '../persistence';
 import { redactSensitive } from '../redact';
 import type { DnsfilterEndpointOutputs } from './types';
@@ -26,9 +26,10 @@ export const macAddressesList: DnsfilterEndpoints['macAddressesList'] = async (
 			page: values.page,
 		},
 	});
-	const result =
-		DnsfilterEndpointOutputSchemas.macAddressesList.parse(response);
-	await persistMacAddresses(ctx, result);
+	const result = DnsfilterEndpointOutputSchemas.macAddressesList.parse(
+		dropNullFields(response),
+	);
+	await persistMacAddresses(ctx, response);
 	await logEventFromContext(
 		ctx,
 		'dnsfilter.macAddresses.list',
@@ -52,9 +53,10 @@ export const macAddressesCreate: DnsfilterEndpoints['macAddressesCreate'] =
 				mac_address: values.mac_address,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.macAddressesCreate.parse(response);
-		await persistMacAddresses(ctx, result);
+		const result = DnsfilterEndpointOutputSchemas.macAddressesCreate.parse(
+			dropNullFields(response),
+		);
+		await persistMacAddresses(ctx, response);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.macAddresses.create',
@@ -79,9 +81,10 @@ export const macAddressesListAll: DnsfilterEndpoints['macAddressesListAll'] =
 				page: values.page,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.macAddressesListAll.parse(response);
-		await persistMacAddresses(ctx, result);
+		const result = DnsfilterEndpointOutputSchemas.macAddressesListAll.parse(
+			dropNullFields(response),
+		);
+		await persistMacAddresses(ctx, response);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.macAddresses.listAll',
@@ -107,8 +110,10 @@ export const macAddressesGet: DnsfilterEndpoints['macAddressesGet'] = async (
 			id: values.id,
 		},
 	});
-	const result = DnsfilterEndpointOutputSchemas.macAddressesGet.parse(response);
-	await persistMacAddresses(ctx, result);
+	const result = DnsfilterEndpointOutputSchemas.macAddressesGet.parse(
+		dropNullFields(response),
+	);
+	await persistMacAddresses(ctx, response);
 	await logEventFromContext(
 		ctx,
 		'dnsfilter.macAddresses.get',
@@ -135,9 +140,10 @@ export const macAddressesUpdate: DnsfilterEndpoints['macAddressesUpdate'] =
 				mac_address: values.mac_address,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.macAddressesUpdate.parse(response);
-		await persistMacAddresses(ctx, result);
+		const result = DnsfilterEndpointOutputSchemas.macAddressesUpdate.parse(
+			dropNullFields(response),
+		);
+		await persistMacAddresses(ctx, response);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.macAddresses.update',
@@ -161,8 +167,9 @@ export const macAddressesDelete: DnsfilterEndpoints['macAddressesDelete'] =
 				id: values.id,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.macAddressesDelete.parse(response);
+		const result = DnsfilterEndpointOutputSchemas.macAddressesDelete.parse(
+			dropNullFields(response),
+		);
 		try {
 			await ctx.db.macAddresses.deleteByEntityId(String(values.id));
 		} catch (error) {

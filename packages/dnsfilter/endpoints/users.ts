@@ -2,7 +2,7 @@
 // One file per resource family; each endpoint keeps its own group name.
 import { logEventFromContext } from 'corsair/core';
 import type { DnsfilterEndpoints } from '..';
-import { makeDnsfilterRequest } from '../client';
+import { dropNullFields, makeDnsfilterRequest } from '../client';
 import { persistUsers } from '../persistence';
 import { redactSensitive } from '../redact';
 import type { DnsfilterEndpointOutputs } from './types';
@@ -25,8 +25,10 @@ export const usersList: DnsfilterEndpoints['usersList'] = async (
 			page: values.page,
 		},
 	});
-	const result = DnsfilterEndpointOutputSchemas.usersList.parse(response);
-	await persistUsers(ctx, result);
+	const result = DnsfilterEndpointOutputSchemas.usersList.parse(
+		dropNullFields(response),
+	);
+	await persistUsers(ctx, response);
 	await logEventFromContext(
 		ctx,
 		'dnsfilter.users.list',
@@ -50,8 +52,10 @@ export const usersListAll: DnsfilterEndpoints['usersListAll'] = async (
 			page: values.page,
 		},
 	});
-	const result = DnsfilterEndpointOutputSchemas.usersListAll.parse(response);
-	await persistUsers(ctx, result);
+	const result = DnsfilterEndpointOutputSchemas.usersListAll.parse(
+		dropNullFields(response),
+	);
+	await persistUsers(ctx, response);
 	await logEventFromContext(
 		ctx,
 		'dnsfilter.users.listAll',
@@ -72,8 +76,10 @@ export const usersGet: DnsfilterEndpoints['usersGet'] = async (ctx, input) => {
 			id: values.id,
 		},
 	});
-	const result = DnsfilterEndpointOutputSchemas.usersGet.parse(response);
-	await persistUsers(ctx, result);
+	const result = DnsfilterEndpointOutputSchemas.usersGet.parse(
+		dropNullFields(response),
+	);
+	await persistUsers(ctx, response);
 	await logEventFromContext(
 		ctx,
 		'dnsfilter.users.get',
@@ -97,8 +103,9 @@ export const usersChangePassword: DnsfilterEndpoints['usersChangePassword'] =
 				new_password: values.new_password,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.usersChangePassword.parse(response);
+		const result = DnsfilterEndpointOutputSchemas.usersChangePassword.parse(
+			dropNullFields(response),
+		);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.users.changePassword',
@@ -127,8 +134,9 @@ export const collectionUsersList: DnsfilterEndpoints['collectionUsersList'] =
 				sort: values.sort,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.collectionUsersList.parse(response);
+		const result = DnsfilterEndpointOutputSchemas.collectionUsersList.parse(
+			dropNullFields(response),
+		);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.collectionUsers.list',
@@ -153,8 +161,9 @@ export const collectionUsersCreate: DnsfilterEndpoints['collectionUsersCreate'] 
 			},
 			body: values.body,
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.collectionUsersCreate.parse(response);
+		const result = DnsfilterEndpointOutputSchemas.collectionUsersCreate.parse(
+			dropNullFields(response),
+		);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.collectionUsers.create',
@@ -179,8 +188,9 @@ export const collectionUsersGet: DnsfilterEndpoints['collectionUsersGet'] =
 				id: values.id,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.collectionUsersGet.parse(response);
+		const result = DnsfilterEndpointOutputSchemas.collectionUsersGet.parse(
+			dropNullFields(response),
+		);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.collectionUsers.get',
@@ -205,8 +215,9 @@ export const collectionUsersDelete: DnsfilterEndpoints['collectionUsersDelete'] 
 				id: values.id,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.collectionUsersDelete.parse(response);
+		const result = DnsfilterEndpointOutputSchemas.collectionUsersDelete.parse(
+			dropNullFields(response),
+		);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.collectionUsers.delete',
@@ -233,8 +244,9 @@ export const organizationUsersList: DnsfilterEndpoints['organizationUsersList'] 
 				include_auth_providers: values.include_auth_providers,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.organizationUsersList.parse(response);
+		const result = DnsfilterEndpointOutputSchemas.organizationUsersList.parse(
+			dropNullFields(response),
+		);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.organizationUsers.list',
@@ -261,8 +273,9 @@ export const organizationUsersCreate: DnsfilterEndpoints['organizationUsersCreat
 				user: values.user,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.organizationUsersCreate.parse(response);
+		const result = DnsfilterEndpointOutputSchemas.organizationUsersCreate.parse(
+			dropNullFields(response),
+		);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.organizationUsers.create',
@@ -290,8 +303,9 @@ export const organizationUsersGet: DnsfilterEndpoints['organizationUsersGet'] =
 				include_auth_providers: values.include_auth_providers,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.organizationUsersGet.parse(response);
+		const result = DnsfilterEndpointOutputSchemas.organizationUsersGet.parse(
+			dropNullFields(response),
+		);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.organizationUsers.get',
@@ -319,8 +333,9 @@ export const organizationUsersUpdate: DnsfilterEndpoints['organizationUsersUpdat
 				user: values.user,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.organizationUsersUpdate.parse(response);
+		const result = DnsfilterEndpointOutputSchemas.organizationUsersUpdate.parse(
+			dropNullFields(response),
+		);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.organizationUsers.update',
@@ -345,8 +360,9 @@ export const organizationUsersDelete: DnsfilterEndpoints['organizationUsersDelet
 				organization_id: values.organization_id,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.organizationUsersDelete.parse(response);
+		const result = DnsfilterEndpointOutputSchemas.organizationUsersDelete.parse(
+			dropNullFields(response),
+		);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.organizationUsers.delete',
@@ -374,7 +390,7 @@ export const organizationUsersResendInvite: DnsfilterEndpoints['organizationUser
 		});
 		const result =
 			DnsfilterEndpointOutputSchemas.organizationUsersResendInvite.parse(
-				response,
+				dropNullFields(response),
 			);
 		await logEventFromContext(
 			ctx,
@@ -398,8 +414,10 @@ export const currentUsersGet: DnsfilterEndpoints['currentUsersGet'] = async (
 	>('/v1/current_user', ctx.key, {
 		method: 'GET',
 	});
-	const result = DnsfilterEndpointOutputSchemas.currentUsersGet.parse(response);
-	await persistUsers(ctx, result);
+	const result = DnsfilterEndpointOutputSchemas.currentUsersGet.parse(
+		dropNullFields(response),
+	);
+	await persistUsers(ctx, response);
 	await logEventFromContext(
 		ctx,
 		'dnsfilter.currentUsers.get',
@@ -423,9 +441,10 @@ export const currentUsersUpdate: DnsfilterEndpoints['currentUsersUpdate'] =
 				user: values.user,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.currentUsersUpdate.parse(response);
-		await persistUsers(ctx, result);
+		const result = DnsfilterEndpointOutputSchemas.currentUsersUpdate.parse(
+			dropNullFields(response),
+		);
+		await persistUsers(ctx, response);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.currentUsers.update',
@@ -447,7 +466,9 @@ export const currentUserUiSettingsGet: DnsfilterEndpoints['currentUserUiSettings
 			method: 'GET',
 		});
 		const result =
-			DnsfilterEndpointOutputSchemas.currentUserUiSettingsGet.parse(response);
+			DnsfilterEndpointOutputSchemas.currentUserUiSettingsGet.parse(
+				dropNullFields(response),
+			);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.currentUserUiSettings.get',
@@ -476,7 +497,7 @@ export const currentUserUiSettingsUpdate: DnsfilterEndpoints['currentUserUiSetti
 		});
 		const result =
 			DnsfilterEndpointOutputSchemas.currentUserUiSettingsUpdate.parse(
-				response,
+				dropNullFields(response),
 			);
 		await logEventFromContext(
 			ctx,
@@ -504,7 +525,7 @@ export const currentUserOrgUiSettingsSuppressLicenseWarning: DnsfilterEndpoints[
 		});
 		const result =
 			DnsfilterEndpointOutputSchemas.currentUserOrgUiSettingsSuppressLicenseWarning.parse(
-				response,
+				dropNullFields(response),
 			);
 		await logEventFromContext(
 			ctx,

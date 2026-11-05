@@ -49,15 +49,22 @@ function toId(value: unknown): string | undefined {
 	return undefined;
 }
 
-// Same mixed string/number values the API returns for names and emails.
-function toStringOrUndefined(value: unknown): string | undefined {
-	if (typeof value === 'string' && value.length > 0) return value;
+// The mappers below read the raw response, nulls included, and return one of
+// three things per field: a value; null when the response cleared the field
+// (an explicit null, an empty string, or `{ data: null }` for a relationship);
+// undefined when the response did not include the field at all.
+
+// Names, emails and similar values arrive as strings or numbers.
+function toText(value: unknown): string | null | undefined {
+	if (value === null || value === '') return null;
+	if (typeof value === 'string') return value;
 	if (typeof value === 'number') return String(value);
 	return undefined;
 }
 
 // Timestamps arrive as ISO strings or epoch numbers.
 function toDate(value: unknown): Date | null | undefined {
+	if (value === null || value === '') return null;
 	if (value instanceof Date) return value;
 	if (typeof value === 'string' || typeof value === 'number') {
 		const parsed = new Date(value);
@@ -66,23 +73,53 @@ function toDate(value: unknown): Date | null | undefined {
 	return undefined;
 }
 
+// `relationships.<relation>.data`: an id, null when the link was removed, or
+// undefined when the response has no such relationship.
+function relationshipId(row: Row, relation: string): string | null | undefined {
+	const relationship = asRecord(asRecord(row.relationships)?.[relation]);
+	if (!relationship || !('data' in relationship)) return undefined;
+	if (relationship.data === null) return null;
+	return toId(asRecord(relationship.data)?.id);
+}
+
+// A nested `{ id, name }` object such as an unblock request's organization.
+function nestedId(value: unknown): string | null | undefined {
+	if (value === null) return null;
+	return toId(asRecord(value)?.id);
+}
+
+// Several sources can carry the same field depending on the response shape.
+// The first one with a value wins; null only when no source has a value and
+// at least one cleared it; undefined when none of them was in the response.
+function pick<T>(...values: (T | null | undefined)[]): T | null | undefined {
+	for (const value of values) {
+		if (value !== null && value !== undefined) return value;
+	}
+	return values.includes(null) ? null : undefined;
+}
+
+// What a mapper produces: each field is a value, null (cleared) or undefined
+// (not in this response).
+type RowPatch<T> = { [K in keyof T]?: T[K] | null };
+
 // Some responses carry only part of a row: an unblock decision has no
 // organization or request time, the unblock detail view has no status, and
 // `basic_info` network lists leave out relationships. upsertByEntityId replaces
-// the stored row, so fields a response leaves out keep their stored value
-// instead of being overwritten with undefined.
-function keepStored<T extends object>(stored: T | undefined, next: T): T {
-	const defined = Object.fromEntries(
-		Object.entries(next).filter(([, value]) => value !== undefined),
-	);
-	// Safe: every key comes from `stored` or `next`, which share the type T.
-	return { ...stored, ...defined } as T;
-}
-
-function relationshipId(row: Row, relation: string): string | undefined {
-	const relationships = asRecord(row.relationships);
-	const data = asRecord(asRecord(relationships?.[relation])?.data);
-	return data ? toId(data.id) : undefined;
+// the stored row, so a field the response left out keeps its stored value,
+// while a field the response cleared is removed from the saved row.
+function keepStored<T extends object>(
+	stored: T | undefined,
+	next: RowPatch<T>,
+): T {
+	// Copies the stored entity's keys, whose types differ per field.
+	const merged: Record<string, unknown> = { ...stored };
+	for (const [key, value] of Object.entries(next)) {
+		if (value === null) delete merged[key];
+		else if (value !== undefined) merged[key] = value;
+	}
+	// Safe: every key comes from `stored` or `next`, which describe the same T,
+	// and nulls were removed above.
+	return merged as T;
 }
 
 export async function persistNetworks(
@@ -100,17 +137,17 @@ export async function persistNetworks(
 				id,
 				keepStored(stored?.data, {
 					id,
-					name: toStringOrUndefined(attributes.name),
-					organizationId:
-						relationshipId(row, 'organization') ??
-						toStringOrUndefined(attributes.organization_id),
-					policyId:
-						relationshipId(row, 'policy') ??
-						toStringOrUndefined(attributes.policy_id),
-					blockPageId: toStringOrUndefined(attributes.block_page_id),
-					scheduledPolicyId: toStringOrUndefined(
-						attributes.scheduled_policy_id,
+					name: toText(attributes.name),
+					organizationId: pick(
+						relationshipId(row, 'organization'),
+						toText(attributes.organization_id),
 					),
+					policyId: pick(
+						relationshipId(row, 'policy'),
+						toText(attributes.policy_id),
+					),
+					blockPageId: toText(attributes.block_page_id),
+					scheduledPolicyId: toText(attributes.scheduled_policy_id),
 					createdAt: toDate(attributes.created_at),
 					updatedAt: toDate(attributes.updated_at),
 				}),
@@ -136,10 +173,11 @@ export async function persistPolicies(
 				id,
 				keepStored(stored?.data, {
 					id,
-					name: toStringOrUndefined(attributes.name),
-					organizationId:
-						relationshipId(row, 'organization') ??
-						toStringOrUndefined(attributes.organization_id),
+					name: toText(attributes.name),
+					organizationId: pick(
+						relationshipId(row, 'organization'),
+						toText(attributes.organization_id),
+					),
 					createdAt: toDate(attributes.created_at),
 					updatedAt: toDate(attributes.updated_at),
 				}),
@@ -165,7 +203,7 @@ export async function persistOrganizations(
 				id,
 				keepStored(stored?.data, {
 					id,
-					name: toStringOrUndefined(attributes.name),
+					name: toText(attributes.name),
 					createdAt: toDate(attributes.created_at),
 					updatedAt: toDate(attributes.updated_at),
 				}),
@@ -191,12 +229,13 @@ export async function persistUsers(
 				id,
 				keepStored(stored?.data, {
 					id,
-					name: toStringOrUndefined(attributes.name),
-					email: toStringOrUndefined(attributes.email),
-					role: toStringOrUndefined(attributes.role),
-					organizationId:
-						relationshipId(row, 'organization') ??
-						toStringOrUndefined(attributes.organization_id),
+					name: toText(attributes.name),
+					email: toText(attributes.email),
+					role: toText(attributes.role),
+					organizationId: pick(
+						relationshipId(row, 'organization'),
+						toText(attributes.organization_id),
+					),
 					createdAt: toDate(attributes.created_at),
 				}),
 			);
@@ -221,22 +260,28 @@ export async function persistUserAgents(
 				id,
 				keepStored(stored?.data, {
 					id,
-					name:
-						toStringOrUndefined(attributes.friendly_name) ??
-						toStringOrUndefined(attributes.hostname),
-					platform:
-						toStringOrUndefined(attributes.os_name) ??
-						toStringOrUndefined(attributes.agent_type),
-					status: toStringOrUndefined(attributes.status),
-					organizationId:
-						relationshipId(row, 'organization') ??
-						toStringOrUndefined(attributes.organization_id),
-					networkId:
-						relationshipId(row, 'network') ??
-						toStringOrUndefined(attributes.network_id),
+					name: pick(
+						toText(attributes.friendly_name),
+						toText(attributes.hostname),
+					),
+					platform: pick(
+						toText(attributes.os_name),
+						toText(attributes.agent_type),
+					),
+					status: toText(attributes.status),
+					organizationId: pick(
+						relationshipId(row, 'organization'),
+						toText(attributes.organization_id),
+					),
+					networkId: pick(
+						relationshipId(row, 'network'),
+						toText(attributes.network_id),
+					),
 					createdAt: toDate(attributes.created_at),
-					lastSeenAt:
-						toDate(attributes.last_sync) ?? toDate(attributes.last_seen_at),
+					lastSeenAt: pick(
+						toDate(attributes.last_sync),
+						toDate(attributes.last_seen_at),
+					),
 				}),
 			);
 		} catch (error) {
@@ -260,14 +305,16 @@ export async function persistIpAddresses(
 				id,
 				keepStored(stored?.data, {
 					id,
-					address: toStringOrUndefined(attributes.ip ?? attributes.address),
-					policyId:
-						relationshipId(row, 'policy') ??
-						toStringOrUndefined(attributes.policy_id),
-					organizationId:
-						relationshipId(row, 'organization') ??
-						toStringOrUndefined(attributes.organization_id),
-					comment: toStringOrUndefined(attributes.comment),
+					address: pick(toText(attributes.ip), toText(attributes.address)),
+					policyId: pick(
+						relationshipId(row, 'policy'),
+						toText(attributes.policy_id),
+					),
+					organizationId: pick(
+						relationshipId(row, 'organization'),
+						toText(attributes.organization_id),
+					),
+					comment: toText(attributes.comment),
 					createdAt: toDate(attributes.created_at),
 				}),
 			);
@@ -292,14 +339,16 @@ export async function persistMacAddresses(
 				id,
 				keepStored(stored?.data, {
 					id,
-					address: toStringOrUndefined(attributes.mac ?? attributes.address),
-					policyId:
-						relationshipId(row, 'policy') ??
-						toStringOrUndefined(attributes.policy_id),
-					organizationId:
-						relationshipId(row, 'organization') ??
-						toStringOrUndefined(attributes.organization_id),
-					comment: toStringOrUndefined(attributes.comment),
+					address: pick(toText(attributes.mac), toText(attributes.address)),
+					policyId: pick(
+						relationshipId(row, 'policy'),
+						toText(attributes.policy_id),
+					),
+					organizationId: pick(
+						relationshipId(row, 'organization'),
+						toText(attributes.organization_id),
+					),
+					comment: toText(attributes.comment),
 					createdAt: toDate(attributes.created_at),
 				}),
 			);
@@ -324,12 +373,13 @@ export async function persistSubnets(
 				id,
 				keepStored(stored?.data, {
 					id,
-					name: toStringOrUndefined(attributes.name),
-					from: toStringOrUndefined(attributes.from),
-					to: toStringOrUndefined(attributes.to),
-					networkId:
-						relationshipId(row, 'network') ??
-						toStringOrUndefined(attributes.network_id),
+					name: toText(attributes.name),
+					from: toText(attributes.from),
+					to: toText(attributes.to),
+					networkId: pick(
+						relationshipId(row, 'network'),
+						toText(attributes.network_id),
+					),
 					createdAt: toDate(attributes.created_at),
 					updatedAt: toDate(attributes.updated_at),
 				}),
@@ -349,24 +399,26 @@ export async function persistUnblockRequests(
 		const id = toId(row.id);
 		if (!id) continue;
 		const attributes = attributesOf(row);
-		const organization = asRecord(attributes.organization);
 		try {
 			const stored = await ctx.db.unblockRequests.findByEntityId(id);
 			await ctx.db.unblockRequests.upsertByEntityId(
 				id,
 				keepStored(stored?.data, {
 					id,
-					domain: toStringOrUndefined(attributes.domain),
-					status:
-						toStringOrUndefined(attributes.status) ??
-						toStringOrUndefined(attributes.action),
-					organizationId:
-						toId(organization?.id) ??
-						toStringOrUndefined(attributes.organization_id),
-					createdAt:
-						toDate(attributes.time_of_attempt) ?? toDate(attributes.created_at),
-					resolvedAt:
-						toDate(attributes.resolved_date) ?? toDate(attributes.decided_at),
+					domain: toText(attributes.domain),
+					status: pick(toText(attributes.status), toText(attributes.action)),
+					organizationId: pick(
+						nestedId(attributes.organization),
+						toText(attributes.organization_id),
+					),
+					createdAt: pick(
+						toDate(attributes.time_of_attempt),
+						toDate(attributes.created_at),
+					),
+					resolvedAt: pick(
+						toDate(attributes.resolved_date),
+						toDate(attributes.decided_at),
+					),
 				}),
 			);
 		} catch (error) {
@@ -384,19 +436,19 @@ export async function persistScheduledReports(
 		const id = toId(row.id);
 		if (!id) continue;
 		const attributes = attributesOf(row);
-		const organization = asRecord(attributes.organization);
 		try {
 			const stored = await ctx.db.scheduledReports.findByEntityId(id);
 			await ctx.db.scheduledReports.upsertByEntityId(
 				id,
 				keepStored(stored?.data, {
 					id,
-					name: toStringOrUndefined(attributes.name),
-					frequency: toStringOrUndefined(attributes.frequency),
-					organizationId:
-						relationshipId(row, 'organization') ??
-						toId(organization?.id) ??
-						toStringOrUndefined(attributes.organization_id),
+					name: toText(attributes.name),
+					frequency: toText(attributes.frequency),
+					organizationId: pick(
+						relationshipId(row, 'organization'),
+						nestedId(attributes.organization),
+						toText(attributes.organization_id),
+					),
 					createdAt: toDate(attributes.created_at),
 					updatedAt: toDate(attributes.updated_at),
 				}),

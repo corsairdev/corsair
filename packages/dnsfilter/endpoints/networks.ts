@@ -2,7 +2,7 @@
 // One file per resource family; each endpoint keeps its own group name.
 import { logEventFromContext } from 'corsair/core';
 import type { DnsfilterEndpoints } from '..';
-import { makeDnsfilterRequest } from '../client';
+import { dropNullFields, makeDnsfilterRequest } from '../client';
 import { persistNetworks, persistSubnets } from '../persistence';
 import { redactSensitive } from '../redact';
 import type { DnsfilterEndpointOutputs } from './types';
@@ -31,8 +31,10 @@ export const networksList: DnsfilterEndpoints['networksList'] = async (
 			unprotected: values.unprotected,
 		},
 	});
-	const result = DnsfilterEndpointOutputSchemas.networksList.parse(response);
-	await persistNetworks(ctx, result);
+	const result = DnsfilterEndpointOutputSchemas.networksList.parse(
+		dropNullFields(response),
+	);
+	await persistNetworks(ctx, response);
 	await logEventFromContext(
 		ctx,
 		'dnsfilter.networks.list',
@@ -58,8 +60,10 @@ export const networksCreate: DnsfilterEndpoints['networksCreate'] = async (
 			network: values.network,
 		},
 	});
-	const result = DnsfilterEndpointOutputSchemas.networksCreate.parse(response);
-	await persistNetworks(ctx, result);
+	const result = DnsfilterEndpointOutputSchemas.networksCreate.parse(
+		dropNullFields(response),
+	);
+	await persistNetworks(ctx, response);
 	await logEventFromContext(
 		ctx,
 		'dnsfilter.networks.create',
@@ -91,8 +95,10 @@ export const networksListAll: DnsfilterEndpoints['networksListAll'] = async (
 			unprotected: values.unprotected,
 		},
 	});
-	const result = DnsfilterEndpointOutputSchemas.networksListAll.parse(response);
-	await persistNetworks(ctx, result);
+	const result = DnsfilterEndpointOutputSchemas.networksListAll.parse(
+		dropNullFields(response),
+	);
+	await persistNetworks(ctx, response);
 	await logEventFromContext(
 		ctx,
 		'dnsfilter.networks.listAll',
@@ -119,7 +125,9 @@ export const networksCounts: DnsfilterEndpoints['networksCounts'] = async (
 			organization_ids: values.organization_ids,
 		},
 	});
-	const result = DnsfilterEndpointOutputSchemas.networksCounts.parse(response);
+	const result = DnsfilterEndpointOutputSchemas.networksCounts.parse(
+		dropNullFields(response),
+	);
 	await logEventFromContext(
 		ctx,
 		'dnsfilter.networks.counts',
@@ -149,8 +157,10 @@ export const networksMsp: DnsfilterEndpoints['networksMsp'] = async (
 			unprotected: values.unprotected,
 		},
 	});
-	const result = DnsfilterEndpointOutputSchemas.networksMsp.parse(response);
-	await persistNetworks(ctx, result);
+	const result = DnsfilterEndpointOutputSchemas.networksMsp.parse(
+		dropNullFields(response),
+	);
+	await persistNetworks(ctx, response);
 	await logEventFromContext(
 		ctx,
 		'dnsfilter.networks.msp',
@@ -181,8 +191,10 @@ export const networksMspAll: DnsfilterEndpoints['networksMspAll'] = async (
 			unprotected: values.unprotected,
 		},
 	});
-	const result = DnsfilterEndpointOutputSchemas.networksMspAll.parse(response);
-	await persistNetworks(ctx, result);
+	const result = DnsfilterEndpointOutputSchemas.networksMspAll.parse(
+		dropNullFields(response),
+	);
+	await persistNetworks(ctx, response);
 	await logEventFromContext(
 		ctx,
 		'dnsfilter.networks.mspAll',
@@ -203,7 +215,9 @@ export const networksGeo: DnsfilterEndpoints['networksGeo'] = async (
 	>('/v1/networks/geo', ctx.key, {
 		method: 'GET',
 	});
-	const result = DnsfilterEndpointOutputSchemas.networksGeo.parse(response);
+	const result = DnsfilterEndpointOutputSchemas.networksGeo.parse(
+		dropNullFields(response),
+	);
 	await logEventFromContext(
 		ctx,
 		'dnsfilter.networks.geo',
@@ -229,7 +243,9 @@ export const networksLookup: DnsfilterEndpoints['networksLookup'] = async (
 			requesting_ip_address: values.requesting_ip_address,
 		},
 	});
-	const result = DnsfilterEndpointOutputSchemas.networksLookup.parse(response);
+	const result = DnsfilterEndpointOutputSchemas.networksLookup.parse(
+		dropNullFields(response),
+	);
 	await logEventFromContext(
 		ctx,
 		'dnsfilter.networks.lookup',
@@ -256,8 +272,10 @@ export const networksGet: DnsfilterEndpoints['networksGet'] = async (
 			count_network_ips: values.count_network_ips,
 		},
 	});
-	const result = DnsfilterEndpointOutputSchemas.networksGet.parse(response);
-	await persistNetworks(ctx, result);
+	const result = DnsfilterEndpointOutputSchemas.networksGet.parse(
+		dropNullFields(response),
+	);
+	await persistNetworks(ctx, response);
 	await logEventFromContext(
 		ctx,
 		'dnsfilter.networks.get',
@@ -286,8 +304,10 @@ export const networksUpdate: DnsfilterEndpoints['networksUpdate'] = async (
 			network: values.network,
 		},
 	});
-	const result = DnsfilterEndpointOutputSchemas.networksUpdate.parse(response);
-	await persistNetworks(ctx, result);
+	const result = DnsfilterEndpointOutputSchemas.networksUpdate.parse(
+		dropNullFields(response),
+	);
+	await persistNetworks(ctx, response);
 	await logEventFromContext(
 		ctx,
 		'dnsfilter.networks.update',
@@ -313,7 +333,9 @@ export const networksDelete: DnsfilterEndpoints['networksDelete'] = async (
 			id: values.id,
 		},
 	});
-	const result = DnsfilterEndpointOutputSchemas.networksDelete.parse(response);
+	const result = DnsfilterEndpointOutputSchemas.networksDelete.parse(
+		dropNullFields(response),
+	);
 	try {
 		await ctx.db.networks.deleteByEntityId(String(values.id));
 	} catch (error) {
@@ -342,8 +364,9 @@ export const networksBulkCreate: DnsfilterEndpoints['networksBulkCreate'] =
 				Network: values.Network,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.networksBulkCreate.parse(response);
+		const result = DnsfilterEndpointOutputSchemas.networksBulkCreate.parse(
+			dropNullFields(response),
+		);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.networks.bulkCreate',
@@ -368,7 +391,9 @@ export const networksBulkCreateStatus: DnsfilterEndpoints['networksBulkCreateSta
 			},
 		});
 		const result =
-			DnsfilterEndpointOutputSchemas.networksBulkCreateStatus.parse(response);
+			DnsfilterEndpointOutputSchemas.networksBulkCreateStatus.parse(
+				dropNullFields(response),
+			);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.networks.bulkCreateStatus',
@@ -397,8 +422,9 @@ export const networksBulkUpdate: DnsfilterEndpoints['networksBulkUpdate'] =
 				is_legacy_vpn_active: values.is_legacy_vpn_active,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.networksBulkUpdate.parse(response);
+		const result = DnsfilterEndpointOutputSchemas.networksBulkUpdate.parse(
+			dropNullFields(response),
+		);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.networks.bulkUpdate',
@@ -423,7 +449,9 @@ export const networksBulkUpdateStatus: DnsfilterEndpoints['networksBulkUpdateSta
 			},
 		});
 		const result =
-			DnsfilterEndpointOutputSchemas.networksBulkUpdateStatus.parse(response);
+			DnsfilterEndpointOutputSchemas.networksBulkUpdateStatus.parse(
+				dropNullFields(response),
+			);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.networks.bulkUpdateStatus',
@@ -448,8 +476,9 @@ export const networksBulkDestroy: DnsfilterEndpoints['networksBulkDestroy'] =
 				organization_id: values.organization_id,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.networksBulkDestroy.parse(response);
+		const result = DnsfilterEndpointOutputSchemas.networksBulkDestroy.parse(
+			dropNullFields(response),
+		);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.networks.bulkDestroy',
@@ -475,7 +504,9 @@ export const networksBulkDestroyStatus: DnsfilterEndpoints['networksBulkDestroyS
 			},
 		});
 		const result =
-			DnsfilterEndpointOutputSchemas.networksBulkDestroyStatus.parse(response);
+			DnsfilterEndpointOutputSchemas.networksBulkDestroyStatus.parse(
+				dropNullFields(response),
+			);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.networks.bulkDestroyStatus',
@@ -501,8 +532,10 @@ export const networksGenerateSecretKey: DnsfilterEndpoints['networksGenerateSecr
 			},
 		});
 		const result =
-			DnsfilterEndpointOutputSchemas.networksGenerateSecretKey.parse(response);
-		await persistNetworks(ctx, result);
+			DnsfilterEndpointOutputSchemas.networksGenerateSecretKey.parse(
+				dropNullFields(response),
+			);
+		await persistNetworks(ctx, response);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.networks.generateSecretKey',
@@ -526,9 +559,10 @@ export const networksRevokeSecretKey: DnsfilterEndpoints['networksRevokeSecretKe
 				id: values.id,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.networksRevokeSecretKey.parse(response);
-		await persistNetworks(ctx, result);
+		const result = DnsfilterEndpointOutputSchemas.networksRevokeSecretKey.parse(
+			dropNullFields(response),
+		);
+		await persistNetworks(ctx, response);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.networks.revokeSecretKey',
@@ -552,9 +586,10 @@ export const networksRotateSecretKey: DnsfilterEndpoints['networksRotateSecretKe
 				id: values.id,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.networksRotateSecretKey.parse(response);
-		await persistNetworks(ctx, result);
+		const result = DnsfilterEndpointOutputSchemas.networksRotateSecretKey.parse(
+			dropNullFields(response),
+		);
+		await persistNetworks(ctx, response);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.networks.rotateSecretKey',
@@ -578,9 +613,10 @@ export const networkSubnetsListAll: DnsfilterEndpoints['networkSubnetsListAll'] 
 				organization_id: values.organization_id,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.networkSubnetsListAll.parse(response);
-		await persistSubnets(ctx, result);
+		const result = DnsfilterEndpointOutputSchemas.networkSubnetsListAll.parse(
+			dropNullFields(response),
+		);
+		await persistSubnets(ctx, response);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.networkSubnets.listAll',
@@ -607,9 +643,10 @@ export const networkSubnetsList: DnsfilterEndpoints['networkSubnetsList'] =
 				page: values.page,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.networkSubnetsList.parse(response);
-		await persistSubnets(ctx, result);
+		const result = DnsfilterEndpointOutputSchemas.networkSubnetsList.parse(
+			dropNullFields(response),
+		);
+		await persistSubnets(ctx, response);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.networkSubnets.list',
@@ -636,9 +673,10 @@ export const networkSubnetsCreate: DnsfilterEndpoints['networkSubnetsCreate'] =
 				network_subnet: values.network_subnet,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.networkSubnetsCreate.parse(response);
-		await persistSubnets(ctx, result);
+		const result = DnsfilterEndpointOutputSchemas.networkSubnetsCreate.parse(
+			dropNullFields(response),
+		);
+		await persistSubnets(ctx, response);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.networkSubnets.create',
@@ -663,9 +701,10 @@ export const networkSubnetsGet: DnsfilterEndpoints['networkSubnetsGet'] =
 				subnet_id: values.subnet_id,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.networkSubnetsGet.parse(response);
-		await persistSubnets(ctx, result);
+		const result = DnsfilterEndpointOutputSchemas.networkSubnetsGet.parse(
+			dropNullFields(response),
+		);
+		await persistSubnets(ctx, response);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.networkSubnets.get',
@@ -693,9 +732,10 @@ export const networkSubnetsUpdate: DnsfilterEndpoints['networkSubnetsUpdate'] =
 				network_subnet: values.network_subnet,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.networkSubnetsUpdate.parse(response);
-		await persistSubnets(ctx, result);
+		const result = DnsfilterEndpointOutputSchemas.networkSubnetsUpdate.parse(
+			dropNullFields(response),
+		);
+		await persistSubnets(ctx, response);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.networkSubnets.update',
@@ -720,8 +760,9 @@ export const networkSubnetsDelete: DnsfilterEndpoints['networkSubnetsDelete'] =
 				subnet_id: values.subnet_id,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.networkSubnetsDelete.parse(response);
+		const result = DnsfilterEndpointOutputSchemas.networkSubnetsDelete.parse(
+			dropNullFields(response),
+		);
 		try {
 			await ctx.db.subnets.deleteByEntityId(String(values.subnet_id));
 		} catch (error) {
@@ -753,8 +794,9 @@ export const networkLanIpsList: DnsfilterEndpoints['networkLanIpsList'] =
 				page: values.page,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.networkLanIpsList.parse(response);
+		const result = DnsfilterEndpointOutputSchemas.networkLanIpsList.parse(
+			dropNullFields(response),
+		);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.networkLanIps.list',
@@ -781,8 +823,9 @@ export const networkLanIpsGet: DnsfilterEndpoints['networkLanIpsGet'] = async (
 			lan_ip_id: values.lan_ip_id,
 		},
 	});
-	const result =
-		DnsfilterEndpointOutputSchemas.networkLanIpsGet.parse(response);
+	const result = DnsfilterEndpointOutputSchemas.networkLanIpsGet.parse(
+		dropNullFields(response),
+	);
 	await logEventFromContext(
 		ctx,
 		'dnsfilter.networkLanIps.get',
@@ -810,8 +853,9 @@ export const networkLanIpsUpdate: DnsfilterEndpoints['networkLanIpsUpdate'] =
 				network_lan_ip: values.network_lan_ip,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.networkLanIpsUpdate.parse(response);
+		const result = DnsfilterEndpointOutputSchemas.networkLanIpsUpdate.parse(
+			dropNullFields(response),
+		);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.networkLanIps.update',

@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { DnsfilterEndpoints } from '..';
-import { makeDnsfilterRequest } from '../client';
+import { dropNullFields, makeDnsfilterRequest } from '../client';
 import { redactSensitive } from '../redact';
 import type { DnsfilterEndpointOutputs } from './types';
 import {
@@ -24,7 +24,9 @@ export const categoriesList: DnsfilterEndpoints['categoriesList'] = async (
 			page: values.page,
 		},
 	});
-	const result = DnsfilterEndpointOutputSchemas.categoriesList.parse(response);
+	const result = DnsfilterEndpointOutputSchemas.categoriesList.parse(
+		dropNullFields(response),
+	);
 	await logEventFromContext(
 		ctx,
 		'dnsfilter.categories.list',
@@ -48,8 +50,9 @@ export const categoriesListAll: DnsfilterEndpoints['categoriesListAll'] =
 				page: values.page,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.categoriesListAll.parse(response);
+		const result = DnsfilterEndpointOutputSchemas.categoriesListAll.parse(
+			dropNullFields(response),
+		);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.categories.listAll',
@@ -73,7 +76,9 @@ export const categoriesGet: DnsfilterEndpoints['categoriesGet'] = async (
 			id: values.id,
 		},
 	});
-	const result = DnsfilterEndpointOutputSchemas.categoriesGet.parse(response);
+	const result = DnsfilterEndpointOutputSchemas.categoriesGet.parse(
+		dropNullFields(response),
+	);
 	await logEventFromContext(
 		ctx,
 		'dnsfilter.categories.get',

@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { DnsfilterEndpoints } from '..';
-import { makeDnsfilterRequest } from '../client';
+import { dropNullFields, makeDnsfilterRequest } from '../client';
 import { redactSensitive } from '../redact';
 import type { DnsfilterEndpointOutputs } from './types';
 import {
@@ -27,7 +27,9 @@ export const metricsOrganizationUsage: DnsfilterEndpoints['metricsOrganizationUs
 			},
 		});
 		const result =
-			DnsfilterEndpointOutputSchemas.metricsOrganizationUsage.parse(response);
+			DnsfilterEndpointOutputSchemas.metricsOrganizationUsage.parse(
+				dropNullFields(response),
+			);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.metrics.organizationUsage',
@@ -58,7 +60,7 @@ export const metricsOrganizationUsageDetailed: DnsfilterEndpoints['metricsOrgani
 		});
 		const result =
 			DnsfilterEndpointOutputSchemas.metricsOrganizationUsageDetailed.parse(
-				response,
+				dropNullFields(response),
 			);
 		await logEventFromContext(
 			ctx,

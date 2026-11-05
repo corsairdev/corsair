@@ -2,7 +2,7 @@
 // One file per resource family; each endpoint keeps its own group name.
 import { logEventFromContext } from 'corsair/core';
 import type { DnsfilterEndpoints } from '..';
-import { makeDnsfilterRequest } from '../client';
+import { dropNullFields, makeDnsfilterRequest } from '../client';
 import { redactSensitive } from '../redact';
 import type { DnsfilterEndpointOutputs } from './types';
 import {
@@ -24,7 +24,9 @@ export const billingsGet: DnsfilterEndpoints['billingsGet'] = async (
 			organization_id: values.organization_id,
 		},
 	});
-	const result = DnsfilterEndpointOutputSchemas.billingsGet.parse(response);
+	const result = DnsfilterEndpointOutputSchemas.billingsGet.parse(
+		dropNullFields(response),
+	);
 	await logEventFromContext(
 		ctx,
 		'dnsfilter.billings.get',
@@ -51,7 +53,9 @@ export const billingsCreate: DnsfilterEndpoints['billingsCreate'] = async (
 			payment_token: values.payment_token,
 		},
 	});
-	const result = DnsfilterEndpointOutputSchemas.billingsCreate.parse(response);
+	const result = DnsfilterEndpointOutputSchemas.billingsCreate.parse(
+		dropNullFields(response),
+	);
 	await logEventFromContext(
 		ctx,
 		'dnsfilter.billings.create',
@@ -75,8 +79,9 @@ export const billingsAddressShow: DnsfilterEndpoints['billingsAddressShow'] =
 				organization_id: values.organization_id,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.billingsAddressShow.parse(response);
+		const result = DnsfilterEndpointOutputSchemas.billingsAddressShow.parse(
+			dropNullFields(response),
+		);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.billings.addressShow',
@@ -103,8 +108,9 @@ export const billingsAddressUpdate: DnsfilterEndpoints['billingsAddressUpdate'] 
 				billing_address: values.billing_address,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.billingsAddressUpdate.parse(response);
+		const result = DnsfilterEndpointOutputSchemas.billingsAddressUpdate.parse(
+			dropNullFields(response),
+		);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.billings.addressUpdate',
@@ -127,7 +133,9 @@ export const invoicesCurrent: DnsfilterEndpoints['invoicesCurrent'] = async (
 	>('/v1/invoices/current', ctx.key, {
 		method: 'GET',
 	});
-	const result = DnsfilterEndpointOutputSchemas.invoicesCurrent.parse(response);
+	const result = DnsfilterEndpointOutputSchemas.invoicesCurrent.parse(
+		dropNullFields(response),
+	);
 	await logEventFromContext(
 		ctx,
 		'dnsfilter.invoices.current',
@@ -151,7 +159,9 @@ export const invoicesList: DnsfilterEndpoints['invoicesList'] = async (
 			organization_id: values.organization_id,
 		},
 	});
-	const result = DnsfilterEndpointOutputSchemas.invoicesList.parse(response);
+	const result = DnsfilterEndpointOutputSchemas.invoicesList.parse(
+		dropNullFields(response),
+	);
 	await logEventFromContext(
 		ctx,
 		'dnsfilter.invoices.list',
@@ -178,7 +188,9 @@ export const invoicesGet: DnsfilterEndpoints['invoicesGet'] = async (
 			organization_id: values.organization_id,
 		},
 	});
-	const result = DnsfilterEndpointOutputSchemas.invoicesGet.parse(response);
+	const result = DnsfilterEndpointOutputSchemas.invoicesGet.parse(
+		dropNullFields(response),
+	);
 	await logEventFromContext(
 		ctx,
 		'dnsfilter.invoices.get',
@@ -203,7 +215,9 @@ export const trialsCreate: DnsfilterEndpoints['trialsCreate'] = async (
 			sku: values.sku,
 		},
 	});
-	const result = DnsfilterEndpointOutputSchemas.trialsCreate.parse(response);
+	const result = DnsfilterEndpointOutputSchemas.trialsCreate.parse(
+		dropNullFields(response),
+	);
 	await logEventFromContext(
 		ctx,
 		'dnsfilter.trials.create',

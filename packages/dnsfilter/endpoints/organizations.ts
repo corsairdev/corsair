@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { DnsfilterEndpoints } from '..';
-import { makeDnsfilterRequest } from '../client';
+import { dropNullFields, makeDnsfilterRequest } from '../client';
 import { persistOrganizations } from '../persistence';
 import { redactSensitive } from '../redact';
 import type { DnsfilterEndpointOutputs } from './types';
@@ -30,9 +30,10 @@ export const organizationsList: DnsfilterEndpoints['organizationsList'] =
 				type: values.type,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.organizationsList.parse(response);
-		await persistOrganizations(ctx, result);
+		const result = DnsfilterEndpointOutputSchemas.organizationsList.parse(
+			dropNullFields(response),
+		);
+		await persistOrganizations(ctx, response);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.organizations.list',
@@ -56,9 +57,10 @@ export const organizationsCreate: DnsfilterEndpoints['organizationsCreate'] =
 				organization: values.organization,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.organizationsCreate.parse(response);
-		await persistOrganizations(ctx, result);
+		const result = DnsfilterEndpointOutputSchemas.organizationsCreate.parse(
+			dropNullFields(response),
+		);
+		await persistOrganizations(ctx, response);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.organizations.create',
@@ -87,9 +89,10 @@ export const organizationsListAll: DnsfilterEndpoints['organizationsListAll'] =
 				type: values.type,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.organizationsListAll.parse(response);
-		await persistOrganizations(ctx, result);
+		const result = DnsfilterEndpointOutputSchemas.organizationsListAll.parse(
+			dropNullFields(response),
+		);
+		await persistOrganizations(ctx, response);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.organizations.listAll',
@@ -118,9 +121,10 @@ export const organizationsGet: DnsfilterEndpoints['organizationsGet'] = async (
 			include_current_mrr: values.include_current_mrr,
 		},
 	});
-	const result =
-		DnsfilterEndpointOutputSchemas.organizationsGet.parse(response);
-	await persistOrganizations(ctx, result);
+	const result = DnsfilterEndpointOutputSchemas.organizationsGet.parse(
+		dropNullFields(response),
+	);
+	await persistOrganizations(ctx, response);
 	await logEventFromContext(
 		ctx,
 		'dnsfilter.organizations.get',
@@ -147,9 +151,10 @@ export const organizationsUpdate: DnsfilterEndpoints['organizationsUpdate'] =
 				organization: values.organization,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.organizationsUpdate.parse(response);
-		await persistOrganizations(ctx, result);
+		const result = DnsfilterEndpointOutputSchemas.organizationsUpdate.parse(
+			dropNullFields(response),
+		);
+		await persistOrganizations(ctx, response);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.organizations.update',
@@ -176,8 +181,9 @@ export const organizationsDelete: DnsfilterEndpoints['organizationsDelete'] =
 				clear_subscription_info: values.clear_subscription_info,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.organizationsDelete.parse(response);
+		const result = DnsfilterEndpointOutputSchemas.organizationsDelete.parse(
+			dropNullFields(response),
+		);
 		try {
 			await ctx.db.organizations.deleteByEntityId(String(values.id));
 		} catch (error) {
@@ -209,9 +215,10 @@ export const organizationsSettings: DnsfilterEndpoints['organizationsSettings'] 
 				organization_ids: values.organization_ids,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.organizationsSettings.parse(response);
-		await persistOrganizations(ctx, result);
+		const result = DnsfilterEndpointOutputSchemas.organizationsSettings.parse(
+			dropNullFields(response),
+		);
+		await persistOrganizations(ctx, response);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.organizations.settings',
@@ -246,8 +253,9 @@ export const organizationsBulkUpdate: DnsfilterEndpoints['organizationsBulkUpdat
 					values.vpn_settings_organization_attributes,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.organizationsBulkUpdate.parse(response);
+		const result = DnsfilterEndpointOutputSchemas.organizationsBulkUpdate.parse(
+			dropNullFields(response),
+		);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.organizations.bulkUpdate',
@@ -271,8 +279,9 @@ export const organizationsCancel: DnsfilterEndpoints['organizationsCancel'] =
 				id: values.id,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.organizationsCancel.parse(response);
+		const result = DnsfilterEndpointOutputSchemas.organizationsCancel.parse(
+			dropNullFields(response),
+		);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.organizations.cancel',
@@ -299,7 +308,9 @@ export const organizationsPromoteToMsp: DnsfilterEndpoints['organizationsPromote
 			},
 		});
 		const result =
-			DnsfilterEndpointOutputSchemas.organizationsPromoteToMsp.parse(response);
+			DnsfilterEndpointOutputSchemas.organizationsPromoteToMsp.parse(
+				dropNullFields(response),
+			);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.organizations.promoteToMsp',

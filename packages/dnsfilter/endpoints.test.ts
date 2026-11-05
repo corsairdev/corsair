@@ -685,3 +685,58 @@ describe('DNSFilter persistence', () => {
 		warn.mockRestore();
 	});
 });
+
+// Map-backed entity table so a sequence of reads shows the saved row.
+// Rows differ per entity, so their data stays untyped.
+function memoryTable() {
+	const rows = new Map<string, Record<string, unknown>>();
+	return {
+		rows,
+		findByEntityId: jest.fn(async (id: string) => {
+			const data = rows.get(id);
+			return data ? { data } : null;
+		}),
+		upsertByEntityId: jest.fn(
+			async (id: string, data: Record<string, unknown>) => {
+				rows.set(id, data);
+			},
+		),
+	};
+}
+
+describe('DNSFilter local rows across reads', () => {
+	beforeEach(() => {
+		requestMock.mockReset();
+	});
+
+	it('clears a field the API nulls and keeps one it omits', async () => {
+		const networks = memoryTable();
+		const ctx = createContext({ networks });
+		const network = (relationships?: Record<string, unknown>) => ({
+			data: {
+				id: '42',
+				type: 'networks',
+				attributes: { name: 'HQ' },
+				...(relationships ? { relationships } : {}),
+			},
+		});
+
+		requestMock.mockResolvedValueOnce(
+			network({ policy: { data: { id: '12', type: 'policies' } } }),
+		);
+		await Networks.networksGet(ctx, { id: 42 });
+		expect(networks.rows.get('42')).toMatchObject({ policyId: '12' });
+
+		// A basic_info style read leaves relationships out: keep the policy.
+		requestMock.mockResolvedValueOnce(network());
+		await Networks.networksGet(ctx, { id: 42 });
+		expect(networks.rows.get('42')).toMatchObject({ policyId: '12' });
+
+		// The policy was removed: `{ data: null }` clears it.
+		requestMock.mockResolvedValueOnce(network({ policy: { data: null } }));
+		const result = await Networks.networksGet(ctx, { id: 42 });
+		expect(networks.rows.get('42')).toEqual({ id: '42', name: 'HQ' });
+		// The caller still gets the null-free parsed response.
+		expect(result.data?.relationships?.policy).toEqual({});
+	});
+});

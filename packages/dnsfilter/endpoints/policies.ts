@@ -2,7 +2,7 @@
 // One file per resource family; each endpoint keeps its own group name.
 import { logEventFromContext } from 'corsair/core';
 import type { DnsfilterEndpoints } from '..';
-import { makeDnsfilterRequest } from '../client';
+import { dropNullFields, makeDnsfilterRequest } from '../client';
 import { persistPolicies } from '../persistence';
 import { redactSensitive } from '../redact';
 import type { DnsfilterEndpointOutputs } from './types';
@@ -27,8 +27,10 @@ export const policiesList: DnsfilterEndpoints['policiesList'] = async (
 			page: values.page,
 		},
 	});
-	const result = DnsfilterEndpointOutputSchemas.policiesList.parse(response);
-	await persistPolicies(ctx, result);
+	const result = DnsfilterEndpointOutputSchemas.policiesList.parse(
+		dropNullFields(response),
+	);
+	await persistPolicies(ctx, response);
 	await logEventFromContext(
 		ctx,
 		'dnsfilter.policies.list',
@@ -56,8 +58,10 @@ export const policiesCreate: DnsfilterEndpoints['policiesCreate'] = async (
 			append_domains: values.append_domains,
 		},
 	});
-	const result = DnsfilterEndpointOutputSchemas.policiesCreate.parse(response);
-	await persistPolicies(ctx, result);
+	const result = DnsfilterEndpointOutputSchemas.policiesCreate.parse(
+		dropNullFields(response),
+	);
+	await persistPolicies(ctx, response);
 	await logEventFromContext(
 		ctx,
 		'dnsfilter.policies.create',
@@ -85,8 +89,10 @@ export const policiesListAll: DnsfilterEndpoints['policiesListAll'] = async (
 			page: values.page,
 		},
 	});
-	const result = DnsfilterEndpointOutputSchemas.policiesListAll.parse(response);
-	await persistPolicies(ctx, result);
+	const result = DnsfilterEndpointOutputSchemas.policiesListAll.parse(
+		dropNullFields(response),
+	);
+	await persistPolicies(ctx, response);
 	await logEventFromContext(
 		ctx,
 		'dnsfilter.policies.listAll',
@@ -113,8 +119,10 @@ export const policiesGet: DnsfilterEndpoints['policiesGet'] = async (
 			include_relationships: values.include_relationships,
 		},
 	});
-	const result = DnsfilterEndpointOutputSchemas.policiesGet.parse(response);
-	await persistPolicies(ctx, result);
+	const result = DnsfilterEndpointOutputSchemas.policiesGet.parse(
+		dropNullFields(response),
+	);
+	await persistPolicies(ctx, response);
 	await logEventFromContext(
 		ctx,
 		'dnsfilter.policies.get',
@@ -145,8 +153,10 @@ export const policiesUpdate: DnsfilterEndpoints['policiesUpdate'] = async (
 			append_domains: values.append_domains,
 		},
 	});
-	const result = DnsfilterEndpointOutputSchemas.policiesUpdate.parse(response);
-	await persistPolicies(ctx, result);
+	const result = DnsfilterEndpointOutputSchemas.policiesUpdate.parse(
+		dropNullFields(response),
+	);
+	await persistPolicies(ctx, response);
 	await logEventFromContext(
 		ctx,
 		'dnsfilter.policies.update',
@@ -172,7 +182,9 @@ export const policiesDelete: DnsfilterEndpoints['policiesDelete'] = async (
 			id: values.id,
 		},
 	});
-	const result = DnsfilterEndpointOutputSchemas.policiesDelete.parse(response);
+	const result = DnsfilterEndpointOutputSchemas.policiesDelete.parse(
+		dropNullFields(response),
+	);
 	try {
 		await ctx.db.policies.deleteByEntityId(String(values.id));
 	} catch (error) {
@@ -204,8 +216,9 @@ export const policiesApplication: DnsfilterEndpoints['policiesApplication'] =
 				policy_ids: values.policy_ids,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.policiesApplication.parse(response);
+		const result = DnsfilterEndpointOutputSchemas.policiesApplication.parse(
+			dropNullFields(response),
+		);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.policies.application',
@@ -234,7 +247,9 @@ export const policiesApplicationUpdate: DnsfilterEndpoints['policiesApplicationU
 			},
 		});
 		const result =
-			DnsfilterEndpointOutputSchemas.policiesApplicationUpdate.parse(response);
+			DnsfilterEndpointOutputSchemas.policiesApplicationUpdate.parse(
+				dropNullFields(response),
+			);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.policies.applicationUpdate',
@@ -265,8 +280,10 @@ export const policiesAddBlacklistDomain: DnsfilterEndpoints['policiesAddBlacklis
 			},
 		});
 		const result =
-			DnsfilterEndpointOutputSchemas.policiesAddBlacklistDomain.parse(response);
-		await persistPolicies(ctx, result);
+			DnsfilterEndpointOutputSchemas.policiesAddBlacklistDomain.parse(
+				dropNullFields(response),
+			);
+		await persistPolicies(ctx, response);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.policies.addBlacklistDomain',
@@ -298,9 +315,9 @@ export const policiesRemoveBlacklistDomain: DnsfilterEndpoints['policiesRemoveBl
 		});
 		const result =
 			DnsfilterEndpointOutputSchemas.policiesRemoveBlacklistDomain.parse(
-				response,
+				dropNullFields(response),
 			);
-		await persistPolicies(ctx, result);
+		await persistPolicies(ctx, response);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.policies.removeBlacklistDomain',
@@ -331,8 +348,10 @@ export const policiesAddWhitelistDomain: DnsfilterEndpoints['policiesAddWhitelis
 			},
 		});
 		const result =
-			DnsfilterEndpointOutputSchemas.policiesAddWhitelistDomain.parse(response);
-		await persistPolicies(ctx, result);
+			DnsfilterEndpointOutputSchemas.policiesAddWhitelistDomain.parse(
+				dropNullFields(response),
+			);
+		await persistPolicies(ctx, response);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.policies.addWhitelistDomain',
@@ -364,9 +383,9 @@ export const policiesRemoveWhitelistDomain: DnsfilterEndpoints['policiesRemoveWh
 		});
 		const result =
 			DnsfilterEndpointOutputSchemas.policiesRemoveWhitelistDomain.parse(
-				response,
+				dropNullFields(response),
 			);
-		await persistPolicies(ctx, result);
+		await persistPolicies(ctx, response);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.policies.removeWhitelistDomain',
@@ -397,9 +416,9 @@ export const policiesAddBlacklistCategory: DnsfilterEndpoints['policiesAddBlackl
 		});
 		const result =
 			DnsfilterEndpointOutputSchemas.policiesAddBlacklistCategory.parse(
-				response,
+				dropNullFields(response),
 			);
-		await persistPolicies(ctx, result);
+		await persistPolicies(ctx, response);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.policies.addBlacklistCategory',
@@ -430,9 +449,9 @@ export const policiesRemoveBlacklistCategory: DnsfilterEndpoints['policiesRemove
 		});
 		const result =
 			DnsfilterEndpointOutputSchemas.policiesRemoveBlacklistCategory.parse(
-				response,
+				dropNullFields(response),
 			);
-		await persistPolicies(ctx, result);
+		await persistPolicies(ctx, response);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.policies.removeBlacklistCategory',
@@ -463,9 +482,9 @@ export const policiesAddAllowedApplication: DnsfilterEndpoints['policiesAddAllow
 		});
 		const result =
 			DnsfilterEndpointOutputSchemas.policiesAddAllowedApplication.parse(
-				response,
+				dropNullFields(response),
 			);
-		await persistPolicies(ctx, result);
+		await persistPolicies(ctx, response);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.policies.addAllowedApplication',
@@ -496,9 +515,9 @@ export const policiesRemoveAllowedApplication: DnsfilterEndpoints['policiesRemov
 		});
 		const result =
 			DnsfilterEndpointOutputSchemas.policiesRemoveAllowedApplication.parse(
-				response,
+				dropNullFields(response),
 			);
-		await persistPolicies(ctx, result);
+		await persistPolicies(ctx, response);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.policies.removeAllowedApplication',
@@ -529,9 +548,9 @@ export const policiesAddBlockedApplication: DnsfilterEndpoints['policiesAddBlock
 		});
 		const result =
 			DnsfilterEndpointOutputSchemas.policiesAddBlockedApplication.parse(
-				response,
+				dropNullFields(response),
 			);
-		await persistPolicies(ctx, result);
+		await persistPolicies(ctx, response);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.policies.addBlockedApplication',
@@ -562,9 +581,9 @@ export const policiesRemoveBlockedApplication: DnsfilterEndpoints['policiesRemov
 		});
 		const result =
 			DnsfilterEndpointOutputSchemas.policiesRemoveBlockedApplication.parse(
-				response,
+				dropNullFields(response),
 			);
-		await persistPolicies(ctx, result);
+		await persistPolicies(ctx, response);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.policies.removeBlockedApplication',
@@ -590,7 +609,9 @@ export const policiesGetPermissiveMode: DnsfilterEndpoints['policiesGetPermissiv
 			},
 		});
 		const result =
-			DnsfilterEndpointOutputSchemas.policiesGetPermissiveMode.parse(response);
+			DnsfilterEndpointOutputSchemas.policiesGetPermissiveMode.parse(
+				dropNullFields(response),
+			);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.policies.getPermissiveMode',
@@ -620,7 +641,7 @@ export const policiesUpdatePermissiveMode: DnsfilterEndpoints['policiesUpdatePer
 		});
 		const result =
 			DnsfilterEndpointOutputSchemas.policiesUpdatePermissiveMode.parse(
-				response,
+				dropNullFields(response),
 			);
 		await logEventFromContext(
 			ctx,
@@ -650,7 +671,7 @@ export const policiesBulkActionsAddAllowlistDomains: DnsfilterEndpoints['policie
 		});
 		const result =
 			DnsfilterEndpointOutputSchemas.policiesBulkActionsAddAllowlistDomains.parse(
-				response,
+				dropNullFields(response),
 			);
 		await logEventFromContext(
 			ctx,
@@ -680,7 +701,7 @@ export const policiesBulkActionsRemoveAllowlistDomains: DnsfilterEndpoints['poli
 		});
 		const result =
 			DnsfilterEndpointOutputSchemas.policiesBulkActionsRemoveAllowlistDomains.parse(
-				response,
+				dropNullFields(response),
 			);
 		await logEventFromContext(
 			ctx,
@@ -710,7 +731,7 @@ export const policiesBulkActionsAddBlocklistDomains: DnsfilterEndpoints['policie
 		});
 		const result =
 			DnsfilterEndpointOutputSchemas.policiesBulkActionsAddBlocklistDomains.parse(
-				response,
+				dropNullFields(response),
 			);
 		await logEventFromContext(
 			ctx,
@@ -740,7 +761,7 @@ export const policiesBulkActionsRemoveBlocklistDomains: DnsfilterEndpoints['poli
 		});
 		const result =
 			DnsfilterEndpointOutputSchemas.policiesBulkActionsRemoveBlocklistDomains.parse(
-				response,
+				dropNullFields(response),
 			);
 		await logEventFromContext(
 			ctx,
@@ -762,7 +783,9 @@ export const policyIpsList: DnsfilterEndpoints['policyIpsList'] = async (
 	>('/v1/policy_ips', ctx.key, {
 		method: 'GET',
 	});
-	const result = DnsfilterEndpointOutputSchemas.policyIpsList.parse(response);
+	const result = DnsfilterEndpointOutputSchemas.policyIpsList.parse(
+		dropNullFields(response),
+	);
 	await logEventFromContext(
 		ctx,
 		'dnsfilter.policyIps.list',
@@ -786,7 +809,9 @@ export const policyIpsGet: DnsfilterEndpoints['policyIpsGet'] = async (
 			id: values.id,
 		},
 	});
-	const result = DnsfilterEndpointOutputSchemas.policyIpsGet.parse(response);
+	const result = DnsfilterEndpointOutputSchemas.policyIpsGet.parse(
+		dropNullFields(response),
+	);
 	await logEventFromContext(
 		ctx,
 		'dnsfilter.policyIps.get',

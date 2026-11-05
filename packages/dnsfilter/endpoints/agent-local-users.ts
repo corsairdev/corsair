@@ -2,7 +2,7 @@
 // One file per resource family; each endpoint keeps its own group name.
 import { logEventFromContext } from 'corsair/core';
 import type { DnsfilterEndpoints } from '..';
-import { makeDnsfilterRequest } from '../client';
+import { dropNullFields, makeDnsfilterRequest } from '../client';
 import { redactSensitive } from '../redact';
 import type { DnsfilterEndpointOutputs } from './types';
 import {
@@ -43,8 +43,9 @@ export const agentLocalUsersList: DnsfilterEndpoints['agentLocalUsersList'] =
 				uuids: values.uuids,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.agentLocalUsersList.parse(response);
+		const result = DnsfilterEndpointOutputSchemas.agentLocalUsersList.parse(
+			dropNullFields(response),
+		);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.agentLocalUsers.list',
@@ -77,8 +78,9 @@ export const agentLocalUsersListAll: DnsfilterEndpoints['agentLocalUsersListAll'
 				user_policy_override: values.user_policy_override,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.agentLocalUsersListAll.parse(response);
+		const result = DnsfilterEndpointOutputSchemas.agentLocalUsersListAll.parse(
+			dropNullFields(response),
+		);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.agentLocalUsers.listAll',
@@ -102,8 +104,9 @@ export const agentLocalUsersGet: DnsfilterEndpoints['agentLocalUsersGet'] =
 				id: values.id,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.agentLocalUsersGet.parse(response);
+		const result = DnsfilterEndpointOutputSchemas.agentLocalUsersGet.parse(
+			dropNullFields(response),
+		);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.agentLocalUsers.get',
@@ -130,8 +133,9 @@ export const agentLocalUsersUpdate: DnsfilterEndpoints['agentLocalUsersUpdate'] 
 				agent_local_user: values.agent_local_user,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.agentLocalUsersUpdate.parse(response);
+		const result = DnsfilterEndpointOutputSchemas.agentLocalUsersUpdate.parse(
+			dropNullFields(response),
+		);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.agentLocalUsers.update',
@@ -155,8 +159,9 @@ export const agentLocalUsersDelete: DnsfilterEndpoints['agentLocalUsersDelete'] 
 				id: values.id,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.agentLocalUsersDelete.parse(response);
+		const result = DnsfilterEndpointOutputSchemas.agentLocalUsersDelete.parse(
+			dropNullFields(response),
+		);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.agentLocalUsers.delete',
@@ -194,7 +199,7 @@ export const agentLocalUserBulkDeletesCreate: DnsfilterEndpoints['agentLocalUser
 		});
 		const result =
 			DnsfilterEndpointOutputSchemas.agentLocalUserBulkDeletesCreate.parse(
-				response,
+				dropNullFields(response),
 			);
 		await logEventFromContext(
 			ctx,
@@ -222,7 +227,7 @@ export const agentLocalUserBulkDeletesGet: DnsfilterEndpoints['agentLocalUserBul
 		});
 		const result =
 			DnsfilterEndpointOutputSchemas.agentLocalUserBulkDeletesGet.parse(
-				response,
+				dropNullFields(response),
 			);
 		await logEventFromContext(
 			ctx,
@@ -250,7 +255,7 @@ export const agentLocalUserBulkDeletesCounts: DnsfilterEndpoints['agentLocalUser
 		});
 		const result =
 			DnsfilterEndpointOutputSchemas.agentLocalUserBulkDeletesCounts.parse(
-				response,
+				dropNullFields(response),
 			);
 		await logEventFromContext(
 			ctx,
@@ -278,8 +283,9 @@ export const agentLocalUsersV2Counts: DnsfilterEndpoints['agentLocalUsersV2Count
 				search: values.search,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.agentLocalUsersV2Counts.parse(response);
+		const result = DnsfilterEndpointOutputSchemas.agentLocalUsersV2Counts.parse(
+			dropNullFields(response),
+		);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.agentLocalUsersV2.counts',

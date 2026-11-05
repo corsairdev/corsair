@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { DnsfilterEndpoints } from '..';
-import { makeDnsfilterRequest } from '../client';
+import { dropNullFields, makeDnsfilterRequest } from '../client';
 import { redactSensitive } from '../redact';
 import type { DnsfilterEndpointOutputs } from './types';
 import {
@@ -22,8 +22,9 @@ export const scheduledPoliciesList: DnsfilterEndpoints['scheduledPoliciesList'] 
 				page: values.page,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.scheduledPoliciesList.parse(response);
+		const result = DnsfilterEndpointOutputSchemas.scheduledPoliciesList.parse(
+			dropNullFields(response),
+		);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.scheduledPolicies.list',
@@ -50,8 +51,9 @@ export const scheduledPoliciesCreate: DnsfilterEndpoints['scheduledPoliciesCreat
 				timezone: values.timezone,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.scheduledPoliciesCreate.parse(response);
+		const result = DnsfilterEndpointOutputSchemas.scheduledPoliciesCreate.parse(
+			dropNullFields(response),
+		);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.scheduledPolicies.create',
@@ -76,7 +78,9 @@ export const scheduledPoliciesListAll: DnsfilterEndpoints['scheduledPoliciesList
 			},
 		});
 		const result =
-			DnsfilterEndpointOutputSchemas.scheduledPoliciesListAll.parse(response);
+			DnsfilterEndpointOutputSchemas.scheduledPoliciesListAll.parse(
+				dropNullFields(response),
+			);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.scheduledPolicies.listAll',
@@ -100,8 +104,9 @@ export const scheduledPoliciesGet: DnsfilterEndpoints['scheduledPoliciesGet'] =
 				id: values.id,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.scheduledPoliciesGet.parse(response);
+		const result = DnsfilterEndpointOutputSchemas.scheduledPoliciesGet.parse(
+			dropNullFields(response),
+		);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.scheduledPolicies.get',
@@ -131,8 +136,9 @@ export const scheduledPoliciesUpdate: DnsfilterEndpoints['scheduledPoliciesUpdat
 				timezone: values.timezone,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.scheduledPoliciesUpdate.parse(response);
+		const result = DnsfilterEndpointOutputSchemas.scheduledPoliciesUpdate.parse(
+			dropNullFields(response),
+		);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.scheduledPolicies.update',
@@ -156,8 +162,9 @@ export const scheduledPoliciesDelete: DnsfilterEndpoints['scheduledPoliciesDelet
 				id: values.id,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.scheduledPoliciesDelete.parse(response);
+		const result = DnsfilterEndpointOutputSchemas.scheduledPoliciesDelete.parse(
+			dropNullFields(response),
+		);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.scheduledPolicies.delete',

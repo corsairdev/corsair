@@ -2,7 +2,7 @@
 // One file per resource family; each endpoint keeps its own group name.
 import { logEventFromContext } from 'corsair/core';
 import type { DnsfilterEndpoints } from '..';
-import { makeDnsfilterRequest } from '../client';
+import { dropNullFields, makeDnsfilterRequest } from '../client';
 import { persistScheduledReports } from '../persistence';
 import { redactSensitive } from '../redact';
 import type { DnsfilterEndpointOutputs } from './types';
@@ -25,9 +25,10 @@ export const scheduledReportsList: DnsfilterEndpoints['scheduledReportsList'] =
 				organization_id: values.organization_id,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.scheduledReportsList.parse(response);
-		await persistScheduledReports(ctx, result);
+		const result = DnsfilterEndpointOutputSchemas.scheduledReportsList.parse(
+			dropNullFields(response),
+		);
+		await persistScheduledReports(ctx, response);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.scheduledReports.list',
@@ -51,9 +52,10 @@ export const scheduledReportsCreate: DnsfilterEndpoints['scheduledReportsCreate'
 				scheduled_report: values.scheduled_report,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.scheduledReportsCreate.parse(response);
-		await persistScheduledReports(ctx, result);
+		const result = DnsfilterEndpointOutputSchemas.scheduledReportsCreate.parse(
+			dropNullFields(response),
+		);
+		await persistScheduledReports(ctx, response);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.scheduledReports.create',
@@ -77,9 +79,10 @@ export const scheduledReportsGet: DnsfilterEndpoints['scheduledReportsGet'] =
 				id: values.id,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.scheduledReportsGet.parse(response);
-		await persistScheduledReports(ctx, result);
+		const result = DnsfilterEndpointOutputSchemas.scheduledReportsGet.parse(
+			dropNullFields(response),
+		);
+		await persistScheduledReports(ctx, response);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.scheduledReports.get',
@@ -106,9 +109,10 @@ export const scheduledReportsUpdate: DnsfilterEndpoints['scheduledReportsUpdate'
 				scheduled_report: values.scheduled_report,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.scheduledReportsUpdate.parse(response);
-		await persistScheduledReports(ctx, result);
+		const result = DnsfilterEndpointOutputSchemas.scheduledReportsUpdate.parse(
+			dropNullFields(response),
+		);
+		await persistScheduledReports(ctx, response);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.scheduledReports.update',
@@ -132,8 +136,9 @@ export const scheduledReportsDelete: DnsfilterEndpoints['scheduledReportsDelete'
 				id: values.id,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.scheduledReportsDelete.parse(response);
+		const result = DnsfilterEndpointOutputSchemas.scheduledReportsDelete.parse(
+			dropNullFields(response),
+		);
 		try {
 			await ctx.db.scheduledReports.deleteByEntityId(String(values.id));
 		} catch (error) {
@@ -168,9 +173,10 @@ export const scheduledReportsV2List: DnsfilterEndpoints['scheduledReportsV2List'
 				sort: values.sort,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.scheduledReportsV2List.parse(response);
-		await persistScheduledReports(ctx, result);
+		const result = DnsfilterEndpointOutputSchemas.scheduledReportsV2List.parse(
+			dropNullFields(response),
+		);
+		await persistScheduledReports(ctx, response);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.scheduledReportsV2.list',
@@ -195,8 +201,10 @@ export const scheduledReportsV2Create: DnsfilterEndpoints['scheduledReportsV2Cre
 			},
 		});
 		const result =
-			DnsfilterEndpointOutputSchemas.scheduledReportsV2Create.parse(response);
-		await persistScheduledReports(ctx, result);
+			DnsfilterEndpointOutputSchemas.scheduledReportsV2Create.parse(
+				dropNullFields(response),
+			);
+		await persistScheduledReports(ctx, response);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.scheduledReportsV2.create',
@@ -220,9 +228,10 @@ export const scheduledReportsV2Get: DnsfilterEndpoints['scheduledReportsV2Get'] 
 				id: values.id,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.scheduledReportsV2Get.parse(response);
-		await persistScheduledReports(ctx, result);
+		const result = DnsfilterEndpointOutputSchemas.scheduledReportsV2Get.parse(
+			dropNullFields(response),
+		);
+		await persistScheduledReports(ctx, response);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.scheduledReportsV2.get',
@@ -250,8 +259,10 @@ export const scheduledReportsV2Update: DnsfilterEndpoints['scheduledReportsV2Upd
 			},
 		});
 		const result =
-			DnsfilterEndpointOutputSchemas.scheduledReportsV2Update.parse(response);
-		await persistScheduledReports(ctx, result);
+			DnsfilterEndpointOutputSchemas.scheduledReportsV2Update.parse(
+				dropNullFields(response),
+			);
+		await persistScheduledReports(ctx, response);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.scheduledReportsV2.update',
@@ -276,7 +287,9 @@ export const scheduledReportsV2Delete: DnsfilterEndpoints['scheduledReportsV2Del
 			},
 		});
 		const result =
-			DnsfilterEndpointOutputSchemas.scheduledReportsV2Delete.parse(response);
+			DnsfilterEndpointOutputSchemas.scheduledReportsV2Delete.parse(
+				dropNullFields(response),
+			);
 		try {
 			await ctx.db.scheduledReports.deleteByEntityId(String(values.id));
 		} catch (error) {
@@ -318,7 +331,7 @@ export const scheduledReportsV2BulkUpdate: DnsfilterEndpoints['scheduledReportsV
 		});
 		const result =
 			DnsfilterEndpointOutputSchemas.scheduledReportsV2BulkUpdate.parse(
-				response,
+				dropNullFields(response),
 			);
 		await logEventFromContext(
 			ctx,
@@ -345,7 +358,9 @@ export const scheduledReportPreviewsGet: DnsfilterEndpoints['scheduledReportPrev
 			},
 		});
 		const result =
-			DnsfilterEndpointOutputSchemas.scheduledReportPreviewsGet.parse(response);
+			DnsfilterEndpointOutputSchemas.scheduledReportPreviewsGet.parse(
+				dropNullFields(response),
+			);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.scheduledReportPreviews.get',
@@ -372,7 +387,7 @@ export const scheduledReportPreviewsCreate: DnsfilterEndpoints['scheduledReportP
 		});
 		const result =
 			DnsfilterEndpointOutputSchemas.scheduledReportPreviewsCreate.parse(
-				response,
+				dropNullFields(response),
 			);
 		await logEventFromContext(
 			ctx,

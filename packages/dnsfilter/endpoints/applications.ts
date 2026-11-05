@@ -2,7 +2,7 @@
 // One file per resource family; each endpoint keeps its own group name.
 import { logEventFromContext } from 'corsair/core';
 import type { DnsfilterEndpoints } from '..';
-import { makeDnsfilterRequest } from '../client';
+import { dropNullFields, makeDnsfilterRequest } from '../client';
 import { redactSensitive } from '../redact';
 import type { DnsfilterEndpointOutputs } from './types';
 import {
@@ -27,8 +27,9 @@ export const applicationsList: DnsfilterEndpoints['applicationsList'] = async (
 			page: values.page,
 		},
 	});
-	const result =
-		DnsfilterEndpointOutputSchemas.applicationsList.parse(response);
+	const result = DnsfilterEndpointOutputSchemas.applicationsList.parse(
+		dropNullFields(response),
+	);
 	await logEventFromContext(
 		ctx,
 		'dnsfilter.applications.list',
@@ -53,8 +54,9 @@ export const applicationsListAll: DnsfilterEndpoints['applicationsListAll'] =
 				page: values.page,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.applicationsListAll.parse(response);
+		const result = DnsfilterEndpointOutputSchemas.applicationsListAll.parse(
+			dropNullFields(response),
+		);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.applications.listAll',
@@ -80,7 +82,9 @@ export const applicationsGet: DnsfilterEndpoints['applicationsGet'] = async (
 			id: values.id,
 		},
 	});
-	const result = DnsfilterEndpointOutputSchemas.applicationsGet.parse(response);
+	const result = DnsfilterEndpointOutputSchemas.applicationsGet.parse(
+		dropNullFields(response),
+	);
 	await logEventFromContext(
 		ctx,
 		'dnsfilter.applications.get',
@@ -106,7 +110,9 @@ export const applicationCategoriesList: DnsfilterEndpoints['applicationCategorie
 			},
 		});
 		const result =
-			DnsfilterEndpointOutputSchemas.applicationCategoriesList.parse(response);
+			DnsfilterEndpointOutputSchemas.applicationCategoriesList.parse(
+				dropNullFields(response),
+			);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.applicationCategories.list',
@@ -131,7 +137,9 @@ export const applicationCategoriesGet: DnsfilterEndpoints['applicationCategories
 			},
 		});
 		const result =
-			DnsfilterEndpointOutputSchemas.applicationCategoriesGet.parse(response);
+			DnsfilterEndpointOutputSchemas.applicationCategoriesGet.parse(
+				dropNullFields(response),
+			);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.applicationCategories.get',

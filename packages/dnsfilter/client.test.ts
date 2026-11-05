@@ -157,21 +157,31 @@ describe('makeDnsfilterRequest', () => {
 		expect(arrayOptions.body).toEqual([{ id: 1 }, { id: 2 }]);
 	});
 
-	it('drops null fields from responses at every depth', async () => {
-		requestMock.mockResolvedValueOnce({
-			data: [
-				{
-					id: '1',
-					attributes: { name: 'HQ', physical_address: null },
-					relationships: { policy: { data: null } },
-				},
-			],
+	it('returns the raw body so local sync can see cleared fields', async () => {
+		const body = {
+			data: [{ id: '1', relationships: { policy: { data: null } } }],
 			links: null,
-		});
+		};
+		requestMock.mockResolvedValueOnce(body);
 
-		const response = await makeDnsfilterRequest('/v1/networks', 'k');
+		await expect(makeDnsfilterRequest('/v1/networks', 'k')).resolves.toEqual(
+			body,
+		);
+	});
 
-		expect(response).toEqual({
+	it('drops null fields at every depth for the output schemas', () => {
+		expect(
+			dropNullFields({
+				data: [
+					{
+						id: '1',
+						attributes: { name: 'HQ', physical_address: null },
+						relationships: { policy: { data: null } },
+					},
+				],
+				links: null,
+			}),
+		).toEqual({
 			data: [
 				{ id: '1', attributes: { name: 'HQ' }, relationships: { policy: {} } },
 			],

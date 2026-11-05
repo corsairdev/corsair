@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { DnsfilterEndpoints } from '..';
-import { makeDnsfilterRequest } from '../client';
+import { dropNullFields, makeDnsfilterRequest } from '../client';
 import { redactSensitive } from '../redact';
 import type { DnsfilterEndpointOutputs } from './types';
 import {
@@ -24,7 +24,9 @@ export const enterpriseConnectionsList: DnsfilterEndpoints['enterpriseConnection
 			},
 		});
 		const result =
-			DnsfilterEndpointOutputSchemas.enterpriseConnectionsList.parse(response);
+			DnsfilterEndpointOutputSchemas.enterpriseConnectionsList.parse(
+				dropNullFields(response),
+			);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.enterpriseConnections.list',
@@ -59,7 +61,7 @@ export const enterpriseConnectionsCreate: DnsfilterEndpoints['enterpriseConnecti
 		});
 		const result =
 			DnsfilterEndpointOutputSchemas.enterpriseConnectionsCreate.parse(
-				response,
+				dropNullFields(response),
 			);
 		await logEventFromContext(
 			ctx,
@@ -85,7 +87,9 @@ export const enterpriseConnectionsGet: DnsfilterEndpoints['enterpriseConnections
 			},
 		});
 		const result =
-			DnsfilterEndpointOutputSchemas.enterpriseConnectionsGet.parse(response);
+			DnsfilterEndpointOutputSchemas.enterpriseConnectionsGet.parse(
+				dropNullFields(response),
+			);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.enterpriseConnections.get',
@@ -122,7 +126,7 @@ export const enterpriseConnectionsUpdate: DnsfilterEndpoints['enterpriseConnecti
 		});
 		const result =
 			DnsfilterEndpointOutputSchemas.enterpriseConnectionsUpdate.parse(
-				response,
+				dropNullFields(response),
 			);
 		await logEventFromContext(
 			ctx,
@@ -150,7 +154,7 @@ export const enterpriseConnectionsDelete: DnsfilterEndpoints['enterpriseConnecti
 		});
 		const result =
 			DnsfilterEndpointOutputSchemas.enterpriseConnectionsDelete.parse(
-				response,
+				dropNullFields(response),
 			);
 		await logEventFromContext(
 			ctx,

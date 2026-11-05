@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { DnsfilterEndpoints } from '..';
-import { makeDnsfilterRequest } from '../client';
+import { dropNullFields, makeDnsfilterRequest } from '../client';
 import { persistIpAddresses } from '../persistence';
 import { redactSensitive } from '../redact';
 import type { DnsfilterEndpointOutputs } from './types';
@@ -26,8 +26,10 @@ export const ipAddressesList: DnsfilterEndpoints['ipAddressesList'] = async (
 			search: values.search,
 		},
 	});
-	const result = DnsfilterEndpointOutputSchemas.ipAddressesList.parse(response);
-	await persistIpAddresses(ctx, result);
+	const result = DnsfilterEndpointOutputSchemas.ipAddressesList.parse(
+		dropNullFields(response),
+	);
+	await persistIpAddresses(ctx, response);
 	await logEventFromContext(
 		ctx,
 		'dnsfilter.ipAddresses.list',
@@ -51,9 +53,10 @@ export const ipAddressesCreate: DnsfilterEndpoints['ipAddressesCreate'] =
 				ip_address: values.ip_address,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.ipAddressesCreate.parse(response);
-		await persistIpAddresses(ctx, result);
+		const result = DnsfilterEndpointOutputSchemas.ipAddressesCreate.parse(
+			dropNullFields(response),
+		);
+		await persistIpAddresses(ctx, response);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.ipAddresses.create',
@@ -77,9 +80,10 @@ export const ipAddressesListAll: DnsfilterEndpoints['ipAddressesListAll'] =
 				page: values.page,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.ipAddressesListAll.parse(response);
-		await persistIpAddresses(ctx, result);
+		const result = DnsfilterEndpointOutputSchemas.ipAddressesListAll.parse(
+			dropNullFields(response),
+		);
+		await persistIpAddresses(ctx, response);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.ipAddresses.listAll',
@@ -105,8 +109,10 @@ export const ipAddressesGet: DnsfilterEndpoints['ipAddressesGet'] = async (
 			id: values.id,
 		},
 	});
-	const result = DnsfilterEndpointOutputSchemas.ipAddressesGet.parse(response);
-	await persistIpAddresses(ctx, result);
+	const result = DnsfilterEndpointOutputSchemas.ipAddressesGet.parse(
+		dropNullFields(response),
+	);
+	await persistIpAddresses(ctx, response);
 	await logEventFromContext(
 		ctx,
 		'dnsfilter.ipAddresses.get',
@@ -133,9 +139,10 @@ export const ipAddressesUpdate: DnsfilterEndpoints['ipAddressesUpdate'] =
 				ip_address: values.ip_address,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.ipAddressesUpdate.parse(response);
-		await persistIpAddresses(ctx, result);
+		const result = DnsfilterEndpointOutputSchemas.ipAddressesUpdate.parse(
+			dropNullFields(response),
+		);
+		await persistIpAddresses(ctx, response);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.ipAddresses.update',
@@ -159,8 +166,9 @@ export const ipAddressesDelete: DnsfilterEndpoints['ipAddressesDelete'] =
 				id: values.id,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.ipAddressesDelete.parse(response);
+		const result = DnsfilterEndpointOutputSchemas.ipAddressesDelete.parse(
+			dropNullFields(response),
+		);
 		try {
 			await ctx.db.ipAddresses.deleteByEntityId(String(values.id));
 		} catch (error) {
@@ -189,8 +197,9 @@ export const ipAddressesVerify: DnsfilterEndpoints['ipAddressesVerify'] =
 				ip_address: values.ip_address,
 			},
 		});
-		const result =
-			DnsfilterEndpointOutputSchemas.ipAddressesVerify.parse(response);
+		const result = DnsfilterEndpointOutputSchemas.ipAddressesVerify.parse(
+			dropNullFields(response),
+		);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.ipAddresses.verify',
@@ -213,7 +222,9 @@ export const ipAddressesMyip: DnsfilterEndpoints['ipAddressesMyip'] = async (
 	>('/v1/ip_addresses/myip', ctx.key, {
 		method: 'GET',
 	});
-	const result = DnsfilterEndpointOutputSchemas.ipAddressesMyip.parse(response);
+	const result = DnsfilterEndpointOutputSchemas.ipAddressesMyip.parse(
+		dropNullFields(response),
+	);
 	await logEventFromContext(
 		ctx,
 		'dnsfilter.ipAddresses.myip',
