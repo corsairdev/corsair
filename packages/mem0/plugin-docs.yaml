@@ -11,7 +11,7 @@ overviewNote: |
   - **The run ID has two names.** `memories.list` returns it as `session_id` and `memories.search` returns the same value as `run_id`.
   - **Expiration.** A memory past its `expiration_date` stays stored but is hidden from search and list unless you pass `show_expired: true`. To clear an expiration date, pass `expiration_date: null` to `memories.update`.
   - **Rate limits and quotas.** Mem0 answers 429 when a project is over its rate limit, and the plugin retries that up to three times with backoff. A free or paid plan's monthly add and retrieval limits are separate: calls past those fail with a 413, which the plugin does not retry because the limits reset on the billing date.
-  - **Webhooks.** The plugin does not receive Mem0 webhooks. Poll `events.list` or `events.get` to follow queued work.
+  - **Webhooks.** The plugin can register, list, change and remove Mem0 webhooks with `webhooks.create`, `webhooks.list`, `webhooks.update` and `webhooks.delete`, so Mem0 posts memory events to your URL. It does not receive those posts itself: Mem0 publishes no signing secret or signature header, so a receiver built here could not tell a genuine post from a forged one. Verify deliveries in your own endpoint, and poll `events.list` or `events.get` if you would rather not run one.
 
   Operations that take an enum argument: `memories.add` accepts `role` values of `user`, `assistant` and `system`. `memories.history` reports events as `ADD`, `UPDATE` or `DELETE`, and `events.get` reports statuses of `PENDING`, `RUNNING`, `FAILED` and `SUCCEEDED`.
 examples:
@@ -55,3 +55,11 @@ apiExamples:
     call: "{ event_id: '2c4d1f44-4f7b-4b2f-9f6e-7b5b4f5a1234' }"
   events.list:
     call: "{ page: 1, page_size: 25 }"
+  webhooks.list:
+    call: "{ project_id: 'proj_123' }"
+  webhooks.create:
+    call: "{ project_id: 'proj_123', name: 'Memory Logger', url: 'https://your-app.com/webhook', event_types: ['memory_add', 'memory_categorize'] }"
+  webhooks.update:
+    call: "{ webhook_id: 'wh_123', name: 'Updated Logger', event_types: ['memory_update', 'memory_add'] }"
+  webhooks.delete:
+    call: "{ webhook_id: 'wh_123' }"

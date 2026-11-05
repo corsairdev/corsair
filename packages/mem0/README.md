@@ -24,6 +24,10 @@ pnpm add @corsair-dev/mem0
 | `memories.list` | `mem0.api.memories.list` | `read` | List stored memories page by page, filtered by entity, date range or category; entity IDs go inside `filters` |
 | `memories.search` | `mem0.api.memories.search` | `read` | Rank stored memories by relevance to a query with hybrid semantic, keyword and entity matching; entity IDs go inside `filters` |
 | `memories.update` | `mem0.api.memories.update` | `write` | Change one memory's text or metadata, or set its expiration date; pass expiration_date as null to clear one |
+| `webhooks.create` | `mem0.api.webhooks.create` | `write` | Register a URL to receive Mem0 events for a project, subscribing it to memory add, update, delete or categorize and the ingest job events |
+| `webhooks.delete` | `mem0.api.webhooks.delete` | `destructive` | Unregister a webhook so Mem0 stops posting events to its URL |
+| `webhooks.list` | `mem0.api.webhooks.list` | `read` | List the webhooks registered on a project: each URL, its event subscriptions, and whether it is active |
+| `webhooks.update` | `mem0.api.webhooks.update` | `write` | Change a webhook's label, URL or event subscriptions; the new event list replaces the old one |
 
 ## Auth
 
