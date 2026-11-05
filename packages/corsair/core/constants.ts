@@ -252,6 +252,7 @@ export const BaseProviders = [
 	'grafana',
 	'griptape',
 	'groqcloud',
+	'gumroad',
 	'habitica',
 	'hackernews',
 	'harvest',
@@ -678,6 +679,7 @@ export const ProviderDisplayNames = {
 	grafana: 'Grafana',
 	griptape: 'Griptape',
 	groqcloud: 'GroqCloud',
+	gumroad: 'Gumroad',
 	habitica: 'Habitica',
 	hackernews: 'Hacker News',
 	harvest: 'Harvest',
@@ -1108,6 +1110,7 @@ export type AllProviders =
 	| 'grafana'
 	| 'griptape'
 	| 'groqcloud'
+	| 'gumroad'
 	| 'habitica'
 	| 'hackernews'
 	| 'harvest'

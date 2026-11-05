@@ -2124,6 +2124,14 @@
                 ]
               },
               {
+                "group": "Gumroad",
+                "pages": [
+                  "plugins/gumroad/overview",
+                  "plugins/gumroad/api",
+                  "plugins/gumroad/database"
+                ]
+              },
+              {
                 "group": "Habitica",
                 "pages": [
                   "plugins/habitica/overview",

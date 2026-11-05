@@ -1,0 +1,173 @@
+displayName: Gumroad
+description: "Sell and manage digital products: products, sales, subscribers, licenses, offer codes, variants, emails, workflows, payouts and tax forms."
+domain: gumroad.com
+recommendedAuth: api_key
+examples:
+  read:
+    path: products.list
+    title: List your Gumroad products
+    args: {}
+  write:
+    path: products.create
+    title: Create a product
+    args:
+      name: Pencil Icon PSD
+      price: 100
+apiExamples:
+  products.list: {}
+  products.get:
+    call: "{ id: 'A-m3CDDC5dlrSdKZp0RFhA==' }"
+  products.create:
+    call: "{ name: 'Pencil Icon PSD', price: 100, native_type: 'digital' }"
+  products.update:
+    call: "{ id: 'A-m3CDDC5dlrSdKZp0RFhA==', name: 'Pencil Icon PSD v2', files: [{ url: 'https://example.com/bundle.zip' }] }"
+  products.delete:
+    call: "{ id: 'A-m3CDDC5dlrSdKZp0RFhA==' }"
+  products.enable:
+    call: "{ id: 'A-m3CDDC5dlrSdKZp0RFhA==' }"
+  products.disable:
+    call: "{ id: 'A-m3CDDC5dlrSdKZp0RFhA==' }"
+  products.reviewsList:
+    call: "{ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==' }"
+  products.categoriesList: {}
+  products.coversAdd:
+    call: "{ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', url: 'https://example.com/cover.png' }"
+  products.coversDelete:
+    call: "{ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', id: 'A-m3CDDC5dlrSdKZp0RFhA==' }"
+  products.thumbnailSet:
+    call: "{ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', url: 'https://example.com/thumb.png' }"
+  products.thumbnailDelete:
+    call: "{ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==' }"
+  offerCodes.list: {}
+  offerCodes.get:
+    call: "{ id: 'A-m3CDDC5dlrSdKZp0RFhA==' }"
+  offerCodes.update:
+    call: "{ id: 'A-m3CDDC5dlrSdKZp0RFhA==' }"
+  offerCodes.listForProduct:
+    call: "{ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==' }"
+  offerCodes.getForProduct:
+    call: "{ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', id: 'A-m3CDDC5dlrSdKZp0RFhA==' }"
+  offerCodes.createForProduct:
+    call: "{ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', name: 'Example', amount_off: 100 }"
+  offerCodes.updateForProduct:
+    call: "{ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', id: 'A-m3CDDC5dlrSdKZp0RFhA==' }"
+  offerCodes.deleteForProduct:
+    call: "{ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', id: 'A-m3CDDC5dlrSdKZp0RFhA==' }"
+  variantCategories.list:
+    call: "{ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==' }"
+  variantCategories.create:
+    call: "{ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', title: 'Format' }"
+  variantCategories.get:
+    call: "{ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', id: 'A-m3CDDC5dlrSdKZp0RFhA==' }"
+  variantCategories.update:
+    call: "{ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', id: 'A-m3CDDC5dlrSdKZp0RFhA==', title: 'Format' }"
+  variantCategories.delete:
+    call: "{ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', id: 'A-m3CDDC5dlrSdKZp0RFhA==' }"
+  variantCategories.variantsList:
+    call: "{ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', variant_category_id: '1' }"
+  variantCategories.variantsCreate:
+    call: "{ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', variant_category_id: '1', name: 'Example', price_difference_cents: 100 }"
+  variantCategories.variantsGet:
+    call: "{ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', variant_category_id: '1', id: 'A-m3CDDC5dlrSdKZp0RFhA==' }"
+  variantCategories.variantsUpdate:
+    call: "{ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', variant_category_id: '1', id: 'A-m3CDDC5dlrSdKZp0RFhA==' }"
+  variantCategories.variantsDelete:
+    call: "{ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', variant_category_id: '1', id: 'A-m3CDDC5dlrSdKZp0RFhA==' }"
+  customFields.list:
+    call: "{ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==' }"
+  customFields.create:
+    call: "{ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', name: 'Example' }"
+  customFields.update:
+    call: "{ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', name: 'Example' }"
+  customFields.delete:
+    call: "{ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', name: 'Example' }"
+  user.get: {}
+  user.customHtmlGet: {}
+  user.customHtmlUpdate:
+    call: "{ custom_html: '<p>Hello</p>' }"
+  user.customHtmlPreview:
+    call: "{ custom_html: '<p>Hello</p>' }"
+  user.refundPolicyGet: {}
+  user.refundPolicyUpdate:
+    call: "{ refund_period: '30' }"
+  public.product:
+    call: "{ seller: 'sahil', permalink: 'pencil' }"
+  public.profile:
+    call: "{ username: 'sahil' }"
+  media.list: {}
+  media.create:
+    call: "{ url: 'https://example.com/logo.png' }"
+  media.delete:
+    call: "{ id: 'A-m3CDDC5dlrSdKZp0RFhA==' }"
+  files.presign:
+    call: "{ file_size: 1024, filename: 'bundle.zip' }"
+  files.complete:
+    call: "{ upload_id: 'example-upload', key: 'uploads/abc', parts: [{ part_number: 1, etag: 'd41d8cd98f00b204e9800998ecf8427e' }] }"
+  files.abort:
+    call: "{ upload_id: 'example-upload', key: 'uploads/abc' }"
+  emails.list: {}
+  emails.get:
+    call: "{ id: 'A-m3CDDC5dlrSdKZp0RFhA==' }"
+  emails.create:
+    call: "{ subject: 'Welcome', body: 'Thanks for your purchase' }"
+  emails.preview:
+    call: "{ id: 'A-m3CDDC5dlrSdKZp0RFhA==' }"
+  emails.send:
+    call: "{ id: 'A-m3CDDC5dlrSdKZp0RFhA==' }"
+  emails.schedule:
+    call: "{ id: 'bfi_30HLgGWL8H2wo_Gzlg==', to_be_published_at: '2027-01-01 09:00' }"
+  emails.unschedule:
+    call: "{ id: 'A-m3CDDC5dlrSdKZp0RFhA==' }"
+  emails.delete:
+    call: "{ id: 'A-m3CDDC5dlrSdKZp0RFhA==' }"
+  workflows.list: {}
+  workflows.get:
+    call: "{ id: 'A-m3CDDC5dlrSdKZp0RFhA==' }"
+  workflows.emailsAdd:
+    call: "{ workflow_id: 'wfl_30HLgGWL8H2wo_Gzlg==', subject: 'Welcome', body: 'Thanks for your purchase', delay_amount: 1, delay_unit: 'day' }"
+  workflows.emailsUpdate:
+    call: "{ workflow_id: 'wfl_30HLgGWL8H2wo_Gzlg==', email_id: 'bfi_30HLgGWL8H2wo_Gzlg==', subject: 'Welcome', body: 'Thanks for your purchase', delay_amount: 1, delay_unit: 'day' }"
+  resourceSubscriptions.subscribe:
+    call: "{ resource_name: 'sale', post_url: 'https://example.com/webhook' }"
+  resourceSubscriptions.list:
+    call: "{ resource_name: 'sale' }"
+  resourceSubscriptions.testEvent:
+    call: "{ resource_subscription_id: 'example' }"
+  resourceSubscriptions.unsubscribe:
+    call: "{ resource_subscription_id: 'example' }"
+  sales.list: {}
+  sales.get:
+    call: "{ id: 'A-m3CDDC5dlrSdKZp0RFhA==' }"
+  sales.markAsShipped:
+    call: "{ id: 'A-m3CDDC5dlrSdKZp0RFhA==' }"
+  sales.refund:
+    call: "{ id: 'A-m3CDDC5dlrSdKZp0RFhA==' }"
+  sales.revokeAccess:
+    call: "{ id: 'A-m3CDDC5dlrSdKZp0RFhA==' }"
+  sales.undoRevokeAccess:
+    call: "{ id: 'A-m3CDDC5dlrSdKZp0RFhA==' }"
+  sales.resendReceipt:
+    call: "{ id: 'A-m3CDDC5dlrSdKZp0RFhA==' }"
+  subscribers.list:
+    call: "{ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==' }"
+  subscribers.get:
+    call: "{ id: 'A-m3CDDC5dlrSdKZp0RFhA==' }"
+  licenses.verify:
+    call: "{ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', license_key: 'A1B2C3D4-E5F60718-9ABCDEF0-1234ABCD' }"
+  licenses.enable:
+    call: "{ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', license_key: 'A1B2C3D4-E5F60718-9ABCDEF0-1234ABCD' }"
+  licenses.disable:
+    call: "{ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', license_key: 'A1B2C3D4-E5F60718-9ABCDEF0-1234ABCD' }"
+  licenses.decrementUsesCount:
+    call: "{ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', license_key: 'A1B2C3D4-E5F60718-9ABCDEF0-1234ABCD' }"
+  licenses.rotate:
+    call: "{ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', license_key: 'A1B2C3D4-E5F60718-9ABCDEF0-1234ABCD' }"
+  payouts.list: {}
+  payouts.get:
+    call: "{ id: 'A-m3CDDC5dlrSdKZp0RFhA==' }"
+  payouts.upcoming: {}
+  taxForms.list: {}
+  taxForms.download:
+    call: "{ year: '2025', tax_form_type: 'us_1099_k' }"
+  earnings.get:
+    call: "{ year: '2025' }"
