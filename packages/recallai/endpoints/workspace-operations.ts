@@ -653,17 +653,31 @@ export const retrieveZoomOAuthCredentialAccessToken = async (
 	);
 };
 
+/**
+ * For calls Recall answers with an empty 200. The body is ignored, so an
+ * empty text response (rather than JSON) cannot fail the call.
+ */
+const requestWithoutBody = async (
+	ctx: RecallaiContext,
+	operation: string,
+	path: string,
+): Promise<undefined> => {
+	await makeRecallaiContextRequest<RecallaiJsonValue>(ctx, path, {
+		method: 'POST',
+	});
+	await logEventFromContext(ctx, operation, {}, 'completed');
+	return undefined;
+};
+
 export const syncZoomOAuthCredentialMeetings = async (
 	ctx: RecallaiContext,
 	input: RecallaiWorkspaceOperationInputs['syncZoomOAuthCredentialMeetings'],
 ) => {
 	const parsed = SyncZoomOAuthCredentialMeetingsInputSchema.parse(input);
-	return requestValidated(
+	return requestWithoutBody(
 		ctx,
 		'recallai.zoomOAuthCredentials.syncMeetings',
 		`/api/v2/zoom-oauth-credentials/${encodeURIComponent(parsed.id)}/sync-meetings/`,
-		{ method: 'POST' },
-		SyncZoomOAuthCredentialMeetingsResponseSchema,
 	);
 };
 
@@ -672,11 +686,9 @@ export const validateZoomOAuthCredential = async (
 	input: RecallaiWorkspaceOperationInputs['validateZoomOAuthCredential'],
 ) => {
 	const parsed = ValidateZoomOAuthCredentialInputSchema.parse(input);
-	return requestValidated(
+	return requestWithoutBody(
 		ctx,
 		'recallai.zoomOAuthCredentials.validate',
 		`/api/v2/zoom-oauth-credentials/${encodeURIComponent(parsed.id)}/validate/`,
-		{ method: 'POST' },
-		ValidateZoomOAuthCredentialResponseSchema,
 	);
 };

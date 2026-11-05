@@ -101,6 +101,7 @@ const stopBotOutput = async (
 	botId: string,
 	actionPath: string,
 	operation: string,
+	// Bodies are validated by the stop action's input schema before this point.
 	body?: Record<string, unknown>,
 ): Promise<undefined> => {
 	await makeRecallaiContextRequest<undefined>(

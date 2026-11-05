@@ -370,6 +370,17 @@ describe('Recall.ai final workspace operations', () => {
 		);
 	});
 
+	it('ignores an empty text body on the no-content POSTs', async () => {
+		// corsair/http returns '' for an empty non-JSON 200.
+		request.mockResolvedValue('');
+		await expect(
+			syncZoomOAuthCredentialMeetings(ctx, { id: credentialId }),
+		).resolves.toBeUndefined();
+		await expect(
+			validateZoomOAuthCredential(ctx, { id: credentialId }),
+		).resolves.toBeUndefined();
+	});
+
 	it('manually validates credentials using the documented no-body POST', async () => {
 		request.mockResolvedValue(undefined);
 		await expect(
