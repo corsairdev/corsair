@@ -2,6 +2,7 @@
 title: Database
 description: "Retell AI local sync: searchable entities, `.search()` filters, and operators."
 ---
+
 The Retell AI plugin syncs data locally. Use `corsair.retellai.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
 
 <Info>
@@ -34,7 +35,7 @@ const rows = await corsair.retellai.db.calls.search({
 | `transcript` | `string` | equals, contains, startsWith, endsWith, in |
 | `recording_url` | `string` | equals, contains, startsWith, endsWith, in |
 
-_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code - see [database operations](/concepts/database)._
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
 
 ---
 
@@ -62,6 +63,7 @@ const rows = await corsair.retellai.db.chats.search({
 | `end_timestamp` | `number` | equals, gt, gte, lt, lte, in |
 | `transcript` | `string` | equals, contains, startsWith, endsWith, in |
 
-_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code - see [database operations](/concepts/database)._
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
 
 ---
+

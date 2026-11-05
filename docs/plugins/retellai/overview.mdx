@@ -5,6 +5,9 @@ description: "Analyze Retell AI calls and chats with transcripts, recordings, an
 
 Use **Retell AI** through Corsair: one client, typed API calls, local DB sync.
 
+- **Lists are summaries.** `calls.list` and `chats.list` omit transcripts; call `calls.get` or `chats.get` for the transcript, recording and analysis. Only the `get` operations save records locally.
+- **Paging.** Pass the returned `pagination_key` back as `paginationKey` while `has_more` is true. Set `includeTotal: true` to get `total` (Retell runs an extra count query for it).
+
 **What you get:**
 
 - 4 typed API operations
@@ -51,7 +54,7 @@ export const corsair = createCorsair({
 });
 ```
 
-Multi-tenancy is the default - scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
 
 </Step>
 
@@ -73,7 +76,7 @@ More: [API Key](/concepts/api-key)
 </Step>
 
 <Step title="Connect a tenant">
-Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app - see [Connect / OAuth](/management/connect).
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
 
 ```ts
 const { connectUrl } = await corsair.manage.connect.createLink({
@@ -89,11 +92,20 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`calls.get`**
+**List ended calls**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.retellai.api.calls.get({ id: 'call-id' });
+await tenant.retellai.api.calls.list({
+	limit: 50,
+	filterCriteria: {
+		call_status: {
+			type: 'enum',
+			op: 'in',
+			value: ['ended'],
+		},
+	},
+});
 ```
 
 
@@ -106,9 +118,17 @@ See the full list on the [API](/plugins/retellai/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.retellai.db.<entity>.search()` and `.list()`: `calls`, `chats`.
+Calls fetched with `calls.get` are kept locally.
 
-See [Database](/plugins/retellai/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.retellai.db.calls.search({
+	data: { call_status: 'ended' },
+	limit: 20,
+});
+```
+
+Synced entities: `calls`, `chats`. See [Database](/plugins/retellai/database) for filters and operators.
 
 ## What's next
 
