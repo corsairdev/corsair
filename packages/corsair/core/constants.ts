@@ -221,6 +221,7 @@ export const BaseProviders = [
 	'figma',
 	'filevine',
 	'filloutforms',
+	'finerworks',
 	'firecrawl',
 	'fireflies',
 	'fixer',
@@ -380,6 +381,7 @@ export const BaseProviders = [
 	'tpscheck',
 	'trello',
 	'tripadvisor',
+	'turbotpipes',
 	'turso',
 	'twentyonerisk',
 	'twilio',
@@ -636,6 +638,7 @@ export const ProviderDisplayNames = {
 	figma: 'Figma',
 	filevine: 'Filevine',
 	filloutforms: 'FilloutForms',
+	finerworks: 'FinerWorks',
 	firecrawl: 'Firecrawl',
 	fireflies: 'Fireflies',
 	fixer: 'Fixer',
@@ -794,6 +797,7 @@ export const ProviderDisplayNames = {
 	tpscheck: 'TPSCheck',
 	trello: 'Trello',
 	tripadvisor: 'Tripadvisor',
+	turbotpipes: 'Turbot Pipes',
 	turso: 'Turso',
 	twentyonerisk: 'TwentyOneRisk',
 	twilio: 'Twilio',
@@ -1056,6 +1060,7 @@ export type AllProviders =
 	| 'figma'
 	| 'filevine'
 	| 'filloutforms'
+	| 'finerworks'
 	| 'firecrawl'
 	| 'fireflies'
 	| 'fixer'
@@ -1215,6 +1220,7 @@ export type AllProviders =
 	| 'tpscheck'
 	| 'trello'
 	| 'tripadvisor'
+	| 'turbotpipes'
 	| 'turso'
 	| 'twentyonerisk'
 	| 'twilio'

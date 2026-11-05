@@ -1861,6 +1861,14 @@
                 ]
               },
               {
+                "group": "FinerWorks",
+                "pages": [
+                  "plugins/finerworks/overview",
+                  "plugins/finerworks/api",
+                  "plugins/finerworks/database"
+                ]
+              },
+              {
                 "group": "Firecrawl",
                 "pages": [
                   "plugins/firecrawl/overview",
@@ -3176,6 +3184,14 @@
                   "plugins/tripadvisor/overview",
                   "plugins/tripadvisor/api",
                   "plugins/tripadvisor/database"
+                ]
+              },
+              {
+                "group": "Turbot Pipes",
+                "pages": [
+                  "plugins/turbotpipes/overview",
+                  "plugins/turbotpipes/api",
+                  "plugins/turbotpipes/database"
                 ]
               },
               {
