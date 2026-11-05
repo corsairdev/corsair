@@ -133,11 +133,11 @@ const QueryResponse = z.object({ points: z.array(ScoredPoint) });
 
 const CollectionInfo = z
 	.object({
-		status: z.enum(['green', 'yellow', 'grey', 'red']),
-		optimizer_status: z.union([
-			z.literal('ok'),
-			z.object({ error: z.string() }),
-		]),
+		// Strings, not enums: a status a newer Qdrant adds must not fail the read.
+		status: z.string().describe('green | yellow | grey | red'),
+		optimizer_status: z
+			.union([z.string(), z.object({ error: z.string() }).loose()])
+			.describe('"ok", or { error } when optimizers failed'),
 		points_count: z.number().int().nullable().optional(),
 		indexed_vectors_count: z.number().int().nullable().optional(),
 		segments_count: z.number().int(),
@@ -161,7 +161,9 @@ const VectorParams = z
 	.object({
 		size: z.number().int().positive(),
 		distance: z.enum(['Cosine', 'Euclid', 'Dot', 'Manhattan']),
-		datatype: z.enum(['float32', 'float16', 'uint8', 'turbo4']).optional(),
+		datatype: z
+			.enum(['float32', 'float16', 'uint8', 'turbo4', 'turbo8', 'turbo16'])
+			.optional(),
 		on_disk: z.boolean().optional(),
 		multivector_config: z
 			.object({ comparator: z.literal('max_sim') })

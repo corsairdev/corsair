@@ -222,6 +222,27 @@ describe('Qdrant endpoints', () => {
 		expect(requests[0]?.url.href).toBe('http://10.0.0.5:6333/collections');
 	});
 
+	it('reads collection and optimizer statuses Qdrant adds later', async () => {
+		const later = { ...info, status: 'blue', optimizer_status: 'indexing' };
+		mockFetch({ body: { result: later } });
+		await expect(call('collections.get', C).output).resolves.toMatchObject({
+			status: 'blue',
+			optimizer_status: 'indexing',
+		});
+	});
+
+	it.each(['turbo8', 'turbo16'])(
+		'accepts the %s vector datatype',
+		async (datatype) => {
+			const requests = mockFetch({ body: { result: true } });
+			const vectors = { size: 4, distance: 'Dot', datatype };
+			await expect(
+				call('collections.create', { ...C, vectors }).output,
+			).resolves.toBe(true);
+			expect(requests[0]?.body).toEqual({ vectors });
+		},
+	);
+
 	it('logs completed and failed calls with only the collection name', async () => {
 		mockFetch(
 			{ body: { result: done } },
