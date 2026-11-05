@@ -45,7 +45,7 @@ export const CalendarUsersListInputSchema = z.object({
 	paginate: z.boolean().optional(),
 });
 export const CalendarEventsListInputSchema = z.object({
-	calendar_id: z.string().min(1),
+	calendar_id: id,
 	cursor: z.string().optional(),
 	ical_uid: z.string().optional(),
 	is_deleted: z.boolean().optional(),

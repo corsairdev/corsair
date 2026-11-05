@@ -236,6 +236,15 @@ describe('Recall.ai final workspace operations', () => {
 		);
 	});
 
+	it('only sends the two fields Recall lets a Zoom OAuth app update', async () => {
+		request.mockReset();
+		await expect(
+			updateZoomOAuthApp(ctx, { id: appId, client_id: 'new-id' } as never),
+		).rejects.toThrow();
+		await expect(updateZoomOAuthApp(ctx, { id: appId })).rejects.toThrow();
+		expect(request).not.toHaveBeenCalled();
+	});
+
 	it('deletes a Zoom OAuth app and returns undefined for the 204 response', async () => {
 		request.mockResolvedValue(undefined);
 		await expect(

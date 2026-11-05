@@ -168,13 +168,20 @@ export const CreateZoomOAuthAppInputSchema = z.object({
 export const CreateZoomOAuthAppResponseSchema = OAuthAppSchema;
 export const RetrieveZoomOAuthAppInputSchema = IdInputSchema;
 export const RetrieveZoomOAuthAppResponseSchema = OAuthAppSchema;
+// Recall rejects any other field: "Only webhook_secret and client_secret can
+// be updated."
 export const UpdateZoomOAuthAppInputSchema = z
 	.object({
 		id: uuid,
 		webhook_secret: z.string().min(1).optional(),
 		client_secret: z.string().min(1).optional(),
 	})
-	.passthrough();
+	.strict()
+	.refine(
+		({ webhook_secret, client_secret }) =>
+			webhook_secret !== undefined || client_secret !== undefined,
+		{ message: 'Pass webhook_secret, client_secret or both' },
+	);
 export const UpdateZoomOAuthAppResponseSchema = OAuthAppSchema;
 export const DeleteZoomOAuthAppInputSchema = IdInputSchema;
 export const DeleteZoomOAuthAppResponseSchema = z.undefined();
