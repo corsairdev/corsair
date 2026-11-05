@@ -100,6 +100,24 @@ describe('Lever binary downloads', () => {
 		).rejects.toMatchObject({ status: 429, retryAfter: undefined });
 	});
 
+	it('converts an HTTP-date Retry-After into a delay', async () => {
+		const retryAt = new Date(Date.now() + 30_000).toUTCString();
+		global.fetch = async () =>
+			new Response('', { status: 429, headers: { 'Retry-After': retryAt } });
+		let error: { status?: number; retryAfter?: number } = {};
+		await makeLeverBinaryRequest(
+			{ key: TEST_KEY, options: {} },
+			'/files/1/download',
+		).catch((caught: { status?: number; retryAfter?: number }) => {
+			error = caught;
+		});
+
+		expect(error.status).toBe(429);
+		// HTTP dates have one-second precision.
+		expect(error.retryAfter).toBeGreaterThan(28_000);
+		expect(error.retryAfter).toBeLessThanOrEqual(30_000);
+	});
+
 	it('hands the Retry-After delay to the retry strategy', async () => {
 		global.fetch = async () =>
 			new Response('', { status: 429, headers: { 'Retry-After': '7' } });
