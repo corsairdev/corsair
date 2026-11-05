@@ -16,9 +16,11 @@ Things to know:
 - **Scopes.** Each endpoint needs its own scope (`r_jobs`, `r_candidates`, `r_account`, `w_departments`, `w_members`, `r_employees`, `w_employees`, `r_timeoff` and so on). A token without it gets a 403. `r_employees` grants access to confidential employee data.
 - **Public job board.** `publicJobs.list` and `publicLocations.list` call Workable's public careers API and need no token. Pass any `subdomain` to read another company's open roles; without one they use the connected account's.
 - **Subdomain.** Only letters, digits and hyphens are accepted, so requests always go to `<subdomain>.workable.com`.
-- **Paging.** `jobs.list`, `candidates.list`, `members.list`, `requisitions.list` and `events.list` take `limit` (up to 100) with `since_id` / `max_id`. `paging.next` in a response is the next page's URL; pass its `since_id` back to fetch it. `employees.list` pages with `limit` and `offset` instead.
+- **Paging.** `jobs.list`, `candidates.list`, `members.list`, `requisitions.list` and `events.list` take `limit` (up to 100) with `since_id` / `max_id`. `paging.next` in a response is the next page's URL; pass its `since_id` back to fetch it. `employees.list` pages with `limit` (10, 20, 50 or 100 only) and `offset` instead.
+- **Rate limit.** Workable allows 10 requests per token in a rolling 10 seconds. A read that gets a 429 waits until the reset time Workable sends, then retries.
 - **Writes are not retried.** Workable has no idempotency keys, so creates, updates, invites and deletes fail fast on a 429 or a network error rather than risk running twice.
-- **Department deletes and merges.** Workable answers 409 when other records still use the department. Pass `force: true` to go ahead anyway.
+- **Department deletes and merges.** Workable answers 409 unless you pass `force: true`, sometimes even when nothing else uses the department.
+- **Time-off balances.** `timeoffBalances.list` needs `employee_id` when the token is an account token.
 
 **What you get:**
 

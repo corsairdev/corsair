@@ -38,6 +38,8 @@ await corsair.workable.api.accounts.get({ subdomain: 'acme' });
 | `id` | `string` | No | — |
 | `name` | `string` | No | — |
 | `subdomain` | `string` | No | — |
+| `description` | `string` | No | — |
+| `summary` | `string` | No | — |
 | `website_url` | `string` | No | — |
 
 
@@ -71,9 +73,11 @@ await corsair.workable.api.accounts.list({});
 ```ts
 {
   id?: string,
-  name?: string,
-  subdomain?: string,
-  website_url?: string
+  name?: string | null,
+  subdomain?: string | null,
+  description?: string | null,
+  summary?: string | null,
+  website_url?: string | null
 }[]
 ```
 </Accordion>
@@ -125,18 +129,18 @@ await corsair.workable.api.candidates.list({ shortcode: 'GROOV003', stage: 'inte
 ```ts
 {
   id?: string,
-  name?: string,
-  firstname?: string,
-  lastname?: string,
-  email?: string,
+  name?: string | null,
+  firstname?: string | null,
+  lastname?: string | null,
+  email?: string | null,
   job?: {
-    shortcode?: string,
-    title?: string
-  },
-  stage?: string,
-  disqualified?: boolean,
-  created_at?: Date,
-  updated_at?: Date
+    shortcode?: string | null,
+    title?: string | null
+  } | null,
+  stage?: string | null,
+  disqualified?: boolean | null,
+  created_at?: Date | null,
+  updated_at?: Date | null
 }[]
 ```
 </Accordion>
@@ -236,7 +240,7 @@ Delete a department
 **Risk:** `destructive`
 
 ```ts
-await corsair.workable.api.departments.delete({ id: '3ff4d641' });
+await corsair.workable.api.departments.delete({ id: '3ff4d641', force: true });
 ```
 
 **Input**
@@ -274,25 +278,20 @@ await corsair.workable.api.departments.list({});
 **Input:** _empty object_
 
 
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `departments` | `object[]` | Yes | — |
+**Output:** `object[]`
 
 <AccordionGroup>
-<Accordion title="departments full type">
+<Accordion title="Output full type">
 
 ```ts
 {
   id?: string,
-  name?: string,
+  name?: string | null,
   parent_id?: string | null
 }[]
 ```
 </Accordion>
 </AccordionGroup>
-
 
 
 ---
@@ -306,7 +305,7 @@ Merge a department into another department
 **Risk:** `write`
 
 ```ts
-await corsair.workable.api.departments.merge({ id: '3ff4d641', target_department_id: '3ff4d64b' });
+await corsair.workable.api.departments.merge({ id: '3ff4d641', target_department_id: '3ff4d64b', force: true });
 ```
 
 **Input**
@@ -382,14 +381,10 @@ await corsair.workable.api.disqualificationReasons.list({});
 **Input:** _empty object_
 
 
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `disqualification_reasons` | `object[]` | Yes | — |
+**Output:** `object[]`
 
 <AccordionGroup>
-<Accordion title="disqualification_reasons full type">
+<Accordion title="Output full type">
 
 ```ts
 {
@@ -397,7 +392,6 @@ await corsair.workable.api.disqualificationReasons.list({});
 ```
 </Accordion>
 </AccordionGroup>
-
 
 
 ---
@@ -419,14 +413,10 @@ await corsair.workable.api.employeeFields.list({});
 **Input:** _empty object_
 
 
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `employee_fields` | `object[]` | Yes | — |
+**Output:** `object[]`
 
 <AccordionGroup>
-<Accordion title="employee_fields full type">
+<Accordion title="Output full type">
 
 ```ts
 {
@@ -434,7 +424,6 @@ await corsair.workable.api.employeeFields.list({});
 ```
 </Accordion>
 </AccordionGroup>
-
 
 
 ---
@@ -481,7 +470,7 @@ await corsair.workable.api.employees.create({ state: 'draft', employee: { firstn
 | `firstname` | `string` | No | — |
 | `lastname` | `string` | No | — |
 | `email` | `string` | No | — |
-| `state` | `draft \| published` | No | — |
+| `state` | `draft \| published \| string` | No | — |
 | `job_title` | `string` | No | — |
 | `department_id` | `string` | No | — |
 | `manager_id` | `string` | No | — |
@@ -519,7 +508,7 @@ await corsair.workable.api.employees.get({ id: '375b' });
 | `firstname` | `string` | No | — |
 | `lastname` | `string` | No | — |
 | `email` | `string` | No | — |
-| `state` | `draft \| published` | No | — |
+| `state` | `draft \| published \| string` | No | — |
 | `job_title` | `string` | No | — |
 | `department_id` | `string` | No | — |
 | `manager_id` | `string` | No | — |
@@ -544,7 +533,7 @@ await corsair.workable.api.employees.list({ query: 'doe', limit: 50, offset: 0 }
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `limit` | `number` | No | — |
+| `limit` | `10 \| 20 \| 50 \| 100` | No | — |
 | `offset` | `number` | No | — |
 | `query` | `string` | No | — |
 | `order_by` | `string` | No | — |
@@ -557,6 +546,7 @@ await corsair.workable.api.employees.list({ query: 'doe', limit: 50, offset: 0 }
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `employees` | `object[]` | Yes | — |
+| `total_count` | `number` | No | — |
 | `totalCount` | `number` | No | — |
 
 <AccordionGroup>
@@ -565,11 +555,11 @@ await corsair.workable.api.employees.list({ query: 'doe', limit: 50, offset: 0 }
 ```ts
 {
   id?: string,
-  firstname?: string,
-  lastname?: string,
-  email?: string,
-  state?: draft | published,
-  job_title?: string,
+  firstname?: string | null,
+  lastname?: string | null,
+  email?: string | null,
+  state?: draft | published | string | null,
+  job_title?: string | null,
   department_id?: string | null,
   manager_id?: string | null
 }[]
@@ -621,7 +611,7 @@ await corsair.workable.api.employees.update({ id: '375b', employee: { job_title:
 | `firstname` | `string` | No | — |
 | `lastname` | `string` | No | — |
 | `email` | `string` | No | — |
-| `state` | `draft \| published` | No | — |
+| `state` | `draft \| published \| string` | No | — |
 | `job_title` | `string` | No | — |
 | `department_id` | `string` | No | — |
 | `manager_id` | `string` | No | — |
@@ -768,13 +758,13 @@ await corsair.workable.api.jobs.list({ state: 'published', limit: 50 });
 ```ts
 {
   id?: string,
-  title?: string,
-  shortcode?: string,
-  state?: draft | published | closed | archived,
+  title?: string | null,
+  shortcode?: string | null,
+  state?: draft | published | closed | archived | string | null,
   department?: string | null,
-  url?: string,
-  created_at?: Date,
-  updated_at?: Date
+  url?: string | null,
+  created_at?: Date | null,
+  updated_at?: Date | null
 }[]
 ```
 </Accordion>
@@ -810,14 +800,10 @@ await corsair.workable.api.legalEntities.list({});
 **Input:** _empty object_
 
 
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `legal_entities` | `object[]` | Yes | — |
+**Output:** `object[]`
 
 <AccordionGroup>
-<Accordion title="legal_entities full type">
+<Accordion title="Output full type">
 
 ```ts
 {
@@ -825,7 +811,6 @@ await corsair.workable.api.legalEntities.list({});
 ```
 </Accordion>
 </AccordionGroup>
-
 
 
 ---
@@ -951,11 +936,11 @@ await corsair.workable.api.members.list({ status: 'active', limit: 50 });
 ```ts
 {
   id?: string,
-  name?: string,
-  headline?: string,
-  email?: string,
-  roles?: string[],
-  active?: boolean,
+  name?: string | null,
+  headline?: string | null,
+  email?: string | null,
+  roles?: string[] | null,
+  active?: boolean | null,
   collaboration_rules?: any[]
 }[]
 ```
@@ -1031,14 +1016,10 @@ await corsair.workable.api.permissionSets.list({});
 **Input:** _empty object_
 
 
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `permission_sets` | `object[]` | Yes | — |
+**Output:** `object[]`
 
 <AccordionGroup>
-<Accordion title="permission_sets full type">
+<Accordion title="Output full type">
 
 ```ts
 {
@@ -1046,7 +1027,6 @@ await corsair.workable.api.permissionSets.list({});
 ```
 </Accordion>
 </AccordionGroup>
-
 
 
 ---
@@ -1125,10 +1105,10 @@ await corsair.workable.api.publicLocations.list({ subdomain: 'acme' });
 
 ```ts
 {
-  code?: string,
-  name?: string,
-  count?: number,
-  url?: string
+  code?: string | null,
+  name?: string | null,
+  count?: number | null,
+  url?: string | null
 }[]
 ```
 </Accordion>
@@ -1307,17 +1287,12 @@ await corsair.workable.api.subscriptions.create({ target: 'https://example.com/w
 
 
 
-**Output:** `object`
+**Output**
 
-<AccordionGroup>
-<Accordion title="Output full type">
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | No | — |
 
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 ---
@@ -1406,7 +1381,7 @@ await corsair.workable.api.timeoffBalances.list({ employee_id: '375b' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `employee_id` | `string` | No | — |
+| `employee_id` | `string` | No | The employee whose balances to read. Required with an account token; a user token defaults to its own employee. |
 
 
 
@@ -1484,14 +1459,10 @@ await corsair.workable.api.workSchedules.list({});
 **Input:** _empty object_
 
 
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `work_schedules` | `object[]` | Yes | — |
+**Output:** `object[]`
 
 <AccordionGroup>
-<Accordion title="work_schedules full type">
+<Accordion title="Output full type">
 
 ```ts
 {
@@ -1499,7 +1470,6 @@ await corsair.workable.api.workSchedules.list({});
 ```
 </Accordion>
 </AccordionGroup>
-
 
 
 ---
