@@ -1,0 +1,2866 @@
+---
+title: API
+description: "API reference for NetSuite: every `netsuite.api.*` operation with input and output types."
+---
+
+Every `netsuite.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Async Get Job Status
+
+### asyncGetJobStatus
+
+`asyncGetJobStatus`
+
+Retrieve the status of an asynchronous NetSuite REST job
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.asyncGetJobStatus({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobId` | `string \| number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Async Get Job Task
+
+### asyncGetJobTask
+
+`asyncGetJobTask`
+
+Retrieve the task reference and status for an asynchronous job
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.asyncGetJobTask({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobId` | `string \| number` | Yes | — |
+| `taskId` | `string \| number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Async Get Job Task Result
+
+### asyncGetJobTaskResult
+
+`asyncGetJobTaskResult`
+
+Retrieve the result of an asynchronous job task
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.asyncGetJobTaskResult({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobId` | `string \| number` | Yes | — |
+| `taskId` | `string \| number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Create Customer
+
+### createCustomer
+
+`createCustomer`
+
+Create a NetSuite customer record
+
+**Risk:** `write`
+
+```ts
+await corsair.netsuite.api.createCustomer({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+| `Prefer` | `string` | No | — |
+| `replace` | `string` | No | — |
+| `X-NetSuite-Idempotency-Key` | `string` | No | — |
+| `X-NetSuite-PropertyNameValidation` | `string` | No | — |
+| `X-NetSuite-PropertyValueValidation` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Create Customer Payment
+
+### createCustomerPayment
+
+`createCustomerPayment`
+
+Create a NetSuite customer payment record
+
+**Risk:** `write`
+
+```ts
+await corsair.netsuite.api.createCustomerPayment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+| `Prefer` | `string` | No | — |
+| `replace` | `string` | No | — |
+| `X-NetSuite-Idempotency-Key` | `string` | No | — |
+| `X-NetSuite-PropertyNameValidation` | `string` | No | — |
+| `X-NetSuite-PropertyValueValidation` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Create Employee
+
+### createEmployee
+
+`createEmployee`
+
+Create a NetSuite employee record
+
+**Risk:** `write`
+
+```ts
+await corsair.netsuite.api.createEmployee({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+| `Prefer` | `string` | No | — |
+| `replace` | `string` | No | — |
+| `X-NetSuite-Idempotency-Key` | `string` | No | — |
+| `X-NetSuite-PropertyNameValidation` | `string` | No | — |
+| `X-NetSuite-PropertyValueValidation` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Create Invoice
+
+### createInvoice
+
+`createInvoice`
+
+Create a NetSuite invoice record
+
+**Risk:** `write`
+
+```ts
+await corsair.netsuite.api.createInvoice({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+| `Prefer` | `string` | No | — |
+| `replace` | `string` | No | — |
+| `X-NetSuite-Idempotency-Key` | `string` | No | — |
+| `X-NetSuite-PropertyNameValidation` | `string` | No | — |
+| `X-NetSuite-PropertyValueValidation` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Create Item
+
+### createItem
+
+`createItem`
+
+Create a NetSuite item record
+
+**Risk:** `write`
+
+```ts
+await corsair.netsuite.api.createItem({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+| `Prefer` | `string` | No | — |
+| `replace` | `string` | No | — |
+| `record_type` | `string` | No | — |
+| `X-NetSuite-Idempotency-Key` | `string` | No | — |
+| `X-NetSuite-PropertyNameValidation` | `string` | No | — |
+| `X-NetSuite-PropertyValueValidation` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Create Journal Entry
+
+### createJournalEntry
+
+`createJournalEntry`
+
+Create a NetSuite journal entry record
+
+**Risk:** `write`
+
+```ts
+await corsair.netsuite.api.createJournalEntry({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+| `Prefer` | `string` | No | — |
+| `replace` | `string` | No | — |
+| `X-NetSuite-Idempotency-Key` | `string` | No | — |
+| `X-NetSuite-PropertyNameValidation` | `string` | No | — |
+| `X-NetSuite-PropertyValueValidation` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Create Jwt Client Assertion
+
+### createJwtClientAssertion
+
+`createJwtClientAssertion`
+
+Create a signed JWT client assertion for OAuth 2.0 client credentials
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.createJwtClientAssertion({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `alg` | `string` | No | — |
+| `aud` | `string` | No | — |
+| `exp` | `number` | No | — |
+| `iat` | `number` | No | — |
+| `scope` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+| `certificate_id` | `string` | No | — |
+| `private_key_pem` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Create Purchase Order
+
+### createPurchaseOrder
+
+`createPurchaseOrder`
+
+Create a NetSuite purchase order
+
+**Risk:** `write`
+
+```ts
+await corsair.netsuite.api.createPurchaseOrder({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item` | `object` | Yes | — |
+| `memo` | `string` | No | — |
+| `Prefer` | `string` | No | — |
+| `entity` | `object` | Yes | — |
+| `replace` | `string` | No | — |
+| `location` | `object` | No | — |
+| `tranDate` | `string` | No | — |
+| `customForm` | `object` | No | — |
+| `X-NetSuite-Idempotency-Key` | `string` | No | — |
+| `X-NetSuite-PropertyNameValidation` | `string` | No | — |
+| `X-NetSuite-PropertyValueValidation` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="item full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="entity full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="location full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="customForm full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Create Record
+
+### createRecord
+
+`createRecord`
+
+Create a record of any exposed NetSuite type
+
+**Risk:** `write`
+
+```ts
+await corsair.netsuite.api.createRecord({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+| `Prefer` | `string` | No | — |
+| `replace` | `string` | No | — |
+| `record_type` | `string` | Yes | — |
+| `X-NetSuite-Idempotency-Key` | `string` | No | — |
+| `X-NetSuite-PropertyNameValidation` | `string` | No | — |
+| `X-NetSuite-PropertyValueValidation` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Create Sales Order
+
+### createSalesOrder
+
+`createSalesOrder`
+
+Create a NetSuite sales order
+
+**Risk:** `write`
+
+```ts
+await corsair.netsuite.api.createSalesOrder({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item` | `object` | Yes | — |
+| `memo` | `string` | No | — |
+| `Prefer` | `string` | No | — |
+| `entity` | `object` | Yes | — |
+| `replace` | `string` | No | — |
+| `tranDate` | `string` | No | — |
+| `promocode` | `object` | No | — |
+| `customForm` | `string` | No | — |
+| `orderStatus` | `string` | No | — |
+| `otherrefnum` | `string` | No | — |
+| `X-NetSuite-Idempotency-Key` | `string` | No | — |
+| `X-NetSuite-PropertyNameValidation` | `string` | No | — |
+| `X-NetSuite-PropertyValueValidation` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="item full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="entity full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="promocode full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Create Vendor
+
+### createVendor
+
+`createVendor`
+
+Create a NetSuite vendor record
+
+**Risk:** `write`
+
+```ts
+await corsair.netsuite.api.createVendor({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+| `Prefer` | `string` | No | — |
+| `replace` | `string` | No | — |
+| `X-NetSuite-Idempotency-Key` | `string` | No | — |
+| `X-NetSuite-PropertyNameValidation` | `string` | No | — |
+| `X-NetSuite-PropertyValueValidation` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Create Vendor Bill
+
+### createVendorBill
+
+`createVendorBill`
+
+Create a NetSuite vendor bill record
+
+**Risk:** `write`
+
+```ts
+await corsair.netsuite.api.createVendorBill({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+| `Prefer` | `string` | No | — |
+| `replace` | `string` | No | — |
+| `X-NetSuite-Idempotency-Key` | `string` | No | — |
+| `X-NetSuite-PropertyNameValidation` | `string` | No | — |
+| `X-NetSuite-PropertyValueValidation` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Delete Customer
+
+### deleteCustomer
+
+`deleteCustomer`
+
+Delete a NetSuite customer record
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.netsuite.api.deleteCustomer({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Delete Customer Payment
+
+### deleteCustomerPayment
+
+`deleteCustomerPayment`
+
+Delete a NetSuite customer payment record
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.netsuite.api.deleteCustomerPayment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Delete Employee
+
+### deleteEmployee
+
+`deleteEmployee`
+
+Delete a NetSuite employee record
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.netsuite.api.deleteEmployee({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Delete Invoice
+
+### deleteInvoice
+
+`deleteInvoice`
+
+Delete a NetSuite invoice record
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.netsuite.api.deleteInvoice({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Delete Item
+
+### deleteItem
+
+`deleteItem`
+
+Delete a NetSuite item record
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.netsuite.api.deleteItem({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `item_record_type` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Delete Item Fulfillment
+
+### deleteItemFulfillment
+
+`deleteItemFulfillment`
+
+Delete a NetSuite item fulfillment record
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.netsuite.api.deleteItemFulfillment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `prefer` | `string` | No | — |
+| `idempotency_key` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Delete Item Receipt
+
+### deleteItemReceipt
+
+`deleteItemReceipt`
+
+Delete a NetSuite item receipt record
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.netsuite.api.deleteItemReceipt({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Delete Journal Entry
+
+### deleteJournalEntry
+
+`deleteJournalEntry`
+
+Delete a NetSuite journal entry record
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.netsuite.api.deleteJournalEntry({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `prefer` | `string` | No | — |
+| `idempotency_key` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Delete Purchase Order
+
+### deletePurchaseOrder
+
+`deletePurchaseOrder`
+
+Delete a NetSuite purchase order record
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.netsuite.api.deletePurchaseOrder({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Delete Sales Order
+
+### deleteSalesOrder
+
+`deleteSalesOrder`
+
+Delete a NetSuite sales order record
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.netsuite.api.deleteSalesOrder({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Delete Vendor Payment
+
+### deleteVendorPayment
+
+`deleteVendorPayment`
+
+Delete a NetSuite vendor payment record
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.netsuite.api.deleteVendorPayment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Execute Dataset
+
+### executeDataset
+
+`executeDataset`
+
+Execute a SuiteAnalytics Workbook dataset
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.executeDataset({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `dataset_id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Get Customer
+
+### getCustomer
+
+`getCustomer`
+
+Get a NetSuite customer record by internal ID
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.getCustomer({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `fields` | `string` | No | — |
+| `expandSubResources` | `boolean` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Get Customer Payment
+
+### getCustomerPayment
+
+`getCustomerPayment`
+
+Get a NetSuite customer payment record by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.getCustomerPayment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `fields` | `string` | No | — |
+| `simpleEnumFormat` | `boolean` | No | — |
+| `expandSubResources` | `boolean` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Get Datacenter Urls
+
+### getDatacenterUrls
+
+`getDatacenterUrls`
+
+Discover account-specific NetSuite service domains
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.getDatacenterUrls({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `c` | `string` | No | — |
+| `account` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Get Employee
+
+### getEmployee
+
+`getEmployee`
+
+Get a NetSuite employee record by internal ID
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.getEmployee({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `fields` | `string` | No | — |
+| `expandSubResources` | `boolean` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Get Governance Limits
+
+### getGovernanceLimits
+
+`getGovernanceLimits`
+
+Retrieve NetSuite account and integration concurrency limits
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.getGovernanceLimits({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+## Get Invoice
+
+### getInvoice
+
+`getInvoice`
+
+Get a NetSuite invoice record by internal ID
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.getInvoice({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `fields` | `string` | No | — |
+| `simpleEnumFormat` | `boolean` | No | — |
+| `expandSubResources` | `boolean` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Get Item
+
+### getItem
+
+`getItem`
+
+Get a NetSuite item record by internal ID
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.getItem({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `fields` | `string` | No | — |
+| `itemRecordType` | `string` | Yes | — |
+| `expandSubResources` | `boolean` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Get Item Fulfillment
+
+### getItemFulfillment
+
+`getItemFulfillment`
+
+Get a NetSuite item fulfillment record by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.getItemFulfillment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `fields` | `string` | No | — |
+| `simpleEnumFormat` | `boolean` | No | — |
+| `expandSubResources` | `boolean` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Get Item Receipt
+
+### getItemReceipt
+
+`getItemReceipt`
+
+Get a NetSuite item receipt record by internal ID
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.getItemReceipt({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `fields` | `string` | No | — |
+| `expandSubResources` | `boolean` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Get Journal Entry
+
+### getJournalEntry
+
+`getJournalEntry`
+
+Get a NetSuite journal entry record by internal ID
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.getJournalEntry({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `fields` | `string` | No | — |
+| `simpleEnumFormat` | `boolean` | No | — |
+| `expandSubResources` | `boolean` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Get Purchase Order
+
+### getPurchaseOrder
+
+`getPurchaseOrder`
+
+Get a NetSuite purchase order by internal ID
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.getPurchaseOrder({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `fields` | `string` | No | — |
+| `simpleEnumFormat` | `boolean` | No | — |
+| `expandSubResources` | `boolean` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Get Record Metadata
+
+### getRecordMetadata
+
+`getRecordMetadata`
+
+Retrieve the metadata schema for a NetSuite record type
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.getRecordMetadata({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accept` | `string` | No | — |
+| `record_type` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Get Reference Select Field
+
+### getReferenceSelectField
+
+`getReferenceSelectField`
+
+Retrieve the record referenced by a select-type field
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.getReferenceSelectField({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `fields` | `string` | No | — |
+| `record_type` | `string` | Yes | — |
+| `select_field` | `string` | Yes | — |
+| `expandSubResources` | `boolean` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Get Sales Order
+
+### getSalesOrder
+
+`getSalesOrder`
+
+Get a NetSuite sales order record by internal ID
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.getSalesOrder({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `fields` | `string` | No | — |
+| `expandSubResources` | `boolean` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Get Server Time
+
+### getServerTime
+
+`getServerTime`
+
+Retrieve the current NetSuite server time in UTC
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.getServerTime({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+## Get Sublist Collection
+
+### getSublistCollection
+
+`getSublistCollection`
+
+Retrieve a sublist collection from a NetSuite record
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.getSublistCollection({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `record_type` | `string` | Yes | — |
+| `sublist_name` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Get Sublist Line
+
+### getSublistLine
+
+`getSublistLine`
+
+Retrieve a specific line from a NetSuite sublist
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.getSublistLine({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `line_id` | `string \| number` | Yes | — |
+| `record_type` | `string` | Yes | — |
+| `sublist_name` | `string` | Yes | — |
+| `expandSubResources` | `boolean` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Get Subrecord
+
+### getSubrecord
+
+`getSubrecord`
+
+Retrieve a subrecord from a NetSuite parent record
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.getSubrecord({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `record_type` | `string` | Yes | — |
+| `subrecord_name` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Get Vendor
+
+### getVendor
+
+`getVendor`
+
+Get a single NetSuite vendor record by internal ID
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.getVendor({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `fields` | `string` | No | — |
+| `simpleEnumFormat` | `boolean` | No | — |
+| `expandSubResources` | `boolean` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Get Vendor Bill
+
+### getVendorBill
+
+`getVendorBill`
+
+Retrieve a NetSuite vendor bill by internal ID
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.getVendorBill({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `fields` | `string` | No | — |
+| `expandSubResources` | `boolean` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Get Vendor Payment
+
+### getVendorPayment
+
+`getVendorPayment`
+
+Retrieve a NetSuite vendor payment by internal ID
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.getVendorPayment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `fields` | `string` | No | — |
+| `expandSubResources` | `boolean` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## List Customer Payments
+
+### listCustomerPayments
+
+`listCustomerPayments`
+
+List NetSuite customer payment records
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.listCustomerPayments({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## List Datasets
+
+### listDatasets
+
+`listDatasets`
+
+List SuiteAnalytics Workbook datasets
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.listDatasets({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## List Employees
+
+### listEmployees
+
+`listEmployees`
+
+List NetSuite employee records
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.listEmployees({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## List Integrations
+
+### listIntegrations
+
+`listIntegrations`
+
+List NetSuite integration applications and their client IDs
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.listIntegrations({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## List Invoices
+
+### listInvoices
+
+`listInvoices`
+
+List NetSuite invoice records
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.listInvoices({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## List Item Fulfillments
+
+### listItemFulfillments
+
+`listItemFulfillments`
+
+List NetSuite item fulfillment records
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.listItemFulfillments({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## List Item Receipts
+
+### listItemReceipts
+
+`listItemReceipts`
+
+List NetSuite item receipt records
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.listItemReceipts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## List Journal Entries
+
+### listJournalEntries
+
+`listJournalEntries`
+
+List NetSuite journal entry records
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.listJournalEntries({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## List Metadata Catalog
+
+### listMetadataCatalog
+
+`listMetadataCatalog`
+
+List metadata for all exposed NetSuite record types
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.listMetadataCatalog({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accept` | `string` | No | — |
+| `select` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## List Purchase Orders
+
+### listPurchaseOrders
+
+`listPurchaseOrders`
+
+List NetSuite purchase order records
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.listPurchaseOrders({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## List Records
+
+### listRecords
+
+`listRecords`
+
+List records of any exposed NetSuite type
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.listRecords({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `recordType` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## List Sales Orders
+
+### listSalesOrders
+
+`listSalesOrders`
+
+List NetSuite sales order records
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.listSalesOrders({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## List Vendor Payments
+
+### listVendorPayments
+
+`listVendorPayments`
+
+List NetSuite vendor payment records
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.listVendorPayments({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Oauth2Authorize Account Domain
+
+### oauth2AuthorizeAccountDomain
+
+`oauth2AuthorizeAccountDomain`
+
+Build an OAuth 2.0 authorization URL on the account domain
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.oauth2AuthorizeAccountDomain({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `scope` | `string` | Yes | — |
+| `state` | `string` | No | — |
+| `prompt` | `string` | No | — |
+| `client_id` | `string` | Yes | — |
+| `redirect_uri` | `string` | Yes | — |
+| `response_type` | `string` | No | — |
+| `code_challenge` | `string` | No | — |
+| `code_challenge_method` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Oauth2Authorize System Domain
+
+### oauth2AuthorizeSystemDomain
+
+`oauth2AuthorizeSystemDomain`
+
+Build an OAuth 2.0 authorization URL on the system domain
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.oauth2AuthorizeSystemDomain({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `nonce` | `string` | No | — |
+| `scope` | `string` | Yes | — |
+| `state` | `string` | Yes | — |
+| `prompt` | `string` | No | — |
+| `client_id` | `string` | Yes | — |
+| `redirect_uri` | `string` | Yes | — |
+| `response_type` | `string` | No | — |
+| `code_challenge` | `string` | No | — |
+| `code_challenge_method` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Oauth2Get Jwks Keys
+
+### oauth2GetJwksKeys
+
+`oauth2GetJwksKeys`
+
+Retrieve NetSuite OAuth 2.0 JWKS public keys
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.oauth2GetJwksKeys({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+## Oauth2Logout
+
+### oauth2Logout
+
+`oauth2Logout`
+
+Log out an OAuth 2.0 session using an ID token hint
+
+**Risk:** `write`
+
+```ts
+await corsair.netsuite.api.oauth2Logout({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id_token_hint` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Oauth2Revoke Refresh Token
+
+### oauth2RevokeRefreshToken
+
+`oauth2RevokeRefreshToken`
+
+Revoke a NetSuite OAuth 2.0 refresh token
+
+**Risk:** `write`
+
+```ts
+await corsair.netsuite.api.oauth2RevokeRefreshToken({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `token` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Oauth2Token Authorization Code
+
+### oauth2TokenAuthorizationCode
+
+`oauth2TokenAuthorizationCode`
+
+Exchange an OAuth 2.0 authorization code for tokens
+
+**Risk:** `write`
+
+```ts
+await corsair.netsuite.api.oauth2TokenAuthorizationCode({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+| `grant_type` | `string` | No | — |
+| `redirect_uri` | `string` | Yes | — |
+| `code_verifier` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Oauth2Token Client Credentials
+
+### oauth2TokenClientCredentials
+
+`oauth2TokenClientCredentials`
+
+Exchange a JWT client assertion for an OAuth 2.0 access token
+
+**Risk:** `write`
+
+```ts
+await corsair.netsuite.api.oauth2TokenClientCredentials({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `grant_type` | `string` | No | — |
+| `client_assertion` | `string` | Yes | — |
+| `client_assertion_type` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Oauth2Token Refresh
+
+### oauth2TokenRefresh
+
+`oauth2TokenRefresh`
+
+Refresh a NetSuite OAuth 2.0 access token
+
+**Risk:** `write`
+
+```ts
+await corsair.netsuite.api.oauth2TokenRefresh({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `client_id` | `string` | No | — |
+| `client_secret` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Run Suiteql Query
+
+### runSuiteqlQuery
+
+`runSuiteqlQuery`
+
+Run a SuiteQL query against NetSuite data
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.runSuiteqlQuery({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Transform Record
+
+### transformRecord
+
+`transformRecord`
+
+Transform a NetSuite record into another record type
+
+**Risk:** `write`
+
+```ts
+await corsair.netsuite.api.transformRecord({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Prefer` | `string` | No | — |
+| `replace` | `string` | No | — |
+| `record_id` | `string \| number` | Yes | — |
+| `record_body` | `object` | No | — |
+| `source_record_type` | `string` | Yes | — |
+| `target_record_type` | `string` | Yes | — |
+| `X-NetSuite-Idempotency-Key` | `string` | No | — |
+| `X-NetSuite-PropertyNameValidation` | `string` | No | — |
+| `X-NetSuite-PropertyValueValidation` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="record_body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Update Customer
+
+### updateCustomer
+
+`updateCustomer`
+
+Update a NetSuite customer record
+
+**Risk:** `write`
+
+```ts
+await corsair.netsuite.api.updateCustomer({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `data` | `object` | Yes | — |
+| `prefer` | `string` | No | — |
+| `idempotency_key` | `string` | No | — |
+| `property_name_validation` | `string` | No | — |
+| `property_value_validation` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Update Customer Payment
+
+### updateCustomerPayment
+
+`updateCustomerPayment`
+
+Update a NetSuite customer payment record
+
+**Risk:** `write`
+
+```ts
+await corsair.netsuite.api.updateCustomerPayment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `data` | `object` | Yes | — |
+| `prefer` | `string` | No | — |
+| `idempotency_key` | `string` | No | — |
+| `property_name_validation` | `string` | No | — |
+| `property_value_validation` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Update Employee
+
+### updateEmployee
+
+`updateEmployee`
+
+Update a NetSuite employee record
+
+**Risk:** `write`
+
+```ts
+await corsair.netsuite.api.updateEmployee({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `data` | `object` | Yes | — |
+| `Prefer` | `string` | No | — |
+| `replace` | `string` | No | — |
+| `replaceSelectedFields` | `boolean` | No | — |
+| `X-NetSuite-Idempotency-Key` | `string` | No | — |
+| `X-NetSuite-PropertyNameValidation` | `string` | No | — |
+| `X-NetSuite-PropertyValueValidation` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Update Invoice
+
+### updateInvoice
+
+`updateInvoice`
+
+Update a NetSuite invoice record
+
+**Risk:** `write`
+
+```ts
+await corsair.netsuite.api.updateInvoice({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `data` | `object` | Yes | — |
+| `prefer` | `string` | No | — |
+| `idempotency_key` | `string` | No | — |
+| `property_name_validation` | `string` | No | — |
+| `property_value_validation` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Update Item
+
+### updateItem
+
+`updateItem`
+
+Update a NetSuite item record
+
+**Risk:** `write`
+
+```ts
+await corsair.netsuite.api.updateItem({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `data` | `object` | Yes | — |
+| `prefer` | `string` | No | — |
+| `replace` | `string` | No | — |
+| `item_type` | `string` | Yes | — |
+| `idempotency_key` | `string` | No | — |
+| `replace_selected_fields` | `boolean` | No | — |
+| `property_name_validation` | `string` | No | — |
+| `property_value_validation` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Update Item Fulfillment
+
+### updateItemFulfillment
+
+`updateItemFulfillment`
+
+Update a NetSuite item fulfillment record
+
+**Risk:** `write`
+
+```ts
+await corsair.netsuite.api.updateItemFulfillment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `data` | `object` | Yes | — |
+| `prefer` | `string` | No | — |
+| `replace` | `string` | No | — |
+| `idempotency_key` | `string` | No | — |
+| `replace_selected_fields` | `boolean` | No | — |
+| `property_name_validation` | `string` | No | — |
+| `property_value_validation` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Update Item Receipt
+
+### updateItemReceipt
+
+`updateItemReceipt`
+
+Update a NetSuite item receipt record
+
+**Risk:** `write`
+
+```ts
+await corsair.netsuite.api.updateItemReceipt({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `data` | `object` | Yes | — |
+| `prefer` | `string` | No | — |
+| `replace` | `string` | No | — |
+| `idempotency_key` | `string` | No | — |
+| `replaceSelectedFields` | `boolean` | No | — |
+| `property_name_validation` | `string` | No | — |
+| `property_value_validation` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Update Journal Entry
+
+### updateJournalEntry
+
+`updateJournalEntry`
+
+Update a NetSuite journal entry record
+
+**Risk:** `write`
+
+```ts
+await corsair.netsuite.api.updateJournalEntry({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `data` | `object` | Yes | — |
+| `prefer` | `string` | No | — |
+| `replace` | `string` | No | — |
+| `idempotency_key` | `string` | No | — |
+| `replace_selected_fields` | `boolean` | No | — |
+| `property_name_validation` | `string` | No | — |
+| `property_value_validation` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Update Purchase Order
+
+### updatePurchaseOrder
+
+`updatePurchaseOrder`
+
+Update a NetSuite purchase order record
+
+**Risk:** `write`
+
+```ts
+await corsair.netsuite.api.updatePurchaseOrder({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `data` | `object` | Yes | — |
+| `prefer` | `string` | No | — |
+| `idempotency_key` | `string` | No | — |
+| `replaceSelectedFields` | `boolean` | No | — |
+| `property_name_validation` | `string` | No | — |
+| `property_value_validation` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Update Sales Order
+
+### updateSalesOrder
+
+`updateSalesOrder`
+
+Update a NetSuite sales order record
+
+**Risk:** `write`
+
+```ts
+await corsair.netsuite.api.updateSalesOrder({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `data` | `object` | Yes | — |
+| `prefer` | `string` | No | — |
+| `idempotency_key` | `string` | No | — |
+| `property_name_validation` | `string` | No | — |
+| `property_value_validation` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Update Vendor
+
+### updateVendor
+
+`updateVendor`
+
+Update a NetSuite vendor record
+
+**Risk:** `write`
+
+```ts
+await corsair.netsuite.api.updateVendor({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `data` | `object` | Yes | — |
+| `prefer` | `string` | No | — |
+| `idempotency_key` | `string` | No | — |
+| `property_name_validation` | `string` | No | — |
+| `property_value_validation` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Update Vendor Bill
+
+### updateVendorBill
+
+`updateVendorBill`
+
+Update a NetSuite vendor bill record
+
+**Risk:** `write`
+
+```ts
+await corsair.netsuite.api.updateVendorBill({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `data` | `object` | Yes | — |
+| `prefer` | `string` | No | — |
+| `replace` | `string` | No | — |
+| `idempotency_key` | `string` | No | — |
+| `replaceSelectedFields` | `boolean` | No | — |
+| `property_name_validation` | `string` | No | — |
+| `property_value_validation` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Update Vendor Payment
+
+### updateVendorPayment
+
+`updateVendorPayment`
+
+Update a NetSuite vendor payment record
+
+**Risk:** `write`
+
+```ts
+await corsair.netsuite.api.updateVendorPayment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `data` | `object` | Yes | — |
+| `prefer` | `string` | No | — |
+| `replace` | `string` | No | — |
+| `idempotency_key` | `string` | No | — |
+| `replaceSelectedFields` | `boolean` | No | — |
+| `property_name_validation` | `string` | No | — |
+| `property_value_validation` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Upsert Record By External Id
+
+### upsertRecordByExternalId
+
+`upsertRecordByExternalId`
+
+Upsert a NetSuite record by external ID
+
+**Risk:** `write`
+
+```ts
+await corsair.netsuite.api.upsertRecordByExternalId({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+| `external_id` | `string` | Yes | — |
+| `record_type` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
