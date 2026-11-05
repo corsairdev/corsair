@@ -75,6 +75,35 @@ function enqueueWrite(key: string, work: () => Promise<void>): Promise<void> {
 	return run;
 }
 
+// Records deleted recently, by write-chain key. A list that was already in
+// flight when the delete ran carries the deleted record, and its write would
+// queue after the delete and bring the row back. Pipes never reuses an id (a
+// recreated workspace or org gets a new one), so list discovery skips these
+// ids for a while. A detail fetch is authoritative and clears the mark.
+const DELETED_TTL_MS = 10 * 60 * 1000;
+const recentlyDeleted = new Map<string, number>();
+
+function markDeleted(key: string): void {
+	const now = Date.now();
+	recentlyDeleted.delete(key);
+	recentlyDeleted.set(key, now);
+	// Insertion order is deletion order, so expired marks sit at the front.
+	for (const [staleKey, deletedAt] of recentlyDeleted) {
+		if (now - deletedAt <= DELETED_TTL_MS) break;
+		recentlyDeleted.delete(staleKey);
+	}
+}
+
+function wasRecentlyDeleted(key: string): boolean {
+	const deletedAt = recentlyDeleted.get(key);
+	if (deletedAt === undefined) return false;
+	if (Date.now() - deletedAt > DELETED_TTL_MS) {
+		recentlyDeleted.delete(key);
+		return false;
+	}
+	return true;
+}
+
 /** Number of records with a write still queued (for tests). */
 export function pendingWriteChains(): number {
 	return writeChains.size;
@@ -138,7 +167,10 @@ export async function syncEntityDetail(
 	if (!target) {
 		return;
 	}
-	await enqueueWrite(target.keyFor(id), async () => {
+	const key = target.keyFor(id);
+	// Pipes just returned this record, so it exists upstream.
+	recentlyDeleted.delete(key);
+	await enqueueWrite(key, async () => {
 		try {
 			await target.table.upsertByEntityId(id, record as never);
 		} catch (error) {
@@ -186,7 +218,10 @@ export function syncListDiscovery(
 			}
 			for (const item of sparse) {
 				const id = item.id as string;
-				if (!fillGaps(storedById.get(id), item)) {
+				if (
+					wasRecentlyDeleted(keyFor(id)) ||
+					!fillGaps(storedById.get(id), item)
+				) {
 					continue;
 				}
 				// Each item is guarded on its own: one invalid item (for
@@ -194,6 +229,8 @@ export function syncListDiscovery(
 				// the remaining valid items on the page from syncing.
 				await enqueueWrite(keyFor(id), async () => {
 					try {
+						// A delete may have run while this list waited its turn.
+						if (wasRecentlyDeleted(keyFor(id))) return;
 						// Re-read in this record's turn: the bulk read may be
 						// older than a detail write that finished since.
 						const merged = fillGaps(
@@ -217,8 +254,9 @@ export function syncListDiscovery(
 /**
  * Removes the local copy of a record Pipes just deleted. Matches by id (from
  * the delete response) and, when given, by handle, since a 204 delete returns
- * no id. Runs in the record's write chain, so a queued list write cannot
- * re-insert it afterwards. Never fails the delete that already succeeded.
+ * no id. Runs in the record's write chain and marks the id as recently
+ * deleted, so neither a queued list write nor one from a list that was still
+ * in flight can re-insert it. Never fails the delete that already succeeded.
  */
 export async function removeLocalEntity(
 	ctx: SyncContext,
@@ -259,6 +297,7 @@ export async function removeLocalEntity(
 			}
 		}
 		for (const id of ids) {
+			markDeleted(keyFor(id));
 			await enqueueWrite(keyFor(id), async () => {
 				try {
 					await table.deleteByEntityId(id);

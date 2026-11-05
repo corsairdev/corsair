@@ -17,7 +17,7 @@ import {
 	UsersEndpoints,
 	WorkspacesEndpoints,
 } from '../endpoints';
-import { pendingWriteChains } from '../endpoints/sync';
+import { pendingWriteChains, removeLocalEntity } from '../endpoints/sync';
 import { TurbotPipesEndpointInputSchemas } from '../endpoints/types';
 import { turbotpipesEndpointSchemas } from '../index';
 
@@ -307,6 +307,49 @@ describe('TurbotPipes endpoint coverage', () => {
 			});
 			// Settled chains are removed.
 			expect(pendingWriteChains()).toBe(0);
+		});
+
+		it('a list already in flight cannot bring back a record deleted meanwhile', async () => {
+			const rows = new Map<string, Record<string, unknown>>();
+			const { table } = memoryStore(rows);
+			const ctx = {
+				...createMockContext(),
+				database: {},
+				db: { workspace: table },
+			};
+			// The list's turn for w_1 is slow, so w_2 is deleted while the list
+			// still holds it.
+			const read = table.findByEntityId.getMockImplementation();
+			let releaseFirst: () => void = () => {};
+			table.findByEntityId.mockImplementationOnce(async (id) => {
+				await new Promise<void>((resolve) => {
+					releaseFirst = resolve;
+				});
+				return (await read?.(id)) ?? null;
+			});
+			mockRequest.mockResolvedValueOnce({
+				items: [
+					{ id: 'w_1', handle: 'one' },
+					{ id: 'w_2', handle: 'two' },
+				],
+			});
+			await UsersEndpoints.listUserWorkspaces(ctx, { user_handle: 'bob' });
+			await new Promise((resolve) => setTimeout(resolve, 0));
+
+			await removeLocalEntity(ctx, 'workspace', { id: 'w_2' });
+			releaseFirst();
+			await new Promise((resolve) => setTimeout(resolve, 10));
+
+			expect(rows.has('w_1')).toBe(true);
+			expect(rows.has('w_2')).toBe(false);
+
+			// A detail fetch is authoritative and stores the record again.
+			mockRequest.mockResolvedValueOnce({ id: 'w_2', handle: 'two' });
+			await UsersEndpoints.getUserWorkspace(ctx, {
+				user_handle: 'bob',
+				workspace_handle: 'two',
+			});
+			expect(rows.get('w_2')).toEqual({ id: 'w_2', handle: 'two' });
 		});
 
 		it('different accounts do not share a write chain', async () => {
