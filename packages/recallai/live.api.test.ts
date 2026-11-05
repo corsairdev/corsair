@@ -48,6 +48,10 @@ liveSuite('Recall.ai live API', () => {
 			return undefined;
 		}
 	};
+	// These two helpers serve every paged list in the plugin (bots, recordings,
+	// transcripts, calendars…), whose row types differ. They only read the row
+	// count and an `id`, so rows stay `unknown` and the id is checked at runtime
+	// instead of naming a union of every response type here.
 	const count = (value: { results: unknown[] }) =>
 		`${value.results.length} rows`;
 	const firstId = (value: { results: unknown[] } | undefined) => {
