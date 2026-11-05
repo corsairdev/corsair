@@ -207,6 +207,64 @@ describe('makeTicketmasterRequest', () => {
 		expect(JSON.stringify(error.cause)).not.toContain(API_KEY);
 	});
 
+	it('redacts a key the provider echoes in its error message', async () => {
+		// The real 429 body names the key: "Identifier : <apikey>".
+		respond(
+			{
+				fault: {
+					faultstring: `Rate limit quota violation. Quota limit exceeded. Identifier : ${API_KEY}`,
+					detail: { errorcode: 'policies.ratelimit.QuotaViolation' },
+				},
+			},
+			429,
+		);
+
+		const error = await failure(
+			makeTicketmasterRequest(API_KEY, { path: '/events.json' }),
+		);
+		expect(error.message).toContain('Rate limit quota violation');
+		expect(error.message).not.toContain(API_KEY);
+		expect(error.message).toContain('[REDACTED]');
+		expect(JSON.stringify(error.body)).not.toContain(API_KEY);
+		expect(JSON.stringify(error)).not.toContain(API_KEY);
+	});
+
+	it('redacts the key from nested body strings and keeps the shape', async () => {
+		respond(
+			{
+				fault: {
+					faultstring: 'Rejected',
+					detail: { errorcode: 'x', notes: [`key=${API_KEY}`, 'other'] },
+				},
+			},
+			401,
+		);
+
+		const error = await failure(
+			makeTicketmasterRequest(API_KEY, { path: '/events.json' }),
+		);
+		const body = error.body as {
+			fault: { detail: { errorcode: string; notes: string[] } };
+		};
+		expect(body.fault.detail.errorcode).toBe('x');
+		expect(body.fault.detail.notes).toEqual(['key=[REDACTED]', 'other']);
+	});
+
+	it('redacts the percent-encoded form of a key in a recorded URL', async () => {
+		// A key with characters that encode differently would only be matched by
+		// its encoded form, which is what the query string actually carries.
+		const awkwardKey = 'a+b/c=d';
+		respond(invalidApiKey, 401);
+
+		const error = await failure(
+			makeTicketmasterRequest(awkwardKey, { path: '/events.json' }),
+		);
+		const cause = error.cause as { url?: string; request?: { url?: string } };
+		expect(cause.url).not.toContain(awkwardKey);
+		expect(cause.url).not.toContain(encodeURIComponent(awkwardKey));
+		expect(cause.request?.url).not.toContain(awkwardKey);
+	});
+
 	it('redacts the key from the recorded request URL', async () => {
 		respond(invalidApiKey, 401);
 

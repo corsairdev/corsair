@@ -109,6 +109,12 @@ function readCode(body: unknown): string | undefined {
 	return readString(asRecord(first), 'code');
 }
 
+/**
+ * Builds the human-readable message for a failed call, preferring the
+ * provider's own text: the gateway `faultstring`, then the first entry of an
+ * `errors` array, then the fallback. The status and machine-readable code are
+ * prefixed when they are known.
+ */
 // unknown: see readCode; the list error shape nests `detail` differently.
 export function describeTicketmasterError(
 	status: number | undefined,
@@ -157,15 +163,54 @@ export function segment(value: string | number): string {
 const REDACTED = '[REDACTED]';
 
 /**
- * Rebuilds the `ApiError` with the `apikey` value replaced. `corsair/http`
- * redacts only `api_key`, `key`, `token` and `appid`, so Ticketmaster's `apikey`
- * parameter would otherwise stay readable in `url` and `request.query` on the
- * error that callers, logs and the event table can all see.
+ * Replaces every form of the key with `[REDACTED]`: the raw value and its
+ * percent-encoded form, which is what actually appears in a recorded request
+ * URL. Both are replaced because the query string is built with
+ * `encodeURIComponent`, so a key containing `+`, `/` or `=` is only matched by
+ * the encoded form.
+ */
+function redactKey(value: string, apiKey: string): string {
+	if (!apiKey) return value;
+	const encoded = encodeURIComponent(apiKey);
+	let redacted = value.split(apiKey).join(REDACTED);
+	if (encoded !== apiKey) {
+		redacted = redacted.split(encoded).join(REDACTED);
+	}
+	return redacted;
+}
+
+/**
+ * Replaces the key throughout an arbitrary error body while keeping its shape.
+ *
+ * Ticketmaster echoes the key in at least one error body: the 429 faultstring
+ * is `Rate limit quota violation. Quota limit exceeded. Identifier : <apikey>`.
+ * The body is reachable from `TicketmasterAPIError.body` and from its cause, so
+ * every nested string is cleaned rather than only the top level.
+ */
+// unknown: an error body is arbitrary JSON from the provider or a proxy.
+function redactBody(body: unknown, apiKey: string): unknown {
+	if (typeof body === 'string') return redactKey(body, apiKey);
+	if (Array.isArray(body)) {
+		return body.map((entry) => redactBody(entry, apiKey));
+	}
+	const record = asRecord(body);
+	if (!record) return body;
+	return Object.fromEntries(
+		Object.entries(record).map(([key, value]) => [
+			key,
+			redactBody(value, apiKey),
+		]),
+	);
+}
+
+/**
+ * Rebuilds the `ApiError` with the key removed. `corsair/http` redacts only
+ * `api_key`, `key`, `token` and `appid`, so Ticketmaster's `apikey` parameter
+ * would otherwise stay readable in `url`, `request.query`, the message and
+ * `body` on the error that callers, logs and the event table can all see.
  */
 function redactCause(error: ApiError, apiKey: string): ApiError {
 	if (!apiKey) return error;
-	const redactUrl = (value: string): string =>
-		value.split(apiKey).join(REDACTED);
 	const query = error.request.query;
 	const redactedQuery =
 		query && typeof query === 'object'
@@ -180,17 +225,17 @@ function redactCause(error: ApiError, apiKey: string): ApiError {
 	return new ApiError(
 		{
 			...error.request,
-			url: redactUrl(error.request.url),
+			url: redactKey(error.request.url, apiKey),
 			query: redactedQuery,
 		},
 		{
-			url: redactUrl(error.url),
+			url: redactKey(error.url, apiKey),
 			ok: false,
 			status: error.status,
 			statusText: error.statusText,
-			body: error.body,
+			body: redactBody(error.body, apiKey),
 		},
-		error.message,
+		redactKey(error.message, apiKey),
 		{
 			retryAfter: error.retryAfter,
 			rateLimitReset: error.rateLimitReset,
@@ -200,7 +245,16 @@ function redactCause(error: ApiError, apiKey: string): ApiError {
 	);
 }
 
-// unknown: callers parse the body with the endpoint's zod output schema.
+/**
+ * Performs one GET against the Discovery API with the key in the `apikey` query
+ * parameter, and turns any failure into a `TicketmasterAPIError`.
+ *
+ * The shared HTTP client is configured with `maxRetries: 0`: retries belong to
+ * `error-handlers.ts`, so a 429 is not replayed twice.
+ *
+ * Returns `unknown` because each caller parses the body with its own output
+ * schema; this layer does not know the operation's shape.
+ */
 export async function makeTicketmasterRequest(
 	apiKey: string,
 	{ path, query }: TicketmasterRequest,
@@ -228,13 +282,16 @@ export async function makeTicketmasterRequest(
 		});
 	} catch (error) {
 		if (error instanceof ApiError) {
-			// ApiError redacts `api_key`, `key`, `token` and `appid` from the URL
-			// it records, but Ticketmaster's parameter is `apikey`, so the key is
-			// still in `error.url` and `error.request.query`. Rebuild an
-			// equivalent `ApiError` with the value replaced, so the key cannot
-			// leak through a logged or serialized error.
+			// ApiError redacts `api_key`, `key`, `token` and `appid` from what it
+			// records, but Ticketmaster's parameter is `apikey` and the provider
+			// echoes it in the 429 faultstring. Both the cause and the message
+			// this throws are rebuilt with every form of the key replaced, so
+			// neither a logged error nor the event table can show it.
 			throw new TicketmasterAPIError(
-				describeTicketmasterError(error.status, error.body, error.message),
+				redactKey(
+					describeTicketmasterError(error.status, error.body, error.message),
+					apiKey,
+				),
 				{ cause: redactCause(error, apiKey) },
 			);
 		}
