@@ -434,7 +434,11 @@ await corsair.dnsfilter.api.agentLocalUsers.list({});
 
 ```ts
 {
-  self?: string
+  self?: string,
+  first?: string,
+  prev?: string,
+  next?: string,
+  last?: string
 }
 ```
 </Accordion>
@@ -525,7 +529,11 @@ await corsair.dnsfilter.api.agentLocalUsers.listAll({});
 
 ```ts
 {
-  self?: string
+  self?: string,
+  first?: string,
+  prev?: string,
+  next?: string,
+  last?: string
 }
 ```
 </Accordion>
@@ -838,7 +846,11 @@ await corsair.dnsfilter.api.apiKeys.list({});
 
 ```ts
 {
-  self?: string
+  self?: string,
+  first?: string,
+  prev?: string,
+  next?: string,
+  last?: string
 }
 ```
 </Accordion>
@@ -1009,7 +1021,11 @@ await corsair.dnsfilter.api.applicationCategories.list({});
 
 ```ts
 {
-  self?: string
+  self?: string,
+  first?: string,
+  prev?: string,
+  next?: string,
+  last?: string
 }
 ```
 </Accordion>
@@ -1154,7 +1170,11 @@ await corsair.dnsfilter.api.applications.list({});
 
 ```ts
 {
-  self?: string
+  self?: string,
+  first?: string,
+  prev?: string,
+  next?: string,
+  last?: string
 }
 ```
 </Accordion>
@@ -1237,7 +1257,11 @@ await corsair.dnsfilter.api.applications.listAll({});
 
 ```ts
 {
-  self?: string
+  self?: string,
+  first?: string,
+  prev?: string,
+  next?: string,
+  last?: string
 }
 ```
 </Accordion>
@@ -1574,24 +1598,48 @@ await corsair.dnsfilter.api.blockPages.list({});
 
 
 
-**Output:** `object[]`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `links` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="Output full type">
+<Accordion title="data full type">
 
 ```ts
 {
-  name?: string,
-  organization_id?: number,
-  block_org_name?: string,
-  block_email_addr?: string,
-  block_logo_uuid?: string,
-  created_at?: string,
-  updated_at?: string
+  id?: string,
+  type?: string,
+  uuid?: string,
+  attributes?: {
+    name?: string,
+    organization_id?: number,
+    block_org_name?: string,
+    block_email_addr?: string,
+    block_logo_uuid?: string,
+    created_at?: string,
+    updated_at?: string
+  }
 }[]
 ```
 </Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string,
+  first?: string,
+  prev?: string,
+  next?: string,
+  last?: string
+}
+```
+</Accordion>
 </AccordionGroup>
+
 
 
 ---
@@ -1629,24 +1677,48 @@ await corsair.dnsfilter.api.blockPages.listAll({});
 
 
 
-**Output:** `object[]`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `links` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="Output full type">
+<Accordion title="data full type">
 
 ```ts
 {
-  name?: string,
-  organization_id?: number,
-  block_org_name?: string,
-  block_email_addr?: string,
-  block_logo_uuid?: string,
-  created_at?: string,
-  updated_at?: string
+  id?: string,
+  type?: string,
+  uuid?: string,
+  attributes?: {
+    name?: string,
+    organization_id?: number,
+    block_org_name?: string,
+    block_email_addr?: string,
+    block_logo_uuid?: string,
+    created_at?: string,
+    updated_at?: string
+  }
 }[]
 ```
 </Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string,
+  first?: string,
+  prev?: string,
+  next?: string,
+  last?: string
+}
+```
+</Accordion>
 </AccordionGroup>
+
 
 
 ---
@@ -1840,7 +1912,11 @@ await corsair.dnsfilter.api.categories.list({});
 
 ```ts
 {
-  self?: string
+  self?: string,
+  first?: string,
+  prev?: string,
+  next?: string,
+  last?: string
 }
 ```
 </Accordion>
@@ -1928,7 +2004,11 @@ await corsair.dnsfilter.api.categories.listAll({});
 
 ```ts
 {
-  self?: string
+  self?: string,
+  first?: string,
+  prev?: string,
+  next?: string,
+  last?: string
 }
 ```
 </Accordion>
@@ -2516,7 +2596,7 @@ await corsair.dnsfilter.api.csvExports.unblockRequestsCreate({ tab: 'active', or
 ```ts
 {
   uuid?: string,
-  tab?: active | history,
+  tab?: active | history | string,
   row_count?: number,
   total_count?: number,
   truncated?: boolean,
@@ -2563,13 +2643,13 @@ await corsair.dnsfilter.api.csvExports.unblockRequestsGet({});
 ```ts
 {
   uuid?: string,
-  tab?: active | history,
+  tab?: active | history | string,
   row_count?: number,
   total_count?: number,
   truncated?: boolean,
   url?: string | null,
   error?: string | null,
-  status?: processing
+  status?: processing | string
 }
 ```
 </Accordion>
@@ -3388,7 +3468,18 @@ await corsair.dnsfilter.api.dictionaryV2.aiApplications({});
 **Input:** _empty object_
 
 
-**Output:** `string[]`
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  name?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
 
 
 ---
@@ -3711,7 +3802,7 @@ await corsair.dnsfilter.api.domains.bulkLookup({});
 
 ```ts
 {
-  id?: number,
+  id?: number | string,
   type?: string,
   uuid?: string,
   name?: string,
@@ -3801,7 +3892,7 @@ await corsair.dnsfilter.api.domains.userLookup({});
 
 ```ts
 {
-  id?: number,
+  id?: number | string,
   type?: string,
   uuid?: string,
   name?: string,
@@ -3905,7 +3996,7 @@ await corsair.dnsfilter.api.enterpriseConnections.create({});
     }[],
     sub_prefix?: string,
     conn_id?: string,
-    idp?: openid | okta | azure | google,
+    idp?: openid | okta | azure | google | string,
     authorized_domains?: string[]
   }
 }
@@ -3986,7 +4077,7 @@ await corsair.dnsfilter.api.enterpriseConnections.get({});
     }[],
     sub_prefix?: string,
     conn_id?: string,
-    idp?: openid | okta | azure | google,
+    idp?: openid | okta | azure | google | string,
     authorized_domains?: string[]
   }
 }
@@ -4042,7 +4133,7 @@ await corsair.dnsfilter.api.enterpriseConnections.list({});
     }[],
     sub_prefix?: string,
     conn_id?: string,
-    idp?: openid | okta | azure | google,
+    idp?: openid | okta | azure | google | string,
     authorized_domains?: string[]
   }
 }[]
@@ -4129,7 +4220,7 @@ await corsair.dnsfilter.api.enterpriseConnections.update({});
     }[],
     sub_prefix?: string,
     conn_id?: string,
-    idp?: openid | okta | azure | google,
+    idp?: openid | okta | azure | google | string,
     authorized_domains?: string[]
   }
 }
@@ -4412,10 +4503,14 @@ await corsair.dnsfilter.api.invoices.list({});
 
 
 
-**Output:** `object[]`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="Output full type">
+<Accordion title="data full type">
 
 ```ts
 {
@@ -4476,6 +4571,7 @@ await corsair.dnsfilter.api.invoices.list({});
 ```
 </Accordion>
 </AccordionGroup>
+
 
 
 ---
@@ -4743,7 +4839,11 @@ await corsair.dnsfilter.api.ipAddresses.list({
 
 ```ts
 {
-  self?: string
+  self?: string,
+  first?: string,
+  prev?: string,
+  next?: string,
+  last?: string
 }
 ```
 </Accordion>
@@ -4823,7 +4923,11 @@ await corsair.dnsfilter.api.ipAddresses.listAll({});
 
 ```ts
 {
-  self?: string
+  self?: string,
+  first?: string,
+  prev?: string,
+  next?: string,
+  last?: string
 }
 ```
 </Accordion>
@@ -5351,7 +5455,11 @@ await corsair.dnsfilter.api.macAddresses.list({});
 
 ```ts
 {
-  self?: string
+  self?: string,
+  first?: string,
+  prev?: string,
+  next?: string,
+  last?: string
 }
 ```
 </Accordion>
@@ -5453,7 +5561,11 @@ await corsair.dnsfilter.api.macAddresses.listAll({});
 
 ```ts
 {
-  self?: string
+  self?: string,
+  first?: string,
+  prev?: string,
+  next?: string,
+  last?: string
 }
 ```
 </Accordion>
@@ -5821,7 +5933,11 @@ await corsair.dnsfilter.api.networkLanIps.list({});
 
 ```ts
 {
-  self?: string
+  self?: string,
+  first?: string,
+  prev?: string,
+  next?: string,
+  last?: string
 }
 ```
 </Accordion>
@@ -6473,10 +6589,14 @@ await corsair.dnsfilter.api.networks.geo({});
 **Input:** _empty object_
 
 
-**Output:** `object[]`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="Output full type">
+<Accordion title="data full type">
 
 ```ts
 {
@@ -6490,6 +6610,7 @@ await corsair.dnsfilter.api.networks.geo({});
 ```
 </Accordion>
 </AccordionGroup>
+
 
 
 ---
@@ -6758,7 +6879,11 @@ await corsair.dnsfilter.api.networks.list({
 
 ```ts
 {
-  self?: string
+  self?: string,
+  first?: string,
+  prev?: string,
+  next?: string,
+  last?: string
 }
 ```
 </Accordion>
@@ -6921,7 +7046,11 @@ await corsair.dnsfilter.api.networks.listAll({});
 
 ```ts
 {
-  self?: string
+  self?: string,
+  first?: string,
+  prev?: string,
+  next?: string,
+  last?: string
 }
 ```
 </Accordion>
@@ -7117,7 +7246,11 @@ await corsair.dnsfilter.api.networks.msp({});
 
 ```ts
 {
-  self?: string
+  self?: string,
+  first?: string,
+  prev?: string,
+  next?: string,
+  last?: string
 }
 ```
 </Accordion>
@@ -7279,7 +7412,11 @@ await corsair.dnsfilter.api.networks.mspAll({});
 
 ```ts
 {
-  self?: string
+  self?: string,
+  first?: string,
+  prev?: string,
+  next?: string,
+  last?: string
 }
 ```
 </Accordion>
@@ -7963,7 +8100,11 @@ await corsair.dnsfilter.api.networkSubnets.list({});
 
 ```ts
 {
-  self?: string
+  self?: string,
+  first?: string,
+  prev?: string,
+  next?: string,
+  last?: string
 }
 ```
 </Accordion>
@@ -8045,7 +8186,11 @@ await corsair.dnsfilter.api.networkSubnets.listAll({});
 
 ```ts
 {
-  self?: string
+  self?: string,
+  first?: string,
+  prev?: string,
+  next?: string,
+  last?: string
 }
 ```
 </Accordion>
@@ -8299,7 +8444,8 @@ await corsair.dnsfilter.api.organizations.create({});
     first_traffic_sent?: string,
     industry?: string,
     managed_by_msp_id?: number,
-    metadata?: string,
+    metadata?: {
+    },
     msp_feature_flags?: string[],
     name?: string,
     owned_msp_id?: number,
@@ -8311,7 +8457,7 @@ await corsair.dnsfilter.api.organizations.create({});
     stripe_customer_id?: string,
     summary_email_address?: string,
     summary_email_enabled?: boolean,
-    sync_tools_auto_update?: string,
+    sync_tools_auto_update?: boolean,
     trial_days?: number,
     unbounce_data?: string,
     unique_id?: string,
@@ -8425,7 +8571,8 @@ await corsair.dnsfilter.api.organizations.get({});
     first_traffic_sent?: string,
     industry?: string,
     managed_by_msp_id?: number,
-    metadata?: string,
+    metadata?: {
+    },
     msp_feature_flags?: string[],
     name?: string,
     owned_msp_id?: number,
@@ -8437,7 +8584,7 @@ await corsair.dnsfilter.api.organizations.get({});
     stripe_customer_id?: string,
     summary_email_address?: string,
     summary_email_enabled?: boolean,
-    sync_tools_auto_update?: string,
+    sync_tools_auto_update?: boolean,
     trial_days?: number,
     unbounce_data?: string,
     unique_id?: string,
@@ -8544,7 +8691,8 @@ await corsair.dnsfilter.api.organizations.list({});
     first_traffic_sent?: string,
     industry?: string,
     managed_by_msp_id?: number,
-    metadata?: string,
+    metadata?: {
+    },
     msp_feature_flags?: string[],
     name?: string,
     owned_msp_id?: number,
@@ -8556,7 +8704,7 @@ await corsair.dnsfilter.api.organizations.list({});
     stripe_customer_id?: string,
     summary_email_address?: string,
     summary_email_enabled?: boolean,
-    sync_tools_auto_update?: string,
+    sync_tools_auto_update?: boolean,
     trial_days?: number,
     unbounce_data?: string,
     unique_id?: string,
@@ -8589,7 +8737,11 @@ await corsair.dnsfilter.api.organizations.list({});
 
 ```ts
 {
-  self?: string
+  self?: string,
+  first?: string,
+  prev?: string,
+  next?: string,
+  last?: string
 }
 ```
 </Accordion>
@@ -8670,7 +8822,8 @@ await corsair.dnsfilter.api.organizations.listAll({});
     first_traffic_sent?: string,
     industry?: string,
     managed_by_msp_id?: number,
-    metadata?: string,
+    metadata?: {
+    },
     msp_feature_flags?: string[],
     name?: string,
     owned_msp_id?: number,
@@ -8682,7 +8835,7 @@ await corsair.dnsfilter.api.organizations.listAll({});
     stripe_customer_id?: string,
     summary_email_address?: string,
     summary_email_enabled?: boolean,
-    sync_tools_auto_update?: string,
+    sync_tools_auto_update?: boolean,
     trial_days?: number,
     unbounce_data?: string,
     unique_id?: string,
@@ -8715,7 +8868,11 @@ await corsair.dnsfilter.api.organizations.listAll({});
 
 ```ts
 {
-  self?: string
+  self?: string,
+  first?: string,
+  prev?: string,
+  next?: string,
+  last?: string
 }
 ```
 </Accordion>
@@ -8794,81 +8951,35 @@ await corsair.dnsfilter.api.organizations.settings({});
 
 
 
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `data` | `object` | No | — |
+**Output:** `object[]`
 
 <AccordionGroup>
-<Accordion title="data full type">
+<Accordion title="Output full type">
 
 ```ts
 {
-  id?: string,
-  type?: string,
-  uuid?: string,
-  attributes?: {
-    id?: number,
-    address?: string,
-    allow_create_network?: boolean,
-    allowlist_updated_at?: string,
-    billing_address?: string,
-    billing_contact_email?: string,
-    billing_contact_name?: string,
-    billing_contact_phone?: string,
-    billing_manual?: boolean,
-    blocklist_updated_at?: string,
-    canceled?: boolean,
-    canceled_at?: string,
-    external_id?: string,
-    feature_flags?: string[],
-    fetched_onboard_details?: boolean,
-    first_traffic_sent?: string,
-    industry?: string,
-    managed_by_msp_id?: number,
-    metadata?: string,
-    msp_feature_flags?: string[],
-    name?: string,
-    owned_msp_id?: number,
-    plan_details?: string,
-    release_channel?: string,
-    role?: string,
-    send_uninstall_notifications_to_admin_users?: boolean,
-    sso_enabled?: boolean,
-    stripe_customer_id?: string,
-    summary_email_address?: string,
-    summary_email_enabled?: boolean,
-    sync_tools_auto_update?: string,
-    trial_days?: number,
-    unbounce_data?: string,
-    unique_id?: string,
-    update_payment?: boolean,
-    usage_alert_cents?: string,
-    user_agent_uninstall_notification?: boolean,
-    user_agent_uninstall_notification_recipient_emails?: string[],
-    user_agents_auto_update?: boolean,
-    will_cancel_at?: string,
-    active_psa_integration?: boolean,
-    segment?: string,
-    vpn_settings_organization?: {
-      vpn_settings_state_type_id?: number
-    }
-  },
-  relationships?: {
-    networks?: {
-      data?: {
-        id?: string,
-        type?: string,
-        uuid?: string
-      }[]
-    }
-  }
-}
+  id?: number,
+  name?: string,
+  user_agents_auto_update?: boolean,
+  user_agent_uninstall_notification?: boolean,
+  send_uninstall_notifications_to_admin_users?: boolean,
+  diagnostics_sharing_enabled?: boolean,
+  remote_diagnostics_enabled?: boolean,
+  pin_protected_uninstall?: boolean,
+  connection_method?: string,
+  filtering_method?: string,
+  fail_over_method?: string,
+  enable_cybersight?: boolean,
+  enable_browser_extension?: boolean,
+  url_filtering?: boolean,
+  ip_filtering?: boolean,
+  privacy_mode?: string,
+  diagnostics_level?: string,
+  agent_shield_state?: string
+}[]
 ```
 </Accordion>
 </AccordionGroup>
-
 
 
 ---
@@ -8953,7 +9064,8 @@ await corsair.dnsfilter.api.organizations.update({});
     first_traffic_sent?: string,
     industry?: string,
     managed_by_msp_id?: number,
-    metadata?: string,
+    metadata?: {
+    },
     msp_feature_flags?: string[],
     name?: string,
     owned_msp_id?: number,
@@ -8965,7 +9077,7 @@ await corsair.dnsfilter.api.organizations.update({});
     stripe_customer_id?: string,
     summary_email_address?: string,
     summary_email_enabled?: boolean,
-    sync_tools_auto_update?: string,
+    sync_tools_auto_update?: boolean,
     trial_days?: number,
     unbounce_data?: string,
     unique_id?: string,
@@ -9348,7 +9460,7 @@ await corsair.dnsfilter.api.policies.addAllowedApplication({});
     ecosia_safesearch?: boolean,
     yandex_safe_search?: boolean,
     youtube_restricted?: boolean,
-    youtube_restricted_level?: strict | none,
+    youtube_restricted_level?: strict | none | string,
     interstitial?: boolean,
     is_global_policy?: boolean,
     can_edit?: boolean,
@@ -9436,7 +9548,7 @@ await corsair.dnsfilter.api.policies.addBlacklistCategory({});
     ecosia_safesearch?: boolean,
     yandex_safe_search?: boolean,
     youtube_restricted?: boolean,
-    youtube_restricted_level?: strict | none,
+    youtube_restricted_level?: strict | none | string,
     interstitial?: boolean,
     is_global_policy?: boolean,
     can_edit?: boolean,
@@ -9525,7 +9637,7 @@ await corsair.dnsfilter.api.policies.addBlacklistDomain({});
     ecosia_safesearch?: boolean,
     yandex_safe_search?: boolean,
     youtube_restricted?: boolean,
-    youtube_restricted_level?: strict | none,
+    youtube_restricted_level?: strict | none | string,
     interstitial?: boolean,
     is_global_policy?: boolean,
     can_edit?: boolean,
@@ -9613,7 +9725,7 @@ await corsair.dnsfilter.api.policies.addBlockedApplication({});
     ecosia_safesearch?: boolean,
     yandex_safe_search?: boolean,
     youtube_restricted?: boolean,
-    youtube_restricted_level?: strict | none,
+    youtube_restricted_level?: strict | none | string,
     interstitial?: boolean,
     is_global_policy?: boolean,
     can_edit?: boolean,
@@ -9702,7 +9814,7 @@ await corsair.dnsfilter.api.policies.addWhitelistDomain({});
     ecosia_safesearch?: boolean,
     yandex_safe_search?: boolean,
     youtube_restricted?: boolean,
-    youtube_restricted_level?: strict | none,
+    youtube_restricted_level?: strict | none | string,
     interstitial?: boolean,
     is_global_policy?: boolean,
     can_edit?: boolean,
@@ -9802,7 +9914,8 @@ await corsair.dnsfilter.api.policies.application({});
     first_traffic_sent?: string,
     industry?: string,
     managed_by_msp_id?: number,
-    metadata?: string,
+    metadata?: {
+    },
     msp_feature_flags?: string[],
     name?: string,
     owned_msp_id?: number,
@@ -9814,7 +9927,7 @@ await corsair.dnsfilter.api.policies.application({});
     stripe_customer_id?: string,
     summary_email_address?: string,
     summary_email_enabled?: boolean,
-    sync_tools_auto_update?: string,
+    sync_tools_auto_update?: boolean,
     trial_days?: number,
     unbounce_data?: string,
     unique_id?: string,
@@ -9847,7 +9960,7 @@ await corsair.dnsfilter.api.policies.application({});
       ecosia_safesearch?: boolean,
       yandex_safe_search?: boolean,
       youtube_restricted?: boolean,
-      youtube_restricted_level?: strict | none,
+      youtube_restricted_level?: strict | none | string,
       interstitial?: boolean,
       is_global_policy?: boolean,
       can_edit?: boolean,
@@ -9895,7 +10008,7 @@ await corsair.dnsfilter.api.policies.application({});
       ecosia_safesearch?: boolean,
       yandex_safe_search?: boolean,
       youtube_restricted?: boolean,
-      youtube_restricted_level?: strict | none,
+      youtube_restricted_level?: strict | none | string,
       interstitial?: boolean,
       is_global_policy?: boolean,
       can_edit?: boolean,
@@ -9996,7 +10109,8 @@ await corsair.dnsfilter.api.policies.applicationUpdate({});
     first_traffic_sent?: string,
     industry?: string,
     managed_by_msp_id?: number,
-    metadata?: string,
+    metadata?: {
+    },
     msp_feature_flags?: string[],
     name?: string,
     owned_msp_id?: number,
@@ -10008,7 +10122,7 @@ await corsair.dnsfilter.api.policies.applicationUpdate({});
     stripe_customer_id?: string,
     summary_email_address?: string,
     summary_email_enabled?: boolean,
-    sync_tools_auto_update?: string,
+    sync_tools_auto_update?: boolean,
     trial_days?: number,
     unbounce_data?: string,
     unique_id?: string,
@@ -10041,7 +10155,7 @@ await corsair.dnsfilter.api.policies.applicationUpdate({});
       ecosia_safesearch?: boolean,
       yandex_safe_search?: boolean,
       youtube_restricted?: boolean,
-      youtube_restricted_level?: strict | none,
+      youtube_restricted_level?: strict | none | string,
       interstitial?: boolean,
       is_global_policy?: boolean,
       can_edit?: boolean,
@@ -10089,7 +10203,7 @@ await corsair.dnsfilter.api.policies.applicationUpdate({});
       ecosia_safesearch?: boolean,
       yandex_safe_search?: boolean,
       youtube_restricted?: boolean,
-      youtube_restricted_level?: strict | none,
+      youtube_restricted_level?: strict | none | string,
       interstitial?: boolean,
       is_global_policy?: boolean,
       can_edit?: boolean,
@@ -10208,7 +10322,7 @@ await corsair.dnsfilter.api.policies.create({});
     ecosia_safesearch?: boolean,
     yandex_safe_search?: boolean,
     youtube_restricted?: boolean,
-    youtube_restricted_level?: strict | none,
+    youtube_restricted_level?: strict | none | string,
     interstitial?: boolean,
     is_global_policy?: boolean,
     can_edit?: boolean,
@@ -10320,7 +10434,7 @@ await corsair.dnsfilter.api.policies.get({ id: 321 });
     ecosia_safesearch?: boolean,
     yandex_safe_search?: boolean,
     youtube_restricted?: boolean,
-    youtube_restricted_level?: strict | none,
+    youtube_restricted_level?: strict | none | string,
     interstitial?: boolean,
     is_global_policy?: boolean,
     can_edit?: boolean,
@@ -10379,17 +10493,12 @@ await corsair.dnsfilter.api.policies.getPermissiveMode({});
 
 
 
-**Output:** `object`
+**Output**
 
-<AccordionGroup>
-<Accordion title="Output full type">
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `permissive_mode` | `boolean` | No | — |
 
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 ---
@@ -10458,7 +10567,7 @@ await corsair.dnsfilter.api.policies.list({
     ecosia_safesearch?: boolean,
     yandex_safe_search?: boolean,
     youtube_restricted?: boolean,
-    youtube_restricted_level?: strict | none,
+    youtube_restricted_level?: strict | none | string,
     interstitial?: boolean,
     is_global_policy?: boolean,
     can_edit?: boolean,
@@ -10496,7 +10605,11 @@ await corsair.dnsfilter.api.policies.list({
 
 ```ts
 {
-  self?: string
+  self?: string,
+  first?: string,
+  prev?: string,
+  next?: string,
+  last?: string
 }
 ```
 </Accordion>
@@ -10568,7 +10681,7 @@ await corsair.dnsfilter.api.policies.listAll({});
     ecosia_safesearch?: boolean,
     yandex_safe_search?: boolean,
     youtube_restricted?: boolean,
-    youtube_restricted_level?: strict | none,
+    youtube_restricted_level?: strict | none | string,
     interstitial?: boolean,
     is_global_policy?: boolean,
     can_edit?: boolean,
@@ -10606,7 +10719,11 @@ await corsair.dnsfilter.api.policies.listAll({});
 
 ```ts
 {
-  self?: string
+  self?: string,
+  first?: string,
+  prev?: string,
+  next?: string,
+  last?: string
 }
 ```
 </Accordion>
@@ -10665,7 +10782,7 @@ await corsair.dnsfilter.api.policies.removeAllowedApplication({});
     ecosia_safesearch?: boolean,
     yandex_safe_search?: boolean,
     youtube_restricted?: boolean,
-    youtube_restricted_level?: strict | none,
+    youtube_restricted_level?: strict | none | string,
     interstitial?: boolean,
     is_global_policy?: boolean,
     can_edit?: boolean,
@@ -10753,7 +10870,7 @@ await corsair.dnsfilter.api.policies.removeBlacklistCategory({});
     ecosia_safesearch?: boolean,
     yandex_safe_search?: boolean,
     youtube_restricted?: boolean,
-    youtube_restricted_level?: strict | none,
+    youtube_restricted_level?: strict | none | string,
     interstitial?: boolean,
     is_global_policy?: boolean,
     can_edit?: boolean,
@@ -10842,7 +10959,7 @@ await corsair.dnsfilter.api.policies.removeBlacklistDomain({});
     ecosia_safesearch?: boolean,
     yandex_safe_search?: boolean,
     youtube_restricted?: boolean,
-    youtube_restricted_level?: strict | none,
+    youtube_restricted_level?: strict | none | string,
     interstitial?: boolean,
     is_global_policy?: boolean,
     can_edit?: boolean,
@@ -10930,7 +11047,7 @@ await corsair.dnsfilter.api.policies.removeBlockedApplication({});
     ecosia_safesearch?: boolean,
     yandex_safe_search?: boolean,
     youtube_restricted?: boolean,
-    youtube_restricted_level?: strict | none,
+    youtube_restricted_level?: strict | none | string,
     interstitial?: boolean,
     is_global_policy?: boolean,
     can_edit?: boolean,
@@ -11019,7 +11136,7 @@ await corsair.dnsfilter.api.policies.removeWhitelistDomain({});
     ecosia_safesearch?: boolean,
     yandex_safe_search?: boolean,
     youtube_restricted?: boolean,
-    youtube_restricted_level?: strict | none,
+    youtube_restricted_level?: strict | none | string,
     interstitial?: boolean,
     is_global_policy?: boolean,
     can_edit?: boolean,
@@ -11138,7 +11255,7 @@ await corsair.dnsfilter.api.policies.update({});
     ecosia_safesearch?: boolean,
     yandex_safe_search?: boolean,
     youtube_restricted?: boolean,
-    youtube_restricted_level?: strict | none,
+    youtube_restricted_level?: strict | none | string,
     interstitial?: boolean,
     is_global_policy?: boolean,
     can_edit?: boolean,
@@ -11198,17 +11315,12 @@ await corsair.dnsfilter.api.policies.updatePermissiveMode({});
 
 
 
-**Output:** `object`
+**Output**
 
-<AccordionGroup>
-<Accordion title="Output full type">
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `permissive_mode` | `boolean` | No | — |
 
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 ---
@@ -11644,21 +11756,45 @@ await corsair.dnsfilter.api.scheduledPolicies.list({});
 
 
 
-**Output:** `object[]`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `links` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="Output full type">
+<Accordion title="data full type">
 
 ```ts
 {
-  name?: string,
-  organization_id?: number,
-  policy_ids?: number[],
-  timezone?: string
+  id?: string,
+  type?: string,
+  uuid?: string,
+  attributes?: {
+    name?: string,
+    organization_id?: number,
+    policy_ids?: number[],
+    timezone?: string
+  }
 }[]
 ```
 </Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string,
+  first?: string,
+  prev?: string,
+  next?: string,
+  last?: string
+}
+```
+</Accordion>
 </AccordionGroup>
+
 
 
 ---
@@ -11695,21 +11831,45 @@ await corsair.dnsfilter.api.scheduledPolicies.listAll({});
 
 
 
-**Output:** `object[]`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `links` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="Output full type">
+<Accordion title="data full type">
 
 ```ts
 {
-  name?: string,
-  organization_id?: number,
-  policy_ids?: number[],
-  timezone?: string
+  id?: string,
+  type?: string,
+  uuid?: string,
+  attributes?: {
+    name?: string,
+    organization_id?: number,
+    policy_ids?: number[],
+    timezone?: string
+  }
 }[]
 ```
 </Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string,
+  first?: string,
+  prev?: string,
+  next?: string,
+  last?: string
+}
+```
+</Accordion>
 </AccordionGroup>
+
 
 
 ---
@@ -11805,7 +11965,7 @@ await corsair.dnsfilter.api.scheduledReportPreviews.create({});
     organization_id?: number,
     include_threat_summary?: boolean,
     include_content_category_summary?: boolean,
-    content_categories_show_count?: all_categories | top5 | top10 | top15,
+    content_categories_show_count?: all_categories | top5 | top10 | top15 | string,
     url?: string
   }
 }
@@ -11855,7 +12015,7 @@ await corsair.dnsfilter.api.scheduledReportPreviews.get({});
     organization_id?: number,
     include_threat_summary?: boolean,
     include_content_category_summary?: boolean,
-    content_categories_show_count?: all_categories | top5 | top10 | top15,
+    content_categories_show_count?: all_categories | top5 | top10 | top15 | string,
     url?: string
   }
 }
@@ -11930,11 +12090,11 @@ await corsair.dnsfilter.api.scheduledReports.create({});
   uuid?: string,
   attributes?: {
     organization_id?: number,
-    frequency?: monthly | bi_weekly | weekly,
-    day_of_week?: sunday | monday | tuesday | wednesday | thursday | friday | saturday,
+    frequency?: monthly | bi_weekly | weekly | string,
+    day_of_week?: sunday | monday | tuesday | wednesday | thursday | friday | saturday | string,
     include_threat_summary?: boolean,
     include_content_category_summary?: boolean,
-    content_categories_show_count?: all_categories | top5 | top10 | top15,
+    content_categories_show_count?: all_categories | top5 | top10 | top15 | string,
     send_to_dashboard_users?: boolean,
     scheduled_report_recipients?: {
       email?: string,
@@ -11990,11 +12150,11 @@ await corsair.dnsfilter.api.scheduledReports.delete({});
   uuid?: string,
   attributes?: {
     organization_id?: number,
-    frequency?: monthly | bi_weekly | weekly,
-    day_of_week?: sunday | monday | tuesday | wednesday | thursday | friday | saturday,
+    frequency?: monthly | bi_weekly | weekly | string,
+    day_of_week?: sunday | monday | tuesday | wednesday | thursday | friday | saturday | string,
     include_threat_summary?: boolean,
     include_content_category_summary?: boolean,
-    content_categories_show_count?: all_categories | top5 | top10 | top15,
+    content_categories_show_count?: all_categories | top5 | top10 | top15 | string,
     send_to_dashboard_users?: boolean,
     scheduled_report_recipients?: {
       email?: string,
@@ -12050,11 +12210,11 @@ await corsair.dnsfilter.api.scheduledReports.get({});
   uuid?: string,
   attributes?: {
     organization_id?: number,
-    frequency?: monthly | bi_weekly | weekly,
-    day_of_week?: sunday | monday | tuesday | wednesday | thursday | friday | saturday,
+    frequency?: monthly | bi_weekly | weekly | string,
+    day_of_week?: sunday | monday | tuesday | wednesday | thursday | friday | saturday | string,
     include_threat_summary?: boolean,
     include_content_category_summary?: boolean,
-    content_categories_show_count?: all_categories | top5 | top10 | top15,
+    content_categories_show_count?: all_categories | top5 | top10 | top15 | string,
     send_to_dashboard_users?: boolean,
     scheduled_report_recipients?: {
       email?: string,
@@ -12110,11 +12270,11 @@ await corsair.dnsfilter.api.scheduledReports.list({});
   uuid?: string,
   attributes?: {
     organization_id?: number,
-    frequency?: monthly | bi_weekly | weekly,
-    day_of_week?: sunday | monday | tuesday | wednesday | thursday | friday | saturday,
+    frequency?: monthly | bi_weekly | weekly | string,
+    day_of_week?: sunday | monday | tuesday | wednesday | thursday | friday | saturday | string,
     include_threat_summary?: boolean,
     include_content_category_summary?: boolean,
-    content_categories_show_count?: all_categories | top5 | top10 | top15,
+    content_categories_show_count?: all_categories | top5 | top10 | top15 | string,
     send_to_dashboard_users?: boolean,
     scheduled_report_recipients?: {
       email?: string,
@@ -12196,11 +12356,11 @@ await corsair.dnsfilter.api.scheduledReports.update({});
   uuid?: string,
   attributes?: {
     organization_id?: number,
-    frequency?: monthly | bi_weekly | weekly,
-    day_of_week?: sunday | monday | tuesday | wednesday | thursday | friday | saturday,
+    frequency?: monthly | bi_weekly | weekly | string,
+    day_of_week?: sunday | monday | tuesday | wednesday | thursday | friday | saturday | string,
     include_threat_summary?: boolean,
     include_content_category_summary?: boolean,
-    content_categories_show_count?: all_categories | top5 | top10 | top15,
+    content_categories_show_count?: all_categories | top5 | top10 | top15 | string,
     send_to_dashboard_users?: boolean,
     scheduled_report_recipients?: {
       email?: string,
@@ -12327,7 +12487,7 @@ await corsair.dnsfilter.api.scheduledReportsV2.create({});
 
 ```ts
 {
-  id?: string,
+  id?: number | string,
   type?: string,
   uuid?: string,
   attributes?: {
@@ -12336,7 +12496,7 @@ await corsair.dnsfilter.api.scheduledReportsV2.create({});
       id?: number,
       name?: string
     },
-    report_type?: legacy_protection_summary_report | filter_protection_overview | cyber_sight_activity_overview | cyber_sight_timeline | cyber_sight_ai_usage | cyber_sight_threat_trends,
+    report_type?: legacy_protection_summary_report | filter_protection_overview | cyber_sight_activity_overview | cyber_sight_timeline | cyber_sight_ai_usage | cyber_sight_threat_trends | string,
     internal_recipients?: {
       id?: number,
       email?: string,
@@ -12366,8 +12526,8 @@ await corsair.dnsfilter.api.scheduledReportsV2.create({});
     }[],
     send_to_dashboard_users?: boolean,
     selected_sub_orgs?: number[],
-    frequency?: monthly | bi_weekly | weekly | daily | quarterly,
-    day_of_week?: sunday | monday | tuesday | wednesday | thursday | friday | saturday,
+    frequency?: monthly | bi_weekly | weekly | daily | quarterly | string,
+    day_of_week?: sunday | monday | tuesday | wednesday | thursday | friday | saturday | string,
     day_of_month?: number,
     next_delivery?: string,
     last_delivery?: string,
@@ -12415,7 +12575,7 @@ await corsair.dnsfilter.api.scheduledReportsV2.delete({});
 
 ```ts
 {
-  id?: string,
+  id?: number | string,
   type?: string,
   uuid?: string,
   attributes?: {
@@ -12424,7 +12584,7 @@ await corsair.dnsfilter.api.scheduledReportsV2.delete({});
       id?: number,
       name?: string
     },
-    report_type?: legacy_protection_summary_report | filter_protection_overview | cyber_sight_activity_overview | cyber_sight_timeline | cyber_sight_ai_usage | cyber_sight_threat_trends,
+    report_type?: legacy_protection_summary_report | filter_protection_overview | cyber_sight_activity_overview | cyber_sight_timeline | cyber_sight_ai_usage | cyber_sight_threat_trends | string,
     internal_recipients?: {
       id?: number,
       email?: string,
@@ -12454,8 +12614,8 @@ await corsair.dnsfilter.api.scheduledReportsV2.delete({});
     }[],
     send_to_dashboard_users?: boolean,
     selected_sub_orgs?: number[],
-    frequency?: monthly | bi_weekly | weekly | daily | quarterly,
-    day_of_week?: sunday | monday | tuesday | wednesday | thursday | friday | saturday,
+    frequency?: monthly | bi_weekly | weekly | daily | quarterly | string,
+    day_of_week?: sunday | monday | tuesday | wednesday | thursday | friday | saturday | string,
     day_of_month?: number,
     next_delivery?: string,
     last_delivery?: string,
@@ -12503,7 +12663,7 @@ await corsair.dnsfilter.api.scheduledReportsV2.get({});
 
 ```ts
 {
-  id?: string,
+  id?: number | string,
   type?: string,
   uuid?: string,
   attributes?: {
@@ -12512,7 +12672,7 @@ await corsair.dnsfilter.api.scheduledReportsV2.get({});
       id?: number,
       name?: string
     },
-    report_type?: legacy_protection_summary_report | filter_protection_overview | cyber_sight_activity_overview | cyber_sight_timeline | cyber_sight_ai_usage | cyber_sight_threat_trends,
+    report_type?: legacy_protection_summary_report | filter_protection_overview | cyber_sight_activity_overview | cyber_sight_timeline | cyber_sight_ai_usage | cyber_sight_threat_trends | string,
     internal_recipients?: {
       id?: number,
       email?: string,
@@ -12542,8 +12702,8 @@ await corsair.dnsfilter.api.scheduledReportsV2.get({});
     }[],
     send_to_dashboard_users?: boolean,
     selected_sub_orgs?: number[],
-    frequency?: monthly | bi_weekly | weekly | daily | quarterly,
-    day_of_week?: sunday | monday | tuesday | wednesday | thursday | friday | saturday,
+    frequency?: monthly | bi_weekly | weekly | daily | quarterly | string,
+    day_of_week?: sunday | monday | tuesday | wednesday | thursday | friday | saturday | string,
     day_of_month?: number,
     next_delivery?: string,
     last_delivery?: string,
@@ -12612,7 +12772,7 @@ await corsair.dnsfilter.api.scheduledReportsV2.list({
 
 ```ts
 {
-  id?: string,
+  id?: number | string,
   type?: string,
   uuid?: string,
   attributes?: {
@@ -12621,7 +12781,7 @@ await corsair.dnsfilter.api.scheduledReportsV2.list({
       id?: number,
       name?: string
     },
-    report_type?: legacy_protection_summary_report | filter_protection_overview | cyber_sight_activity_overview | cyber_sight_timeline | cyber_sight_ai_usage | cyber_sight_threat_trends,
+    report_type?: legacy_protection_summary_report | filter_protection_overview | cyber_sight_activity_overview | cyber_sight_timeline | cyber_sight_ai_usage | cyber_sight_threat_trends | string,
     recipients?: {
       id?: number,
       email?: string,
@@ -12633,8 +12793,8 @@ await corsair.dnsfilter.api.scheduledReportsV2.list({
     }[],
     recipient_count?: number,
     send_to_dashboard_users?: boolean,
-    frequency?: monthly | bi_weekly | weekly | daily | quarterly,
-    day_of_week?: sunday | monday | tuesday | wednesday | thursday | friday | saturday,
+    frequency?: monthly | bi_weekly | weekly | daily | quarterly | string,
+    day_of_week?: sunday | monday | tuesday | wednesday | thursday | friday | saturday | string,
     day_of_month?: number,
     next_delivery?: string,
     last_delivery?: string,
@@ -12721,7 +12881,7 @@ await corsair.dnsfilter.api.scheduledReportsV2.update({});
 
 ```ts
 {
-  id?: string,
+  id?: number | string,
   type?: string,
   uuid?: string,
   attributes?: {
@@ -12730,7 +12890,7 @@ await corsair.dnsfilter.api.scheduledReportsV2.update({});
       id?: number,
       name?: string
     },
-    report_type?: legacy_protection_summary_report | filter_protection_overview | cyber_sight_activity_overview | cyber_sight_timeline | cyber_sight_ai_usage | cyber_sight_threat_trends,
+    report_type?: legacy_protection_summary_report | filter_protection_overview | cyber_sight_activity_overview | cyber_sight_timeline | cyber_sight_ai_usage | cyber_sight_threat_trends | string,
     internal_recipients?: {
       id?: number,
       email?: string,
@@ -12760,8 +12920,8 @@ await corsair.dnsfilter.api.scheduledReportsV2.update({});
     }[],
     send_to_dashboard_users?: boolean,
     selected_sub_orgs?: number[],
-    frequency?: monthly | bi_weekly | weekly | daily | quarterly,
-    day_of_week?: sunday | monday | tuesday | wednesday | thursday | friday | saturday,
+    frequency?: monthly | bi_weekly | weekly | daily | quarterly | string,
+    day_of_week?: sunday | monday | tuesday | wednesday | thursday | friday | saturday | string,
     day_of_month?: number,
     next_delivery?: string,
     last_delivery?: string,
@@ -13048,24 +13208,32 @@ await corsair.dnsfilter.api.trafficReports.queryLogs({});
 ```ts
 {
   organization_id?: number,
-  organization_ids?: string[],
+  organization_ids?: (
+    number | string
+  )[],
   organization_name?: string,
   organization_names?: string[],
   network_id?: number,
-  network_ids?: string[],
+  network_ids?: (
+    number | string
+  )[],
   client_id?: string,
   client_ids?: string[],
   user_id?: number,
-  user_ids?: string[],
+  user_ids?: (
+    number | string
+  )[],
   collection_id?: number,
-  collection_ids?: string[],
+  collection_ids?: (
+    number | string
+  )[],
   values?: {
     time?: string,
     fqdn?: string,
     networkid?: number,
     request_address?: string,
     domain?: string,
-    result?: allowed | blocked,
+    result?: allowed | blocked | string,
     threat?: boolean,
     categories?: number[],
     server_id?: number,
@@ -13074,7 +13242,7 @@ await corsair.dnsfilter.api.trafficReports.queryLogs({});
     responsetime?: number,
     agentid?: string,
     agentname?: string,
-    agenttype?: proxy | agent | clientless,
+    agenttype?: proxy | agent | clientless | string,
     agent_type_raw?: string,
     local_ipv4_address?: string,
     local_ipv6_address?: string,
@@ -15097,7 +15265,9 @@ await corsair.dnsfilter.api.trafficReports.totalRequestsGeo({});
 {
   organization_ids?: number[],
   organization_names?: string[],
-  network_ids?: string[],
+  network_ids?: (
+    number | string
+  )[],
   network_names?: string[],
   values?: {
     network_id?: number,
@@ -15623,7 +15793,7 @@ await corsair.dnsfilter.api.unblockRequests.decision({ id: '8f14e45f', decision:
   id?: string,
   attributes?: {
     domain?: string,
-    status?: allowed | denied | ignored | resolved_already_allowed | expired,
+    status?: allowed | denied | ignored | resolved_already_allowed | expired | string,
     decided_at?: string,
     decided_by?: {
       id?: number,
@@ -15700,11 +15870,11 @@ await corsair.dnsfilter.api.unblockRequests.get({});
     time_of_attempt?: string,
     already_covered?: {
       covered?: boolean,
-      list?: policy | universal_org | universal_msp,
+      list?: policy | universal_org | universal_msp | string,
       date_added?: string
     },
     allow_list_targets?: {
-      type?: policy | universal,
+      type?: policy | universal | string,
       id?: number,
       name?: string,
       affects_all?: boolean,
@@ -15945,7 +16115,7 @@ await corsair.dnsfilter.api.unblockRequests.list({
       name?: string
     },
     deployment?: string,
-    deployment_type?: site | roaming_client | relay | clientless,
+    deployment_type?: site | roaming_client | relay | clientless | string,
     policy?: {
       id?: number,
       name?: string,
@@ -15956,7 +16126,7 @@ await corsair.dnsfilter.api.unblockRequests.list({
       names?: string[],
       is_threat?: boolean
     },
-    blocked_by?: blocklist | appaware | category | security | unknown,
+    blocked_by?: blocklist | appaware | category | security | unknown | string,
     time_of_attempt?: string,
     user_agent_id?: string,
     agent_local_user_id?: number,
@@ -15970,7 +16140,7 @@ await corsair.dnsfilter.api.unblockRequests.list({
       email?: string
     },
     resolved_date?: string,
-    action?: allowed | denied | ignored | resolved_already_allowed | expired,
+    action?: allowed | denied | ignored | resolved_already_allowed | expired | string,
     response_message?: string,
     internal_notes?: string
   }
@@ -16632,8 +16802,10 @@ await corsair.dnsfilter.api.userAgentReleases.list({});
 
 ```ts
 {
-  agent_type?: windows | macos,
-  architecture?: x86 | x86_64,
+  agent_type?: windows | macos | string,
+  architecture?: x86 | x86_64 | string,
+  version?: string,
+  platform?: string,
   agent_version?: string,
   white_label?: boolean,
   release_channels?: {
@@ -16677,8 +16849,10 @@ await corsair.dnsfilter.api.userAgentReleases.relay({});
 
 ```ts
 {
-  agent_type?: windows | macos,
-  architecture?: x86 | x86_64,
+  agent_type?: windows | macos | string,
+  architecture?: x86 | x86_64 | string,
+  version?: string,
+  platform?: string,
   agent_version?: string,
   white_label?: boolean,
   release_channels?: {
@@ -16847,11 +17021,11 @@ await corsair.dnsfilter.api.userAgents.get({});
   type?: string,
   uuid?: string,
   attributes?: {
-    agent_type?: proxy | windows | macos | linux | android | ios | embedded | dnsmasq | fingbox,
+    agent_type?: proxy | windows | macos | linux | android | ios | embedded | dnsmasq | fingbox | string,
     agent_version?: string,
     client_id?: string,
     hostname?: string,
-    status?: active | disabled | uninstalled | uninstalled_from_client | created,
+    status?: active | disabled | uninstalled | uninstalled_from_client | created | string,
     os_version?: string,
     os_name?: string,
     friendly_name?: string,
@@ -16863,11 +17037,11 @@ await corsair.dnsfilter.api.userAgents.get({});
     id_hex?: string,
     id_binary?: number[],
     last_sync?: string,
-    agent_state?: protected | unprotected | bypassed | uninstalled,
+    agent_state?: protected | unprotected | bypassed | uninstalled | string,
     cyber_sight_client?: {
-      service_state?: not_installed | operational | disabled | error,
-      chrome_extension_status?: not_installed | operational | disabled | error | outdated | install_disabled | browser_not_installed | not_communicating,
-      edge_extension_status?: not_installed | operational | disabled | error | outdated | install_disabled | browser_not_installed | not_communicating
+      service_state?: not_installed | operational | disabled | error | string,
+      chrome_extension_status?: not_installed | operational | disabled | error | outdated | install_disabled | browser_not_installed | not_communicating | string,
+      edge_extension_status?: not_installed | operational | disabled | error | outdated | install_disabled | browser_not_installed | not_communicating | string
     },
     cyber_sight_client_setting?: {
       enable_browser_extension?: boolean
@@ -16878,9 +17052,9 @@ await corsair.dnsfilter.api.userAgents.get({});
     },
     filtering_client_setting?: {
       auto_updates?: boolean,
-      connection_method?: inherit | transparent_prox | loopback,
-      filtering_method?: inherit | precheck | dns_filtering,
-      fail_over_method?: inherit | fail_open | fail_close
+      connection_method?: inherit | transparent_prox | loopback | string,
+      filtering_method?: inherit | precheck | dns_filtering | string,
+      fail_over_method?: inherit | fail_open | fail_close | string
     }
   },
   relationships?: {
@@ -17073,11 +17247,11 @@ await corsair.dnsfilter.api.userAgents.list({});
   type?: string,
   uuid?: string,
   attributes?: {
-    agent_type?: proxy | windows | macos | linux | android | ios | embedded | dnsmasq | fingbox,
+    agent_type?: proxy | windows | macos | linux | android | ios | embedded | dnsmasq | fingbox | string,
     agent_version?: string,
     client_id?: string,
     hostname?: string,
-    status?: active | disabled | uninstalled | uninstalled_from_client | created,
+    status?: active | disabled | uninstalled | uninstalled_from_client | created | string,
     os_version?: string,
     os_name?: string,
     friendly_name?: string,
@@ -17089,11 +17263,11 @@ await corsair.dnsfilter.api.userAgents.list({});
     id_hex?: string,
     id_binary?: number[],
     last_sync?: string,
-    agent_state?: protected | unprotected | bypassed | uninstalled,
+    agent_state?: protected | unprotected | bypassed | uninstalled | string,
     cyber_sight_client?: {
-      service_state?: not_installed | operational | disabled | error,
-      chrome_extension_status?: not_installed | operational | disabled | error | outdated | install_disabled | browser_not_installed | not_communicating,
-      edge_extension_status?: not_installed | operational | disabled | error | outdated | install_disabled | browser_not_installed | not_communicating
+      service_state?: not_installed | operational | disabled | error | string,
+      chrome_extension_status?: not_installed | operational | disabled | error | outdated | install_disabled | browser_not_installed | not_communicating | string,
+      edge_extension_status?: not_installed | operational | disabled | error | outdated | install_disabled | browser_not_installed | not_communicating | string
     },
     cyber_sight_client_setting?: {
       enable_browser_extension?: boolean
@@ -17104,9 +17278,9 @@ await corsair.dnsfilter.api.userAgents.list({});
     },
     filtering_client_setting?: {
       auto_updates?: boolean,
-      connection_method?: inherit | transparent_prox | loopback,
-      filtering_method?: inherit | precheck | dns_filtering,
-      fail_over_method?: inherit | fail_open | fail_close
+      connection_method?: inherit | transparent_prox | loopback | string,
+      filtering_method?: inherit | precheck | dns_filtering | string,
+      fail_over_method?: inherit | fail_open | fail_close | string
     }
   },
   relationships?: {
@@ -17140,7 +17314,11 @@ await corsair.dnsfilter.api.userAgents.list({});
 
 ```ts
 {
-  self?: string
+  self?: string,
+  first?: string,
+  prev?: string,
+  next?: string,
+  last?: string
 }
 ```
 </Accordion>
@@ -17218,11 +17396,11 @@ await corsair.dnsfilter.api.userAgents.listAll({});
   type?: string,
   uuid?: string,
   attributes?: {
-    agent_type?: proxy | windows | macos | linux | android | ios | embedded | dnsmasq | fingbox,
+    agent_type?: proxy | windows | macos | linux | android | ios | embedded | dnsmasq | fingbox | string,
     agent_version?: string,
     client_id?: string,
     hostname?: string,
-    status?: active | disabled | uninstalled | uninstalled_from_client | created,
+    status?: active | disabled | uninstalled | uninstalled_from_client | created | string,
     os_version?: string,
     os_name?: string,
     friendly_name?: string,
@@ -17234,11 +17412,11 @@ await corsair.dnsfilter.api.userAgents.listAll({});
     id_hex?: string,
     id_binary?: number[],
     last_sync?: string,
-    agent_state?: protected | unprotected | bypassed | uninstalled,
+    agent_state?: protected | unprotected | bypassed | uninstalled | string,
     cyber_sight_client?: {
-      service_state?: not_installed | operational | disabled | error,
-      chrome_extension_status?: not_installed | operational | disabled | error | outdated | install_disabled | browser_not_installed | not_communicating,
-      edge_extension_status?: not_installed | operational | disabled | error | outdated | install_disabled | browser_not_installed | not_communicating
+      service_state?: not_installed | operational | disabled | error | string,
+      chrome_extension_status?: not_installed | operational | disabled | error | outdated | install_disabled | browser_not_installed | not_communicating | string,
+      edge_extension_status?: not_installed | operational | disabled | error | outdated | install_disabled | browser_not_installed | not_communicating | string
     },
     cyber_sight_client_setting?: {
       enable_browser_extension?: boolean
@@ -17249,9 +17427,9 @@ await corsair.dnsfilter.api.userAgents.listAll({});
     },
     filtering_client_setting?: {
       auto_updates?: boolean,
-      connection_method?: inherit | transparent_prox | loopback,
-      filtering_method?: inherit | precheck | dns_filtering,
-      fail_over_method?: inherit | fail_open | fail_close
+      connection_method?: inherit | transparent_prox | loopback | string,
+      filtering_method?: inherit | precheck | dns_filtering | string,
+      fail_over_method?: inherit | fail_open | fail_close | string
     }
   },
   relationships?: {
@@ -17285,7 +17463,11 @@ await corsair.dnsfilter.api.userAgents.listAll({});
 
 ```ts
 {
-  self?: string
+  self?: string,
+  first?: string,
+  prev?: string,
+  next?: string,
+  last?: string
 }
 ```
 </Accordion>
@@ -17359,7 +17541,12 @@ await corsair.dnsfilter.api.userAgents.uninstallPin({});
 
 
 
-**Output:** `string`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pin` | `string` | No | — |
+
 
 
 ---
@@ -17421,11 +17608,11 @@ await corsair.dnsfilter.api.userAgents.update({});
   type?: string,
   uuid?: string,
   attributes?: {
-    agent_type?: proxy | windows | macos | linux | android | ios | embedded | dnsmasq | fingbox,
+    agent_type?: proxy | windows | macos | linux | android | ios | embedded | dnsmasq | fingbox | string,
     agent_version?: string,
     client_id?: string,
     hostname?: string,
-    status?: active | disabled | uninstalled | uninstalled_from_client | created,
+    status?: active | disabled | uninstalled | uninstalled_from_client | created | string,
     os_version?: string,
     os_name?: string,
     friendly_name?: string,
@@ -17437,11 +17624,11 @@ await corsair.dnsfilter.api.userAgents.update({});
     id_hex?: string,
     id_binary?: number[],
     last_sync?: string,
-    agent_state?: protected | unprotected | bypassed | uninstalled,
+    agent_state?: protected | unprotected | bypassed | uninstalled | string,
     cyber_sight_client?: {
-      service_state?: not_installed | operational | disabled | error,
-      chrome_extension_status?: not_installed | operational | disabled | error | outdated | install_disabled | browser_not_installed | not_communicating,
-      edge_extension_status?: not_installed | operational | disabled | error | outdated | install_disabled | browser_not_installed | not_communicating
+      service_state?: not_installed | operational | disabled | error | string,
+      chrome_extension_status?: not_installed | operational | disabled | error | outdated | install_disabled | browser_not_installed | not_communicating | string,
+      edge_extension_status?: not_installed | operational | disabled | error | outdated | install_disabled | browser_not_installed | not_communicating | string
     },
     cyber_sight_client_setting?: {
       enable_browser_extension?: boolean
@@ -17452,9 +17639,9 @@ await corsair.dnsfilter.api.userAgents.update({});
     },
     filtering_client_setting?: {
       auto_updates?: boolean,
-      connection_method?: inherit | transparent_prox | loopback,
-      filtering_method?: inherit | precheck | dns_filtering,
-      fail_over_method?: inherit | fail_open | fail_close
+      connection_method?: inherit | transparent_prox | loopback | string,
+      filtering_method?: inherit | precheck | dns_filtering | string,
+      fail_over_method?: inherit | fail_open | fail_close | string
     }
   },
   relationships?: {
@@ -17700,7 +17887,11 @@ await corsair.dnsfilter.api.users.list({
 
 ```ts
 {
-  self?: string
+  self?: string,
+  first?: string,
+  prev?: string,
+  next?: string,
+  last?: string
 }
 ```
 </Accordion>
@@ -17777,7 +17968,11 @@ await corsair.dnsfilter.api.users.listAll({});
 
 ```ts
 {
-  self?: string
+  self?: string,
+  first?: string,
+  prev?: string,
+  next?: string,
+  last?: string
 }
 ```
 </Accordion>
