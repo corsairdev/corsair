@@ -60,6 +60,10 @@ import {
 	SecurityGetUserPrivilegesOutputSchema,
 	SecurityHasPrivilegesInputSchema,
 	SecurityHasPrivilegesOutputSchema,
+	SecurityPrivilegesGetBuiltinOutputSchema,
+	SecurityPrivilegesGetInputSchema,
+	SecurityPrivilegesPutInputSchema,
+	SecurityPrivilegesPutOutputSchema,
 	SecurityRoleMappingsGetOutputSchema,
 	SecurityRoleMappingsPutInputSchema,
 	SecurityRolesBulkDeleteInputSchema,
@@ -195,6 +199,8 @@ import {
 	securityGetUserPrivilegesOutput,
 	securityHasPrivilegesOutput,
 	securityLogsReaderRole,
+	securityPrivilegesGetBuiltinOutput,
+	securityPrivilegesPutOutput,
 	securityRoleMapping,
 	securityRoleMappingsGetOutput,
 	securityRolesBulkDeleteOutput,
@@ -3971,5 +3977,122 @@ describe('security.roles wire calls', () => {
 			'http://es:9200/_security/role_mapping/operations_mapping',
 		);
 		expect(init.method).toBe('DELETE');
+	});
+});
+
+// ── security.privileges schemas and wire assertions ──────────────────────────
+
+describe('security.privileges schemas', () => {
+	it('put requires non-empty actions per privilege', () => {
+		expect(
+			SecurityPrivilegesPutInputSchema.safeParse({
+				privileges: { myapp: { read: { actions: [] } } },
+			}).success,
+		).toBe(false);
+		expect(
+			SecurityPrivilegesPutInputSchema.parse({
+				privileges: {
+					myapp: { read: { actions: ['data:*:read/*'] } },
+				},
+			}).privileges,
+		).toEqual({ myapp: { read: { actions: ['data:*:read/*'] } } });
+		expect(
+			SecurityPrivilegesPutInputSchema.safeParse({ privileges: {} }).success,
+		).toBe(true);
+	});
+
+	it('get requires both application and name targets', () => {
+		expect(SecurityPrivilegesGetInputSchema.safeParse({}).success).toBe(false);
+		expect(
+			SecurityPrivilegesGetInputSchema.parse({
+				application: 'myapp',
+				name: '*',
+			}),
+		).toEqual({ application: 'myapp', name: '*' });
+	});
+
+	it('parses the created map and the builtin cluster/index lists', () => {
+		const created = SecurityPrivilegesPutOutputSchema.parse(
+			securityPrivilegesPutOutput,
+		);
+		expect(created.myapp?.read?.actions).toEqual(['data:*:read/*']);
+
+		const builtin = SecurityPrivilegesGetBuiltinOutputSchema.parse(
+			securityPrivilegesGetBuiltinOutput,
+		);
+		expect(builtin.cluster).toContain('monitor');
+		expect(builtin.index).toContain('read');
+		expect(builtin.remote_cluster).toEqual(['monitor_enrich', 'monitor_stats']);
+	});
+});
+
+describe('security.privileges wire calls', () => {
+	let fetchMock: jest.SpyInstance;
+
+	beforeEach(() => {
+		fetchMock = jest.spyOn(globalThis, 'fetch');
+		mockLog.mockClear();
+	});
+
+	afterEach(() => {
+		fetchMock.mockRestore();
+	});
+
+	const ctx = {
+		options: { baseUrl: 'http://es:9200' },
+		key: 'ApiKey encoded-key',
+	} as never;
+
+	function mockJson(body: unknown, status = 200) {
+		fetchMock.mockResolvedValueOnce(
+			new Response(JSON.stringify(body), {
+				status,
+				headers: { 'Content-Type': 'application/json' },
+			}),
+		);
+	}
+
+	async function sent() {
+		expect(fetchMock).toHaveBeenCalledTimes(1);
+		const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+		return { url, init };
+	}
+
+	it('privileges.put POSTs the application map as the body', async () => {
+		mockJson(securityPrivilegesPutOutput);
+		const result = await Security.putPrivileges(ctx, {
+			privileges: {
+				myapp: { read: { actions: ['data:*:read/*'] } },
+			},
+			refresh: true,
+		});
+		expect(result.myapp?.read?.actions).toEqual(['data:*:read/*']);
+		const { url, init } = await sent();
+		expect(url).toBe('http://es:9200/_security/privilege?refresh=true');
+		expect(init.method).toBe('POST');
+		expect(JSON.parse(String(init.body))).toEqual({
+			myapp: { read: { actions: ['data:*:read/*'] } },
+		});
+	});
+
+	it('privileges.getBuiltin GETs the builtin path', async () => {
+		mockJson(securityPrivilegesGetBuiltinOutput);
+		const result = await Security.getBuiltinPrivileges(ctx, {});
+		expect(result.cluster).toContain('manage');
+		const { url, init } = await sent();
+		expect(url).toBe('http://es:9200/_security/privilege/_builtin');
+		expect(init.method).toBe('GET');
+	});
+
+	it('privileges.get GETs the application and name path', async () => {
+		mockJson(securityPrivilegesPutOutput);
+		const result = await Security.getPrivileges(ctx, {
+			application: 'myapp',
+			name: 'read',
+		});
+		expect(result.myapp?.read).toBeDefined();
+		const { url, init } = await sent();
+		expect(url).toBe('http://es:9200/_security/privilege/myapp/read');
+		expect(init.method).toBe('GET');
 	});
 });

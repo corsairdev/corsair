@@ -410,3 +410,38 @@ export const deleteRoleMapping: ElasticsearchEndpoints['securityRoleMappingsDele
 				query: (parsed) => pickQuery(parsed, ['refresh']),
 			},
 		);
+
+// ── security.privileges ──────────────────────────────────────────────────────
+
+export const putPrivileges: ElasticsearchEndpoints['securityPrivilegesPut'] = (
+	ctx,
+	input,
+) =>
+	call(ctx, 'securityPrivilegesPut', 'security.privileges.put', input, {
+		method: 'POST',
+		path: () => '/_security/privilege',
+		query: (parsed) => pickQuery(parsed, ['refresh']),
+		// The wire body is the application-to-privilege map itself.
+		body: (parsed) => parsed.privileges,
+	});
+
+export const getBuiltinPrivileges: ElasticsearchEndpoints['securityPrivilegesGetBuiltin'] =
+	(ctx, input) =>
+		call(
+			ctx,
+			'securityPrivilegesGetBuiltin',
+			'security.privileges.getBuiltin',
+			input,
+			{
+				path: () => '/_security/privilege/_builtin',
+			},
+		);
+
+export const getPrivileges: ElasticsearchEndpoints['securityPrivilegesGet'] = (
+	ctx,
+	input,
+) =>
+	call(ctx, 'securityPrivilegesGet', 'security.privileges.get', input, {
+		path: (parsed) =>
+			`/_security/privilege/${target(parsed.application)}/${target(parsed.name)}`,
+	});

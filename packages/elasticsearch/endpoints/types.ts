@@ -3811,6 +3811,63 @@ export type SecurityRoleMappingsDeleteInput = z.input<
 >;
 export type SecurityRoleMappingsDeleteOutput = SecurityFoundResponse;
 
+// ── security.privileges: /_security/privilege ────────────────────────────────
+
+// Application privileges are a two-level map (application -> privilege name
+// -> definition); each definition carries non-empty actions and metadata.
+const SecurityApplicationPrivilegeDefinitionSchema = z.strictObject({
+	actions: z.array(NonBlankString).min(1),
+	metadata: SecurityMetadata.optional(),
+});
+
+export const SecurityPrivilegesPutInputSchema = z.strictObject({
+	privileges: z.record(
+		z.string().min(1),
+		z.record(z.string().min(1), SecurityApplicationPrivilegeDefinitionSchema),
+	),
+	refresh: RefreshParam.optional(),
+});
+export type SecurityPrivilegesPutInput = z.input<
+	typeof SecurityPrivilegesPutInputSchema
+>;
+
+export const SecurityPrivilegesPutOutputSchema = z.record(
+	z.string().min(1),
+	z.record(
+		z.string().min(1),
+		z.looseObject({
+			actions: z.array(z.string()),
+			metadata: SecurityMetadata.optional(),
+		}),
+	),
+);
+export type SecurityPrivilegesPutOutput = z.infer<
+	typeof SecurityPrivilegesPutOutputSchema
+>;
+
+export const SecurityPrivilegesGetBuiltinInputSchema = z.object({});
+export type SecurityPrivilegesGetBuiltinInput = z.infer<
+	typeof SecurityPrivilegesGetBuiltinInputSchema
+>;
+
+export const SecurityPrivilegesGetBuiltinOutputSchema = z.looseObject({
+	cluster: z.array(z.string()),
+	index: z.array(z.string()),
+	remote_cluster: z.array(z.string()),
+});
+export type SecurityPrivilegesGetBuiltinOutput = z.infer<
+	typeof SecurityPrivilegesGetBuiltinOutputSchema
+>;
+
+export const SecurityPrivilegesGetInputSchema = z.strictObject({
+	application: NonBlankString,
+	name: NonBlankString,
+});
+export type SecurityPrivilegesGetInput = z.input<
+	typeof SecurityPrivilegesGetInputSchema
+>;
+export type SecurityPrivilegesGetOutput = SecurityPrivilegesPutOutput;
+
 // ── registry ─────────────────────────────────────────────────────────────────
 
 export type ElasticsearchEndpointInputs = {
@@ -3981,6 +4038,9 @@ export type ElasticsearchEndpointInputs = {
 	securityRoleMappingsGet: SecurityRoleMappingsGetInput;
 	securityRoleMappingsPut: SecurityRoleMappingsPutInput;
 	securityRoleMappingsDelete: SecurityRoleMappingsDeleteInput;
+	securityPrivilegesPut: SecurityPrivilegesPutInput;
+	securityPrivilegesGetBuiltin: SecurityPrivilegesGetBuiltinInput;
+	securityPrivilegesGet: SecurityPrivilegesGetInput;
 };
 
 export type ElasticsearchEndpointOutputs = {
@@ -4151,6 +4211,9 @@ export type ElasticsearchEndpointOutputs = {
 	securityRoleMappingsGet: SecurityRoleMappingsGetOutput;
 	securityRoleMappingsPut: SecurityRoleMappingsPutOutput;
 	securityRoleMappingsDelete: SecurityRoleMappingsDeleteOutput;
+	securityPrivilegesPut: SecurityPrivilegesPutOutput;
+	securityPrivilegesGetBuiltin: SecurityPrivilegesGetBuiltinOutput;
+	securityPrivilegesGet: SecurityPrivilegesGetOutput;
 };
 
 export type ElasticsearchOperation = keyof ElasticsearchEndpointInputs;
@@ -4327,6 +4390,9 @@ export const ElasticsearchEndpointInputSchemas = {
 	securityRoleMappingsGet: SecurityRoleMappingsGetInputSchema,
 	securityRoleMappingsPut: SecurityRoleMappingsPutInputSchema,
 	securityRoleMappingsDelete: SecurityRoleMappingsDeleteInputSchema,
+	securityPrivilegesPut: SecurityPrivilegesPutInputSchema,
+	securityPrivilegesGetBuiltin: SecurityPrivilegesGetBuiltinInputSchema,
+	securityPrivilegesGet: SecurityPrivilegesGetInputSchema,
 } as const;
 
 export const ElasticsearchEndpointOutputSchemas = {
@@ -4497,4 +4563,7 @@ export const ElasticsearchEndpointOutputSchemas = {
 	securityRoleMappingsGet: SecurityRoleMappingsGetOutputSchema,
 	securityRoleMappingsPut: SecurityCreatedResponseSchema,
 	securityRoleMappingsDelete: SecurityFoundResponseSchema,
+	securityPrivilegesPut: SecurityPrivilegesPutOutputSchema,
+	securityPrivilegesGetBuiltin: SecurityPrivilegesGetBuiltinOutputSchema,
+	securityPrivilegesGet: SecurityPrivilegesPutOutputSchema,
 } as const;

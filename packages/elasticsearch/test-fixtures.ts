@@ -104,6 +104,8 @@ import type {
 	SecurityCreatedApiKey,
 	SecurityGetUserPrivilegesOutput,
 	SecurityHasPrivilegesOutput,
+	SecurityPrivilegesGetBuiltinOutput,
+	SecurityPrivilegesPutOutput,
 	SecurityRoleDescriptor,
 	SecurityRoleMapping,
 	SecurityRoleMappingsGetOutput,
@@ -1532,3 +1534,19 @@ export const securityRolesQueryOutput: SecurityRolesQueryOutput = {
 		hits: [{ cluster: ['monitor'] }],
 	},
 };
+
+export const securityPrivilegesPutOutput: SecurityPrivilegesPutOutput = {
+	myapp: {
+		read: {
+			actions: ['data:*:read/*'],
+			metadata: { description: 'read access' },
+		},
+	},
+};
+
+export const securityPrivilegesGetBuiltinOutput: SecurityPrivilegesGetBuiltinOutput =
+	{
+		cluster: ['monitor', 'manage'],
+		index: ['all', 'create', 'delete', 'read', 'write'],
+		remote_cluster: ['monitor_enrich', 'monitor_stats'],
+	};

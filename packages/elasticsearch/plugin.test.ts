@@ -188,6 +188,9 @@ const operations = [
 	'security.roleMappings.get',
 	'security.roleMappings.put',
 	'security.roleMappings.delete',
+	'security.privileges.put',
+	'security.privileges.getBuiltin',
+	'security.privileges.get',
 ];
 
 // Risk pinned per op: reads never mutate, writes change data or cluster
@@ -360,6 +363,9 @@ const riskLevels: Record<string, 'read' | 'write' | 'destructive'> = {
 	'security.roleMappings.get': 'read',
 	'security.roleMappings.put': 'write',
 	'security.roleMappings.delete': 'destructive',
+	'security.privileges.put': 'write',
+	'security.privileges.getBuiltin': 'read',
+	'security.privileges.get': 'read',
 };
 
 describe('elasticsearch plugin definition', () => {

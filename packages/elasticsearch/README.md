@@ -179,6 +179,9 @@ pnpm add @corsair-dev/elasticsearch
 | `security.roleMappings.get` | `elasticsearch.api.security.roleMappings.get` | `read` | Get role mappings by comma-separated names (GET /_security/role_mapping/{name}), keyed by mapping name |
 | `security.roleMappings.put` | `elasticsearch.api.security.roleMappings.put` | `write` | Create or update a role mapping (POST /_security/role_mapping/{name}) granting static roles or mustache role_templates under rules |
 | `security.roleMappings.delete` | `elasticsearch.api.security.roleMappings.delete` | `destructive` | Delete a role mapping (DELETE /_security/role_mapping/{name}); replies found: true when a mapping was removed |
+| `security.privileges.put` | `elasticsearch.api.security.privileges.put` | `write` | Create or update application privileges (POST /_security/privilege) from an application-to-privilege map with action lists and metadata |
+| `security.privileges.getBuiltin` | `elasticsearch.api.security.privileges.getBuiltin` | `read` | List the builtin cluster, index and remote-cluster privilege names the cluster recognizes (GET /_security/privilege/_builtin) |
+| `security.privileges.get` | `elasticsearch.api.security.privileges.get` | `read` | Get application privileges by application and privilege name or wildcard (GET /_security/privilege/{application}/{name}) |
 
 Risk levels follow the operation's effect on the cluster: `read` never mutates, `write` changes documents or index/cluster state, `destructive` deletes data. Mutating calls (POST/PUT/DELETE) are never replayed on 5xx or timeout, because the change may already have been applied; 429 retries remain safe (the request was rejected before executing).
 

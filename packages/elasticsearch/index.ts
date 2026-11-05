@@ -249,6 +249,9 @@ export type ElasticsearchEndpoints = {
 	securityRoleMappingsGet: ElasticsearchEndpoint<'securityRoleMappingsGet'>;
 	securityRoleMappingsPut: ElasticsearchEndpoint<'securityRoleMappingsPut'>;
 	securityRoleMappingsDelete: ElasticsearchEndpoint<'securityRoleMappingsDelete'>;
+	securityPrivilegesPut: ElasticsearchEndpoint<'securityPrivilegesPut'>;
+	securityPrivilegesGetBuiltin: ElasticsearchEndpoint<'securityPrivilegesGetBuiltin'>;
+	securityPrivilegesGet: ElasticsearchEndpoint<'securityPrivilegesGet'>;
 };
 
 // Elasticsearch has no inbound webhook surface — the REST API is
@@ -451,6 +454,11 @@ const elasticsearchEndpointsNested = {
 			get: Security.getRoleMapping,
 			put: Security.putRoleMapping,
 			delete: Security.deleteRoleMapping,
+		},
+		privileges: {
+			put: Security.putPrivileges,
+			getBuiltin: Security.getBuiltinPrivileges,
+			get: Security.getPrivileges,
 		},
 	},
 } as const;
@@ -1128,6 +1136,18 @@ export const elasticsearchEndpointSchemas = {
 	'security.roleMappings.delete': {
 		input: ElasticsearchEndpointInputSchemas.securityRoleMappingsDelete,
 		output: ElasticsearchEndpointOutputSchemas.securityRoleMappingsDelete,
+	},
+	'security.privileges.put': {
+		input: ElasticsearchEndpointInputSchemas.securityPrivilegesPut,
+		output: ElasticsearchEndpointOutputSchemas.securityPrivilegesPut,
+	},
+	'security.privileges.getBuiltin': {
+		input: ElasticsearchEndpointInputSchemas.securityPrivilegesGetBuiltin,
+		output: ElasticsearchEndpointOutputSchemas.securityPrivilegesGetBuiltin,
+	},
+	'security.privileges.get': {
+		input: ElasticsearchEndpointInputSchemas.securityPrivilegesGet,
+		output: ElasticsearchEndpointOutputSchemas.securityPrivilegesGet,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof elasticsearchEndpointsNested
@@ -1967,6 +1987,21 @@ const elasticsearchEndpointMeta = {
 		riskLevel: 'destructive',
 		description:
 			'Delete a role mapping (DELETE /_security/role_mapping/{name}); replies found: true when a mapping was removed',
+	},
+	'security.privileges.put': {
+		riskLevel: 'write',
+		description:
+			'Create or update application privileges (POST /_security/privilege) from an application-to-privilege map with action lists and metadata',
+	},
+	'security.privileges.getBuiltin': {
+		riskLevel: 'read',
+		description:
+			'List the builtin cluster, index and remote-cluster privilege names the cluster recognizes (GET /_security/privilege/_builtin)',
+	},
+	'security.privileges.get': {
+		riskLevel: 'read',
+		description:
+			'Get application privileges by application and privilege name or wildcard (GET /_security/privilege/{application}/{name})',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof elasticsearchEndpointsNested
