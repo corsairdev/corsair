@@ -22,6 +22,19 @@ export type DocSchemaShape =
 
 export type EndpointRiskLevel = 'read' | 'write' | 'destructive';
 
+/** Mirrors `EndpointJob` in `corsair/core`: how to follow the job an operation starts. */
+export type DocsEndpointJob = {
+	idPath: string;
+	status: {
+		op: string;
+		idArg: string;
+		statusPath: string;
+		done: readonly string[];
+		failed: readonly string[];
+	};
+	cancel?: { op: string; idArg: string };
+};
+
 export type DocsApiEndpoint = {
 	path: string;
 	/** Dot path after `plugin.api.` (e.g. `messages.post`). */
@@ -29,6 +42,8 @@ export type DocsApiEndpoint = {
 	description?: string;
 	riskLevel?: EndpointRiskLevel;
 	irreversible?: boolean;
+	/** Present only on operations that start a long job. */
+	job?: DocsEndpointJob;
 	input: DocSchemaShape;
 	output: DocSchemaShape;
 };

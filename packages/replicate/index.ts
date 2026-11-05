@@ -284,6 +284,33 @@ export const replicateEndpointSchemas = {
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
+// A prediction or training runs on Replicate after the call that starts it
+// returns; these say how to follow one to its end. Status values are the
+// output schema's (endpoints/types.ts); jobs.test.ts keeps the two in step.
+const PREDICTION_JOB = {
+	idPath: 'id',
+	status: {
+		op: 'predictions.get',
+		idArg: 'predictionId',
+		statusPath: 'status',
+		done: ['succeeded'],
+		failed: ['failed', 'canceled', 'aborted'],
+	},
+	cancel: { op: 'predictions.cancel', idArg: 'predictionId' },
+} as const;
+
+const TRAINING_JOB = {
+	idPath: 'id',
+	status: {
+		op: 'trainings.get',
+		idArg: 'trainingId',
+		statusPath: 'status',
+		done: ['succeeded'],
+		failed: ['failed', 'canceled', 'aborted'],
+	},
+	cancel: { op: 'trainings.cancel', idArg: 'trainingId' },
+} as const;
+
 const replicateEndpointMeta = {
 	'account.get': {
 		riskLevel: 'read',
@@ -316,6 +343,7 @@ const replicateEndpointMeta = {
 	'deployments.predictionsCreate': {
 		riskLevel: 'write',
 		description: 'Create a prediction from deployment',
+		job: PREDICTION_JOB,
 	},
 	'files.list': {
 		riskLevel: 'read',
@@ -356,6 +384,7 @@ const replicateEndpointMeta = {
 	'models.predictionsCreate': {
 		riskLevel: 'write',
 		description: 'Create official model prediction',
+		job: PREDICTION_JOB,
 	},
 	'models.readmeGet': {
 		riskLevel: 'read',
@@ -376,6 +405,7 @@ const replicateEndpointMeta = {
 	'predictions.create': {
 		riskLevel: 'write',
 		description: 'Create prediction by version',
+		job: PREDICTION_JOB,
 	},
 	'predictions.get': {
 		riskLevel: 'read',
@@ -392,6 +422,7 @@ const replicateEndpointMeta = {
 	'trainings.create': {
 		riskLevel: 'write',
 		description: 'Create training job',
+		job: TRAINING_JOB,
 	},
 	'trainings.get': {
 		riskLevel: 'read',

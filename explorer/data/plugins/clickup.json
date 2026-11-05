@@ -1,7 +1,7 @@
 {
   "id": "clickup",
-  "displayName": "Clickup",
-  "description": "Clickup plugin for Corsair",
+  "displayName": "ClickUp",
+  "description": "Work management platform. Manage workspaces, spaces, folders, lists, tasks, comments, goals, time entries, docs, chat, views, and custom fields.",
   "npmPackageName": "@corsair-dev/clickup",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

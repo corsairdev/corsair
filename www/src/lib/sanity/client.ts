@@ -23,7 +23,11 @@ export function getSanityClient(): SanityClient | null {
 			projectId,
 			dataset: sanityDataset,
 			apiVersion: sanityApiVersion,
-			useCdn: process.env.NODE_ENV === 'production',
+			// Next's data cache already holds these reads under the 'blog' tag, and
+			// the Sanity webhook revalidates that tag on publish. Sanity's API CDN can
+			// still serve the old result a few seconds after a publish, which would
+			// re-cache stale data until the next publish.
+			useCdn: false,
 		});
 	}
 
