@@ -384,30 +384,40 @@ export type AccessTokensListResponse = z.infer<
 
 export const GRAFBASE_ACCESS_TOKEN_KINDS = ['USER', 'ACCOUNT'] as const;
 
-const AccessTokensCreateInputSchema = z.object({
-	name: z.string().min(1).describe('A name to recognize the token by.'),
-	kind: z
-		.enum(GRAFBASE_ACCESS_TOKEN_KINDS)
-		.describe(
-			'USER acts as you. ACCOUNT acts as an organization and needs accountId.',
-		),
-	accountId: z
-		.string()
-		.optional()
-		.describe('The organization ID; required for ACCOUNT tokens.'),
-	expiresAt: z
-		.string()
-		.optional()
-		.describe(
-			'When the token expires, as ISO 8601 such as 2026-12-31T23:59:59Z. Omit for no expiry.',
-		),
-	graphScopes: z
-		.array(z.string())
-		.optional()
-		.describe(
-			'Organization graph IDs the token may use; omit to allow all of them.',
-		),
-});
+const AccessTokensCreateInputSchema = z
+	.object({
+		name: z.string().min(1).describe('A name to recognize the token by.'),
+		kind: z
+			.enum(GRAFBASE_ACCESS_TOKEN_KINDS)
+			.describe(
+				'USER acts as you. ACCOUNT acts as an organization and needs accountId.',
+			),
+		accountId: z
+			.string()
+			.optional()
+			.describe('The organization ID; required for ACCOUNT tokens.'),
+		expiresAt: z
+			.string()
+			.optional()
+			.describe(
+				'When the token expires, as ISO 8601 such as 2026-12-31T23:59:59Z. Omit for no expiry.',
+			),
+		graphScopes: z
+			.array(z.string())
+			.optional()
+			.describe(
+				'Organization graph IDs the token may use; omit to allow all of them.',
+			),
+	})
+	.refine(
+		(value) =>
+			value.kind !== 'ACCOUNT' ||
+			(value.accountId !== undefined && value.accountId.length > 0),
+		{
+			message: 'ACCOUNT tokens need accountId.',
+			path: ['accountId'],
+		},
+	);
 
 export type AccessTokensCreateInput = z.input<
 	typeof AccessTokensCreateInputSchema
