@@ -5,6 +5,14 @@ function statusOf(error: Error): number | undefined {
 	return error instanceof Mem0APIError ? error.status : undefined;
 }
 
+// The POSTs that only read. A retry cannot change what they return beyond
+// getting past a transient failure.
+const READ_OPERATIONS = new Set(['memories.search', 'memories.list']);
+
+function isReadOperation(operation: string | undefined): boolean {
+	return operation !== undefined && READ_OPERATIONS.has(operation);
+}
+
 // Status codes: the responses each endpoint in https://docs.mem0.ai/api-reference
 // declares, plus the mapping Mem0's own TypeScript SDK applies
 // (mem0ai/src/common/exceptions.ts).
@@ -52,12 +60,13 @@ export const errorHandlers = {
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// 5xx. Only reads are replayed: a failed add or delete may have gone
-	// through, and deleteAll is queued rather than applied inline.
+	// through, and deleteAll is queued rather than applied inline. search and
+	// list are POSTs that read, so they retry with the GET reads.
 	SERVER_ERROR: {
-		match: (error: Error) =>
+		match: (error: Error, context?: { operation?: string }) =>
 			error instanceof Mem0APIError &&
-			error.method === 'GET' &&
-			(error.status ?? 0) >= 500,
+			(error.status ?? 0) >= 500 &&
+			(error.method === 'GET' || isReadOperation(context?.operation)),
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,
