@@ -6,10 +6,12 @@ describe('Ticketmaster schema', () => {
 		expect(TicketmasterSchema.version).toMatch(/^\d+\.\d+\.\d+$/);
 	});
 
-	it('declares an entities map', () => {
+	it('declares an entities map, not an array', () => {
 		expect(typeof TicketmasterSchema.entities).toBe('object');
 		expect(TicketmasterSchema.entities).not.toBeNull();
-		expect(Array.isArray(Object.keys(TicketmasterSchema.entities))).toBe(true);
+		// `Object.keys()` is always an array, so asserting on it proved nothing:
+		// check the map itself, so an array cannot pass as the entity map.
+		expect(Array.isArray(TicketmasterSchema.entities)).toBe(false);
 		for (const entity of Object.values(TicketmasterSchema.entities)) {
 			expect(entity).toBeDefined();
 		}

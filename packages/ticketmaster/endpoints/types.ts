@@ -94,12 +94,18 @@ const LinkRefSchema = z
  * genres, and a genre holds sub-genres, each a `{ id, name }` node. Spelling the
  * two levels out keeps named types in the API docs and in IntelliSense, which a
  * recursive `z.lazy` schema does not: the docs renderer prints it as `lazy`.
+ *
+ * `href` and `templated` are here because a node in some responses carries them
+ * alongside `id` and `name`; `.loose()` would otherwise leave them typed as
+ * `unknown`.
  */
 export const ClassificationNodeSchema = z
 	.object({
 		id: z.string().nullish(),
 		name: z.string().nullish(),
 		locale: z.string().nullish(),
+		href: z.string().nullish(),
+		templated: z.boolean().nullish(),
 		_links: LinksSchema,
 	})
 	.loose();
