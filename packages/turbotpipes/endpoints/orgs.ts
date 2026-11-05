@@ -1,7 +1,8 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeTurbotPipesRequest, pathSegment, pickQuery } from '../client';
 import type { TurbotPipesEndpoints } from '../index';
-import { syncEntityDetail, syncListDiscovery } from './sync';
+import { eventIdentifiers } from './events';
+import { removeLocalEntity, syncEntityDetail, syncListDiscovery } from './sync';
 import type { TurbotPipesEndpointOutputs } from './types';
 
 export const getOrg: TurbotPipesEndpoints['getOrg'] = async (ctx, input) => {
@@ -9,11 +10,11 @@ export const getOrg: TurbotPipesEndpoints['getOrg'] = async (ctx, input) => {
 		TurbotPipesEndpointOutputs['getOrg']
 	>(`org/${pathSegment(input.org_handle)}`, ctx.key, { method: 'GET' });
 	// Awaited: a completed fetch guarantees its record is searchable locally.
-	await syncEntityDetail(ctx, ctx.db?.org, response.id, response);
+	await syncEntityDetail(ctx, 'org', response.id, response);
 	await logEventFromContext(
 		ctx,
 		'turbotpipes.orgs.get',
-		{ ...input },
+		eventIdentifiers(input),
 		'completed',
 	);
 	return response;
@@ -26,10 +27,16 @@ export const deleteOrg: TurbotPipesEndpoints['deleteOrg'] = async (
 	const response = await makeTurbotPipesRequest<
 		TurbotPipesEndpointOutputs['deleteOrg']
 	>(`org/${pathSegment(input.org_handle)}`, ctx.key, { method: 'DELETE' });
+	// Drop the local copy getOrg stored. Org handles are unique, so the handle
+	// also finds it when a 204 delete returns no id.
+	await removeLocalEntity(ctx, 'org', {
+		id: response.id,
+		handle: input.org_handle,
+	});
 	await logEventFromContext(
 		ctx,
 		'turbotpipes.orgs.delete',
-		{ ...input },
+		eventIdentifiers(input),
 		'completed',
 	);
 	return response;
@@ -45,11 +52,11 @@ export const listOrgWorkspaces: TurbotPipesEndpoints['listOrgWorkspaces'] =
 		});
 		// Background insert-only discovery: populates search without
 		// erasing stored details and without delaying the response.
-		syncListDiscovery(ctx, ctx.db?.workspace, response?.items);
+		syncListDiscovery(ctx, 'workspace', response?.items);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.orgs.list_workspaces',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -66,10 +73,13 @@ export const deleteOrgWorkspace: TurbotPipesEndpoints['deleteOrgWorkspace'] =
 				method: 'DELETE',
 			},
 		);
+		// Workspace handles repeat across orgs and users, so only the id from
+		// the delete response identifies the local copy.
+		await removeLocalEntity(ctx, 'workspace', { id: response.id });
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.orgs.delete_workspace',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -91,7 +101,7 @@ export const runOrgWorkspaceCommand: TurbotPipesEndpoints['runOrgWorkspaceComman
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.orgs.run_workspace_command',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -107,11 +117,11 @@ export const listOrgProcesses: TurbotPipesEndpoints['listOrgProcesses'] =
 		});
 		// Background insert-only discovery: populates search without
 		// erasing stored details and without delaying the response.
-		syncListDiscovery(ctx, ctx.db?.process, response?.items);
+		syncListDiscovery(ctx, 'process', response?.items);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.orgs.list_processes',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -128,7 +138,7 @@ export const listOrgServiceAccounts: TurbotPipesEndpoints['listOrgServiceAccount
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.orgs.list_service_accounts',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -150,7 +160,7 @@ export const updateOrgServiceAccount: TurbotPipesEndpoints['updateOrgServiceAcco
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.orgs.update_service_account',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -176,7 +186,7 @@ export const updateOrgServiceAccountToken: TurbotPipesEndpoints['updateOrgServic
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.orgs.update_service_account_token',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -198,7 +208,7 @@ export const getOrgMember: TurbotPipesEndpoints['getOrgMember'] = async (
 	await logEventFromContext(
 		ctx,
 		'turbotpipes.orgs.get_member',
-		{ ...input },
+		eventIdentifiers(input),
 		'completed',
 	);
 	return response;
@@ -220,7 +230,7 @@ export const updateOrgMemberRole: TurbotPipesEndpoints['updateOrgMemberRole'] =
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.orgs.update_member_role',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -239,7 +249,7 @@ export const listOrgUsage: TurbotPipesEndpoints['listOrgUsage'] = async (
 	await logEventFromContext(
 		ctx,
 		'turbotpipes.orgs.list_usage',
-		{ ...input },
+		eventIdentifiers(input),
 		'completed',
 	);
 	return response;

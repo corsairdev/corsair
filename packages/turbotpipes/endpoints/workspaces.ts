@@ -1,8 +1,35 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeTurbotPipesRequest, pathSegment, pickQuery } from '../client';
+import {
+	makeTurbotPipesRequest,
+	makeTurbotPipesTextRequest,
+	pathSegment,
+	pickQuery,
+} from '../client';
 import type { TurbotPipesEndpoints } from '../index';
+import { eventIdentifiers } from './events';
 import { syncEntityDetail, syncListDiscovery } from './sync';
 import type { TurbotPipesEndpointOutputs } from './types';
+
+// unknown: a parsed log line is any JSON value until this checks it.
+function isJsonObject(value: unknown): value is Record<string, unknown> {
+	return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+// unknown: log lines are provider-defined objects without a fixed shape.
+function parseJsonLines(text: string): Record<string, unknown>[] {
+	const entries: Record<string, unknown>[] = [];
+	for (const line of text.split('\n')) {
+		const trimmed = line.trim();
+		if (!trimmed) continue;
+		try {
+			const parsed: unknown = JSON.parse(trimmed);
+			entries.push(isJsonObject(parsed) ? parsed : { raw: trimmed });
+		} catch {
+			entries.push({ raw: trimmed });
+		}
+	}
+	return entries;
+}
 
 export const createUserWorkspaceConnection: TurbotPipesEndpoints['createUserWorkspaceConnection'] =
 	async (ctx, input) => {
@@ -21,7 +48,7 @@ export const createUserWorkspaceConnection: TurbotPipesEndpoints['createUserWork
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.workspaces.create_user_connection',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -39,7 +66,7 @@ export const getUserWorkspaceConnection: TurbotPipesEndpoints['getUserWorkspaceC
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.workspaces.get_user_connection',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -56,11 +83,11 @@ export const listUserWorkspaceConnections: TurbotPipesEndpoints['listUserWorkspa
 		);
 		// Background insert-only discovery: populates search without
 		// erasing stored details and without delaying the response.
-		syncListDiscovery(ctx, ctx.db?.connection, response?.items);
+		syncListDiscovery(ctx, 'connection', response?.items);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.workspaces.list_user_connections',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -78,7 +105,7 @@ export const listUserWorkspaceConnectionAssociations: TurbotPipesEndpoints['list
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.workspaces.list_user_connection_associations',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -99,7 +126,7 @@ export const listUserWorkspaceConnectionTree: TurbotPipesEndpoints['listUserWork
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.workspaces.list_user_connection_tree',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -120,7 +147,7 @@ export const testUserWorkspaceConnection: TurbotPipesEndpoints['testUserWorkspac
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.workspaces.test_user_connection',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -139,7 +166,7 @@ export const createUserWorkspaceConnectionFolder: TurbotPipesEndpoints['createUs
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.workspaces.create_user_connection_folder',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -157,7 +184,7 @@ export const getUserWorkspaceConnectionFolder: TurbotPipesEndpoints['getUserWork
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.workspaces.get_user_connection_folder',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -175,7 +202,7 @@ export const listUserWorkspaceConnectionFolders: TurbotPipesEndpoints['listUserW
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.workspaces.list_user_connection_folders',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -198,7 +225,7 @@ export const createOrgWorkspaceConnection: TurbotPipesEndpoints['createOrgWorksp
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.workspaces.create_org_connection',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -216,7 +243,7 @@ export const getOrgWorkspaceConnection: TurbotPipesEndpoints['getOrgWorkspaceCon
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.workspaces.get_org_connection',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -235,7 +262,7 @@ export const createOrgWorkspaceConnectionFolder: TurbotPipesEndpoints['createOrg
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.workspaces.create_org_connection_folder',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -253,7 +280,7 @@ export const getOrgWorkspaceConnectionFolder: TurbotPipesEndpoints['getOrgWorksp
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.workspaces.get_org_connection_folder',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -282,7 +309,7 @@ export const createOrgWorkspaceAggregator: TurbotPipesEndpoints['createOrgWorksp
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.workspaces.create_org_aggregator',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -300,7 +327,7 @@ export const getUserWorkspaceAggregator: TurbotPipesEndpoints['getUserWorkspaceA
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.workspaces.get_user_aggregator',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -318,7 +345,7 @@ export const listUserWorkspaceAggregators: TurbotPipesEndpoints['listUserWorkspa
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.workspaces.list_user_aggregators',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -336,7 +363,7 @@ export const listUserWorkspaceAggregatorConnections: TurbotPipesEndpoints['listU
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.workspaces.list_user_aggregator_connections',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -354,7 +381,7 @@ export const listUserWorkspaceAuditLogs: TurbotPipesEndpoints['listUserWorkspace
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.workspaces.list_user_audit_logs',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -372,7 +399,7 @@ export const listUserWorkspaceDatabaseLogs: TurbotPipesEndpoints['listUserWorksp
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.workspaces.list_user_database_logs',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -392,11 +419,11 @@ export const listUserWorkspaceProcesses: TurbotPipesEndpoints['listUserWorkspace
 		);
 		// Background insert-only discovery: populates search without
 		// erasing stored details and without delaying the response.
-		syncListDiscovery(ctx, ctx.db?.process, response?.items);
+		syncListDiscovery(ctx, 'process', response?.items);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.workspaces.list_user_processes',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -412,11 +439,11 @@ export const getUserWorkspaceProcess: TurbotPipesEndpoints['getUserWorkspaceProc
 			{ method: 'GET' },
 		);
 		// Awaited: a completed fetch guarantees its record is searchable locally.
-		await syncEntityDetail(ctx, ctx.db?.process, response.id, response);
+		await syncEntityDetail(ctx, 'process', response.id, response);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.workspaces.get_user_process',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -424,18 +451,22 @@ export const getUserWorkspaceProcess: TurbotPipesEndpoints['getUserWorkspaceProc
 
 export const getUserWorkspaceProcessLog: TurbotPipesEndpoints['getUserWorkspaceProcessLog'] =
 	async (ctx, input) => {
-		const contentType = input.content_type ?? 'json';
-		const response = await makeTurbotPipesRequest<
-			TurbotPipesEndpointOutputs['getUserWorkspaceProcessLog']
-		>(
-			`user/${pathSegment(input.user_handle)}/workspace/${pathSegment(input.workspace_handle)}/process/${pathSegment(input.process_id)}/log/${pathSegment(input.log_file)}.${pathSegment(contentType)}`,
+		const logFile = input.log_file ?? 'process';
+		const contentType = input.content_type ?? 'jsonl';
+		// The log is JSON lines (application/jsonlines+json): one JSON object per
+		// line, read as text and parsed line by line.
+		const text = await makeTurbotPipesTextRequest(
+			`user/${pathSegment(input.user_handle)}/workspace/${pathSegment(input.workspace_handle)}/process/${pathSegment(input.process_id)}/log/${pathSegment(logFile)}.${pathSegment(contentType)}`,
 			ctx.key,
-			{ method: 'GET' },
+			'application/jsonlines+json',
 		);
+		const response: TurbotPipesEndpointOutputs['getUserWorkspaceProcessLog'] = {
+			entries: parseJsonLines(text),
+		};
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.workspaces.get_user_process_log',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -455,11 +486,11 @@ export const listOrgWorkspaceProcesses: TurbotPipesEndpoints['listOrgWorkspacePr
 		);
 		// Background insert-only discovery: populates search without
 		// erasing stored details and without delaying the response.
-		syncListDiscovery(ctx, ctx.db?.process, response?.items);
+		syncListDiscovery(ctx, 'process', response?.items);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.workspaces.list_org_processes',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -480,7 +511,7 @@ export const listUserWorkspaceUsage: TurbotPipesEndpoints['listUserWorkspaceUsag
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.workspaces.list_user_usage',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;

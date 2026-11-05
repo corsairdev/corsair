@@ -14,21 +14,38 @@
 //   are serialized and a list write re-reads first), and steady-state lists
 //   perform one bulk read with zero writes.
 
+import type { TurbotPipesSchema } from '../schema';
+
+// unknown: entity clients are typed per entity; sync only reads results back
+// as plain records (narrowed with isRecord), so their row types are not needed.
 type EntityTable = {
 	upsertByEntityId(id: string, record: never): Promise<unknown>;
 	findManyByEntityIds(ids: string[]): Promise<unknown[]>;
 	findByEntityId(id: string): Promise<unknown>;
+	deleteByEntityId(id: string): Promise<boolean>;
+	// never: each entity types its own search filter; callers pass a handle filter.
+	search(options: never): Promise<unknown[]>;
+	list(): Promise<unknown[]>;
 };
 
-// Only `database` is read: without one, the entity accessor exists but every
-// write throws `Database not configured`, so sync is skipped instead of
-// warning on each call.
-type SyncContext = { database?: unknown };
+export type SyncedEntity = keyof typeof TurbotPipesSchema.entities;
 
+type SyncContext = {
+	// unknown: only presence matters. Without a database the entity accessor
+	// exists but every write throws `Database not configured`, so sync is
+	// skipped instead of warning on each call.
+	database?: unknown;
+	db?: { readonly [K in SyncedEntity]?: EntityTable };
+	$getAccountId: () => Promise<string>;
+};
+
+// unknown: rows and items are provider records of any shape; this guard is
+// what narrows them before any field is read.
 function isRecord(value: unknown): value is Record<string, unknown> {
 	return typeof value === 'object' && value !== null;
 }
 
+// unknown: a stored row is read back untyped and narrowed here.
 function storedData(row: unknown): Record<string, unknown> | undefined {
 	if (!isRecord(row)) {
 		return undefined;
@@ -40,31 +57,57 @@ function storedData(row: unknown): Record<string, unknown> | undefined {
 // Writes for one record run one after another. A list write re-reads the row
 // inside its turn, so a detail GET that lands between the list's bulk read and
 // its write is merged into, not overwritten by the sparse list item.
-const writeChains = new WeakMap<EntityTable, Map<string, Promise<void>>>();
+//
+// Chains are keyed by account, entity type and entity id, not by the entity
+// client: each withTenant(...) call builds new clients, and two clients for
+// the same account must still share one chain.
+const writeChains = new Map<string, Promise<void>>();
 
-function enqueueWrite(
-	table: EntityTable,
-	id: string,
-	work: () => Promise<void>,
-): Promise<void> {
-	let chains = writeChains.get(table);
-	if (!chains) {
-		chains = new Map();
-		writeChains.set(table, chains);
-	}
-	const previous = chains.get(id) ?? Promise.resolve();
+function enqueueWrite(key: string, work: () => Promise<void>): Promise<void> {
+	const previous = writeChains.get(key) ?? Promise.resolve();
 	const run = previous.then(work, work);
 	const settled = run.finally(() => {
-		if (chains.get(id) === settled) {
-			chains.delete(id);
+		if (writeChains.get(key) === settled) {
+			writeChains.delete(key);
 		}
 	});
-	chains.set(id, settled);
+	writeChains.set(key, settled);
 	return run;
+}
+
+/** Number of records with a write still queued (for tests). */
+export function pendingWriteChains(): number {
+	return writeChains.size;
+}
+
+type SyncTarget = {
+	table: EntityTable;
+	keyFor: (id: string) => string;
+};
+
+// Resolves the entity table and the account the write belongs to. Returns
+// undefined (sync skipped) without a database, table or account.
+async function syncTarget(
+	ctx: SyncContext,
+	entity: SyncedEntity,
+): Promise<SyncTarget | undefined> {
+	const table = ctx.db?.[entity];
+	if (!ctx.database || !table) {
+		return undefined;
+	}
+	let accountId: string;
+	try {
+		accountId = await ctx.$getAccountId();
+	} catch (error) {
+		console.warn('Skipped entity sync: no account for this tenant:', error);
+		return undefined;
+	}
+	return { table, keyFor: (id) => `${accountId}\u0000${entity}\u0000${id}` };
 }
 
 // Stored data wins every conflict: list fields only fill gaps that stored
 // details do not already cover. Returns undefined when nothing would change.
+// unknown: both sides are provider records of any shape, merged key by key.
 function fillGaps(
 	stored: Record<string, unknown> | undefined,
 	item: Record<string, unknown>,
@@ -87,16 +130,17 @@ function fillGaps(
 // each entity table validates its own columns on write.
 export async function syncEntityDetail(
 	ctx: SyncContext,
-	table: EntityTable | null | undefined,
+	entity: SyncedEntity,
 	id: string,
 	record: unknown,
 ): Promise<void> {
-	if (!ctx.database || !table) {
+	const target = await syncTarget(ctx, entity);
+	if (!target) {
 		return;
 	}
-	await enqueueWrite(table, id, async () => {
+	await enqueueWrite(target.keyFor(id), async () => {
 		try {
-			await table.upsertByEntityId(id, record as never);
+			await target.table.upsertByEntityId(id, record as never);
 		} catch (error) {
 			console.warn('Failed to sync entity to database:', error);
 		}
@@ -107,10 +151,10 @@ export async function syncEntityDetail(
 // for discovery, and records pass through as never for table-validated writes.
 export function syncListDiscovery(
 	ctx: SyncContext,
-	table: EntityTable | null | undefined,
+	entity: SyncedEntity,
 	items: unknown,
 ): void {
-	if (!ctx.database || !table || !Array.isArray(items)) {
+	if (!ctx.database || !ctx.db?.[entity] || !Array.isArray(items)) {
 		return;
 	}
 	const sparse: Record<string, unknown>[] = [];
@@ -124,6 +168,11 @@ export function syncListDiscovery(
 	}
 	void (async () => {
 		try {
+			const target = await syncTarget(ctx, entity);
+			if (!target) {
+				return;
+			}
+			const { table, keyFor } = target;
 			// One bulk read for the whole page picks the items that need a
 			// write, so repeated lists cost one read and no writes.
 			const existing = await table.findManyByEntityIds(
@@ -143,7 +192,7 @@ export function syncListDiscovery(
 				// Each item is guarded on its own: one invalid item (for
 				// example an id without the required handle) must not stop
 				// the remaining valid items on the page from syncing.
-				await enqueueWrite(table, id, async () => {
+				await enqueueWrite(keyFor(id), async () => {
 					try {
 						// Re-read in this record's turn: the bulk read may be
 						// older than a detail write that finished since.
@@ -163,4 +212,62 @@ export function syncListDiscovery(
 			console.warn('Failed to sync list items to database:', error);
 		}
 	})();
+}
+
+/**
+ * Removes the local copy of a record Pipes just deleted. Matches by id (from
+ * the delete response) and, when given, by handle, since a 204 delete returns
+ * no id. Runs in the record's write chain, so a queued list write cannot
+ * re-insert it afterwards. Never fails the delete that already succeeded.
+ */
+export async function removeLocalEntity(
+	ctx: SyncContext,
+	entity: SyncedEntity,
+	match: { id?: unknown; handle?: string },
+): Promise<void> {
+	const target = await syncTarget(ctx, entity);
+	if (!target) {
+		return;
+	}
+	const { table, keyFor } = target;
+	try {
+		const ids = new Set<string>();
+		if (typeof match.id === 'string' && match.id) {
+			ids.add(match.id);
+		}
+		if (match.handle) {
+			const handle = match.handle;
+			// unknown: rows come back untyped and are narrowed with isRecord below.
+			let rows: unknown[] = [];
+			try {
+				// as never: a handle filter is valid for the entities this is used
+				// on (org, workspace), whose schemas declare handle.
+				rows = await table.search({ data: { handle } } as never);
+			} catch {
+				// Sealed rows (encryptDataAtRest) cannot be searched by field.
+			}
+			if (rows.length === 0) {
+				// Read the rows back (decrypted) and match the handle instead.
+				rows = (await table.list()).filter(
+					(row) => storedData(row)?.handle === handle,
+				);
+			}
+			for (const row of rows) {
+				if (isRecord(row) && typeof row.entity_id === 'string') {
+					ids.add(row.entity_id);
+				}
+			}
+		}
+		for (const id of ids) {
+			await enqueueWrite(keyFor(id), async () => {
+				try {
+					await table.deleteByEntityId(id);
+				} catch (error) {
+					console.warn('Failed to remove deleted entity locally:', error);
+				}
+			});
+		}
+	} catch (error) {
+		console.warn('Failed to remove deleted entity locally:', error);
+	}
 }

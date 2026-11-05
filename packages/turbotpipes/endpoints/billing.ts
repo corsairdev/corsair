@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeTurbotPipesRequest, pathSegment, pickQuery } from '../client';
 import type { TurbotPipesEndpoints } from '../index';
+import { eventIdentifiers } from './events';
 import type { TurbotPipesEndpointOutputs } from './types';
 
 export const deleteOrgBillingSubscription: TurbotPipesEndpoints['deleteOrgBillingSubscription'] =
@@ -15,7 +16,7 @@ export const deleteOrgBillingSubscription: TurbotPipesEndpoints['deleteOrgBillin
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.billing.delete_org_subscription',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -37,7 +38,7 @@ export const updateOrgBillingSubscription: TurbotPipesEndpoints['updateOrgBillin
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.billing.update_org_subscription',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -57,7 +58,7 @@ export const getOrgBillingInvoice: TurbotPipesEndpoints['getOrgBillingInvoice'] 
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.billing.get_org_invoice',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -73,7 +74,7 @@ export const getUserBillingPlan: TurbotPipesEndpoints['getUserBillingPlan'] =
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.billing.get_user_plan',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -84,6 +85,10 @@ export const getUserBillingUpcomingInvoice: TurbotPipesEndpoints['getUserBilling
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['getUserBillingUpcomingInvoice']
 		>(
+			// The OpenAPI document lists billing/stripe/invoice/upcoming, but the
+			// live API answers that path with "API Not Found" (v0 and v1, checked
+			// 2026-11-05). This path is the one it serves; it returns null when
+			// there is no upcoming invoice.
 			`user/${pathSegment(input.user_handle)}/billing/invoice/upcoming`,
 			ctx.key,
 			{
@@ -93,7 +98,7 @@ export const getUserBillingUpcomingInvoice: TurbotPipesEndpoints['getUserBilling
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.billing.get_user_upcoming_invoice',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -110,7 +115,7 @@ export const listUserBillingInvoices: TurbotPipesEndpoints['listUserBillingInvoi
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.billing.list_user_invoices',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -130,7 +135,7 @@ export const listUserBillingPaymentMethods: TurbotPipesEndpoints['listUserBillin
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.billing.list_user_payment_methods',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -146,7 +151,7 @@ export const listUserBillingSubscriptions: TurbotPipesEndpoints['listUserBilling
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.billing.list_user_subscriptions',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;

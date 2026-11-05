@@ -186,3 +186,87 @@ describe('list pagination through createCorsair', () => {
 		expect(pipes.sent).toHaveLength(0);
 	});
 });
+
+describe('process logs', () => {
+	it('reads the documented process.jsonl path and parses each line', async () => {
+		const fetchSpy = jest
+			.spyOn(globalThis, 'fetch')
+			.mockResolvedValueOnce(
+				new Response(
+					'{"level":"info","msg":"start"}\n\n{"level":"error","msg":"boom"}\nnot json\n',
+					{ headers: { 'Content-Type': 'application/jsonlines+json' } },
+				),
+			);
+		const log = await api().workspaces.getUserWorkspaceProcessLog({
+			user_handle: 'bob',
+			workspace_handle: 'dev',
+			process_id: 'p_1',
+		});
+		expect(String(fetchSpy.mock.calls[0]?.[0])).toBe(
+			'https://pipes.turbot.com/api/v1/user/bob/workspace/dev/process/p_1/log/process.jsonl',
+		);
+		expect(log.entries).toEqual([
+			{ level: 'info', msg: 'start' },
+			{ level: 'error', msg: 'boom' },
+			{ raw: 'not json' },
+		]);
+		fetchSpy.mockRestore();
+	});
+
+	it('an empty log (204) has no entries', async () => {
+		const fetchSpy = jest
+			.spyOn(globalThis, 'fetch')
+			.mockResolvedValueOnce(new Response(null, { status: 204 }));
+		await expect(
+			api().workspaces.getUserWorkspaceProcessLog({
+				user_handle: 'bob',
+				workspace_handle: 'dev',
+				process_id: 'p_1',
+			}),
+		).resolves.toEqual({ entries: [] });
+		fetchSpy.mockRestore();
+	});
+
+	it('rejects log files and content types Pipes does not document', async () => {
+		await expect(
+			api().workspaces.getUserWorkspaceProcessLog({
+				user_handle: 'bob',
+				workspace_handle: 'dev',
+				process_id: 'p_1',
+				// as is necessary: the call deliberately breaks the typed input.
+				log_file: 'error' as 'process',
+			}),
+		).rejects.toThrow(/log_file/);
+		await expect(
+			api().workspaces.getUserWorkspaceProcessLog({
+				user_handle: 'bob',
+				workspace_handle: 'dev',
+				process_id: 'p_1',
+				// as is necessary: the call deliberately breaks the typed input.
+				content_type: 'json' as 'jsonl',
+			}),
+		).rejects.toThrow(/content_type/);
+		expect(pipes.sent).toHaveLength(0);
+	});
+});
+
+describe('routes checked against the live API', () => {
+	it('the upcoming invoice uses billing/invoice/upcoming', async () => {
+		pipes.answers['GET /api/v1/user/bob/billing/invoice/upcoming'] = {
+			body: { id: 'in_1' },
+		};
+		await api().billing.getUserBillingUpcomingInvoice({ user_handle: 'bob' });
+		expect(pipes.sent[0]?.path).toBe('user/bob/billing/invoice/upcoming');
+	});
+
+	it('flowpipe triggers list at flowpipe/trigger', async () => {
+		pipes.answers['GET /api/v1/user/bob/workspace/dev/flowpipe/trigger'] = {
+			body: { items: [] },
+		};
+		await api().pipelines.listUserWorkspaceFlowpipeTriggers({
+			user_handle: 'bob',
+			workspace_handle: 'dev',
+		});
+		expect(pipes.sent[0]?.path).toBe('user/bob/workspace/dev/flowpipe/trigger');
+	});
+});

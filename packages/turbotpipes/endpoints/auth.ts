@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeTurbotPipesRequest, pathSegment } from '../client';
 import type { TurbotPipesEndpoints } from '../index';
+import { eventIdentifiers } from './events';
 import type { TurbotPipesEndpointOutputs } from './types';
 
 export const createUserPassword: TurbotPipesEndpoints['createUserPassword'] =
@@ -34,7 +35,7 @@ export const getUserPassword: TurbotPipesEndpoints['getUserPassword'] = async (
 	await logEventFromContext(
 		ctx,
 		'turbotpipes.auth.get_user_password',
-		{ ...input },
+		eventIdentifiers(input),
 		'completed',
 	);
 	return response;
@@ -56,7 +57,7 @@ export const getUserToken: TurbotPipesEndpoints['getUserToken'] = async (
 	await logEventFromContext(
 		ctx,
 		'turbotpipes.auth.get_user_token',
-		{ ...input },
+		eventIdentifiers(input),
 		'completed',
 	);
 	return response;
@@ -78,7 +79,7 @@ export const deleteUserToken: TurbotPipesEndpoints['deleteUserToken'] = async (
 	await logEventFromContext(
 		ctx,
 		'turbotpipes.auth.delete_user_token',
-		{ ...input },
+		eventIdentifiers(input),
 		'completed',
 	);
 	return response;
@@ -102,7 +103,7 @@ export const updateUserToken: TurbotPipesEndpoints['updateUserToken'] = async (
 	await logEventFromContext(
 		ctx,
 		'turbotpipes.auth.update_user_token',
-		{ ...input },
+		eventIdentifiers(input),
 		'completed',
 	);
 	return response;
@@ -167,7 +168,7 @@ export const getAuthProvider: TurbotPipesEndpoints['getAuthProvider'] = async (
 	await logEventFromContext(
 		ctx,
 		'turbotpipes.auth.get_auth_provider',
-		{ ...input },
+		eventIdentifiers(input),
 		'completed',
 	);
 	return response;

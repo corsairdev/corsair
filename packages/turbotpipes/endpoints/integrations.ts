@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeTurbotPipesRequest, pathSegment, pickQuery } from '../client';
 import type { TurbotPipesEndpoints } from '../index';
+import { eventIdentifiers } from './events';
 import type { TurbotPipesEndpointOutputs } from './types';
 
 export const createUserIntegration: TurbotPipesEndpoints['createUserIntegration'] =
@@ -15,7 +16,7 @@ export const createUserIntegration: TurbotPipesEndpoints['createUserIntegration'
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.integrations.create_user',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -33,7 +34,7 @@ export const deleteUserIntegration: TurbotPipesEndpoints['deleteUserIntegration'
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.integrations.delete_user',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -51,7 +52,7 @@ export const getUserIntegration: TurbotPipesEndpoints['getUserIntegration'] =
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.integrations.get_user',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -68,7 +69,7 @@ export const listUserIntegrations: TurbotPipesEndpoints['listUserIntegrations'] 
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.integrations.list_user',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -90,7 +91,7 @@ export const updateUserIntegration: TurbotPipesEndpoints['updateUserIntegration'
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.integrations.update_user',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -110,7 +111,7 @@ export const testUserIntegration: TurbotPipesEndpoints['testUserIntegration'] =
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.integrations.test_user',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -128,7 +129,7 @@ export const getOrgWorkspaceIntegration: TurbotPipesEndpoints['getOrgWorkspaceIn
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.integrations.get_org_workspace',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -146,7 +147,7 @@ export const getOrgIntegration: TurbotPipesEndpoints['getOrgIntegration'] =
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.integrations.get_org',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -164,7 +165,7 @@ export const getUserWorkspaceIntegration: TurbotPipesEndpoints['getUserWorkspace
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.integrations.get_user_workspace',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -182,7 +183,7 @@ export const listUserWorkspaceIntegrations: TurbotPipesEndpoints['listUserWorksp
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.integrations.list_user_workspace',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -200,7 +201,7 @@ export const installUserSlackIntegration: TurbotPipesEndpoints['installUserSlack
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.integrations.install_user_slack',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;

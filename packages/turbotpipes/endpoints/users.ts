@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeTurbotPipesRequest, pathSegment, pickQuery } from '../client';
 import type { TurbotPipesEndpoints } from '../index';
+import { eventIdentifiers } from './events';
 import { syncEntityDetail, syncListDiscovery } from './sync';
 import type { TurbotPipesEndpointOutputs } from './types';
 
@@ -9,11 +10,11 @@ export const getUser: TurbotPipesEndpoints['getUser'] = async (ctx, input) => {
 		TurbotPipesEndpointOutputs['getUser']
 	>(`user/${pathSegment(input.user_handle)}`, ctx.key, { method: 'GET' });
 	// Awaited: a completed fetch guarantees its record is searchable locally.
-	await syncEntityDetail(ctx, ctx.db?.user, response.id, response);
+	await syncEntityDetail(ctx, 'user', response.id, response);
 	await logEventFromContext(
 		ctx,
 		'turbotpipes.users.get',
-		{ ...input },
+		eventIdentifiers(input),
 		'completed',
 	);
 	return response;
@@ -30,7 +31,7 @@ export const updateUser: TurbotPipesEndpoints['updateUser'] = async (
 	await logEventFromContext(
 		ctx,
 		'turbotpipes.users.update',
-		{ ...input },
+		eventIdentifiers(input),
 		'completed',
 	);
 	return response;
@@ -46,11 +47,11 @@ export const listUserWorkspaces: TurbotPipesEndpoints['listUserWorkspaces'] =
 		});
 		// Background insert-only discovery: populates search without
 		// erasing stored details and without delaying the response.
-		syncListDiscovery(ctx, ctx.db?.workspace, response?.items);
+		syncListDiscovery(ctx, 'workspace', response?.items);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.users.list_workspaces',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -66,11 +67,11 @@ export const getUserWorkspace: TurbotPipesEndpoints['getUserWorkspace'] =
 			{ method: 'GET' },
 		);
 		// Awaited: a completed fetch guarantees its record is searchable locally.
-		await syncEntityDetail(ctx, ctx.db?.workspace, response.id, response);
+		await syncEntityDetail(ctx, 'workspace', response.id, response);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.users.get_workspace',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -92,7 +93,7 @@ export const updateUserWorkspace: TurbotPipesEndpoints['updateUserWorkspace'] =
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.users.update_workspace',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -114,7 +115,7 @@ export const runUserWorkspaceCommand: TurbotPipesEndpoints['runUserWorkspaceComm
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.users.run_workspace_command',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -130,11 +131,11 @@ export const listUserProcesses: TurbotPipesEndpoints['listUserProcesses'] =
 		});
 		// Background insert-only discovery: populates search without
 		// erasing stored details and without delaying the response.
-		syncListDiscovery(ctx, ctx.db?.process, response?.items);
+		syncListDiscovery(ctx, 'process', response?.items);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.users.list_processes',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -154,11 +155,11 @@ export const getUserProcess: TurbotPipesEndpoints['getUserProcess'] = async (
 		},
 	);
 	// Awaited: a completed fetch guarantees its record is searchable locally.
-	await syncEntityDetail(ctx, ctx.db?.process, response.id, response);
+	await syncEntityDetail(ctx, 'process', response.id, response);
 	await logEventFromContext(
 		ctx,
 		'turbotpipes.users.get_process',
-		{ ...input },
+		eventIdentifiers(input),
 		'completed',
 	);
 	return response;
@@ -177,7 +178,7 @@ export const listUserUsage: TurbotPipesEndpoints['listUserUsage'] = async (
 	await logEventFromContext(
 		ctx,
 		'turbotpipes.users.list_usage',
-		{ ...input },
+		eventIdentifiers(input),
 		'completed',
 	);
 	return response;
@@ -194,7 +195,7 @@ export const listUserConstraints: TurbotPipesEndpoints['listUserConstraints'] =
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.users.list_constraints',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -211,7 +212,7 @@ export const listUserAuditLogs: TurbotPipesEndpoints['listUserAuditLogs'] =
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.users.list_audit_logs',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -233,7 +234,7 @@ export const getUserEmail: TurbotPipesEndpoints['getUserEmail'] = async (
 	await logEventFromContext(
 		ctx,
 		'turbotpipes.users.get_email',
-		{ ...input },
+		eventIdentifiers(input),
 		'completed',
 	);
 	return response;
@@ -252,7 +253,7 @@ export const listUserEmails: TurbotPipesEndpoints['listUserEmails'] = async (
 	await logEventFromContext(
 		ctx,
 		'turbotpipes.users.list_emails',
-		{ ...input },
+		eventIdentifiers(input),
 		'completed',
 	);
 	return response;
@@ -268,7 +269,7 @@ export const getUserPreferences: TurbotPipesEndpoints['getUserPreferences'] =
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.users.get_preferences',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -286,7 +287,7 @@ export const updateUserPreferences: TurbotPipesEndpoints['updateUserPreferences'
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.users.update_preferences',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -302,7 +303,7 @@ export const deleteUserAvatar: TurbotPipesEndpoints['deleteUserAvatar'] =
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.users.delete_avatar',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;

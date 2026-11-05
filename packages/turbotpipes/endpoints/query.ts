@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeTurbotPipesRequest, pathSegment, pickQuery } from '../client';
 import type { TurbotPipesEndpoints } from '../index';
+import { eventIdentifiers } from './events';
 import type { TurbotPipesEndpointOutputs } from './types';
 
 // Query events log only the user or org and workspace handles. SQL text can
@@ -67,7 +68,7 @@ export const createOrgWorkspaceSnapshot: TurbotPipesEndpoints['createOrgWorkspac
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.query.create_org_snapshot',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -176,7 +177,7 @@ export const listUserWorkspaceSnapshots: TurbotPipesEndpoints['listUserWorkspace
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.query.list_user_snapshots',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;

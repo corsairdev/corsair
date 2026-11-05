@@ -17,6 +17,7 @@ import {
 	UsersEndpoints,
 	WorkspacesEndpoints,
 } from '../endpoints';
+import { pendingWriteChains } from '../endpoints/sync';
 import { TurbotPipesEndpointInputSchemas } from '../endpoints/types';
 import { turbotpipesEndpointSchemas } from '../index';
 
@@ -99,10 +100,14 @@ describe('TurbotPipes endpoint coverage', () => {
 	beforeEach(() => {
 		jest.clearAllMocks();
 		mockRequest.mockResolvedValue({ id: 'test-id', items: [] });
-		jest.spyOn(globalThis, 'fetch').mockResolvedValue({
-			status: 307,
-			headers: { get: () => 'https://pipes.turbot.com/images/test.png' },
-		} as unknown as Response);
+		jest.spyOn(globalThis, 'fetch').mockImplementation(async (url) =>
+			String(url).includes('/log/')
+				? new Response('{"level":"info"}\n')
+				: ({
+						status: 307,
+						headers: { get: () => 'https://pipes.turbot.com/images/test.png' },
+					} as unknown as Response),
+		);
 	});
 
 	afterEach(() => {
@@ -130,8 +135,7 @@ describe('TurbotPipes endpoint coverage', () => {
 	);
 
 	describe('local sync semantics', () => {
-		const memoryStore = () => {
-			const rows = new Map<string, Record<string, unknown>>();
+		const memoryStore = (rows = new Map<string, Record<string, unknown>>()) => {
 			const table = {
 				// Mimics table validation: records without the required
 				// handle are rejected, like a real entity table would.
@@ -253,6 +257,85 @@ describe('TurbotPipes endpoint coverage', () => {
 				title: 'Detailed Title',
 				state: 'running',
 			});
+		});
+
+		it('separately built tenant clients for one account share a write chain', async () => {
+			// Two entity clients over the same rows, as two withTenant(...)
+			// calls for the same account would build.
+			const rows = new Map<string, Record<string, unknown>>();
+			const { table: detailTable } = memoryStore(rows);
+			const { table: listTable } = memoryStore(rows);
+			// The detail write lands slowly and the list's bulk read is stale,
+			// so only a shared chain keeps the list from writing first.
+			const write = detailTable.upsertByEntityId.getMockImplementation();
+			detailTable.upsertByEntityId.mockImplementation(async (id, record) => {
+				await new Promise((resolve) => setTimeout(resolve, 20));
+				await write?.(id, record);
+			});
+			listTable.findManyByEntityIds.mockImplementationOnce(async () => []);
+			const ctxFor = (table: typeof detailTable) => ({
+				...createMockContext(),
+				database: {},
+				db: { workspace: table },
+			});
+			// as never: the mock answers with plain promises, not CancelablePromise.
+			mockRequest.mockImplementation((async (
+				_config: unknown,
+				options: { url: string },
+			) =>
+				options.url.endsWith('/workspace')
+					? { items: [{ id: 'w_1', handle: 'main', state: 'running' }] }
+					: { id: 'w_1', handle: 'main', title: 'Detailed Title' }) as never);
+
+			const detail = UsersEndpoints.getUserWorkspace(ctxFor(detailTable), {
+				user_handle: 'bob',
+				workspace_handle: 'main',
+			});
+			// Let the detail write start before the list arrives.
+			await new Promise((resolve) => setTimeout(resolve, 0));
+			await UsersEndpoints.listUserWorkspaces(ctxFor(listTable), {
+				user_handle: 'bob',
+			});
+			await detail;
+			await new Promise((resolve) => setTimeout(resolve, 40));
+
+			expect(rows.get('w_1')).toEqual({
+				id: 'w_1',
+				handle: 'main',
+				title: 'Detailed Title',
+				state: 'running',
+			});
+			// Settled chains are removed.
+			expect(pendingWriteChains()).toBe(0);
+		});
+
+		it('different accounts do not share a write chain', async () => {
+			const rows = new Map<string, Record<string, unknown>>();
+			const { table: slowTable } = memoryStore(rows);
+			const { table: fastTable } = memoryStore(new Map());
+			slowTable.upsertByEntityId.mockImplementation(
+				() => new Promise<void>(() => {}),
+			);
+			mockRequest.mockResolvedValue({ id: 'w_1', handle: 'main' });
+			const ctxFor = (table: typeof slowTable, account: string) => ({
+				...createMockContext(),
+				$getAccountId: jest.fn().mockResolvedValue(account),
+				database: {},
+				db: { workspace: table },
+			});
+			// acc_1's write never settles; acc_2's write for the same id must
+			// not wait behind it.
+			void UsersEndpoints.getUserWorkspace(ctxFor(slowTable, 'acc_1'), {
+				user_handle: 'bob',
+				workspace_handle: 'main',
+			});
+			await expect(
+				UsersEndpoints.getUserWorkspace(ctxFor(fastTable, 'acc_2'), {
+					user_handle: 'bob',
+					workspace_handle: 'main',
+				}),
+			).resolves.toMatchObject({ id: 'w_1' });
+			expect(fastTable.upsertByEntityId).toHaveBeenCalledTimes(1);
 		});
 
 		it('skips local sync when no database is configured', async () => {

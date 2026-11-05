@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeTurbotPipesRequest, pickQuery } from '../client';
 import type { TurbotPipesEndpoints } from '../index';
+import { eventIdentifiers } from './events';
 import { syncEntityDetail, syncListDiscovery } from './sync';
 import type { TurbotPipesEndpointOutputs } from './types';
 
@@ -12,11 +13,11 @@ export const getActor: TurbotPipesEndpoints['actorGet'] = async (
 		TurbotPipesEndpointOutputs['actorGet']
 	>('actor', ctx.key, { method: 'GET' });
 	// Awaited: a completed fetch guarantees its record is searchable locally.
-	await syncEntityDetail(ctx, ctx.db?.actor, response.id, response);
+	await syncEntityDetail(ctx, 'actor', response.id, response);
 	await logEventFromContext(
 		ctx,
 		'turbotpipes.actor.get',
-		{ ...input },
+		eventIdentifiers(input),
 		'completed',
 	);
 	return response;
@@ -32,11 +33,11 @@ export const listActorWorkspaces: TurbotPipesEndpoints['actorListWorkspaces'] =
 		});
 		// Background insert-only discovery: populates search without
 		// erasing stored details and without delaying the response.
-		syncListDiscovery(ctx, ctx.db?.workspace, response?.items);
+		syncListDiscovery(ctx, 'workspace', response?.items);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.actor.list_workspaces',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -54,11 +55,11 @@ export const listActorOrgs: TurbotPipesEndpoints['actorListOrgs'] = async (
 	});
 	// Background insert-only discovery: populates search without
 	// erasing stored details and without delaying the response.
-	syncListDiscovery(ctx, ctx.db?.org, response?.items);
+	syncListDiscovery(ctx, 'org', response?.items);
 	await logEventFromContext(
 		ctx,
 		'turbotpipes.actor.list_orgs',
-		{ ...input },
+		eventIdentifiers(input),
 		'completed',
 	);
 	return response;
@@ -74,11 +75,11 @@ export const listActorConnections: TurbotPipesEndpoints['actorListConnections'] 
 		});
 		// Background insert-only discovery: populates search without
 		// erasing stored details and without delaying the response.
-		syncListDiscovery(ctx, ctx.db?.connection, response?.items);
+		syncListDiscovery(ctx, 'connection', response?.items);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.actor.list_connections',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -95,7 +96,7 @@ export const listActorActivity: TurbotPipesEndpoints['actorListActivity'] =
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.actor.list_activity',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;

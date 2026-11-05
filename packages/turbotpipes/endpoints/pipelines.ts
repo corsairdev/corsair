@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeTurbotPipesRequest, pathSegment, pickQuery } from '../client';
 import type { TurbotPipesEndpoints } from '../index';
+import { eventIdentifiers } from './events';
 import type { TurbotPipesEndpointOutputs } from './types';
 
 export const installUserWorkspaceFlowpipeMod: TurbotPipesEndpoints['installUserWorkspaceFlowpipeMod'] =
@@ -16,7 +17,7 @@ export const installUserWorkspaceFlowpipeMod: TurbotPipesEndpoints['installUserW
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.pipelines.install_flowpipe_mod',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -34,7 +35,7 @@ export const getUserWorkspaceFlowpipeMod: TurbotPipesEndpoints['getUserWorkspace
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.pipelines.get_flowpipe_mod',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -52,7 +53,7 @@ export const uninstallFlowpipeMod: TurbotPipesEndpoints['uninstallFlowpipeMod'] 
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.pipelines.uninstall_flowpipe_mod',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -70,7 +71,7 @@ export const uninstallOrgWorkspaceFlowpipeMod: TurbotPipesEndpoints['uninstallOr
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.pipelines.uninstall_org_flowpipe_mod',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -88,7 +89,7 @@ export const listOrgWorkspaceFlowpipeModVariables: TurbotPipesEndpoints['listOrg
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.pipelines.list_org_flowpipe_mod_vars',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -106,7 +107,7 @@ export const listUserWorkspaceFlowpipeModVariables: TurbotPipesEndpoints['listUs
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.pipelines.list_user_flowpipe_mod_vars',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -124,7 +125,7 @@ export const getUserWorkspaceFlowpipePipeline: TurbotPipesEndpoints['getUserWork
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.pipelines.get_flowpipe_pipeline',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -145,7 +146,7 @@ export const listUserWorkspaceFlowpipePipelines: TurbotPipesEndpoints['listUserW
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.pipelines.list_flowpipe_pipelines',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -164,7 +165,7 @@ export const runUserWorkspaceFlowpipePipelineCommand: TurbotPipesEndpoints['runU
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.pipelines.run_flowpipe_pipeline_cmd',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -182,7 +183,7 @@ export const getOrgWorkspaceFlowpipeTrigger: TurbotPipesEndpoints['getOrgWorkspa
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.pipelines.get_org_flowpipe_trigger',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -193,6 +194,8 @@ export const listUserWorkspaceFlowpipeTriggers: TurbotPipesEndpoints['listUserWo
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['listUserWorkspaceFlowpipeTriggers']
 		>(
+			// Not in the OpenAPI document, but the live API serves it: an unknown
+			// workspace gets a resource 404, not "API Not Found" (checked 2026-11-05).
 			`user/${pathSegment(input.user_handle)}/workspace/${pathSegment(input.workspace_handle)}/flowpipe/trigger`,
 			ctx.key,
 			{ method: 'GET' },
@@ -200,7 +203,7 @@ export const listUserWorkspaceFlowpipeTriggers: TurbotPipesEndpoints['listUserWo
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.pipelines.list_flowpipe_triggers',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -219,7 +222,7 @@ export const runUserWorkspaceFlowpipeTriggerCommand: TurbotPipesEndpoints['runUs
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.pipelines.run_flowpipe_trigger_cmd',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -237,7 +240,7 @@ export const listUserWorkspaceFlowpipeInputs: TurbotPipesEndpoints['listUserWork
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.pipelines.list_flowpipe_inputs',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -258,7 +261,7 @@ export const listUserWorkspacePipelineTriggers: TurbotPipesEndpoints['listUserWo
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.pipelines.list_pipeline_triggers',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -276,7 +279,7 @@ export const deleteUserWorkspacePipeline: TurbotPipesEndpoints['deleteUserWorksp
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.pipelines.delete_user_pipeline',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -294,7 +297,7 @@ export const getUserWorkspacePipeline: TurbotPipesEndpoints['getUserWorkspacePip
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.pipelines.get_user_pipeline',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -315,7 +318,7 @@ export const listUserWorkspacePipelines: TurbotPipesEndpoints['listUserWorkspace
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.pipelines.list_user_pipelines',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -336,7 +339,7 @@ export const listOrgWorkspacePipelines: TurbotPipesEndpoints['listOrgWorkspacePi
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.pipelines.list_org_pipelines',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;

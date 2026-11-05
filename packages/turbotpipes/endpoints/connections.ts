@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeTurbotPipesRequest, pathSegment, pickQuery } from '../client';
 import type { TurbotPipesEndpoints } from '../index';
+import { eventIdentifiers } from './events';
 import { syncEntityDetail } from './sync';
 import type { TurbotPipesEndpointOutputs } from './types';
 
@@ -35,11 +36,11 @@ export const getUserConnection: TurbotPipesEndpoints['getUserConnection'] =
 			{ method: 'GET' },
 		);
 		// Awaited: a completed fetch guarantees its record is searchable locally.
-		await syncEntityDetail(ctx, ctx.db?.connection, response.id, response);
+		await syncEntityDetail(ctx, 'connection', response.id, response);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.connections.get_user',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -56,7 +57,7 @@ export const listUserConnections: TurbotPipesEndpoints['listUserConnections'] =
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.connections.list_user',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -97,7 +98,7 @@ export const deleteUserConnectionDeprecated: TurbotPipesEndpoints['deleteUserCon
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.connections.delete_user_deprecated',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -191,7 +192,7 @@ export const getOrgConnectionPermission: TurbotPipesEndpoints['getOrgConnectionP
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.connections.get_org_permission',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -210,7 +211,7 @@ export const deleteOrgConnectionPermission: TurbotPipesEndpoints['deleteOrgConne
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.connections.delete_org_permission',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -228,7 +229,7 @@ export const createOrgConnectionFolder: TurbotPipesEndpoints['createOrgConnectio
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.connections.create_org_folder',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -250,7 +251,7 @@ export const updateOrgConnectionFolder: TurbotPipesEndpoints['updateOrgConnectio
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.connections.update_org_folder',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;

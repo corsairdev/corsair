@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeTurbotPipesRequest, pathSegment, pickQuery } from '../client';
 import type { TurbotPipesEndpoints } from '../index';
+import { eventIdentifiers } from './events';
 import type { TurbotPipesEndpointOutputs } from './types';
 
 export const createUserNotifier: TurbotPipesEndpoints['createUserNotifier'] =
@@ -15,7 +16,7 @@ export const createUserNotifier: TurbotPipesEndpoints['createUserNotifier'] =
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.notifiers.create_user',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -32,7 +33,7 @@ export const listUserNotifiers: TurbotPipesEndpoints['listUserNotifiers'] =
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.notifiers.list_user',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -50,7 +51,7 @@ export const getOrgWorkspaceNotifier: TurbotPipesEndpoints['getOrgWorkspaceNotif
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.notifiers.get_org_workspace',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -72,7 +73,7 @@ export const createUserWorkspaceNotifier: TurbotPipesEndpoints['createUserWorksp
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.notifiers.create_user_workspace',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -90,7 +91,7 @@ export const deleteUserWorkspaceNotifier: TurbotPipesEndpoints['deleteUserWorksp
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.notifiers.delete_user_workspace',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -108,7 +109,7 @@ export const getUserWorkspaceNotifier: TurbotPipesEndpoints['getUserWorkspaceNot
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.notifiers.get_user_workspace',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -129,7 +130,7 @@ export const listUserWorkspaceNotifiers: TurbotPipesEndpoints['listUserWorkspace
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.notifiers.list_user_workspace',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -148,7 +149,7 @@ export const postUserWorkspaceNotifierCommand: TurbotPipesEndpoints['postUserWor
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.notifiers.post_command',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;

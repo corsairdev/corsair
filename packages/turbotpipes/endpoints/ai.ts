@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeTurbotPipesRequest, pathSegment, pickQuery } from '../client';
 import type { TurbotPipesEndpoints } from '../index';
+import { eventIdentifiers } from './events';
 import type { TurbotPipesEndpointOutputs } from './types';
 
 export const createUserAiKey: TurbotPipesEndpoints['createUserAiKey'] = async (
@@ -42,7 +43,7 @@ export const getUserAiKey: TurbotPipesEndpoints['getUserAiKey'] = async (
 	await logEventFromContext(
 		ctx,
 		'turbotpipes.ai.get_user_key',
-		{ ...input },
+		eventIdentifiers(input),
 		'completed',
 	);
 	return response;
@@ -61,7 +62,7 @@ export const listUserAiKeys: TurbotPipesEndpoints['listUserAiKeys'] = async (
 	await logEventFromContext(
 		ctx,
 		'turbotpipes.ai.list_user_keys',
-		{ ...input },
+		eventIdentifiers(input),
 		'completed',
 	);
 	return response;
@@ -129,7 +130,7 @@ export const deleteOrgWorkspaceConversation: TurbotPipesEndpoints['deleteOrgWork
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.ai.delete_org_conversation',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -147,7 +148,7 @@ export const getUserWorkspaceConversation: TurbotPipesEndpoints['getUserWorkspac
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.ai.get_user_conversation',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -166,7 +167,7 @@ export const updateUserWorkspaceConversation: TurbotPipesEndpoints['updateUserWo
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.ai.update_user_conversation',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -187,7 +188,7 @@ export const listUserWorkspaceConversations: TurbotPipesEndpoints['listUserWorks
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.ai.list_user_conversations',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;

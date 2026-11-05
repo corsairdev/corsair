@@ -6,6 +6,7 @@ import {
 	pickQuery,
 } from '../client';
 import type { TurbotPipesEndpoints } from '../index';
+import { eventIdentifiers } from './events';
 import type { TurbotPipesEndpointOutputs } from './types';
 
 export const getIdentity: TurbotPipesEndpoints['getIdentity'] = async (
@@ -20,7 +21,7 @@ export const getIdentity: TurbotPipesEndpoints['getIdentity'] = async (
 	await logEventFromContext(
 		ctx,
 		'turbotpipes.identities.get',
-		{ ...input },
+		eventIdentifiers(input),
 		'completed',
 	);
 	return response;
@@ -37,7 +38,7 @@ export const getIdentityAvatar: TurbotPipesEndpoints['getIdentityAvatar'] =
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.identities.get_avatar',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -56,7 +57,7 @@ export const listIdentities: TurbotPipesEndpoints['listIdentities'] = async (
 	await logEventFromContext(
 		ctx,
 		'turbotpipes.identities.list',
-		{ ...input },
+		eventIdentifiers(input),
 		'completed',
 	);
 	return response;

@@ -6,6 +6,7 @@ import {
 	pickQuery,
 } from '../client';
 import type { TurbotPipesEndpoints } from '../index';
+import { eventIdentifiers } from './events';
 import type { TurbotPipesEndpointOutputs } from './types';
 
 export const getTenant: TurbotPipesEndpoints['getTenant'] = async (
@@ -18,7 +19,7 @@ export const getTenant: TurbotPipesEndpoints['getTenant'] = async (
 	await logEventFromContext(
 		ctx,
 		'turbotpipes.tenants.get',
-		{ ...input },
+		eventIdentifiers(input),
 		'completed',
 	);
 	return response;
@@ -37,7 +38,7 @@ export const getTenantAvatar: TurbotPipesEndpoints['getTenantAvatar'] = async (
 	await logEventFromContext(
 		ctx,
 		'turbotpipes.tenants.get_avatar',
-		{ ...input },
+		eventIdentifiers(input),
 		'completed',
 	);
 	return response;
@@ -70,7 +71,7 @@ export const listTenants: TurbotPipesEndpoints['listTenants'] = async (
 	await logEventFromContext(
 		ctx,
 		'turbotpipes.tenants.list',
-		{ ...input },
+		eventIdentifiers(input),
 		'completed',
 	);
 	return response;

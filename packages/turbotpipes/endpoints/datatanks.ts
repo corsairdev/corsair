@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeTurbotPipesRequest, pathSegment, pickQuery } from '../client';
 import type { TurbotPipesEndpoints } from '../index';
+import { eventIdentifiers } from './events';
 import { syncEntityDetail, syncListDiscovery } from './sync';
 import type { TurbotPipesEndpointOutputs } from './types';
 
@@ -20,7 +21,7 @@ export const createUserWorkspaceDatatank: TurbotPipesEndpoints['createUserWorksp
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.datatanks.create_user_workspace',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -36,11 +37,11 @@ export const getUserWorkspaceDatatank: TurbotPipesEndpoints['getUserWorkspaceDat
 			{ method: 'GET' },
 		);
 		// Awaited: a completed fetch guarantees its record is searchable locally.
-		await syncEntityDetail(ctx, ctx.db?.datatank, response.id, response);
+		await syncEntityDetail(ctx, 'datatank', response.id, response);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.datatanks.get_user_workspace',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -57,11 +58,11 @@ export const listUserWorkspaceDatatanks: TurbotPipesEndpoints['listUserWorkspace
 		);
 		// Background insert-only discovery: populates search without
 		// erasing stored details and without delaying the response.
-		syncListDiscovery(ctx, ctx.db?.datatank, response?.items);
+		syncListDiscovery(ctx, 'datatank', response?.items);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.datatanks.list_user_workspace',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -78,11 +79,11 @@ export const listOrgWorkspaceDatatanks: TurbotPipesEndpoints['listOrgWorkspaceDa
 		);
 		// Background insert-only discovery: populates search without
 		// erasing stored details and without delaying the response.
-		syncListDiscovery(ctx, ctx.db?.datatank, response?.items);
+		syncListDiscovery(ctx, 'datatank', response?.items);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.datatanks.list_org_workspace',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -101,7 +102,7 @@ export const createUserWorkspaceDatatankTable: TurbotPipesEndpoints['createUserW
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.datatanks.create_table',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -119,7 +120,7 @@ export const getDatatankTable: TurbotPipesEndpoints['getDatatankTable'] =
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.datatanks.get_table',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -137,7 +138,7 @@ export const listUserWorkspaceDatatankTables: TurbotPipesEndpoints['listUserWork
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.datatanks.list_tables',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -155,7 +156,7 @@ export const listUserWorkspaceDatatankPartitions: TurbotPipesEndpoints['listUser
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.datatanks.list_partitions',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -173,7 +174,7 @@ export const getUserWorkspaceSchema: TurbotPipesEndpoints['getUserWorkspaceSchem
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.datatanks.get_schema',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -191,7 +192,7 @@ export const listUserWorkspaceSchemas: TurbotPipesEndpoints['listUserWorkspaceSc
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.datatanks.list_schemas',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -209,7 +210,7 @@ export const getUserWorkspaceSchemaTable: TurbotPipesEndpoints['getUserWorkspace
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.datatanks.get_schema_table',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -227,7 +228,7 @@ export const listUserWorkspaceSchemaTables: TurbotPipesEndpoints['listUserWorksp
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.datatanks.list_schema_tables',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;

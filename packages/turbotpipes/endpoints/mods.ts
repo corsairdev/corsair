@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeTurbotPipesRequest, pathSegment, pickQuery } from '../client';
 import type { TurbotPipesEndpoints } from '../index';
+import { eventIdentifiers } from './events';
 import type { TurbotPipesEndpointOutputs } from './types';
 
 export const installUserWorkspaceMod: TurbotPipesEndpoints['installUserWorkspaceMod'] =
@@ -19,7 +20,7 @@ export const installUserWorkspaceMod: TurbotPipesEndpoints['installUserWorkspace
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.mods.install_user_mod',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -37,7 +38,7 @@ export const getUserWorkspaceMod: TurbotPipesEndpoints['getUserWorkspaceMod'] =
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.mods.get_user_mod',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -55,7 +56,7 @@ export const listUserWorkspaceMods: TurbotPipesEndpoints['listUserWorkspaceMods'
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.mods.list_user_mods',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -73,7 +74,7 @@ export const listOrgWorkspaceMods: TurbotPipesEndpoints['listOrgWorkspaceMods'] 
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.mods.list_org_mods',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -113,7 +114,7 @@ export const deleteUserWorkspaceModVariableSetting: TurbotPipesEndpoints['delete
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.mods.delete_user_var_setting',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -132,7 +133,7 @@ export const getUserWorkspaceModVariableSetting: TurbotPipesEndpoints['getUserWo
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.mods.get_user_var_setting',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -151,7 +152,7 @@ export const listUserWorkspaceModVariables: TurbotPipesEndpoints['listUserWorksp
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.mods.list_user_mod_vars',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -170,7 +171,7 @@ export const getOrgWorkspaceModVariableSetting: TurbotPipesEndpoints['getOrgWork
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.mods.get_org_var_setting',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;
@@ -189,7 +190,7 @@ export const deleteOrgWorkspaceModVariableSetting: TurbotPipesEndpoints['deleteO
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.mods.delete_org_var_setting',
-			{ ...input },
+			eventIdentifiers(input),
 			'completed',
 		);
 		return response;

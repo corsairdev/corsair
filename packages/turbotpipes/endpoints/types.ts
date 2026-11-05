@@ -611,8 +611,9 @@ export const GetUserWorkspaceProcessLogInputSchema = z.object({
 	user_handle: z.string(),
 	workspace_handle: z.string(),
 	process_id: z.string(),
-	log_file: z.string(),
-	content_type: z.string().optional(),
+	// The only values Pipes documents for this route (default when omitted).
+	log_file: z.enum(['process']).optional(),
+	content_type: z.enum(['jsonl']).optional(),
 });
 export type GetUserWorkspaceProcessLogInput = z.infer<
 	typeof GetUserWorkspaceProcessLogInputSchema
@@ -1586,6 +1587,12 @@ export const StatusOutputSchema = z.object({
 // unknown: generic endpoints return provider-defined JSON objects without a fixed shape.
 export const GenericRecordOutputSchema = z.record(z.string(), z.unknown());
 
+// unknown: each process log line is a provider-defined JSON object. A line
+// that is not a JSON object is kept as { raw: line }.
+export const ProcessLogOutputSchema = z.object({
+	entries: z.array(z.record(z.string(), z.unknown())),
+});
+
 // Avatar endpoints redirect to the hosted image (`*/*`), and the shared HTTP
 // client would read those binary bodies as text and corrupt them. The handlers
 // resolve the redirect instead and return the directly usable image URL.
@@ -1852,7 +1859,7 @@ export const TurbotPipesEndpointOutputSchemas = {
 	listUserWorkspaceDatabaseLogs: ListItemsOutputSchema,
 	listUserWorkspaceProcesses: ListItemsOutputSchema,
 	getUserWorkspaceProcess: TurbotPipesProcessSchema,
-	getUserWorkspaceProcessLog: GenericRecordOutputSchema,
+	getUserWorkspaceProcessLog: ProcessLogOutputSchema,
 	listOrgWorkspaceProcesses: ListItemsOutputSchema,
 	listUserWorkspaceUsage: ListItemsOutputSchema,
 	createOrgWorkspaceQuery: GenericRecordOutputSchema,

@@ -84,6 +84,12 @@ export function pathSegment(value: string | number): string {
 	return encodeURIComponent(segment);
 }
 
+function authorizationHeader(apiKey: string): string {
+	return apiKey.startsWith('Bearer ') || apiKey.startsWith('api key ')
+		? apiKey
+		: `Bearer ${apiKey}`;
+}
+
 type QueryValue = string | number | boolean | undefined;
 
 /**
@@ -124,10 +130,7 @@ export async function makeTurbotPipesRequest<T>(
 ): Promise<T> {
 	const { method = 'GET', body, query } = options;
 
-	const formattedToken =
-		apiKey.startsWith('Bearer ') || apiKey.startsWith('api key ')
-			? apiKey
-			: `Bearer ${apiKey}`;
+	const formattedToken = authorizationHeader(apiKey);
 
 	const config: OpenAPIConfig = {
 		BASE: TURBOTPIPES_API_BASE,
@@ -187,10 +190,7 @@ export async function getTurbotPipesAvatarUrl(
 	endpoint: string,
 	apiKey: string,
 ): Promise<{ avatar_url: string }> {
-	const formattedToken =
-		apiKey.startsWith('Bearer ') || apiKey.startsWith('api key ')
-			? apiKey
-			: `Bearer ${apiKey}`;
+	const formattedToken = authorizationHeader(apiKey);
 
 	const response = await fetch(`${TURBOTPIPES_API_BASE}/${endpoint}`, {
 		method: 'GET',
@@ -217,4 +217,42 @@ export async function getTurbotPipesAvatarUrl(
 		`Failed to resolve avatar: ${response.status} ${response.statusText}`,
 		{ status: response.status, method: 'GET' },
 	);
+}
+
+/**
+ * GETs a text body, such as a process log (`application/jsonlines+json`).
+ *
+ * The shared HTTP client parses any `application/json*` content type as one
+ * JSON document, so a JSON-lines body with more than one line fails to parse
+ * and comes back empty. This reads the raw text instead; 204 gives ''.
+ */
+export async function makeTurbotPipesTextRequest(
+	endpoint: string,
+	apiKey: string,
+	accept: string,
+): Promise<string> {
+	const response = await fetch(`${TURBOTPIPES_API_BASE}/${endpoint}`, {
+		method: 'GET',
+		headers: { Authorization: authorizationHeader(apiKey), Accept: accept },
+	});
+	if (response.status === 204) {
+		return '';
+	}
+	const text = await response.text();
+	if (!response.ok) {
+		const retryAfterSeconds = Number(response.headers.get('retry-after'));
+		throw new TurbotPipesAPIError(
+			`Turbot Pipes request failed: ${response.status} ${response.statusText}`,
+			{
+				status: response.status,
+				body: text,
+				retryAfter:
+					Number.isFinite(retryAfterSeconds) && retryAfterSeconds > 0
+						? retryAfterSeconds * 1000
+						: undefined,
+				method: 'GET',
+			},
+		);
+	}
+	return text;
 }

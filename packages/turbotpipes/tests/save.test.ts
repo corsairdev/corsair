@@ -55,7 +55,10 @@ beforeAll(() => {
 		const url = new URL(String(input));
 		const answer = routes[url.pathname];
 		if (!answer) throw new Error(`unexpected request ${url.pathname}`);
-		return new Response(JSON.stringify(answer()), {
+		const body = answer();
+		// A route answering undefined stands for 204 No Content.
+		if (body === undefined) return new Response(null, { status: 204 });
+		return new Response(JSON.stringify(body), {
 			headers: { 'Content-Type': 'application/json' },
 		});
 	};
@@ -182,5 +185,130 @@ describe('turbotpipes query events', () => {
 		const org = column('corsair_events', 'turbotpipes.query.create_org_query');
 		expect(org).toEqual([{ org_handle: 'acme', workspace_handle: 'main' }]);
 		expect(JSON.stringify([user, org])).not.toContain('svc-secret-42');
+	});
+});
+
+describe('turbotpipes deletes remove the local copy', () => {
+	it('deleteOrg removes the org getOrg stored', async () => {
+		const corsair = await corsairWith(false);
+		routes['/api/v1/org/acme'] = () => ({ id: 'o_1', handle: 'acme' });
+		await corsair.turbotpipes.api.orgs.get({ org_handle: 'acme' });
+		expect(await corsair.turbotpipes.db.org.findByEntityId('o_1')).toBeTruthy();
+
+		await corsair.turbotpipes.api.orgs.delete({ org_handle: 'acme' });
+		expect(await corsair.turbotpipes.db.org.findByEntityId('o_1')).toBeNull();
+	});
+
+	it('a 204 org delete still finds the stored org by handle', async () => {
+		const corsair = await corsairWith(true);
+		routes['/api/v1/org/acme'] = () => ({ id: 'o_1', handle: 'acme' });
+		routes['/api/v1/org/other'] = () => ({ id: 'o_2', handle: 'other' });
+		await corsair.turbotpipes.api.orgs.get({ org_handle: 'acme' });
+		await corsair.turbotpipes.api.orgs.get({ org_handle: 'other' });
+
+		routes['/api/v1/org/acme'] = () => undefined;
+		await expect(
+			corsair.turbotpipes.api.orgs.delete({ org_handle: 'acme' }),
+		).resolves.toEqual({});
+		expect(await corsair.turbotpipes.db.org.findByEntityId('o_1')).toBeNull();
+		expect(await corsair.turbotpipes.db.org.findByEntityId('o_2')).toBeTruthy();
+	});
+
+	it('deleteOrgWorkspace removes the workspace by the returned id', async () => {
+		const corsair = await corsairWith(false);
+		routes['/api/v1/org/acme/workspace'] = () => ({
+			items: [
+				{ id: 'w_1', handle: 'main' },
+				{ id: 'w_2', handle: 'dev' },
+			],
+		});
+		await corsair.turbotpipes.api.orgs.listWorkspaces({ org_handle: 'acme' });
+		await flush();
+
+		routes['/api/v1/org/acme/workspace/main'] = () => ({
+			id: 'w_1',
+			handle: 'main',
+		});
+		await corsair.turbotpipes.api.orgs.deleteWorkspace({
+			org_handle: 'acme',
+			workspace_handle: 'main',
+		});
+		expect(
+			await corsair.turbotpipes.db.workspace.findByEntityId('w_1'),
+		).toBeNull();
+		expect(
+			await corsair.turbotpipes.db.workspace.findByEntityId('w_2'),
+		).toBeTruthy();
+	});
+});
+
+describe('turbotpipes events hold identifiers only', () => {
+	const SECRET = 'svc-secret-42';
+
+	it('never logs commands, chat text, keys, configs, notifier targets or filters', async () => {
+		const corsair = await corsairWith(false);
+		const api = corsair.turbotpipes.api;
+		routes['/api/v1/org/acme/workspace/main/command'] = () => ({});
+		routes['/api/v1/user/bob/workspace/dev/command'] = () => ({});
+		routes['/api/v1/user/bob/workspace/dev/ai/chat'] = () => ({});
+		routes['/api/v1/user/bob/ai/key'] = () => ({ id: 'k_1' });
+		routes['/api/v1/user/bob/workspace/dev/connection'] = () => ({
+			id: 'c_1',
+			handle: 'aws_prod',
+		});
+		routes['/api/v1/user/bob/notifier'] = () => ({ id: 'n_1' });
+		routes['/api/v1/user/bob/constraint'] = () => ({ items: [] });
+
+		await api.orgs.runWorkspaceCommand({
+			org_handle: 'acme',
+			workspace_handle: 'main',
+			command: `reboot ${SECRET}`,
+		});
+		await api.users.runUserWorkspaceCommand({
+			user_handle: 'bob',
+			workspace_handle: 'dev',
+			command: `reboot ${SECRET}`,
+		});
+		await api.ai.sendUserWorkspaceChatMessage({
+			user_handle: 'bob',
+			workspace_handle: 'dev',
+			message: `what is ${SECRET}?`,
+		});
+		await api.ai.createUserAiKey({
+			user_handle: 'bob',
+			provider: 'openai',
+			key: SECRET,
+		});
+		await api.workspaces.createUserWorkspaceConnection({
+			user_handle: 'bob',
+			workspace_handle: 'dev',
+			handle: 'aws_prod',
+			plugin: 'aws',
+			config: { secret_key: SECRET },
+		});
+		await api.notifiers.createUserNotifier({
+			user_handle: 'bob',
+			name: 'ops',
+			notifies: [{ webhook_url: `https://hooks.example/${SECRET}` }],
+		});
+		await api.users.listConstraints({
+			user_handle: 'bob',
+			where: `name = '${SECRET}'`,
+		});
+
+		expect(
+			column('corsair_events', 'turbotpipes.orgs.run_workspace_command'),
+		).toEqual([{ org_handle: 'acme', workspace_handle: 'main' }]);
+		expect(
+			column('corsair_events', 'turbotpipes.users.run_workspace_command'),
+		).toEqual([{ user_handle: 'bob', workspace_handle: 'dev' }]);
+		const all = sqlite
+			.prepare('SELECT payload FROM corsair_events')
+			.all()
+			.map((row) =>
+				row && typeof row === 'object' ? Reflect.get(row, 'payload') : '',
+			);
+		expect(all).toHaveLength(7);
+		expect(JSON.stringify(all)).not.toContain(SECRET);
 	});
 });
