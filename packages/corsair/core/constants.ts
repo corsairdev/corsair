@@ -327,6 +327,7 @@ export const BaseProviders = [
 	'reducto',
 	'remoet',
 	'removebg',
+	'render',
 	'replicate',
 	'replicate',
 	'replyio',
@@ -749,6 +750,7 @@ export const ProviderDisplayNames = {
 	reducto: 'Reducto',
 	remoet: 'Remoet',
 	removebg: 'remove.bg',
+	render: 'Render',
 	replicate: 'Replicate',
 	replyio: 'Reply.io',
 	resend: 'Resend',
@@ -1175,6 +1177,7 @@ export type AllProviders =
 	| 'reducto'
 	| 'remoet'
 	| 'removebg'
+	| 'render'
 	| 'replicate'
 	| 'replicate'
 	| 'replyio'
