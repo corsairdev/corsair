@@ -8,7 +8,7 @@ import { ApiError } from 'corsair/http';
 import type { NetSuiteContext } from '..';
 import {
 	makeNetSuiteRequest,
-	netSuiteOAuthTokenUrl,
+	netSuiteAccountBase,
 	normalizeAccountHost,
 } from '../client';
 import type { NetSuiteSpecKey, RouteSpec } from './specs';
@@ -328,7 +328,8 @@ async function customEndpoint(
 		const privateKey =
 			(input.private_key_pem as string | undefined) ?? options.privateKeyPem;
 		const aud =
-			(input.aud as string | undefined) ?? netSuiteOAuthTokenUrl(accountId);
+			(input.aud as string | undefined) ??
+			`${netSuiteAccountBase(accountId)}/services/rest/auth/oauth2/v1/token`;
 		if (!clientId || !privateKey || !certificateId) {
 			throw new Error(
 				'[netsuite] createJwtClientAssertion requires client_id, certificate_id, and private_key_pem',
