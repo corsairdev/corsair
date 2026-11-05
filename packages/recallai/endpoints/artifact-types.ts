@@ -10,8 +10,8 @@ const artifactStatus = z.object({
 });
 
 export const ArtifactListInputSchema = z.object({
-	created_at_after: z.string().datetime().optional(),
-	created_at_before: z.string().datetime().optional(),
+	created_at_after: z.string().datetime({ offset: true }).optional(),
+	created_at_before: z.string().datetime({ offset: true }).optional(),
 	cursor: z.string().optional(),
 	recording_id: id.optional(),
 	status_code: z.enum(['processing', 'done', 'failed']).optional(),

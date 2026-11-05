@@ -29,7 +29,10 @@ describe('Recall.ai recording operations', () => {
 		const plugin = recallai({ key: 'recall-key' });
 		if (!plugin.endpoints) throw new Error('Recall.ai endpoints are missing');
 		const ctx = recallaiTestContext;
-		await plugin.endpoints.recordings.list(ctx, { status_code: 'done' });
+		await plugin.endpoints.recordings.list(ctx, {
+			bot_id: id,
+			status_code: 'paused',
+		});
 		await plugin.endpoints.recordings.retrieve(ctx, { id });
 		await plugin.endpoints.recordings.update(ctx, {
 			id,
@@ -38,13 +41,15 @@ describe('Recall.ai recording operations', () => {
 		await plugin.endpoints.recordings.delete(ctx, { id });
 		await plugin.endpoints.recordings.createTranscript(ctx, {
 			id,
-			provider: 'recallai',
+			provider: { recallai_async: { language_code: 'en' } },
+			diarization: { use_separate_streams_when_available: true },
+			metadata: { source: 'test' },
 		});
 		expect(request).toHaveBeenNthCalledWith(
 			1,
 			'/api/v1/recording/',
 			'recall-key',
-			{ method: 'GET', query: { status_code: 'done' } },
+			{ method: 'GET', query: { bot_id: id, status_code: 'paused' } },
 		);
 		expect(request).toHaveBeenNthCalledWith(
 			2,
@@ -68,7 +73,14 @@ describe('Recall.ai recording operations', () => {
 			5,
 			`/api/v1/recording/${id}/create_transcript/`,
 			'recall-key',
-			{ method: 'POST', body: { provider: 'recallai' } },
+			{
+				method: 'POST',
+				body: {
+					provider: { recallai_async: { language_code: 'en' } },
+					diarization: { use_separate_streams_when_available: true },
+					metadata: { source: 'test' },
+				},
+			},
 		);
 	});
 	it('asserts real-time endpoint routes', async () => {
@@ -83,7 +95,10 @@ describe('Recall.ai recording operations', () => {
 		const plugin = recallai({ key: 'recall-key' });
 		if (!plugin.endpoints) throw new Error('Recall.ai endpoints are missing');
 		const ctx = recallaiTestContext;
-		await plugin.endpoints.realtimeEndpoints.list(ctx, {});
+		await plugin.endpoints.realtimeEndpoints.list(ctx, {
+			status_code: 'running',
+			type: 'websocket',
+		});
 		await plugin.endpoints.realtimeEndpoints.retrieve(ctx, { id });
 		await plugin.endpoints.realtimeEndpoints.update(ctx, {
 			id,
@@ -93,7 +108,7 @@ describe('Recall.ai recording operations', () => {
 			1,
 			'/api/v1/realtime_endpoint/',
 			'recall-key',
-			{ method: 'GET', query: {} },
+			{ method: 'GET', query: { status_code: 'running', type: 'websocket' } },
 		);
 		expect(request).toHaveBeenNthCalledWith(
 			2,
@@ -118,5 +133,49 @@ describe('Recall.ai recording operations', () => {
 			method: 'GET',
 			query: {},
 		});
+	});
+
+	it('rejects filters each list does not document', async () => {
+		const request = jest.mocked(makeRecallaiRequest);
+		const plugin = recallai({ key: 'recall-key' });
+		if (!plugin.endpoints) throw new Error('Recall.ai endpoints are missing');
+		const ctx = recallaiTestContext;
+		await expect(
+			plugin.endpoints.recordings.list(ctx, {
+				status_code: 'deleted',
+			} as never),
+		).rejects.toThrow();
+		await expect(
+			plugin.endpoints.realtimeEndpoints.list(ctx, {
+				status_code: 'processing',
+			} as never),
+		).rejects.toThrow();
+		await expect(
+			plugin.endpoints.audioMixed.list(ctx, {
+				status_code: 'deleted',
+			} as never),
+		).rejects.toThrow();
+		expect(request).not.toHaveBeenCalled();
+	});
+
+	it('requires the transcript provider as one provider object', async () => {
+		const request = jest.mocked(makeRecallaiRequest);
+		const plugin = recallai({ key: 'recall-key' });
+		if (!plugin.endpoints) throw new Error('Recall.ai endpoints are missing');
+		const ctx = recallaiTestContext;
+		for (const provider of [
+			'recallai',
+			{},
+			{ recallai_async: {}, deepgram_async: {} },
+			{ made_up_async: {} },
+		]) {
+			await expect(
+				plugin.endpoints.recordings.createTranscript(ctx, {
+					id,
+					provider,
+				} as never),
+			).rejects.toThrow();
+		}
+		expect(request).not.toHaveBeenCalled();
 	});
 });

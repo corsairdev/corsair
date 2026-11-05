@@ -26,20 +26,68 @@ const page = z.object({
 	previous: z.string().url().nullable().optional(),
 	results: z.array(artifact),
 });
-const listInput = z.object({
+// Each Recall list takes its own filters; these follow the API reference.
+const recordingListInput = z.object({
+	bot_id: id.optional(),
+	desktop_sdk_upload_id: id.optional(),
+	created_at_after: z.string().datetime({ offset: true }).optional(),
+	created_at_before: z.string().datetime({ offset: true }).optional(),
 	cursor: z.string().optional(),
-	created_at_after: z.string().datetime().optional(),
-	created_at_before: z.string().datetime().optional(),
-	recording_id: id.optional(),
-	status_code: z.enum(['processing', 'done', 'failed', 'deleted']).optional(),
+	status_code: z.enum(['processing', 'paused', 'done', 'failed']).optional(),
 });
+const realtimeEndpointListInput = z.object({
+	recording_id: id.optional(),
+	created_at_after: z.string().datetime({ offset: true }).optional(),
+	created_at_before: z.string().datetime({ offset: true }).optional(),
+	cursor: z.string().optional(),
+	status_code: z.enum(['running', 'done', 'failed']).optional(),
+	type: z
+		.enum(['desktop_sdk_callback', 'rtmp', 'webhook', 'websocket'])
+		.optional(),
+});
+const sdkUploadListInput = z.object({ cursor: z.string().optional() });
 const itemInput = z.object({ id });
 const updateInput = z
 	.object({ id, metadata: opaque.optional() })
 	.refine(({ metadata }) => metadata !== undefined);
+const transcriptProviderNames = [
+	'assembly_ai_async',
+	'deepgram_async',
+	'gladia_v2_async',
+	'recallai_async',
+	'rev_async',
+	'speechmatics_async',
+	'google_speech_v2_async',
+	'aws_transcribe_async',
+	'soniox_async',
+	'elevenlabs_async',
+] as const;
+// Recall takes the provider as an object keyed by provider name, e.g.
+// `{ recallai_async: { language_code: 'en' } }`; the value holds that
+// provider's own options, which Recall documents per provider.
+const transcriptProvider = z
+	.object(
+		Object.fromEntries(
+			transcriptProviderNames.map((name) => [name, opaque.optional()]),
+		) as Record<
+			(typeof transcriptProviderNames)[number],
+			z.ZodOptional<typeof opaque>
+		>,
+	)
+	.strict()
+	.refine(
+		(provider) =>
+			Object.values(provider).filter((value) => value !== undefined).length ===
+			1,
+		{ message: 'Pass exactly one transcription provider' },
+	);
 const transcriptInput = z.object({
 	id,
-	provider: z.string().min(1).optional(),
+	provider: transcriptProvider,
+	diarization: z
+		.object({ use_separate_streams_when_available: z.boolean().optional() })
+		.optional(),
+	metadata: opaque.optional(),
 });
 
 const path = (resource: string, idValue?: string) =>
@@ -47,7 +95,8 @@ const path = (resource: string, idValue?: string) =>
 
 const list = async (
 	ctx: Parameters<RecallaiEndpoints['listRecording']>[0],
-	input: z.infer<typeof listInput>,
+	// Validated by the operation's own list schema before this point.
+	input: Record<string, string | undefined>,
 	resource: string,
 	event: string,
 ) => {
@@ -164,7 +213,7 @@ export const updateRealtimeEndpoints: RecallaiEndpoints['updateRealtimeEndpoints
 	};
 export const listSdkUploads = async (
 	ctx: RecallaiContext,
-	input: z.infer<typeof listInput>,
+	input: z.infer<typeof sdkUploadListInput>,
 ): Promise<{
 	count?: number;
 	next?: string | null;
@@ -208,15 +257,22 @@ export const retrieveSdkUpload: RecallaiEndpoints['retrieveSdkUpload'] = async (
 };
 
 export const recordingSchemas = {
-	listRecording: { input: listInput, output: page },
+	listRecording: { input: recordingListInput, output: page },
 	retrieveRecording: { input: itemInput, output: artifact },
 	updateRecording: { input: updateInput, output: artifact },
 	deleteRecording: { input: itemInput, output: z.undefined() },
 	createAsyncTranscript: { input: transcriptInput, output: artifact },
-	listRealtimeEndpoints: { input: listInput, output: page },
+	listRealtimeEndpoints: { input: realtimeEndpointListInput, output: page },
 	retrieveRealtimeEndpoints: { input: itemInput, output: artifact },
 	updateRealtimeEndpoints: { input: updateInput, output: artifact },
-	listSdkUploads: { input: listInput, output: page },
+	listSdkUploads: { input: sdkUploadListInput, output: page },
 	createSdkUpload: { input: createSdkUploadInput, output: artifact },
 	retrieveSdkUpload: { input: itemInput, output: artifact },
 } as const;
+
+export type RecordingListInput = z.infer<typeof recordingListInput>;
+export type RealtimeEndpointListInput = z.infer<
+	typeof realtimeEndpointListInput
+>;
+export type SdkUploadListInput = z.infer<typeof sdkUploadListInput>;
+export type CreateAsyncTranscriptInput = z.infer<typeof transcriptInput>;

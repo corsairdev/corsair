@@ -41,6 +41,12 @@ import {
 } from './google-logins';
 import { mediaSchemas } from './media';
 import type {
+	CreateAsyncTranscriptInput,
+	RealtimeEndpointListInput,
+	RecordingListInput,
+	SdkUploadListInput,
+} from './recordings';
+import type {
 	RecallaiWorkspaceOperationInputs,
 	RecallaiWorkspaceOperationOutputs,
 } from './workspace-operations';
@@ -170,33 +176,15 @@ export type RecallaiEndpointInputs = ArtifactEndpointInputs &
 		updateCalendar: z.infer<typeof UpdateCalendarInputSchema>;
 		deleteCalendar: z.infer<typeof CalendarIdInputSchema>;
 		createCalendarAccessToken: z.infer<typeof CalendarIdInputSchema>;
-		listRecording: {
-			cursor?: string;
-			created_at_after?: string;
-			created_at_before?: string;
-			recording_id?: string;
-			status_code?: 'processing' | 'done' | 'failed' | 'deleted';
-		};
+		listRecording: RecordingListInput;
 		retrieveRecording: { id: string };
 		updateRecording: { id: string; metadata: RecallaiJsonObject };
 		deleteRecording: { id: string };
-		createAsyncTranscript: { id: string; provider?: string };
-		listRealtimeEndpoints: {
-			cursor?: string;
-			created_at_after?: string;
-			created_at_before?: string;
-			recording_id?: string;
-			status_code?: 'processing' | 'done' | 'failed' | 'deleted';
-		};
+		createAsyncTranscript: CreateAsyncTranscriptInput;
+		listRealtimeEndpoints: RealtimeEndpointListInput;
 		retrieveRealtimeEndpoints: { id: string };
 		updateRealtimeEndpoints: { id: string; metadata: RecallaiJsonObject };
-		listSdkUploads: {
-			cursor?: string;
-			created_at_after?: string;
-			created_at_before?: string;
-			recording_id?: string;
-			status_code?: 'processing' | 'done' | 'failed' | 'deleted';
-		};
+		listSdkUploads: SdkUploadListInput;
 		createSdkUpload: {
 			recording_config?: RecallaiJsonObject;
 			_1080p?: boolean;
@@ -208,43 +196,19 @@ export type RecallaiEndpointInputs = ArtifactEndpointInputs &
 		deleteParticipantEvents: { id: string };
 		updateTranscript: { id: string; metadata: RecallaiJsonObject };
 		deleteTranscript: { id: string };
-		listAudioMixed: {
-			cursor?: string;
-			created_at_after?: string;
-			created_at_before?: string;
-			recording_id?: string;
-			status_code?: 'processing' | 'done' | 'failed' | 'deleted';
-		};
+		listAudioMixed: z.infer<typeof mediaSchemas.audioMixed.list.input>;
 		retrieveAudioMixed: { id: string };
 		updateAudioMixed: { id: string; metadata: RecallaiJsonObject };
 		deleteAudioMixed: { id: string };
-		listAudioSeparate: {
-			cursor?: string;
-			created_at_after?: string;
-			created_at_before?: string;
-			recording_id?: string;
-			status_code?: 'processing' | 'done' | 'failed' | 'deleted';
-		};
+		listAudioSeparate: z.infer<typeof mediaSchemas.audioSeparate.list.input>;
 		retrieveAudioSeparate: { id: string };
 		updateAudioSeparate: { id: string; metadata: RecallaiJsonObject };
 		deleteAudioSeparate: { id: string };
-		listVideoMixed: {
-			cursor?: string;
-			created_at_after?: string;
-			created_at_before?: string;
-			recording_id?: string;
-			status_code?: 'processing' | 'done' | 'failed' | 'deleted';
-		};
+		listVideoMixed: z.infer<typeof mediaSchemas.videoMixed.list.input>;
 		retrieveVideoMixed: { id: string };
 		updateVideoMixed: { id: string; metadata: RecallaiJsonObject };
 		deleteVideoMixed: { id: string };
-		listVideoSeparate: {
-			cursor?: string;
-			created_at_after?: string;
-			created_at_before?: string;
-			recording_id?: string;
-			status_code?: 'processing' | 'done' | 'failed' | 'deleted';
-		};
+		listVideoSeparate: z.infer<typeof mediaSchemas.videoSeparate.list.input>;
 		retrieveVideoSeparate: { id: string };
 		updateVideoSeparate: { id: string; metadata: RecallaiJsonObject };
 		deleteVideoSeparate: { id: string };
@@ -402,13 +366,7 @@ export const RecallaiEndpointInputSchemas = {
 	retrieveCalendarEvent: CalendarEventInputSchema,
 	scheduleBotForCalendarEvent: CalendarEventBotInputSchema,
 	unscheduleBotForCalendarEvent: CalendarEventInputSchema,
-	listAudioMixed: z.object({
-		cursor: z.string().optional(),
-		created_at_after: z.string().datetime().optional(),
-		created_at_before: z.string().datetime().optional(),
-		recording_id: id.optional(),
-		status_code: z.enum(['processing', 'done', 'failed', 'deleted']).optional(),
-	}),
+	listAudioMixed: mediaSchemas.audioMixed.list.input,
 	retrieveAudioMixed: mediaSchemas.audioMixed.retrieve.input,
 	updateAudioMixed: mediaSchemas.audioMixed.update.input,
 	deleteAudioMixed: mediaSchemas.audioMixed.delete.input,
