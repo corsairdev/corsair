@@ -253,6 +253,35 @@ describe('image endpoints', () => {
 		expect(res.count).toBe(1);
 	});
 
+	it('list fills in the site_id and session_id FinerWorks requires', async () => {
+		makeFinerWorksRequest.mockResolvedValue({ status: okStatus, images: [] });
+
+		await endpoint('images', 'list')(makeCtx(), {
+			library: { name: 'inventory' },
+		});
+
+		const body = lastCall()[2].body as {
+			library: { name: string; site_id: number; session_id: string };
+		};
+		expect(body.library.name).toBe('inventory');
+		expect(body.library.site_id).toBe(2);
+		expect(body.library.session_id).toMatch(/^[0-9a-f]{32}$/);
+	});
+
+	it('list keeps a session_id the caller passes', async () => {
+		makeFinerWorksRequest.mockResolvedValue({ status: okStatus, images: [] });
+
+		await endpoint('images', 'list')(makeCtx(), {
+			library: { name: 'temporary', session_id: 'session-12345', site_id: 3 },
+		});
+
+		expect((lastCall()[2].body as { library: unknown }).library).toEqual({
+			name: 'temporary',
+			session_id: 'session-12345',
+			site_id: 3,
+		});
+	});
+
 	it('list rejects a per_page above the documented maximum of 50', async () => {
 		await expect(
 			endpoint('images', 'list')(makeCtx(), { library, per_page: 51 }),
@@ -558,6 +587,33 @@ describe('product endpoints', () => {
 		expect(lastCall()[0]).toBe('v3/list_style_types');
 		expect(res.style_types[0]?.can_frame).toBe(true);
 	});
+
+	// Live FinerWorks answers these three routes with a bare array (2026-11-05).
+	it.each([
+		['listMediaTypes', 'media_types'],
+		['listProductTypes', 'product_types'],
+		['listStyleTypes', 'style_types'],
+	] as const)('%s wraps the bare array FinerWorks returns', async (op, key) => {
+		makeFinerWorksRequest.mockResolvedValue([{ id: 7, name: 'Live shape' }]);
+
+		const res = (await endpoint('products', op)(makeCtx())) as Record<
+			string,
+			Array<{ id: number }>
+		>;
+
+		expect(res[key]?.[0]?.id).toBe(7);
+	});
+
+	it.each(['listMediaTypes', 'listStyleTypes'] as const)(
+		'%s sends ids: [] by default (FinerWorks 500s without it)',
+		async (op) => {
+			makeFinerWorksRequest.mockResolvedValue([]);
+
+			await endpoint('products', op)(makeCtx());
+
+			expect(lastCall()[2].body).toEqual({ ids: [] });
+		},
+	);
 });
 
 describe('framing endpoints', () => {

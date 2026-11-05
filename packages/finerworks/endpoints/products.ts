@@ -43,6 +43,15 @@ export const getPrices: FinerWorksEndpoint<'products.getPrices'> = async (
 };
 
 /**
+ * The three catalog list routes answer with a bare JSON array, not the
+ * `{ status, <key>: [...] }` envelope the other routes use. Wrap it so callers
+ * get one shape. Checked live against v2.api.finerworks.com on 2026-11-05.
+ */
+function wrapList(res: unknown, key: string): unknown {
+	return Array.isArray(res) ? { [key]: res } : res;
+}
+
+/**
  * Printing substrates — canvas, paper, vinyl — and their product information.
  * https://v2.api.finerworks.com/Help/Api/POST-v3-list_media_types
  */
@@ -55,7 +64,7 @@ export const listMediaTypes: FinerWorksEndpoint<
 	const res = await makeFinerWorksRequest<unknown>(
 		'v3/list_media_types',
 		credentials,
-		{ method: 'POST', body: validated },
+		{ method: 'POST', body: { ...validated, ids: validated.ids ?? [] } },
 	);
 
 	await logEventFromContext(
@@ -64,7 +73,7 @@ export const listMediaTypes: FinerWorksEndpoint<
 		{},
 		'completed',
 	);
-	return ProductsListMediaTypesOutputSchema.parse(res);
+	return ProductsListMediaTypesOutputSchema.parse(wrapList(res, 'media_types'));
 };
 
 /**
@@ -89,7 +98,9 @@ export const listProductTypes: FinerWorksEndpoint<
 		{},
 		'completed',
 	);
-	return ProductsListProductTypesOutputSchema.parse(res);
+	return ProductsListProductTypesOutputSchema.parse(
+		wrapList(res, 'product_types'),
+	);
 };
 
 /**
@@ -105,7 +116,7 @@ export const listStyleTypes: FinerWorksEndpoint<
 	const res = await makeFinerWorksRequest<unknown>(
 		'v3/list_style_types',
 		credentials,
-		{ method: 'POST', body: validated },
+		{ method: 'POST', body: { ...validated, ids: validated.ids ?? [] } },
 	);
 
 	await logEventFromContext(
@@ -114,7 +125,7 @@ export const listStyleTypes: FinerWorksEndpoint<
 		{},
 		'completed',
 	);
-	return ProductsListStyleTypesOutputSchema.parse(res);
+	return ProductsListStyleTypesOutputSchema.parse(wrapList(res, 'style_types'));
 };
 
 export const ProductsEndpoints = {

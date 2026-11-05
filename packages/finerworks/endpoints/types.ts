@@ -78,9 +78,15 @@ export const FinerWorksRecipientInputSchema = z
  */
 export const FinerWorksImageLibrarySchema = z
 	.object({
+		/** "inventory" (the account's saved images) or "temporary". */
 		name: z.string(),
-		session_id: z.string().nullable().optional(),
+		/**
+		 * 8 to 50 characters. Required by FinerWorks; the plugin generates one
+		 * when omitted. Pass the FinerWorks.com session for the temporary library.
+		 */
+		session_id: z.string().min(8).max(50).nullable().optional(),
 		account_key: z.string().nullable().optional(),
+		/** Required by FinerWorks; defaults to 2. */
 		site_id: z.number().nullable().optional(),
 	})
 	.loose();

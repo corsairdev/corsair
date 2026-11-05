@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import { logEventFromContext } from 'corsair/core';
 import { makeFinerWorksRequest } from '../client';
 import { deleteImages, saveImages } from './save';
@@ -19,6 +20,24 @@ import {
 } from './types';
 
 /**
+ * FinerWorks rejects an `image_library` without `site_id` or with a
+ * `session_id` shorter than 8 characters. `site_id` is 2 unless FinerWorks
+ * says otherwise, and the session only matters for the `temporary` library
+ * (uploads tied to a FinerWorks.com browser session), so the inventory
+ * library gets a fresh 32-character id when the caller has none.
+ * https://v2.api.finerworks.com/Help/ResourceModel?modelName=image_library
+ */
+function withLibraryDefaults<
+	T extends { site_id?: number | null; session_id?: string | null },
+>(library: T): T & { site_id: number; session_id: string } {
+	return {
+		...library,
+		site_id: library.site_id ?? 2,
+		session_id: library.session_id ?? randomUUID().replaceAll('-', ''),
+	};
+}
+
+/**
  * Add up to five prepared image files to a FinerWorks library.
  * https://v2.api.finerworks.com/Help/Api/POST-v3-add_images
  */
@@ -31,7 +50,7 @@ export const add: FinerWorksEndpoint<'images.add'> = async (ctx, input) => {
 		credentials,
 		{
 			method: 'POST',
-			body: validated,
+			body: { ...validated, library: withLibraryDefaults(validated.library) },
 		},
 	);
 
@@ -58,7 +77,10 @@ export const list: FinerWorksEndpoint<'images.list'> = async (ctx, input) => {
 	const res = await makeFinerWorksRequest<unknown>(
 		'v3/list_images',
 		credentials,
-		{ method: 'POST', body: validated },
+		{
+			method: 'POST',
+			body: { ...validated, library: withLibraryDefaults(validated.library) },
+		},
 	);
 
 	await logEventFromContext(
@@ -119,7 +141,12 @@ export const remove: FinerWorksEndpoint<'images.delete'> = async (
 	const res = await makeFinerWorksRequest<unknown>(
 		'v3/delete_images',
 		credentials,
-		{ method: 'DELETE', body: validated },
+		{
+			method: 'DELETE',
+			body: validated.library
+				? { ...validated, library: withLibraryDefaults(validated.library) }
+				: validated,
+		},
 	);
 
 	await logEventFromContext(
