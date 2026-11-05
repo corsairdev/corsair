@@ -453,6 +453,14 @@
                 ]
               },
               {
+                "group": "AnyAPI",
+                "pages": [
+                  "plugins/anyapi/overview",
+                  "plugins/anyapi/api",
+                  "plugins/anyapi/database"
+                ]
+              },
+              {
                 "group": "Apaleo",
                 "pages": [
                   "plugins/apaleo/overview",
@@ -973,6 +981,14 @@
                 ]
               },
               {
+                "group": "Browser Use",
+                "pages": [
+                  "plugins/browseruse/overview",
+                  "plugins/browseruse/api",
+                  "plugins/browseruse/database"
+                ]
+              },
+              {
                 "group": "Browserless",
                 "pages": [
                   "plugins/browserless/overview",
@@ -1275,7 +1291,7 @@
                 ]
               },
               {
-                "group": "Clickup",
+                "group": "ClickUp",
                 "pages": [
                   "plugins/clickup/overview",
                   "plugins/clickup/api",
@@ -1348,6 +1364,14 @@
                   "plugins/cloudinary/api",
                   "plugins/cloudinary/database",
                   "plugins/cloudinary/webhooks"
+                ]
+              },
+              {
+                "group": "Coassemble",
+                "pages": [
+                  "plugins/coassemble/overview",
+                  "plugins/coassemble/api",
+                  "plugins/coassemble/database"
                 ]
               },
               {
@@ -1629,6 +1653,14 @@
                 ]
               },
               {
+                "group": "DNSFilter",
+                "pages": [
+                  "plugins/dnsfilter/overview",
+                  "plugins/dnsfilter/api",
+                  "plugins/dnsfilter/database"
+                ]
+              },
+              {
                 "group": "Docker Hub",
                 "pages": [
                   "plugins/dockerhub/overview",
@@ -1760,6 +1792,14 @@
                 ]
               },
               {
+                "group": "eSputnik",
+                "pages": [
+                  "plugins/esputnik/overview",
+                  "plugins/esputnik/api",
+                  "plugins/esputnik/database"
+                ]
+              },
+              {
                 "group": "Everhour",
                 "pages": [
                   "plugins/everhour/overview",
@@ -1834,6 +1874,14 @@
                   "plugins/filloutforms/overview",
                   "plugins/filloutforms/api",
                   "plugins/filloutforms/database"
+                ]
+              },
+              {
+                "group": "FinerWorks",
+                "pages": [
+                  "plugins/finerworks/overview",
+                  "plugins/finerworks/api",
+                  "plugins/finerworks/database"
                 ]
               },
               {
@@ -1946,6 +1994,14 @@
                   "plugins/gmail/api",
                   "plugins/gmail/database",
                   "plugins/gmail/webhooks"
+                ]
+              },
+              {
+                "group": "GMI Cloud",
+                "pages": [
+                  "plugins/gmicloud/overview",
+                  "plugins/gmicloud/api",
+                  "plugins/gmicloud/database"
                 ]
               },
               {
@@ -2200,6 +2256,15 @@
                 ]
               },
               {
+                "group": "Instantly",
+                "pages": [
+                  "plugins/instantly/overview",
+                  "plugins/instantly/api",
+                  "plugins/instantly/database",
+                  "plugins/instantly/webhooks"
+                ]
+              },
+              {
                 "group": "Intercom",
                 "pages": [
                   "plugins/intercom/overview",
@@ -2265,6 +2330,14 @@
                   "plugins/leexi/overview",
                   "plugins/leexi/api",
                   "plugins/leexi/database"
+                ]
+              },
+              {
+                "group": "Lever",
+                "pages": [
+                  "plugins/lever/overview",
+                  "plugins/lever/api",
+                  "plugins/lever/database"
                 ]
               },
               {
@@ -2682,6 +2755,14 @@
                 ]
               },
               {
+                "group": "Render",
+                "pages": [
+                  "plugins/render/overview",
+                  "plugins/render/api",
+                  "plugins/render/database"
+                ]
+              },
+              {
                 "group": "Replicate",
                 "pages": [
                   "plugins/replicate/overview",
@@ -3021,6 +3102,14 @@
                 ]
               },
               {
+                "group": "TikHub",
+                "pages": [
+                  "plugins/tikhub/overview",
+                  "plugins/tikhub/api",
+                  "plugins/tikhub/database"
+                ]
+              },
+              {
                 "group": "TimeCamp",
                 "pages": [
                   "plugins/timecamp/overview",
@@ -3122,6 +3211,14 @@
                 ]
               },
               {
+                "group": "Turbot Pipes",
+                "pages": [
+                  "plugins/turbotpipes/overview",
+                  "plugins/turbotpipes/api",
+                  "plugins/turbotpipes/database"
+                ]
+              },
+              {
                 "group": "Turso",
                 "pages": [
                   "plugins/turso/overview",
@@ -3175,12 +3272,29 @@
                 ]
               },
               {
+                "group": "TypeSafe",
+                "pages": [
+                  "plugins/typesafe/overview",
+                  "plugins/typesafe/api",
+                  "plugins/typesafe/database"
+                ]
+              },
+              {
                 "group": "UniOne",
                 "pages": [
                   "plugins/unione/overview",
                   "plugins/unione/api",
                   "plugins/unione/database",
                   "plugins/unione/webhooks"
+                ]
+              },
+              {
+                "group": "Unipile",
+                "pages": [
+                  "plugins/unipile/overview",
+                  "plugins/unipile/api",
+                  "plugins/unipile/database",
+                  "plugins/unipile/webhooks"
                 ]
               },
               {
@@ -3349,6 +3463,22 @@
                 ]
               },
               {
+                "group": "Woodpecker Co",
+                "pages": [
+                  "plugins/woodpeckerco/overview",
+                  "plugins/woodpeckerco/api",
+                  "plugins/woodpeckerco/database"
+                ]
+              },
+              {
+                "group": "Workable",
+                "pages": [
+                  "plugins/workable/overview",
+                  "plugins/workable/api",
+                  "plugins/workable/database"
+                ]
+              },
+              {
                 "group": "Workday",
                 "pages": [
                   "plugins/workday/overview",
@@ -3446,6 +3576,14 @@
                   "plugins/zohobigin/overview",
                   "plugins/zohobigin/api",
                   "plugins/zohobigin/database"
+                ]
+              },
+              {
+                "group": "Zoho Desk",
+                "pages": [
+                  "plugins/zohodesk/overview",
+                  "plugins/zohodesk/api",
+                  "plugins/zohodesk/database"
                 ]
               },
               {

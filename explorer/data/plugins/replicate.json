@@ -314,6 +314,20 @@
       "shortPath": "deployments.predictionsCreate",
       "description": "Create a prediction from deployment",
       "riskLevel": "write",
+      "job": {
+        "idPath": "id",
+        "status": {
+          "op": "predictions.get",
+          "idArg": "predictionId",
+          "statusPath": "status",
+          "done": ["succeeded"],
+          "failed": ["failed", "canceled", "aborted"]
+        },
+        "cancel": {
+          "op": "predictions.cancel",
+          "idArg": "predictionId"
+        }
+      },
       "input": {
         "kind": "object",
         "fields": [
@@ -704,7 +718,7 @@
           {
             "key": "results",
             "optional": false,
-            "type": "{ id: string, status: starting | processing | succeeded | failed | canceled | aborted, model?: string, version?: string, deployment?: string, input?: {}, output?: any, error?: string | null, logs?: string, source?: api | web, data_removed?: boolean, created_at?: string | string, started_at?: string | string | null, completed_at?: string | string | null, deadline?: string | string, metrics?: {}, urls?: { get?: string, cancel?: string, web?: string, stream?: string } }[]"
+            "type": "{ id: string, status: starting | processing | succeeded | failed | canceled | aborted, model?: string, version?: string | null, deployment?: string, input?: {}, output?: any, error?: string | null, logs?: string | null, source?: api | web, data_removed?: boolean, created_at?: string | string, started_at?: string | string | null, completed_at?: string | string | null, deadline?: string | string, metrics?: {}, urls?: { get?: string, cancel?: string, web?: string, stream?: string } }[]"
           }
         ]
       }
@@ -851,6 +865,20 @@
       "shortPath": "models.predictionsCreate",
       "description": "Create official model prediction",
       "riskLevel": "write",
+      "job": {
+        "idPath": "id",
+        "status": {
+          "op": "predictions.get",
+          "idArg": "predictionId",
+          "statusPath": "status",
+          "done": ["succeeded"],
+          "failed": ["failed", "canceled", "aborted"]
+        },
+        "cancel": {
+          "op": "predictions.cancel",
+          "idArg": "predictionId"
+        }
+      },
       "input": {
         "kind": "object",
         "fields": [
@@ -1341,6 +1369,20 @@
       "shortPath": "predictions.create",
       "description": "Create prediction by version",
       "riskLevel": "write",
+      "job": {
+        "idPath": "id",
+        "status": {
+          "op": "predictions.get",
+          "idArg": "predictionId",
+          "statusPath": "status",
+          "done": ["succeeded"],
+          "failed": ["failed", "canceled", "aborted"]
+        },
+        "cancel": {
+          "op": "predictions.cancel",
+          "idArg": "predictionId"
+        }
+      },
       "input": {
         "kind": "object",
         "fields": [
@@ -1624,7 +1666,7 @@
           {
             "key": "results",
             "optional": false,
-            "type": "{ id: string, status: starting | processing | succeeded | failed | canceled | aborted, model?: string, version?: string, deployment?: string, input?: {}, output?: any, error?: string | null, logs?: string, source?: api | web, data_removed?: boolean, created_at?: string | string, started_at?: string | string | null, completed_at?: string | string | null, deadline?: string | string, metrics?: {}, urls?: { get?: string, cancel?: string, web?: string, stream?: string } }[]"
+            "type": "{ id: string, status: starting | processing | succeeded | failed | canceled | aborted, model?: string, version?: string | null, deployment?: string, input?: {}, output?: any, error?: string | null, logs?: string | null, source?: api | web, data_removed?: boolean, created_at?: string | string, started_at?: string | string | null, completed_at?: string | string | null, deadline?: string | string, metrics?: {}, urls?: { get?: string, cancel?: string, web?: string, stream?: string } }[]"
           }
         ]
       }
@@ -1771,6 +1813,20 @@
       "shortPath": "trainings.create",
       "description": "Create training job",
       "riskLevel": "write",
+      "job": {
+        "idPath": "id",
+        "status": {
+          "op": "trainings.get",
+          "idArg": "trainingId",
+          "statusPath": "status",
+          "done": ["succeeded"],
+          "failed": ["failed", "canceled", "aborted"]
+        },
+        "cancel": {
+          "op": "trainings.cancel",
+          "idArg": "trainingId"
+        }
+      },
       "input": {
         "kind": "object",
         "fields": [

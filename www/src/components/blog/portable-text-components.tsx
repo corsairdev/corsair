@@ -2,7 +2,15 @@ import type { PortableTextComponents } from '@portabletext/react';
 import type { PortableTextBlock } from '@portabletext/types';
 import Image from 'next/image';
 
+import { BlogCodeBlock } from '@/components/blog/blog-code-block';
 import { urlForImage } from '@/lib/sanity/client';
+
+type CodeBlockValue = {
+	_type: 'codeBlock';
+	code?: string;
+	filename?: string;
+	language?: string;
+};
 
 type SanityImageValue = {
 	_type: 'image';
@@ -72,6 +80,21 @@ export const portableTextComponents: PortableTextComponents = {
 		},
 	},
 	types: {
+		codeBlock: ({ value }) => {
+			const block = value as CodeBlockValue | undefined;
+
+			if (!block?.code) {
+				return null;
+			}
+
+			return (
+				<BlogCodeBlock
+					code={block.code}
+					filename={block.filename}
+					language={block.language}
+				/>
+			);
+		},
 		image: ({ value }) => {
 			const imageValue = value as SanityImageValue | undefined;
 

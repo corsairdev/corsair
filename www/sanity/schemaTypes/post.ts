@@ -129,6 +129,52 @@ export const postType = defineType({
 						}),
 					],
 				}),
+				defineArrayMember({
+					type: 'object',
+					name: 'codeBlock',
+					title: 'Code block',
+					fields: [
+						defineField({
+							name: 'filename',
+							title: 'File name',
+							type: 'string',
+							description:
+								'Optional. Shown above the code, e.g. ~/.codex/config.toml.',
+						}),
+						defineField({
+							name: 'language',
+							title: 'Language',
+							type: 'string',
+							options: {
+								list: [
+									'bash',
+									'toml',
+									'json',
+									'yaml',
+									'typescript',
+									'javascript',
+									'python',
+									'text',
+								],
+							},
+							initialValue: 'bash',
+						}),
+						defineField({
+							name: 'code',
+							title: 'Code',
+							type: 'text',
+							rows: 8,
+							validation: (rule) => rule.required(),
+						}),
+					],
+					preview: {
+						select: { title: 'filename', subtitle: 'language' },
+						prepare: ({ title, subtitle }) => ({
+							title: title || 'Code block',
+							subtitle,
+						}),
+					},
+				}),
 			],
 			validation: (rule) => rule.required(),
 		}),

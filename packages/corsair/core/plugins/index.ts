@@ -61,6 +61,32 @@ export type PermissionMode = 'open' | 'cautious' | 'strict' | 'readonly';
 export type PermissionPolicy = 'allow' | 'deny' | 'require_approval';
 
 /**
+ * Declared on an operation that starts work the provider finishes later (a
+ * prediction, a render, a transcription), so an agent or a routine can follow
+ * it to its end: read it back with `status.op` until `status.statusPath` reads
+ * one of `done` or `failed`. Every path and status value is the provider's own,
+ * as the plugin's output schema states it.
+ */
+export type EndpointJob = {
+	/** Dot path in this operation's result to the provider's job id, e.g. `id`. */
+	idPath: string;
+	status: {
+		/** The operation in this plugin that reads the job back, e.g. `predictions.get`. */
+		op: string;
+		/** That operation's argument that takes the job id, e.g. `predictionId`. */
+		idArg: string;
+		/** Dot path in its result to where the job stands, e.g. `status`. */
+		statusPath: string;
+		/** Values that mean the job finished. */
+		done: readonly string[];
+		/** Values that mean it ended without finishing (failed, cancelled, timed out). */
+		failed: readonly string[];
+	};
+	/** The operation in this plugin that stops the job, when the provider has one. */
+	cancel?: { op: string; idArg: string };
+};
+
+/**
  * Metadata for a single endpoint entry. Drives permission decisions and MCP tool descriptions.
  * Plugin authors populate this on the `endpointMeta` field of their plugin definition.
  */
@@ -77,6 +103,8 @@ export type EndpointMetaEntry = {
 	 * Included in the MCP tool description surfaced to the AI agent.
 	 */
 	description?: string;
+	/** Set when the operation starts a long job; see {@link EndpointJob}. */
+	job?: EndpointJob;
 };
 
 /**

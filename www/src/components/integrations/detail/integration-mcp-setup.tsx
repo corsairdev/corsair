@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 
+import { ClientSetupTabs } from '@/components/integrations/detail/client-setup-tabs';
 import { CopyableCodeSnippet } from '@/components/landing/copyable-code-snippet';
 import type { IntegrationDetailData } from '@/lib/integration-page.types';
 import {
@@ -9,7 +10,7 @@ import {
 } from '@/lib/integration-seo';
 import {
 	CURSOR_INSTALL_URL,
-	hubWwwPluginLoginUrl,
+	hubMcpConnectUrl,
 	MCP_DOCS_URL,
 	MCP_URL,
 } from '@/lib/site-links';
@@ -20,8 +21,7 @@ const CURSOR_CONFIG = `{
   }
 }`;
 
-// Clients whose step is a code block take a full row so the code stays readable.
-const CLIENTS: { name: string; wide?: boolean; body: ReactNode }[] = [
+const CLIENTS: { name: string; body: ReactNode }[] = [
 	{
 		name: 'Claude',
 		body: (
@@ -42,7 +42,6 @@ const CLIENTS: { name: string; wide?: boolean; body: ReactNode }[] = [
 	},
 	{
 		name: 'Cursor',
-		wide: true,
 		body: (
 			<>
 				<a
@@ -63,7 +62,6 @@ const CLIENTS: { name: string; wide?: boolean; body: ReactNode }[] = [
 	},
 	{
 		name: 'Claude Code',
-		wide: true,
 		body: (
 			<>
 				Run this, then run <code>/mcp</code> in Claude Code to sign in.
@@ -112,9 +110,9 @@ export function IntegrationMcpSetup({
 	const risk = countToolsByRisk(integration.operations);
 
 	return (
-		<section className="pt-7 pb-4 md:pt-8 md:pb-5">
+		<section id="connect" className="scroll-mt-24 pt-8 pb-4 md:pt-10 md:pb-5">
 			<div className="mx-auto max-w-[960px] px-4 sm:px-6 md:px-10">
-				<h2 className="font-[family-name:var(--landing-font-mono)] text-xs font-medium uppercase tracking-[0.06em] text-[#1c1c1c66]">
+				<h2 className="font-[family-name:var(--landing-font-serif)] text-[clamp(1.5rem,3vw,2rem)] font-light tracking-[-0.03em] text-[#1c1c1c]">
 					Connect {displayName} to Claude, ChatGPT or Cursor
 				</h2>
 
@@ -123,36 +121,30 @@ export function IntegrationMcpSetup({
 						<p>
 							{integrationAuthSummary(displayName, integration.authTypes)}{' '}
 							<a
-								href={hubWwwPluginLoginUrl(id)}
+								href={hubMcpConnectUrl(id)}
 								target="_blank"
 								rel="noopener noreferrer"
 								className="font-medium text-[#4a38f5] no-underline hover:underline"
 							>
-								Open Corsair Hub
+								Connect {displayName}
 							</a>
+						</p>
+						<p className="mt-2 text-sm">
+							If your link lets the agent add apps, you can skip this: it gives
+							you a sign-in link the first time it needs {displayName}. On a
+							ChatGPT personal plan, connect {displayName} here first.
 						</p>
 					</Step>
 
 					<Step number={2} title="Add Corsair's MCP server to your agent">
 						<p>Every client uses the same address:</p>
 						<CopyableCodeSnippet code={MCP_URL} className="mt-2 max-w-md" />
-						<div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
-							{CLIENTS.map((client) => (
-								<div
-									key={client.name}
-									className={`min-w-0 rounded-md border border-[#1c1c1c]/10 bg-white px-4 py-3 ${client.wide ? 'sm:col-span-2' : ''}`}
-								>
-									<p className="text-sm font-medium text-[#1c1c1c]">
-										{client.name}
-									</p>
-									<div className="mt-1 text-sm leading-relaxed text-[#1c1c1c99]">
-										{client.body}
-									</div>
-								</div>
-							))}
-						</div>
+						<ClientSetupTabs clients={CLIENTS} />
 						<p className="mt-3 text-sm">
-							VS Code, Codex, Gemini CLI and Zed work the same way.{' '}
+							Codex, Gemini CLI, VS Code, Zed and other clients with OAuth
+							sign-in work the same way. Clients without it, such as GitHub
+							Copilot&apos;s coding agent, use a link&apos;s own address and an
+							API key.{' '}
 							<a
 								href={MCP_DOCS_URL}
 								className="font-medium text-[#4a38f5] no-underline hover:underline"
