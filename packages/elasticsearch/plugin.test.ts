@@ -19,13 +19,52 @@ function buildKey(
 	return plugin.keyBuilder?.(ctx as never, 'endpoint');
 }
 
+// Every nested endpoint dot-path the plugin exposes.
 const operations = [
 	'cluster.getHealth',
 	'indices.list',
 	'indices.get',
 	'search.run',
 	'documents.get',
+	'documents.exists',
+	'documents.index',
+	'documents.create',
+	'documents.update',
+	'documents.delete',
+	'documents.updateByQuery',
+	'documents.deleteByQuery',
+	'documents.mget',
+	'documents.getSource',
+	'documents.existsSource',
+	'documents.explain',
+	'documents.termvectors',
+	'documents.mtermvectors',
+	'documents.bulk',
 ];
+
+// Risk pinned per op: reads never mutate, writes change data or cluster
+// state, destructives remove data.
+const riskLevels: Record<string, 'read' | 'write' | 'destructive'> = {
+	'cluster.getHealth': 'read',
+	'indices.list': 'read',
+	'indices.get': 'read',
+	'search.run': 'read',
+	'documents.get': 'read',
+	'documents.exists': 'read',
+	'documents.index': 'write',
+	'documents.create': 'write',
+	'documents.update': 'write',
+	'documents.delete': 'destructive',
+	'documents.updateByQuery': 'write',
+	'documents.deleteByQuery': 'destructive',
+	'documents.mget': 'read',
+	'documents.getSource': 'read',
+	'documents.existsSource': 'read',
+	'documents.explain': 'read',
+	'documents.termvectors': 'read',
+	'documents.mtermvectors': 'read',
+	'documents.bulk': 'write',
+};
 
 describe('elasticsearch plugin definition', () => {
 	const plugin = elasticsearch();
@@ -52,11 +91,16 @@ describe('elasticsearch plugin definition', () => {
 		expect(nested.sort()).toEqual([...operations].sort());
 	});
 
-	it('marks every endpoint read-only with a description', () => {
+	it('pins the risk level and a description for every endpoint', () => {
 		const meta = plugin.endpointMeta ?? {};
-		expect(Object.keys(meta).sort()).toEqual([...operations].sort());
+		const expected = Object.fromEntries(
+			operations.map((operation) => [
+				operation,
+				{ riskLevel: riskLevels[operation], description: expect.any(String) },
+			]),
+		);
+		expect(meta).toEqual(expected);
 		for (const entry of Object.values(meta)) {
-			expect(entry.riskLevel).toBe('read');
 			expect(entry.description?.length).toBeGreaterThan(10);
 		}
 	});

@@ -76,6 +76,20 @@ export type ElasticsearchEndpoints = {
 	indicesGet: ElasticsearchEndpoint<'indicesGet'>;
 	searchRun: ElasticsearchEndpoint<'searchRun'>;
 	documentsGet: ElasticsearchEndpoint<'documentsGet'>;
+	documentsExists: ElasticsearchEndpoint<'documentsExists'>;
+	documentsIndex: ElasticsearchEndpoint<'documentsIndex'>;
+	documentsCreate: ElasticsearchEndpoint<'documentsCreate'>;
+	documentsUpdate: ElasticsearchEndpoint<'documentsUpdate'>;
+	documentsDelete: ElasticsearchEndpoint<'documentsDelete'>;
+	documentsUpdateByQuery: ElasticsearchEndpoint<'documentsUpdateByQuery'>;
+	documentsDeleteByQuery: ElasticsearchEndpoint<'documentsDeleteByQuery'>;
+	documentsMget: ElasticsearchEndpoint<'documentsMget'>;
+	documentsGetSource: ElasticsearchEndpoint<'documentsGetSource'>;
+	documentsExistsSource: ElasticsearchEndpoint<'documentsExistsSource'>;
+	documentsExplain: ElasticsearchEndpoint<'documentsExplain'>;
+	documentsTermvectors: ElasticsearchEndpoint<'documentsTermvectors'>;
+	documentsMtermvectors: ElasticsearchEndpoint<'documentsMtermvectors'>;
+	documentsBulk: ElasticsearchEndpoint<'documentsBulk'>;
 };
 
 // Elasticsearch has no inbound webhook surface — the REST API is
@@ -95,6 +109,20 @@ const elasticsearchEndpointsNested = {
 	},
 	documents: {
 		get: Documents.get,
+		exists: Documents.exists,
+		index: Documents.index,
+		create: Documents.create,
+		update: Documents.update,
+		delete: Documents.remove,
+		updateByQuery: Documents.updateByQuery,
+		deleteByQuery: Documents.deleteByQuery,
+		mget: Documents.mget,
+		getSource: Documents.getSource,
+		existsSource: Documents.existsSource,
+		explain: Documents.explain,
+		termvectors: Documents.termvectors,
+		mtermvectors: Documents.mtermvectors,
+		bulk: Documents.bulk,
 	},
 } as const;
 
@@ -118,6 +146,62 @@ export const elasticsearchEndpointSchemas = {
 	'documents.get': {
 		input: ElasticsearchEndpointInputSchemas.documentsGet,
 		output: ElasticsearchEndpointOutputSchemas.documentsGet,
+	},
+	'documents.exists': {
+		input: ElasticsearchEndpointInputSchemas.documentsExists,
+		output: ElasticsearchEndpointOutputSchemas.documentsExists,
+	},
+	'documents.index': {
+		input: ElasticsearchEndpointInputSchemas.documentsIndex,
+		output: ElasticsearchEndpointOutputSchemas.documentsIndex,
+	},
+	'documents.create': {
+		input: ElasticsearchEndpointInputSchemas.documentsCreate,
+		output: ElasticsearchEndpointOutputSchemas.documentsCreate,
+	},
+	'documents.update': {
+		input: ElasticsearchEndpointInputSchemas.documentsUpdate,
+		output: ElasticsearchEndpointOutputSchemas.documentsUpdate,
+	},
+	'documents.delete': {
+		input: ElasticsearchEndpointInputSchemas.documentsDelete,
+		output: ElasticsearchEndpointOutputSchemas.documentsDelete,
+	},
+	'documents.updateByQuery': {
+		input: ElasticsearchEndpointInputSchemas.documentsUpdateByQuery,
+		output: ElasticsearchEndpointOutputSchemas.documentsUpdateByQuery,
+	},
+	'documents.deleteByQuery': {
+		input: ElasticsearchEndpointInputSchemas.documentsDeleteByQuery,
+		output: ElasticsearchEndpointOutputSchemas.documentsDeleteByQuery,
+	},
+	'documents.mget': {
+		input: ElasticsearchEndpointInputSchemas.documentsMget,
+		output: ElasticsearchEndpointOutputSchemas.documentsMget,
+	},
+	'documents.getSource': {
+		input: ElasticsearchEndpointInputSchemas.documentsGetSource,
+		output: ElasticsearchEndpointOutputSchemas.documentsGetSource,
+	},
+	'documents.existsSource': {
+		input: ElasticsearchEndpointInputSchemas.documentsExistsSource,
+		output: ElasticsearchEndpointOutputSchemas.documentsExistsSource,
+	},
+	'documents.explain': {
+		input: ElasticsearchEndpointInputSchemas.documentsExplain,
+		output: ElasticsearchEndpointOutputSchemas.documentsExplain,
+	},
+	'documents.termvectors': {
+		input: ElasticsearchEndpointInputSchemas.documentsTermvectors,
+		output: ElasticsearchEndpointOutputSchemas.documentsTermvectors,
+	},
+	'documents.mtermvectors': {
+		input: ElasticsearchEndpointInputSchemas.documentsMtermvectors,
+		output: ElasticsearchEndpointOutputSchemas.documentsMtermvectors,
+	},
+	'documents.bulk': {
+		input: ElasticsearchEndpointInputSchemas.documentsBulk,
+		output: ElasticsearchEndpointOutputSchemas.documentsBulk,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof elasticsearchEndpointsNested
@@ -150,6 +234,76 @@ const elasticsearchEndpointMeta = {
 		riskLevel: 'read',
 		description:
 			'Get one JSON document by index and id; a missing document returns found: false rather than an error',
+	},
+	'documents.exists': {
+		riskLevel: 'read',
+		description:
+			'Check whether a document exists (HEAD): resolves to { exists: boolean } instead of throwing on 404',
+	},
+	'documents.index': {
+		riskLevel: 'write',
+		description:
+			'Create or replace a document by id (POST /{index}/_doc/{id}) with optional op_type, refresh and optimistic-concurrency controls',
+	},
+	'documents.create': {
+		riskLevel: 'write',
+		description:
+			'Create a document only if no document with the id exists yet (POST /{index}/_create/{id}); a duplicate answers 409',
+	},
+	'documents.update': {
+		riskLevel: 'write',
+		description:
+			'Update one document with a partial doc merge or a script (exactly one), with optional upsert and retry-on-conflict',
+	},
+	'documents.delete': {
+		riskLevel: 'destructive',
+		description:
+			'Delete one document by id; a missing document answers 404 with result: not_found instead of an error',
+	},
+	'documents.updateByQuery': {
+		riskLevel: 'write',
+		description:
+			'Update every document matching a query with a script, optionally throttled, sliced and run as a background task',
+	},
+	'documents.deleteByQuery': {
+		riskLevel: 'destructive',
+		description:
+			'Delete every document matching a query (the query is mandatory so the deletion set is always explicit)',
+	},
+	'documents.mget': {
+		riskLevel: 'read',
+		description:
+			'Fetch multiple documents in one request by ids (under the path index) or explicit { _index, _id } entries',
+	},
+	'documents.getSource': {
+		riskLevel: 'read',
+		description:
+			"Get a document's _source JSON directly by index and id; a missing document is a 404 error (unlike documents.get)",
+	},
+	'documents.existsSource': {
+		riskLevel: 'read',
+		description:
+			'Check whether a stored _source exists for a document (HEAD): resolves to { exists: boolean }',
+	},
+	'documents.explain': {
+		riskLevel: 'read',
+		description:
+			'Explain whether and why a document matches a query: score computation and optional inline get back',
+	},
+	'documents.termvectors': {
+		riskLevel: 'read',
+		description:
+			'Get term-vector statistics (terms, positions, offsets, payloads, frequencies) for one document',
+	},
+	'documents.mtermvectors': {
+		riskLevel: 'read',
+		description:
+			'Get term vectors for multiple documents by ids or { _index, _id } entries in one request',
+	},
+	'documents.bulk': {
+		riskLevel: 'write',
+		description:
+			'Bulk index, create, update or delete documents on one target (PUT /{index}/_bulk) from typed operations or raw NDJSON',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof elasticsearchEndpointsNested

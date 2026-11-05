@@ -10,6 +10,7 @@ import {
 	esErrorBody,
 	indexInfo,
 	searchResponse,
+	writeResponse,
 } from './test-fixtures';
 
 async function createClient(options: Parameters<typeof elasticsearch>[0]) {
@@ -270,6 +271,75 @@ describe('elasticsearch plugin through createCorsair', () => {
 
 			expect(result.status).toBe('green');
 			expect(fetchMock).toHaveBeenCalledTimes(2);
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	it('indexes a document with a JSON body and query params through the bind layer', async () => {
+		const { corsair, testDb } = await createClient({
+			baseUrl: 'http://es:9200',
+			key: 'encoded-key',
+		});
+		try {
+			respond(writeResponse);
+
+			const result = await corsair.elasticsearch.api.documents.index({
+				index: 'logs-2026-11',
+				id: '1',
+				document: { level: 'error', message: 'disk on node 2 above 90%' },
+				refresh: 'wait_for',
+			});
+
+			expect(result.result).toBe('created');
+			const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+			expect(url).toBe('http://es:9200/logs-2026-11/_doc/1?refresh=wait_for');
+			expect(init.method).toBe('POST');
+			expect(JSON.parse(String(init.body))).toEqual({
+				level: 'error',
+				message: 'disk on node 2 above 90%',
+			});
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	it('resolves a HEAD exists 404 to { exists: false } through the bind layer', async () => {
+		const { corsair, testDb } = await createClient({
+			baseUrl: 'http://es:9200',
+			key: 'encoded-key',
+		});
+		try {
+			fetchMock.mockResolvedValueOnce(new Response(null, { status: 404 }));
+
+			const result = await corsair.elasticsearch.api.documents.exists({
+				index: 'logs-2026-11',
+				id: 'missing',
+			});
+
+			expect(result).toEqual({ exists: false });
+			expect(fetchMock).toHaveBeenCalledTimes(1);
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	it('never replays a write that fails 5xx (exactly one fetch)', async () => {
+		const { corsair, testDb } = await createClient({
+			baseUrl: 'http://es:9200',
+			key: 'encoded-key',
+		});
+		try {
+			respond(esErrorBody(503, 'internal', 'boom'), 503);
+
+			await expect(
+				corsair.elasticsearch.api.documents.index({
+					index: 'logs-2026-11',
+					id: '1',
+					document: { level: 'error' },
+				}),
+			).rejects.toMatchObject({ status: 503 });
+			expect(fetchMock).toHaveBeenCalledTimes(1);
 		} finally {
 			testDb.cleanup();
 		}

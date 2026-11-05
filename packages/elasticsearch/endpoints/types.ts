@@ -86,6 +86,132 @@ const BoolQuerySchema = z.strictObject({
 	}),
 });
 
+// ── shared response fragments (spec _types.*) ───────────────────────────────
+
+const ErrorCauseSchema = z.looseObject({
+	type: z.string().optional(),
+	reason: z.string().optional(),
+});
+
+const ShardStatisticsSchema = z.looseObject({
+	total: z.number(),
+	successful: z.number(),
+	failed: z.number(),
+	skipped: z.number().optional(),
+	// Failures are open error-cause objects per shard.
+	failures: z.array(z.looseObject({})).optional(),
+});
+
+// _types.AcknowledgedResponseBase
+const AcknowledgedResponseSchema = z.looseObject({
+	acknowledged: z.boolean(),
+});
+
+// _types.ShardsOperationResponseBase
+const ShardsOperationResponseSchema = z.looseObject({
+	_shards: ShardStatisticsSchema.optional(),
+});
+
+// _types.WriteResponseBase (index/create/update/delete document replies)
+const WriteResponseSchema = z.looseObject({
+	_id: z.string(),
+	_index: z.string(),
+	_version: z.number(),
+	result: z.string(),
+	_shards: ShardStatisticsSchema,
+	_seq_no: z.number().optional(),
+	_primary_term: z.number().optional(),
+	forced_refresh: z.boolean().optional(),
+});
+export type WriteResponse = z.infer<typeof WriteResponseSchema>;
+
+// z.unknown() values: the document source is caller-indexed JSON; no stricter
+// value type can hold it (same precedent as SearchHit._source).
+const SourceRecord = z.record(z.string(), z.unknown());
+
+// Bulk-index-by-scroll replies (_delete_by_query, _update_by_query): every
+// field is optional; failures carry a typed per-item error cause.
+const ByScrollResponseSchema = z.looseObject({
+	took: z.number().optional(),
+	timed_out: z.boolean().optional(),
+	total: z.number().optional(),
+	updated: z.number().optional(),
+	deleted: z.number().optional(),
+	noops: z.number().optional(),
+	batches: z.number().optional(),
+	version_conflicts: z.number().optional(),
+	retries: z.looseObject({ bulk: z.number(), search: z.number() }).optional(),
+	failures: z
+		.array(
+			z.looseObject({
+				index: z.string().optional(),
+				id: z.string().optional(),
+				status: z.number().optional(),
+				cause: ErrorCauseSchema.optional(),
+			}),
+		)
+		.optional(),
+	task: z.string().optional(),
+	requests_per_second: z.number().optional(),
+	throttled_millis: z.number().optional(),
+	throttled_until_millis: z.number().optional(),
+});
+export type ByScrollResponse = z.infer<typeof ByScrollResponseSchema>;
+
+// ── shared request-param fragments ──────────────────────────────────────────
+
+// _types.Refresh: `true` | `false` | `wait_for`.
+const RefreshParam = z.union([z.boolean(), z.literal('wait_for')]);
+
+// _types.WaitForActiveShards: `all`, `index-setting`, or a positive count.
+const WaitForActiveShardsParam = z.union([
+	z.literal('all'),
+	z.literal('index-setting'),
+	z.number().int().min(1),
+]);
+
+// _types.Script: an inline `source` or a stored `id`, plus optional params.
+const ScriptSchema = z
+	.strictObject({
+		source: z.string().min(1).optional(),
+		id: z.string().min(1).optional(),
+		lang: z.string().min(1).optional(),
+		// z.unknown() values: script params are arbitrary name/value pairs the
+		// script itself defines.
+		params: z.record(z.string(), z.unknown()).optional(),
+	})
+	.refine((script) => script.source !== undefined || script.id !== undefined, {
+		message: 'script requires source or id',
+	});
+
+// _global.search._types.SourceConfigParam: enable/disable or field includes.
+const SourceFilterParam = z.union([
+	z.boolean(),
+	z.array(z.string().min(1)).min(1),
+]);
+
+// Raw newline-delimited JSON (bulk, msearch). Every non-empty line must parse
+// and the payload must end with the terminator newline the APIs require.
+const NdjsonPayload = z
+	.string()
+	.min(2)
+	.refine(
+		(payload) =>
+			payload.endsWith('\n') &&
+			payload
+				.split('\n')
+				.slice(0, -1)
+				.every((line) => {
+					try {
+						JSON.parse(line);
+						return true;
+					} catch {
+						return false;
+					}
+				}),
+		{ message: 'expected newline-delimited JSON terminated by a newline' },
+	);
+
 // ── cluster.getHealth: GET /_cluster/health ──────────────────────────────────
 
 // Cluster-level call (spec default `level=cluster`); no wire body to protect.
@@ -240,6 +366,358 @@ export const DocumentsGetResponseSchema = z.looseObject({
 });
 export type DocumentsGetResponse = z.infer<typeof DocumentsGetResponseSchema>;
 
+// ── documents.exists: HEAD /{index}/_doc/{id} ────────────────────────────────
+
+// HEAD answers 200/404 with an empty body; the plugin resolves the status to
+// a boolean (convention documented in README.md).
+export const ExistsResultSchema = z.strictObject({ exists: z.boolean() });
+export type ExistsResult = z.infer<typeof ExistsResultSchema>;
+
+export const DocumentsExistsInputSchema = z.strictObject({
+	index: NonBlankString,
+	id: NonBlankString,
+});
+export type DocumentsExistsInput = z.infer<typeof DocumentsExistsInputSchema>;
+export type DocumentsExistsOutput = ExistsResult;
+
+// ── documents.index: POST /{index}/_doc/{id} ─────────────────────────────────
+
+export const DocumentsIndexInputSchema = z.strictObject({
+	index: NonBlankString,
+	id: NonBlankString,
+	document: SourceRecord,
+	op_type: z.enum(['index', 'create']).optional(),
+	refresh: RefreshParam.optional(),
+	routing: NonBlankString.optional(),
+	pipeline: NonBlankString.optional(),
+	if_seq_no: z.number().int().min(0).optional(),
+	if_primary_term: z.number().int().min(0).optional(),
+	require_alias: z.boolean().optional(),
+	timeout: NonBlankString.optional(),
+	wait_for_active_shards: WaitForActiveShardsParam.optional(),
+});
+export type DocumentsIndexInput = z.input<typeof DocumentsIndexInputSchema>;
+export type DocumentsIndexOutput = WriteResponse;
+
+// ── documents.create: POST /{index}/_create/{id} ─────────────────────────────
+
+export const DocumentsCreateInputSchema = z.strictObject({
+	index: NonBlankString,
+	id: NonBlankString,
+	document: SourceRecord,
+	refresh: RefreshParam.optional(),
+	routing: NonBlankString.optional(),
+	pipeline: NonBlankString.optional(),
+	timeout: NonBlankString.optional(),
+	wait_for_active_shards: WaitForActiveShardsParam.optional(),
+});
+export type DocumentsCreateInput = z.input<typeof DocumentsCreateInputSchema>;
+export type DocumentsCreateOutput = WriteResponse;
+
+// ── documents.update: POST /{index}/_update/{id} ─────────────────────────────
+
+export const DocumentsUpdateInputSchema = z
+	.strictObject({
+		index: NonBlankString,
+		id: NonBlankString,
+		doc: SourceRecord.optional(),
+		script: ScriptSchema.optional(),
+		doc_as_upsert: z.boolean().optional(),
+		detect_noop: z.boolean().optional(),
+		scripted_upsert: z.boolean().optional(),
+		upsert: SourceRecord.optional(),
+		_source: SourceFilterParam.optional(),
+		refresh: RefreshParam.optional(),
+		retry_on_conflict: z.number().int().min(0).optional(),
+		routing: NonBlankString.optional(),
+		if_seq_no: z.number().int().min(0).optional(),
+		if_primary_term: z.number().int().min(0).optional(),
+	})
+	.refine(
+		(input) => (input.doc !== undefined) !== (input.script !== undefined),
+		{
+			message: 'provide exactly one of doc or script',
+		},
+	);
+export type DocumentsUpdateInput = z.input<typeof DocumentsUpdateInputSchema>;
+
+export const DocumentsUpdateOutputSchema = WriteResponseSchema.extend({
+	get: z
+		.looseObject({
+			found: z.boolean().optional(),
+			_source: SourceRecord.optional(),
+		})
+		.optional(),
+});
+export type DocumentsUpdateOutput = z.infer<typeof DocumentsUpdateOutputSchema>;
+
+// ── documents.delete: DELETE /{index}/_doc/{id} ──────────────────────────────
+
+export const DocumentsDeleteInputSchema = z.strictObject({
+	index: NonBlankString,
+	id: NonBlankString,
+	refresh: RefreshParam.optional(),
+	routing: NonBlankString.optional(),
+	if_seq_no: z.number().int().min(0).optional(),
+	if_primary_term: z.number().int().min(0).optional(),
+	timeout: NonBlankString.optional(),
+	wait_for_active_shards: WaitForActiveShardsParam.optional(),
+});
+export type DocumentsDeleteInput = z.input<typeof DocumentsDeleteInputSchema>;
+export type DocumentsDeleteOutput = WriteResponse;
+
+// ── documents.updateByQuery: POST /{index}/_update_by_query ──────────────────
+
+const ByQuerySharedFields = {
+	query: QuerySchema.optional(),
+	max_docs: z.number().int().min(1).optional(),
+	conflicts: z.enum(['abort', 'proceed']).optional(),
+	refresh: z.boolean().optional(),
+	wait_for_completion: z.boolean().optional(),
+	requests_per_second: z.number().min(-1).optional(),
+	scroll: NonBlankString.optional(),
+	slices: z.union([z.number().int().min(0), z.literal('auto')]).optional(),
+};
+
+export const DocumentsUpdateByQueryInputSchema = z.strictObject({
+	index: NonBlankString,
+	...ByQuerySharedFields,
+	script: ScriptSchema.optional(),
+	pipeline: NonBlankString.optional(),
+});
+export type DocumentsUpdateByQueryInput = z.input<
+	typeof DocumentsUpdateByQueryInputSchema
+>;
+export type DocumentsUpdateByQueryOutput = z.infer<
+	typeof ByScrollResponseSchema
+>;
+
+// deleteByQuery requires an explicit query: without one Elasticsearch would
+// delete every document in the target, and a typo must not do that.
+export const DocumentsDeleteByQueryInputSchema = z
+	.strictObject({
+		index: NonBlankString,
+		...ByQuerySharedFields,
+	})
+	.refine((input) => input.query !== undefined, {
+		message: 'query is required so the deletion set is explicit',
+	});
+export type DocumentsDeleteByQueryInput = z.input<
+	typeof DocumentsDeleteByQueryInputSchema
+>;
+export type DocumentsDeleteByQueryOutput = z.infer<
+	typeof ByScrollResponseSchema
+>;
+
+// ── documents.mget: POST /{index}/_mget ──────────────────────────────────────
+
+// One lookup: by id under the path index, or a full { _index?, _id } entry.
+const MgetDocsSchema = z
+	.array(
+		z.strictObject({
+			_index: NonBlankString.optional(),
+			_id: NonBlankString,
+		}),
+	)
+	.min(1);
+
+export const DocumentsMgetInputSchema = z
+	.strictObject({
+		index: NonBlankString,
+		ids: z.array(NonBlankString).min(1).optional(),
+		docs: MgetDocsSchema.optional(),
+	})
+	.refine((input) => (input.ids !== undefined) !== (input.docs !== undefined), {
+		message: 'provide exactly one of ids or docs',
+	});
+export type DocumentsMgetInput = z.input<typeof DocumentsMgetInputSchema>;
+
+const MgetItemSchema = z.looseObject({
+	_index: z.string().optional(),
+	_id: z.string().optional(),
+	found: z.boolean().optional(),
+	_version: z.number().optional(),
+	_source: SourceRecord.optional(),
+	error: ErrorCauseSchema.optional(),
+});
+
+export const DocumentsMgetOutputSchema = z.looseObject({
+	// Empty lookups return an empty array, which is valid.
+	docs: z.array(MgetItemSchema),
+});
+export type DocumentsMgetOutput = z.infer<typeof DocumentsMgetOutputSchema>;
+
+// ── documents.getSource: GET /{index}/_source/{id} ───────────────────────────
+
+export const DocumentsGetSourceInputSchema = z.strictObject({
+	index: NonBlankString,
+	id: NonBlankString,
+	routing: NonBlankString.optional(),
+});
+export type DocumentsGetSourceInput = z.infer<
+	typeof DocumentsGetSourceInputSchema
+>;
+// The response body is the document source itself.
+export type DocumentsGetSourceOutput = z.infer<typeof SourceRecord>;
+
+export const DocumentsGetSourceOutputSchema = SourceRecord;
+
+// ── documents.existsSource: HEAD /{index}/_source/{id} ───────────────────────
+
+export const DocumentsExistsSourceInputSchema = z.strictObject({
+	index: NonBlankString,
+	id: NonBlankString,
+});
+export type DocumentsExistsSourceInput = z.infer<
+	typeof DocumentsExistsSourceInputSchema
+>;
+export type DocumentsExistsSourceOutput = ExistsResult;
+
+// ── documents.explain: POST /{index}/_explain/{id} ───────────────────────────
+
+export const DocumentsExplainInputSchema = z.strictObject({
+	index: NonBlankString,
+	id: NonBlankString,
+	query: QuerySchema.optional(),
+	routing: NonBlankString.optional(),
+});
+export type DocumentsExplainInput = z.input<typeof DocumentsExplainInputSchema>;
+
+export const DocumentsExplainOutputSchema = z.looseObject({
+	_index: z.string(),
+	_id: z.string(),
+	matched: z.boolean(),
+	explanation: z.looseObject({}).optional(),
+	get: z.looseObject({}).optional(),
+});
+export type DocumentsExplainOutput = z.infer<
+	typeof DocumentsExplainOutputSchema
+>;
+
+// ── documents.termvectors: POST /{index}/_termvectors/{id} ───────────────────
+
+const TermVectorFlags = {
+	fields: z.array(NonBlankString).min(1).optional(),
+	field_statistics: z.boolean().optional(),
+	term_statistics: z.boolean().optional(),
+	positions: z.boolean().optional(),
+	offsets: z.boolean().optional(),
+	payloads: z.boolean().optional(),
+	routing: NonBlankString.optional(),
+};
+
+export const DocumentsTermvectorsInputSchema = z.strictObject({
+	index: NonBlankString,
+	id: NonBlankString,
+	...TermVectorFlags,
+});
+export type DocumentsTermvectorsInput = z.input<
+	typeof DocumentsTermvectorsInputSchema
+>;
+
+export const TermVectorsResultSchema = z.looseObject({
+	_id: z.string().optional(),
+	_index: z.string(),
+	_version: z.number().optional(),
+	took: z.number().optional(),
+	found: z.boolean().optional(),
+	// Per-field token statistics are deeply nested and version-dependent.
+	term_vectors: z.record(z.string(), z.looseObject({})).optional(),
+	error: ErrorCauseSchema.optional(),
+});
+export type TermVectorsResult = z.infer<typeof TermVectorsResultSchema>;
+
+// ── documents.mtermvectors: POST /{index}/_mtermvectors ──────────────────────
+
+export const DocumentsMtermvectorsInputSchema = z
+	.strictObject({
+		index: NonBlankString,
+		ids: z.array(NonBlankString).min(1).optional(),
+		docs: MgetDocsSchema.optional(),
+		...TermVectorFlags,
+	})
+	.refine((input) => (input.ids !== undefined) !== (input.docs !== undefined), {
+		message: 'provide exactly one of ids or docs',
+	});
+export type DocumentsMtermvectorsInput = z.input<
+	typeof DocumentsMtermvectorsInputSchema
+>;
+
+export const DocumentsMtermvectorsOutputSchema = z.looseObject({
+	docs: z.array(TermVectorsResultSchema),
+});
+export type DocumentsMtermvectorsOutput = z.infer<
+	typeof DocumentsMtermvectorsOutputSchema
+>;
+
+// ── documents.bulk: PUT /{index}/_bulk ───────────────────────────────────────
+
+// One bulk action; `document`/`doc` bodies are caller-defined JSON.
+const BulkOperationSchema = z.discriminatedUnion('action', [
+	z.strictObject({
+		action: z.literal('index'),
+		_id: NonBlankString.optional(),
+		document: SourceRecord,
+	}),
+	z.strictObject({
+		action: z.literal('create'),
+		_id: NonBlankString,
+		document: SourceRecord,
+	}),
+	z.strictObject({
+		action: z.literal('update'),
+		_id: NonBlankString,
+		doc: SourceRecord.optional(),
+		script: ScriptSchema.optional(),
+		doc_as_upsert: z.boolean().optional(),
+		upsert: SourceRecord.optional(),
+	}),
+	z.strictObject({
+		action: z.literal('delete'),
+		_id: NonBlankString,
+	}),
+]);
+
+export const DocumentsBulkInputSchema = z
+	.strictObject({
+		index: NonBlankString,
+		operations: z.array(BulkOperationSchema).min(1).optional(),
+		ndjson: NdjsonPayload.optional(),
+		refresh: RefreshParam.optional(),
+		routing: NonBlankString.optional(),
+		pipeline: NonBlankString.optional(),
+		require_alias: z.boolean().optional(),
+		timeout: NonBlankString.optional(),
+	})
+	.refine(
+		(input) =>
+			(input.operations !== undefined) !== (input.ndjson !== undefined),
+		{ message: 'provide exactly one of operations or ndjson' },
+	);
+export type DocumentsBulkInput = z.input<typeof DocumentsBulkInputSchema>;
+
+// Each item is keyed by its action name; values carry the per-item outcome
+// and a typed error cause.
+const BulkItemSchema = z.record(
+	z.string(),
+	z.looseObject({
+		_id: z.string().optional(),
+		_index: z.string().optional(),
+		status: z.number().optional(),
+		result: z.string().optional(),
+		error: ErrorCauseSchema.optional(),
+	}),
+);
+
+export const DocumentsBulkOutputSchema = z.looseObject({
+	errors: z.boolean(),
+	took: z.number().optional(),
+	ingest_took: z.number().optional(),
+	// An all-noop bulk returns items: [].
+	items: z.array(BulkItemSchema),
+});
+export type DocumentsBulkOutput = z.infer<typeof DocumentsBulkOutputSchema>;
+
 // ── registry ─────────────────────────────────────────────────────────────────
 
 export type ElasticsearchEndpointInputs = {
@@ -248,6 +726,20 @@ export type ElasticsearchEndpointInputs = {
 	indicesGet: IndicesGetInput;
 	searchRun: SearchRunInput;
 	documentsGet: DocumentsGetInput;
+	documentsExists: DocumentsExistsInput;
+	documentsIndex: DocumentsIndexInput;
+	documentsCreate: DocumentsCreateInput;
+	documentsUpdate: DocumentsUpdateInput;
+	documentsDelete: DocumentsDeleteInput;
+	documentsUpdateByQuery: DocumentsUpdateByQueryInput;
+	documentsDeleteByQuery: DocumentsDeleteByQueryInput;
+	documentsMget: DocumentsMgetInput;
+	documentsGetSource: DocumentsGetSourceInput;
+	documentsExistsSource: DocumentsExistsSourceInput;
+	documentsExplain: DocumentsExplainInput;
+	documentsTermvectors: DocumentsTermvectorsInput;
+	documentsMtermvectors: DocumentsMtermvectorsInput;
+	documentsBulk: DocumentsBulkInput;
 };
 
 export type ElasticsearchEndpointOutputs = {
@@ -256,6 +748,20 @@ export type ElasticsearchEndpointOutputs = {
 	indicesGet: IndicesGetResponse;
 	searchRun: SearchRunResponse;
 	documentsGet: DocumentsGetResponse;
+	documentsExists: DocumentsExistsOutput;
+	documentsIndex: DocumentsIndexOutput;
+	documentsCreate: DocumentsCreateOutput;
+	documentsUpdate: DocumentsUpdateOutput;
+	documentsDelete: DocumentsDeleteOutput;
+	documentsUpdateByQuery: DocumentsUpdateByQueryOutput;
+	documentsDeleteByQuery: DocumentsDeleteByQueryOutput;
+	documentsMget: DocumentsMgetOutput;
+	documentsGetSource: DocumentsGetSourceOutput;
+	documentsExistsSource: DocumentsExistsSourceOutput;
+	documentsExplain: DocumentsExplainOutput;
+	documentsTermvectors: TermVectorsResult;
+	documentsMtermvectors: DocumentsMtermvectorsOutput;
+	documentsBulk: DocumentsBulkOutput;
 };
 
 export type ElasticsearchOperation = keyof ElasticsearchEndpointInputs;
@@ -266,6 +772,20 @@ export const ElasticsearchEndpointInputSchemas = {
 	indicesGet: IndicesGetInputSchema,
 	searchRun: SearchRunInputSchema,
 	documentsGet: DocumentsGetInputSchema,
+	documentsExists: DocumentsExistsInputSchema,
+	documentsIndex: DocumentsIndexInputSchema,
+	documentsCreate: DocumentsCreateInputSchema,
+	documentsUpdate: DocumentsUpdateInputSchema,
+	documentsDelete: DocumentsDeleteInputSchema,
+	documentsUpdateByQuery: DocumentsUpdateByQueryInputSchema,
+	documentsDeleteByQuery: DocumentsDeleteByQueryInputSchema,
+	documentsMget: DocumentsMgetInputSchema,
+	documentsGetSource: DocumentsGetSourceInputSchema,
+	documentsExistsSource: DocumentsExistsSourceInputSchema,
+	documentsExplain: DocumentsExplainInputSchema,
+	documentsTermvectors: DocumentsTermvectorsInputSchema,
+	documentsMtermvectors: DocumentsMtermvectorsInputSchema,
+	documentsBulk: DocumentsBulkInputSchema,
 } as const;
 
 export const ElasticsearchEndpointOutputSchemas = {
@@ -274,4 +794,18 @@ export const ElasticsearchEndpointOutputSchemas = {
 	indicesGet: IndicesGetResponseSchema,
 	searchRun: SearchRunResponseSchema,
 	documentsGet: DocumentsGetResponseSchema,
+	documentsExists: ExistsResultSchema,
+	documentsIndex: WriteResponseSchema,
+	documentsCreate: WriteResponseSchema,
+	documentsUpdate: DocumentsUpdateOutputSchema,
+	documentsDelete: WriteResponseSchema,
+	documentsUpdateByQuery: ByScrollResponseSchema,
+	documentsDeleteByQuery: ByScrollResponseSchema,
+	documentsMget: DocumentsMgetOutputSchema,
+	documentsGetSource: DocumentsGetSourceOutputSchema,
+	documentsExistsSource: ExistsResultSchema,
+	documentsExplain: DocumentsExplainOutputSchema,
+	documentsTermvectors: TermVectorsResultSchema,
+	documentsMtermvectors: DocumentsMtermvectorsOutputSchema,
+	documentsBulk: DocumentsBulkOutputSchema,
 } as const;

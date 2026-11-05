@@ -2,13 +2,22 @@
 // spec examples: https://www.elastic.co/docs/api/doc/elasticsearch.json
 // Each one satisfies the operation's output schema.
 import type {
+	ByScrollResponse,
 	CatIndexRow,
 	ClusterGetHealthResponse,
+	DocumentsBulkOutput,
+	DocumentsExplainOutput,
 	DocumentsGetResponse,
+	DocumentsMgetOutput,
+	DocumentsMtermvectorsOutput,
+	DocumentsUpdateOutput,
+	ExistsResult,
 	IndicesGetResponse,
 	IndicesListResponse,
 	SearchHit,
 	SearchRunResponse,
+	TermVectorsResult,
+	WriteResponse,
 } from './endpoints/types';
 
 export const clusterHealth: ClusterGetHealthResponse = {
@@ -129,3 +138,129 @@ export function esErrorBody(
 ): { error: { type: string; reason: string }; status: number } {
 	return { error: { type, reason }, status };
 }
+
+export const existsTrue: ExistsResult = { exists: true };
+export const existsFalse: ExistsResult = { exists: false };
+
+const shardStats = { total: 2, successful: 1, failed: 0, skipped: 0 };
+
+export const writeResponse: WriteResponse = {
+	_index: 'logs-2026-11',
+	_id: 'tZ0GinMB6Y5qFuDylF8J',
+	_version: 1,
+	result: 'created',
+	_shards: shardStats,
+	_seq_no: 0,
+	_primary_term: 1,
+};
+
+export const writeResponseNotFound: WriteResponse = {
+	_index: 'logs-2026-11',
+	_id: 'does-not-exist',
+	_version: 1,
+	result: 'not_found',
+	_shards: shardStats,
+	_seq_no: 0,
+	_primary_term: 1,
+};
+
+export const updateResponse: DocumentsUpdateOutput = {
+	...writeResponse,
+	result: 'updated',
+	get: {
+		found: true,
+		_source: {
+			'@timestamp': '2026-11-04T12:00:00.000Z',
+			level: 'warn',
+			message: 'disk on node 2 above 80%',
+		},
+	},
+};
+
+export function byScrollResponse(
+	overrides: Partial<ByScrollResponse> = {},
+): ByScrollResponse {
+	return {
+		took: 67,
+		timed_out: false,
+		total: 117,
+		updated: 117,
+		deleted: 0,
+		noops: 0,
+		batches: 1,
+		version_conflicts: 0,
+		retries: { bulk: 0, search: 0 },
+		failures: [],
+		requests_per_second: -1,
+		throttled_millis: 0,
+		throttled_until_millis: 0,
+		...overrides,
+	};
+}
+
+export const mgetResponse: DocumentsMgetOutput = {
+	docs: [
+		documentFound,
+		documentMissing,
+		{
+			_index: 'logs-2026-10',
+			_id: 'other-index-doc',
+			found: true,
+			_source: { level: 'info' },
+		},
+	],
+};
+
+export const termvectorsResult: TermVectorsResult = {
+	_index: 'logs-2026-11',
+	_id: 'tZ0GinMB6Y5qFuDylF8J',
+	_version: 1,
+	found: true,
+	took: 4,
+	term_vectors: {
+		message: {
+			field_statistics: { doc_count: 4201, sum_doc_freq: 9000, sum_ttf: 12000 },
+			terms: { disk: { term_freq: 1, tokens: [{ position: 0 }] } },
+		},
+	},
+};
+
+export const mtermvectorsResponse: DocumentsMtermvectorsOutput = {
+	docs: [termvectorsResult],
+};
+
+export const bulkResponse: DocumentsBulkOutput = {
+	errors: false,
+	took: 30,
+	items: [
+		{
+			index: {
+				_index: 'logs-2026-11',
+				_id: '1',
+				_version: 1,
+				result: 'created',
+				status: 201,
+			},
+		},
+		{
+			delete: {
+				_index: 'logs-2026-11',
+				_id: '2',
+				result: 'not_found',
+				status: 404,
+				error: { type: 'document_missing_exception', reason: 'no doc' },
+			},
+		},
+	],
+};
+
+export const explainResponse: DocumentsExplainOutput = {
+	_index: 'logs-2026-11',
+	_id: 'tZ0GinMB6Y5qFuDylF8J',
+	matched: true,
+	explanation: {
+		value: 1.3862942,
+		description: 'weight(message:disk in 0) [PerFieldSimilarity]',
+		details: [],
+	},
+};
