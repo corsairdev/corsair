@@ -22,7 +22,9 @@ export type SnowflakeTokenType = z.infer<typeof SnowflakeTokenTypeSchema>;
 
 type AccountContext = {
 	options?: { account?: string; tokenType?: string };
-	keys: {
+	// Corsair attaches `keys` only when a database and KEK are configured. A
+	// client built with direct credentials has none, so stored lookups are skipped.
+	keys?: {
 		get_account: () => Promise<string | null>;
 		get_tokenType: () => Promise<string | null>;
 	};
@@ -47,7 +49,8 @@ export async function resolveSnowflakeAccount(
 ): Promise<string> {
 	const fromOptions = ctx.options?.account?.trim() ?? '';
 	const account =
-		fromOptions || (await readStored(ctx.keys.get_account)).trim();
+		fromOptions ||
+		(ctx.keys ? (await readStored(ctx.keys.get_account)).trim() : '');
 	if (!account) {
 		throw new AuthMissingError(
 			'snowflake',
@@ -62,7 +65,9 @@ export async function resolveSnowflakeTokenType(
 	ctx: AccountContext,
 ): Promise<SnowflakeTokenType | undefined> {
 	const fromOptions = ctx.options?.tokenType?.trim() ?? '';
-	const raw = fromOptions || (await readStored(ctx.keys.get_tokenType)).trim();
+	const raw =
+		fromOptions ||
+		(ctx.keys ? (await readStored(ctx.keys.get_tokenType)).trim() : '');
 	if (!raw) return undefined;
 	return SnowflakeTokenTypeSchema.parse(raw);
 }

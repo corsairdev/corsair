@@ -2,6 +2,8 @@ import {
 	accountBaseUrl,
 	describeSnowflakeError,
 	makeSnowflakeRequest,
+	resolveSnowflakeAccount,
+	resolveSnowflakeTokenType,
 	SNOWFLAKE_USER_AGENT,
 	SnowflakeAPIError,
 } from './client';
@@ -62,6 +64,36 @@ const base = {
 	baseUrl: 'https://acme-prod.snowflakecomputing.com',
 	apiKey: 'pat-test',
 };
+
+describe('direct credentials without a key store', () => {
+	// createCorsair only attaches `keys` with a database and KEK, so a client
+	// built from options alone must not reach for stored fields.
+	it('leaves the token type unset when none is given', async () => {
+		await expect(resolveSnowflakeTokenType({ options: {} })).resolves.toBe(
+			undefined,
+		);
+	});
+
+	it('uses the token type from options', async () => {
+		await expect(
+			resolveSnowflakeTokenType({
+				options: { tokenType: 'PROGRAMMATIC_ACCESS_TOKEN' },
+			}),
+		).resolves.toBe('PROGRAMMATIC_ACCESS_TOKEN');
+	});
+
+	it('uses the account from options', async () => {
+		await expect(
+			resolveSnowflakeAccount({ options: { account: 'myorg-myacct' } }),
+		).resolves.toBe('myorg-myacct');
+	});
+
+	it('asks for an account when neither options nor a key store has one', async () => {
+		await expect(resolveSnowflakeAccount({ options: {} })).rejects.toThrow(
+			'auth-missing:snowflake:account',
+		);
+	});
+});
 
 describe('accountBaseUrl', () => {
 	it('builds the account host and accepts documented host forms', () => {
