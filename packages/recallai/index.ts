@@ -173,18 +173,37 @@ import { RecallaiSchema } from './schema';
 export type RecallaiPluginOptions = {
 	authType?: PickAuth<'api_key'>;
 	key?: string;
+	/**
+	 * The region the API key was created in (us-east-1, us-west-2,
+	 * eu-central-1 or ap-northeast-1). Overrides the region stored with the
+	 * connected account; without either, requests go to us-west-2.
+	 */
 	region?: RecallaiRegion;
 	hooks?: InternalRecallaiPlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof recallaiEndpointsNested>;
 };
 
+/**
+ * `region` is the second half of the credential: a Recall.ai API key only
+ * works on its own region's host. Declaring it here generates
+ * `ctx.keys.get_region()`, which the client reads when no `region` plugin
+ * option is set. Values outside the four Recall regions are rejected.
+ */
+export const recallaiAuthConfig = {
+	api_key: { account: ['tenant_external_id', 'region'] as const },
+} as const satisfies PluginAuthConfig;
+
 export type RecallaiContext = CorsairPluginContext<
 	typeof RecallaiSchema,
-	RecallaiPluginOptions
+	RecallaiPluginOptions,
+	undefined,
+	typeof recallaiAuthConfig
 >;
-export type RecallaiKeyBuilderContext =
-	KeyBuilderContext<RecallaiPluginOptions>;
+export type RecallaiKeyBuilderContext = KeyBuilderContext<
+	RecallaiPluginOptions,
+	typeof recallaiAuthConfig
+>;
 export type RecallaiBoundEndpoints = BindEndpoints<
 	typeof recallaiEndpointsNested
 >;
@@ -1310,9 +1329,6 @@ const recallaiEndpointMeta = {
 } as const satisfies RequiredPluginEndpointMeta<typeof recallaiEndpointsNested>;
 
 const defaultAuthType: AuthTypes = 'api_key';
-export const recallaiAuthConfig = {
-	api_key: { account: ['tenant_external_id'] as const },
-} as const satisfies PluginAuthConfig;
 
 export type BaseRecallaiPlugin<T extends RecallaiPluginOptions> = CorsairPlugin<
 	'recallai',
@@ -1320,13 +1336,36 @@ export type BaseRecallaiPlugin<T extends RecallaiPluginOptions> = CorsairPlugin<
 	typeof recallaiEndpointsNested,
 	Record<string, never>,
 	T,
-	typeof defaultAuthType
+	typeof defaultAuthType,
+	typeof recallaiAuthConfig
 >;
 export type InternalRecallaiPlugin = BaseRecallaiPlugin<RecallaiPluginOptions>;
 export type ExternalRecallaiPlugin<T extends RecallaiPluginOptions> =
 	BaseRecallaiPlugin<T>;
 
+/**
+ * Reads a stored credential best-effort. A tenant with no account row has no
+ * DEK, so the key manager throws instead of returning null; that case is a
+ * missing key, which the keyBuilder reports as AuthMissingError.
+ */
+async function readStoredKey(
+	read: () => Promise<string | null | undefined>,
+): Promise<string | null> {
+	try {
+		return (await read()) || null;
+	} catch (error) {
+		// why safe: narrows to the uninitialized-tenant case, which carries no
+		// credential; anything else rethrows untouched.
+		if (error instanceof Error && /no dek found/i.test(error.message)) {
+			return null;
+		}
+		throw error;
+	}
+}
+
 export function recallai<const T extends RecallaiPluginOptions>(
+	// why safe: standard generator default for the generic factory; callers
+	// always pass a full options object and `{}` only types the no-arg case.
 	incomingOptions: RecallaiPluginOptions & T = {} as RecallaiPluginOptions & T,
 ): ExternalRecallaiPlugin<T> {
 	const options = {
@@ -1348,9 +1387,10 @@ export function recallai<const T extends RecallaiPluginOptions>(
 		keyBuilder: async (ctx: RecallaiKeyBuilderContext, source) => {
 			if (source === 'endpoint' && options.key) return options.key;
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				const key = await ctx.keys.get_api_key();
+				const key = await readStoredKey(() => ctx.keys.get_api_key());
 				if (key) return key;
 			}
+			// Raised here so the binder can offer a connect link.
 			throw new AuthMissingError('recallai', 'api_key');
 		},
 	} satisfies InternalRecallaiPlugin;
