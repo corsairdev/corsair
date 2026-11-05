@@ -79,9 +79,8 @@ export const netSuiteEndpointSchemas = Object.fromEntries(
 				],
 		},
 	]),
-	// Object.fromEntries returns Record<string, unknown>; cast through unknown
-	// to RequiredPluginEndpointSchemas because TypeScript cannot statically verify
-	// the dynamically reconstructed per-endpoint schema object map.
+	// Necessity: Cast mapped schema entries through unknown to RequiredPluginEndpointSchemas.
+	// Why stricter typing is not feasible: Object.fromEntries returns Record<string, unknown> and TypeScript cannot statically verify the dynamically reconstructed per-endpoint schema object map.
 ) as unknown as RequiredPluginEndpointSchemas<typeof netSuiteEndpoints>;
 
 const defaultAuthType = 'oauth_2' as const;
@@ -184,8 +183,8 @@ export function netsuite<const T extends NetSuitePluginOptions>(
 			}
 			if (source === 'endpoint' && options.key) return options.key;
 			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				// ctx.keys is generic across Corsair plugins; narrow here to the optional
-				// account identifier getter used to resolve the tenant's NetSuite account ID.
+				// Necessity: Cast ctx.keys through unknown to access the provider-specific get_account_id accessor.
+				// Why stricter typing is not feasible: PluginKeyManager is generic across Corsair plugins and does not define provider-specific account key helpers.
 				const resolvedAccount =
 					options.accountId ??
 					options.account ??

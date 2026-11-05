@@ -71,8 +71,8 @@ async function resolveAccountId(ctx: NetSuiteContext): Promise<string> {
 	const direct = options.accountId ?? options.account;
 	if (direct) return direct;
 
-	// ctx.keys is generic across Corsair plugins; narrow here to the optional
-	// account identifier getter functions.
+	// Necessity: Cast ctx.keys through unknown to access provider-specific key getter functions (e.g. get_account_id).
+	// Why stricter typing is not feasible: PluginKeyManager is generic across all Corsair plugins and does not define provider-specific account key accessors.
 	const keys = ctx.keys as unknown as Record<
 		string,
 		(() => Promise<string | null | undefined>) | undefined
@@ -448,8 +448,8 @@ async function syncEntityCache(
 	);
 	if (isAsync) return;
 
-	// ctx.db contains dynamically generated entity tables from plugin schema;
-	// cast through unknown to access optional upsertByEntityId, findByEntityId, and deleteByEntityId methods.
+	// Necessity: Cast ctx.db through unknown to access dynamic local database entity store methods (findByEntityId, upsertByEntityId, deleteByEntityId).
+	// Why stricter typing is not feasible: ctx.db has an untyped open record shape in the core plugin context because entity tables are dynamically injected from the plugin's schema definition.
 	const db = ctx.db as unknown as
 		| Record<
 				string,
@@ -692,7 +692,8 @@ export async function runNetSuite<K extends NetSuiteSpecKey>(
 					parseJsonText: spec.parseJsonText,
 				},
 			);
-	// Cast through Record<string, unknown> because NetSuite API return shapes vary per endpoint and schema.
+	// Necessity: Cast raw response to Record<string, unknown> to inspect and cache NetSuite record properties.
+	// Why stricter typing is not feasible: NetSuite REST API returns heterogeneous payloads (record objects, collection listings, metadata schemas, or location headers) across 85 distinct endpoints.
 	const response =
 		spec.responseHeader && typeof raw === 'string'
 			? { location: raw }

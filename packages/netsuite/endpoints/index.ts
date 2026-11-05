@@ -5,9 +5,8 @@ import type { NetSuiteSpecKey } from './specs';
 import { netSuiteSpecs } from './specs';
 import type { NetSuiteEndpointInputs, NetSuiteEndpointOutputs } from './types';
 
-// Object.fromEntries returns Record<string, unknown>; cast through unknown
-// to NetSuiteEndpoints because TypeScript cannot statically correlate the dynamic
-// keys of Object.keys(netSuiteSpecs) with their respective input/output signatures.
+// Necessity: Cast dynamic runtime endpoint entries through unknown to the strongly typed NetSuiteEndpoints map.
+// Why stricter typing is not feasible: Object.fromEntries returns Record<string, unknown> and TypeScript cannot statically correlate dynamic mapped tuple keys with individual per-operation input and output signatures.
 export const NetSuite = Object.fromEntries(
 	(Object.keys(netSuiteSpecs) as NetSuiteSpecKey[]).map((key) => [
 		key,

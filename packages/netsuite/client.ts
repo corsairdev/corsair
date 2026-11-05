@@ -149,9 +149,8 @@ export async function makeNetSuiteRequest<T>(
 		responseHeader: options.responseHeader,
 	};
 	const result = await request<T>(config, requestOptions);
-	// The shared transport only parses application/json and
-	// application/problem+json. Metadata is served as application/schema+json,
-	// so parse it here when the caller opts in.
+	// Necessity: Parse stringified application/schema+json metadata payloads and cast to the expected return type T.
+	// Why stricter typing is not feasible: The shared transport request<T> only automatically parses application/json; raw string responses for custom media types must be parsed and asserted to generic parameter T at runtime.
 	if (options.parseJsonText && typeof result === 'string') {
 		try {
 			return JSON.parse(result) as T;
