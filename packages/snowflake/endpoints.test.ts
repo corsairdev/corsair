@@ -280,6 +280,34 @@ describe('statements.get', () => {
 		expect(request.body).toBeUndefined();
 	});
 
+	it('accepts a later partition that carries only data', async () => {
+		// Live shape of ?partition=1: no handle, no metadata.
+		respond({
+			data: [
+				['6563', 'he fluffily final requests s'],
+				['6564', null],
+			],
+		});
+		const result = await invoke(get, {
+			statementHandle: STATEMENT_HANDLE,
+			partition: 1,
+		});
+		expect(result).toEqual({
+			statementHandle: STATEMENT_HANDLE,
+			data: [
+				['6563', 'he fluffily final requests s'],
+				['6564', null],
+			],
+		});
+		expect(lastRequest().url.searchParams.get('partition')).toBe('1');
+		expect(mockLog).toHaveBeenCalledWith(
+			expect.anything(),
+			'snowflake.statements.get',
+			{ statementHandle: STATEMENT_HANDLE, rows: 2, partition: 1 },
+			'completed',
+		);
+	});
+
 	it('rejects a bad handle, a negative partition, and nullable', async () => {
 		await expect(
 			invoke(get, { statementHandle: 'abc' }),

@@ -56,6 +56,19 @@ function resultLog(result: StatementResult): Record<string, string | number> {
 	return payload;
 }
 
+// A partition after the first is `{ data }` alone: no handle, no metadata
+// (https://docs.snowflake.com/en/developer-guide/sql-api/handling-responses#retrieving-additional-partitions,
+// confirmed live 2026-11-06). The requested handle fills the gap so the
+// result keeps its shape.
+// unknown: the raw body before the output schema parses it.
+function withStatementHandle(raw: unknown, statementHandle: string): unknown {
+	if (raw === null || typeof raw !== 'object' || Array.isArray(raw)) {
+		return raw;
+	}
+	if ('statementHandle' in raw) return raw;
+	return { ...raw, statementHandle };
+}
+
 async function target(ctx: Parameters<SnowflakeEndpoints['statementsGet']>[0]) {
 	const account = await resolveSnowflakeAccount(ctx);
 	const tokenType = await resolveSnowflakeTokenType(ctx);
@@ -103,7 +116,9 @@ export const get: SnowflakeEndpoints['statementsGet'] = async (ctx, input) => {
 			retry: parsed.retry,
 		}),
 	});
-	const result = SnowflakeEndpointOutputSchemas.statementsGet.parse(raw);
+	const result = SnowflakeEndpointOutputSchemas.statementsGet.parse(
+		withStatementHandle(raw, parsed.statementHandle),
+	);
 	const payload = resultLog(result);
 	if (parsed.partition !== undefined) payload.partition = parsed.partition;
 	await logEventFromContext(
