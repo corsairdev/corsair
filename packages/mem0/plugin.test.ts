@@ -26,17 +26,28 @@ const OPS = [
 	'webhooks.update',
 ];
 
+// The plugin type marks keyBuilder optional and types its context by the
+// plugin's own generics, so it is narrowed here to call it from a test.
+// unknown: keyBuilder is optional on the public type, so it is probed first.
 function keyBuilderOf(plugin: { keyBuilder?: unknown }) {
 	const keyBuilder = plugin.keyBuilder;
 	if (typeof keyBuilder !== 'function') {
 		throw new Error('keyBuilder is not registered');
 	}
-	return keyBuilder as (ctx: unknown, source: string) => Promise<string>;
+	return keyBuilder as (
+		// unknown: the fake context only carries the auth fields keyBuilder reads.
+		ctx: unknown,
+		source: string,
+	) => Promise<string>;
 }
 
+// The endpoint tree is a deeply nested literal of typed functions, so it is
+// widened once here to walk its keys.
+// unknown: each nested value is a group of endpoints with its own shape.
 function flattenEndpoints(): string[] {
 	const groups = mem0EndpointsNested as unknown as Record<
 		string,
+		// unknown: an endpoint function's parameters and return are per-operation.
 		Record<string, unknown>
 	>;
 	return Object.entries(groups)
