@@ -157,6 +157,17 @@ const operations = [
 	'tasks.list',
 	'tasks.get',
 	'tasks.cancel',
+	'security.apiKeys.get',
+	'security.apiKeys.create',
+	'security.apiKeys.invalidate',
+	'security.apiKeys.bulkUpdate',
+	'security.apiKeys.clone',
+	'security.apiKeys.grant',
+	'security.apiKeys.clearCache',
+	'security.apiKeys.update',
+	'security.apiKeys.query',
+	'security.crossClusterApiKeys.create',
+	'security.crossClusterApiKeys.update',
 ];
 
 // Risk pinned per op: reads never mutate, writes change data or cluster
@@ -298,6 +309,17 @@ const riskLevels: Record<string, 'read' | 'write' | 'destructive'> = {
 	'tasks.list': 'read',
 	'tasks.get': 'read',
 	'tasks.cancel': 'write',
+	'security.apiKeys.get': 'read',
+	'security.apiKeys.create': 'write',
+	'security.apiKeys.invalidate': 'write',
+	'security.apiKeys.bulkUpdate': 'write',
+	'security.apiKeys.clone': 'write',
+	'security.apiKeys.grant': 'write',
+	'security.apiKeys.clearCache': 'write',
+	'security.apiKeys.update': 'write',
+	'security.apiKeys.query': 'read',
+	'security.crossClusterApiKeys.create': 'write',
+	'security.crossClusterApiKeys.update': 'write',
 };
 
 describe('elasticsearch plugin definition', () => {
@@ -319,9 +341,15 @@ describe('elasticsearch plugin definition', () => {
 	});
 
 	it('exposes the full nested endpoint tree', () => {
-		const nested = Object.entries(plugin.endpoints ?? {}).flatMap(
-			([group, fns]) => Object.keys(fns).map((name) => `${group}.${name}`),
-		);
+		// Endpoint trees nest more than one level (security.apiKeys.get), so
+		// the flattening recurses until it reaches function leaves.
+		const flatten = (node: object, prefix = ''): string[] =>
+			Object.entries(node).flatMap(([name, value]) =>
+				typeof value === 'function'
+					? [prefix + name]
+					: flatten(value, `${prefix}${name}.`),
+			);
+		const nested = flatten(plugin.endpoints ?? {});
 		expect(nested.sort()).toEqual([...operations].sort());
 	});
 

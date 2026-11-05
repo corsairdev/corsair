@@ -94,6 +94,13 @@ import type {
 	SearchShardsOutput,
 	SearchTermsEnumOutput,
 	SearchValidateQueryOutput,
+	SecurityApiKeyItem,
+	SecurityApiKeysBulkUpdateOutput,
+	SecurityApiKeysGetOutput,
+	SecurityApiKeysInvalidateOutput,
+	SecurityApiKeysQueryOutput,
+	SecurityCacheClearResponse,
+	SecurityCreatedApiKey,
 	TasksGetOutput,
 	TasksListOutput,
 	TermVectorsResult,
@@ -1354,4 +1361,59 @@ export const taskGetOutput: TasksGetOutput = {
 		description: 'reindex from logs-2025 to logs-2026',
 	},
 	response: { total: 4201, updated: 4201 },
+};
+
+// ── security family fixtures ─────────────────────────────────────────────────
+
+export const securityApiKeyItem: SecurityApiKeyItem = {
+	id: 'VuaOCfVY4sH4Qf7d9CAAa3',
+	name: 'my-api-key',
+	type: 'rest',
+	creation: 1761955200000,
+	invalidated: false,
+	username: 'elastic',
+	realm: 'default_file',
+	realm_type: 'file',
+	metadata: { application: 'logs-agent' },
+};
+
+export function securityApiKeysGetOutput(
+	items: SecurityApiKeyItem[] = [securityApiKeyItem],
+): SecurityApiKeysGetOutput {
+	return { api_keys: items };
+}
+
+export const securityCreatedApiKey: SecurityCreatedApiKey = {
+	id: 'VuaOCfVY4sH4Qf7d9CAAa3',
+	name: 'my-api-key',
+	api_key: 'u3Vlc3QtdXNlci1hcGkta2V5LXBsZWFzZS1pZ25vcmUtbWU',
+	encoded: 'VnVhT0NmVlk0c0g0UWY3ZDlDQUFhMzp1M1ZsYzNNRFEwT2ZpQnFsZUP1NLZiOFh3',
+};
+
+export const securityApiKeysInvalidateOutput: SecurityApiKeysInvalidateOutput =
+	{
+		error_count: 0,
+		invalidated_api_keys: ['VuaOCfVY4sH4Qf7d9CAAa3'],
+		previously_invalidated_api_keys: [],
+	};
+
+export const securityApiKeysBulkUpdateOutput: SecurityApiKeysBulkUpdateOutput =
+	{
+		noops: [],
+		updated: ['VuaOCfVY4sH4Qf7d9CAAa3'],
+	};
+
+export const securityApiKeysUpdateOutput = { updated: true } as const;
+
+export const securityCacheClearOutput: SecurityCacheClearResponse = {
+	_nodes: { total: 3, successful: 3, failed: 0 },
+	cluster_name: 'es-test-cluster',
+	nodes: { 'node-1': { name: 'node-1' } },
+};
+
+export const securityApiKeysQueryOutput: SecurityApiKeysQueryOutput = {
+	hits: {
+		total: { value: 1, relation: 'eq' },
+		hits: [securityApiKeyItem],
+	},
 };

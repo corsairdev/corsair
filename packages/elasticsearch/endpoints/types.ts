@@ -3041,6 +3041,353 @@ export const TasksCancelInputSchema = z.strictObject({
 export type TasksCancelInput = z.input<typeof TasksCancelInputSchema>;
 export type TasksCancelOutput = TaskListResponse;
 
+// ── security family: shared fragments ────────────────────────────────────────
+
+// z.unknown() values: security metadata is arbitrary caller-defined JSON;
+// no stricter value type can hold it (same precedent as SettingsRecord).
+const SecurityMetadata = z.record(z.string(), z.unknown());
+
+// Index privilege entries inside role descriptors: `names` takes a single
+// target or a list; field_security and query are the privilege DSL (any query
+// shape), validated server-side, so they pass through loose.
+const SecurityIndexPrivilegeSchema = z.looseObject({
+	names: z.union([NonBlankString, z.array(NonBlankString).min(1)]),
+	privileges: z.array(NonBlankString).min(1),
+	allow_restricted_indices: z.boolean().optional(),
+});
+
+// Application privilege entries inside role descriptors.
+const SecurityApplicationPrivilegeSchema = z.looseObject({
+	application: NonBlankString,
+	privileges: z.array(NonBlankString).min(1),
+	resources: z.array(NonBlankString).optional(),
+});
+
+// security._types.RoleDescriptor: the privilege tree roles and API keys
+// accept. The full descriptor (global, remote_indices, transpose, ...) is
+// open-ended and cluster-validated; the common fields are typed.
+const SecurityRoleDescriptorSchema = z.looseObject({
+	cluster: z.array(NonBlankString).optional(),
+	indices: z.array(SecurityIndexPrivilegeSchema).optional(),
+	applications: z.array(SecurityApplicationPrivilegeSchema).optional(),
+	run_as: z.array(NonBlankString).optional(),
+	metadata: SecurityMetadata.optional(),
+	global: z.array(z.looseObject({})).optional(),
+	remote_indices: z.array(z.looseObject({})).optional(),
+	remote_cluster: z.array(NonBlankString).optional(),
+});
+export type SecurityRoleDescriptor = z.input<
+	typeof SecurityRoleDescriptorSchema
+>;
+
+// One API key row, shared by apiKeys.get and apiKeys.query.
+const SecurityApiKeyItemSchema = z.looseObject({
+	id: z.string(),
+	name: z.string(),
+	type: z.string(),
+	creation: z.number(),
+	expiration: z.number().optional(),
+	invalidated: z.boolean(),
+	invalidation: z.number().optional(),
+	username: z.string(),
+	realm: z.string(),
+	realm_type: z.string().optional(),
+	metadata: SecurityMetadata,
+	role_descriptors: z.record(z.string(), z.looseObject({})).optional(),
+	limited_by: z.array(z.looseObject({})).optional(),
+	access: z.looseObject({}).optional(),
+	profile_uid: z.string().optional(),
+});
+export type SecurityApiKeyItem = z.infer<typeof SecurityApiKeyItemSchema>;
+
+// The _clear_cache APIs (API keys, realms, roles, privileges, service tokens)
+// answer the per-node statistics envelope keyed by node id.
+const SecurityCacheClearResponseSchema = z.looseObject({
+	_nodes: z.looseObject({
+		total: z.number(),
+		successful: z.number(),
+		failed: z.number(),
+	}),
+	cluster_name: z.string(),
+	nodes: z.record(z.string(), z.looseObject({})),
+});
+export type SecurityCacheClearResponse = z.infer<
+	typeof SecurityCacheClearResponseSchema
+>;
+
+// The created-or-cloned API key reply (create, clone, grant, cross-cluster).
+export const SecurityCreatedApiKeySchema = z.looseObject({
+	id: z.string(),
+	name: z.string(),
+	api_key: z.string(),
+	encoded: z.string(),
+	expiration: z.number().optional(),
+});
+export type SecurityCreatedApiKey = z.infer<typeof SecurityCreatedApiKeySchema>;
+
+// ── security.apiKeys: GET|POST|DELETE /_security/api_key and friends ─────────
+
+export const SecurityApiKeysGetInputSchema = z.strictObject({
+	id: NonBlankString.optional(),
+	name: NonBlankString.optional(),
+	owner: z.boolean().optional(),
+	realm_name: NonBlankString.optional(),
+	username: NonBlankString.optional(),
+	with_limited_by: z.boolean().optional(),
+	active_only: z.boolean().optional(),
+	with_profile_uid: z.boolean().optional(),
+});
+export type SecurityApiKeysGetInput = z.input<
+	typeof SecurityApiKeysGetInputSchema
+>;
+
+export const SecurityApiKeysGetOutputSchema = z.looseObject({
+	api_keys: z.array(SecurityApiKeyItemSchema),
+});
+export type SecurityApiKeysGetOutput = z.infer<
+	typeof SecurityApiKeysGetOutputSchema
+>;
+
+const SecurityApiKeyBodyFields = {
+	expiration: NonBlankString.optional(),
+	role_descriptors: z
+		.record(z.string().min(1), SecurityRoleDescriptorSchema)
+		.optional(),
+	metadata: SecurityMetadata.optional(),
+};
+
+export const SecurityApiKeysCreateInputSchema = z.strictObject({
+	name: NonBlankString,
+	...SecurityApiKeyBodyFields,
+	refresh: RefreshParam.optional(),
+});
+export type SecurityApiKeysCreateInput = z.input<
+	typeof SecurityApiKeysCreateInputSchema
+>;
+export type SecurityApiKeysCreateOutput = SecurityCreatedApiKey;
+
+export const SecurityApiKeysCloneInputSchema = z.strictObject({
+	name: NonBlankString,
+	...SecurityApiKeyBodyFields,
+	refresh: RefreshParam.optional(),
+});
+export type SecurityApiKeysCloneInput = z.input<
+	typeof SecurityApiKeysCloneInputSchema
+>;
+export type SecurityApiKeysCloneOutput = SecurityCreatedApiKey;
+
+export const SecurityApiKeysGrantInputSchema = z
+	.strictObject({
+		api_key: z.strictObject({
+			name: NonBlankString,
+			...SecurityApiKeyBodyFields,
+		}),
+		grant_type: z.enum([
+			'access_token',
+			'password',
+			'_user_managed_service_account',
+		]),
+		access_token: NonBlankString.optional(),
+		client_authentication: z
+			.strictObject({
+				scheme: z.literal('SharedSecret'),
+				value: NonBlankString,
+			})
+			.optional(),
+		service_account_token: NonBlankString.optional(),
+		username: NonBlankString.optional(),
+		password: NonBlankString.optional(),
+		run_as: NonBlankString.optional(),
+		refresh: RefreshParam.optional(),
+	})
+	.refine(
+		(input) => {
+			if (input.grant_type === 'access_token')
+				return input.access_token !== undefined;
+			if (input.grant_type === 'password')
+				return input.username !== undefined && input.password !== undefined;
+			return input.service_account_token !== undefined;
+		},
+		{
+			message:
+				'grant_type requires its paired credential (access_token, username+password, or service_account_token)',
+		},
+	);
+export type SecurityApiKeysGrantInput = z.input<
+	typeof SecurityApiKeysGrantInputSchema
+>;
+export type SecurityApiKeysGrantOutput = SecurityCreatedApiKey;
+
+export const SecurityApiKeysInvalidateInputSchema = z
+	.strictObject({
+		id: NonBlankString.optional(),
+		ids: z.array(NonBlankString).min(1).optional(),
+		name: NonBlankString.optional(),
+		owner: z.boolean().optional(),
+		realm_name: NonBlankString.optional(),
+		username: NonBlankString.optional(),
+	})
+	.refine(
+		(input) =>
+			input.owner === true ||
+			input.id !== undefined ||
+			input.ids !== undefined ||
+			input.name !== undefined ||
+			input.realm_name !== undefined ||
+			input.username !== undefined,
+		{
+			message:
+				'provide a selector (id, ids, name, realm_name or username) or owner: true, per the spec',
+		},
+	);
+export type SecurityApiKeysInvalidateInput = z.input<
+	typeof SecurityApiKeysInvalidateInputSchema
+>;
+
+export const SecurityApiKeysInvalidateOutputSchema = z.looseObject({
+	error_count: z.number(),
+	error_details: z
+		.array(
+			z.looseObject({
+				type: z.string().optional(),
+				reason: z.string().optional(),
+				id: z.string().optional(),
+				caused_by: ErrorCauseSchema.optional(),
+			}),
+		)
+		.optional(),
+	invalidated_api_keys: z.array(z.string()),
+	previously_invalidated_api_keys: z.array(z.string()),
+});
+export type SecurityApiKeysInvalidateOutput = z.infer<
+	typeof SecurityApiKeysInvalidateOutputSchema
+>;
+
+export const SecurityApiKeysBulkUpdateInputSchema = z.strictObject({
+	ids: z.union([NonBlankString, z.array(NonBlankString).min(1)]),
+	...SecurityApiKeyBodyFields,
+});
+export type SecurityApiKeysBulkUpdateInput = z.input<
+	typeof SecurityApiKeysBulkUpdateInputSchema
+>;
+
+export const SecurityApiKeysBulkUpdateOutputSchema = z.looseObject({
+	errors: z
+		.looseObject({
+			count: z.number(),
+			details: z.record(z.string(), z.looseObject({})),
+		})
+		.optional(),
+	noops: z.array(z.string()),
+	updated: z.array(z.string()),
+});
+export type SecurityApiKeysBulkUpdateOutput = z.infer<
+	typeof SecurityApiKeysBulkUpdateOutputSchema
+>;
+
+export const SecurityApiKeysUpdateInputSchema = z.strictObject({
+	id: NonBlankString,
+	...SecurityApiKeyBodyFields,
+});
+export type SecurityApiKeysUpdateInput = z.input<
+	typeof SecurityApiKeysUpdateInputSchema
+>;
+
+export const SecurityApiKeysUpdateOutputSchema = z.looseObject({
+	updated: z.boolean(),
+});
+export type SecurityApiKeysUpdateOutput = z.infer<
+	typeof SecurityApiKeysUpdateOutputSchema
+>;
+
+export const SecurityApiKeysClearCacheInputSchema = z.strictObject({
+	// Comma-separated key ids, or `*` for all keys.
+	ids: NonBlankString,
+});
+export type SecurityApiKeysClearCacheInput = z.input<
+	typeof SecurityApiKeysClearCacheInputSchema
+>;
+export type SecurityApiKeysClearCacheOutput = SecurityCacheClearResponse;
+
+export const SecurityApiKeysQueryInputSchema = z.strictObject({
+	query: QuerySchema.optional(),
+	from: z.number().int().min(0).optional(),
+	size: z.number().int().min(0).max(10_000).optional(),
+	with_limited_by: z.boolean().optional(),
+	with_profile_uid: z.boolean().optional(),
+	typed_keys: z.boolean().optional(),
+});
+export type SecurityApiKeysQueryInput = z.input<
+	typeof SecurityApiKeysQueryInputSchema
+>;
+
+// The _query APIs answer a search-style hits envelope; hit items reuse the
+// typed API key row (loose itself, so vendor additions pass).
+export const SecurityApiKeysQueryOutputSchema = z.looseObject({
+	hits: z.looseObject({
+		total: z
+			.union([
+				z.looseObject({ value: z.number(), relation: z.string() }),
+				z.number(),
+			])
+			.optional(),
+		hits: z.array(SecurityApiKeyItemSchema),
+	}),
+});
+export type SecurityApiKeysQueryOutput = z.infer<
+	typeof SecurityApiKeysQueryOutputSchema
+>;
+
+// ── security.crossClusterApiKeys: /_security/cross_cluster/api_key ───────────
+
+// Cross-cluster access entries: the same open privilege-DSL tree as role
+// index privileges, so only the common fields are typed.
+const SecurityCrossClusterAccessEntrySchema = z.looseObject({
+	names: z.union([NonBlankString, z.array(NonBlankString).min(1)]),
+	field_security: z.looseObject({}).optional(),
+	query: z.looseObject({}).optional(),
+	allow_restricted_indices: z.boolean().optional(),
+});
+
+const SecurityCrossClusterAccessSchema = z
+	.strictObject({
+		search: z.array(SecurityCrossClusterAccessEntrySchema).min(1).optional(),
+		replication: z
+			.array(SecurityCrossClusterAccessEntrySchema)
+			.min(1)
+			.optional(),
+	})
+	.refine(
+		(access) => access.search !== undefined || access.replication !== undefined,
+		{ message: 'access requires search and/or replication per the spec' },
+	);
+
+export const SecurityCrossClusterApiKeysCreateInputSchema = z.strictObject({
+	name: NonBlankString,
+	access: SecurityCrossClusterAccessSchema,
+	expiration: NonBlankString.optional(),
+	metadata: SecurityMetadata.optional(),
+	refresh: RefreshParam.optional(),
+});
+export type SecurityCrossClusterApiKeysCreateInput = z.input<
+	typeof SecurityCrossClusterApiKeysCreateInputSchema
+>;
+export type SecurityCrossClusterApiKeysCreateOutput = SecurityCreatedApiKey;
+
+export const SecurityCrossClusterApiKeysUpdateInputSchema = z.strictObject({
+	id: NonBlankString,
+	access: SecurityCrossClusterAccessSchema,
+	expiration: NonBlankString.optional(),
+	metadata: SecurityMetadata.optional(),
+	refresh: RefreshParam.optional(),
+});
+export type SecurityCrossClusterApiKeysUpdateInput = z.input<
+	typeof SecurityCrossClusterApiKeysUpdateInputSchema
+>;
+export type SecurityCrossClusterApiKeysUpdateOutput = z.infer<
+	typeof SecurityApiKeysUpdateOutputSchema
+>;
+
 // ── registry ─────────────────────────────────────────────────────────────────
 
 export type ElasticsearchEndpointInputs = {
@@ -3180,6 +3527,17 @@ export type ElasticsearchEndpointInputs = {
 	tasksList: TasksListInput;
 	tasksGet: TasksGetInput;
 	tasksCancel: TasksCancelInput;
+	securityApiKeysGet: SecurityApiKeysGetInput;
+	securityApiKeysCreate: SecurityApiKeysCreateInput;
+	securityApiKeysInvalidate: SecurityApiKeysInvalidateInput;
+	securityApiKeysBulkUpdate: SecurityApiKeysBulkUpdateInput;
+	securityApiKeysClone: SecurityApiKeysCloneInput;
+	securityApiKeysGrant: SecurityApiKeysGrantInput;
+	securityApiKeysClearCache: SecurityApiKeysClearCacheInput;
+	securityApiKeysUpdate: SecurityApiKeysUpdateInput;
+	securityApiKeysQuery: SecurityApiKeysQueryInput;
+	securityCrossClusterApiKeysCreate: SecurityCrossClusterApiKeysCreateInput;
+	securityCrossClusterApiKeysUpdate: SecurityCrossClusterApiKeysUpdateInput;
 };
 
 export type ElasticsearchEndpointOutputs = {
@@ -3319,6 +3677,17 @@ export type ElasticsearchEndpointOutputs = {
 	tasksList: TasksListOutput;
 	tasksGet: TasksGetOutput;
 	tasksCancel: TasksCancelOutput;
+	securityApiKeysGet: SecurityApiKeysGetOutput;
+	securityApiKeysCreate: SecurityApiKeysCreateOutput;
+	securityApiKeysInvalidate: SecurityApiKeysInvalidateOutput;
+	securityApiKeysBulkUpdate: SecurityApiKeysBulkUpdateOutput;
+	securityApiKeysClone: SecurityApiKeysCloneOutput;
+	securityApiKeysGrant: SecurityApiKeysGrantOutput;
+	securityApiKeysClearCache: SecurityApiKeysClearCacheOutput;
+	securityApiKeysUpdate: SecurityApiKeysUpdateOutput;
+	securityApiKeysQuery: SecurityApiKeysQueryOutput;
+	securityCrossClusterApiKeysCreate: SecurityCrossClusterApiKeysCreateOutput;
+	securityCrossClusterApiKeysUpdate: SecurityCrossClusterApiKeysUpdateOutput;
 };
 
 export type ElasticsearchOperation = keyof ElasticsearchEndpointInputs;
@@ -3462,6 +3831,19 @@ export const ElasticsearchEndpointInputSchemas = {
 	tasksList: TasksListInputSchema,
 	tasksGet: TasksGetInputSchema,
 	tasksCancel: TasksCancelInputSchema,
+	securityApiKeysGet: SecurityApiKeysGetInputSchema,
+	securityApiKeysCreate: SecurityApiKeysCreateInputSchema,
+	securityApiKeysInvalidate: SecurityApiKeysInvalidateInputSchema,
+	securityApiKeysBulkUpdate: SecurityApiKeysBulkUpdateInputSchema,
+	securityApiKeysClone: SecurityApiKeysCloneInputSchema,
+	securityApiKeysGrant: SecurityApiKeysGrantInputSchema,
+	securityApiKeysClearCache: SecurityApiKeysClearCacheInputSchema,
+	securityApiKeysUpdate: SecurityApiKeysUpdateInputSchema,
+	securityApiKeysQuery: SecurityApiKeysQueryInputSchema,
+	securityCrossClusterApiKeysCreate:
+		SecurityCrossClusterApiKeysCreateInputSchema,
+	securityCrossClusterApiKeysUpdate:
+		SecurityCrossClusterApiKeysUpdateInputSchema,
 } as const;
 
 export const ElasticsearchEndpointOutputSchemas = {
@@ -3601,4 +3983,15 @@ export const ElasticsearchEndpointOutputSchemas = {
 	tasksList: TaskListResponseSchema,
 	tasksGet: TasksGetOutputSchema,
 	tasksCancel: TaskListResponseSchema,
+	securityApiKeysGet: SecurityApiKeysGetOutputSchema,
+	securityApiKeysCreate: SecurityCreatedApiKeySchema,
+	securityApiKeysInvalidate: SecurityApiKeysInvalidateOutputSchema,
+	securityApiKeysBulkUpdate: SecurityApiKeysBulkUpdateOutputSchema,
+	securityApiKeysClone: SecurityCreatedApiKeySchema,
+	securityApiKeysGrant: SecurityCreatedApiKeySchema,
+	securityApiKeysClearCache: SecurityCacheClearResponseSchema,
+	securityApiKeysUpdate: SecurityApiKeysUpdateOutputSchema,
+	securityApiKeysQuery: SecurityApiKeysQueryOutputSchema,
+	securityCrossClusterApiKeysCreate: SecurityCreatedApiKeySchema,
+	securityCrossClusterApiKeysUpdate: SecurityApiKeysUpdateOutputSchema,
 } as const;

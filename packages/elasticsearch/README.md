@@ -148,6 +148,17 @@ pnpm add @corsair-dev/elasticsearch
 | `tasks.list` | `elasticsearch.api.tasks.list` | `read` | List the tasks currently running on the cluster, groupable by node or parent task and filterable by actions and nodes |
 | `tasks.get` | `elasticsearch.api.tasks.get` | `read` | Get one task by its <node_id>:<number> id with status, timing and optionally its completed response |
 | `tasks.cancel` | `elasticsearch.api.tasks.cancel` | `write` | Cancel one task (POST /_tasks/{task_id}/_cancel), optionally narrowed by actions, nodes or parent task |
+| `security.apiKeys.get` | `elasticsearch.api.security.apiKeys.get` | `read` | List API keys filtered by id, name, owner, realm or username, optionally active-only, with the encoded key never returned |
+| `security.apiKeys.create` | `elasticsearch.api.security.apiKeys.create` | `write` | Create an API key (POST /_security/api_key) with a name, optional expiration, role descriptors and metadata; the reply carries the id and the encoded key value |
+| `security.apiKeys.invalidate` | `elasticsearch.api.security.apiKeys.invalidate` | `write` | Invalidate API keys by id, ids, name, realm, username or owner selector (DELETE /_security/api_key); invalidated keys stop working immediately |
+| `security.apiKeys.bulkUpdate` | `elasticsearch.api.security.apiKeys.bulkUpdate` | `write` | Bulk update API keys by ids: replace role descriptors, metadata and expiration in one request, with per-key error details |
+| `security.apiKeys.clone` | `elasticsearch.api.security.apiKeys.clone` | `write` | Clone an existing API key (PUT /_security/api_key/clone) into a new key with a fresh name, expiration and privilege set |
+| `security.apiKeys.grant` | `elasticsearch.api.security.apiKeys.grant` | `write` | Grant an API key on behalf of another principal (password, access token or service account grant type), optionally restricted with role descriptors |
+| `security.apiKeys.clearCache` | `elasticsearch.api.security.apiKeys.clearCache` | `write` | Evict API keys from the security cache by comma-separated ids (POST /_security/api_key/{ids}/_clear_cache; * clears all) |
+| `security.apiKeys.update` | `elasticsearch.api.security.apiKeys.update` | `write` | Update one API key by id (PUT /_security/api_key/{id}): replace role descriptors, metadata or expiration |
+| `security.apiKeys.query` | `elasticsearch.api.security.apiKeys.query` | `read` | Find API keys with a typed query (POST /_security/_query/api_key) over name, metadata and other key fields, search-style hits envelope |
+| `security.crossClusterApiKeys.create` | `elasticsearch.api.security.crossClusterApiKeys.create` | `write` | Create a cross-cluster API key granting remote search and/or replication access to named indices |
+| `security.crossClusterApiKeys.update` | `elasticsearch.api.security.crossClusterApiKeys.update` | `write` | Replace the access assignment, expiration or metadata of a cross-cluster API key by id |
 
 Risk levels follow the operation's effect on the cluster: `read` never mutates, `write` changes documents or index/cluster state, `destructive` deletes data. Mutating calls (POST/PUT/DELETE) are never replayed on 5xx or timeout, because the change may already have been applied; 429 retries remain safe (the request was rejected before executing).
 

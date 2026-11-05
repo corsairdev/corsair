@@ -8,6 +8,7 @@ import {
 	Indices,
 	Nodes,
 	Search,
+	Security,
 	Tasks,
 } from './endpoints';
 import {
@@ -44,6 +45,17 @@ import {
 	SearchRunResponseSchema,
 	SearchTemplateInputSchema,
 	SearchVectorTileInputSchema,
+	SecurityApiKeysBulkUpdateInputSchema,
+	SecurityApiKeysCreateInputSchema,
+	SecurityApiKeysGetInputSchema,
+	SecurityApiKeysGetOutputSchema,
+	SecurityApiKeysGrantInputSchema,
+	SecurityApiKeysInvalidateInputSchema,
+	SecurityApiKeysQueryInputSchema,
+	SecurityApiKeysQueryOutputSchema,
+	SecurityCreatedApiKeySchema,
+	SecurityCrossClusterApiKeysCreateInputSchema,
+	SecurityCrossClusterApiKeysUpdateInputSchema,
 	TasksListInputSchema,
 } from './endpoints/types';
 import {
@@ -154,6 +166,13 @@ import {
 	searchShardsOutput,
 	searchTermsEnumOutput,
 	searchValidateQueryOutput,
+	securityApiKeysBulkUpdateOutput,
+	securityApiKeysGetOutput,
+	securityApiKeysInvalidateOutput,
+	securityApiKeysQueryOutput,
+	securityApiKeysUpdateOutput,
+	securityCacheClearOutput,
+	securityCreatedApiKey,
 	shardsOpResponse,
 	taskGetOutput,
 	tasksListOutput,
@@ -3001,5 +3020,387 @@ describe('cluster, cat, nodes and tasks wire calls', () => {
 			await expect(run()).resolves.toEqual([]);
 		}
 		expect(fetchMock).toHaveBeenCalledTimes(25);
+	});
+});
+
+// ── security.apiKeys schemas and wire assertions ─────────────────────────────
+
+describe('security.apiKeys schemas', () => {
+	it('get accepts every documented filter and rejects unknown keys', () => {
+		expect(
+			SecurityApiKeysGetInputSchema.parse({
+				name: 'my-key*',
+				owner: true,
+				active_only: true,
+			}),
+		).toEqual({ name: 'my-key*', owner: true, active_only: true });
+		expect(
+			SecurityApiKeysGetInputSchema.safeParse({ sort: 'name' }).success,
+		).toBe(false);
+	});
+
+	it('create requires a name and types the body fields', () => {
+		expect(
+			SecurityApiKeysCreateInputSchema.safeParse({ expiration: '1d' }).success,
+		).toBe(false);
+		expect(
+			SecurityApiKeysCreateInputSchema.parse({
+				name: 'agent-key',
+				expiration: '30d',
+				role_descriptors: {
+					'logs-reader': {
+						indices: [{ names: ['logs-*'], privileges: ['read'] }],
+					},
+				},
+				metadata: { app: 'agent' },
+				refresh: 'wait_for',
+			}).name,
+		).toBe('agent-key');
+	});
+
+	it('rejects role descriptors without privileges or names', () => {
+		expect(
+			SecurityApiKeysCreateInputSchema.safeParse({
+				name: 'k',
+				role_descriptors: {
+					bad: { indices: [{ names: ['logs'], privileges: [] }] },
+				},
+			}).success,
+		).toBe(false);
+		expect(
+			SecurityApiKeysCreateInputSchema.safeParse({
+				name: 'k',
+				role_descriptors: {
+					bad: { indices: [{ names: [], privileges: ['read'] }] },
+				},
+			}).success,
+		).toBe(false);
+	});
+
+	it('invalidate requires a selector or owner: true per the spec', () => {
+		expect(SecurityApiKeysInvalidateInputSchema.safeParse({}).success).toBe(
+			false,
+		);
+		expect(
+			SecurityApiKeysInvalidateInputSchema.safeParse({ owner: true }).success,
+		).toBe(true);
+		expect(
+			SecurityApiKeysInvalidateInputSchema.safeParse({
+				ids: ['a', 'b'],
+			}).success,
+		).toBe(true);
+	});
+
+	it('bulkUpdate requires ids and accepts a single id or a list', () => {
+		expect(
+			SecurityApiKeysBulkUpdateInputSchema.safeParse({ expiration: '1d' })
+				.success,
+		).toBe(false);
+		expect(
+			SecurityApiKeysBulkUpdateInputSchema.parse({ ids: 'one-id' }).ids,
+		).toBe('one-id');
+		expect(
+			SecurityApiKeysBulkUpdateInputSchema.parse({ ids: ['a'] }).ids,
+		).toEqual(['a']);
+	});
+
+	it('grant pins the grant_type enum and its paired credential', () => {
+		expect(
+			SecurityApiKeysGrantInputSchema.safeParse({
+				api_key: { name: 'granted' },
+				grant_type: 'password',
+				password: 'pw',
+			}).success,
+		).toBe(false);
+		expect(
+			SecurityApiKeysGrantInputSchema.safeParse({
+				api_key: { name: 'granted' },
+				grant_type: 'access_token',
+				access_token: 'tok',
+			}).success,
+		).toBe(true);
+		expect(
+			SecurityApiKeysGrantInputSchema.safeParse({
+				api_key: { name: 'granted' },
+				grant_type: 'client_credentials',
+			}).success,
+		).toBe(false);
+		expect(
+			SecurityApiKeysGrantInputSchema.safeParse({
+				api_key: { name: 'g' },
+				grant_type: '_user_managed_service_account',
+				service_account_token: 'token',
+			}).success,
+		).toBe(true);
+	});
+
+	it('query accepts the typed query subset with paging bounds', () => {
+		expect(
+			SecurityApiKeysQueryInputSchema.safeParse({
+				query: { term: { name: 'agent' } },
+				size: 100,
+			}).success,
+		).toBe(true);
+		expect(
+			SecurityApiKeysQueryInputSchema.safeParse({ size: 10_001 }).success,
+		).toBe(false);
+		expect(
+			SecurityApiKeysQueryInputSchema.safeParse({
+				query: { wildcard: { name: 'a*' } },
+			}).success,
+		).toBe(false);
+	});
+
+	it('cross-cluster access requires search and/or replication with names', () => {
+		expect(
+			SecurityCrossClusterApiKeysCreateInputSchema.safeParse({
+				name: 'ccs',
+				access: {},
+			}).success,
+		).toBe(false);
+		expect(
+			SecurityCrossClusterApiKeysCreateInputSchema.safeParse({
+				name: 'ccs',
+				access: { search: [{ names: ['logs-*'] }] },
+			}).success,
+		).toBe(true);
+		expect(
+			SecurityCrossClusterApiKeysUpdateInputSchema.safeParse({
+				id: 'key-id',
+				access: {
+					replication: [{ names: 'leader-*', allow_restricted_indices: true }],
+				},
+			}).success,
+		).toBe(true);
+	});
+
+	it('parses the documented API key list and created-key bodies', () => {
+		const listed = SecurityApiKeysGetOutputSchema.parse(
+			securityApiKeysGetOutput(),
+		);
+		expect(listed.api_keys[0]?.name).toBe('my-api-key');
+		expect(listed.api_keys[0]?.invalidated).toBe(false);
+
+		const created = SecurityCreatedApiKeySchema.parse(securityCreatedApiKey);
+		expect(created.encoded).toContain('VnVhT0NmVlk0c0g0UWY3ZDlDQUFhMzp1M1Zs');
+
+		const query = SecurityApiKeysQueryOutputSchema.parse(
+			securityApiKeysQueryOutput,
+		);
+		expect(query.hits.total).toEqual({ value: 1, relation: 'eq' });
+		expect(query.hits.hits).toHaveLength(1);
+	});
+
+	it('accepts an empty API key list as a valid result', () => {
+		expect(SecurityApiKeysGetOutputSchema.parse({ api_keys: [] })).toEqual({
+			api_keys: [],
+		});
+	});
+});
+
+describe('security.apiKeys wire calls', () => {
+	let fetchMock: jest.SpyInstance;
+
+	beforeEach(() => {
+		fetchMock = jest.spyOn(globalThis, 'fetch');
+		mockLog.mockClear();
+	});
+
+	afterEach(() => {
+		fetchMock.mockRestore();
+	});
+
+	const ctx = {
+		options: { baseUrl: 'http://es:9200' },
+		key: 'ApiKey encoded-key',
+	} as never;
+
+	function mockJson(body: unknown, status = 200) {
+		fetchMock.mockResolvedValueOnce(
+			new Response(JSON.stringify(body), {
+				status,
+				headers: { 'Content-Type': 'application/json' },
+			}),
+		);
+	}
+
+	async function sent() {
+		expect(fetchMock).toHaveBeenCalledTimes(1);
+		const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+		return { url, init };
+	}
+
+	it('apiKeys.get sends the filters as query params', async () => {
+		mockJson(securityApiKeysGetOutput());
+		const result = await Security.getApiKeys(ctx, {
+			name: 'my-key*',
+			active_only: true,
+		});
+		expect(result.api_keys).toHaveLength(1);
+		const { url, init } = await sent();
+		expect(url).toBe(
+			'http://es:9200/_security/api_key?name=my-key*&active_only=true',
+		);
+		expect(init.method).toBe('GET');
+		expect(init.body).toBeUndefined();
+	});
+
+	it('apiKeys.create POSTs name, expiration, role descriptors and metadata', async () => {
+		mockJson(securityCreatedApiKey);
+		const result = await Security.createApiKey(ctx, {
+			name: 'agent-key',
+			expiration: '30d',
+			role_descriptors: {
+				'logs-reader': {
+					indices: [{ names: ['logs-*'], privileges: ['read'] }],
+				},
+			},
+			metadata: { app: 'agent' },
+			refresh: 'wait_for',
+		});
+		expect(result.name).toBe('my-api-key');
+		const { url, init } = await sent();
+		expect(url).toBe('http://es:9200/_security/api_key?refresh=wait_for');
+		expect(init.method).toBe('POST');
+		expect(JSON.parse(String(init.body))).toEqual({
+			name: 'agent-key',
+			expiration: '30d',
+			role_descriptors: {
+				'logs-reader': {
+					indices: [{ names: ['logs-*'], privileges: ['read'] }],
+				},
+			},
+			metadata: { app: 'agent' },
+		});
+	});
+
+	it('apiKeys.invalidate DELETEs the selector as the JSON body', async () => {
+		mockJson(securityApiKeysInvalidateOutput);
+		const result = await Security.invalidateApiKeys(ctx, { ids: ['k1', 'k2'] });
+		expect(result.invalidated_api_keys).toHaveLength(1);
+		const { url, init } = await sent();
+		expect(url).toBe('http://es:9200/_security/api_key');
+		expect(init.method).toBe('DELETE');
+		expect(JSON.parse(String(init.body))).toEqual({ ids: ['k1', 'k2'] });
+	});
+
+	it('apiKeys.bulkUpdate POSTs ids and updates to _bulk_update', async () => {
+		mockJson(securityApiKeysBulkUpdateOutput);
+		await Security.bulkUpdateApiKeys(ctx, {
+			ids: ['k1'],
+			expiration: '7d',
+		});
+		const { url, init } = await sent();
+		expect(url).toBe('http://es:9200/_security/api_key/_bulk_update');
+		expect(init.method).toBe('POST');
+		expect(JSON.parse(String(init.body))).toEqual({
+			ids: ['k1'],
+			expiration: '7d',
+		});
+	});
+
+	it('apiKeys.clone PUTs the new key spec to /clone', async () => {
+		mockJson(securityCreatedApiKey);
+		await Security.cloneApiKey(ctx, {
+			name: 'cloned-key',
+			role_descriptors: {},
+		});
+		const { url, init } = await sent();
+		expect(url).toBe('http://es:9200/_security/api_key/clone');
+		expect(init.method).toBe('PUT');
+		expect(JSON.parse(String(init.body))).toEqual({
+			name: 'cloned-key',
+			role_descriptors: {},
+		});
+	});
+
+	it('apiKeys.grant POSTs the grant body and query refresh', async () => {
+		mockJson(securityCreatedApiKey);
+		await Security.grantApiKey(ctx, {
+			api_key: { name: 'granted' },
+			grant_type: 'password',
+			username: 'other-user',
+			password: 'pw',
+		});
+		const { url, init } = await sent();
+		expect(url).toBe('http://es:9200/_security/api_key/grant');
+		expect(init.method).toBe('POST');
+		expect(JSON.parse(String(init.body))).toEqual({
+			api_key: { name: 'granted' },
+			grant_type: 'password',
+			username: 'other-user',
+			password: 'pw',
+		});
+	});
+
+	it('apiKeys.clearCache POSTs the encoded id list path', async () => {
+		mockJson(securityCacheClearOutput);
+		const result = await Security.clearApiKeyCache(ctx, { ids: 'k1,k2' });
+		expect(result._nodes.successful).toBe(3);
+		const { url, init } = await sent();
+		expect(url).toBe('http://es:9200/_security/api_key/k1,k2/_clear_cache');
+		expect(init.method).toBe('POST');
+	});
+
+	it('apiKeys.update PUTs the body fields under the key id', async () => {
+		mockJson(securityApiKeysUpdateOutput);
+		const result = await Security.updateApiKey(ctx, {
+			id: 'key id/1',
+			expiration: '1d',
+		});
+		expect(result.updated).toBe(true);
+		const { url, init } = await sent();
+		expect(url).toBe('http://es:9200/_security/api_key/key%20id%2F1');
+		expect(init.method).toBe('PUT');
+		expect(JSON.parse(String(init.body))).toEqual({ expiration: '1d' });
+	});
+
+	it('apiKeys.query POSTs the typed query subset with paging', async () => {
+		mockJson(securityApiKeysQueryOutput);
+		await Security.queryApiKeys(ctx, {
+			query: { term: { name: 'agent' } },
+			from: 0,
+			size: 50,
+			with_profile_uid: true,
+		});
+		const { url, init } = await sent();
+		expect(url).toBe(
+			'http://es:9200/_security/_query/api_key?with_profile_uid=true',
+		);
+		expect(init.method).toBe('POST');
+		expect(JSON.parse(String(init.body))).toEqual({
+			query: { term: { name: 'agent' } },
+			from: 0,
+			size: 50,
+		});
+	});
+
+	it('crossClusterApiKeys.create POSTs the access tree', async () => {
+		mockJson(securityCreatedApiKey);
+		await Security.createCrossClusterApiKey(ctx, {
+			name: 'ccs-key',
+			access: { search: [{ names: ['logs-*'] }] },
+		});
+		const { url, init } = await sent();
+		expect(url).toBe('http://es:9200/_security/cross_cluster/api_key');
+		expect(init.method).toBe('POST');
+		expect(JSON.parse(String(init.body))).toEqual({
+			name: 'ccs-key',
+			access: { search: [{ names: ['logs-*'] }] },
+		});
+	});
+
+	it('crossClusterApiKeys.update PUTs the access tree under the id', async () => {
+		mockJson(securityApiKeysUpdateOutput);
+		await Security.updateCrossClusterApiKey(ctx, {
+			id: 'ccs-id',
+			access: { replication: [{ names: 'leader-*' }] },
+		});
+		const { url, init } = await sent();
+		expect(url).toBe('http://es:9200/_security/cross_cluster/api_key/ccs-id');
+		expect(init.method).toBe('PUT');
+		expect(JSON.parse(String(init.body))).toEqual({
+			access: { replication: [{ names: 'leader-*' }] },
+		});
 	});
 });

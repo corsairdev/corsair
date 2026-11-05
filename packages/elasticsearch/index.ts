@@ -22,6 +22,7 @@ import {
 	Indices,
 	Nodes,
 	Search,
+	Security,
 	Tasks,
 } from './endpoints';
 import type {
@@ -217,6 +218,17 @@ export type ElasticsearchEndpoints = {
 	tasksList: ElasticsearchEndpoint<'tasksList'>;
 	tasksGet: ElasticsearchEndpoint<'tasksGet'>;
 	tasksCancel: ElasticsearchEndpoint<'tasksCancel'>;
+	securityApiKeysGet: ElasticsearchEndpoint<'securityApiKeysGet'>;
+	securityApiKeysCreate: ElasticsearchEndpoint<'securityApiKeysCreate'>;
+	securityApiKeysInvalidate: ElasticsearchEndpoint<'securityApiKeysInvalidate'>;
+	securityApiKeysBulkUpdate: ElasticsearchEndpoint<'securityApiKeysBulkUpdate'>;
+	securityApiKeysClone: ElasticsearchEndpoint<'securityApiKeysClone'>;
+	securityApiKeysGrant: ElasticsearchEndpoint<'securityApiKeysGrant'>;
+	securityApiKeysClearCache: ElasticsearchEndpoint<'securityApiKeysClearCache'>;
+	securityApiKeysUpdate: ElasticsearchEndpoint<'securityApiKeysUpdate'>;
+	securityApiKeysQuery: ElasticsearchEndpoint<'securityApiKeysQuery'>;
+	securityCrossClusterApiKeysCreate: ElasticsearchEndpoint<'securityCrossClusterApiKeysCreate'>;
+	securityCrossClusterApiKeysUpdate: ElasticsearchEndpoint<'securityCrossClusterApiKeysUpdate'>;
 };
 
 // Elasticsearch has no inbound webhook surface — the REST API is
@@ -377,6 +389,23 @@ const elasticsearchEndpointsNested = {
 		list: Tasks.list,
 		get: Tasks.get,
 		cancel: Tasks.cancel,
+	},
+	security: {
+		apiKeys: {
+			get: Security.getApiKeys,
+			create: Security.createApiKey,
+			invalidate: Security.invalidateApiKeys,
+			bulkUpdate: Security.bulkUpdateApiKeys,
+			clone: Security.cloneApiKey,
+			grant: Security.grantApiKey,
+			clearCache: Security.clearApiKeyCache,
+			update: Security.updateApiKey,
+			query: Security.queryApiKeys,
+		},
+		crossClusterApiKeys: {
+			create: Security.createCrossClusterApiKey,
+			update: Security.updateCrossClusterApiKey,
+		},
 	},
 } as const;
 
@@ -927,6 +956,52 @@ export const elasticsearchEndpointSchemas = {
 	'tasks.cancel': {
 		input: ElasticsearchEndpointInputSchemas.tasksCancel,
 		output: ElasticsearchEndpointOutputSchemas.tasksCancel,
+	},
+	'security.apiKeys.get': {
+		input: ElasticsearchEndpointInputSchemas.securityApiKeysGet,
+		output: ElasticsearchEndpointOutputSchemas.securityApiKeysGet,
+	},
+	'security.apiKeys.create': {
+		input: ElasticsearchEndpointInputSchemas.securityApiKeysCreate,
+		output: ElasticsearchEndpointOutputSchemas.securityApiKeysCreate,
+	},
+	'security.apiKeys.invalidate': {
+		input: ElasticsearchEndpointInputSchemas.securityApiKeysInvalidate,
+		output: ElasticsearchEndpointOutputSchemas.securityApiKeysInvalidate,
+	},
+	'security.apiKeys.bulkUpdate': {
+		input: ElasticsearchEndpointInputSchemas.securityApiKeysBulkUpdate,
+		output: ElasticsearchEndpointOutputSchemas.securityApiKeysBulkUpdate,
+	},
+	'security.apiKeys.clone': {
+		input: ElasticsearchEndpointInputSchemas.securityApiKeysClone,
+		output: ElasticsearchEndpointOutputSchemas.securityApiKeysClone,
+	},
+	'security.apiKeys.grant': {
+		input: ElasticsearchEndpointInputSchemas.securityApiKeysGrant,
+		output: ElasticsearchEndpointOutputSchemas.securityApiKeysGrant,
+	},
+	'security.apiKeys.clearCache': {
+		input: ElasticsearchEndpointInputSchemas.securityApiKeysClearCache,
+		output: ElasticsearchEndpointOutputSchemas.securityApiKeysClearCache,
+	},
+	'security.apiKeys.update': {
+		input: ElasticsearchEndpointInputSchemas.securityApiKeysUpdate,
+		output: ElasticsearchEndpointOutputSchemas.securityApiKeysUpdate,
+	},
+	'security.apiKeys.query': {
+		input: ElasticsearchEndpointInputSchemas.securityApiKeysQuery,
+		output: ElasticsearchEndpointOutputSchemas.securityApiKeysQuery,
+	},
+	'security.crossClusterApiKeys.create': {
+		input: ElasticsearchEndpointInputSchemas.securityCrossClusterApiKeysCreate,
+		output:
+			ElasticsearchEndpointOutputSchemas.securityCrossClusterApiKeysCreate,
+	},
+	'security.crossClusterApiKeys.update': {
+		input: ElasticsearchEndpointInputSchemas.securityCrossClusterApiKeysUpdate,
+		output:
+			ElasticsearchEndpointOutputSchemas.securityCrossClusterApiKeysUpdate,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof elasticsearchEndpointsNested
@@ -1611,6 +1686,61 @@ const elasticsearchEndpointMeta = {
 		riskLevel: 'write',
 		description:
 			'Cancel one task (POST /_tasks/{task_id}/_cancel), optionally narrowed by actions, nodes or parent task',
+	},
+	'security.apiKeys.get': {
+		riskLevel: 'read',
+		description:
+			'List API keys filtered by id, name, owner, realm or username, optionally active-only, with the encoded key never returned',
+	},
+	'security.apiKeys.create': {
+		riskLevel: 'write',
+		description:
+			'Create an API key (POST /_security/api_key) with a name, optional expiration, role descriptors and metadata; the reply carries the id and the encoded key value',
+	},
+	'security.apiKeys.invalidate': {
+		riskLevel: 'write',
+		description:
+			'Invalidate API keys by id, ids, name, realm, username or owner selector (DELETE /_security/api_key); invalidated keys stop working immediately',
+	},
+	'security.apiKeys.bulkUpdate': {
+		riskLevel: 'write',
+		description:
+			'Bulk update API keys by ids: replace role descriptors, metadata and expiration in one request, with per-key error details',
+	},
+	'security.apiKeys.clone': {
+		riskLevel: 'write',
+		description:
+			'Clone an existing API key (PUT /_security/api_key/clone) into a new key with a fresh name, expiration and privilege set',
+	},
+	'security.apiKeys.grant': {
+		riskLevel: 'write',
+		description:
+			'Grant an API key on behalf of another principal (password, access token or service account grant type), optionally restricted with role descriptors',
+	},
+	'security.apiKeys.clearCache': {
+		riskLevel: 'write',
+		description:
+			'Evict API keys from the security cache by comma-separated ids (POST /_security/api_key/{ids}/_clear_cache; * clears all)',
+	},
+	'security.apiKeys.update': {
+		riskLevel: 'write',
+		description:
+			'Update one API key by id (PUT /_security/api_key/{id}): replace role descriptors, metadata or expiration',
+	},
+	'security.apiKeys.query': {
+		riskLevel: 'read',
+		description:
+			'Find API keys with a typed query (POST /_security/_query/api_key) over name, metadata and other key fields, search-style hits envelope',
+	},
+	'security.crossClusterApiKeys.create': {
+		riskLevel: 'write',
+		description:
+			'Create a cross-cluster API key granting remote search and/or replication access to named indices',
+	},
+	'security.crossClusterApiKeys.update': {
+		riskLevel: 'write',
+		description:
+			'Replace the access assignment, expiration or metadata of a cross-cluster API key by id',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof elasticsearchEndpointsNested
