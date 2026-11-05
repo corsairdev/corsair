@@ -1,33 +1,57 @@
 import { z } from 'zod';
+import {
+	ApplicationFormRecord,
+	ApplicationRecord,
+	ApplyOutput,
+	ArchiveReasonRecord,
+	AuditEventRecord,
+	ContactRecord,
+	CreatedWebhookOutput,
+	DeletedRecord,
+	DispositionStagesOutput,
+	DiversitySurveyRecord,
+	EeoResponsesOutput,
+	envelope,
+	FeedbackRecord,
+	FeedbackTemplateRecord,
+	FileActionRecord,
+	FileRecord,
+	FormTemplateRecord,
+	InterviewRecord,
+	listOf,
+	NoteRecord,
+	NoteWriteRecord,
+	OfferRecord,
+	OpportunityRecord,
+	PanelRecord,
+	PostingAccessOutput,
+	PostingRecord,
+	ProfileFormRecord,
+	ReferralRecord,
+	RequisitionFieldRecord,
+	RequisitionRecord,
+	ResumeRecord,
+	recordOrEnvelope,
+	StageRecord,
+	scheduledOutput,
+	TextCountRecord,
+	UserRecord,
+	WebhookRecord,
+} from './responses';
 
 // ── Shared building blocks ───────────────────────────────────────────────────
-const LeverRecordSchema = z.object({}).passthrough();
-// Every Lever list endpoint returns { data, hasNext, next }. `next` is an
-// opaque offset token: pass it back as `offset` to fetch the following page.
-const LeverListOutputSchema = z
-	.object({
-		data: z.array(LeverRecordSchema),
-		hasNext: z.boolean().optional(),
-		next: z.string().optional(),
-	})
-	.passthrough();
-// A few report endpoints (EEO responses, disposition stages) wrap an object,
-// not an array, in `data`.
-const LeverObjectEnvelopeOutputSchema = z
-	.object({ data: LeverRecordSchema })
-	.passthrough();
-const LeverResourceOutputSchema = LeverRecordSchema;
+// Provider-defined objects inside request bodies (interview entries,
+// location details, custom fields, webhook conditions) whose keys Lever
+// does not fix.
+const LeverRecordSchema = z.object({}).loose();
 // File, resume and offer downloads: raw bytes as base64 plus their MIME type.
 const LeverDownloadOutputSchema = z.object({
 	data: z.string(),
 	contentType: z.string(),
 });
-// unknown: delete acknowledgements arrive as an empty 204 body, an empty
-// object, or occasionally a provider-side echo; any of these is a success.
-const LeverEmptyOutputSchema = z.union([
-	z.object({}).passthrough(),
-	z.undefined(),
-]);
+// Deletes and contact link/tag/source changes: Lever answers 204 with no
+// body (or an empty object), so any object or no body is a success.
+const LeverAckOutputSchema = z.union([z.object({}).loose(), z.undefined()]);
 
 const IdSchema = z.string().min(1);
 const OpportunityIdInputSchema = z.object({ opportunityId: IdSchema });
@@ -207,7 +231,7 @@ const PostingCategoriesSchema = z
 		commitment: z.string().optional(),
 		locationDetails: LeverRecordSchema.optional(),
 	})
-	.passthrough();
+	.loose();
 const PostingContentSchema = z
 	.object({
 		descriptionHtml: z.string().optional(),
@@ -216,7 +240,7 @@ const PostingContentSchema = z
 			.optional(),
 		closingPostingHtml: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 const PostingBodySchema = z.object({
 	text: z.string().min(1),
 	state: z
@@ -335,7 +359,7 @@ const UpdateNoteInputSchema = NoteIdInputSchema.extend({
 					value: z.string().min(1),
 					createdAt: TimestampSchema.optional(),
 				})
-				.passthrough(),
+				.loose(),
 		)
 		.min(1),
 	user: z.string().optional(),
@@ -355,7 +379,7 @@ const PanelBodySchema = z
 		externalUrl: z.string().optional(),
 		interviews: z.array(LeverRecordSchema).min(1),
 	})
-	.passthrough();
+	.loose();
 
 // ── Feedback ─────────────────────────────────────────────────────────────────
 const CreateFeedbackInputSchema = OpportunityIdInputSchema.extend({
@@ -381,7 +405,7 @@ const FeedbackTemplateBodySchema = z.object({
 	instructions: z.string().optional(),
 	group: z.string().optional(),
 	fields: z
-		.array(z.object({ type: z.string(), text: z.string() }).passthrough())
+		.array(z.object({ type: z.string(), text: z.string() }).loose())
 		.optional(),
 });
 
@@ -398,7 +422,7 @@ const FormTemplateBodySchema = z.object({
 	group: z.string().optional(),
 	secretByDefault: z.boolean().optional(),
 	fields: z
-		.array(z.object({ type: z.string(), text: z.string() }).passthrough())
+		.array(z.object({ type: z.string(), text: z.string() }).loose())
 		.min(1),
 });
 
@@ -450,7 +474,7 @@ const RequisitionBodySchema = z
 		department: z.string().optional(),
 		postingIds: z.array(z.string()).optional(),
 	})
-	.passthrough();
+	.loose();
 
 // ── Profile form submissions ─────────────────────────────────────────────────
 // Lever creates a profile form from a form template: `fields` mirrors the
@@ -465,7 +489,7 @@ const CreateProfileFormInputSchema = OpportunityIdInputSchema.extend({
 					text: z.string().min(1),
 					value: FormFieldValueSchema.optional(),
 				})
-				.passthrough(),
+				.loose(),
 		)
 		.min(1),
 	secret: z.boolean().optional(),
@@ -575,7 +599,7 @@ export const LeverEndpointInputSchemas = {
 		.object({ opportunityId: IdSchema, panelId: IdSchema })
 		.extend(PanelBodySchema.shape)
 		.extend(RequiredPerformAsSchema.shape)
-		.passthrough(),
+		.loose(),
 	deletePanel: z
 		.object({ opportunityId: IdSchema, panelId: IdSchema })
 		.extend(RequiredPerformAsSchema.shape),
@@ -707,110 +731,110 @@ export const LeverEndpointInputSchemas = {
 } as const;
 
 export const LeverEndpointOutputSchemas = {
-	listOpportunities: LeverListOutputSchema,
-	retrieveOpportunity: LeverResourceOutputSchema,
-	listDeletedOpportunities: LeverListOutputSchema,
-	listOpportunityFileActions: LeverListOutputSchema,
-	createOpportunity: LeverResourceOutputSchema,
-	updateOpportunityStage: LeverResourceOutputSchema,
-	updateOpportunityArchivedState: LeverResourceOutputSchema,
-	addOpportunityLinks: LeverEmptyOutputSchema,
-	removeOpportunityLinks: LeverEmptyOutputSchema,
-	addOpportunityTags: LeverEmptyOutputSchema,
-	removeOpportunityTags: LeverEmptyOutputSchema,
-	addOpportunitySources: LeverEmptyOutputSchema,
-	removeOpportunitySources: LeverEmptyOutputSchema,
-	listApplications: LeverListOutputSchema,
-	retrieveApplication: LeverResourceOutputSchema,
-	listDeletedApplications: LeverListOutputSchema,
-	listPostings: LeverListOutputSchema,
-	retrievePosting: LeverResourceOutputSchema,
-	listDeletedPostings: LeverListOutputSchema,
-	createPosting: LeverResourceOutputSchema,
-	updatePosting: LeverResourceOutputSchema,
-	retrievePostingApplicationQuestions: LeverResourceOutputSchema,
-	listPostingUsers: LeverListOutputSchema,
-	applyToPosting: LeverResourceOutputSchema,
-	listInterviews: LeverListOutputSchema,
-	retrieveInterview: LeverResourceOutputSchema,
-	createInterview: LeverResourceOutputSchema,
-	updateInterview: LeverResourceOutputSchema,
-	deleteInterview: LeverEmptyOutputSchema,
-	listNotes: LeverListOutputSchema,
-	retrieveNote: LeverResourceOutputSchema,
-	createNote: LeverResourceOutputSchema,
-	updateNote: LeverResourceOutputSchema,
-	deleteNote: LeverEmptyOutputSchema,
-	listArchiveReasons: LeverListOutputSchema,
-	retrieveArchiveReason: LeverResourceOutputSchema,
-	listStages: LeverListOutputSchema,
-	retrieveStage: LeverResourceOutputSchema,
-	listPanels: LeverListOutputSchema,
-	retrievePanel: LeverResourceOutputSchema,
-	createPanel: LeverResourceOutputSchema,
-	updatePanel: LeverResourceOutputSchema,
-	deletePanel: LeverEmptyOutputSchema,
-	listFeedback: LeverListOutputSchema,
-	retrieveFeedback: LeverResourceOutputSchema,
-	createFeedback: LeverResourceOutputSchema,
-	updateFeedback: LeverResourceOutputSchema,
-	deleteFeedback: LeverEmptyOutputSchema,
-	listFeedbackTemplates: LeverListOutputSchema,
-	retrieveFeedbackTemplate: LeverResourceOutputSchema,
-	createFeedbackTemplate: LeverResourceOutputSchema,
-	updateFeedbackTemplate: LeverResourceOutputSchema,
-	deleteFeedbackTemplate: LeverEmptyOutputSchema,
-	listFiles: LeverListOutputSchema,
-	retrieveFile: LeverResourceOutputSchema,
+	listOpportunities: listOf(OpportunityRecord),
+	retrieveOpportunity: envelope(OpportunityRecord),
+	listDeletedOpportunities: listOf(DeletedRecord),
+	listOpportunityFileActions: listOf(FileActionRecord),
+	createOpportunity: envelope(OpportunityRecord),
+	updateOpportunityStage: envelope(OpportunityRecord),
+	updateOpportunityArchivedState: envelope(OpportunityRecord),
+	addOpportunityLinks: LeverAckOutputSchema,
+	removeOpportunityLinks: LeverAckOutputSchema,
+	addOpportunityTags: LeverAckOutputSchema,
+	removeOpportunityTags: LeverAckOutputSchema,
+	addOpportunitySources: LeverAckOutputSchema,
+	removeOpportunitySources: LeverAckOutputSchema,
+	listApplications: listOf(ApplicationRecord),
+	retrieveApplication: envelope(ApplicationRecord),
+	listDeletedApplications: listOf(DeletedRecord),
+	listPostings: listOf(PostingRecord),
+	retrievePosting: envelope(PostingRecord),
+	listDeletedPostings: listOf(DeletedRecord),
+	createPosting: envelope(PostingRecord),
+	updatePosting: envelope(PostingRecord),
+	retrievePostingApplicationQuestions: envelope(ApplicationFormRecord),
+	listPostingUsers: PostingAccessOutput,
+	applyToPosting: ApplyOutput,
+	listInterviews: listOf(InterviewRecord),
+	retrieveInterview: envelope(InterviewRecord),
+	createInterview: scheduledOutput(InterviewRecord),
+	updateInterview: scheduledOutput(InterviewRecord),
+	deleteInterview: LeverAckOutputSchema,
+	listNotes: listOf(NoteRecord),
+	retrieveNote: envelope(NoteRecord),
+	createNote: envelope(NoteWriteRecord),
+	updateNote: envelope(NoteWriteRecord),
+	deleteNote: LeverAckOutputSchema,
+	listArchiveReasons: listOf(ArchiveReasonRecord),
+	retrieveArchiveReason: envelope(ArchiveReasonRecord),
+	listStages: listOf(StageRecord),
+	retrieveStage: envelope(StageRecord),
+	listPanels: listOf(PanelRecord),
+	retrievePanel: envelope(PanelRecord),
+	createPanel: scheduledOutput(PanelRecord),
+	updatePanel: scheduledOutput(PanelRecord),
+	deletePanel: LeverAckOutputSchema,
+	listFeedback: listOf(FeedbackRecord),
+	retrieveFeedback: envelope(FeedbackRecord),
+	createFeedback: recordOrEnvelope(FeedbackRecord),
+	updateFeedback: envelope(FeedbackRecord),
+	deleteFeedback: LeverAckOutputSchema,
+	listFeedbackTemplates: listOf(FeedbackTemplateRecord),
+	retrieveFeedbackTemplate: envelope(FeedbackTemplateRecord),
+	createFeedbackTemplate: envelope(FeedbackTemplateRecord),
+	updateFeedbackTemplate: envelope(FeedbackTemplateRecord),
+	deleteFeedbackTemplate: LeverAckOutputSchema,
+	listFiles: listOf(FileRecord),
+	retrieveFile: envelope(FileRecord),
 	downloadFile: LeverDownloadOutputSchema,
-	deleteFile: LeverEmptyOutputSchema,
-	listFormTemplates: LeverListOutputSchema,
-	retrieveFormTemplate: LeverResourceOutputSchema,
-	createFormTemplate: LeverResourceOutputSchema,
-	updateFormTemplate: LeverResourceOutputSchema,
-	deleteFormTemplate: LeverEmptyOutputSchema,
-	listRequisitionFields: LeverListOutputSchema,
-	retrieveRequisitionField: LeverResourceOutputSchema,
-	createRequisitionField: LeverResourceOutputSchema,
-	updateRequisitionField: LeverResourceOutputSchema,
-	deleteRequisitionField: LeverEmptyOutputSchema,
-	addRequisitionFieldOptions: LeverResourceOutputSchema,
-	replaceRequisitionFieldOptions: LeverResourceOutputSchema,
-	deleteRequisitionFieldOptions: LeverEmptyOutputSchema,
-	listRequisitions: LeverListOutputSchema,
-	createRequisition: LeverResourceOutputSchema,
-	retrieveRequisition: LeverResourceOutputSchema,
-	updateRequisition: LeverResourceOutputSchema,
-	deleteRequisition: LeverEmptyOutputSchema,
-	listForms: LeverListOutputSchema,
-	retrieveForm: LeverResourceOutputSchema,
-	createForm: LeverResourceOutputSchema,
-	listResumes: LeverListOutputSchema,
-	retrieveResume: LeverResourceOutputSchema,
+	deleteFile: LeverAckOutputSchema,
+	listFormTemplates: listOf(FormTemplateRecord),
+	retrieveFormTemplate: envelope(FormTemplateRecord),
+	createFormTemplate: envelope(FormTemplateRecord),
+	updateFormTemplate: envelope(FormTemplateRecord),
+	deleteFormTemplate: LeverAckOutputSchema,
+	listRequisitionFields: listOf(RequisitionFieldRecord),
+	retrieveRequisitionField: envelope(RequisitionFieldRecord),
+	createRequisitionField: envelope(RequisitionFieldRecord),
+	updateRequisitionField: envelope(RequisitionFieldRecord),
+	deleteRequisitionField: LeverAckOutputSchema,
+	addRequisitionFieldOptions: envelope(RequisitionFieldRecord),
+	replaceRequisitionFieldOptions: envelope(RequisitionFieldRecord),
+	deleteRequisitionFieldOptions: LeverAckOutputSchema,
+	listRequisitions: listOf(RequisitionRecord),
+	createRequisition: envelope(RequisitionRecord),
+	retrieveRequisition: envelope(RequisitionRecord),
+	updateRequisition: envelope(RequisitionRecord),
+	deleteRequisition: LeverAckOutputSchema,
+	listForms: listOf(ProfileFormRecord),
+	retrieveForm: envelope(ProfileFormRecord),
+	createForm: recordOrEnvelope(ProfileFormRecord),
+	listResumes: listOf(ResumeRecord),
+	retrieveResume: envelope(ResumeRecord),
 	downloadResume: LeverDownloadOutputSchema,
-	listUsers: LeverListOutputSchema,
-	retrieveUser: LeverResourceOutputSchema,
-	createUser: LeverResourceOutputSchema,
-	updateUser: LeverResourceOutputSchema,
-	// Both return the updated user wrapped in `data`.
-	deactivateUser: LeverResourceOutputSchema,
-	reactivateUser: LeverResourceOutputSchema,
-	listReferrals: LeverListOutputSchema,
-	retrieveReferral: LeverResourceOutputSchema,
-	retrieveContact: LeverResourceOutputSchema,
-	updateContact: LeverResourceOutputSchema,
-	retrieveEeoResponsesWithPii: LeverObjectEnvelopeOutputSchema,
-	retrieveEeoResponsesAnonymous: LeverObjectEnvelopeOutputSchema,
-	listDispositionStages: LeverObjectEnvelopeOutputSchema,
-	retrieveDiversitySurvey: LeverResourceOutputSchema,
-	listWebhooks: LeverListOutputSchema,
-	createWebhook: LeverResourceOutputSchema,
-	updateWebhook: LeverListOutputSchema,
-	deleteWebhook: LeverEmptyOutputSchema,
-	listAuditEvents: LeverListOutputSchema,
-	listSources: LeverListOutputSchema,
-	listTags: LeverListOutputSchema,
-	listOpportunityOffers: LeverListOutputSchema,
+	listUsers: listOf(UserRecord),
+	retrieveUser: envelope(UserRecord),
+	createUser: envelope(UserRecord),
+	updateUser: envelope(UserRecord),
+	deactivateUser: envelope(UserRecord),
+	reactivateUser: envelope(UserRecord),
+	listReferrals: listOf(ReferralRecord),
+	retrieveReferral: envelope(ReferralRecord),
+	retrieveContact: envelope(ContactRecord),
+	updateContact: envelope(ContactRecord),
+	retrieveEeoResponsesWithPii: EeoResponsesOutput,
+	retrieveEeoResponsesAnonymous: EeoResponsesOutput,
+	listDispositionStages: DispositionStagesOutput,
+	// Lever returns the posting's diversity surveys as a list.
+	retrieveDiversitySurvey: listOf(DiversitySurveyRecord),
+	listWebhooks: listOf(WebhookRecord),
+	createWebhook: CreatedWebhookOutput,
+	updateWebhook: listOf(WebhookRecord),
+	deleteWebhook: LeverAckOutputSchema,
+	listAuditEvents: listOf(AuditEventRecord),
+	listSources: listOf(TextCountRecord),
+	listTags: listOf(TextCountRecord),
+	listOpportunityOffers: listOf(OfferRecord),
 	downloadOpportunityOffer: LeverDownloadOutputSchema,
 } as const;
 

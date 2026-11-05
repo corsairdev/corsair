@@ -474,6 +474,106 @@ describe('Lever schema', () => {
 		).toBe(true);
 	});
 
+	it('types resource responses and rejects malformed records', async () => {
+		const out = (path: keyof typeof leverEndpointSchemas) => {
+			const schema = leverEndpointSchemas[path].output;
+			if (!schema) throw new Error(`Missing output schema for ${path}`);
+			return schema;
+		};
+		const retrieve = out('opportunities.retrieve');
+
+		// The bare object and a record without its id are not opportunities.
+		expect(retrieve.safeParse({ invalid: true }).success).toBe(false);
+		expect(retrieve.safeParse({ data: { name: 'Jane Doe' } }).success).toBe(
+			false,
+		);
+		// Documented fields are typed.
+		expect(
+			retrieve.safeParse({ data: { id: 'opp-1', emails: 'jane@x.test' } })
+				.success,
+		).toBe(false);
+		// An expanded field (object instead of ID), an origin Lever added after
+		// this plugin shipped, and an undocumented field all still parse.
+		const parsed = retrieve.parse({
+			data: {
+				id: 'opp-1',
+				stage: { id: 'stage-1', text: 'New applicant' },
+				origin: 'a-new-origin',
+				archived: null,
+				someNewField: 42,
+			},
+		});
+		expect(parsed).toMatchObject({
+			data: { id: 'opp-1', origin: 'a-new-origin', someNewField: 42 },
+		});
+
+		// unknown: these payloads are deliberately malformed responses for
+		// different operations, so no single response type can describe them.
+		const malformed: [keyof typeof leverEndpointSchemas, unknown][] = [
+			['opportunities.list', { data: [{ name: 'no id' }] }],
+			['postings.retrieve', { data: { text: 'Engineer' } }],
+			['users.list', { data: [{ name: 'Chandler' }], hasNext: false }],
+			['stages.retrieve', { data: { text: 'New lead' } }],
+			['archiveReasons.list', { data: [{ text: 'Underqualified' }] }],
+			['sources.list', { data: [{ count: 3 }] }],
+			['notes.retrieve', { data: { text: 'Note' } }],
+			['feedback.list', { data: [{ text: 'On-site' }] }],
+			['forms.retrieve', { data: { text: 'Offer information' } }],
+			['interviews.retrieve', { data: { subject: 'On-site' } }],
+			['offers.list', { data: [{ status: 'signed' }] }],
+			['referrals.retrieve', { data: { type: 'referral' } }],
+			['files.list', { data: [{ name: 'cv.pdf' }] }],
+			['resumes.retrieve', { data: { createdAt: 1 } }],
+			['requisitions.retrieve', { data: { name: 'Engineer' } }],
+			['requisitionFields.list', { data: [{ text: 'Cost center' }] }],
+			['webhooks.list', { data: [{ url: 'https://example.test/hook' }] }],
+			['contacts.retrieve', { data: { name: 'Jane Doe' } }],
+			['eeo.retrieveWithPii', { data: [] }],
+			['dispositionStages.list', { data: [] }],
+			['notes.create', { data: {} }],
+			['postings.apply', { data: { id: 'app-1' } }],
+		];
+		for (const [path, payload] of malformed) {
+			expect([path, out(path).safeParse(payload).success]).toEqual([
+				path,
+				false,
+			]);
+		}
+
+		// New status values from Lever never fail parsing.
+		expect(
+			out('postings.retrieve').safeParse({
+				data: { id: 'post-1', state: 'a-new-state' },
+			}).success,
+		).toBe(true);
+		expect(
+			out('users.retrieve').safeParse({
+				data: { id: 'user-1', accessRole: 'custom-role-id' },
+			}).success,
+		).toBe(true);
+
+		// The bound endpoint enforces the contract on live responses too.
+		const request = jest.mocked(makeLeverRequest);
+		request.mockClear();
+		request.mockResolvedValue({ invalid: true });
+		const plugin = lever({ key: 'secret' });
+		const ctx = {
+			key: 'secret',
+			options: {},
+			$getAccountId: jest.fn().mockResolvedValue('account-1'),
+		} as never;
+		if (!plugin.endpoints) throw new Error('Lever endpoints are missing');
+		await expect(
+			plugin.endpoints.opportunities.retrieve(ctx, { opportunityId: 'opp-1' }),
+		).rejects.toThrow();
+		request.mockResolvedValue({ data: { id: 'opp-1', name: 'Jane Doe' } });
+		const opportunity = await plugin.endpoints.opportunities.retrieve(ctx, {
+			opportunityId: 'opp-1',
+		});
+		expect(opportunity.data.id).toBe('opp-1');
+		expect(opportunity.data.name).toBe('Jane Doe');
+	});
+
 	it('provides executable input and output contracts for every operation', () => {
 		for (const schemas of Object.values(leverEndpointSchemas)) {
 			if (!schemas.input || !schemas.output) {
@@ -614,42 +714,70 @@ describe('Lever schema', () => {
 		// by probing the output schema, so a contract that rejects genuine
 		// records or strips documented fields fails here instead of in
 		// production.
+		const record = {
+			id: 'rec-1',
+			name: 'Jane Doe',
+			stage: 'f2a1b2c3-received',
+			createdAt: 1700000000000,
+			updatedAt: 1700000000001,
+			owner: 'user-1',
+		};
 		const listOutput = {
 			data: [
-				{
-					id: 'opp-1',
-					name: 'Jane Doe',
-					stage: 'f2a1b2c3-received',
-					createdAt: 1700000000000,
-					updatedAt: 1700000000001,
-					owner: 'user-1',
-					archived: null,
-				},
-				{
-					id: 'opp-2',
-					name: 'John Smith',
-					stage: 'f2a1b2c3-interview',
-					createdAt: 1700000000100,
-					updatedAt: 1700000000101,
-					owner: 'user-2',
-					archived: null,
-				},
+				{ ...record, archived: null },
+				{ ...record, id: 'rec-2', name: 'John Smith', archived: null },
 			],
 			hasNext: true,
 			next: '0.1414895548650.a6070140-33db-407c-91f5-2760e15c8e94',
 		};
-		const recordOutput = {
-			data: {
-				id: 'rec-1',
-				name: 'Jane Doe',
-				stage: 'f2a1b2c3-received',
-				createdAt: 1700000000000,
-				updatedAt: 1700000000001,
-				owner: 'user-1',
+		const recordOutput = { data: record };
+		// Shapes Lever documents for specific operations.
+		// unknown: each entry is a different operation's response shape; the
+		// output schema of that operation validates it below.
+		const specialOutputs: Record<string, unknown> = {
+			'sources.list': { data: [{ text: 'LinkedIn', count: 24 }] },
+			'tags.list': { data: [{ text: 'Infrastructure Engineer', count: 23 }] },
+			'notes.create': { data: { noteId: 'note-1' } },
+			'notes.update': { data: { noteId: 'note-1' } },
+			'postings.apply': { data: { applicationId: 'app-1' } },
+			'postings.listUsers': {
+				posting: { id: 'post-1', text: 'Software Engineer' },
+				users: [{ id: 'user-1', name: 'Jane Smith', email: 'jane@x.test' }],
+				roles: [{ id: 'role-1', name: 'Hiring Manager', isReadOnly: false }],
+			},
+			'surveys.retrieveDiversity': {
+				data: [{ id: 'survey-1', text: 'Demographic survey', fields: [] }],
+			},
+			// Interview and panel writes nest a list inside data.
+			'interviews.create': { data: { data: [record], hasNext: false } },
+			'interviews.update': { data: { data: [record], hasNext: false } },
+			'panels.create': { data: { data: [record], hasNext: false } },
+			'panels.update': { data: { data: [record], hasNext: false } },
+			'webhooks.create': {
+				data: {
+					data: {
+						id: 'wh-1',
+						event: 'candidateStageChange',
+						url: 'https://example.test/hook',
+						configuration: { signatureToken: 'token-not-a-secret' },
+					},
+				},
+			},
+			'webhooks.update': {
+				data: [{ id: 'wh-1', url: 'https://example.test/hook' }],
+			},
+			// Lever documents these creates without the data wrapper.
+			'feedback.create': { id: 'fb-1', type: 'interview', text: 'On-site' },
+			'forms.create': { id: 'form-1', type: 'form', fields: [] },
+			'dispositionStages.list': {
+				data: {
+					stages: [{ id: 'lead-new', text: 'New lead', pipeline: 'lead' }],
+					archiveReasons: [{ id: 'arch-1', text: 'Culture fit', type: null }],
+				},
 			},
 		};
-		// EEO responses and disposition stages wrap an object, not a list.
-		const envelopeOutput = {
+		// EEO responses wrap an object, not a list.
+		const eeoOutput = {
 			data: {
 				eeoResponses: [{ gender: 'Female', appliedAt: '1418353241665' }],
 			},
@@ -658,16 +786,24 @@ describe('Lever schema', () => {
 			data: 'cGRmLWJ5dGVz',
 			contentType: 'application/pdf',
 		};
+		// Deletes and contact link/tag/source changes answer 204 with no body.
+		const ackOperations = new Set([
+			'delete',
+			'deleteOptions',
+			'addLinks',
+			'removeLinks',
+			'addTags',
+			'removeTags',
+			'addSources',
+			'removeSources',
+		]);
 		const outputFor = (path: string) => {
 			const [, operation = ''] = path.split('.');
+			if (path in specialOutputs) return specialOutputs[path];
 			if (path.endsWith('.download')) return downloadOutput;
-			if (path.startsWith('eeo.') || path === 'dispositionStages.list') {
-				return envelopeOutput;
-			}
-			// PUT /webhooks answers with the updated webhooks as a list.
-			if (operation.startsWith('list') || path === 'webhooks.update') {
-				return listOutput;
-			}
+			if (path.startsWith('eeo.')) return eeoOutput;
+			if (ackOperations.has(operation)) return undefined;
+			if (operation.startsWith('list')) return listOutput;
 			return recordOutput;
 		};
 		let invokedOperations = 0;
