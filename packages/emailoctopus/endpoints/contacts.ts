@@ -73,7 +73,10 @@ export const create: EmailOctopusEndpoints['contactsCreate'] = (ctx, input) =>
 			body: { email_address, fields, tags, status },
 		}),
 		{
-			log: ({ list_id }, result) => ({ listId: list_id, contactId: result.id }),
+			log: ({ list_id }, result) => ({
+				listId: list_id,
+				contactId: result.id ?? undefined,
+			}),
 		},
 	);
 
@@ -92,7 +95,10 @@ export const upsert: EmailOctopusEndpoints['contactsUpsert'] = (ctx, input) =>
 			body: { email_address, fields, tags, status },
 		}),
 		{
-			log: ({ list_id }, result) => ({ listId: list_id, contactId: result.id }),
+			log: ({ list_id }, result) => ({
+				listId: list_id,
+				contactId: result.id ?? undefined,
+			}),
 		},
 	);
 

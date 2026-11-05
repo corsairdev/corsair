@@ -45,7 +45,7 @@ export const create: EmailOctopusEndpoints['listsCreate'] = (ctx, input) =>
 			path: '/lists',
 			body: { name },
 		}),
-		{ log: (_, result) => ({ listId: result.id }) },
+		{ log: (_, result) => ({ listId: result.id ?? undefined }) },
 	);
 
 export const update: EmailOctopusEndpoints['listsUpdate'] = (ctx, input) =>

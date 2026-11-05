@@ -156,8 +156,8 @@ await corsair.emailoctopus.api.campaigns.list({ limit: 10 });
 ```ts
 {
   next?: {
-    url?: string,
-    starting_after?: string
+    url?: string | null,
+    starting_after?: string | null
   } | null
 }
 ```
@@ -216,8 +216,8 @@ await corsair.emailoctopus.api.campaigns.reportContacts({ campaign_id: '00000000
 ```ts
 {
   next?: {
-    url?: string,
-    starting_after?: string
+    url?: string | null,
+    starting_after?: string | null
   } | null
 }
 ```
@@ -391,13 +391,13 @@ await corsair.emailoctopus.api.contacts.batch({ list_id: '00000000-0000-0000-000
 {
   success?: boolean,
   data?: {
-    id?: string,
-    email_address?: string,
-    fields?: Record<string, string | number | string[] | null>,
-    tags?: string[],
-    status?: string,
-    created_at?: string,
-    last_updated_at?: string
+    id?: string | null,
+    email_address?: string | null,
+    fields?: Record<string, string | number | string[] | null> | null,
+    tags?: string[] | null,
+    status?: string | null,
+    created_at?: string | null,
+    last_updated_at?: string | null
   }
 }[]
 ```
@@ -592,13 +592,13 @@ await corsair.emailoctopus.api.contacts.list({ list_id: '00000000-0000-0000-0000
 
 ```ts
 {
-  id?: string,
-  email_address?: string,
-  fields?: Record<string, string | number | string[] | null>,
-  tags?: string[],
-  status?: string,
-  created_at?: string,
-  last_updated_at?: string
+  id?: string | null,
+  email_address?: string | null,
+  fields?: Record<string, string | number | string[] | null> | null,
+  tags?: string[] | null,
+  status?: string | null,
+  created_at?: string | null,
+  last_updated_at?: string | null
 }[]
 ```
 </Accordion>
@@ -608,8 +608,8 @@ await corsair.emailoctopus.api.contacts.list({ list_id: '00000000-0000-0000-0000
 ```ts
 {
   next?: {
-    url?: string,
-    starting_after?: string
+    url?: string | null,
+    starting_after?: string | null
   } | null
 }
 ```
@@ -1081,8 +1081,8 @@ await corsair.emailoctopus.api.lists.list({ limit: 10 });
 ```ts
 {
   next?: {
-    url?: string,
-    starting_after?: string
+    url?: string | null,
+    starting_after?: string | null
   } | null
 }
 ```
@@ -1260,8 +1260,8 @@ await corsair.emailoctopus.api.tags.list({ list_id: '00000000-0000-0000-0000-000
 ```ts
 {
   next?: {
-    url?: string,
-    starting_after?: string
+    url?: string | null,
+    starting_after?: string | null
   } | null
 }
 ```
