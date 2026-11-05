@@ -1,6 +1,6 @@
 import { ZodError } from 'zod';
 import { GrafbaseAPIError } from './client';
-import { errorHandlers } from './error-handlers';
+import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 
 type HandlerName = keyof typeof errorHandlers;
 
@@ -123,5 +123,55 @@ describe('Grafbase error handlers', () => {
 		const error = new Error('something unexpected');
 		expect(classify(error)).toBe('DEFAULT');
 		expect(await strategy(error)).toEqual({ maxRetries: 0 });
+	});
+});
+
+describe('mergeErrorHandlers', () => {
+	// unknown: core passes a full ErrorContext; these calls only exercise
+	// matching and the returned retry strategy.
+	const context = {
+		pluginId: 'grafbase',
+		operation: 'merge',
+		input: {},
+		originalError: new Error('anything'),
+	};
+
+	it('runs caller handlers first and keeps DEFAULT last', async () => {
+		const merged = mergeErrorHandlers(errorHandlers, {
+			CATCH_ALL: {
+				match: () => true,
+				handler: async () => ({ maxRetries: 7 }),
+			},
+		});
+		const names = Object.keys(merged);
+		expect(names[0]).toBe('CATCH_ALL');
+		expect(names.at(-1)).toBe('DEFAULT');
+		// The first match wins, so the caller handler answers before the
+		// built-in RATE_LIMIT_ERROR, AUTH_ERROR or SERVER_ERROR matches.
+		expect(merged.CATCH_ALL?.match(context.originalError, context)).toBe(true);
+		expect(
+			await merged.CATCH_ALL?.handler(context.originalError, context),
+		).toEqual({
+			maxRetries: 7,
+		});
+	});
+
+	it('lets a caller handler replace a builtin under the same key', async () => {
+		const merged = mergeErrorHandlers(errorHandlers, {
+			RATE_LIMIT_ERROR: {
+				match: (error: Error) =>
+					error instanceof GrafbaseAPIError && error.status === 429,
+				handler: async () => ({ maxRetries: 1 }),
+			},
+		});
+		const names = Object.keys(merged);
+		expect(names[0]).toBe('RATE_LIMIT_ERROR');
+		expect(names.filter((key) => key === 'RATE_LIMIT_ERROR')).toHaveLength(1);
+		expect(
+			await merged.RATE_LIMIT_ERROR?.handler(
+				new GrafbaseAPIError('x', { status: 429 }),
+				context,
+			),
+		).toEqual({ maxRetries: 1 });
 	});
 });

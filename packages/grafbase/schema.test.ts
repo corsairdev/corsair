@@ -9,7 +9,7 @@ describe('Grafbase schema', () => {
 	it('declares an entities map', () => {
 		expect(typeof GrafbaseSchema.entities).toBe('object');
 		expect(GrafbaseSchema.entities).not.toBeNull();
-		expect(Array.isArray(Object.keys(GrafbaseSchema.entities))).toBe(true);
+		expect(Array.isArray(GrafbaseSchema.entities)).toBe(false);
 		for (const entity of Object.values(GrafbaseSchema.entities)) {
 			expect(entity).toBeDefined();
 		}

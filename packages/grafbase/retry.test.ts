@@ -63,6 +63,25 @@ describe('grafbase retry path through createCorsair', () => {
 		}
 	});
 
+	it('does not replay a publish that got a 500, which may have executed', async () => {
+		const { corsair, testDb } = await createClient();
+		try {
+			respond({ message: 'Internal Server Error' }, 500);
+
+			await expect(
+				corsair.grafbase.api.subgraphs.publish({
+					accountSlug: 'fieldkit',
+					graphSlug: 'analytics-api',
+					subgraph: 'products',
+					schema: 'type Product { id: ID! name: String }',
+				}),
+			).rejects.toMatchObject({ status: 500 });
+			expect(fetchMock).toHaveBeenCalledTimes(1);
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
 	it('does not retry a GraphQL-level failure, which is not a rate limit', async () => {
 		const { corsair, testDb } = await createClient();
 		try {

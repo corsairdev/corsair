@@ -185,6 +185,7 @@ describe('graphs.get', () => {
 		});
 
 		expectAuthenticated();
+		expect(sentQuery().query).toContain('graphByAccountSlug');
 		expect(sentQuery().variables).toEqual({
 			accountSlug: 'fieldkit',
 			graphSlug: 'analytics-api',
@@ -503,6 +504,13 @@ describe('accessTokens.create', () => {
 			tokenId: accessToken.id,
 		});
 		expect(JSON.stringify(logged)).not.toContain(tokenCreateSuccess.jwt);
+	});
+
+	it('rejects an ACCOUNT token without an accountId before any request', async () => {
+		await expect(
+			invoke(AccessTokens.create, { name: 'org-token', kind: 'ACCOUNT' }),
+		).rejects.toThrow(/ACCOUNT tokens need accountId/);
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 });
 

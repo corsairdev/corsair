@@ -7,6 +7,8 @@ export function envelope(data: unknown) {
 	return { data };
 }
 
+// unknown: a GraphQL response path mixes field names and list indices, so the
+// fixture accepts whatever shape the test needs.
 export function graphQLErrorEnvelope(message: string, path?: unknown[]) {
 	return {
 		data: null,

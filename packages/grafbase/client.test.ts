@@ -219,6 +219,17 @@ describe('describeGrafbaseError', () => {
 
 	it('prefers GraphQL messages over a body message', () => {
 		expect(
+			describeGrafbaseError(
+				401,
+				{ message: 'Unauthorized' },
+				[{ message: 'jwt expired' }],
+				'fallback',
+			),
+		).toBe('Grafbase 401: jwt expired');
+	});
+
+	it('reads the body message when there are no GraphQL errors', () => {
+		expect(
 			describeGrafbaseError(401, { message: 'Unauthorized' }, [], 'fallback'),
 		).toBe('Grafbase 401: Unauthorized');
 	});
