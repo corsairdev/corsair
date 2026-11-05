@@ -218,6 +218,18 @@ describe('memories.search', () => {
 		});
 	});
 
+	it('rejects filters that carry no entity ID', async () => {
+		await expect(
+			invoke(Memories.search, {
+				query: 'hobbies',
+				filters: { categories: { in: ['hobbies'] } },
+			}),
+		).rejects.toThrow(
+			'filters must include at least one of user_id, agent_id, app_id or run_id.',
+		);
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
 	it('rejects a top_k above the documented maximum', async () => {
 		await expect(
 			invoke(Memories.search, {
@@ -270,6 +282,22 @@ describe('memories.list', () => {
 		});
 
 		expect(result).toEqual(emptyMemoryPage);
+	});
+
+	it('accepts a metadata-only filter when an entity ID sits inside AND', async () => {
+		respond(memoryPage);
+
+		await invoke(Memories.list, {
+			filters: {
+				AND: [{ user_id: 'alice' }, { categories: { contains: 'finance' } }],
+			},
+		});
+
+		expect(lastRequest().body).toMatchObject({
+			filters: {
+				AND: [{ user_id: 'alice' }, { categories: { contains: 'finance' } }],
+			},
+		});
 	});
 
 	it('rejects a page_size above the documented maximum', async () => {

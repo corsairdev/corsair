@@ -496,7 +496,7 @@ await corsair.mem0.api.memories.list({ filters: { user_id: 'alice' }, page: 1, p
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `filters` | `object` | Yes | Entity and metadata filters. Must include at least one of user_id, agent_id, app_id or run_id. Supports AND, OR, NOT and the operators in, gte, lte, gt, lt, ne, icontains, and * as a wildcard. |
+| `filters` | `object` | Yes | Entity and metadata filters. Must include at least one of user_id, agent_id, app_id or run_id, at the top level or inside AND/OR/NOT. Supports AND, OR, NOT and the operators in, gte, lte, gt, lt, ne, icontains, and * as a wildcard. |
 | `page` | `number` | No | 1-based page. Defaults to 1. |
 | `page_size` | `number` | No | Results per page. Defaults to 100. |
 | `show_expired` | `boolean` | No | Defaults to false. Include memories past their expiration_date. |
@@ -572,7 +572,7 @@ await corsair.mem0.api.memories.search({ query: 'Where does the user live?', fil
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `query` | `string` | Yes | Natural-language search query. |
-| `filters` | `object` | Yes | Entity and metadata filters. Must include at least one of user_id, agent_id, app_id or run_id. Supports AND, OR, NOT and the operators in, gte, lte, gt, lt, ne, icontains, and * as a wildcard. |
+| `filters` | `object` | Yes | Entity and metadata filters. Must include at least one of user_id, agent_id, app_id or run_id, at the top level or inside AND/OR/NOT. Supports AND, OR, NOT and the operators in, gte, lte, gt, lt, ne, icontains, and * as a wildcard. |
 | `top_k` | `number` | No | Number of results. Defaults to 10. |
 | `threshold` | `number` | No | Minimum relevance score. Defaults to 0.1. Pass 0 to disable filtering. |
 | `rerank` | `boolean` | No | Defaults to false. Apply the managed reranker, which adds latency. |
