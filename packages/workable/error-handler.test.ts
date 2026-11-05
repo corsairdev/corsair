@@ -136,6 +136,25 @@ describe('Workable error handlers', () => {
 		});
 	});
 
+	describe('CONFLICT_ERROR', () => {
+		// Live: a fresh account answered 409 { affected_resources: [] } to a
+		// merge and a delete sent without force.
+		it('matches HTTP 409, names force, and never retries', async () => {
+			const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+			const error = apiError(409, 'Conflict');
+			expect(
+				handlers.CONFLICT_ERROR?.match(error, makeCtx('departments.delete')),
+			).toBe(true);
+			const strategy = await handlers.CONFLICT_ERROR?.handler(
+				error,
+				makeCtx('departments.delete'),
+			);
+			expect(strategy).toMatchObject({ maxRetries: 0 });
+			expect(String(warn.mock.calls[0]?.[0])).toContain('force: true');
+			warn.mockRestore();
+		});
+	});
+
 	describe('NOT_FOUND_ERROR', () => {
 		it('matches HTTP 404 and never retries', async () => {
 			const error = apiError(404, 'Not Found');

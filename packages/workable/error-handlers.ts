@@ -105,6 +105,20 @@ export const errorHandlers = {
 			return { maxRetries: 0 };
 		},
 	},
+	/**
+	 * Department merges and deletes answer 409 when Workable wants
+	 * confirmation, even with an empty `affected_resources` list (seen on a
+	 * fresh account). Retrying cannot help; the caller must pass `force`.
+	 */
+	CONFLICT_ERROR: {
+		match: (error) => error instanceof ApiError && error.status === 409,
+		handler: async (error, context) => {
+			console.warn(
+				`[WORKABLE:${context.operation}] Conflict - Workable wants confirmation; for departments.merge and departments.delete pass force: true: ${error.message}`,
+			);
+			return { maxRetries: 0 };
+		},
+	},
 	VALIDATION_ERROR: {
 		match: (error) =>
 			error instanceof ApiError &&

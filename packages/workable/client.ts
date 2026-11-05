@@ -28,7 +28,9 @@ export function buildWorkableBaseUrl(subdomain: string): string {
 export const WORKABLE_PUBLIC_API_BASE = 'https://www.workable.com/api';
 
 /**
- * Not publicly documented by Workable; retry generously on 429 and back off.
+ * Workable allows 10 requests per token in a rolling ~10 s window and sends
+ * no Retry-After: each response carries `X-Rate-Limit-Remaining` and
+ * `X-Rate-Limit-Reset` (epoch seconds), so a 429 waits until that reset.
  * Writes opt out via `retryOnRateLimit: false` in `makeWorkableRequest` -
  * without an idempotency key a replayed write could land twice.
  */
@@ -39,6 +41,8 @@ const WORKABLE_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	backoffMultiplier: 2,
 	headerNames: {
 		retryAfter: 'Retry-After',
+		resetTime: 'X-Rate-Limit-Reset',
+		remaining: 'X-Rate-Limit-Remaining',
 	},
 };
 

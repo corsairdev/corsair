@@ -84,6 +84,42 @@ describe('Workable client', () => {
 		});
 	});
 
+	describe('rate limit', () => {
+		// Live: Workable sends X-Rate-Limit-Reset (epoch seconds) and no
+		// Retry-After, 10 requests per ~10 s per token.
+		it('waits for X-Rate-Limit-Reset before retrying a throttled read', async () => {
+			const { makeWorkableRequest } = await import('./client');
+			const reset = Math.ceil(Date.now() / 1000) + 2;
+			const times: number[] = [];
+			// why safe: test-only fetch stub — signature matches fetch.
+			globalThis.fetch = (async () => {
+				times.push(Date.now());
+				if (times.length === 1) {
+					return new Response(
+						JSON.stringify({ error: 'You have exceeded the rate limits' }),
+						{
+							status: 429,
+							headers: {
+								'Content-Type': 'application/json',
+								'X-Rate-Limit-Limit': '10',
+								'X-Rate-Limit-Remaining': '0',
+								'X-Rate-Limit-Reset': String(reset),
+							},
+						},
+					);
+				}
+				return new Response(JSON.stringify([]), {
+					status: 200,
+					headers: { 'Content-Type': 'application/json' },
+				});
+			}) as typeof fetch;
+			await makeWorkableRequest('/departments', 'token-123', 'example');
+			expect(times).toHaveLength(2);
+			// The plain backoff would retry after 1 s; the reset is >= 2 s away.
+			expect((times[1] ?? 0) - (times[0] ?? 0)).toBeGreaterThanOrEqual(1500);
+		});
+	});
+
 	describe('request shape', () => {
 		it('sends a Bearer token, not a query string', async () => {
 			const { makeWorkableRequest } = await import('./client');
