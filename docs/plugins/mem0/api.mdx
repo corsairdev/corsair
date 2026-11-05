@@ -40,7 +40,7 @@ await corsair.mem0.api.events.get({ event_id: '2c4d1f44-4f7b-4b2f-9f6e-7b5b4f5a1
 | `status` | `string \| null` | No | PENDING, RUNNING, FAILED or SUCCEEDED. |
 | `payload` | `Record<string, unknown> \| null` | No | — |
 | `metadata` | `Record<string, unknown> \| null` | No | — |
-| `results` | `any[] \| null` | No | — |
+| `results` | `unknown[] \| Record<string, unknown> \| null` | No | An array for ADD, SEARCH and GET_ALL, one object for UPDATE, and null for a delete. |
 | `created_at` | `string \| null` | No | — |
 | `updated_at` | `string \| null` | No | — |
 | `started_at` | `string \| null` | No | — |
@@ -61,6 +61,14 @@ Record<string, unknown>
 
 ```ts
 Record<string, unknown>
+```
+</Accordion>
+
+<Accordion title="results full type">
+
+```ts
+any[] | {
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -109,7 +117,7 @@ await corsair.mem0.api.events.list({ page: 1, page_size: 25 });
   status?: string | null,
   payload?: Record<string, unknown> | null,
   metadata?: Record<string, unknown> | null,
-  results?: any[] | null,
+  results?: unknown[] | Record<string, unknown> | null,
   created_at?: string | null,
   updated_at?: string | null,
   started_at?: string | null,
@@ -503,7 +511,7 @@ await corsair.mem0.api.memories.list({ filters: { user_id: 'alice' }, page: 1, p
 | `start_date` | `string` | No | Only memories created on or after this date. |
 | `end_date` | `string` | No | Only memories created on or before this date. |
 | `categories` | `string[]` | No | Only memories tagged with any of these categories. |
-| `fields` | `string[]` | No | Restrict the fields returned per memory. |
+| `fields` | `string[]` | No | Only these fields come back per memory. A memory without them is absent from the result, not null. |
 | `keywords` | `string` | No | Free-text keyword filter applied on top of `filters`. |
 
 <AccordionGroup>
@@ -578,7 +586,7 @@ await corsair.mem0.api.memories.search({ query: 'Where does the user live?', fil
 | `rerank` | `boolean` | No | Defaults to false. Apply the managed reranker, which adds latency. |
 | `show_expired` | `boolean` | No | Defaults to false. Include memories past their expiration_date. |
 | `reference_date` | `number \| string` | No | Date to simulate the search from. Accepts a Unix epoch, YYYY-MM-DD, or an ISO datetime. |
-| `fields` | `string[]` | No | Restrict the fields returned per memory. |
+| `fields` | `string[]` | No | Only these fields come back per memory. A memory without them is absent from the result, not null. |
 | `categories` | `string[]` | No | Only memories tagged with any of these categories. |
 
 <AccordionGroup>
