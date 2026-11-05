@@ -1,0 +1,59 @@
+displayName: eSputnik
+description: Manage eSputnik contacts and segments, send events and orders, edit and send email, SMS, Viber, push and Telegram messages, and run broadcasts.
+domain: esputnik.com
+recommendedAuth: api_key
+overviewNote: |
+  **API key.** Create a key in eSputnik under your profile > Settings > API and give it the access rights the operations you call need. The plugin sends it with HTTP Basic auth as the password. Keys have no expiry date, but eSputnik disables a key that goes unused for 90 days; turn it back on in the same place.
+
+  **Things to know:**
+
+  - **Rate limits.** Message reads (`getEmail`, `getViberMessage` and the like) allow 500 requests an hour. Contact writes allow 200 a second, and `addContact` rejects the same contact twice within a minute (409). Calls that hit 429 are retried with backoff.
+  - **Acknowledgements.** Deletes, updates and segment or unsubscribe changes return `undefined`: eSputnik answers them with an empty body or a sentence such as "Email with id='42' has been deleted". A failure throws, and the error message carries eSputnik's explanation when it sends one ("Contact not found").
+  - **Lists.** List operations always return an array, including when eSputnik sends a single match as a bare object (email template search does) or an empty body.
+  - **Not set up yet.** `site.getScript` and `site.getWebPushScript` fail until a domain is registered, `productFeeds.getProductFeedsConfiguration` answers 404 until a feed is configured, and `contacts.getGroupContacts` works on static segments only.
+  - **Contact fields.** Additional fields are `{ id, value }` pairs. List the ids with `contacts.getAdditionalFields`.
+  - **Activity.** `contacts.contactActivity` has to be enabled by eSputnik support first and keeps 90 days. `contacts.contactMessages` needs a contact identifier and a `dateFrom` less than a year old.
+  - **Broadcasts.** Broadcast ids are strings. `broadcasts.createBroadcast` sends a prepared message (`messageId`) to segment ids (`groups`).
+  - **Event tokens.** `account.generateApiToken` returns a bearer token for eSputnik's event endpoints. Treat the result as a secret.
+  - **No local sync.** Data is read from eSputnik on each call; nothing is stored in the Corsair database.
+examples:
+  read:
+    path: contacts.searchContacts
+    title: Find a contact by email
+    args:
+      email: ada@example.com
+      maxrows: 10
+  write:
+    path: contacts.addContact
+    title: Create or update a contact
+    args:
+      firstName: Ada
+      channels:
+        - type: email
+          value: ada@example.com
+      fields:
+        - id: 79814
+          value: gold
+apiExamples:
+  contacts.searchContacts:
+    call: "{ email: 'ada@example.com', maxrows: 10 }"
+  contacts.addContact:
+    call: "{ firstName: 'Ada', channels: [{ type: 'email', value: 'ada@example.com' }], fields: [{ id: 79814, value: 'gold' }] }"
+  contacts.contactActivity:
+    call: "{ dateFrom: '2026-10-01', dateTo: '2026-10-31T23:59:59', email: 'ada@example.com', activityStatus: 'CLICKED' }"
+  contacts.contactMessages:
+    call: "{ email: 'ada@example.com', dateFrom: '2026-10-01', dateTo: '2026-11-01', maxrows: 50 }"
+  contacts.attachContactsToGroup:
+    call: "{ id: 200400, contactIds: [12345] }"
+  events.registerEvent:
+    call: "{ eventTypeKey: 'cart_abandoned', params: { email: 'ada@example.com', cartUrl: 'https://shop.example.com/cart/42' } }"
+  emails.searchEmails:
+    call: "{ search: 'welcome', maxrows: 20 }"
+  emails.sendEmail:
+    call: "{ from: '\"Shop\" <news@shop.example.com>', subject: 'Your order', htmlText: '<p>Thanks!</p>', emails: ['ada@example.com'] }"
+  sms.sendSms:
+    call: "{ from: 'Shop', text: 'Your code is 4821', phoneNumbers: ['380501234567'] }"
+  messages.sendPreparedMessage:
+    call: "{ id: 4512, recipients: [{ locator: 'ada@example.com', jsonParam: JSON.stringify({ orderId: 42 }) }], email: true }"
+  broadcasts.createBroadcast:
+    call: "{ messageId: '4512', groups: [200400], startDate: '2026-11-10T09:00' }"

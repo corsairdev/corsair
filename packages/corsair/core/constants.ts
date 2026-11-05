@@ -116,6 +116,7 @@ export const BaseProviders = [
 	'browseai',
 	'browserless',
 	'browsertool',
+	'browseruse',
 	'bubble',
 	'bugsnag',
 	'buildkite',
@@ -195,6 +196,7 @@ export const BaseProviders = [
 	'diffbot',
 	'digitalocean',
 	'discord',
+	'dnsfilter',
 	'dockerhub',
 	'docmosis',
 	'docsumo',
@@ -210,6 +212,7 @@ export const BaseProviders = [
 	'dynapictures',
 	'emelia',
 	'epicgames',
+	'esputnik',
 	'everhour',
 	'exa',
 	'excel',
@@ -220,6 +223,7 @@ export const BaseProviders = [
 	'figma',
 	'filevine',
 	'filloutforms',
+	'finerworks',
 	'firecrawl',
 	'fireflies',
 	'fixer',
@@ -273,6 +277,7 @@ export const BaseProviders = [
 	'kibana',
 	'kling',
 	'leexi',
+	'lever',
 	'linear',
 	'linkedin',
 	'litescrape',
@@ -323,6 +328,8 @@ export const BaseProviders = [
 	'reducto',
 	'remoet',
 	'removebg',
+	'render',
+	'replicate',
 	'replicate',
 	'replyio',
 	'resend',
@@ -378,6 +385,7 @@ export const BaseProviders = [
 	'tpscheck',
 	'trello',
 	'tripadvisor',
+	'turbotpipes',
 	'turso',
 	'twentyonerisk',
 	'twilio',
@@ -408,6 +416,8 @@ export const BaseProviders = [
 	'witai',
 	'wix',
 	'wiza',
+	'woodpeckerco',
+	'workable',
 	'workday',
 	'workiom',
 	'worldnewsapi',
@@ -419,6 +429,7 @@ export const BaseProviders = [
 	'zendesk',
 	'zenserp',
 	'zohobigin',
+	'zohodesk',
 	'zohoinventory',
 	'zohomail',
 	'zoom',
@@ -529,6 +540,7 @@ export const ProviderDisplayNames = {
 	browseai: 'Browse AI',
 	browserless: 'Browserless',
 	browsertool: 'Browser Tool',
+	browseruse: 'Browser Use',
 	bubble: 'Bubble',
 	bugsnag: 'BugSnag',
 	buildkite: 'Buildkite',
@@ -608,6 +620,7 @@ export const ProviderDisplayNames = {
 	diffbot: 'Diffbot',
 	digitalocean: 'DigitalOcean',
 	discord: 'Discord',
+	dnsfilter: 'DNSFilter',
 	dockerhub: 'Docker Hub',
 	docmosis: 'Docmosis',
 	docsumo: 'Docsumo',
@@ -623,6 +636,7 @@ export const ProviderDisplayNames = {
 	dynapictures: 'Dynapictures',
 	emelia: 'Emelia',
 	epicgames: 'Epic Games',
+	esputnik: 'eSputnik',
 	everhour: 'Everhour',
 	exa: 'Exa',
 	excel: 'Excel',
@@ -633,6 +647,7 @@ export const ProviderDisplayNames = {
 	figma: 'Figma',
 	filevine: 'Filevine',
 	filloutforms: 'FilloutForms',
+	finerworks: 'FinerWorks',
 	firecrawl: 'Firecrawl',
 	fireflies: 'Fireflies',
 	fixer: 'Fixer',
@@ -686,6 +701,7 @@ export const ProviderDisplayNames = {
 	kibana: 'Kibana',
 	kling: 'Kling',
 	leexi: 'Leexi',
+	lever: 'Lever',
 	linear: 'Linear',
 	linkedin: 'LinkedIn',
 	litescrape: 'LiteScrape',
@@ -736,6 +752,7 @@ export const ProviderDisplayNames = {
 	reducto: 'Reducto',
 	remoet: 'Remoet',
 	removebg: 'remove.bg',
+	render: 'Render',
 	replicate: 'Replicate',
 	replyio: 'Reply.io',
 	resend: 'Resend',
@@ -791,6 +808,7 @@ export const ProviderDisplayNames = {
 	tpscheck: 'TPSCheck',
 	trello: 'Trello',
 	tripadvisor: 'Tripadvisor',
+	turbotpipes: 'Turbot Pipes',
 	turso: 'Turso',
 	twentyonerisk: 'TwentyOneRisk',
 	twilio: 'Twilio',
@@ -821,6 +839,8 @@ export const ProviderDisplayNames = {
 	witai: 'WitAi',
 	wix: 'Wix',
 	wiza: 'Wiza',
+	woodpeckerco: 'Woodpecker Co',
+	workable: 'Workable',
 	workday: 'Workday',
 	workiom: 'Workiom',
 	worldnewsapi: 'World News API',
@@ -832,6 +852,7 @@ export const ProviderDisplayNames = {
 	zendesk: 'Zendesk',
 	zenserp: 'Zenserp',
 	zohobigin: 'Zoho Bigin',
+	zohodesk: 'Zoho Desk',
 	zohoinventory: 'Zoho Inventory',
 	zohomail: 'Zoho Mail',
 	zoom: 'Zoom',
@@ -949,6 +970,7 @@ export type AllProviders =
 	| 'browseai'
 	| 'browserless'
 	| 'browsertool'
+	| 'browseruse'
 	| 'bubble'
 	| 'bugsnag'
 	| 'buildkite'
@@ -1042,6 +1064,7 @@ export type AllProviders =
 	| 'dynapictures'
 	| 'emelia'
 	| 'epicgames'
+	| 'esputnik'
 	| 'everhour'
 	| 'exa'
 	| 'excel'
@@ -1052,6 +1075,7 @@ export type AllProviders =
 	| 'figma'
 	| 'filevine'
 	| 'filloutforms'
+	| 'finerworks'
 	| 'firecrawl'
 	| 'fireflies'
 	| 'fixer'
@@ -1105,6 +1129,7 @@ export type AllProviders =
 	| 'kibana'
 	| 'kling'
 	| 'leexi'
+	| 'lever'
 	| 'linear'
 	| 'linkedin'
 	| 'litescrape'
@@ -1155,6 +1180,8 @@ export type AllProviders =
 	| 'reducto'
 	| 'remoet'
 	| 'removebg'
+	| 'render'
+	| 'replicate'
 	| 'replicate'
 	| 'replyio'
 	| 'resend'
@@ -1210,6 +1237,7 @@ export type AllProviders =
 	| 'tpscheck'
 	| 'trello'
 	| 'tripadvisor'
+	| 'turbotpipes'
 	| 'turso'
 	| 'twentyonerisk'
 	| 'twilio'
@@ -1240,6 +1268,8 @@ export type AllProviders =
 	| 'witai'
 	| 'wix'
 	| 'wiza'
+	| 'woodpeckerco'
+	| 'workable'
 	| 'workday'
 	| 'workiom'
 	| 'worldnewsapi'
@@ -1251,6 +1281,7 @@ export type AllProviders =
 	| 'zendesk'
 	| 'zenserp'
 	| 'zohobigin'
+	| 'zohodesk'
 	| 'zohoinventory'
 	| 'zohomail'
 	| 'zoom'

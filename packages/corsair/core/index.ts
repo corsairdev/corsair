@@ -438,6 +438,7 @@ export type {
 	CorsairPluginSubscribe,
 	CorsairPluginSubscribeResult,
 	EndpointHooks,
+	EndpointJob,
 	EndpointMetaEntry,
 	EndpointRiskLevel,
 	KeyBuilderContext,
