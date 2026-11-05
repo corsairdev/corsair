@@ -6,7 +6,11 @@ import type {
 } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 
-export const ENIGMA_API_URL = 'https://api.enigma.com/graphql';
+const ENIGMA_API_BASE = 'https://api.enigma.com';
+const ENIGMA_GRAPHQL_PATH = '/graphql';
+// CloudFront refuses POST /graphql/ (trailing slash) with a 403 HTML page, so
+// the path stays out of BASE: request() joins BASE and url with a slash.
+export const ENIGMA_API_URL = `${ENIGMA_API_BASE}${ENIGMA_GRAPHQL_PATH}`;
 
 export type EnigmaGraphQLRequest = {
 	query: string;
@@ -87,7 +91,7 @@ export async function makeEnigmaRequest(
 	{ query, variables }: EnigmaGraphQLRequest,
 ): Promise<unknown> {
 	const config: OpenAPIConfig = {
-		BASE: ENIGMA_API_URL,
+		BASE: ENIGMA_API_BASE,
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
@@ -96,7 +100,7 @@ export async function makeEnigmaRequest(
 
 	const requestOptions: ApiRequestOptions = {
 		method: 'POST',
-		url: '',
+		url: ENIGMA_GRAPHQL_PATH,
 		body: { query, variables },
 		mediaType: 'application/json',
 	};

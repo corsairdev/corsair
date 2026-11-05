@@ -58,7 +58,7 @@ describe('makeEnigmaRequest', () => {
 		});
 
 		const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
-		expect(url).toBe('https://api.enigma.com/graphql/');
+		expect(url).toBe('https://api.enigma.com/graphql');
 		expect(init.method).toBe('POST');
 		const headers = new Headers(init.headers);
 		expect(headers.get('x-api-key')).toBe(API_KEY);

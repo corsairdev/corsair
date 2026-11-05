@@ -59,7 +59,7 @@ function lastRequest() {
 
 function expectAuthenticated() {
 	const sent = lastRequest();
-	expect(sent.url).toBe('https://api.enigma.com/graphql/');
+	expect(sent.url).toBe('https://api.enigma.com/graphql');
 	expect(sent.method).toBe('POST');
 	expect(sent.headers.get('x-api-key')).toBe(API_KEY);
 	expect(sent.headers.get('authorization')).toBeNull();

@@ -85,7 +85,7 @@ describe('Enigma plugin through createCorsair', () => {
 
 			expect(result.brand?.names).toEqual(['STARBUCKS']);
 			const [url] = fetchMock.mock.calls[0] as [string, RequestInit];
-			expect(url).toBe('https://api.enigma.com/graphql/');
+			expect(url).toBe('https://api.enigma.com/graphql');
 		} finally {
 			testDb.cleanup();
 		}
