@@ -49,8 +49,11 @@ export const templateRow = {
 	title: 'Rental agreement',
 };
 
-// eSignatures documents no error body shape; this is the field the client
-// reads first.
-export function errorBody(message: string) {
-	return { error: message };
+// eSignatures documents no error body shape; this is the one the live API
+// sent for a missing token (403, error_code "forbidden").
+export function errorBody(message: string, errorCode = 'forbidden') {
+	return {
+		status: 'error',
+		data: { error_code: errorCode, error_message: message },
+	};
 }

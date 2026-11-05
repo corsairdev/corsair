@@ -252,6 +252,22 @@ describe('makeESignaturesRequest', () => {
 });
 
 describe('describeESignaturesError', () => {
+	it('reads data.error_message from the body the live API sends', () => {
+		expect(
+			describeESignaturesError(
+				403,
+				{
+					status: 'error',
+					data: {
+						error_code: 'forbidden',
+						error_message: 'Invalid or missing Secret token',
+					},
+				},
+				'Forbidden',
+			),
+		).toBe('eSignatures 403: Invalid or missing Secret token');
+	});
+
 	it('keeps the fallback when the body has no error text', () => {
 		expect(describeESignaturesError(502, { code: 7 }, 'Bad gateway')).toBe(
 			'eSignatures 502: Bad gateway',

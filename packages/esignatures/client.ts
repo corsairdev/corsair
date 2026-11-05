@@ -34,8 +34,10 @@ export function basicAuthHeader(apiKey: string): string {
 }
 
 /**
- * eSignatures does not document an error body shape, so the message is read
- * from the common fields in order and the status is prepended when present.
+ * eSignatures does not document an error body shape. The live API answers
+ * `{ status: 'error', data: { error_code, error_message } }`, so that message
+ * is read first, then the common top-level fields, and the status is
+ * prepended when present.
  */
 export function describeESignaturesError(
 	status: number | undefined,
@@ -44,6 +46,7 @@ export function describeESignaturesError(
 ): string {
 	const record = asRecord(body);
 	const text =
+		readString(asRecord(record?.data), 'error_message') ??
 		readString(record, 'error') ??
 		readString(record, 'message') ??
 		readString(record, 'error_message') ??
