@@ -60,6 +60,15 @@ import {
 	SecurityGetUserPrivilegesOutputSchema,
 	SecurityHasPrivilegesInputSchema,
 	SecurityHasPrivilegesOutputSchema,
+	SecurityRoleMappingsGetOutputSchema,
+	SecurityRoleMappingsPutInputSchema,
+	SecurityRolesBulkDeleteInputSchema,
+	SecurityRolesBulkDeleteOutputSchema,
+	SecurityRolesBulkPutInputSchema,
+	SecurityRolesBulkPutOutputSchema,
+	SecurityRolesGetInputSchema,
+	SecurityRolesGetOutputSchema,
+	SecurityRolesPutInputSchema,
 	SecurityUsersChangePasswordInputSchema,
 	SecurityUsersGetInputSchema,
 	SecurityUsersGetOutputSchema,
@@ -185,6 +194,13 @@ import {
 	securityCreatedApiKey,
 	securityGetUserPrivilegesOutput,
 	securityHasPrivilegesOutput,
+	securityLogsReaderRole,
+	securityRoleMapping,
+	securityRoleMappingsGetOutput,
+	securityRolesBulkDeleteOutput,
+	securityRolesBulkPutOutput,
+	securityRolesGetOutput,
+	securityRolesQueryOutput,
 	securityUsersGetOutput,
 	securityUsersQueryOutput,
 	shardsOpResponse,
@@ -3690,5 +3706,270 @@ describe('security.users wire calls', () => {
 		const { url, init } = await sent();
 		expect(url).toBe('http://es:9200/_security/user/_privileges');
 		expect(init.method).toBe('GET');
+	});
+});
+
+// ── security roles / role mappings schemas and wire assertions ───────────────
+
+describe('security.roles schemas', () => {
+	it('get requires a name target and rejects extras', () => {
+		expect(SecurityRolesGetInputSchema.safeParse({}).success).toBe(false);
+		expect(SecurityRolesGetInputSchema.parse({ name: 'logs-reader' })).toEqual({
+			name: 'logs-reader',
+		});
+		expect(
+			SecurityRolesGetInputSchema.safeParse({ name: 'a', size: 5 }).success,
+		).toBe(false);
+	});
+
+	it('put takes the descriptor tree as the role body', () => {
+		expect(
+			SecurityRolesPutInputSchema.parse({
+				name: 'logs-reader',
+				role: { cluster: ['monitor'] },
+			}),
+		).toEqual({
+			name: 'logs-reader',
+			role: { cluster: ['monitor'] },
+		});
+		expect(
+			SecurityRolesPutInputSchema.safeParse({ name: 'r', role: {} }).success,
+		).toBe(true);
+	});
+
+	it('bulkPut requires the roles map and bulkDelete a non-empty name list', () => {
+		expect(SecurityRolesBulkPutInputSchema.safeParse({}).success).toBe(false);
+		expect(
+			SecurityRolesBulkPutInputSchema.parse({
+				roles: { 'logs-reader': { cluster: ['monitor'] } },
+			}).roles,
+		).toEqual({ 'logs-reader': { cluster: ['monitor'] } });
+		expect(
+			SecurityRolesBulkDeleteInputSchema.safeParse({ names: [] }).success,
+		).toBe(false);
+	});
+
+	it('parses the role map and bulk replies', () => {
+		const roles = SecurityRolesGetOutputSchema.parse(securityRolesGetOutput);
+		expect(roles['logs-reader']?.cluster).toEqual(['monitor']);
+		expect(roles['logs-reader']?.indices?.[0]?.names).toEqual(['logs-*']);
+
+		const bulk = SecurityRolesBulkPutOutputSchema.parse(
+			securityRolesBulkPutOutput,
+		);
+		expect(bulk.created).toEqual(['logs-reader']);
+
+		const removed = SecurityRolesBulkDeleteOutputSchema.parse(
+			securityRolesBulkDeleteOutput,
+		);
+		expect(removed.deleted).toEqual(['old-role']);
+	});
+
+	it('role mapping put requires exactly one of roles or role_templates', () => {
+		expect(
+			SecurityRoleMappingsPutInputSchema.safeParse({
+				name: 'm',
+				mapping: {
+					enabled: true,
+					rules: { any: [] },
+				},
+			}).success,
+		).toBe(false);
+		expect(
+			SecurityRoleMappingsPutInputSchema.safeParse({
+				name: 'm',
+				mapping: {
+					enabled: true,
+					roles: ['logs-reader'],
+					role_templates: [{ template: { source: '{{x}}' } }],
+					rules: { any: [] },
+				},
+			}).success,
+		).toBe(false);
+		expect(
+			SecurityRoleMappingsPutInputSchema.safeParse({
+				name: 'm',
+				mapping: {
+					roles: ['logs-reader'],
+					rules: { any: [] },
+				},
+			}).success,
+		).toBe(true);
+	});
+
+	it('parses the role mapping map', () => {
+		const mappings = SecurityRoleMappingsGetOutputSchema.parse(
+			securityRoleMappingsGetOutput,
+		);
+		expect(mappings.operations_mapping?.roles).toEqual(['logs-reader']);
+		expect(mappings.operations_mapping?.enabled).toBe(true);
+	});
+});
+
+describe('security.roles wire calls', () => {
+	let fetchMock: jest.SpyInstance;
+
+	beforeEach(() => {
+		fetchMock = jest.spyOn(globalThis, 'fetch');
+		mockLog.mockClear();
+	});
+
+	afterEach(() => {
+		fetchMock.mockRestore();
+	});
+
+	const ctx = {
+		options: { baseUrl: 'http://es:9200' },
+		key: 'ApiKey encoded-key',
+	} as never;
+
+	function mockJson(body: unknown, status = 200) {
+		fetchMock.mockResolvedValueOnce(
+			new Response(JSON.stringify(body), {
+				status,
+				headers: { 'Content-Type': 'application/json' },
+			}),
+		);
+	}
+
+	async function sent() {
+		expect(fetchMock).toHaveBeenCalledTimes(1);
+		const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+		return { url, init };
+	}
+
+	it('roles.get GETs the encoded name list with include_implicit', async () => {
+		mockJson(securityRolesGetOutput);
+		const result = await Security.getRoles(ctx, {
+			name: 'logs-reader, admin',
+			include_implicit: true,
+		});
+		expect(result['logs-reader']?.cluster).toEqual(['monitor']);
+		const { url, init } = await sent();
+		expect(url).toBe(
+			'http://es:9200/_security/role/logs-reader,admin?include_implicit=true',
+		);
+		expect(init.method).toBe('GET');
+	});
+
+	it('roles.put POSTs the descriptor under the role name', async () => {
+		mockJson({ role: { created: true } });
+		const result = await Security.putRole(ctx, {
+			name: 'logs-reader',
+			role: securityLogsReaderRole,
+			refresh: 'wait_for',
+		});
+		expect(result.role.created).toBe(true);
+		const { url, init } = await sent();
+		expect(url).toBe(
+			'http://es:9200/_security/role/logs-reader?refresh=wait_for',
+		);
+		expect(init.method).toBe('POST');
+		expect(JSON.parse(String(init.body))).toEqual(securityLogsReaderRole);
+	});
+
+	it('roles.delete DELETEs the role path', async () => {
+		mockJson({ found: true });
+		const result = await Security.deleteRole(ctx, { name: 'old-role' });
+		expect(result.found).toBe(true);
+		const { url, init } = await sent();
+		expect(url).toBe('http://es:9200/_security/role/old-role');
+		expect(init.method).toBe('DELETE');
+	});
+
+	it('roles.bulkPut POSTs the roles map', async () => {
+		mockJson(securityRolesBulkPutOutput);
+		await Security.bulkPutRoles(ctx, {
+			roles: { 'logs-reader': securityLogsReaderRole },
+		});
+		const { url, init } = await sent();
+		expect(url).toBe('http://es:9200/_security/role');
+		expect(init.method).toBe('POST');
+		expect(JSON.parse(String(init.body))).toEqual({
+			roles: { 'logs-reader': securityLogsReaderRole },
+		});
+	});
+
+	it('roles.bulkDelete DELETEs the names as the body', async () => {
+		mockJson(securityRolesBulkDeleteOutput);
+		await Security.bulkDeleteRoles(ctx, { names: ['old-role', 'x'] });
+		const { url, init } = await sent();
+		expect(url).toBe('http://es:9200/_security/role');
+		expect(init.method).toBe('DELETE');
+		expect(JSON.parse(String(init.body))).toEqual({
+			names: ['old-role', 'x'],
+		});
+	});
+
+	it('roles.clearCache POSTs the name path', async () => {
+		mockJson(securityCacheClearOutput);
+		const result = await Security.clearRoleCache(ctx, { name: '*' });
+		expect(result._nodes.successful).toBe(3);
+		const { url, init } = await sent();
+		expect(url).toBe('http://es:9200/_security/role/*/_clear_cache');
+		expect(init.method).toBe('POST');
+	});
+
+	it('roles.query POSTs the typed query subset', async () => {
+		mockJson(securityRolesQueryOutput);
+		await Security.queryRoles(ctx, {
+			query: { term: { name: 'logs' } },
+			size: 10,
+		});
+		const { url, init } = await sent();
+		expect(url).toBe('http://es:9200/_security/_query/role');
+		expect(init.method).toBe('POST');
+		expect(JSON.parse(String(init.body))).toEqual({
+			query: { term: { name: 'logs' } },
+			size: 10,
+		});
+	});
+
+	it('roleMappings.get GETs the mapping name path', async () => {
+		mockJson(securityRoleMappingsGetOutput);
+		const result = await Security.getRoleMapping(ctx, {
+			name: 'operations_mapping',
+		});
+		expect(result.operations_mapping?.roles).toEqual(['logs-reader']);
+		const { url, init } = await sent();
+		expect(url).toBe(
+			'http://es:9200/_security/role_mapping/operations_mapping',
+		);
+		expect(init.method).toBe('GET');
+	});
+
+	it('roleMappings.put POSTs the mapping body without the name', async () => {
+		mockJson({ created: true });
+		await Security.putRoleMapping(ctx, {
+			name: 'operations_mapping',
+			mapping: {
+				enabled: true,
+				roles: ['logs-reader'],
+				rules: securityRoleMapping.rules,
+			},
+		});
+		const { url, init } = await sent();
+		expect(url).toBe(
+			'http://es:9200/_security/role_mapping/operations_mapping',
+		);
+		expect(init.method).toBe('POST');
+		expect(JSON.parse(String(init.body))).toEqual({
+			enabled: true,
+			roles: ['logs-reader'],
+			rules: securityRoleMapping.rules,
+		});
+	});
+
+	it('roleMappings.delete DELETEs the mapping path', async () => {
+		mockJson({ found: true });
+		const result = await Security.deleteRoleMapping(ctx, {
+			name: 'operations_mapping',
+		});
+		expect(result.found).toBe(true);
+		const { url, init } = await sent();
+		expect(url).toBe(
+			'http://es:9200/_security/role_mapping/operations_mapping',
+		);
+		expect(init.method).toBe('DELETE');
 	});
 });

@@ -3632,6 +3632,185 @@ export type SecurityGetUserPrivilegesOutput = z.infer<
 	typeof SecurityGetUserPrivilegesOutputSchema
 >;
 
+// ── security.roles: /_security/role ──────────────────────────────────────────
+
+export const SecurityRolesGetInputSchema = z.strictObject({
+	// Comma-separated role names or wildcards; the spec default is all roles.
+	name: NonBlankString,
+	include_implicit: z.boolean().optional(),
+});
+export type SecurityRolesGetInput = z.input<typeof SecurityRolesGetInputSchema>;
+
+// Get and query return role names mapped to their descriptor trees, which
+// are the same open privilege DSL the inputs accept.
+export const SecurityRolesGetOutputSchema = z.record(
+	z.string().min(1),
+	SecurityRoleDescriptorSchema,
+);
+export type SecurityRolesGetOutput = z.infer<
+	typeof SecurityRolesGetOutputSchema
+>;
+
+export const SecurityRolesPutInputSchema = z.strictObject({
+	name: NonBlankString,
+	role: SecurityRoleDescriptorSchema,
+	refresh: RefreshParam.optional(),
+});
+export type SecurityRolesPutInput = z.input<typeof SecurityRolesPutInputSchema>;
+
+export const SecurityRolesPutOutputSchema = z.looseObject({
+	role: z.looseObject({ created: z.boolean() }),
+});
+export type SecurityRolesPutOutput = z.infer<
+	typeof SecurityRolesPutOutputSchema
+>;
+
+export const SecurityRolesDeleteInputSchema = z.strictObject({
+	name: NonBlankString,
+	refresh: RefreshParam.optional(),
+});
+export type SecurityRolesDeleteInput = z.input<
+	typeof SecurityRolesDeleteInputSchema
+>;
+export type SecurityRolesDeleteOutput = SecurityFoundResponse;
+
+const SecurityRoleErrorsSchema = z.looseObject({
+	count: z.number(),
+	details: z.record(z.string(), z.looseObject({})),
+});
+
+export const SecurityRolesBulkPutInputSchema = z.strictObject({
+	roles: z.record(z.string().min(1), SecurityRoleDescriptorSchema),
+	refresh: RefreshParam.optional(),
+});
+export type SecurityRolesBulkPutInput = z.input<
+	typeof SecurityRolesBulkPutInputSchema
+>;
+
+export const SecurityRolesBulkPutOutputSchema = z.looseObject({
+	created: z.array(z.string()).optional(),
+	updated: z.array(z.string()).optional(),
+	noop: z.array(z.string()).optional(),
+	errors: SecurityRoleErrorsSchema.optional(),
+});
+export type SecurityRolesBulkPutOutput = z.infer<
+	typeof SecurityRolesBulkPutOutputSchema
+>;
+
+export const SecurityRolesBulkDeleteInputSchema = z.strictObject({
+	names: z.array(NonBlankString).min(1),
+	refresh: RefreshParam.optional(),
+});
+export type SecurityRolesBulkDeleteInput = z.input<
+	typeof SecurityRolesBulkDeleteInputSchema
+>;
+
+export const SecurityRolesBulkDeleteOutputSchema = z.looseObject({
+	deleted: z.array(z.string()).optional(),
+	not_found: z.array(z.string()).optional(),
+	errors: SecurityRoleErrorsSchema.optional(),
+});
+export type SecurityRolesBulkDeleteOutput = z.infer<
+	typeof SecurityRolesBulkDeleteOutputSchema
+>;
+
+export const SecurityRolesClearCacheInputSchema = z.strictObject({
+	// Comma-separated role names, or `*` for all roles.
+	name: NonBlankString,
+});
+export type SecurityRolesClearCacheInput = z.input<
+	typeof SecurityRolesClearCacheInputSchema
+>;
+export type SecurityRolesClearCacheOutput = SecurityCacheClearResponse;
+
+export const SecurityRolesQueryInputSchema = z.strictObject({
+	query: QuerySchema.optional(),
+	from: z.number().int().min(0).optional(),
+	size: z.number().int().min(0).max(10_000).optional(),
+});
+export type SecurityRolesQueryInput = z.input<
+	typeof SecurityRolesQueryInputSchema
+>;
+
+// Role hit items are the full descriptor tree, so they stay loose.
+export const SecurityRolesQueryOutputSchema = z.looseObject({
+	hits: z.looseObject({
+		total: z
+			.union([
+				z.looseObject({ value: z.number(), relation: z.string() }),
+				z.number(),
+			])
+			.optional(),
+		hits: z.array(z.looseObject({})),
+	}),
+});
+export type SecurityRolesQueryOutput = z.infer<
+	typeof SecurityRolesQueryOutputSchema
+>;
+
+// ── security.roleMappings: /_security/role_mapping ───────────────────────────
+
+// Mapping rules are a recursive any/all/field decision tree, so only the
+// envelope is typed.
+const SecurityRoleMappingSchema = z.looseObject({
+	enabled: z.boolean(),
+	roles: z.array(z.string()).optional(),
+	role_templates: z.array(z.looseObject({})).optional(),
+	rules: z.looseObject({}),
+	metadata: SecurityMetadata.optional(),
+});
+export type SecurityRoleMapping = z.infer<typeof SecurityRoleMappingSchema>;
+
+export const SecurityRoleMappingsGetInputSchema = z.strictObject({
+	name: NonBlankString,
+});
+export type SecurityRoleMappingsGetInput = z.input<
+	typeof SecurityRoleMappingsGetInputSchema
+>;
+
+export const SecurityRoleMappingsGetOutputSchema = z.record(
+	z.string().min(1),
+	SecurityRoleMappingSchema,
+);
+export type SecurityRoleMappingsGetOutput = z.infer<
+	typeof SecurityRoleMappingsGetOutputSchema
+>;
+
+// A mapping grants either static roles or mustache role_templates (exactly
+// one); role_templates stay loose because each entry is a template object.
+const SecurityRoleMappingBodySchema = z
+	.strictObject({
+		enabled: z.boolean().optional(),
+		roles: z.array(NonBlankString).min(1).optional(),
+		role_templates: z.array(z.looseObject({})).min(1).optional(),
+		rules: z.looseObject({}),
+		metadata: SecurityMetadata.optional(),
+	})
+	.refine(
+		(mapping) =>
+			(mapping.roles !== undefined) !== (mapping.role_templates !== undefined),
+		{ message: 'provide exactly one of roles or role_templates' },
+	);
+
+export const SecurityRoleMappingsPutInputSchema = z.strictObject({
+	name: NonBlankString,
+	mapping: SecurityRoleMappingBodySchema,
+	refresh: RefreshParam.optional(),
+});
+export type SecurityRoleMappingsPutInput = z.input<
+	typeof SecurityRoleMappingsPutInputSchema
+>;
+export type SecurityRoleMappingsPutOutput = SecurityCreatedResponse;
+
+export const SecurityRoleMappingsDeleteInputSchema = z.strictObject({
+	name: NonBlankString,
+	refresh: RefreshParam.optional(),
+});
+export type SecurityRoleMappingsDeleteInput = z.input<
+	typeof SecurityRoleMappingsDeleteInputSchema
+>;
+export type SecurityRoleMappingsDeleteOutput = SecurityFoundResponse;
+
 // ── registry ─────────────────────────────────────────────────────────────────
 
 export type ElasticsearchEndpointInputs = {
@@ -3792,6 +3971,16 @@ export type ElasticsearchEndpointInputs = {
 	securityUsersQuery: SecurityUsersQueryInput;
 	securityHasPrivileges: SecurityHasPrivilegesInput;
 	securityGetUserPrivileges: SecurityGetUserPrivilegesInput;
+	securityRolesGet: SecurityRolesGetInput;
+	securityRolesPut: SecurityRolesPutInput;
+	securityRolesDelete: SecurityRolesDeleteInput;
+	securityRolesBulkPut: SecurityRolesBulkPutInput;
+	securityRolesBulkDelete: SecurityRolesBulkDeleteInput;
+	securityRolesClearCache: SecurityRolesClearCacheInput;
+	securityRolesQuery: SecurityRolesQueryInput;
+	securityRoleMappingsGet: SecurityRoleMappingsGetInput;
+	securityRoleMappingsPut: SecurityRoleMappingsPutInput;
+	securityRoleMappingsDelete: SecurityRoleMappingsDeleteInput;
 };
 
 export type ElasticsearchEndpointOutputs = {
@@ -3952,6 +4141,16 @@ export type ElasticsearchEndpointOutputs = {
 	securityUsersQuery: SecurityUsersQueryOutput;
 	securityHasPrivileges: SecurityHasPrivilegesOutput;
 	securityGetUserPrivileges: SecurityGetUserPrivilegesOutput;
+	securityRolesGet: SecurityRolesGetOutput;
+	securityRolesPut: SecurityRolesPutOutput;
+	securityRolesDelete: SecurityRolesDeleteOutput;
+	securityRolesBulkPut: SecurityRolesBulkPutOutput;
+	securityRolesBulkDelete: SecurityRolesBulkDeleteOutput;
+	securityRolesClearCache: SecurityRolesClearCacheOutput;
+	securityRolesQuery: SecurityRolesQueryOutput;
+	securityRoleMappingsGet: SecurityRoleMappingsGetOutput;
+	securityRoleMappingsPut: SecurityRoleMappingsPutOutput;
+	securityRoleMappingsDelete: SecurityRoleMappingsDeleteOutput;
 };
 
 export type ElasticsearchOperation = keyof ElasticsearchEndpointInputs;
@@ -4118,6 +4317,16 @@ export const ElasticsearchEndpointInputSchemas = {
 	securityUsersQuery: SecurityUsersQueryInputSchema,
 	securityHasPrivileges: SecurityHasPrivilegesInputSchema,
 	securityGetUserPrivileges: SecurityGetUserPrivilegesInputSchema,
+	securityRolesGet: SecurityRolesGetInputSchema,
+	securityRolesPut: SecurityRolesPutInputSchema,
+	securityRolesDelete: SecurityRolesDeleteInputSchema,
+	securityRolesBulkPut: SecurityRolesBulkPutInputSchema,
+	securityRolesBulkDelete: SecurityRolesBulkDeleteInputSchema,
+	securityRolesClearCache: SecurityRolesClearCacheInputSchema,
+	securityRolesQuery: SecurityRolesQueryInputSchema,
+	securityRoleMappingsGet: SecurityRoleMappingsGetInputSchema,
+	securityRoleMappingsPut: SecurityRoleMappingsPutInputSchema,
+	securityRoleMappingsDelete: SecurityRoleMappingsDeleteInputSchema,
 } as const;
 
 export const ElasticsearchEndpointOutputSchemas = {
@@ -4278,4 +4487,14 @@ export const ElasticsearchEndpointOutputSchemas = {
 	securityUsersQuery: SecurityUsersQueryOutputSchema,
 	securityHasPrivileges: SecurityHasPrivilegesOutputSchema,
 	securityGetUserPrivileges: SecurityGetUserPrivilegesOutputSchema,
+	securityRolesGet: SecurityRolesGetOutputSchema,
+	securityRolesPut: SecurityRolesPutOutputSchema,
+	securityRolesDelete: SecurityFoundResponseSchema,
+	securityRolesBulkPut: SecurityRolesBulkPutOutputSchema,
+	securityRolesBulkDelete: SecurityRolesBulkDeleteOutputSchema,
+	securityRolesClearCache: SecurityCacheClearResponseSchema,
+	securityRolesQuery: SecurityRolesQueryOutputSchema,
+	securityRoleMappingsGet: SecurityRoleMappingsGetOutputSchema,
+	securityRoleMappingsPut: SecurityCreatedResponseSchema,
+	securityRoleMappingsDelete: SecurityFoundResponseSchema,
 } as const;

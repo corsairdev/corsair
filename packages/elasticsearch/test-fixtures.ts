@@ -104,6 +104,13 @@ import type {
 	SecurityCreatedApiKey,
 	SecurityGetUserPrivilegesOutput,
 	SecurityHasPrivilegesOutput,
+	SecurityRoleDescriptor,
+	SecurityRoleMapping,
+	SecurityRoleMappingsGetOutput,
+	SecurityRolesBulkDeleteOutput,
+	SecurityRolesBulkPutOutput,
+	SecurityRolesGetOutput,
+	SecurityRolesQueryOutput,
 	SecurityUser,
 	SecurityUsersGetOutput,
 	SecurityUsersQueryOutput,
@@ -1481,5 +1488,47 @@ export const securityUsersQueryOutput: SecurityUsersQueryOutput = {
 	hits: {
 		total: { value: 1, relation: 'eq' },
 		hits: [securityUserRow],
+	},
+};
+
+export const securityLogsReaderRole: SecurityRoleDescriptor = {
+	cluster: ['monitor'],
+	indices: [
+		{
+			names: ['logs-*'],
+			privileges: ['read', 'view_index_metadata'],
+		},
+	],
+};
+
+export const securityRolesGetOutput: SecurityRolesGetOutput = {
+	'logs-reader': securityLogsReaderRole,
+};
+
+export const securityRoleMapping: SecurityRoleMapping = {
+	enabled: true,
+	roles: ['logs-reader'],
+	rules: { any: [{ field: { 'metadata.department': 'operations' } }] },
+};
+
+export const securityRoleMappingsGetOutput: SecurityRoleMappingsGetOutput = {
+	operations_mapping: securityRoleMapping,
+};
+
+export const securityRolesBulkPutOutput: SecurityRolesBulkPutOutput = {
+	created: ['logs-reader'],
+	updated: [],
+	noop: [],
+};
+
+export const securityRolesBulkDeleteOutput: SecurityRolesBulkDeleteOutput = {
+	deleted: ['old-role'],
+	not_found: [],
+};
+
+export const securityRolesQueryOutput: SecurityRolesQueryOutput = {
+	hits: {
+		total: { value: 1, relation: 'eq' },
+		hits: [{ cluster: ['monitor'] }],
 	},
 };

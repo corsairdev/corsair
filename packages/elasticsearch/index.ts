@@ -239,6 +239,16 @@ export type ElasticsearchEndpoints = {
 	securityUsersQuery: ElasticsearchEndpoint<'securityUsersQuery'>;
 	securityHasPrivileges: ElasticsearchEndpoint<'securityHasPrivileges'>;
 	securityGetUserPrivileges: ElasticsearchEndpoint<'securityGetUserPrivileges'>;
+	securityRolesGet: ElasticsearchEndpoint<'securityRolesGet'>;
+	securityRolesPut: ElasticsearchEndpoint<'securityRolesPut'>;
+	securityRolesDelete: ElasticsearchEndpoint<'securityRolesDelete'>;
+	securityRolesBulkPut: ElasticsearchEndpoint<'securityRolesBulkPut'>;
+	securityRolesBulkDelete: ElasticsearchEndpoint<'securityRolesBulkDelete'>;
+	securityRolesClearCache: ElasticsearchEndpoint<'securityRolesClearCache'>;
+	securityRolesQuery: ElasticsearchEndpoint<'securityRolesQuery'>;
+	securityRoleMappingsGet: ElasticsearchEndpoint<'securityRoleMappingsGet'>;
+	securityRoleMappingsPut: ElasticsearchEndpoint<'securityRoleMappingsPut'>;
+	securityRoleMappingsDelete: ElasticsearchEndpoint<'securityRoleMappingsDelete'>;
 };
 
 // Elasticsearch has no inbound webhook surface — the REST API is
@@ -428,6 +438,20 @@ const elasticsearchEndpointsNested = {
 		authenticate: Security.authenticate,
 		hasPrivileges: Security.hasPrivileges,
 		getUserPrivileges: Security.getUserPrivileges,
+		roles: {
+			get: Security.getRoles,
+			put: Security.putRole,
+			delete: Security.deleteRole,
+			bulkPut: Security.bulkPutRoles,
+			bulkDelete: Security.bulkDeleteRoles,
+			clearCache: Security.clearRoleCache,
+			query: Security.queryRoles,
+		},
+		roleMappings: {
+			get: Security.getRoleMapping,
+			put: Security.putRoleMapping,
+			delete: Security.deleteRoleMapping,
+		},
 	},
 } as const;
 
@@ -1064,6 +1088,46 @@ export const elasticsearchEndpointSchemas = {
 	'security.getUserPrivileges': {
 		input: ElasticsearchEndpointInputSchemas.securityGetUserPrivileges,
 		output: ElasticsearchEndpointOutputSchemas.securityGetUserPrivileges,
+	},
+	'security.roles.get': {
+		input: ElasticsearchEndpointInputSchemas.securityRolesGet,
+		output: ElasticsearchEndpointOutputSchemas.securityRolesGet,
+	},
+	'security.roles.put': {
+		input: ElasticsearchEndpointInputSchemas.securityRolesPut,
+		output: ElasticsearchEndpointOutputSchemas.securityRolesPut,
+	},
+	'security.roles.delete': {
+		input: ElasticsearchEndpointInputSchemas.securityRolesDelete,
+		output: ElasticsearchEndpointOutputSchemas.securityRolesDelete,
+	},
+	'security.roles.bulkPut': {
+		input: ElasticsearchEndpointInputSchemas.securityRolesBulkPut,
+		output: ElasticsearchEndpointOutputSchemas.securityRolesBulkPut,
+	},
+	'security.roles.bulkDelete': {
+		input: ElasticsearchEndpointInputSchemas.securityRolesBulkDelete,
+		output: ElasticsearchEndpointOutputSchemas.securityRolesBulkDelete,
+	},
+	'security.roles.clearCache': {
+		input: ElasticsearchEndpointInputSchemas.securityRolesClearCache,
+		output: ElasticsearchEndpointOutputSchemas.securityRolesClearCache,
+	},
+	'security.roles.query': {
+		input: ElasticsearchEndpointInputSchemas.securityRolesQuery,
+		output: ElasticsearchEndpointOutputSchemas.securityRolesQuery,
+	},
+	'security.roleMappings.get': {
+		input: ElasticsearchEndpointInputSchemas.securityRoleMappingsGet,
+		output: ElasticsearchEndpointOutputSchemas.securityRoleMappingsGet,
+	},
+	'security.roleMappings.put': {
+		input: ElasticsearchEndpointInputSchemas.securityRoleMappingsPut,
+		output: ElasticsearchEndpointOutputSchemas.securityRoleMappingsPut,
+	},
+	'security.roleMappings.delete': {
+		input: ElasticsearchEndpointInputSchemas.securityRoleMappingsDelete,
+		output: ElasticsearchEndpointOutputSchemas.securityRoleMappingsDelete,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof elasticsearchEndpointsNested
@@ -1853,6 +1917,56 @@ const elasticsearchEndpointMeta = {
 		riskLevel: 'read',
 		description:
 			'List the privileges of the authenticated principal (GET /_security/user/_privileges): cluster, index, application, global and run_as grants',
+	},
+	'security.roles.get': {
+		riskLevel: 'read',
+		description:
+			'Get roles by comma-separated names or wildcards (GET /_security/role/{name}), keyed by role name with their full privilege descriptors',
+	},
+	'security.roles.put': {
+		riskLevel: 'write',
+		description:
+			'Create or update one role (POST /_security/role/{name}) with cluster, index, application, run_as and global privilege sections',
+	},
+	'security.roles.delete': {
+		riskLevel: 'destructive',
+		description:
+			'Delete a role (DELETE /_security/role/{name}); holders of the role lose its grants immediately, replies found: true when removed',
+	},
+	'security.roles.bulkPut': {
+		riskLevel: 'write',
+		description:
+			'Create or update several roles in one request (POST /_security/role) from a name-to-descriptor map, with per-role error details',
+	},
+	'security.roles.bulkDelete': {
+		riskLevel: 'destructive',
+		description:
+			'Delete several roles in one request (DELETE /_security/role) by name list, with per-role error details',
+	},
+	'security.roles.clearCache': {
+		riskLevel: 'write',
+		description:
+			'Evict roles from the security cache by comma-separated names (POST /_security/role/{name}/_clear_cache; * clears all)',
+	},
+	'security.roles.query': {
+		riskLevel: 'read',
+		description:
+			'Find roles with a typed query over name and privilege fields (POST /_security/_query/role), search-style hits envelope',
+	},
+	'security.roleMappings.get': {
+		riskLevel: 'read',
+		description:
+			'Get role mappings by comma-separated names (GET /_security/role_mapping/{name}), keyed by mapping name',
+	},
+	'security.roleMappings.put': {
+		riskLevel: 'write',
+		description:
+			'Create or update a role mapping (POST /_security/role_mapping/{name}) granting static roles or mustache role_templates under rules',
+	},
+	'security.roleMappings.delete': {
+		riskLevel: 'destructive',
+		description:
+			'Delete a role mapping (DELETE /_security/role_mapping/{name}); replies found: true when a mapping was removed',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof elasticsearchEndpointsNested

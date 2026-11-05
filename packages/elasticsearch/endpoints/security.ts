@@ -308,3 +308,105 @@ export const getUserPrivileges: ElasticsearchEndpoints['securityGetUserPrivilege
 				path: () => '/_security/user/_privileges',
 			},
 		);
+
+// ── security.roles ───────────────────────────────────────────────────────────
+
+export const getRoles: ElasticsearchEndpoints['securityRolesGet'] = (
+	ctx,
+	input,
+) =>
+	call(ctx, 'securityRolesGet', 'security.roles.get', input, {
+		path: (parsed) => `/_security/role/${target(parsed.name)}`,
+		query: (parsed) => pickQuery(parsed, ['include_implicit']),
+	});
+
+export const putRole: ElasticsearchEndpoints['securityRolesPut'] = (
+	ctx,
+	input,
+) =>
+	call(ctx, 'securityRolesPut', 'security.roles.put', input, {
+		method: 'POST',
+		path: (parsed) => `/_security/role/${target(parsed.name)}`,
+		query: (parsed) => pickQuery(parsed, ['refresh']),
+		// The wire body is the descriptor itself (POST /_security/role/{name}).
+		body: (parsed) => parsed.role,
+	});
+
+export const deleteRole: ElasticsearchEndpoints['securityRolesDelete'] = (
+	ctx,
+	input,
+) =>
+	call(ctx, 'securityRolesDelete', 'security.roles.delete', input, {
+		method: 'DELETE',
+		path: (parsed) => `/_security/role/${target(parsed.name)}`,
+		query: (parsed) => pickQuery(parsed, ['refresh']),
+	});
+
+export const bulkPutRoles: ElasticsearchEndpoints['securityRolesBulkPut'] = (
+	ctx,
+	input,
+) =>
+	call(ctx, 'securityRolesBulkPut', 'security.roles.bulkPut', input, {
+		method: 'POST',
+		path: () => '/_security/role',
+		query: (parsed) => pickQuery(parsed, ['refresh']),
+		body: (parsed) => pickBody(parsed, ['roles']),
+	});
+
+export const bulkDeleteRoles: ElasticsearchEndpoints['securityRolesBulkDelete'] =
+	(ctx, input) =>
+		call(ctx, 'securityRolesBulkDelete', 'security.roles.bulkDelete', input, {
+			method: 'DELETE',
+			path: () => '/_security/role',
+			query: (parsed) => pickQuery(parsed, ['refresh']),
+			body: (parsed) => pickBody(parsed, ['names']),
+		});
+
+export const clearRoleCache: ElasticsearchEndpoints['securityRolesClearCache'] =
+	(ctx, input) =>
+		call(ctx, 'securityRolesClearCache', 'security.roles.clearCache', input, {
+			method: 'POST',
+			path: (parsed) => `/_security/role/${target(parsed.name)}/_clear_cache`,
+		});
+
+export const queryRoles: ElasticsearchEndpoints['securityRolesQuery'] = (
+	ctx,
+	input,
+) =>
+	call(ctx, 'securityRolesQuery', 'security.roles.query', input, {
+		method: 'POST',
+		path: () => '/_security/_query/role',
+		body: (parsed) => pickBody(parsed, ['query', 'from', 'size']),
+	});
+
+// ── security.roleMappings ────────────────────────────────────────────────────
+
+export const getRoleMapping: ElasticsearchEndpoints['securityRoleMappingsGet'] =
+	(ctx, input) =>
+		call(ctx, 'securityRoleMappingsGet', 'security.roleMappings.get', input, {
+			path: (parsed) => `/_security/role_mapping/${target(parsed.name)}`,
+		});
+
+export const putRoleMapping: ElasticsearchEndpoints['securityRoleMappingsPut'] =
+	(ctx, input) =>
+		call(ctx, 'securityRoleMappingsPut', 'security.roleMappings.put', input, {
+			method: 'POST',
+			path: (parsed) => `/_security/role_mapping/${target(parsed.name)}`,
+			query: (parsed) => pickQuery(parsed, ['refresh']),
+			// The wire body is the mapping itself (POST /_security/role_mapping/{name}).
+			body: (parsed) => parsed.mapping,
+		});
+
+export const deleteRoleMapping: ElasticsearchEndpoints['securityRoleMappingsDelete'] =
+	(ctx, input) =>
+		call(
+			ctx,
+			'securityRoleMappingsDelete',
+			'security.roleMappings.delete',
+			input,
+			{
+				method: 'DELETE',
+				path: (parsed) => `/_security/role_mapping/${target(parsed.name)}`,
+				query: (parsed) => pickQuery(parsed, ['refresh']),
+			},
+		);

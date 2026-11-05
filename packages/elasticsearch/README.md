@@ -169,6 +169,16 @@ pnpm add @corsair-dev/elasticsearch
 | `security.users.query` | `elasticsearch.api.security.users.query` | `read` | Find users with a typed query over username and profile fields (POST /_security/_query/user), search-style hits envelope |
 | `security.hasPrivileges` | `elasticsearch.api.security.hasPrivileges` | `read` | Check cluster, index and application privileges for one user (POST /_security/user/{user}/_has_privileges); the reply maps each privilege to a boolean |
 | `security.getUserPrivileges` | `elasticsearch.api.security.getUserPrivileges` | `read` | List the privileges of the authenticated principal (GET /_security/user/_privileges): cluster, index, application, global and run_as grants |
+| `security.roles.get` | `elasticsearch.api.security.roles.get` | `read` | Get roles by comma-separated names or wildcards (GET /_security/role/{name}), keyed by role name with their full privilege descriptors |
+| `security.roles.put` | `elasticsearch.api.security.roles.put` | `write` | Create or update one role (POST /_security/role/{name}) with cluster, index, application, run_as and global privilege sections |
+| `security.roles.delete` | `elasticsearch.api.security.roles.delete` | `destructive` | Delete a role (DELETE /_security/role/{name}); holders of the role lose its grants immediately, replies found: true when removed |
+| `security.roles.bulkPut` | `elasticsearch.api.security.roles.bulkPut` | `write` | Create or update several roles in one request (POST /_security/role) from a name-to-descriptor map, with per-role error details |
+| `security.roles.bulkDelete` | `elasticsearch.api.security.roles.bulkDelete` | `destructive` | Delete several roles in one request (DELETE /_security/role) by name list, with per-role error details |
+| `security.roles.clearCache` | `elasticsearch.api.security.roles.clearCache` | `write` | Evict roles from the security cache by comma-separated names (POST /_security/role/{name}/_clear_cache; * clears all) |
+| `security.roles.query` | `elasticsearch.api.security.roles.query` | `read` | Find roles with a typed query over name and privilege fields (POST /_security/_query/role), search-style hits envelope |
+| `security.roleMappings.get` | `elasticsearch.api.security.roleMappings.get` | `read` | Get role mappings by comma-separated names (GET /_security/role_mapping/{name}), keyed by mapping name |
+| `security.roleMappings.put` | `elasticsearch.api.security.roleMappings.put` | `write` | Create or update a role mapping (POST /_security/role_mapping/{name}) granting static roles or mustache role_templates under rules |
+| `security.roleMappings.delete` | `elasticsearch.api.security.roleMappings.delete` | `destructive` | Delete a role mapping (DELETE /_security/role_mapping/{name}); replies found: true when a mapping was removed |
 
 Risk levels follow the operation's effect on the cluster: `read` never mutates, `write` changes documents or index/cluster state, `destructive` deletes data. Mutating calls (POST/PUT/DELETE) are never replayed on 5xx or timeout, because the change may already have been applied; 429 retries remain safe (the request was rejected before executing).
 
