@@ -20,7 +20,8 @@ const CallSummarySchema = z
 		agent_id: z.string().optional(),
 		call_status: z.string().optional(),
 		start_timestamp: z.number().optional(),
-		end_timestamp: z.number().optional(),
+		// Unset while a call is still in progress.
+		end_timestamp: z.number().nullish(),
 		direction: z.string().optional(),
 		from_number: z.string().optional(),
 		to_number: z.string().optional(),
@@ -45,7 +46,8 @@ const ChatSummarySchema = z
 		agent_id: z.string().optional(),
 		chat_status: z.string().optional(),
 		start_timestamp: z.number().optional(),
-		end_timestamp: z.number().optional(),
+		// Retell returns null until the chat ends.
+		end_timestamp: z.number().nullish(),
 		metadata: OpaqueObjectSchema.optional(),
 	})
 	.loose();

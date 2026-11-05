@@ -8,6 +8,7 @@ import {
 import { errorHandlers } from './error-handlers';
 import type { RetellContext } from './index';
 import { retellai } from './index';
+import { RetellSchema } from './schema';
 
 jest.mock('./client', () => ({
 	makeRetellRequest: jest.fn(),
@@ -157,6 +158,40 @@ describe('Retell endpoints', () => {
 	it('validates chat list responses before returning them', async () => {
 		request.mockResolvedValue({ items: [{ chat_id: 42 }] });
 		await expect(Chats.list(ctx, {})).rejects.toThrow();
+	});
+
+	it('accepts and caches an ongoing chat whose end_timestamp is null', async () => {
+		const upsertByEntityId = jest.fn();
+		const ongoing = {
+			chat_id: 'chat-2',
+			agent_id: 'agent-1',
+			chat_status: 'ongoing',
+			start_timestamp: 1700000000000,
+			end_timestamp: null,
+		};
+		request.mockResolvedValue({ items: [ongoing], has_more: false });
+		await expect(Chats.list(ctx, {})).resolves.toBeDefined();
+
+		request.mockResolvedValue(ongoing);
+		const result = await Chats.get(
+			createTestContext({
+				db: {
+					calls: { upsertByEntityId: jest.fn() },
+					chats: { upsertByEntityId },
+				},
+			}),
+			{ id: 'chat-2' },
+		);
+		expect(result.end_timestamp).toBeNull();
+		expect(upsertByEntityId).toHaveBeenCalledWith('chat-2', ongoing);
+		// The ORM parses cached data with the entity schema on write.
+		expect(RetellSchema.entities.chats.safeParse(ongoing).success).toBe(true);
+		expect(
+			RetellSchema.entities.calls.safeParse({
+				call_id: 'call-2',
+				end_timestamp: null,
+			}).success,
+		).toBe(true);
 	});
 
 	it('gets a chat detail record containing analysis', async () => {

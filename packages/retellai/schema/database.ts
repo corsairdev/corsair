@@ -9,7 +9,7 @@ export const RetellCallEntity = z
 		agent_id: z.string().optional(),
 		call_status: z.string().optional(),
 		start_timestamp: z.number().optional(),
-		end_timestamp: z.number().optional(),
+		end_timestamp: z.number().nullish(),
 		transcript: z.string().optional(),
 		transcript_object: z.array(z.record(z.string(), z.unknown())).optional(),
 		recording_url: z.string().optional(),
@@ -24,7 +24,7 @@ export const RetellChatEntity = z
 		agent_id: z.string().optional(),
 		chat_status: z.string().optional(),
 		start_timestamp: z.number().optional(),
-		end_timestamp: z.number().optional(),
+		end_timestamp: z.number().nullish(),
 		transcript: z.string().optional(),
 		transcript_with_tool_calls: z
 			.array(z.record(z.string(), z.unknown()))
