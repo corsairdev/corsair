@@ -10,7 +10,9 @@ Use **eSputnik** through Corsair: one client, typed API calls.
 **Things to know:**
 
 - **Rate limits.** Message reads (`getEmail`, `getViberMessage` and the like) allow 500 requests an hour. Contact writes allow 200 a second, and `addContact` rejects the same contact twice within a minute (409). Calls that hit 429 are retried with backoff.
-- **Empty answers.** Deletes, updates and other acknowledgements often come back with an empty body. Those operations return `undefined` or a short string; an error is thrown only when eSputnik answers with an error status.
+- **Acknowledgements.** Deletes, updates and segment or unsubscribe changes return `undefined`: eSputnik answers them with an empty body or a sentence such as "Email with id='42' has been deleted". A failure throws, and the error message carries eSputnik's explanation when it sends one ("Contact not found").
+- **Lists.** List operations always return an array, including when eSputnik sends a single match as a bare object (email template search does) or an empty body.
+- **Not set up yet.** `site.getScript` and `site.getWebPushScript` fail until a domain is registered, `productFeeds.getProductFeedsConfiguration` answers 404 until a feed is configured, and `contacts.getGroupContacts` works on static segments only.
 - **Contact fields.** Additional fields are `{ id, value }` pairs. List the ids with `contacts.getAdditionalFields`.
 - **Activity.** `contacts.contactActivity` has to be enabled by eSputnik support first and keeps 90 days. `contacts.contactMessages` needs a contact identifier and a `dateFrom` less than a year old.
 - **Broadcasts.** Broadcast ids are strings. `broadcasts.createBroadcast` sends a prepared message (`messageId`) to segment ids (`groups`).
