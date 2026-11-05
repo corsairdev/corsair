@@ -2520,7 +2520,8 @@ const renderEndpointMeta = {
 
 const defaultAuthType: AuthTypes = 'api_key';
 export const renderAuthConfig = {
-	api_key: { account: ['tenant_external_id'] as const },
+	// The API key is the only credential; keyBuilder reads nothing else.
+	api_key: { account: [] as const },
 } as const satisfies PluginAuthConfig;
 
 export type BaseRenderPlugin<T extends RenderPluginOptions> = CorsairPlugin<
