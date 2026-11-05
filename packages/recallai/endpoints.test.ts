@@ -39,32 +39,36 @@ const artifact = {
 	data: { download_url: 'https://downloads.example.test/artifact.json' },
 };
 
+const BOT_ID = bot.id;
+const botPath = (action: string) => `/api/v1/bot/${BOT_ID}/${action}/`;
+
 describe('Recall.ai bot endpoints', () => {
 	it('routes bot media and output actions to the documented paths', async () => {
 		const request = jest.mocked(makeRecallaiRequest);
-		request.mockResolvedValue(undefined);
-		await deleteBotMedia(recallaiTestContext, { id: 'bot-1' });
+		request.mockResolvedValue(bot);
+		await deleteBotMedia(recallaiTestContext, { id: BOT_ID });
 		await outputAudio(recallaiTestContext, {
-			id: 'bot-1',
+			id: BOT_ID,
 			kind: 'mp3',
 			b64_data: 'YQ==',
 		});
-		await stopOutputVideo(recallaiTestContext, { id: 'bot-1' });
+		request.mockResolvedValueOnce(undefined);
+		await stopOutputVideo(recallaiTestContext, { id: BOT_ID });
 		expect(request).toHaveBeenNthCalledWith(
 			1,
-			'/api/v1/bot/bot-1/delete_media/',
+			botPath('delete_media'),
 			'recall-key',
 			{ method: 'POST' },
 		);
 		expect(request).toHaveBeenNthCalledWith(
 			2,
-			'/api/v1/bot/bot-1/output_audio/',
+			botPath('output_audio'),
 			'recall-key',
 			{ method: 'POST', body: { kind: 'mp3', b64_data: 'YQ==' } },
 		);
 		expect(request).toHaveBeenNthCalledWith(
 			3,
-			'/api/v1/bot/bot-1/output_video/',
+			botPath('output_video'),
 			'recall-key',
 			{ method: 'DELETE' },
 		);
@@ -72,108 +76,136 @@ describe('Recall.ai bot endpoints', () => {
 
 	it('sends participant and chat payloads without mixing bot and participant IDs', async () => {
 		const request = jest.mocked(makeRecallaiRequest);
-		request.mockResolvedValue(undefined);
+		request.mockResolvedValue(bot);
 		await pinParticipant(recallaiTestContext, {
-			bot_id: 'bot-1',
+			bot_id: BOT_ID,
 			participant_id: 42,
 		});
 		await sendChatMessage(recallaiTestContext, {
-			id: 'bot-1',
+			id: BOT_ID,
 			message: 'hello',
 			pin: true,
 		});
 		expect(request).toHaveBeenNthCalledWith(
 			1,
-			'/api/v1/bot/bot-1/pin_participant/',
+			botPath('pin_participant'),
 			'recall-key',
 			{ method: 'POST', body: { id: 42 } },
 		);
 		expect(request).toHaveBeenNthCalledWith(
 			2,
-			'/api/v1/bot/bot-1/send_chat_message/',
+			botPath('send_chat_message'),
 			'recall-key',
-			{ method: 'POST', body: { to: undefined, message: 'hello', pin: true } },
+			{ method: 'POST', body: { message: 'hello', pin: true } },
 		);
 	});
 
-	it('asserts the public routes for every bot action', async () => {
+	it('returns the updated bot from every action POST and nothing from the stop calls', async () => {
 		const request = jest.mocked(makeRecallaiRequest);
-		request.mockResolvedValue(undefined);
+		// Recall answers every action POST with the bot and every stop DELETE
+		// with 204 (no body).
+		request.mockImplementation(async (_path, _key, options) =>
+			options?.method === 'DELETE' ? undefined : bot,
+		);
 		const plugin = recallai({ key: 'recall-key' });
 		if (!plugin.endpoints) throw new Error('Recall.ai endpoints are missing');
 		const actions = plugin.endpoints.botActions;
 		const ctx = recallaiTestContext;
 
-		const responses = await Promise.all([
-			actions.deleteBotMedia(ctx, { id: 'bot-1' }),
-			actions.leaveBotCall(ctx, { id: 'bot-1' }),
-			actions.outputAudio(ctx, {
-				id: 'bot-1',
+		const responses = [
+			await actions.deleteBotMedia(ctx, { id: BOT_ID }),
+			await actions.leaveBotCall(ctx, { id: BOT_ID }),
+			await actions.outputAudio(ctx, {
+				id: BOT_ID,
 				kind: 'mp3',
 				b64_data: 'YQ==',
 			}),
-			actions.stopOutputAudio(ctx, { id: 'bot-1' }),
-			actions.outputMedia(ctx, { id: 'bot-1', camera: {} }),
-			actions.stopOutputMedia(ctx, { id: 'bot-1' }),
-			actions.startScreenshare(ctx, {
-				id: 'bot-1',
+			await actions.stopOutputAudio(ctx, { id: BOT_ID }),
+			await actions.outputMedia(ctx, {
+				id: BOT_ID,
+				camera: { kind: 'webpage', config: { url: 'https://example.com' } },
+			}),
+			await actions.stopOutputMedia(ctx, {
+				id: BOT_ID,
+				camera: true,
+				screenshare: false,
+			}),
+			await actions.startScreenshare(ctx, {
+				id: BOT_ID,
 				kind: 'jpeg',
 				b64_data: 'YQ==',
 			}),
-			actions.stopScreenshare(ctx, { id: 'bot-1' }),
-			actions.outputVideo(ctx, {
-				id: 'bot-1',
-				kind: 'mp4',
+			await actions.stopScreenshare(ctx, { id: BOT_ID }),
+			await actions.outputVideo(ctx, {
+				id: BOT_ID,
+				kind: 'jpeg',
 				b64_data: 'YQ==',
 			}),
-			actions.stopOutputVideo(ctx, { id: 'bot-1' }),
-			actions.pauseRecording(ctx, { id: 'bot-1' }),
-			actions.pinParticipant(ctx, { bot_id: 'bot-1', participant_id: 42 }),
-			actions.resumeRecording(ctx, { id: 'bot-1' }),
-			actions.sendChatMessage(ctx, { id: 'bot-1', message: 'hello' }),
-			actions.startRecording(ctx, { id: 'bot-1' }),
-			actions.stopRecording(ctx, { id: 'bot-1' }),
-		]);
-		expect(responses).toEqual(Array.from({ length: 16 }, () => undefined));
+			await actions.stopOutputVideo(ctx, { id: BOT_ID }),
+			await actions.pauseRecording(ctx, { id: BOT_ID }),
+			await actions.pinParticipant(ctx, { bot_id: BOT_ID, participant_id: 42 }),
+			await actions.resumeRecording(ctx, { id: BOT_ID }),
+			await actions.sendChatMessage(ctx, { id: BOT_ID, message: 'hello' }),
+			await actions.startRecording(ctx, {
+				id: BOT_ID,
+				recording_config: {
+					transcript: { provider: { recallai_streaming: {} } },
+				},
+			}),
+			await actions.stopRecording(ctx, { id: BOT_ID }),
+		];
+		const stopIndexes = new Set([3, 5, 7, 9]);
+		responses.forEach((response, index) => {
+			if (stopIndexes.has(index)) expect(response).toBeUndefined();
+			else expect(response).toEqual(bot);
+		});
 
 		const expectedRoutes = [
-			['/api/v1/bot/bot-1/delete_media/', { method: 'POST' }],
-			['/api/v1/bot/bot-1/leave_call/', { method: 'POST' }],
+			[botPath('delete_media'), { method: 'POST' }],
+			[botPath('leave_call'), { method: 'POST' }],
 			[
-				'/api/v1/bot/bot-1/output_audio/',
+				botPath('output_audio'),
 				{ method: 'POST', body: { kind: 'mp3', b64_data: 'YQ==' } },
 			],
-			['/api/v1/bot/bot-1/output_audio/', { method: 'DELETE' }],
+			[botPath('output_audio'), { method: 'DELETE' }],
 			[
-				'/api/v1/bot/bot-1/output_media/',
-				{ method: 'POST', body: { camera: {}, screenshare: undefined } },
-			],
-			['/api/v1/bot/bot-1/output_media/', { method: 'DELETE' }],
-			[
-				'/api/v1/bot/bot-1/output_screenshare/',
-				{ method: 'POST', body: { kind: 'jpeg', b64_data: 'YQ==' } },
-			],
-			['/api/v1/bot/bot-1/output_screenshare/', { method: 'DELETE' }],
-			[
-				'/api/v1/bot/bot-1/output_video/',
-				{ method: 'POST', body: { kind: 'mp4', b64_data: 'YQ==' } },
-			],
-			['/api/v1/bot/bot-1/output_video/', { method: 'DELETE' }],
-			['/api/v1/bot/bot-1/pause_recording/', { method: 'POST' }],
-			[
-				'/api/v1/bot/bot-1/pin_participant/',
-				{ method: 'POST', body: { id: 42 } },
-			],
-			['/api/v1/bot/bot-1/resume_recording/', { method: 'POST' }],
-			[
-				'/api/v1/bot/bot-1/send_chat_message/',
+				botPath('output_media'),
 				{
 					method: 'POST',
-					body: { to: undefined, message: 'hello', pin: undefined },
+					body: {
+						camera: { kind: 'webpage', config: { url: 'https://example.com' } },
+					},
 				},
 			],
-			['/api/v1/bot/bot-1/start_recording/', { method: 'POST' }],
-			['/api/v1/bot/bot-1/stop_recording/', { method: 'POST' }],
+			[
+				botPath('output_media'),
+				{ method: 'DELETE', body: { camera: true, screenshare: false } },
+			],
+			[
+				botPath('output_screenshare'),
+				{ method: 'POST', body: { kind: 'jpeg', b64_data: 'YQ==' } },
+			],
+			[botPath('output_screenshare'), { method: 'DELETE' }],
+			[
+				botPath('output_video'),
+				{ method: 'POST', body: { kind: 'jpeg', b64_data: 'YQ==' } },
+			],
+			[botPath('output_video'), { method: 'DELETE' }],
+			[botPath('pause_recording'), { method: 'POST' }],
+			[botPath('pin_participant'), { method: 'POST', body: { id: 42 } }],
+			[botPath('resume_recording'), { method: 'POST' }],
+			[
+				botPath('send_chat_message'),
+				{ method: 'POST', body: { message: 'hello' } },
+			],
+			[
+				botPath('start_recording'),
+				{
+					method: 'POST',
+					body: { transcript: { provider: { recallai_streaming: {} } } },
+				},
+			],
+			[botPath('stop_recording'), { method: 'POST' }],
 		] as const;
 
 		for (const [index, [path, options]] of expectedRoutes.entries()) {
@@ -186,12 +218,33 @@ describe('Recall.ai bot endpoints', () => {
 		}
 	});
 
+	it('requires the outputs to stop and the media kind Recall accepts', async () => {
+		const request = jest.mocked(makeRecallaiRequest);
+		request.mockClear();
+		const plugin = recallai({ key: 'recall-key' });
+		if (!plugin.endpoints) throw new Error('Recall.ai endpoints are missing');
+		const actions = plugin.endpoints.botActions;
+		await expect(
+			actions.stopOutputMedia(recallaiTestContext, { id: BOT_ID } as never),
+		).rejects.toThrow();
+		await expect(
+			actions.outputVideo(recallaiTestContext, {
+				id: BOT_ID,
+				kind: 'mp4',
+				b64_data: 'YQ==',
+			} as never),
+		).rejects.toThrow();
+		expect(request).not.toHaveBeenCalled();
+	});
+
 	it('rejects unsafe action identifiers before transport', async () => {
 		const request = jest.mocked(makeRecallaiRequest);
 		request.mockClear();
-		await expect(
-			deleteBotMedia(recallaiTestContext, { id: '../secret' }),
-		).rejects.toThrow();
+		for (const id of ['../secret', '..', '.', 'bot-1']) {
+			await expect(
+				deleteBotMedia(recallaiTestContext, { id }),
+			).rejects.toThrow();
+		}
 		expect(request).not.toHaveBeenCalled();
 	});
 

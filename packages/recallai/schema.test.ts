@@ -188,30 +188,36 @@ describe('Recall.ai schema', () => {
 		if (!plugin.endpoints) throw new Error('Recall.ai endpoints are missing');
 
 		await expect(
-			plugin.endpoints.botActions.stopOutputAudio(ctx, { id: 'bot-1' }),
+			plugin.endpoints.botActions.stopOutputAudio(ctx, {
+				id: '550e8400-e29b-41d4-a716-446655440000',
+			}),
 		).resolves.toBeUndefined();
 		await expect(
-			plugin.endpoints.botActions.stopScreenshare(ctx, { id: 'bot-1' }),
+			plugin.endpoints.botActions.stopScreenshare(ctx, {
+				id: '550e8400-e29b-41d4-a716-446655440000',
+			}),
 		).resolves.toBeUndefined();
 		await expect(
-			plugin.endpoints.botActions.stopOutputVideo(ctx, { id: 'bot-1' }),
+			plugin.endpoints.botActions.stopOutputVideo(ctx, {
+				id: '550e8400-e29b-41d4-a716-446655440000',
+			}),
 		).resolves.toBeUndefined();
 
 		expect(request).toHaveBeenNthCalledWith(
 			1,
-			'/api/v1/bot/bot-1/output_audio/',
+			'/api/v1/bot/550e8400-e29b-41d4-a716-446655440000/output_audio/',
 			'recall-key',
 			{ method: 'DELETE' },
 		);
 		expect(request).toHaveBeenNthCalledWith(
 			2,
-			'/api/v1/bot/bot-1/output_screenshare/',
+			'/api/v1/bot/550e8400-e29b-41d4-a716-446655440000/output_screenshare/',
 			'recall-key',
 			{ method: 'DELETE' },
 		);
 		expect(request).toHaveBeenNthCalledWith(
 			3,
-			'/api/v1/bot/bot-1/output_video/',
+			'/api/v1/bot/550e8400-e29b-41d4-a716-446655440000/output_video/',
 			'recall-key',
 			{ method: 'DELETE' },
 		);

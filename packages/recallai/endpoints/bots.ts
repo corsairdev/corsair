@@ -9,7 +9,10 @@ import type {
 	PinParticipantInput,
 	RecallaiEndpointOutputs,
 	SendChatMessageInput,
+	StartRecordingInput,
+	StopOutputMediaInput,
 	UpdateBotInput,
+	VideoOutputInput,
 } from './types';
 import { RecallaiBotActionInputSchemas } from './types';
 
@@ -70,138 +73,198 @@ export const deleteBot: RecallaiEndpoints['deleteBot'] = async (ctx, input) => {
 
 const botActionPath = (id: string, action: string) =>
 	`${botPath(id)}${action}/`;
-const action =
+
+type BotContext = Parameters<RecallaiEndpoints['listBots']>[0];
+type BotResponse = RecallaiEndpointOutputs['retrieveBot'];
+
+/** POSTs a bot action and returns the updated bot Recall answers with. */
+const postBotAction = async (
+	ctx: BotContext,
+	botId: string,
+	actionPath: string,
+	operation: string,
+	// Bodies are validated by each action's input schema before this point.
+	body?: Record<string, unknown>,
+): Promise<BotResponse> => {
+	const response = await makeRecallaiContextRequest<BotResponse>(
+		ctx,
+		botActionPath(botId, actionPath),
+		body === undefined ? { method: 'POST' } : { method: 'POST', body },
+	);
+	await logEventFromContext(ctx, operation, { id: botId }, 'completed');
+	return response;
+};
+
+/** Stops one kind of bot output; Recall answers 204. */
+const stopBotOutput = async (
+	ctx: BotContext,
+	botId: string,
+	actionPath: string,
+	operation: string,
+	body?: Record<string, unknown>,
+): Promise<undefined> => {
+	await makeRecallaiContextRequest<undefined>(
+		ctx,
+		botActionPath(botId, actionPath),
+		body === undefined ? { method: 'DELETE' } : { method: 'DELETE', body },
+	);
+	await logEventFromContext(ctx, operation, { id: botId }, 'completed');
+	return undefined;
+};
+
+const simpleAction =
 	(
-		actionName: Exclude<
-			keyof typeof RecallaiBotActionInputSchemas,
-			'pinParticipant'
-		>,
-		method: 'POST' | 'DELETE' = 'POST',
-		schemaName: keyof typeof RecallaiBotActionInputSchemas = actionName,
-	) =>
-	async (
-		ctx: Parameters<RecallaiEndpoints['listBots']>[0],
-		input: BotActionInput,
-	) => {
-		const parsed = RecallaiBotActionInputSchemas[schemaName].parse(input);
-		const botId = 'id' in parsed ? parsed.id : parsed.bot_id;
-		await makeRecallaiContextRequest<undefined>(
-			ctx,
-			botActionPath(botId, actionNameToPath[actionName]),
-			{ method },
-		);
+		actionPath: string,
+		operation: string,
+	): ((ctx: BotContext, input: BotActionInput) => Promise<BotResponse>) =>
+	async (ctx, input) => {
+		const { id } = RecallaiBotActionInputSchemas.deleteBotMedia.parse(input);
+		return postBotAction(ctx, id, actionPath, operation);
 	};
 
-const actionNameToPath = {
-	deleteBotMedia: 'delete_media',
-	leaveBotCall: 'leave_call',
-	outputAudio: 'output_audio',
-	outputMedia: 'output_media',
-	outputScreenshare: 'output_screenshare',
-	outputVideo: 'output_video',
-	pauseRecording: 'pause_recording',
-	pinParticipant: 'pin_participant',
-	resumeRecording: 'resume_recording',
-	sendChatMessage: 'send_chat_message',
-	startRecording: 'start_recording',
-	stopRecording: 'stop_recording',
-} as const;
+const stopAction =
+	(
+		actionPath: string,
+		operation: string,
+	): ((ctx: BotContext, input: BotActionInput) => Promise<undefined>) =>
+	async (ctx, input) => {
+		const { id } = RecallaiBotActionInputSchemas.stopOutput.parse(input);
+		return stopBotOutput(ctx, id, actionPath, operation);
+	};
 
-export const deleteBotMedia = action('deleteBotMedia');
-export const leaveBotCall = action('leaveBotCall');
-export const outputAudio = async (
-	ctx: Parameters<RecallaiEndpoints['listBots']>[0],
-	input: AudioOutputInput,
-) => {
-	const parsed = RecallaiBotActionInputSchemas.outputAudio.parse(input);
-	return makeRecallaiContextRequest(
+export const deleteBotMedia = simpleAction(
+	'delete_media',
+	'recallai.bots.deleteMedia',
+);
+export const leaveBotCall = simpleAction(
+	'leave_call',
+	'recallai.bots.leaveCall',
+);
+export const outputAudio = async (ctx: BotContext, input: AudioOutputInput) => {
+	const { id, ...body } =
+		RecallaiBotActionInputSchemas.outputAudio.parse(input);
+	return postBotAction(
 		ctx,
-		botActionPath(parsed.id, 'output_audio'),
-		{ method: 'POST', body: { kind: parsed.kind, b64_data: parsed.b64_data } },
+		id,
+		'output_audio',
+		'recallai.bots.outputAudio',
+		body,
 	);
 };
-export const stopOutputAudio = action(
-	'outputAudio',
-	'DELETE',
-	'deleteBotMedia',
+export const stopOutputAudio = stopAction(
+	'output_audio',
+	'recallai.bots.stopOutputAudio',
 );
-export const outputMedia = async (
-	ctx: Parameters<RecallaiEndpoints['listBots']>[0],
-	input: OutputMediaInput,
-) => {
-	const parsed = RecallaiBotActionInputSchemas.outputMedia.parse(input);
-	return makeRecallaiContextRequest(
+export const outputMedia = async (ctx: BotContext, input: OutputMediaInput) => {
+	const { id, ...body } =
+		RecallaiBotActionInputSchemas.outputMedia.parse(input);
+	return postBotAction(
 		ctx,
-		botActionPath(parsed.id, 'output_media'),
-		{
-			method: 'POST',
-			body: { camera: parsed.camera, screenshare: parsed.screenshare },
-		},
+		id,
+		'output_media',
+		'recallai.bots.outputMedia',
+		body,
 	);
 };
-export const stopOutputMedia = action(
-	'outputMedia',
-	'DELETE',
-	'deleteBotMedia',
-);
+/** Recall needs to know which outputs to stop: camera, screenshare or both. */
+export const stopOutputMedia = async (
+	ctx: BotContext,
+	input: StopOutputMediaInput,
+) => {
+	const { id, ...body } =
+		RecallaiBotActionInputSchemas.stopOutputMedia.parse(input);
+	return stopBotOutput(
+		ctx,
+		id,
+		'output_media',
+		'recallai.bots.stopOutputMedia',
+		body,
+	);
+};
 export const startScreenshare = async (
-	ctx: Parameters<RecallaiEndpoints['listBots']>[0],
-	input: AudioOutputInput,
+	ctx: BotContext,
+	input: VideoOutputInput,
 ) => {
-	const parsed = RecallaiBotActionInputSchemas.outputScreenshare.parse(input);
-	return makeRecallaiContextRequest(
+	const { id, ...body } =
+		RecallaiBotActionInputSchemas.outputScreenshare.parse(input);
+	return postBotAction(
 		ctx,
-		botActionPath(parsed.id, 'output_screenshare'),
-		{ method: 'POST', body: { kind: parsed.kind, b64_data: parsed.b64_data } },
+		id,
+		'output_screenshare',
+		'recallai.bots.startScreenshare',
+		body,
 	);
 };
-export const stopScreenshare = action(
-	'outputScreenshare',
-	'DELETE',
-	'deleteBotMedia',
+export const stopScreenshare = stopAction(
+	'output_screenshare',
+	'recallai.bots.stopScreenshare',
 );
-export const outputVideo = async (
-	ctx: Parameters<RecallaiEndpoints['listBots']>[0],
-	input: AudioOutputInput,
-) => {
-	const parsed = RecallaiBotActionInputSchemas.outputVideo.parse(input);
-	return makeRecallaiContextRequest(
+export const outputVideo = async (ctx: BotContext, input: VideoOutputInput) => {
+	const { id, ...body } =
+		RecallaiBotActionInputSchemas.outputVideo.parse(input);
+	return postBotAction(
 		ctx,
-		botActionPath(parsed.id, 'output_video'),
-		{ method: 'POST', body: { kind: parsed.kind, b64_data: parsed.b64_data } },
+		id,
+		'output_video',
+		'recallai.bots.outputVideo',
+		body,
 	);
 };
-export const stopOutputVideo = action(
-	'outputVideo',
-	'DELETE',
-	'deleteBotMedia',
+export const stopOutputVideo = stopAction(
+	'output_video',
+	'recallai.bots.stopOutputVideo',
 );
-export const pauseRecording = action('pauseRecording');
+export const pauseRecording = simpleAction(
+	'pause_recording',
+	'recallai.bots.pauseRecording',
+);
 export const pinParticipant = async (
-	ctx: Parameters<RecallaiEndpoints['listBots']>[0],
+	ctx: BotContext,
 	input: PinParticipantInput,
 ) => {
 	const parsed = RecallaiBotActionInputSchemas.pinParticipant.parse(input);
-	return makeRecallaiContextRequest(
+	return postBotAction(
 		ctx,
-		botActionPath(parsed.bot_id, 'pin_participant'),
-		{ method: 'POST', body: { id: parsed.participant_id } },
+		parsed.bot_id,
+		'pin_participant',
+		'recallai.bots.pinParticipant',
+		{ id: parsed.participant_id },
 	);
 };
-export const resumeRecording = action('resumeRecording');
+export const resumeRecording = simpleAction(
+	'resume_recording',
+	'recallai.bots.resumeRecording',
+);
 export const sendChatMessage = async (
-	ctx: Parameters<RecallaiEndpoints['listBots']>[0],
+	ctx: BotContext,
 	input: SendChatMessageInput,
 ) => {
-	const parsed = RecallaiBotActionInputSchemas.sendChatMessage.parse(input);
-	return makeRecallaiContextRequest(
+	const { id, ...body } =
+		RecallaiBotActionInputSchemas.sendChatMessage.parse(input);
+	return postBotAction(
 		ctx,
-		botActionPath(parsed.id, 'send_chat_message'),
-		{
-			method: 'POST',
-			body: { to: parsed.to, message: parsed.message, pin: parsed.pin },
-		},
+		id,
+		'send_chat_message',
+		'recallai.bots.sendChatMessage',
+		body,
 	);
 };
-export const startRecording = action('startRecording');
-export const stopRecording = action('stopRecording');
+/** Restarts the recording; `recording_config` replaces the bot's current one. */
+export const startRecording = async (
+	ctx: BotContext,
+	input: StartRecordingInput,
+) => {
+	const { id, recording_config } =
+		RecallaiBotActionInputSchemas.startRecording.parse(input);
+	return postBotAction(
+		ctx,
+		id,
+		'start_recording',
+		'recallai.bots.startRecording',
+		recording_config,
+	);
+};
+export const stopRecording = simpleAction(
+	'stop_recording',
+	'recallai.bots.stopRecording',
+);

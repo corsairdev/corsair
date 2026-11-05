@@ -51,44 +51,78 @@ import {
 
 export { UpdateParticipantEventsInputSchema } from './artifact-types';
 
-const id = z
-	.string()
-	.min(1)
-	.refine((value) => !/[\\/]/.test(value), {
-		message: 'Identifiers cannot contain path separators',
-	});
+// Recall identifies every bot by UUID. Requiring one keeps `.`, `..` and
+// path separators out of the request path.
+const id = z.string().uuid();
 
 // Recall returns provider-specific nested configuration objects. The known
 // envelope is validated while these opaque sections remain extensible.
 const opaqueObject = RecallaiJsonObjectSchema;
 
+// Output fields stay loose (plain strings, open objects) so a new value from
+// Recall does not fail a call that already succeeded.
 const BotSchema = z
 	.object({
-		id: z.string().uuid().optional(),
-		meeting_url: z.union([z.string().url(), opaqueObject]).optional(),
-		bot_name: z.string().max(100).optional(),
-		join_at: z.string().datetime().optional(),
+		id: z.string(),
+		meeting_url: z.union([z.string(), opaqueObject]).nullable().optional(),
+		bot_name: z.string().optional(),
+		join_at: z.string().nullable().optional(),
 		status_changes: z.array(opaqueObject).optional(),
 		recordings: z.array(opaqueObject).optional(),
-		metadata: opaqueObject.optional(),
+		metadata: opaqueObject.nullable().optional(),
 	})
 	.passthrough();
 
 const ListBotsResponseSchema = z.object({
-	count: z.number().int().nonnegative(),
-	next: z.string().url().nullable().optional(),
-	previous: z.string().url().nullable().optional(),
+	// Recall leaves `count` out of cursor-paginated pages.
+	count: z.number().int().nonnegative().optional(),
+	next: z.string().nullable().optional(),
+	previous: z.string().nullable().optional(),
 	results: z.array(BotSchema),
 });
 
+const BotPlatformSchema = z.enum([
+	'chime_sdk',
+	'google_meet',
+	'google_meet_media_api',
+	'goto_meeting',
+	'microsoft_teams',
+	'microsoft_teams_live',
+	'slack_authenticator',
+	'slack_huddle_observer',
+	'webex',
+	'zoom',
+	'zoom_rtms',
+]);
+const BotStatusSchema = z.enum([
+	'analysis_done',
+	'analysis_failed',
+	'call_ended',
+	'done',
+	'fatal',
+	'in_call_not_recording',
+	'in_call_recording',
+	'in_waiting_room',
+	'joining_call',
+	'media_expired',
+	'ready',
+	'recording_done',
+	'recording_permission_allowed',
+	'recording_permission_denied',
+]);
+
 const ListBotsInputSchema = z.object({
-	join_at_after: z.string().datetime().optional(),
-	join_at_before: z.string().datetime().optional(),
+	// Recall takes a date (2026-01-31) or a full ISO timestamp here.
+	join_at_after: z.string().min(1).optional(),
+	join_at_before: z.string().min(1).optional(),
 	meeting_url: z.string().url().optional(),
 	page: z.number().int().positive().optional(),
-	platform: z.array(z.string()).optional(),
-	status: z.array(z.string()).optional(),
+	platform: z.array(BotPlatformSchema).optional(),
+	status: z.array(BotStatusSchema).optional(),
+	// Any value switches the list to cursor pagination; pass the `cursor`
+	// from the previous page's `next` URL to continue.
 	use_cursor: z.string().optional(),
+	cursor: z.string().optional(),
 });
 
 const CreateBotInputSchema = z
@@ -103,18 +137,20 @@ const CreateBotInputSchema = z
 
 const RetrieveBotInputSchema = z.object({ id });
 
+// Only scheduled bots that have not joined yet can be updated.
 const UpdateBotInputSchema = z
 	.object({
 		id,
+		meeting_url: z.string().url().optional(),
+		join_at: z.string().datetime({ offset: true }).optional(),
 		bot_name: z.string().max(100).optional(),
 		metadata: opaqueObject.optional(),
 		recording_config: opaqueObject.optional(),
 	})
 	.refine(
-		({ bot_name, metadata, recording_config }) =>
-			bot_name !== undefined ||
-			metadata !== undefined ||
-			recording_config !== undefined,
+		({ id: _id, ...fields }) =>
+			Object.values(fields).some((value) => value !== undefined),
+		{ message: 'Pass at least one field to update' },
 	);
 
 export type ListBotsInput = z.infer<typeof ListBotsInputSchema>;
@@ -222,16 +258,16 @@ export type RecallaiEndpointInputs = ArtifactEndpointInputs &
 		outputAudio: AudioOutputInput;
 		stopOutputAudio: BotActionInput;
 		outputMedia: OutputMediaInput;
-		stopOutputMedia: BotActionInput;
-		startScreenshare: AudioOutputInput;
+		stopOutputMedia: StopOutputMediaInput;
+		startScreenshare: VideoOutputInput;
 		stopScreenshare: BotActionInput;
-		outputVideo: AudioOutputInput;
+		outputVideo: VideoOutputInput;
 		stopOutputVideo: BotActionInput;
 		pauseRecording: BotActionInput;
 		pinParticipant: PinParticipantInput;
 		resumeRecording: BotActionInput;
 		sendChatMessage: SendChatMessageInput;
-		startRecording: BotActionInput;
+		startRecording: StartRecordingInput;
 		stopRecording: BotActionInput;
 	};
 
@@ -309,22 +345,22 @@ export type RecallaiEndpointOutputs = ArtifactEndpointOutputs &
 		retrieveBot: BotResponse;
 		updateBot: BotResponse;
 		deleteBot: undefined;
-		deleteBotMedia: undefined;
-		leaveBotCall: undefined;
-		outputAudio: RecallaiJsonObject;
+		deleteBotMedia: BotResponse;
+		leaveBotCall: BotResponse;
+		outputAudio: BotResponse;
 		stopOutputAudio: undefined;
-		outputMedia: RecallaiJsonObject;
+		outputMedia: BotResponse;
 		stopOutputMedia: undefined;
-		startScreenshare: RecallaiJsonObject;
+		startScreenshare: BotResponse;
 		stopScreenshare: undefined;
-		outputVideo: RecallaiJsonObject;
+		outputVideo: BotResponse;
 		stopOutputVideo: undefined;
-		pauseRecording: undefined;
-		pinParticipant: undefined;
-		resumeRecording: undefined;
-		sendChatMessage: undefined;
-		startRecording: undefined;
-		stopRecording: undefined;
+		pauseRecording: BotResponse;
+		pinParticipant: BotResponse;
+		resumeRecording: BotResponse;
+		sendChatMessage: BotResponse;
+		startRecording: BotResponse;
+		stopRecording: BotResponse;
 	};
 
 export const RecallaiEndpointInputSchemas = {
@@ -410,22 +446,24 @@ export const RecallaiEndpointOutputSchemas = {
 	retrieveBot: BotSchema,
 	updateBot: BotSchema,
 	deleteBot: z.undefined(),
-	deleteBotMedia: z.undefined(),
-	leaveBotCall: z.undefined(),
-	outputAudio: RecallaiJsonObjectSchema.optional(),
+	// Every bot action POST answers with the updated bot; the stop calls
+	// (DELETE) answer 204.
+	deleteBotMedia: BotSchema,
+	leaveBotCall: BotSchema,
+	outputAudio: BotSchema,
 	stopOutputAudio: z.undefined(),
-	outputMedia: RecallaiJsonObjectSchema.optional(),
+	outputMedia: BotSchema,
 	stopOutputMedia: z.undefined(),
-	startScreenshare: RecallaiJsonObjectSchema.optional(),
+	startScreenshare: BotSchema,
 	stopScreenshare: z.undefined(),
-	outputVideo: RecallaiJsonObjectSchema.optional(),
+	outputVideo: BotSchema,
 	stopOutputVideo: z.undefined(),
-	pauseRecording: z.undefined(),
-	pinParticipant: z.undefined(),
-	resumeRecording: z.undefined(),
-	sendChatMessage: z.undefined(),
-	startRecording: z.undefined(),
-	stopRecording: z.undefined(),
+	pauseRecording: BotSchema,
+	pinParticipant: BotSchema,
+	resumeRecording: BotSchema,
+	sendChatMessage: BotSchema,
+	startRecording: BotSchema,
+	stopRecording: BotSchema,
 	createSdkUpload: opaqueObject,
 	retrieveSdkUpload: opaqueObject,
 	updateMeetingMetadata: opaqueObject,
@@ -467,13 +505,25 @@ export const RecallaiEndpointOutputSchemas = {
 
 const BotActionInputSchema = z.object({ id });
 const AudioOutputInputSchema = BotActionInputSchema.extend({
-	kind: z.string().min(1),
+	kind: z.literal('mp3'),
 	b64_data: z.string().min(1),
 });
-const VideoOutputInputSchema = AudioOutputInputSchema;
+const VideoOutputInputSchema = BotActionInputSchema.extend({
+	kind: z.literal('jpeg'),
+	b64_data: z.string().min(1),
+});
 const OutputMediaInputSchema = BotActionInputSchema.extend({
 	camera: opaqueObject.optional(),
 	screenshare: opaqueObject.optional(),
+});
+const StopOutputMediaInputSchema = BotActionInputSchema.extend({
+	camera: z.boolean(),
+	screenshare: z.boolean(),
+});
+const StartRecordingInputSchema = BotActionInputSchema.extend({
+	// Same shape as `recording_config` on bots.create; sent as the request
+	// body. Omit it to restart with the bot's current configuration.
+	recording_config: opaqueObject.optional(),
 });
 const PinParticipantInputSchema = z.object({
 	bot_id: id,
@@ -487,7 +537,10 @@ const SendChatMessageInputSchema = BotActionInputSchema.extend({
 
 export type BotActionInput = z.infer<typeof BotActionInputSchema>;
 export type AudioOutputInput = z.infer<typeof AudioOutputInputSchema>;
+export type VideoOutputInput = z.infer<typeof VideoOutputInputSchema>;
 export type OutputMediaInput = z.infer<typeof OutputMediaInputSchema>;
+export type StopOutputMediaInput = z.infer<typeof StopOutputMediaInputSchema>;
+export type StartRecordingInput = z.infer<typeof StartRecordingInputSchema>;
 export type PinParticipantInput = z.infer<typeof PinParticipantInputSchema>;
 export type SendChatMessageInput = z.infer<typeof SendChatMessageInputSchema>;
 
@@ -495,13 +548,15 @@ export const RecallaiBotActionInputSchemas = {
 	deleteBotMedia: BotActionInputSchema,
 	leaveBotCall: BotActionInputSchema,
 	outputAudio: AudioOutputInputSchema,
+	stopOutput: BotActionInputSchema,
 	outputMedia: OutputMediaInputSchema,
+	stopOutputMedia: StopOutputMediaInputSchema,
 	outputScreenshare: VideoOutputInputSchema,
 	outputVideo: VideoOutputInputSchema,
 	pauseRecording: BotActionInputSchema,
 	pinParticipant: PinParticipantInputSchema,
 	resumeRecording: BotActionInputSchema,
 	sendChatMessage: SendChatMessageInputSchema,
-	startRecording: BotActionInputSchema,
+	startRecording: StartRecordingInputSchema,
 	stopRecording: BotActionInputSchema,
 } as const;

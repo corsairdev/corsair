@@ -568,7 +568,7 @@ export const recallaiEndpointSchemas = {
 		output: RecallaiEndpointOutputSchemas.outputAudio,
 	},
 	'botActions.stopOutputAudio': {
-		input: RecallaiBotActionInputSchemas.deleteBotMedia,
+		input: RecallaiBotActionInputSchemas.stopOutput,
 		output: RecallaiEndpointOutputSchemas.stopOutputAudio,
 	},
 	'botActions.outputMedia': {
@@ -576,7 +576,7 @@ export const recallaiEndpointSchemas = {
 		output: RecallaiEndpointOutputSchemas.outputMedia,
 	},
 	'botActions.stopOutputMedia': {
-		input: RecallaiBotActionInputSchemas.deleteBotMedia,
+		input: RecallaiBotActionInputSchemas.stopOutputMedia,
 		output: RecallaiEndpointOutputSchemas.stopOutputMedia,
 	},
 	'botActions.startScreenshare': {
@@ -584,7 +584,7 @@ export const recallaiEndpointSchemas = {
 		output: RecallaiEndpointOutputSchemas.startScreenshare,
 	},
 	'botActions.stopScreenshare': {
-		input: RecallaiBotActionInputSchemas.deleteBotMedia,
+		input: RecallaiBotActionInputSchemas.stopOutput,
 		output: RecallaiEndpointOutputSchemas.stopScreenshare,
 	},
 	'botActions.outputVideo': {
@@ -592,7 +592,7 @@ export const recallaiEndpointSchemas = {
 		output: RecallaiEndpointOutputSchemas.outputVideo,
 	},
 	'botActions.stopOutputVideo': {
-		input: RecallaiBotActionInputSchemas.deleteBotMedia,
+		input: RecallaiBotActionInputSchemas.stopOutput,
 		output: RecallaiEndpointOutputSchemas.stopOutputVideo,
 	},
 	'botActions.pauseRecording': {

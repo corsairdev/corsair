@@ -134,7 +134,9 @@ describe('Recall.ai regional request routing', () => {
 	});
 
 	it('points a rejected key at the region setting', async () => {
-		const unauthorized = Object.assign(new ApiError('Unauthorized'), {
+		// The mocked ApiError takes only a message; status is what the client reads.
+		const MockApiError = ApiError as unknown as new (message: string) => Error;
+		const unauthorized = Object.assign(new MockApiError('Unauthorized'), {
 			status: 401,
 		});
 		jest.mocked(request).mockRejectedValueOnce(unauthorized);
