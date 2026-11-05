@@ -20,6 +20,10 @@ const OPS = [
 	'memories.list',
 	'memories.search',
 	'memories.update',
+	'webhooks.create',
+	'webhooks.delete',
+	'webhooks.list',
+	'webhooks.update',
 ];
 
 function keyBuilderOf(plugin: { keyBuilder?: unknown }) {
@@ -86,6 +90,8 @@ describe('mem0 plugin registration', () => {
 		);
 		expect(mem0EndpointMeta['memories.get'].riskLevel).toBe('read');
 		expect(mem0EndpointMeta['memories.search'].riskLevel).toBe('read');
+		expect(mem0EndpointMeta['webhooks.delete'].riskLevel).toBe('destructive');
+		expect(mem0EndpointMeta['webhooks.list'].riskLevel).toBe('read');
 	});
 
 	it('registers no inbound webhooks', () => {

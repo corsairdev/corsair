@@ -175,3 +175,30 @@ export const serverError = {
 	error: '500 Internal Server Error',
 	details: { message: 'An unexpected error occurred.' },
 };
+
+/** 200 on webhooks.list, and 201 on webhooks.create. */
+export const webhook = {
+	webhook_id: 'wh_123',
+	name: 'Memory Logger',
+	url: 'https://your-app.example/webhook',
+	owner: 'alice',
+	event_types: ['memory_add', 'memory_categorize'],
+	project: 'default-project',
+	is_active: true,
+	created_at: '2025-02-18T22:59:56.804993-08:00',
+	updated_at: '2025-02-18T23:06:41.479361-08:00',
+};
+
+/** 200 on webhooks.update. */
+export const webhookUpdated = { message: 'Webhook updated successfully' };
+
+/** 200 on webhooks.delete. */
+export const webhookDeleted = { message: 'Webhook deleted successfully' };
+
+/** 403 when the key cannot see the project. */
+export const webhookForbidden = {
+	error: "You don't have access to this project",
+};
+
+/** 400 from webhooks.create, keyed by request field. */
+export const webhookInvalid = { name: ['This field is required.'] };

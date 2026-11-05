@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import { Mem0APIError } from './client';
-import { Events, Memories } from './endpoints';
+import { Events, Memories, Webhooks } from './endpoints';
 import {
 	addedQueued,
 	addedVerbatim,
@@ -19,6 +19,11 @@ import {
 	memoryPage,
 	searchResults,
 	updatedMemory,
+	webhook,
+	webhookDeleted,
+	webhookForbidden,
+	webhookInvalid,
+	webhookUpdated,
 } from './test-fixtures';
 
 jest.mock('corsair/core', () => ({
@@ -663,6 +668,189 @@ describe('events.list', () => {
 			expect.anything(),
 			'mem0.events.list',
 			{ count: 1, page: 1 },
+			'completed',
+		);
+	});
+});
+
+describe('webhooks.list', () => {
+	it('GETs the project webhooks on the API prefix and wraps the array', async () => {
+		respond([webhook]);
+
+		const result = await invoke(Webhooks.list, { project_id: 'proj_123' });
+
+		expectAuthenticated();
+		expect(lastRequest()).toMatchObject({
+			method: 'GET',
+			path: '/api/v1/webhooks/projects/proj_123/',
+			body: undefined,
+		});
+		expect(result).toEqual({ webhooks: [webhook] });
+		expect(mockLog).toHaveBeenCalledWith(
+			expect.anything(),
+			'mem0.webhooks.list',
+			{ count: 1 },
+			'completed',
+		);
+	});
+
+	it('returns an empty list for a project with no webhooks', async () => {
+		respond([]);
+
+		const result = await invoke(Webhooks.list, { project_id: 'proj_123' });
+
+		expect(result).toEqual({ webhooks: [] });
+	});
+
+	it('surfaces a 403 for a project the key cannot see', async () => {
+		respond(webhookForbidden, 403);
+
+		const error = await invoke(Webhooks.list, {
+			project_id: 'proj_other',
+		}).catch((e: unknown) => e);
+
+		expect((error as Mem0APIError).status).toBe(403);
+	});
+});
+
+describe('webhooks.create', () => {
+	it('POSTs name, url and event_types to the project path', async () => {
+		respond(webhook, 201);
+
+		const result = await invoke(Webhooks.create, {
+			project_id: 'proj_123',
+			name: 'Memory Logger',
+			url: 'https://your-app.example/webhook',
+			event_types: ['memory_add', 'memory_categorize'],
+		});
+
+		expectAuthenticated();
+		expect(lastRequest()).toMatchObject({
+			method: 'POST',
+			path: '/api/v1/webhooks/projects/proj_123/',
+			body: {
+				name: 'Memory Logger',
+				url: 'https://your-app.example/webhook',
+				event_types: ['memory_add', 'memory_categorize'],
+			},
+		});
+		expect(result).toEqual(webhook);
+		expect(mockLog).toHaveBeenCalledWith(
+			expect.anything(),
+			'mem0.webhooks.create',
+			{ webhookId: 'wh_123', events: 2, active: true },
+			'completed',
+		);
+	});
+
+	it('rejects an empty event_types list before any request', async () => {
+		await expect(
+			invoke(Webhooks.create, {
+				project_id: 'proj_123',
+				name: 'Memory Logger',
+				url: 'https://your-app.example/webhook',
+				event_types: [],
+			}),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('rejects an event type Mem0 does not send', async () => {
+		await expect(
+			invoke(Webhooks.create, {
+				project_id: 'proj_123',
+				name: 'Memory Logger',
+				url: 'https://your-app.example/webhook',
+				event_types: ['memory_export'],
+			}),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('reports the first field error of a 400', async () => {
+		respond(webhookInvalid, 400);
+
+		const error = await invoke(Webhooks.create, {
+			project_id: 'proj_123',
+			name: 'Memory Logger',
+			url: 'https://your-app.example/webhook',
+			event_types: ['memory_add'],
+		}).catch((e: unknown) => e);
+
+		expect((error as Mem0APIError).message).toBe(
+			'Mem0 400: name: This field is required.',
+		);
+	});
+});
+
+describe('webhooks.update', () => {
+	it('PUTs the changed fields and reports success', async () => {
+		respond(webhookUpdated);
+
+		const result = await invoke(Webhooks.update, {
+			webhook_id: 'wh_123',
+			name: 'Updated Logger',
+			url: 'https://your-app.example/new-webhook',
+			event_types: ['memory_update', 'memory_add'],
+		});
+
+		expectAuthenticated();
+		expect(lastRequest()).toMatchObject({
+			method: 'PUT',
+			path: '/api/v1/webhooks/wh_123/',
+			body: {
+				name: 'Updated Logger',
+				url: 'https://your-app.example/new-webhook',
+				event_types: ['memory_update', 'memory_add'],
+			},
+		});
+		expect(result).toEqual({
+			success: true,
+			webhook_id: 'wh_123',
+			message: 'Webhook updated successfully',
+		});
+	});
+
+	it('keeps the webhook body when a deployment returns it instead of a message', async () => {
+		respond(webhook);
+
+		const result = (await invoke(Webhooks.update, {
+			webhook_id: 'wh_123',
+			name: 'Memory Logger',
+		})) as { webhook?: unknown };
+
+		expect(result.webhook).toEqual(webhook);
+	});
+
+	it('rejects an update with no fields to change', async () => {
+		await expect(
+			invoke(Webhooks.update, { webhook_id: 'wh_123' }),
+		).rejects.toThrow('Pass at least one of name, url or event_types.');
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+});
+
+describe('webhooks.delete', () => {
+	it('DELETEs the webhook by ID and reports success', async () => {
+		respond(webhookDeleted);
+
+		const result = await invoke(Webhooks.remove, { webhook_id: 'wh_123' });
+
+		expectAuthenticated();
+		expect(lastRequest()).toMatchObject({
+			method: 'DELETE',
+			path: '/api/v1/webhooks/wh_123/',
+			body: undefined,
+		});
+		expect(result).toEqual({
+			success: true,
+			webhook_id: 'wh_123',
+			message: 'Webhook deleted successfully',
+		});
+		expect(mockLog).toHaveBeenCalledWith(
+			expect.anything(),
+			'mem0.webhooks.delete',
+			{ webhookId: 'wh_123' },
 			'completed',
 		);
 	});

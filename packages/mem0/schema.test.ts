@@ -27,6 +27,10 @@ describe('Mem0 schema', () => {
 			'memoriesList',
 			'memoriesSearch',
 			'memoriesUpdate',
+			'webhooksCreate',
+			'webhooksDelete',
+			'webhooksList',
+			'webhooksUpdate',
 		]);
 		expect(Object.keys(Mem0EndpointOutputSchemas).sort()).toEqual(
 			Object.keys(Mem0EndpointInputSchemas).sort(),
