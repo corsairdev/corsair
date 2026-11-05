@@ -39,11 +39,11 @@ export const retrieveForm: LeverEndpoints['retrieveForm'] = async (
 };
 
 export const createForm: LeverEndpoints['createForm'] = async (ctx, input) => {
-	const { opportunityId, ...body } = input;
+	const { opportunityId, perform_as, ...body } = input;
 	const response = await makeLeverRequest<LeverEndpointOutputs['createForm']>(
 		ctx,
 		withFormsPath(opportunityId),
-		{ method: 'POST', body },
+		{ method: 'POST', body, query: { perform_as } },
 	);
 	await logEventFromContext(ctx, 'lever.forms.create', input, 'completed');
 	return response;

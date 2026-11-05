@@ -28,7 +28,7 @@ export const retrieveDiversitySurvey: LeverEndpoints['retrieveDiversitySurvey'] 
 				'postingId',
 				input.postingId,
 			),
-			{ method: 'GET' },
+			{ method: 'GET', query: { country_code: input.country_code } },
 		);
 		await logEventFromContext(
 			ctx,

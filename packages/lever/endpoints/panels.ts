@@ -40,11 +40,11 @@ export const createPanel: LeverEndpoints['createPanel'] = async (
 	ctx,
 	input,
 ) => {
-	const { opportunityId, ...body } = input;
+	const { opportunityId, perform_as, ...body } = input;
 	const response = await makeLeverRequest<LeverEndpointOutputs['createPanel']>(
 		ctx,
 		withPanelPath(opportunityId),
-		{ method: 'POST', body },
+		{ method: 'POST', body, query: { perform_as } },
 	);
 	await logEventFromContext(ctx, 'lever.panels.create', input, 'completed');
 	return response;
@@ -54,11 +54,11 @@ export const updatePanel: LeverEndpoints['updatePanel'] = async (
 	ctx,
 	input,
 ) => {
-	const { opportunityId, panelId, ...body } = input;
+	const { opportunityId, panelId, perform_as, ...body } = input;
 	const response = await makeLeverRequest<LeverEndpointOutputs['updatePanel']>(
 		ctx,
 		withPanelPath(opportunityId, panelId),
-		{ method: 'PUT', body },
+		{ method: 'PUT', body, query: { perform_as } },
 	);
 	await logEventFromContext(ctx, 'lever.panels.update', input, 'completed');
 	return response;
@@ -71,7 +71,7 @@ export const deletePanel: LeverEndpoints['deletePanel'] = async (
 	const response = await makeLeverRequest<LeverEndpointOutputs['deletePanel']>(
 		ctx,
 		withPanelPath(input.opportunityId, input.panelId),
-		{ method: 'DELETE' },
+		{ method: 'DELETE', query: { perform_as: input.perform_as } },
 	);
 	await logEventFromContext(ctx, 'lever.panels.delete', input, 'completed');
 	return response;

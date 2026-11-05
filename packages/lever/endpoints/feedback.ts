@@ -48,10 +48,14 @@ export const createFeedback: LeverEndpoints['createFeedback'] = async (
 	ctx,
 	input,
 ) => {
-	const { opportunityId, ...body } = input;
+	const { opportunityId, perform_as, ...body } = input;
 	const response = await makeLeverRequest<
 		LeverEndpointOutputs['createFeedback']
-	>(ctx, withFeedbackPath(opportunityId), { method: 'POST', body });
+	>(ctx, withFeedbackPath(opportunityId), {
+		method: 'POST',
+		body,
+		query: { perform_as },
+	});
 	await logEventFromContext(ctx, 'lever.feedback.create', input, 'completed');
 	return response;
 };
@@ -60,10 +64,14 @@ export const updateFeedback: LeverEndpoints['updateFeedback'] = async (
 	ctx,
 	input,
 ) => {
-	const { opportunityId, feedbackId, ...body } = input;
+	const { opportunityId, feedbackId, perform_as, ...body } = input;
 	const response = await makeLeverRequest<
 		LeverEndpointOutputs['updateFeedback']
-	>(ctx, withFeedbackPath(opportunityId, feedbackId), { method: 'PUT', body });
+	>(ctx, withFeedbackPath(opportunityId, feedbackId), {
+		method: 'PUT',
+		body,
+		query: { perform_as },
+	});
 	await logEventFromContext(ctx, 'lever.feedback.update', input, 'completed');
 	return response;
 };
@@ -76,6 +84,7 @@ export const deleteFeedback: LeverEndpoints['deleteFeedback'] = async (
 		LeverEndpointOutputs['deleteFeedback']
 	>(ctx, withFeedbackPath(input.opportunityId, input.feedbackId), {
 		method: 'DELETE',
+		query: { perform_as: input.perform_as },
 	});
 	await logEventFromContext(ctx, 'lever.feedback.delete', input, 'completed');
 	return response;

@@ -56,11 +56,13 @@ export const createPosting: LeverEndpoints['createPosting'] = async (
 	ctx,
 	input,
 ) => {
+	const { perform_as, ...body } = input;
 	const response = await makeLeverRequest<
 		LeverEndpointOutputs['createPosting']
 	>(ctx, '/postings', {
 		method: 'POST',
-		body: input,
+		body,
+		query: { perform_as },
 	});
 	await logEventFromContext(ctx, 'lever.postings.create', input, 'completed');
 	return response;
@@ -70,12 +72,13 @@ export const updatePosting: LeverEndpoints['updatePosting'] = async (
 	ctx,
 	input,
 ) => {
-	const { postingId, ...body } = input;
+	const { postingId, perform_as, ...body } = input;
 	const response = await makeLeverRequest<
 		LeverEndpointOutputs['updatePosting']
 	>(ctx, leverPathParameter('/postings/{postingId}', 'postingId', postingId), {
 		method: 'POST',
 		body,
+		query: { perform_as },
 	});
 	await logEventFromContext(ctx, 'lever.postings.update', input, 'completed');
 	return response;
@@ -131,13 +134,13 @@ export const applyToPosting: LeverEndpoints['applyToPosting'] = async (
 	ctx,
 	input,
 ) => {
-	const { postingId, ...body } = input;
+	const { postingId, send_confirmation_email, ...body } = input;
 	const response = await makeLeverRequest<
 		LeverEndpointOutputs['applyToPosting']
 	>(
 		ctx,
 		leverPathParameter('/postings/{postingId}/apply', 'postingId', postingId),
-		{ method: 'POST', body },
+		{ method: 'POST', body, query: { send_confirmation_email } },
 	);
 	await logEventFromContext(ctx, 'lever.postings.apply', input, 'completed');
 	return response;

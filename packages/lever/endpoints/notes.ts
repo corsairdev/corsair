@@ -39,22 +39,22 @@ export const retrieveNote: LeverEndpoints['retrieveNote'] = async (
 };
 
 export const createNote: LeverEndpoints['createNote'] = async (ctx, input) => {
-	const { opportunityId, value } = input;
+	const { opportunityId, perform_as, note_id, ...body } = input;
 	const response = await makeLeverRequest<LeverEndpointOutputs['createNote']>(
 		ctx,
 		withNotePath(opportunityId),
-		{ method: 'POST', body: { value } },
+		{ method: 'POST', body, query: { perform_as, note_id } },
 	);
 	await logEventFromContext(ctx, 'lever.notes.create', input, 'completed');
 	return response;
 };
 
 export const updateNote: LeverEndpoints['updateNote'] = async (ctx, input) => {
-	const { opportunityId, noteId, value } = input;
+	const { opportunityId, noteId, ...body } = input;
 	const response = await makeLeverRequest<LeverEndpointOutputs['updateNote']>(
 		ctx,
 		withNotePath(opportunityId, noteId),
-		{ method: 'PUT', body: { value } },
+		{ method: 'PUT', body },
 	);
 	await logEventFromContext(ctx, 'lever.notes.update', input, 'completed');
 	return response;

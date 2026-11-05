@@ -36,7 +36,7 @@ describe('Lever schema', () => {
 			contentType: 'application/pdf',
 		});
 		request.mockClear();
-		request.mockResolvedValue({ data: [], has_more: false });
+		request.mockResolvedValue({ data: [], hasNext: false });
 		const plugin = lever({ key: 'secret' });
 		const ctx = {
 			key: 'secret',
@@ -51,7 +51,7 @@ describe('Lever schema', () => {
 		expect(request).not.toHaveBeenCalled();
 
 		await expect(plugin.endpoints.opportunities.list(ctx, {})).resolves.toEqual(
-			{ data: [], has_more: false },
+			{ data: [], hasNext: false },
 		);
 
 		request.mockResolvedValue({ invalid: true });
@@ -120,52 +120,87 @@ describe('Lever schema', () => {
 		const bodyRequiredOperations = [
 			[
 				'addOpportunityLinks',
-				{ opportunityId: 'opp-1', contactIDs: ['con-1'] },
+				{ opportunityId: 'opp-1', links: ['linkedin.com/in/jane'] },
 			],
 			[
 				'removeOpportunityLinks',
-				{ opportunityId: 'opp-1', contactIDs: ['con-1'] },
+				{ opportunityId: 'opp-1', links: ['linkedin.com/in/jane'] },
 			],
 			['addOpportunityTags', { opportunityId: 'opp-1', tags: ['remote'] }],
 			['removeOpportunityTags', { opportunityId: 'opp-1', tags: ['remote'] }],
-			[
-				'addOpportunitySources',
-				{ opportunityId: 'opp-1', sourceIDs: ['src-1'] },
-			],
+			['addOpportunitySources', { opportunityId: 'opp-1', sources: ['Gild'] }],
 			[
 				'removeOpportunitySources',
-				{ opportunityId: 'opp-1', sourceIDs: ['src-1'] },
+				{ opportunityId: 'opp-1', sources: ['Gild'] },
 			],
-			['createOpportunity', { name: 'Jane Doe' }],
+			['createOpportunity', { perform_as: 'user-1', name: 'Jane Doe' }],
+			['updateOpportunityStage', { opportunityId: 'opp-1', stage: 'stage-2' }],
 			[
-				'updateOpportunityStage',
-				{ opportunityId: 'opp-1', stageID: 'stage-2' },
+				'updateOpportunityArchivedState',
+				{ opportunityId: 'opp-1', reason: null },
 			],
 			['createNote', { opportunityId: 'opp-1', value: 'note text' }],
 			[
 				'updateNote',
-				{ opportunityId: 'opp-1', noteId: 'note-1', value: 'note text' },
+				{
+					opportunityId: 'opp-1',
+					noteId: 'note-1',
+					values: [{ value: 'note text' }],
+				},
 			],
 			[
 				'applyToPosting',
-				{ postingId: 'post-1', name: 'Jane', email: 'jane@example.com' },
+				{
+					postingId: 'post-1',
+					personalInformation: [{ name: 'fullName', value: 'Jane Doe' }],
+				},
 			],
-			['createPosting', { text: 'Software Engineer' }],
-			['createInterview', { opportunityId: 'opp-1', date: 1700000000000 }],
-			['createPanel', { opportunityId: 'opp-1', note: 'Panel for Rachel' }],
+			['createPosting', { perform_as: 'user-1', text: 'Software Engineer' }],
+			[
+				'createInterview',
+				{
+					opportunityId: 'opp-1',
+					perform_as: 'user-1',
+					panel: 'panel-1',
+					interviewers: [{ id: 'user-2' }],
+					date: 1700000000000,
+					duration: 30,
+				},
+			],
+			[
+				'createPanel',
+				{
+					opportunityId: 'opp-1',
+					perform_as: 'user-1',
+					timezone: 'America/Los_Angeles',
+					interviews: [{ date: 1700000000000, duration: 30 }],
+				},
+			],
 			[
 				'updatePanel',
-				{ opportunityId: 'opp-1', panelId: 'panel-1', note: 'Updated panel' },
+				{
+					opportunityId: 'opp-1',
+					panelId: 'panel-1',
+					perform_as: 'user-1',
+					timezone: 'America/Los_Angeles',
+					interviews: [{ date: 1700000000000, duration: 30 }],
+				},
 			],
 			[
 				'createFeedback',
-				{ opportunityId: 'opp-1', fieldValues: [{ id: 'fv-1', value: '4' }] },
+				{
+					opportunityId: 'opp-1',
+					perform_as: 'user-1',
+					baseTemplateId: 'ft-1',
+					fieldValues: [{ id: 'fv-1', value: ['a', 'b'] }],
+				},
 			],
 			[
 				'updateFeedback',
 				{
 					opportunityId: 'opp-1',
 					feedbackId: 'fb-1',
+					perform_as: 'user-1',
 					completedAt: 1600275449372,
 				},
 			],
@@ -174,9 +209,15 @@ describe('Lever schema', () => {
 				'updateFeedbackTemplate',
 				{ feedbackTemplateId: 'ft-1', text: 'Updated form' },
 			],
-			['updateFormTemplate', { formTemplateId: 'f-1', title: 'Application' }],
-			['createFormTemplate', { title: 'Application' }],
-			['createRequisitionField', { text: 'Work type', type: 'dropdown' }],
+			['updateFormTemplate', { formTemplateId: 'f-1', text: 'Offer info' }],
+			[
+				'createFormTemplate',
+				{ text: 'Offer info', fields: [{ type: 'date', text: 'Start Date' }] },
+			],
+			[
+				'createRequisitionField',
+				{ id: 'work_type', text: 'Work type', type: 'dropdown' },
+			],
 			[
 				'updateRequisitionField',
 				{ requisitionFieldId: 'rf-1', text: 'Work type', type: 'dropdown' },
@@ -196,8 +237,18 @@ describe('Lever schema', () => {
 				'deleteRequisitionFieldOptions',
 				{ requisitionFieldId: 'rf-1', values: ['opt-1'] },
 			],
-			['createRequisition', { title: 'Senior Engineer requisition' }],
-			['createForm', { opportunityId: 'opp-1', formTemplateId: 'form-1' }],
+			[
+				'createRequisition',
+				{ requisitionCode: 'ENG-9', name: 'Engineer', headcountTotal: 1 },
+			],
+			[
+				'createForm',
+				{
+					opportunityId: 'opp-1',
+					baseTemplateId: 'form-1',
+					fields: [{ type: 'currency', text: 'Compensation', value: 75000 }],
+				},
+			],
 			['createUser', { name: 'Chandler Bing', email: 'chandler@example.com' }],
 			['updateUser', { userId: 'user-1', name: 'Chandler Bing' }],
 			['updateContact', { contactId: 'con-1', name: 'Jane Doe' }],
@@ -259,6 +310,167 @@ describe('Lever schema', () => {
 			LeverEndpointInputSchemas.retrieveArchiveReason.safeParse({
 				archiveReasonId: 'arch-1',
 			}).success,
+		).toBe(true);
+	});
+
+	it('requires perform_as on every write Lever rejects without it', () => {
+		const writesRequiringPerformAs = [
+			['createOpportunity', { name: 'Jane Doe' }],
+			['createPosting', { text: 'Software Engineer' }],
+			['updatePosting', { postingId: 'post-1', text: 'Staff Engineer' }],
+			[
+				'createInterview',
+				{
+					opportunityId: 'opp-1',
+					panel: 'panel-1',
+					interviewers: [{ id: 'user-2' }],
+					date: 1700000000000,
+					duration: 30,
+				},
+			],
+			['deleteInterview', { opportunityId: 'opp-1', interviewId: 'int-1' }],
+			[
+				'createPanel',
+				{
+					opportunityId: 'opp-1',
+					timezone: 'America/Los_Angeles',
+					interviews: [{ duration: 30 }],
+				},
+			],
+			['deletePanel', { opportunityId: 'opp-1', panelId: 'panel-1' }],
+			['createFeedback', { opportunityId: 'opp-1', baseTemplateId: 'ft-1' }],
+			['updateFeedback', { opportunityId: 'opp-1', feedbackId: 'fb-1' }],
+			['deleteFeedback', { opportunityId: 'opp-1', feedbackId: 'fb-1' }],
+			['deleteFile', { opportunityId: 'opp-1', fileId: 'file-1' }],
+		] as const;
+		for (const [operation, input] of writesRequiringPerformAs) {
+			const schema = LeverEndpointInputSchemas[operation];
+			expect(schema.safeParse(input).success).toBe(false);
+			expect(schema.safeParse({ ...input, perform_as: 'user-1' }).success).toBe(
+				true,
+			);
+		}
+	});
+
+	it('rejects the field names Lever does not read', () => {
+		const schemas = LeverEndpointInputSchemas;
+		// Lever reads `stage`, `reason`, `links`, `sources`, `categories`,
+		// `baseTemplateId`/`fields` and `values`, not the names below.
+		expect(
+			schemas.updateOpportunityStage.safeParse({
+				opportunityId: 'opp-1',
+				stageID: 'stage-2',
+			}).success,
+		).toBe(false);
+		expect(
+			schemas.updateOpportunityArchivedState.safeParse({
+				opportunityId: 'opp-1',
+				archived: true,
+				reasonID: 'reason-1',
+			}).success,
+		).toBe(false);
+		expect(
+			schemas.addOpportunityLinks.safeParse({
+				opportunityId: 'opp-1',
+				contactIDs: ['con-1'],
+			}).success,
+		).toBe(false);
+		expect(
+			schemas.addOpportunitySources.safeParse({
+				opportunityId: 'opp-1',
+				sourceIDs: ['src-1'],
+			}).success,
+		).toBe(false);
+		expect(
+			schemas.createForm.safeParse({
+				opportunityId: 'opp-1',
+				formTemplateId: 'form-1',
+				values: [{ id: 'field-1', value: 'x' }],
+			}).success,
+		).toBe(false);
+		expect(
+			schemas.createFormTemplate.safeParse({ title: 'Application' }).success,
+		).toBe(false);
+		expect(
+			schemas.createRequisition.safeParse({ title: 'Engineer' }).success,
+		).toBe(false);
+		expect(
+			schemas.updateNote.safeParse({
+				opportunityId: 'opp-1',
+				noteId: 'note-1',
+				value: 'text',
+			}).success,
+		).toBe(false);
+		// Posting team and location belong under categories; loose top-level
+		// keys are stripped rather than sent.
+		const posting = schemas.createPosting.parse({
+			perform_as: 'user-1',
+			text: 'Engineer',
+			team: 'Platform',
+			categories: { team: 'Platform', location: 'Remote' },
+		});
+		expect(posting).not.toHaveProperty('team');
+		expect(posting.categories).toEqual({
+			team: 'Platform',
+			location: 'Remote',
+		});
+	});
+
+	it('pages with the opaque next token and a 1-100 limit', async () => {
+		const listInput = LeverEndpointInputSchemas.listOpportunities;
+		expect(listInput.safeParse({ offset: 100 }).success).toBe(false);
+		expect(
+			listInput.safeParse({
+				offset: '0.1414895548650.a6070140-33db-407c-91f5-2760e15c8e94',
+				limit: 100,
+			}).success,
+		).toBe(true);
+		expect(listInput.safeParse({ limit: 101 }).success).toBe(false);
+		expect(
+			LeverEndpointInputSchemas.listDeletedPostings.safeParse({}).success,
+		).toBe(false);
+
+		const request = jest.mocked(makeLeverRequest);
+		request.mockClear();
+		const page = {
+			data: [{ id: 'opp-1' }],
+			hasNext: true,
+			next: '0.1414895548650.a6070140',
+		};
+		request.mockResolvedValue(page);
+		const plugin = lever({ key: 'secret' });
+		const ctx = {
+			key: 'secret',
+			options: {},
+			$getAccountId: jest.fn().mockResolvedValue('account-1'),
+		} as never;
+		if (!plugin.endpoints) throw new Error('Lever endpoints are missing');
+		const result = await plugin.endpoints.opportunities.list(ctx, {
+			offset: page.next,
+		});
+		expect(result.hasNext).toBe(true);
+		expect(result.next).toBe(page.next);
+	});
+
+	it('accepts the object envelopes of EEO responses and disposition stages', () => {
+		const outputs = leverEndpointSchemas;
+		const eeo = {
+			data: { eeoResponses: [{ gender: 'Female', posting: 'post-1' }] },
+		};
+		const stages = {
+			data: {
+				stages: [{ id: 'lead-new', text: 'New lead', pipeline: 'lead' }],
+				archiveReasons: [{ id: 'arch-1', text: 'Hired', type: 'hired' }],
+			},
+		};
+		expect(outputs['eeo.retrieveWithPii'].output?.safeParse(eeo).success).toBe(
+			true,
+		);
+		expect(
+			outputs['eeo.retrieveAnonymous'].output?.safeParse(eeo).success,
+		).toBe(true);
+		expect(
+			outputs['dispositionStages.list'].output?.safeParse(stages).success,
 		).toBe(true);
 	});
 
@@ -327,36 +539,72 @@ describe('Lever schema', () => {
 				stageId: 'stage-1',
 			},
 			{},
-			{ name: 'Jane Doe' },
-			{ text: 'Software Engineer' },
-			{ opportunityId: 'opp-1', stageID: 'stage-2' },
-			{ opportunityId: 'opp-1', archived: true },
-			{ opportunityId: 'opp-1', contactIDs: ['con-1'] },
+			{ deleted_at_start: 1711929600000, deleted_at_end: 1714521600000 },
+			{ perform_as: 'user-1', name: 'Jane Doe' },
+			{ perform_as: 'user-1', text: 'Software Engineer' },
+			{ text: 'Phone Screen Feedback Form' },
+			{ opportunityId: 'opp-1', stage: 'stage-2' },
+			{ opportunityId: 'opp-1', reason: 'reason-1' },
+			{ opportunityId: 'opp-1', links: ['linkedin.com/in/jane'] },
 			{ opportunityId: 'opp-1', tags: ['remote'] },
-			{ opportunityId: 'opp-1', sourceIDs: ['src-1'] },
+			{ opportunityId: 'opp-1', sources: ['Gild'] },
 			{ opportunityId: 'opp-1', value: 'note text' },
-			{ opportunityId: 'opp-1', noteId: 'note-1', value: 'note text' },
-			{ postingId: 'post-1', name: 'Jane Doe', email: 'jane@example.com' },
-			{ opportunityId: 'opp-1', date: 1700000000000 },
-			{ opportunityId: 'opp-1', panelId: 'panel-1' },
-			{ opportunityId: 'opp-1', feedbackId: 'fb-1' },
+			{
+				opportunityId: 'opp-1',
+				noteId: 'note-1',
+				values: [{ value: 'note text' }],
+			},
+			{
+				postingId: 'post-1',
+				perform_as: 'user-1',
+				personalInformation: [{ name: 'fullName', value: 'Jane Doe' }],
+			},
+			{
+				opportunityId: 'opp-1',
+				interviewId: 'int-1',
+				perform_as: 'user-1',
+				panel: 'panel-1',
+				interviewers: [{ id: 'user-2' }],
+				date: 1700000000000,
+				duration: 30,
+			},
+			{
+				opportunityId: 'opp-1',
+				panelId: 'panel-1',
+				perform_as: 'user-1',
+				timezone: 'America/Los_Angeles',
+				interviews: [{ date: 1700000000000, duration: 30 }],
+			},
+			{
+				opportunityId: 'opp-1',
+				feedbackId: 'fb-1',
+				perform_as: 'user-1',
+				baseTemplateId: 'ft-1',
+			},
 			{ feedbackTemplateId: 'ft-1' },
-			{ opportunityId: 'opp-1', fileId: 'file-1' },
+			{ opportunityId: 'opp-1', fileId: 'file-1', perform_as: 'user-1' },
 			{ formTemplateId: 'form-1' },
+			{ text: 'Offer info', fields: [{ type: 'date', text: 'Start Date' }] },
+			{ id: 'work_type', text: 'Work type', type: 'dropdown' },
 			{ requisitionFieldId: 'rf-1' },
 			{ requisitionFieldId: 'rf-1', values: [{ text: 'hourly' }] },
 			{ requisitionFieldId: 'rf-1', values: ['opt-1'] },
-			{ opportunityId: 'opp-1', note: 'Panel for Rachel' },
-			{ text: 'Phone Screen Feedback Form' },
-			{ title: 'Application' },
-			{ text: 'Work type', type: 'dropdown' },
-			{ title: 'Senior Engineer requisition' },
-			{ opportunityId: 'opp-1', formId: 'form-1' },
+			{
+				requisitionId: 'req-1',
+				requisitionCode: 'ENG-9',
+				name: 'Engineer',
+				headcountTotal: 1,
+			},
+			{
+				opportunityId: 'opp-1',
+				formId: 'form-1',
+				baseTemplateId: 'form-1',
+				fields: [{ type: 'currency', text: 'Compensation', value: 75000 }],
+			},
 			{ opportunityId: 'opp-1', resumeId: 'res-1' },
 			{ userId: 'user-1' },
 			{ contactId: 'con-1' },
 			{ opportunityId: 'opp-1', referralId: 'ref-1' },
-			{ requisitionId: 'req-1' },
 			{ webhookId: 'wh-1' },
 			{ opportunityId: 'opp-1', offerId: 'offer-1' },
 			{ name: 'Chandler Bing', email: 'chandler@example.com' },
@@ -375,7 +623,7 @@ describe('Lever schema', () => {
 					createdAt: 1700000000000,
 					updatedAt: 1700000000001,
 					owner: 'user-1',
-					archived: false,
+					archived: null,
 				},
 				{
 					id: 'opp-2',
@@ -384,23 +632,40 @@ describe('Lever schema', () => {
 					createdAt: 1700000000100,
 					updatedAt: 1700000000101,
 					owner: 'user-2',
-					archived: false,
+					archived: null,
 				},
 			],
-			has_more: true,
+			hasNext: true,
+			next: '0.1414895548650.a6070140-33db-407c-91f5-2760e15c8e94',
 		};
 		const recordOutput = {
-			id: 'rec-1',
-			name: 'Jane Doe',
-			stage: 'f2a1b2c3-received',
-			createdAt: 1700000000000,
-			updatedAt: 1700000000001,
-			owner: 'user-1',
-			archived: false,
+			data: {
+				id: 'rec-1',
+				name: 'Jane Doe',
+				stage: 'f2a1b2c3-received',
+				createdAt: 1700000000000,
+				updatedAt: 1700000000001,
+				owner: 'user-1',
+			},
+		};
+		// EEO responses and disposition stages wrap an object, not a list.
+		const envelopeOutput = {
+			data: {
+				eeoResponses: [{ gender: 'Female', appliedAt: '1418353241665' }],
+			},
+		};
+		const downloadOutput = {
+			data: 'cGRmLWJ5dGVz',
+			contentType: 'application/pdf',
 		};
 		const outputFor = (path: string) => {
 			const [, operation = ''] = path.split('.');
-			if (operation.startsWith('list') || path.startsWith('eeo.')) {
+			if (path.endsWith('.download')) return downloadOutput;
+			if (path.startsWith('eeo.') || path === 'dispositionStages.list') {
+				return envelopeOutput;
+			}
+			// PUT /webhooks answers with the updated webhooks as a list.
+			if (operation.startsWith('list') || path === 'webhooks.update') {
 				return listOutput;
 			}
 			return recordOutput;

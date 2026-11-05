@@ -41,7 +41,10 @@ export const retrieveOpportunity: LeverEndpoints['retrieveOpportunity'] =
 				'opportunityId',
 				input.opportunityId,
 			),
-			{ method: 'GET', query: { include: input.include } },
+			{
+				method: 'GET',
+				query: { include: input.include, expand: input.expand },
+			},
 		);
 		await logEventFromContext(
 			ctx,
@@ -71,10 +74,12 @@ export const listDeletedOpportunities: LeverEndpoints['listDeletedOpportunities'
 
 export const listOpportunityFileActions: LeverEndpoints['listOpportunityFileActions'] =
 	async (ctx, input) => {
+		const { opportunityId, ...query } = input;
 		const response = await makeLeverRequest<
 			LeverEndpointOutputs['listOpportunityFileActions']
-		>(ctx, withOpportunityPath(input.opportunityId, '/file_actions'), {
+		>(ctx, withOpportunityPath(opportunityId, '/file_actions'), {
 			method: 'GET',
+			query,
 		});
 		await logEventFromContext(
 			ctx,
@@ -89,11 +94,13 @@ export const createOpportunity: LeverEndpoints['createOpportunity'] = async (
 	ctx,
 	input,
 ) => {
+	const { perform_as, parse, perform_as_posting_owner, ...body } = input;
 	const response = await makeLeverRequest<
 		LeverEndpointOutputs['createOpportunity']
 	>(ctx, '/opportunities', {
 		method: 'POST',
-		body: input,
+		body,
+		query: { perform_as, parse, perform_as_posting_owner },
 	});
 	await logEventFromContext(
 		ctx,
@@ -106,12 +113,13 @@ export const createOpportunity: LeverEndpoints['createOpportunity'] = async (
 
 export const updateOpportunityStage: LeverEndpoints['updateOpportunityStage'] =
 	async (ctx, input) => {
-		const { opportunityId, stageID } = input;
+		const { opportunityId, stage, perform_as } = input;
 		const response = await makeLeverRequest<
 			LeverEndpointOutputs['updateOpportunityStage']
 		>(ctx, withOpportunityPath(opportunityId, '/stage'), {
 			method: 'PUT',
-			body: { stageID },
+			body: { stage },
+			query: { perform_as },
 		});
 		await logEventFromContext(
 			ctx,
@@ -124,12 +132,13 @@ export const updateOpportunityStage: LeverEndpoints['updateOpportunityStage'] =
 
 export const updateOpportunityArchivedState: LeverEndpoints['updateOpportunityArchivedState'] =
 	async (ctx, input) => {
-		const { opportunityId, archived, reasonID } = input;
+		const { opportunityId, perform_as, ...body } = input;
 		const response = await makeLeverRequest<
 			LeverEndpointOutputs['updateOpportunityArchivedState']
 		>(ctx, withOpportunityPath(opportunityId, '/archived'), {
 			method: 'PUT',
-			body: reasonID ? { archived, reasonID } : { archived },
+			body,
+			query: { perform_as },
 		});
 		await logEventFromContext(
 			ctx,
@@ -142,12 +151,13 @@ export const updateOpportunityArchivedState: LeverEndpoints['updateOpportunityAr
 
 export const addOpportunityLinks: LeverEndpoints['addOpportunityLinks'] =
 	async (ctx, input) => {
-		const { opportunityId, contactIDs } = input;
+		const { opportunityId, links, perform_as } = input;
 		const response = await makeLeverRequest<
 			LeverEndpointOutputs['addOpportunityLinks']
 		>(ctx, withOpportunityPath(opportunityId, '/addLinks'), {
 			method: 'POST',
-			body: { contactIDs },
+			body: { links },
+			query: { perform_as },
 		});
 		await logEventFromContext(
 			ctx,
@@ -160,12 +170,13 @@ export const addOpportunityLinks: LeverEndpoints['addOpportunityLinks'] =
 
 export const removeOpportunityLinks: LeverEndpoints['removeOpportunityLinks'] =
 	async (ctx, input) => {
-		const { opportunityId, contactIDs } = input;
+		const { opportunityId, links, perform_as } = input;
 		const response = await makeLeverRequest<
 			LeverEndpointOutputs['removeOpportunityLinks']
 		>(ctx, withOpportunityPath(opportunityId, '/removeLinks'), {
 			method: 'POST',
-			body: { contactIDs },
+			body: { links },
+			query: { perform_as },
 		});
 		await logEventFromContext(
 			ctx,
@@ -180,12 +191,13 @@ export const addOpportunityTags: LeverEndpoints['addOpportunityTags'] = async (
 	ctx,
 	input,
 ) => {
-	const { opportunityId, tags } = input;
+	const { opportunityId, tags, perform_as } = input;
 	const response = await makeLeverRequest<
 		LeverEndpointOutputs['addOpportunityTags']
 	>(ctx, withOpportunityPath(opportunityId, '/addTags'), {
 		method: 'POST',
 		body: { tags },
+		query: { perform_as },
 	});
 	await logEventFromContext(
 		ctx,
@@ -198,12 +210,13 @@ export const addOpportunityTags: LeverEndpoints['addOpportunityTags'] = async (
 
 export const removeOpportunityTags: LeverEndpoints['removeOpportunityTags'] =
 	async (ctx, input) => {
-		const { opportunityId, tags } = input;
+		const { opportunityId, tags, perform_as } = input;
 		const response = await makeLeverRequest<
 			LeverEndpointOutputs['removeOpportunityTags']
 		>(ctx, withOpportunityPath(opportunityId, '/removeTags'), {
 			method: 'POST',
 			body: { tags },
+			query: { perform_as },
 		});
 		await logEventFromContext(
 			ctx,
@@ -216,12 +229,13 @@ export const removeOpportunityTags: LeverEndpoints['removeOpportunityTags'] =
 
 export const addOpportunitySources: LeverEndpoints['addOpportunitySources'] =
 	async (ctx, input) => {
-		const { opportunityId, sourceIDs } = input;
+		const { opportunityId, sources, perform_as } = input;
 		const response = await makeLeverRequest<
 			LeverEndpointOutputs['addOpportunitySources']
 		>(ctx, withOpportunityPath(opportunityId, '/addSources'), {
 			method: 'POST',
-			body: { sourceIDs },
+			body: { sources },
+			query: { perform_as },
 		});
 		await logEventFromContext(
 			ctx,
@@ -234,12 +248,13 @@ export const addOpportunitySources: LeverEndpoints['addOpportunitySources'] =
 
 export const removeOpportunitySources: LeverEndpoints['removeOpportunitySources'] =
 	async (ctx, input) => {
-		const { opportunityId, sourceIDs } = input;
+		const { opportunityId, sources, perform_as } = input;
 		const response = await makeLeverRequest<
 			LeverEndpointOutputs['removeOpportunitySources']
 		>(ctx, withOpportunityPath(opportunityId, '/removeSources'), {
 			method: 'POST',
-			body: { sourceIDs },
+			body: { sources },
+			query: { perform_as },
 		});
 		await logEventFromContext(
 			ctx,

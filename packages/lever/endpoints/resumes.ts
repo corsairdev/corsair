@@ -19,10 +19,11 @@ export const listResumes: LeverEndpoints['listResumes'] = async (
 	ctx,
 	input,
 ) => {
+	const { opportunityId, ...query } = input;
 	const response = await makeLeverRequest<LeverEndpointOutputs['listResumes']>(
 		ctx,
-		withResumePath(input.opportunityId),
-		{ method: 'GET' },
+		withResumePath(opportunityId),
+		{ method: 'GET', query },
 	);
 	await logEventFromContext(ctx, 'lever.resumes.list', input, 'completed');
 	return response;
@@ -41,7 +42,7 @@ export const retrieveResume: LeverEndpoints['retrieveResume'] = async (
 	return response;
 };
 
-// Downloads stream raw bytes, so their output stays untyped.
+// Downloads return the raw bytes base64-encoded with their content type.
 export const downloadResume: LeverEndpoints['downloadResume'] = async (
 	ctx,
 	input,

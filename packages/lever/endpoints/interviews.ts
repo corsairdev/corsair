@@ -55,10 +55,14 @@ export const createInterview: LeverEndpoints['createInterview'] = async (
 	ctx,
 	input,
 ) => {
-	const { opportunityId, ...body } = input;
+	const { opportunityId, perform_as, ...body } = input;
 	const response = await makeLeverRequest<
 		LeverEndpointOutputs['createInterview']
-	>(ctx, withInterviewPath(opportunityId), { method: 'POST', body });
+	>(ctx, withInterviewPath(opportunityId), {
+		method: 'POST',
+		body,
+		query: { perform_as },
+	});
 	await logEventFromContext(ctx, 'lever.interviews.create', input, 'completed');
 	return response;
 };
@@ -67,12 +71,13 @@ export const updateInterview: LeverEndpoints['updateInterview'] = async (
 	ctx,
 	input,
 ) => {
-	const { opportunityId, interviewId, ...body } = input;
+	const { opportunityId, interviewId, perform_as, ...body } = input;
 	const response = await makeLeverRequest<
 		LeverEndpointOutputs['updateInterview']
 	>(ctx, withInterviewPath(opportunityId, interviewId), {
 		method: 'PUT',
 		body,
+		query: { perform_as },
 	});
 	await logEventFromContext(ctx, 'lever.interviews.update', input, 'completed');
 	return response;
@@ -86,6 +91,7 @@ export const deleteInterview: LeverEndpoints['deleteInterview'] = async (
 		LeverEndpointOutputs['deleteInterview']
 	>(ctx, withInterviewPath(input.opportunityId, input.interviewId), {
 		method: 'DELETE',
+		query: { perform_as: input.perform_as },
 	});
 	await logEventFromContext(ctx, 'lever.interviews.delete', input, 'completed');
 	return response;

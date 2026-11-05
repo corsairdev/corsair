@@ -40,7 +40,8 @@ export const retrieveFile: LeverEndpoints['retrieveFile'] = async (
 
 // The documented multipart upload for this family is excluded: the shared
 // JSON client cannot express a binary multipart/form-data body (30MB file
-// limit). Downloads stream raw bytes, so their output stays untyped.
+// limit). Downloads return the raw bytes base64-encoded with their content
+// type.
 export const downloadFile: LeverEndpoints['downloadFile'] = async (
 	ctx,
 	input,
@@ -58,7 +59,7 @@ export const deleteFile: LeverEndpoints['deleteFile'] = async (ctx, input) => {
 	const response = await makeLeverRequest<LeverEndpointOutputs['deleteFile']>(
 		ctx,
 		withFilePath(input.opportunityId, input.fileId),
-		{ method: 'DELETE' },
+		{ method: 'DELETE', query: { perform_as: input.perform_as } },
 	);
 	await logEventFromContext(ctx, 'lever.files.delete', input, 'completed');
 	return response;

@@ -31,12 +31,14 @@ export const updateWebhook: LeverEndpoints['updateWebhook'] = async (
 	ctx,
 	input,
 ) => {
-	const { webhookId, ...body } = input;
+	// Lever has no per-webhook update route: PUT /webhooks takes a batch of
+	// { id, url?, configuration? } updates under `data`.
+	const { webhookId, ...changes } = input;
 	const response = await makeLeverRequest<
 		LeverEndpointOutputs['updateWebhook']
-	>(ctx, leverPathParameter('/webhooks/{webhookId}', 'webhookId', webhookId), {
+	>(ctx, '/webhooks', {
 		method: 'PUT',
-		body,
+		body: { data: [{ id: webhookId, ...changes }] },
 	});
 	await logEventFromContext(ctx, 'lever.webhooks.update', input, 'completed');
 	return response;

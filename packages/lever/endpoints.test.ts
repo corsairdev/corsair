@@ -117,23 +117,33 @@ const binaryRequest = jest.mocked(makeLeverBinaryRequest);
 describe('Lever endpoint request seams', () => {
 	beforeEach(() => {
 		request.mockClear();
-		request.mockResolvedValue({ data: [], has_more: false });
+		request.mockResolvedValue({ data: [], hasNext: false });
 	});
 
-	it('lists opportunities with documented filters and pagination', async () => {
+	it('lists opportunities with documented filters and token pagination', async () => {
 		const ctx = {
 			key: 'secret',
 			options: {},
 			$getAccountId: jest.fn().mockResolvedValue('account-1'),
 		} as never;
-		await listOpportunities(ctx, { offset: 50, stage: 'stage-1' });
+		await listOpportunities(ctx, {
+			limit: 50,
+			offset: '0.1414895548650.a6070140',
+			stage_id: ['stage-1', 'stage-2'],
+			created_at_start: 1407460069499,
+		});
 		expect(request).toHaveBeenCalledWith(ctx, '/opportunities', {
 			method: 'GET',
-			query: { offset: 50, stage: 'stage-1' },
+			query: {
+				limit: 50,
+				offset: '0.1414895548650.a6070140',
+				stage_id: ['stage-1', 'stage-2'],
+				created_at_start: 1407460069499,
+			},
 		});
 	});
 
-	it('retrieves an opportunity with its include parameter', async () => {
+	it('retrieves an opportunity with its include and expand parameters', async () => {
 		const ctx = {
 			key: 'secret',
 			options: {},
@@ -141,11 +151,12 @@ describe('Lever endpoint request seams', () => {
 		} as never;
 		await retrieveOpportunity(ctx, {
 			opportunityId: 'opp-1',
-			include: 'applications',
+			include: 'followers',
+			expand: 'stage',
 		});
 		expect(request).toHaveBeenCalledWith(ctx, '/opportunities/opp-1', {
 			method: 'GET',
-			query: { include: 'applications' },
+			query: { include: 'followers', expand: 'stage' },
 		});
 	});
 
@@ -156,41 +167,58 @@ describe('Lever endpoint request seams', () => {
 			$getAccountId: jest.fn().mockResolvedValue('account-1'),
 		} as never;
 		request.mockResolvedValue({});
-		await listDeletedOpportunities(ctx, { offset: 10 });
-		await listOpportunityFileActions(ctx, { opportunityId: 'opp-1' });
+		await listDeletedOpportunities(ctx, { offset: 'next-token' });
+		await listOpportunityFileActions(ctx, {
+			opportunityId: 'opp-1',
+			occurred_at_start: 1711929600000,
+		});
 		expect(request).toHaveBeenCalledWith(ctx, '/opportunities/deleted', {
 			method: 'GET',
-			query: { offset: 10 },
+			query: { offset: 'next-token' },
 		});
 		expect(request).toHaveBeenCalledWith(
 			ctx,
 			'/opportunities/opp-1/file_actions',
 			{
 				method: 'GET',
+				query: { occurred_at_start: 1711929600000 },
 			},
 		);
 	});
 
-	it('creates an opportunity with the documented payload', async () => {
+	it('creates an opportunity with perform_as in the query and the rest in the body', async () => {
 		const ctx = {
 			key: 'secret',
 			options: {},
 			$getAccountId: jest.fn().mockResolvedValue('account-1'),
 		} as never;
 		request.mockResolvedValue({});
-		const input = {
+		await createOpportunity(ctx, {
+			perform_as: 'user-1',
 			name: 'Jane Doe',
 			headline: 'Backend engineer',
 			emails: ['jane@example.com'],
-		};
-		await createOpportunity(ctx, input);
+			phones: [{ value: '(123) 456-7891', type: 'mobile' }],
+			postings: ['post-1'],
+		});
 		expect(request).toHaveBeenCalledWith(ctx, '/opportunities', {
 			method: 'POST',
-			body: input,
+			body: {
+				name: 'Jane Doe',
+				headline: 'Backend engineer',
+				emails: ['jane@example.com'],
+				phones: [{ value: '(123) 456-7891', type: 'mobile' }],
+				postings: ['post-1'],
+			},
+			query: {
+				perform_as: 'user-1',
+				parse: undefined,
+				perform_as_posting_owner: undefined,
+			},
 		});
 	});
 
-	it('routes opportunity stage and archived-state updates to the documented routes', async () => {
+	it('sends the stage and archive reason under the field names Lever reads', async () => {
 		const ctx = {
 			key: 'secret',
 			options: {},
@@ -199,37 +227,49 @@ describe('Lever endpoint request seams', () => {
 		request.mockResolvedValue({});
 		await updateOpportunityStage(ctx, {
 			opportunityId: 'opp-1',
-			stageID: 'stage-2',
+			stage: 'stage-2',
+			perform_as: 'user-1',
 		});
 		await updateOpportunityArchivedState(ctx, {
 			opportunityId: 'opp-1',
-			archived: true,
-			reasonID: 'reason-1',
+			reason: 'reason-1',
+			cleanInterviews: true,
+		});
+		await updateOpportunityArchivedState(ctx, {
+			opportunityId: 'opp-1',
+			reason: null,
 		});
 		expect(request).toHaveBeenCalledWith(ctx, '/opportunities/opp-1/stage', {
 			method: 'PUT',
-			body: { stageID: 'stage-2' },
+			body: { stage: 'stage-2' },
+			query: { perform_as: 'user-1' },
 		});
 		expect(request).toHaveBeenCalledWith(ctx, '/opportunities/opp-1/archived', {
 			method: 'PUT',
-			body: { archived: true, reasonID: 'reason-1' },
+			body: { reason: 'reason-1', cleanInterviews: true },
+			query: { perform_as: undefined },
+		});
+		// A null reason unarchives the opportunity.
+		expect(request).toHaveBeenCalledWith(ctx, '/opportunities/opp-1/archived', {
+			method: 'PUT',
+			body: { reason: null },
+			query: { perform_as: undefined },
 		});
 	});
 
-	it('sends link, tag, and source mutations as request bodies', async () => {
+	it('sends link, tag, and source mutations under links, tags and sources', async () => {
 		const ctx = {
 			key: 'secret',
 			options: {},
 			$getAccountId: jest.fn().mockResolvedValue('account-1'),
 		} as never;
 		request.mockResolvedValue({});
-		await addOpportunityLinks(ctx, {
-			opportunityId: 'opp-1',
-			contactIDs: ['con-1'],
-		});
+		const links = ['indeed.com/r/Shane-Smith/0b7c87f6b246d2bc'];
+		await addOpportunityLinks(ctx, { opportunityId: 'opp-1', links });
 		await removeOpportunityLinks(ctx, {
 			opportunityId: 'opp-1',
-			contactIDs: ['con-1'],
+			links,
+			perform_as: 'user-1',
 		});
 		await addOpportunityTags(ctx, { opportunityId: 'opp-1', tags: ['remote'] });
 		await removeOpportunityTags(ctx, {
@@ -238,28 +278,32 @@ describe('Lever endpoint request seams', () => {
 		});
 		await addOpportunitySources(ctx, {
 			opportunityId: 'opp-1',
-			sourceIDs: ['src-1'],
+			sources: ['Gild'],
 		});
 		await removeOpportunitySources(ctx, {
 			opportunityId: 'opp-1',
-			sourceIDs: ['src-1'],
+			sources: ['Gild'],
 		});
 
+		const noPerformAs = { perform_as: undefined };
 		expect(request).toHaveBeenCalledWith(ctx, '/opportunities/opp-1/addLinks', {
 			method: 'POST',
-			body: { contactIDs: ['con-1'] },
+			body: { links },
+			query: noPerformAs,
 		});
 		expect(request).toHaveBeenCalledWith(
 			ctx,
 			'/opportunities/opp-1/removeLinks',
 			{
 				method: 'POST',
-				body: { contactIDs: ['con-1'] },
+				body: { links },
+				query: { perform_as: 'user-1' },
 			},
 		);
 		expect(request).toHaveBeenCalledWith(ctx, '/opportunities/opp-1/addTags', {
 			method: 'POST',
 			body: { tags: ['remote'] },
+			query: noPerformAs,
 		});
 		expect(request).toHaveBeenCalledWith(
 			ctx,
@@ -267,6 +311,7 @@ describe('Lever endpoint request seams', () => {
 			{
 				method: 'POST',
 				body: { tags: ['remote'] },
+				query: noPerformAs,
 			},
 		);
 		expect(request).toHaveBeenCalledWith(
@@ -274,7 +319,8 @@ describe('Lever endpoint request seams', () => {
 			'/opportunities/opp-1/addSources',
 			{
 				method: 'POST',
-				body: { sourceIDs: ['src-1'] },
+				body: { sources: ['Gild'] },
+				query: noPerformAs,
 			},
 		);
 		expect(request).toHaveBeenCalledWith(
@@ -282,7 +328,8 @@ describe('Lever endpoint request seams', () => {
 			'/opportunities/opp-1/removeSources',
 			{
 				method: 'POST',
-				body: { sourceIDs: ['src-1'] },
+				body: { sources: ['Gild'] },
+				query: noPerformAs,
 			},
 		);
 	});
@@ -299,7 +346,10 @@ describe('Lever endpoint request seams', () => {
 			opportunityId: 'opp-1',
 			applicationId: 'app-1',
 		});
-		await listDeletedApplications(ctx, {});
+		await listDeletedApplications(ctx, {
+			deleted_at_start: 1711929600000,
+			deleted_at_end: 1714521600000,
+		});
 		expect(request).toHaveBeenCalledWith(
 			ctx,
 			'/opportunities/opp-1/applications',
@@ -312,7 +362,7 @@ describe('Lever endpoint request seams', () => {
 		);
 		expect(request).toHaveBeenCalledWith(ctx, '/applications/deleted', {
 			method: 'GET',
-			query: {},
+			query: { deleted_at_start: 1711929600000, deleted_at_end: 1714521600000 },
 		});
 	});
 
@@ -323,37 +373,67 @@ describe('Lever endpoint request seams', () => {
 			$getAccountId: jest.fn().mockResolvedValue('account-1'),
 		} as never;
 		request.mockResolvedValue({});
-		await listPostings(ctx, {});
+		const deletedWindow = {
+			deleted_at_start: 1711929600000,
+			deleted_at_end: 1714521600000,
+		};
+		const categories = {
+			team: 'Platform',
+			department: 'Engineering',
+			location: 'San Francisco',
+			commitment: 'Full-time',
+		};
+		const personalInformation = [
+			{ name: 'fullName', value: 'Jane Doe' },
+			{ name: 'email', value: 'jane@example.com' },
+		];
+		await listPostings(ctx, { state: 'published', team: 'Platform' });
 		await retrievePosting(ctx, { postingId: 'post-1' });
-		await listDeletedPostings(ctx, {});
-		await createPosting(ctx, { text: 'Software Engineer' });
-		await updatePosting(ctx, { postingId: 'post-1', text: 'Staff Engineer' });
+		await listDeletedPostings(ctx, deletedWindow);
+		await createPosting(ctx, {
+			perform_as: 'user-1',
+			text: 'Software Engineer',
+			categories,
+			content: { descriptionHtml: '<div>Build things</div>' },
+		});
+		await updatePosting(ctx, {
+			postingId: 'post-1',
+			perform_as: 'user-1',
+			text: 'Staff Engineer',
+		});
 		await retrievePostingApplicationQuestions(ctx, { postingId: 'post-1' });
 		await listPostingUsers(ctx, { postingId: 'post-1' });
 		await applyToPosting(ctx, {
 			postingId: 'post-1',
-			name: 'Jane Doe',
-			email: 'jane@example.com',
+			send_confirmation_email: true,
+			personalInformation,
 		});
 
 		expect(request).toHaveBeenCalledWith(ctx, '/postings', {
 			method: 'GET',
-			query: {},
+			query: { state: 'published', team: 'Platform' },
 		});
 		expect(request).toHaveBeenCalledWith(ctx, '/postings/post-1', {
 			method: 'GET',
 		});
 		expect(request).toHaveBeenCalledWith(ctx, '/postings/deleted', {
 			method: 'GET',
-			query: {},
+			query: deletedWindow,
 		});
+		// Team, department, location and work type travel under `categories`.
 		expect(request).toHaveBeenCalledWith(ctx, '/postings', {
 			method: 'POST',
-			body: { text: 'Software Engineer' },
+			body: {
+				text: 'Software Engineer',
+				categories,
+				content: { descriptionHtml: '<div>Build things</div>' },
+			},
+			query: { perform_as: 'user-1' },
 		});
 		expect(request).toHaveBeenCalledWith(ctx, '/postings/post-1', {
 			method: 'POST',
 			body: { text: 'Staff Engineer' },
+			query: { perform_as: 'user-1' },
 		});
 		expect(request).toHaveBeenCalledWith(ctx, '/postings/post-1/apply', {
 			method: 'GET',
@@ -363,7 +443,8 @@ describe('Lever endpoint request seams', () => {
 		});
 		expect(request).toHaveBeenCalledWith(ctx, '/postings/post-1/apply', {
 			method: 'POST',
-			body: { name: 'Jane Doe', email: 'jane@example.com' },
+			body: { personalInformation },
+			query: { send_confirmation_email: true },
 		});
 	});
 
@@ -374,6 +455,12 @@ describe('Lever endpoint request seams', () => {
 			$getAccountId: jest.fn().mockResolvedValue('account-1'),
 		} as never;
 		request.mockResolvedValue({});
+		const interview = {
+			panel: 'panel-1',
+			interviewers: [{ id: 'user-2', feedbackTemplate: 'ft-1' }],
+			date: 1700000000000,
+			duration: 30,
+		};
 		await listInterviews(ctx, { opportunityId: 'opp-1' });
 		await retrieveInterview(ctx, {
 			opportunityId: 'opp-1',
@@ -381,16 +468,20 @@ describe('Lever endpoint request seams', () => {
 		});
 		await createInterview(ctx, {
 			opportunityId: 'opp-1',
-			date: 1700000000000,
+			perform_as: 'user-1',
+			...interview,
 		});
 		await updateInterview(ctx, {
 			opportunityId: 'opp-1',
 			interviewId: 'int-1',
+			perform_as: 'user-1',
+			...interview,
 			date: 1700000000001,
 		});
 		await deleteInterview(ctx, {
 			opportunityId: 'opp-1',
 			interviewId: 'int-1',
+			perform_as: 'user-1',
 		});
 
 		expect(request).toHaveBeenCalledWith(
@@ -411,18 +502,23 @@ describe('Lever endpoint request seams', () => {
 			'/opportunities/opp-1/interviews',
 			{
 				method: 'POST',
-				body: { date: 1700000000000 },
+				body: interview,
+				query: { perform_as: 'user-1' },
 			},
 		);
 		expect(request).toHaveBeenCalledWith(
 			ctx,
 			'/opportunities/opp-1/interviews/int-1',
-			{ method: 'PUT', body: { date: 1700000000001 } },
+			{
+				method: 'PUT',
+				body: { ...interview, date: 1700000000001 },
+				query: { perform_as: 'user-1' },
+			},
 		);
 		expect(request).toHaveBeenCalledWith(
 			ctx,
 			'/opportunities/opp-1/interviews/int-1',
-			{ method: 'DELETE' },
+			{ method: 'DELETE', query: { perform_as: 'user-1' } },
 		);
 	});
 
@@ -435,11 +531,17 @@ describe('Lever endpoint request seams', () => {
 		request.mockResolvedValue({});
 		await listNotes(ctx, { opportunityId: 'opp-1' });
 		await retrieveNote(ctx, { opportunityId: 'opp-1', noteId: 'note-1' });
-		await createNote(ctx, { opportunityId: 'opp-1', value: 'Great profile' });
+		await createNote(ctx, {
+			opportunityId: 'opp-1',
+			value: 'Great profile',
+			score: 3,
+			perform_as: 'user-1',
+			note_id: 'note-0',
+		});
 		await updateNote(ctx, {
 			opportunityId: 'opp-1',
 			noteId: 'note-1',
-			value: 'Updated note',
+			values: [{ value: 'first comment' }, { value: 'second comment' }],
 		});
 		await deleteNote(ctx, { opportunityId: 'opp-1', noteId: 'note-1' });
 
@@ -455,14 +557,18 @@ describe('Lever endpoint request seams', () => {
 		);
 		expect(request).toHaveBeenCalledWith(ctx, '/opportunities/opp-1/notes', {
 			method: 'POST',
-			body: { value: 'Great profile' },
+			body: { value: 'Great profile', score: 3 },
+			query: { perform_as: 'user-1', note_id: 'note-0' },
 		});
+		// Lever replaces the note thread on update from the `values` array.
 		expect(request).toHaveBeenCalledWith(
 			ctx,
 			'/opportunities/opp-1/notes/note-1',
 			{
 				method: 'PUT',
-				body: { value: 'Updated note' },
+				body: {
+					values: [{ value: 'first comment' }, { value: 'second comment' }],
+				},
 			},
 		);
 		expect(request).toHaveBeenCalledWith(
@@ -509,18 +615,36 @@ describe('Lever endpoint request seams', () => {
 			$getAccountId: jest.fn().mockResolvedValue('account-1'),
 		} as never;
 		request.mockResolvedValue({});
+		const panel = {
+			timezone: 'America/Los_Angeles',
+			note: 'Panel for Rachel',
+			interviews: [
+				{
+					interviewers: [{ id: 'user-2' }],
+					date: 1423188000000,
+					duration: 30,
+				},
+			],
+		};
 		await listPanels(ctx, { opportunityId: 'opp-1' });
 		await retrievePanel(ctx, { opportunityId: 'opp-1', panelId: 'panel-1' });
 		await createPanel(ctx, {
 			opportunityId: 'opp-1',
-			note: 'Panel for Rachel',
+			perform_as: 'user-1',
+			...panel,
 		});
 		await updatePanel(ctx, {
 			opportunityId: 'opp-1',
 			panelId: 'panel-1',
+			perform_as: 'user-1',
+			...panel,
 			note: 'Updated panel',
 		});
-		await deletePanel(ctx, { opportunityId: 'opp-1', panelId: 'panel-1' });
+		await deletePanel(ctx, {
+			opportunityId: 'opp-1',
+			panelId: 'panel-1',
+			perform_as: 'user-1',
+		});
 
 		expect(request).toHaveBeenCalledWith(ctx, '/opportunities/opp-1/panels', {
 			method: 'GET',
@@ -532,17 +656,22 @@ describe('Lever endpoint request seams', () => {
 		);
 		expect(request).toHaveBeenCalledWith(ctx, '/opportunities/opp-1/panels', {
 			method: 'POST',
-			body: { note: 'Panel for Rachel' },
+			body: panel,
+			query: { perform_as: 'user-1' },
 		});
 		expect(request).toHaveBeenCalledWith(
 			ctx,
 			'/opportunities/opp-1/panels/panel-1',
-			{ method: 'PUT', body: { note: 'Updated panel' } },
+			{
+				method: 'PUT',
+				body: { ...panel, note: 'Updated panel' },
+				query: { perform_as: 'user-1' },
+			},
 		);
 		expect(request).toHaveBeenCalledWith(
 			ctx,
 			'/opportunities/opp-1/panels/panel-1',
-			{ method: 'DELETE' },
+			{ method: 'DELETE', query: { perform_as: 'user-1' } },
 		);
 	});
 
@@ -553,18 +682,33 @@ describe('Lever endpoint request seams', () => {
 			$getAccountId: jest.fn().mockResolvedValue('account-1'),
 		} as never;
 		request.mockResolvedValue({});
+		// Field values follow the field type: text, numbers and string arrays.
+		const fieldValues = [
+			{ id: 'fv-1', value: '4 - Strong Hire' },
+			{ id: 'fv-2', value: 1418716800000 },
+			{ id: 'fv-3', value: ['Can you email us references?'] },
+		];
 		await listFeedback(ctx, { opportunityId: 'opp-1' });
 		await retrieveFeedback(ctx, { opportunityId: 'opp-1', feedbackId: 'fb-1' });
 		await createFeedback(ctx, {
 			opportunityId: 'opp-1',
-			fieldValues: [{ id: 'fv-1', value: '4' }],
+			perform_as: 'user-1',
+			baseTemplateId: 'ft-1',
+			panel: 'panel-1',
+			interview: 'int-1',
+			fieldValues,
 		});
 		await updateFeedback(ctx, {
 			opportunityId: 'opp-1',
 			feedbackId: 'fb-1',
+			perform_as: 'user-1',
 			completedAt: 1600275449372,
 		});
-		await deleteFeedback(ctx, { opportunityId: 'opp-1', feedbackId: 'fb-1' });
+		await deleteFeedback(ctx, {
+			opportunityId: 'opp-1',
+			feedbackId: 'fb-1',
+			perform_as: 'user-1',
+		});
 
 		expect(request).toHaveBeenCalledWith(ctx, '/opportunities/opp-1/feedback', {
 			method: 'GET',
@@ -576,17 +720,27 @@ describe('Lever endpoint request seams', () => {
 		);
 		expect(request).toHaveBeenCalledWith(ctx, '/opportunities/opp-1/feedback', {
 			method: 'POST',
-			body: { fieldValues: [{ id: 'fv-1', value: '4' }] },
+			body: {
+				baseTemplateId: 'ft-1',
+				panel: 'panel-1',
+				interview: 'int-1',
+				fieldValues,
+			},
+			query: { perform_as: 'user-1' },
 		});
 		expect(request).toHaveBeenCalledWith(
 			ctx,
 			'/opportunities/opp-1/feedback/fb-1',
-			{ method: 'PUT', body: { completedAt: 1600275449372 } },
+			{
+				method: 'PUT',
+				body: { completedAt: 1600275449372 },
+				query: { perform_as: 'user-1' },
+			},
 		);
 		expect(request).toHaveBeenCalledWith(
 			ctx,
 			'/opportunities/opp-1/feedback/fb-1',
-			{ method: 'DELETE' },
+			{ method: 'DELETE', query: { perform_as: 'user-1' } },
 		);
 	});
 
@@ -639,7 +793,11 @@ describe('Lever endpoint request seams', () => {
 			contentType: 'application/pdf',
 		});
 		await downloadFile(ctx, { opportunityId: 'opp-1', fileId: 'file-1' });
-		await deleteFile(ctx, { opportunityId: 'opp-1', fileId: 'file-1' });
+		await deleteFile(ctx, {
+			opportunityId: 'opp-1',
+			fileId: 'file-1',
+			perform_as: 'user-1',
+		});
 
 		expect(request).toHaveBeenCalledWith(ctx, '/opportunities/opp-1/files', {
 			method: 'GET',
@@ -658,7 +816,7 @@ describe('Lever endpoint request seams', () => {
 		expect(request).toHaveBeenCalledWith(
 			ctx,
 			'/opportunities/opp-1/files/file-1',
-			{ method: 'DELETE' },
+			{ method: 'DELETE', query: { perform_as: 'user-1' } },
 		);
 	});
 
@@ -671,10 +829,11 @@ describe('Lever endpoint request seams', () => {
 		request.mockResolvedValue({});
 		await listFormTemplates(ctx, {});
 		await retrieveFormTemplate(ctx, { formTemplateId: 'form-1' });
-		await createFormTemplate(ctx, { title: 'Application' });
+		const fields = [{ type: 'date', text: 'Start Date', required: true }];
+		await createFormTemplate(ctx, { text: 'Offer information', fields });
 		await updateFormTemplate(ctx, {
 			formTemplateId: 'form-1',
-			title: 'Updated application',
+			text: 'Updated offer information',
 		});
 		await deleteFormTemplate(ctx, { formTemplateId: 'form-1' });
 
@@ -687,11 +846,11 @@ describe('Lever endpoint request seams', () => {
 		});
 		expect(request).toHaveBeenCalledWith(ctx, '/form_templates', {
 			method: 'POST',
-			body: { title: 'Application' },
+			body: { text: 'Offer information', fields },
 		});
 		expect(request).toHaveBeenCalledWith(ctx, '/form_templates/form-1', {
 			method: 'PUT',
-			body: { title: 'Updated application' },
+			body: { text: 'Updated offer information' },
 		});
 		expect(request).toHaveBeenCalledWith(ctx, '/form_templates/form-1', {
 			method: 'DELETE',
@@ -708,6 +867,7 @@ describe('Lever endpoint request seams', () => {
 		await listRequisitionFields(ctx, {});
 		await retrieveRequisitionField(ctx, { requisitionFieldId: 'rf-1' });
 		await createRequisitionField(ctx, {
+			id: 'work_type',
 			text: 'Work type',
 			type: 'dropdown',
 		});
@@ -739,7 +899,7 @@ describe('Lever endpoint request seams', () => {
 		});
 		expect(request).toHaveBeenCalledWith(ctx, '/requisition_fields', {
 			method: 'POST',
-			body: { text: 'Work type', type: 'dropdown' },
+			body: { id: 'work_type', text: 'Work type', type: 'dropdown' },
 		});
 		expect(request).toHaveBeenCalledWith(ctx, '/requisition_fields/rf-1', {
 			method: 'PUT',
@@ -790,18 +950,25 @@ describe('Lever endpoint request seams', () => {
 		expect(request).toHaveBeenCalledWith(ctx, '/requisitions/req-1', {
 			method: 'GET',
 		});
-		await createRequisition(ctx, { title: 'Senior Engineer requisition' });
+		// Lever requires requisitionCode, name and headcountTotal.
+		const requisition = {
+			requisitionCode: 'ENG-9',
+			name: 'Junior Software Engineer, Platform',
+			headcountTotal: 10,
+		};
+		await createRequisition(ctx, requisition);
 		expect(request).toHaveBeenCalledWith(ctx, '/requisitions', {
 			method: 'POST',
-			body: { title: 'Senior Engineer requisition' },
+			body: requisition,
 		});
 		await updateRequisition(ctx, {
 			requisitionId: 'req-1',
-			title: 'Updated requisition',
+			...requisition,
+			status: 'closed',
 		});
 		expect(request).toHaveBeenCalledWith(ctx, '/requisitions/req-1', {
 			method: 'PUT',
-			body: { title: 'Updated requisition' },
+			body: { ...requisition, status: 'closed' },
 		});
 		await deleteRequisition(ctx, { requisitionId: 'req-1' });
 		expect(request).toHaveBeenCalledWith(ctx, '/requisitions/req-1', {
@@ -826,10 +993,23 @@ describe('Lever endpoint request seams', () => {
 			'/opportunities/opp-1/forms/form-1',
 			{ method: 'GET' },
 		);
-		await createForm(ctx, { opportunityId: 'opp-1', formTemplateId: 'form-1' });
+		// A profile form is built from its template: baseTemplateId plus the
+		// template's fields, each carrying its answer in `value`.
+		const fields = [
+			{ type: 'date', text: 'Start Date', value: 1418716800000 },
+			{ type: 'currency', text: 'Compensation', value: 75000 },
+		];
+		await createForm(ctx, {
+			opportunityId: 'opp-1',
+			baseTemplateId: 'form-1',
+			fields,
+			secret: true,
+			perform_as: 'user-1',
+		});
 		expect(request).toHaveBeenCalledWith(ctx, '/opportunities/opp-1/forms', {
 			method: 'POST',
-			body: { formTemplateId: 'form-1' },
+			body: { baseTemplateId: 'form-1', fields, secret: true },
+			query: { perform_as: 'user-1' },
 		});
 	});
 
@@ -843,6 +1023,7 @@ describe('Lever endpoint request seams', () => {
 		await listResumes(ctx, { opportunityId: 'opp-1' });
 		expect(request).toHaveBeenCalledWith(ctx, '/opportunities/opp-1/resumes', {
 			method: 'GET',
+			query: {},
 		});
 		await retrieveResume(ctx, { opportunityId: 'opp-1', resumeId: 'res-1' });
 		expect(request).toHaveBeenCalledWith(
@@ -960,9 +1141,11 @@ describe('Lever endpoint request seams', () => {
 			webhookId: 'wh-1',
 			url: 'https://example.test/hook',
 		});
-		expect(request).toHaveBeenCalledWith(ctx, '/webhooks/wh-1', {
+		// Lever has no per-webhook PUT route: updates go to PUT /webhooks as a
+		// batch under `data`.
+		expect(request).toHaveBeenCalledWith(ctx, '/webhooks', {
 			method: 'PUT',
-			body: { url: 'https://example.test/hook' },
+			body: { data: [{ id: 'wh-1', url: 'https://example.test/hook' }] },
 		});
 		await deleteWebhook(ctx, { webhookId: 'wh-1' });
 		expect(request).toHaveBeenCalledWith(ctx, '/webhooks/wh-1', {
@@ -988,9 +1171,13 @@ describe('Lever endpoint request seams', () => {
 			method: 'GET',
 			query: {},
 		});
-		await retrieveDiversitySurvey(ctx, { postingId: 'post-1' });
+		await retrieveDiversitySurvey(ctx, {
+			postingId: 'post-1',
+			country_code: 'US',
+		});
 		expect(request).toHaveBeenCalledWith(ctx, '/surveys/diversity/post-1', {
 			method: 'GET',
+			query: { country_code: 'US' },
 		});
 		await retrieveEeoResponsesWithPii(ctx, {});
 		expect(request).toHaveBeenCalledWith(ctx, '/eeo/responses/pii', {
@@ -1005,6 +1192,7 @@ describe('Lever endpoint request seams', () => {
 		await listOpportunityOffers(ctx, { opportunityId: 'opp-1' });
 		expect(request).toHaveBeenCalledWith(ctx, '/opportunities/opp-1/offers', {
 			method: 'GET',
+			query: { expand: undefined },
 		});
 		binaryRequest.mockResolvedValue({
 			data: 'cGRmLWJ5dGVz',
@@ -1013,11 +1201,15 @@ describe('Lever endpoint request seams', () => {
 		await downloadOpportunityOffer(ctx, {
 			opportunityId: 'opp-1',
 			offerId: 'offer-1',
+			status: 'signed',
 		});
 		expect(binaryRequest).toHaveBeenCalledWith(
 			ctx,
 			'/opportunities/opp-1/offers/offer-1/download',
-			{ headers: { Accept: 'application/octet-stream' } },
+			{
+				headers: { Accept: 'application/octet-stream' },
+				query: { status: 'signed' },
+			},
 		);
 	});
 

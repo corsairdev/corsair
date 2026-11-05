@@ -12,7 +12,7 @@ export const listOpportunityOffers: LeverEndpoints['listOpportunityOffers'] =
 		);
 		const response = await makeLeverRequest<
 			LeverEndpointOutputs['listOpportunityOffers']
-		>(ctx, path, { method: 'GET' });
+		>(ctx, path, { method: 'GET', query: { expand: input.expand } });
 		await logEventFromContext(ctx, 'lever.offers.list', input, 'completed');
 		return response;
 	};
@@ -31,6 +31,7 @@ export const downloadOpportunityOffer: LeverEndpoints['downloadOpportunityOffer'
 		);
 		const response = await makeLeverBinaryRequest(ctx, path, {
 			headers: { Accept: 'application/octet-stream' },
+			query: { status: input.status },
 		});
 		await logEventFromContext(ctx, 'lever.offers.download', input, 'completed');
 		return response;
