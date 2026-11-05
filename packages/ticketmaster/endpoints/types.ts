@@ -133,12 +133,7 @@ export const SegmentNodeSchema = ClassificationNodeSchema.extend({
 
 export type TicketmasterSegment = z.infer<typeof SegmentNodeSchema>;
 
-/**
- * One entry of a classification response. Ticketmaster fills whichever levels
- * the entry belongs to, so a segment entry has `segment`, a genre entry has
- * `segment` and `genre`, and a sub-genre entry has all three.
- */
-export const ClassificationSchema = z
+const ClassificationObjectSchema = z
 	.object({
 		primary: z.boolean().nullish(),
 		family: z.boolean().nullish(),
@@ -149,6 +144,32 @@ export const ClassificationSchema = z
 		subType: ClassificationNodeSchema.nullish(),
 	})
 	.loose();
+
+type ClassificationObjectSchemaType = typeof ClassificationObjectSchema;
+
+/**
+ * The type of `ClassificationSchema`, named so the built `.d.ts` refers to it
+ * instead of repeating it.
+ *
+ * Declaration emit writes an inferred zod type out in full at every use. An
+ * event lists classifications and embeds attractions, which list them again,
+ * so the emitted event type carried the segment → genre → sub-genre tree twice,
+ * each copy a separate type. Code compiled against the built package, as Hub
+ * is, had to resolve an event's output type from the top in one pass and hit
+ * TypeScript's instantiation depth limit: TS2589 on `ticketmaster()`,
+ * `events.search`, `events.get` and `suggest.get`. TypeScript prints an
+ * interface by name, so the tree is written out once.
+ */
+export interface TicketmasterClassificationSchema
+	extends ClassificationObjectSchemaType {}
+
+/**
+ * One entry of a classification response. Ticketmaster fills whichever levels
+ * the entry belongs to, so a segment entry has `segment`, a genre entry has
+ * `segment` and `genre`, and a sub-genre entry has all three.
+ */
+export const ClassificationSchema: TicketmasterClassificationSchema =
+	ClassificationObjectSchema;
 
 export type TicketmasterClassification = z.infer<typeof ClassificationSchema>;
 
