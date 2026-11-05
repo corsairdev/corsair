@@ -981,6 +981,14 @@
                 ]
               },
               {
+                "group": "Browser Use",
+                "pages": [
+                  "plugins/browseruse/overview",
+                  "plugins/browseruse/api",
+                  "plugins/browseruse/database"
+                ]
+              },
+              {
                 "group": "Browserless",
                 "pages": [
                   "plugins/browserless/overview",
@@ -1850,6 +1858,14 @@
                   "plugins/filloutforms/overview",
                   "plugins/filloutforms/api",
                   "plugins/filloutforms/database"
+                ]
+              },
+              {
+                "group": "FinerWorks",
+                "pages": [
+                  "plugins/finerworks/overview",
+                  "plugins/finerworks/api",
+                  "plugins/finerworks/database"
                 ]
               },
               {
@@ -3163,6 +3179,14 @@
                 ]
               },
               {
+                "group": "Turbot Pipes",
+                "pages": [
+                  "plugins/turbotpipes/overview",
+                  "plugins/turbotpipes/api",
+                  "plugins/turbotpipes/database"
+                ]
+              },
+              {
                 "group": "Turso",
                 "pages": [
                   "plugins/turso/overview",
@@ -3407,6 +3431,14 @@
                 ]
               },
               {
+                "group": "Woodpecker Co",
+                "pages": [
+                  "plugins/woodpeckerco/overview",
+                  "plugins/woodpeckerco/api",
+                  "plugins/woodpeckerco/database"
+                ]
+              },
+              {
                 "group": "Workday",
                 "pages": [
                   "plugins/workday/overview",
@@ -3504,6 +3536,14 @@
                   "plugins/zohobigin/overview",
                   "plugins/zohobigin/api",
                   "plugins/zohobigin/database"
+                ]
+              },
+              {
+                "group": "Zoho Desk",
+                "pages": [
+                  "plugins/zohodesk/overview",
+                  "plugins/zohodesk/api",
+                  "plugins/zohodesk/database"
                 ]
               },
               {

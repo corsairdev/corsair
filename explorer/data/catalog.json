@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-10-20T17:39:57.607Z",
-  "corsairVersion": "0.1.149",
+  "generatedAt": "2026-11-05T08:57:32.198Z",
+  "corsairVersion": "0.1.157",
   "catalogVersion": 2,
   "plugins": [
     {
@@ -1553,6 +1553,21 @@
       }
     },
     {
+      "id": "browseruse",
+      "displayName": "Browser Use",
+      "description": "Stealth cloud browsers you drive over CDP with Playwright or Puppeteer, plus hosted browser agent runs, behind one API key.",
+      "npmPackageName": "@corsair-dev/browseruse",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 8,
+        "webhooks": 0,
+        "db": 2
+      }
+    },
+    {
       "id": "bubble",
       "displayName": "Bubble",
       "description": "No-code app builder with data and workflow APIs for custom web applications.",
@@ -2082,8 +2097,8 @@
     },
     {
       "id": "clickup",
-      "displayName": "Clickup",
-      "description": "Clickup plugin for Corsair",
+      "displayName": "ClickUp",
+      "description": "Work management platform. Manage workspaces, spaces, folders, lists, tasks, comments, goals, time entries, docs, chat, views, and custom fields.",
       "npmPackageName": "@corsair-dev/clickup",
       "authTypes": [
         "api_key"
@@ -3119,6 +3134,21 @@
         "api": 28,
         "webhooks": 0,
         "db": 5
+      }
+    },
+    {
+      "id": "finerworks",
+      "displayName": "FinerWorks",
+      "description": "Print-on-demand fulfilment - manage images, virtual inventory products, framing options, pricing, shipping rates and orders.",
+      "npmPackageName": "@corsair-dev/finerworks",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 33,
+        "webhooks": 0,
+        "db": 3
       }
     },
     {
@@ -5499,6 +5529,21 @@
       }
     },
     {
+      "id": "turbotpipes",
+      "displayName": "Turbot Pipes",
+      "description": "Cloud intelligence and DevOps data platform for managing workspaces, connections, and queries.",
+      "npmPackageName": "@corsair-dev/turbotpipes",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 170,
+        "webhooks": 0,
+        "db": 8
+      }
+    },
+    {
       "id": "turso",
       "displayName": "Turso",
       "description": "Serverless SQLite databases on libSQL with global replication.",
@@ -5950,6 +5995,21 @@
       }
     },
     {
+      "id": "woodpeckerco",
+      "displayName": "Woodpecker Co",
+      "description": "Cold email and LinkedIn outreach with Woodpecker - list, run, pause and stop campaigns, remove unused campaign steps, add prospects to campaigns and read them back, and look up webhook event types.",
+      "npmPackageName": "@corsair-dev/woodpeckerco",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 8,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
       "id": "workday",
       "displayName": "Workday",
       "description": "Enterprise HR and finance cloud suite for workers, payroll, and organizational data.",
@@ -6113,6 +6173,21 @@
         "api": 55,
         "webhooks": 0,
         "db": 0
+      }
+    },
+    {
+      "id": "zohodesk",
+      "displayName": "Zoho Desk",
+      "description": "Read tickets, threads, contacts, agents, departments and roles in Zoho Desk, update tasks in bulk and manage department logos.",
+      "npmPackageName": "@corsair-dev/zohodesk",
+      "authTypes": [
+        "oauth_2"
+      ],
+      "defaultAuthType": "oauth_2",
+      "counts": {
+        "api": 22,
+        "webhooks": 0,
+        "db": 2
       }
     },
     {
@@ -30520,6 +30595,54 @@
       "haystack": "tasks.watch browsertool.api.tasks.watch poll a browser task for progress and results read"
     },
     {
+      "pluginId": "browseruse",
+      "kind": "api",
+      "shortPath": "browsers.create",
+      "haystack": "browsers.create browseruse.api.browsers.create post /browsers — start a cloud browser; returns cdpurl for playwright/puppeteer and a liveurl write"
+    },
+    {
+      "pluginId": "browseruse",
+      "kind": "api",
+      "shortPath": "browsers.get",
+      "haystack": "browsers.get browseruse.api.browsers.get get /browsers/{id} — browser status, urls, cost, recording read"
+    },
+    {
+      "pluginId": "browseruse",
+      "kind": "api",
+      "shortPath": "browsers.list",
+      "haystack": "browsers.list browseruse.api.browsers.list get /browsers — paginated browsers, filter by active/stopped read"
+    },
+    {
+      "pluginId": "browseruse",
+      "kind": "api",
+      "shortPath": "browsers.stop",
+      "haystack": "browsers.stop browseruse.api.browsers.stop patch /browsers/{id} — stop a browser and refund unused time write"
+    },
+    {
+      "pluginId": "browseruse",
+      "kind": "api",
+      "shortPath": "runs.cancel",
+      "haystack": "runs.cancel browseruse.api.runs.cancel post /runs/{id}/cancel — cancel an in-flight run write"
+    },
+    {
+      "pluginId": "browseruse",
+      "kind": "api",
+      "shortPath": "runs.create",
+      "haystack": "runs.create browseruse.api.runs.create post /runs — start a browser agent run for a natural-language task write"
+    },
+    {
+      "pluginId": "browseruse",
+      "kind": "api",
+      "shortPath": "runs.get",
+      "haystack": "runs.get browseruse.api.runs.get get /runs/{id} — full run once status is terminal: result, tokens, cost read"
+    },
+    {
+      "pluginId": "browseruse",
+      "kind": "api",
+      "shortPath": "runs.getStatus",
+      "haystack": "runs.getstatus browseruse.api.runs.getstatus get /runs/{id}/status — cheap poll until completed, failed, or cancelled read"
+    },
+    {
       "pluginId": "bubble",
       "kind": "api",
       "shortPath": "meta.getSwagger",
@@ -54596,6 +54719,204 @@
       "kind": "api",
       "shortPath": "webhooks.removeForm",
       "haystack": "webhooks.removeform filloutforms.api.webhooks.removeform remove a fillout form webhook destructive"
+    },
+    {
+      "pluginId": "finerworks",
+      "kind": "api",
+      "shortPath": "account.getCompanyInfo",
+      "haystack": "account.getcompanyinfo finerworks.api.account.getcompanyinfo get finerworks' site identifier, company address and business hours read"
+    },
+    {
+      "pluginId": "finerworks",
+      "kind": "api",
+      "shortPath": "account.getUser",
+      "haystack": "account.getuser finerworks.api.account.getuser get the authenticated finerworks account profile, including billing and business addresses read"
+    },
+    {
+      "pluginId": "finerworks",
+      "kind": "api",
+      "shortPath": "account.updateAppDetails",
+      "haystack": "account.updateappdetails finerworks.api.account.updateappdetails update the calling application's name, description and live mode write"
+    },
+    {
+      "pluginId": "finerworks",
+      "kind": "api",
+      "shortPath": "account.updateUser",
+      "haystack": "account.updateuser finerworks.api.account.updateuser update the finerworks account profile, including billing and payment information write"
+    },
+    {
+      "pluginId": "finerworks",
+      "kind": "api",
+      "shortPath": "framing.getFrameDetails",
+      "haystack": "framing.getframedetails finerworks.api.framing.getframedetails get dimensions, pricing, materials and imagery for a specific frame read"
+    },
+    {
+      "pluginId": "finerworks",
+      "kind": "api",
+      "shortPath": "framing.listCollections",
+      "haystack": "framing.listcollections finerworks.api.framing.listcollections list available frame collections and categories read"
+    },
+    {
+      "pluginId": "finerworks",
+      "kind": "api",
+      "shortPath": "framing.listGlazing",
+      "haystack": "framing.listglazing finerworks.api.framing.listglazing list available glazing and glass options read"
+    },
+    {
+      "pluginId": "finerworks",
+      "kind": "api",
+      "shortPath": "framing.listMats",
+      "haystack": "framing.listmats finerworks.api.framing.listmats list matting specifications, colours and pricing read"
+    },
+    {
+      "pluginId": "finerworks",
+      "kind": "api",
+      "shortPath": "galleries.addOrUpdateCollection",
+      "haystack": "galleries.addorupdatecollection finerworks.api.galleries.addorupdatecollection create a personal gallery collection, or update one by supplying its id write"
+    },
+    {
+      "pluginId": "finerworks",
+      "kind": "api",
+      "shortPath": "galleries.list",
+      "haystack": "galleries.list finerworks.api.galleries.list list geogalleries.com galleries, with optional filtering read"
+    },
+    {
+      "pluginId": "finerworks",
+      "kind": "api",
+      "shortPath": "galleries.listThemes",
+      "haystack": "galleries.listthemes finerworks.api.galleries.listthemes list the theme options available for gallery customisation read"
+    },
+    {
+      "pluginId": "finerworks",
+      "kind": "api",
+      "shortPath": "images.add",
+      "haystack": "images.add finerworks.api.images.add add up to five prepared images to a finerworks library write"
+    },
+    {
+      "pluginId": "finerworks",
+      "kind": "api",
+      "shortPath": "images.delete",
+      "haystack": "images.delete finerworks.api.images.delete delete image files by guid, along with any virtual inventory products assigned to them destructive"
+    },
+    {
+      "pluginId": "finerworks",
+      "kind": "api",
+      "shortPath": "images.list",
+      "haystack": "images.list finerworks.api.images.list list image files uploaded to the finerworks account, with pagination read"
+    },
+    {
+      "pluginId": "finerworks",
+      "kind": "api",
+      "shortPath": "images.listFileSelection",
+      "haystack": "images.listfileselection finerworks.api.images.listfileselection list the image guids grouped under a file-selection key read"
+    },
+    {
+      "pluginId": "finerworks",
+      "kind": "api",
+      "shortPath": "images.update",
+      "haystack": "images.update finerworks.api.images.update update image metadata by guid write"
+    },
+    {
+      "pluginId": "finerworks",
+      "kind": "api",
+      "shortPath": "images.updateFileSelection",
+      "haystack": "images.updatefileselection finerworks.api.images.updatefileselection replace the image files held under a selection guid write"
+    },
+    {
+      "pluginId": "finerworks",
+      "kind": "api",
+      "shortPath": "inventory.delete",
+      "haystack": "inventory.delete finerworks.api.inventory.delete delete virtual inventory products by sku and disconnect their third-party sync destructive"
+    },
+    {
+      "pluginId": "finerworks",
+      "kind": "api",
+      "shortPath": "inventory.disconnect",
+      "haystack": "inventory.disconnect finerworks.api.inventory.disconnect disconnect every virtual inventory item from a third-party platform write"
+    },
+    {
+      "pluginId": "finerworks",
+      "kind": "api",
+      "shortPath": "inventory.list",
+      "haystack": "inventory.list finerworks.api.inventory.list list the virtual inventory products on the account, with pagination read"
+    },
+    {
+      "pluginId": "finerworks",
+      "kind": "api",
+      "shortPath": "inventory.update",
+      "haystack": "inventory.update finerworks.api.inventory.update update virtual inventory pricing, stock and third-party integrations write"
+    },
+    {
+      "pluginId": "finerworks",
+      "kind": "api",
+      "shortPath": "orders.deletePending",
+      "haystack": "orders.deletepending finerworks.api.orders.deletepending remove orders that were saved as pending destructive"
+    },
+    {
+      "pluginId": "finerworks",
+      "kind": "api",
+      "shortPath": "orders.fetchStatus",
+      "haystack": "orders.fetchstatus finerworks.api.orders.fetchstatus get production status and tracking information for orders read"
+    },
+    {
+      "pluginId": "finerworks",
+      "kind": "api",
+      "shortPath": "orders.listStatusDefinitions",
+      "haystack": "orders.liststatusdefinitions finerworks.api.orders.liststatusdefinitions list every production status an order can have read"
+    },
+    {
+      "pluginId": "finerworks",
+      "kind": "api",
+      "shortPath": "orders.savePending",
+      "haystack": "orders.savepending finerworks.api.orders.savepending save orders to temporary storage for review before submission write"
+    },
+    {
+      "pluginId": "finerworks",
+      "kind": "api",
+      "shortPath": "orders.submit",
+      "haystack": "orders.submit finerworks.api.orders.submit submit up to five new orders for production write"
+    },
+    {
+      "pluginId": "finerworks",
+      "kind": "api",
+      "shortPath": "orders.validateRecipientAddress",
+      "haystack": "orders.validaterecipientaddress finerworks.api.orders.validaterecipientaddress validate a recipient address before submitting an order read"
+    },
+    {
+      "pluginId": "finerworks",
+      "kind": "api",
+      "shortPath": "products.getPrices",
+      "haystack": "products.getprices finerworks.api.products.getprices get pricing for a set of finerworks product skus read"
+    },
+    {
+      "pluginId": "finerworks",
+      "kind": "api",
+      "shortPath": "products.listMediaTypes",
+      "haystack": "products.listmediatypes finerworks.api.products.listmediatypes list printing substrates (canvas, paper, vinyl) and their product information read"
+    },
+    {
+      "pluginId": "finerworks",
+      "kind": "api",
+      "shortPath": "products.listProductTypes",
+      "haystack": "products.listproducttypes finerworks.api.products.listproducttypes list printing categories such as canvas prints and metal prints read"
+    },
+    {
+      "pluginId": "finerworks",
+      "kind": "api",
+      "shortPath": "products.listStyleTypes",
+      "haystack": "products.liststyletypes finerworks.api.products.liststyletypes list print formatting options including borders and canvas wraps read"
+    },
+    {
+      "pluginId": "finerworks",
+      "kind": "api",
+      "shortPath": "shipping.getOptionIds",
+      "haystack": "shipping.getoptionids finerworks.api.shipping.getoptionids list shipping method identifiers for cross-reference read"
+    },
+    {
+      "pluginId": "finerworks",
+      "kind": "api",
+      "shortPath": "shipping.listOptionsMultiple",
+      "haystack": "shipping.listoptionsmultiple finerworks.api.shipping.listoptionsmultiple get shipping options and rates for a batch of orders read"
     },
     {
       "pluginId": "firecrawl",
@@ -88372,6 +88693,1026 @@
       "haystack": "locations.nearby tripadvisor.api.locations.nearby find full location representations near an area; filter category hotel to list nearby hotels read"
     },
     {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "actor.get",
+      "haystack": "actor.get turbotpipes.api.actor.get get authenticated actor read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "actor.listActivity",
+      "haystack": "actor.listactivity turbotpipes.api.actor.listactivity list activity for actor read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "actor.listConnections",
+      "haystack": "actor.listconnections turbotpipes.api.actor.listconnections list connections for actor read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "actor.listOrgs",
+      "haystack": "actor.listorgs turbotpipes.api.actor.listorgs list organizations for actor read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "actor.listWorkspaces",
+      "haystack": "actor.listworkspaces turbotpipes.api.actor.listworkspaces list workspaces accessible by actor read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "ai.createUserAiKey",
+      "haystack": "ai.createuseraikey turbotpipes.api.ai.createuseraikey create user ai key write"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "ai.deleteOrgWorkspaceConversation",
+      "haystack": "ai.deleteorgworkspaceconversation turbotpipes.api.ai.deleteorgworkspaceconversation delete ai conversation in org workspace destructive"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "ai.getUserAiKey",
+      "haystack": "ai.getuseraikey turbotpipes.api.ai.getuseraikey get user ai key metadata read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "ai.getUserWorkspaceConversation",
+      "haystack": "ai.getuserworkspaceconversation turbotpipes.api.ai.getuserworkspaceconversation get ai conversation details read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "ai.listUserAiKeys",
+      "haystack": "ai.listuseraikeys turbotpipes.api.ai.listuseraikeys list user ai keys read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "ai.listUserWorkspaceConversations",
+      "haystack": "ai.listuserworkspaceconversations turbotpipes.api.ai.listuserworkspaceconversations list ai conversations read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "ai.sendUserWorkspaceChatMessage",
+      "haystack": "ai.senduserworkspacechatmessage turbotpipes.api.ai.senduserworkspacechatmessage send chat message to workspace ai write"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "ai.testUserAiKey",
+      "haystack": "ai.testuseraikey turbotpipes.api.ai.testuseraikey test user ai key read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "ai.updateUserAiKey",
+      "haystack": "ai.updateuseraikey turbotpipes.api.ai.updateuseraikey update user ai key write"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "ai.updateUserWorkspaceConversation",
+      "haystack": "ai.updateuserworkspaceconversation turbotpipes.api.ai.updateuserworkspaceconversation update ai conversation write"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "auth.createLoginTokenEmail",
+      "haystack": "auth.createlogintokenemail turbotpipes.api.auth.createlogintokenemail send login token to email write"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "auth.createSignup",
+      "haystack": "auth.createsignup turbotpipes.api.auth.createsignup create new user signup write"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "auth.createUserPassword",
+      "haystack": "auth.createuserpassword turbotpipes.api.auth.createuserpassword create user password write"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "auth.deleteUserToken",
+      "haystack": "auth.deleteusertoken turbotpipes.api.auth.deleteusertoken delete user token destructive"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "auth.getAuthProvider",
+      "haystack": "auth.getauthprovider turbotpipes.api.auth.getauthprovider get oauth provider details read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "auth.getUserPassword",
+      "haystack": "auth.getuserpassword turbotpipes.api.auth.getuserpassword get user password status read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "auth.getUserToken",
+      "haystack": "auth.getusertoken turbotpipes.api.auth.getusertoken get user token metadata read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "auth.initiateLogin",
+      "haystack": "auth.initiatelogin turbotpipes.api.auth.initiatelogin initiate user login write"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "auth.updateUserToken",
+      "haystack": "auth.updateusertoken turbotpipes.api.auth.updateusertoken update user token status write"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "billing.deleteOrgBillingSubscription",
+      "haystack": "billing.deleteorgbillingsubscription turbotpipes.api.billing.deleteorgbillingsubscription delete org billing subscription destructive"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "billing.getOrgBillingInvoice",
+      "haystack": "billing.getorgbillinginvoice turbotpipes.api.billing.getorgbillinginvoice get org billing invoice read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "billing.getUserBillingPlan",
+      "haystack": "billing.getuserbillingplan turbotpipes.api.billing.getuserbillingplan get user billing plan read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "billing.getUserBillingUpcomingInvoice",
+      "haystack": "billing.getuserbillingupcominginvoice turbotpipes.api.billing.getuserbillingupcominginvoice get user upcoming invoice read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "billing.listUserBillingInvoices",
+      "haystack": "billing.listuserbillinginvoices turbotpipes.api.billing.listuserbillinginvoices list user billing invoices read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "billing.listUserBillingPaymentMethods",
+      "haystack": "billing.listuserbillingpaymentmethods turbotpipes.api.billing.listuserbillingpaymentmethods list user payment methods read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "billing.listUserBillingSubscriptions",
+      "haystack": "billing.listuserbillingsubscriptions turbotpipes.api.billing.listuserbillingsubscriptions list user billing subscriptions read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "billing.updateOrgBillingSubscription",
+      "haystack": "billing.updateorgbillingsubscription turbotpipes.api.billing.updateorgbillingsubscription update org billing subscription write"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "connections.createOrgConnection",
+      "haystack": "connections.createorgconnection turbotpipes.api.connections.createorgconnection create org connection write"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "connections.createOrgConnectionFolder",
+      "haystack": "connections.createorgconnectionfolder turbotpipes.api.connections.createorgconnectionfolder create org connection folder write"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "connections.createUserConnection",
+      "haystack": "connections.createuserconnection turbotpipes.api.connections.createuserconnection create user connection write"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "connections.deleteOrgConnectionPermission",
+      "haystack": "connections.deleteorgconnectionpermission turbotpipes.api.connections.deleteorgconnectionpermission delete org connection permission destructive"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "connections.deleteUserConnectionDeprecated",
+      "haystack": "connections.deleteuserconnectiondeprecated turbotpipes.api.connections.deleteuserconnectiondeprecated delete user connection (deprecated) destructive"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "connections.getOrgConnectionPermission",
+      "haystack": "connections.getorgconnectionpermission turbotpipes.api.connections.getorgconnectionpermission get org connection permission read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "connections.getUserConnection",
+      "haystack": "connections.getuserconnection turbotpipes.api.connections.getuserconnection get user connection details read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "connections.listUserConnections",
+      "haystack": "connections.listuserconnections turbotpipes.api.connections.listuserconnections list connections for user read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "connections.testUserConnection",
+      "haystack": "connections.testuserconnection turbotpipes.api.connections.testuserconnection test user connection credentials read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "connections.updateOrgConnection",
+      "haystack": "connections.updateorgconnection turbotpipes.api.connections.updateorgconnection update org connection write"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "connections.updateOrgConnectionFolder",
+      "haystack": "connections.updateorgconnectionfolder turbotpipes.api.connections.updateorgconnectionfolder update org connection folder write"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "connections.updateUserConnection",
+      "haystack": "connections.updateuserconnection turbotpipes.api.connections.updateuserconnection update user connection write"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "datatanks.createUserWorkspaceDatatank",
+      "haystack": "datatanks.createuserworkspacedatatank turbotpipes.api.datatanks.createuserworkspacedatatank create user workspace datatank write"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "datatanks.createUserWorkspaceDatatankTable",
+      "haystack": "datatanks.createuserworkspacedatatanktable turbotpipes.api.datatanks.createuserworkspacedatatanktable create datatank table write"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "datatanks.getDatatankTable",
+      "haystack": "datatanks.getdatatanktable turbotpipes.api.datatanks.getdatatanktable get datatank table details read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "datatanks.getUserWorkspaceDatatank",
+      "haystack": "datatanks.getuserworkspacedatatank turbotpipes.api.datatanks.getuserworkspacedatatank get user workspace datatank read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "datatanks.getUserWorkspaceSchema",
+      "haystack": "datatanks.getuserworkspaceschema turbotpipes.api.datatanks.getuserworkspaceschema get user workspace schema read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "datatanks.getUserWorkspaceSchemaTable",
+      "haystack": "datatanks.getuserworkspaceschematable turbotpipes.api.datatanks.getuserworkspaceschematable get schema table details read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "datatanks.listOrgWorkspaceDatatanks",
+      "haystack": "datatanks.listorgworkspacedatatanks turbotpipes.api.datatanks.listorgworkspacedatatanks list org workspace datatanks read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "datatanks.listUserWorkspaceDatatankPartitions",
+      "haystack": "datatanks.listuserworkspacedatatankpartitions turbotpipes.api.datatanks.listuserworkspacedatatankpartitions list datatank partitions read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "datatanks.listUserWorkspaceDatatanks",
+      "haystack": "datatanks.listuserworkspacedatatanks turbotpipes.api.datatanks.listuserworkspacedatatanks list user workspace datatanks read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "datatanks.listUserWorkspaceDatatankTables",
+      "haystack": "datatanks.listuserworkspacedatatanktables turbotpipes.api.datatanks.listuserworkspacedatatanktables list datatank tables read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "datatanks.listUserWorkspaceSchemas",
+      "haystack": "datatanks.listuserworkspaceschemas turbotpipes.api.datatanks.listuserworkspaceschemas list user workspace schemas read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "datatanks.listUserWorkspaceSchemaTables",
+      "haystack": "datatanks.listuserworkspaceschematables turbotpipes.api.datatanks.listuserworkspaceschematables list schema tables read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "identities.getIdentity",
+      "haystack": "identities.getidentity turbotpipes.api.identities.getidentity get identity details by handle read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "identities.getIdentityAvatar",
+      "haystack": "identities.getidentityavatar turbotpipes.api.identities.getidentityavatar get identity avatar read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "identities.listIdentities",
+      "haystack": "identities.listidentities turbotpipes.api.identities.listidentities list identities read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "integrations.createUserIntegration",
+      "haystack": "integrations.createuserintegration turbotpipes.api.integrations.createuserintegration create user integration write"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "integrations.deleteUserIntegration",
+      "haystack": "integrations.deleteuserintegration turbotpipes.api.integrations.deleteuserintegration delete user integration destructive"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "integrations.getOrgIntegration",
+      "haystack": "integrations.getorgintegration turbotpipes.api.integrations.getorgintegration get org integration read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "integrations.getOrgWorkspaceIntegration",
+      "haystack": "integrations.getorgworkspaceintegration turbotpipes.api.integrations.getorgworkspaceintegration get org workspace integration read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "integrations.getUserIntegration",
+      "haystack": "integrations.getuserintegration turbotpipes.api.integrations.getuserintegration get user integration details read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "integrations.getUserWorkspaceIntegration",
+      "haystack": "integrations.getuserworkspaceintegration turbotpipes.api.integrations.getuserworkspaceintegration get user workspace integration read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "integrations.installUserSlackIntegration",
+      "haystack": "integrations.installuserslackintegration turbotpipes.api.integrations.installuserslackintegration install slack integration for user write"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "integrations.listUserIntegrations",
+      "haystack": "integrations.listuserintegrations turbotpipes.api.integrations.listuserintegrations list integrations for user read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "integrations.listUserWorkspaceIntegrations",
+      "haystack": "integrations.listuserworkspaceintegrations turbotpipes.api.integrations.listuserworkspaceintegrations list user workspace integrations read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "integrations.testUserIntegration",
+      "haystack": "integrations.testuserintegration turbotpipes.api.integrations.testuserintegration test user integration read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "integrations.updateUserIntegration",
+      "haystack": "integrations.updateuserintegration turbotpipes.api.integrations.updateuserintegration update user integration write"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "mods.createUserWorkspaceModVariableSetting",
+      "haystack": "mods.createuserworkspacemodvariablesetting turbotpipes.api.mods.createuserworkspacemodvariablesetting create mod variable setting write"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "mods.deleteOrgWorkspaceModVariableSetting",
+      "haystack": "mods.deleteorgworkspacemodvariablesetting turbotpipes.api.mods.deleteorgworkspacemodvariablesetting delete org mod variable setting destructive"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "mods.deleteUserWorkspaceModVariableSetting",
+      "haystack": "mods.deleteuserworkspacemodvariablesetting turbotpipes.api.mods.deleteuserworkspacemodvariablesetting delete mod variable setting destructive"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "mods.getOrgWorkspaceModVariableSetting",
+      "haystack": "mods.getorgworkspacemodvariablesetting turbotpipes.api.mods.getorgworkspacemodvariablesetting get org mod variable setting read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "mods.getUserWorkspaceMod",
+      "haystack": "mods.getuserworkspacemod turbotpipes.api.mods.getuserworkspacemod get installed mod details read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "mods.getUserWorkspaceModVariableSetting",
+      "haystack": "mods.getuserworkspacemodvariablesetting turbotpipes.api.mods.getuserworkspacemodvariablesetting get mod variable setting read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "mods.installUserWorkspaceMod",
+      "haystack": "mods.installuserworkspacemod turbotpipes.api.mods.installuserworkspacemod install mod in user workspace write"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "mods.listOrgWorkspaceMods",
+      "haystack": "mods.listorgworkspacemods turbotpipes.api.mods.listorgworkspacemods list installed mods in org workspace read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "mods.listUserWorkspaceMods",
+      "haystack": "mods.listuserworkspacemods turbotpipes.api.mods.listuserworkspacemods list installed mods in workspace read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "mods.listUserWorkspaceModVariables",
+      "haystack": "mods.listuserworkspacemodvariables turbotpipes.api.mods.listuserworkspacemodvariables list mod variables read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "notifiers.createUserNotifier",
+      "haystack": "notifiers.createusernotifier turbotpipes.api.notifiers.createusernotifier create user notifier write"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "notifiers.createUserWorkspaceNotifier",
+      "haystack": "notifiers.createuserworkspacenotifier turbotpipes.api.notifiers.createuserworkspacenotifier create workspace notifier write"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "notifiers.deleteUserWorkspaceNotifier",
+      "haystack": "notifiers.deleteuserworkspacenotifier turbotpipes.api.notifiers.deleteuserworkspacenotifier delete workspace notifier destructive"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "notifiers.getOrgWorkspaceNotifier",
+      "haystack": "notifiers.getorgworkspacenotifier turbotpipes.api.notifiers.getorgworkspacenotifier get org workspace notifier read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "notifiers.getUserWorkspaceNotifier",
+      "haystack": "notifiers.getuserworkspacenotifier turbotpipes.api.notifiers.getuserworkspacenotifier get workspace notifier read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "notifiers.listUserNotifiers",
+      "haystack": "notifiers.listusernotifiers turbotpipes.api.notifiers.listusernotifiers list user notifiers read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "notifiers.listUserWorkspaceNotifiers",
+      "haystack": "notifiers.listuserworkspacenotifiers turbotpipes.api.notifiers.listuserworkspacenotifiers list workspace notifiers read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "notifiers.postUserWorkspaceNotifierCommand",
+      "haystack": "notifiers.postuserworkspacenotifiercommand turbotpipes.api.notifiers.postuserworkspacenotifiercommand post command to workspace notifier write"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "orgs.delete",
+      "haystack": "orgs.delete turbotpipes.api.orgs.delete delete an organization destructive"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "orgs.deleteWorkspace",
+      "haystack": "orgs.deleteworkspace turbotpipes.api.orgs.deleteworkspace delete organization workspace destructive"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "orgs.get",
+      "haystack": "orgs.get turbotpipes.api.orgs.get get organization details read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "orgs.getMember",
+      "haystack": "orgs.getmember turbotpipes.api.orgs.getmember get organization member details read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "orgs.listProcesses",
+      "haystack": "orgs.listprocesses turbotpipes.api.orgs.listprocesses list organization processes read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "orgs.listServiceAccounts",
+      "haystack": "orgs.listserviceaccounts turbotpipes.api.orgs.listserviceaccounts list organization service accounts read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "orgs.listUsage",
+      "haystack": "orgs.listusage turbotpipes.api.orgs.listusage list organization usage read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "orgs.listWorkspaces",
+      "haystack": "orgs.listworkspaces turbotpipes.api.orgs.listworkspaces list organization workspaces read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "orgs.runWorkspaceCommand",
+      "haystack": "orgs.runworkspacecommand turbotpipes.api.orgs.runworkspacecommand run command on org workspace write"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "orgs.updateMemberRole",
+      "haystack": "orgs.updatememberrole turbotpipes.api.orgs.updatememberrole update organization member role write"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "orgs.updateServiceAccount",
+      "haystack": "orgs.updateserviceaccount turbotpipes.api.orgs.updateserviceaccount update service account write"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "orgs.updateServiceAccountToken",
+      "haystack": "orgs.updateserviceaccounttoken turbotpipes.api.orgs.updateserviceaccounttoken update service account token write"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "pipelines.deleteUserWorkspacePipeline",
+      "haystack": "pipelines.deleteuserworkspacepipeline turbotpipes.api.pipelines.deleteuserworkspacepipeline delete pipeline from workspace destructive"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "pipelines.getOrgWorkspaceFlowpipeTrigger",
+      "haystack": "pipelines.getorgworkspaceflowpipetrigger turbotpipes.api.pipelines.getorgworkspaceflowpipetrigger get flowpipe trigger details read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "pipelines.getUserWorkspaceFlowpipeMod",
+      "haystack": "pipelines.getuserworkspaceflowpipemod turbotpipes.api.pipelines.getuserworkspaceflowpipemod get flowpipe mod details read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "pipelines.getUserWorkspaceFlowpipePipeline",
+      "haystack": "pipelines.getuserworkspaceflowpipepipeline turbotpipes.api.pipelines.getuserworkspaceflowpipepipeline get flowpipe pipeline details read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "pipelines.getUserWorkspacePipeline",
+      "haystack": "pipelines.getuserworkspacepipeline turbotpipes.api.pipelines.getuserworkspacepipeline get pipeline details read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "pipelines.installUserWorkspaceFlowpipeMod",
+      "haystack": "pipelines.installuserworkspaceflowpipemod turbotpipes.api.pipelines.installuserworkspaceflowpipemod install flowpipe mod write"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "pipelines.listOrgWorkspaceFlowpipeModVariables",
+      "haystack": "pipelines.listorgworkspaceflowpipemodvariables turbotpipes.api.pipelines.listorgworkspaceflowpipemodvariables list org flowpipe mod variables read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "pipelines.listOrgWorkspacePipelines",
+      "haystack": "pipelines.listorgworkspacepipelines turbotpipes.api.pipelines.listorgworkspacepipelines list pipelines in org workspace read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "pipelines.listUserWorkspaceFlowpipeInputs",
+      "haystack": "pipelines.listuserworkspaceflowpipeinputs turbotpipes.api.pipelines.listuserworkspaceflowpipeinputs list flowpipe inputs read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "pipelines.listUserWorkspaceFlowpipeModVariables",
+      "haystack": "pipelines.listuserworkspaceflowpipemodvariables turbotpipes.api.pipelines.listuserworkspaceflowpipemodvariables list user flowpipe mod variables read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "pipelines.listUserWorkspaceFlowpipePipelines",
+      "haystack": "pipelines.listuserworkspaceflowpipepipelines turbotpipes.api.pipelines.listuserworkspaceflowpipepipelines list flowpipe pipelines read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "pipelines.listUserWorkspaceFlowpipeTriggers",
+      "haystack": "pipelines.listuserworkspaceflowpipetriggers turbotpipes.api.pipelines.listuserworkspaceflowpipetriggers list flowpipe triggers read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "pipelines.listUserWorkspacePipelines",
+      "haystack": "pipelines.listuserworkspacepipelines turbotpipes.api.pipelines.listuserworkspacepipelines list pipelines in workspace read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "pipelines.listUserWorkspacePipelineTriggers",
+      "haystack": "pipelines.listuserworkspacepipelinetriggers turbotpipes.api.pipelines.listuserworkspacepipelinetriggers list triggers for pipeline read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "pipelines.runUserWorkspaceFlowpipePipelineCommand",
+      "haystack": "pipelines.runuserworkspaceflowpipepipelinecommand turbotpipes.api.pipelines.runuserworkspaceflowpipepipelinecommand run flowpipe pipeline command write"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "pipelines.runUserWorkspaceFlowpipeTriggerCommand",
+      "haystack": "pipelines.runuserworkspaceflowpipetriggercommand turbotpipes.api.pipelines.runuserworkspaceflowpipetriggercommand run flowpipe trigger command write"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "pipelines.uninstallFlowpipeMod",
+      "haystack": "pipelines.uninstallflowpipemod turbotpipes.api.pipelines.uninstallflowpipemod uninstall flowpipe mod destructive"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "pipelines.uninstallOrgWorkspaceFlowpipeMod",
+      "haystack": "pipelines.uninstallorgworkspaceflowpipemod turbotpipes.api.pipelines.uninstallorgworkspaceflowpipemod uninstall org flowpipe mod destructive"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "query.createOrgWorkspaceQuery",
+      "haystack": "query.createorgworkspacequery turbotpipes.api.query.createorgworkspacequery execute query in org workspace write"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "query.createOrgWorkspaceSnapshot",
+      "haystack": "query.createorgworkspacesnapshot turbotpipes.api.query.createorgworkspacesnapshot create workspace snapshot write"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "query.getOrgWorkspaceQueryData",
+      "haystack": "query.getorgworkspacequerydata turbotpipes.api.query.getorgworkspacequerydata get query data from org workspace read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "query.getUserWorkspaceQuery",
+      "haystack": "query.getuserworkspacequery turbotpipes.api.query.getuserworkspacequery execute query in user workspace (get) read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "query.getUserWorkspaceQueryData",
+      "haystack": "query.getuserworkspacequerydata turbotpipes.api.query.getuserworkspacequerydata get query data from user workspace read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "query.listUserWorkspaceSnapshots",
+      "haystack": "query.listuserworkspacesnapshots turbotpipes.api.query.listuserworkspacesnapshots list workspace snapshots read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "query.postUserWorkspaceQuery",
+      "haystack": "query.postuserworkspacequery turbotpipes.api.query.postuserworkspacequery execute query in user workspace (post) write"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "query.runUserWorkspaceQuery",
+      "haystack": "query.runuserworkspacequery turbotpipes.api.query.runuserworkspacequery run query in user workspace write"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "tenants.getTenant",
+      "haystack": "tenants.gettenant turbotpipes.api.tenants.gettenant get tenant information read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "tenants.getTenantAvatar",
+      "haystack": "tenants.gettenantavatar turbotpipes.api.tenants.gettenantavatar get tenant avatar image read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "tenants.getTenantSettings",
+      "haystack": "tenants.gettenantsettings turbotpipes.api.tenants.gettenantsettings get tenant settings read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "tenants.listTenants",
+      "haystack": "tenants.listtenants turbotpipes.api.tenants.listtenants list accessible tenants read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "users.deleteUserAvatar",
+      "haystack": "users.deleteuseravatar turbotpipes.api.users.deleteuseravatar delete custom user avatar destructive"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "users.get",
+      "haystack": "users.get turbotpipes.api.users.get get user details by handle read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "users.getUserEmail",
+      "haystack": "users.getuseremail turbotpipes.api.users.getuseremail get user email details read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "users.getUserPreferences",
+      "haystack": "users.getuserpreferences turbotpipes.api.users.getuserpreferences get user preferences read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "users.getUserProcess",
+      "haystack": "users.getuserprocess turbotpipes.api.users.getuserprocess get user process details read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "users.getUserWorkspace",
+      "haystack": "users.getuserworkspace turbotpipes.api.users.getuserworkspace get user workspace details read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "users.listAuditLogs",
+      "haystack": "users.listauditlogs turbotpipes.api.users.listauditlogs list user audit logs read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "users.listConstraints",
+      "haystack": "users.listconstraints turbotpipes.api.users.listconstraints list user constraints read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "users.listProcesses",
+      "haystack": "users.listprocesses turbotpipes.api.users.listprocesses list processes for user read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "users.listUsage",
+      "haystack": "users.listusage turbotpipes.api.users.listusage list user usage metrics read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "users.listUserEmails",
+      "haystack": "users.listuseremails turbotpipes.api.users.listuseremails list user emails read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "users.listWorkspaces",
+      "haystack": "users.listworkspaces turbotpipes.api.users.listworkspaces list workspaces for user read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "users.runUserWorkspaceCommand",
+      "haystack": "users.runuserworkspacecommand turbotpipes.api.users.runuserworkspacecommand run command on user workspace write"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "users.update",
+      "haystack": "users.update turbotpipes.api.users.update update user information write"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "users.updateUserPreferences",
+      "haystack": "users.updateuserpreferences turbotpipes.api.users.updateuserpreferences update user preferences write"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "users.updateUserWorkspace",
+      "haystack": "users.updateuserworkspace turbotpipes.api.users.updateuserworkspace update user workspace write"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "workspaces.createOrgWorkspaceAggregator",
+      "haystack": "workspaces.createorgworkspaceaggregator turbotpipes.api.workspaces.createorgworkspaceaggregator create org workspace aggregator write"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "workspaces.createOrgWorkspaceConnection",
+      "haystack": "workspaces.createorgworkspaceconnection turbotpipes.api.workspaces.createorgworkspaceconnection create org workspace connection write"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "workspaces.createOrgWorkspaceConnectionFolder",
+      "haystack": "workspaces.createorgworkspaceconnectionfolder turbotpipes.api.workspaces.createorgworkspaceconnectionfolder create org workspace connection folder write"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "workspaces.createUserWorkspaceConnection",
+      "haystack": "workspaces.createuserworkspaceconnection turbotpipes.api.workspaces.createuserworkspaceconnection create user workspace connection write"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "workspaces.createUserWorkspaceConnectionFolder",
+      "haystack": "workspaces.createuserworkspaceconnectionfolder turbotpipes.api.workspaces.createuserworkspaceconnectionfolder create user workspace connection folder write"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "workspaces.getOrgWorkspaceConnection",
+      "haystack": "workspaces.getorgworkspaceconnection turbotpipes.api.workspaces.getorgworkspaceconnection get org workspace connection read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "workspaces.getOrgWorkspaceConnectionFolder",
+      "haystack": "workspaces.getorgworkspaceconnectionfolder turbotpipes.api.workspaces.getorgworkspaceconnectionfolder get org workspace connection folder read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "workspaces.getUserWorkspaceAggregator",
+      "haystack": "workspaces.getuserworkspaceaggregator turbotpipes.api.workspaces.getuserworkspaceaggregator get user workspace aggregator read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "workspaces.getUserWorkspaceConnection",
+      "haystack": "workspaces.getuserworkspaceconnection turbotpipes.api.workspaces.getuserworkspaceconnection get user workspace connection read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "workspaces.getUserWorkspaceConnectionFolder",
+      "haystack": "workspaces.getuserworkspaceconnectionfolder turbotpipes.api.workspaces.getuserworkspaceconnectionfolder get user workspace connection folder read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "workspaces.getUserWorkspaceProcess",
+      "haystack": "workspaces.getuserworkspaceprocess turbotpipes.api.workspaces.getuserworkspaceprocess get workspace process read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "workspaces.getUserWorkspaceProcessLog",
+      "haystack": "workspaces.getuserworkspaceprocesslog turbotpipes.api.workspaces.getuserworkspaceprocesslog get workspace process logs read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "workspaces.listOrgWorkspaceProcesses",
+      "haystack": "workspaces.listorgworkspaceprocesses turbotpipes.api.workspaces.listorgworkspaceprocesses list org workspace processes read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "workspaces.listUserWorkspaceAggregatorConnections",
+      "haystack": "workspaces.listuserworkspaceaggregatorconnections turbotpipes.api.workspaces.listuserworkspaceaggregatorconnections list user workspace aggregator connections read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "workspaces.listUserWorkspaceAggregators",
+      "haystack": "workspaces.listuserworkspaceaggregators turbotpipes.api.workspaces.listuserworkspaceaggregators list user workspace aggregators read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "workspaces.listUserWorkspaceAuditLogs",
+      "haystack": "workspaces.listuserworkspaceauditlogs turbotpipes.api.workspaces.listuserworkspaceauditlogs list workspace audit logs read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "workspaces.listUserWorkspaceConnectionAssociations",
+      "haystack": "workspaces.listuserworkspaceconnectionassociations turbotpipes.api.workspaces.listuserworkspaceconnectionassociations list user workspace connection associations read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "workspaces.listUserWorkspaceConnectionFolders",
+      "haystack": "workspaces.listuserworkspaceconnectionfolders turbotpipes.api.workspaces.listuserworkspaceconnectionfolders list user workspace connection folders read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "workspaces.listUserWorkspaceConnections",
+      "haystack": "workspaces.listuserworkspaceconnections turbotpipes.api.workspaces.listuserworkspaceconnections list user workspace connections read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "workspaces.listUserWorkspaceConnectionTree",
+      "haystack": "workspaces.listuserworkspaceconnectiontree turbotpipes.api.workspaces.listuserworkspaceconnectiontree list user workspace connection tree read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "workspaces.listUserWorkspaceDatabaseLogs",
+      "haystack": "workspaces.listuserworkspacedatabaselogs turbotpipes.api.workspaces.listuserworkspacedatabaselogs list workspace database logs read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "workspaces.listUserWorkspaceProcesses",
+      "haystack": "workspaces.listuserworkspaceprocesses turbotpipes.api.workspaces.listuserworkspaceprocesses list workspace processes read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "workspaces.listUserWorkspaceUsage",
+      "haystack": "workspaces.listuserworkspaceusage turbotpipes.api.workspaces.listuserworkspaceusage list user workspace usage read"
+    },
+    {
+      "pluginId": "turbotpipes",
+      "kind": "api",
+      "shortPath": "workspaces.testUserWorkspaceConnection",
+      "haystack": "workspaces.testuserworkspaceconnection turbotpipes.api.workspaces.testuserworkspaceconnection test user workspace connection read"
+    },
+    {
       "pluginId": "turso",
       "kind": "api",
       "shortPath": "changes.listen",
@@ -93004,6 +94345,54 @@
       "haystack": "prospects.search wiza.api.prospects.search search for prospects matching filters (job title, location, company, industry) read"
     },
     {
+      "pluginId": "woodpeckerco",
+      "kind": "api",
+      "shortPath": "campaigns.deleteStep",
+      "haystack": "campaigns.deletestep woodpeckerco.api.campaigns.deletestep permanently delete an unused email or linkedin step that is not the first step; the campaign must be draft or edited destructive"
+    },
+    {
+      "pluginId": "woodpeckerco",
+      "kind": "api",
+      "shortPath": "campaigns.list",
+      "haystack": "campaigns.list woodpeckerco.api.campaigns.list list campaigns, optionally filtered by status or id; asking for exactly one id also returns its statistics read"
+    },
+    {
+      "pluginId": "woodpeckerco",
+      "kind": "api",
+      "shortPath": "campaigns.pause",
+      "haystack": "campaigns.pause woodpeckerco.api.campaigns.pause pause a campaign: no further contact with prospects until it is run again write"
+    },
+    {
+      "pluginId": "woodpeckerco",
+      "kind": "api",
+      "shortPath": "campaigns.run",
+      "haystack": "campaigns.run woodpeckerco.api.campaigns.run start or resume a campaign: it becomes running and woodpecker starts contacting its prospects write"
+    },
+    {
+      "pluginId": "woodpeckerco",
+      "kind": "api",
+      "shortPath": "campaigns.stop",
+      "haystack": "campaigns.stop woodpeckerco.api.campaigns.stop stop a campaign: no further contact with prospects until it is run again write"
+    },
+    {
+      "pluginId": "woodpeckerco",
+      "kind": "api",
+      "shortPath": "prospects.addToCampaign",
+      "haystack": "prospects.addtocampaign woodpeckerco.api.prospects.addtocampaign add up to 20,000 prospects to a campaign, also creating them in the global list; each result says if that prospect was a duplicate or rejected write"
+    },
+    {
+      "pluginId": "woodpeckerco",
+      "kind": "api",
+      "shortPath": "prospects.listInCampaigns",
+      "haystack": "prospects.listincampaigns woodpeckerco.api.prospects.listincampaigns list the prospects in one or more campaigns with their campaign status and interest level, with filters, sorting and paging read"
+    },
+    {
+      "pluginId": "woodpeckerco",
+      "kind": "api",
+      "shortPath": "webhooks.listEvents",
+      "haystack": "webhooks.listevents woodpeckerco.api.webhooks.listevents list the event types woodpecker can send to a webhook, from woodpecker's docs; makes no api call read"
+    },
+    {
       "pluginId": "workday",
       "kind": "api",
       "shortPath": "absence.getAbsenceBalance",
@@ -94910,6 +96299,138 @@
       "kind": "api",
       "shortPath": "users.uploadOrgPhoto",
       "haystack": "users.uploadorgphoto zohobigin.api.users.uploadorgphoto upload organization photo write"
+    },
+    {
+      "pluginId": "zohodesk",
+      "kind": "api",
+      "shortPath": "agents.get",
+      "haystack": "agents.get zohodesk.api.agents.get get an agent, optionally with its profile, role, departments and verified emails read"
+    },
+    {
+      "pluginId": "zohodesk",
+      "kind": "api",
+      "shortPath": "agents.getCount",
+      "haystack": "agents.getcount zohodesk.api.agents.getcount count agents, optionally by status, confirmation and light agent inclusion read"
+    },
+    {
+      "pluginId": "zohodesk",
+      "kind": "api",
+      "shortPath": "contacts.get",
+      "haystack": "contacts.get zohodesk.api.contacts.get get a contact, optionally with its accounts and owner read"
+    },
+    {
+      "pluginId": "zohodesk",
+      "kind": "api",
+      "shortPath": "contacts.getByIds",
+      "haystack": "contacts.getbyids zohodesk.api.contacts.getbyids get up to 20 contacts by id read"
+    },
+    {
+      "pluginId": "zohodesk",
+      "kind": "api",
+      "shortPath": "contacts.list",
+      "haystack": "contacts.list zohodesk.api.contacts.list list contacts with view and saved filter, paging, sorting and field selection read"
+    },
+    {
+      "pluginId": "zohodesk",
+      "kind": "api",
+      "shortPath": "contacts.listAccounts",
+      "haystack": "contacts.listaccounts zohodesk.api.contacts.listaccounts list the accounts of a contact read"
+    },
+    {
+      "pluginId": "zohodesk",
+      "kind": "api",
+      "shortPath": "departments.get",
+      "haystack": "departments.get zohodesk.api.departments.get get a department by id read"
+    },
+    {
+      "pluginId": "zohodesk",
+      "kind": "api",
+      "shortPath": "departments.getCount",
+      "haystack": "departments.getcount zohodesk.api.departments.getcount count departments, optionally only enabled or disabled ones read"
+    },
+    {
+      "pluginId": "zohodesk",
+      "kind": "api",
+      "shortPath": "departments.getLogo",
+      "haystack": "departments.getlogo zohodesk.api.departments.getlogo download the logo of a department as base64 read"
+    },
+    {
+      "pluginId": "zohodesk",
+      "kind": "api",
+      "shortPath": "departments.list",
+      "haystack": "departments.list zohodesk.api.departments.list list departments read"
+    },
+    {
+      "pluginId": "zohodesk",
+      "kind": "api",
+      "shortPath": "departments.listTeams",
+      "haystack": "departments.listteams zohodesk.api.departments.listteams list the teams in a department read"
+    },
+    {
+      "pluginId": "zohodesk",
+      "kind": "api",
+      "shortPath": "departments.uploadLogo",
+      "haystack": "departments.uploadlogo zohodesk.api.departments.uploadlogo replace the logo of a department with a jpg, png or gif of up to 2mb write"
+    },
+    {
+      "pluginId": "zohodesk",
+      "kind": "api",
+      "shortPath": "organizations.list",
+      "haystack": "organizations.list zohodesk.api.organizations.list list the organizations the user belongs to read"
+    },
+    {
+      "pluginId": "zohodesk",
+      "kind": "api",
+      "shortPath": "roles.list",
+      "haystack": "roles.list zohodesk.api.roles.list list roles read"
+    },
+    {
+      "pluginId": "zohodesk",
+      "kind": "api",
+      "shortPath": "roles.listByIds",
+      "haystack": "roles.listbyids zohodesk.api.roles.listbyids get up to 50 roles by id read"
+    },
+    {
+      "pluginId": "zohodesk",
+      "kind": "api",
+      "shortPath": "tasks.updateMany",
+      "haystack": "tasks.updatemany zohodesk.api.tasks.updatemany set one field on up to 50 tasks write"
+    },
+    {
+      "pluginId": "zohodesk",
+      "kind": "api",
+      "shortPath": "tickets.get",
+      "haystack": "tickets.get zohodesk.api.tickets.get get a ticket by id read"
+    },
+    {
+      "pluginId": "zohodesk",
+      "kind": "api",
+      "shortPath": "tickets.getLatestThread",
+      "haystack": "tickets.getlatestthread zohodesk.api.tickets.getlatestthread get the most recent thread of a ticket, or null if it has none read"
+    },
+    {
+      "pluginId": "zohodesk",
+      "kind": "api",
+      "shortPath": "tickets.getResolution",
+      "haystack": "tickets.getresolution zohodesk.api.tickets.getresolution get the resolution of a ticket, or null if it has none read"
+    },
+    {
+      "pluginId": "zohodesk",
+      "kind": "api",
+      "shortPath": "tickets.getThread",
+      "haystack": "tickets.getthread zohodesk.api.tickets.getthread get one thread of a ticket read"
+    },
+    {
+      "pluginId": "zohodesk",
+      "kind": "api",
+      "shortPath": "tickets.list",
+      "haystack": "tickets.list zohodesk.api.tickets.list list tickets, filtered by department, view, assignee, team, channel, status or priority read"
+    },
+    {
+      "pluginId": "zohodesk",
+      "kind": "api",
+      "shortPath": "tickets.listConversations",
+      "haystack": "tickets.listconversations zohodesk.api.tickets.listconversations list the threads and comments of a ticket read"
     },
     {
       "pluginId": "zohoinventory",

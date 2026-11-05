@@ -12,17 +12,48 @@ describe('agent roles', () => {
 		for (const role of AGENT_ROLES) assert.match(role.title, /^an? [a-z]/i);
 	});
 
-	it('show four steps and six apps, and every step uses a listed app', () => {
+	it('show only apps a step uses, and name each one in the prompt', () => {
 		for (const role of AGENT_ROLES) {
-			assert.equal(role.steps.length, 4, role.id);
-			assert.equal(role.apps.length, 6, role.id);
-			const apps = new Set(role.apps.map((a) => a.id));
-			assert.equal(apps.size, 6, `${role.id} repeats an app`);
-			for (const step of role.steps) {
-				assert.ok(apps.has(step.app), `${role.id}: ${step.app} is not listed`);
-				assert.match(step.tool, /^[a-zA-Z]+(\.[a-zA-Z]+)+$/);
+			assert.ok(
+				role.steps.length >= 4 && role.steps.length <= 5,
+				`${role.id} has ${role.steps.length} steps`,
+			);
+			const apps = role.apps.map((a) => a.id);
+			assert.equal(
+				new Set(apps).size,
+				apps.length,
+				`${role.id} repeats an app`,
+			);
+			const used = [...new Set(role.steps.map((s) => s.app))];
+			assert.deepEqual(
+				apps,
+				used,
+				`${role.id}: apps must match the steps, in order`,
+			);
+			for (const app of role.apps) {
+				assert.ok(
+					role.prompt.includes(app.name),
+					`${role.id}: the prompt never names ${app.name}`,
+				);
 			}
+			for (const step of role.steps) {
+				assert.match(step.tool, /^[a-zA-Z]+(\.[a-zA-Z]+)+$/);
+				assert.ok(
+					step.result.length > 0,
+					`${role.id}: ${step.tool} has no result`,
+				);
+			}
+			assert.ok(role.answer.length > 0, `${role.id} has no answer`);
 		}
+	});
+
+	it("mark the recruiter's stage change as approved by the user", () => {
+		const recruiter = AGENT_ROLES.find((r) => r.id === 'recruiter');
+		const approved = recruiter?.steps.filter((s) => s.approved) ?? [];
+		assert.deepEqual(
+			approved.map((s) => `${s.app}.${s.tool}`),
+			['ashby.application.changeStage'],
+		);
 	});
 
 	it('link only to use cases that exist', () => {
