@@ -13,6 +13,8 @@ const WRITE_CONCURRENCY = 16;
 type Store = {
 	// unknown: store backends return varying driver metadata — never read.
 	upsertByEntityId(entityId: string, data: never): Promise<unknown>;
+	// unknown: the stored row's data is read back only to keep its fields.
+	findByEntityId?(entityId: string): Promise<{ data?: unknown } | null>;
 	// unknown: store backends return varying driver metadata — never read.
 	deleteByEntityId?(entityId: string): Promise<unknown>;
 };
@@ -49,12 +51,31 @@ export async function persistRow(
 	}
 
 	try {
+		// Workable answers with different field sets for the same entity: a
+		// list row is a summary of what the detail call returns, and the
+		// member update response has no `active`. Keep the stored fields the
+		// response leaves out instead of replacing the whole row.
+		const stored = await readStoredData(store, entityId);
 		// why safe: `data` was zod-validated above; `never` only satisfies the
 		// generic store signature — a cache write, skipped on failure below.
-		await store.upsertByEntityId(entityId, data as never);
+		await store.upsertByEntityId(entityId, { ...stored, ...data } as never);
 	} catch (error) {
 		console.warn(`[WORKABLE] Failed to cache ${entityName}:`, error);
 	}
+}
+
+/** Reads a cached row's data, or an empty object when there is none. */
+async function readStoredData(
+	store: Store,
+	entityId: string,
+	// unknown: the cached row's data is spread back unchanged, never inspected.
+): Promise<Record<string, unknown>> {
+	const existing = await store.findByEntityId?.(entityId);
+	const data = existing?.data;
+	return data && typeof data === 'object' && !Array.isArray(data)
+		? // why safe: checked to be a non-array object just above.
+			(data as Record<string, unknown>)
+		: {};
 }
 
 /** Validates rows in bounded-concurrency batches and caches them best-effort. */

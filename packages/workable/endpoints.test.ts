@@ -37,6 +37,8 @@ function makeStore() {
 		deleteByEntityId: async (id: string) => {
 			rows.delete(id);
 		},
+		findByEntityId: async (id: string) =>
+			rows.has(id) ? { data: rows.get(id) } : null,
 	};
 }
 
@@ -248,6 +250,30 @@ describe('Workable endpoints', () => {
 			});
 		});
 
+		// The list row is a summary of the detail record; caching it must not
+		// wipe the fields employees.get stored.
+		it('employees.list keeps the detail fields employees.get cached', async () => {
+			const { ctx, stores } = makeCtx();
+			respondWith({
+				id: 'e1',
+				firstname: 'Ada',
+				hire_date: '2021-10-01T00:00:00.000Z',
+				department: '3ff4d641',
+			});
+			await Employees.get(ctx, { id: 'e1' });
+			respondWith({
+				employees: [{ id: 'e1', firstname: 'Ada L.', state: 'published' }],
+			});
+			await Employees.list(ctx, {});
+			expect(stores.employees.rows.get('e1')).toEqual({
+				id: 'e1',
+				firstname: 'Ada L.',
+				state: 'published',
+				hire_date: '2021-10-01T00:00:00.000Z',
+				department: '3ff4d641',
+			});
+		});
+
 		it('employees.get hits GET /employees/{id}', async () => {
 			const { ctx } = makeCtx();
 			respondWith({ id: 'e1', firstname: 'Ada' });
@@ -341,6 +367,25 @@ describe('Workable endpoints', () => {
 				'https://example.workable.com/spi/v3/members',
 			);
 			expect(calls.at(-1)?.init?.method).toBe('PUT');
+		});
+
+		// PUT /members answers without `active`; the cached flag must survive.
+		it('members.update keeps the cached active flag the response omits', async () => {
+			const { ctx, stores } = makeCtx();
+			stores.members.rows.set('m2', {
+				id: 'm2',
+				name: 'Jo',
+				active: true,
+				roles: ['ats.simple'],
+			});
+			respondWith({ id: 'm2', name: 'Jo', roles: ['ats.reviewer'] });
+			await Members.update(ctx, { id: 'm2', roles: ['ats.reviewer'] });
+			expect(stores.members.rows.get('m2')).toEqual({
+				id: 'm2',
+				name: 'Jo',
+				active: true,
+				roles: ['ats.reviewer'],
+			});
 		});
 
 		it('members.enable hits POST /members/{id}/enable and evicts the stale row', async () => {
